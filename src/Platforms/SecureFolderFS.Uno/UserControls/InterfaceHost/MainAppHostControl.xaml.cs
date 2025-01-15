@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using OwlCore.Storage.System.IO;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
@@ -14,8 +14,10 @@ using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,7 +46,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
-#if WINDOWS // TODO(u win)
+#if WINDOWS
             if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {
@@ -60,7 +62,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
             
             // Find existing target or create new
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
             {
                 var vaultLoginViewModel = new VaultLoginViewModel(vaultViewModel, ViewModel.NavigationService);
@@ -83,6 +85,57 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 _isInitialized = true;
                 await ViewModel.InitAsync();
             }
+        }
+
+        private void Rename_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuFlyoutItem menuItem)
+                return;
+
+            if (menuItem is not { DataContext: VaultListItemViewModel itemViewModel })
+                return;
+
+            itemViewModel.IsRenaming = true;
+        }
+
+        private async void RenameBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel } textBox)
+                return;
+
+            switch (e.Key)
+            {
+                case VirtualKey.Enter:
+                {
+                    e.Handled = true;
+                    await itemViewModel.RenameCommand.ExecuteAsync(textBox.Text);
+                    break;
+                }
+
+                case VirtualKey.Escape:
+                {
+                    itemViewModel.IsRenaming = false;
+                    break;
+                }
+            }
+        }
+
+        private void RenameBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel } textBox)
+                return;
+
+            textBox.Focus(FocusState.Programmatic);
+            textBox.Text = itemViewModel.VaultViewModel.VaultName;
+            textBox.SelectAll();
+        }
+
+        private void RenameBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel })
+                return;
+
+            itemViewModel.IsRenaming = false;
         }
 
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
@@ -146,7 +199,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
             // Recreate as SystemFolder for best performance.
             // The logic can be changed to handle Platform Storage Items in the future, if needed.
-            var folder = new SystemFolder(item.Path);
+            var folder = new SystemFolderEx(item.Path);
             await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
         }
 

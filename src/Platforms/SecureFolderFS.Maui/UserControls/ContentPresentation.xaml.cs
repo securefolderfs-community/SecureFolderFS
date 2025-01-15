@@ -7,13 +7,13 @@ namespace SecureFolderFS.Maui.UserControls
             InitializeComponent();
         }
 
-        public object? ViewContent
+        public object? Presentation
         {
-            get => (object?)GetValue(ViewContentProperty);
-            set => SetValue(ViewContentProperty, value);
+            get => (object?)GetValue(PresentationProperty);
+            set => SetValue(PresentationProperty, value);
         }
-        public static readonly BindableProperty ViewContentProperty =
-            BindableProperty.Create(nameof(ViewContent), typeof(object), typeof(ContentPresentation), null, propertyChanged:
+        public static readonly BindableProperty PresentationProperty =
+            BindableProperty.Create(nameof(Presentation), typeof(object), typeof(ContentPresentation), null, propertyChanged:
                 (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
 
         public DataTemplateSelector? TemplateSelector
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TemplateSelectorProperty =
             BindableProperty.Create(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentPresentation), null, propertyChanged:
-                (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.ViewContent));
+                (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.Presentation));
 
         private static void ApplyTemplate(BindableObject bindable, object? newValue)
         {

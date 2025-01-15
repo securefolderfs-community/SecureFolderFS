@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             // Calculate sizes
             var ciphertextSize = _security.ContentCrypt.ChunkCiphertextSize;
-            var PlaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
+            var plaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
             var ciphertextPosition = _security.HeaderCrypt.HeaderCiphertextSize + (chunkNumber * ciphertextSize);
 
             // Rent buffer
@@ -49,12 +49,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
                 // Get available read stream or throw
-                var ciphertextFileStream = _streamsManager.GetReadOnlyStream();
-                _ = ciphertextFileStream ?? throw new UnavailableStreamException();
+                var ciphertextStream = _streamsManager.GetReadOnlyStream();
+                _ = ciphertextStream ?? throw new UnavailableStreamException();
+
+                // Check position bounds
+                if (ciphertextPosition > ciphertextStream.Length)
+                    return 0;
 
                 // Read from stream at correct chunk
-                ciphertextFileStream.Position = ciphertextPosition;
-                var read = ciphertextFileStream.Read(realCiphertextChunk);
+                ciphertextStream.Position = ciphertextPosition;
+                var read = ciphertextStream.Read(realCiphertextChunk);
 
                 // Check for end of file
                 if (read == FileSystem.Constants.FILE_EOF)
@@ -70,7 +74,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 if (SpanExtensions.IsAllZeros(chunkReserved))
                 {
                     plaintextChunk.Clear();
-                    return read - (ciphertextSize - PlaintextSize);
+                    return read - (ciphertextSize - plaintextSize);
                 }
 
                 // Decrypt
@@ -89,7 +93,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return -1;
                 }
 
-                return read - (ciphertextSize - PlaintextSize);
+                return read - (ciphertextSize - plaintextSize);
             }
             finally
             {

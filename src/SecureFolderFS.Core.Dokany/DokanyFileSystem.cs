@@ -1,14 +1,15 @@
 ﻿using DokanNet;
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
@@ -36,8 +37,10 @@ namespace SecureFolderFS.Core.Dokany
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var dokanyOptions = DokanyOptions.ToOptions(options, folder);
+            var dokanyOptions = DokanyOptions.ToOptions(options);
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, dokanyOptions);
+            dokanyOptions.SetupValidators(specifics);
+
             var volumeModel = new DokanyVolumeModel()
             {
                 FileSystemName = Constants.Dokan.FS_TYPE_ID,
@@ -56,13 +59,13 @@ namespace SecureFolderFS.Core.Dokany
             if (dokanyOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
-            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
+            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions);
             var dokanyCallbacks = new OnDeviceDokany(specifics, handlesManager, volumeModel);
             var dokanyWrapper = new DokanyWrapper(dokanyCallbacks);
             dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);
 
             await Task.CompletedTask;
-            return new DokanyVFSRoot(dokanyWrapper, new SystemFolder(dokanyOptions.MountPoint), dokanyOptions);
+            return new DokanyVFSRoot(dokanyWrapper, new SystemFolderEx(dokanyOptions.MountPoint), specifics);
         }
     }
 }

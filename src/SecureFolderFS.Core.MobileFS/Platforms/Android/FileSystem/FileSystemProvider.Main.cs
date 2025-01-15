@@ -2,10 +2,12 @@
 using Android.Content;
 using Android.Database;
 using Android.OS;
+using Android.OS.Storage;
 using Android.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
-using static Android.Provider.DocumentsContract;
+using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
@@ -19,7 +21,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
     [IntentFilter(["android.content.action.DOCUMENTS_PROVIDER"])]
     internal sealed partial class FileSystemProvider : DocumentsProvider
     {
+        private readonly StorageManagerCompat _storageManager;
         private RootCollection? _rootCollection;
+
+        public FileSystemProvider()
+        {
+            _storageManager = new(Platform.AppContext);
+        }
 
         /// <inheritdoc/>
         public override bool OnCreate()
@@ -34,23 +42,38 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var matrix = new MatrixCursor(projection ?? DefaultRootProjection);
             foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
             {
-                var row = matrix.NewRow();
-                if (row is null)
-                    return null;
-
-                row.Add(Root.ColumnRootId, item.RootId);
-                row.Add(Root.ColumnIcon, Constants.Android.Saf.IC_LOCK_LOCK);
-                row.Add(Root.ColumnTitle, item.StorageRoot.Options.VolumeName);
-                row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.RootId));
-                row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+                AddRoot(matrix, item, Constants.Android.Saf.IC_LOCK_LOCK);
             }
 
             return matrix;
         }
 
         /// <inheritdoc/>
+        public override string? CreateDocument(string? parentDocumentId, string? mimeType, string? displayName)
+        {
+            parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
+            if (parentDocumentId is null || displayName is null)
+                return null;
+
+            var parentStorable = GetStorableForDocumentId(parentDocumentId);
+            if (parentStorable is not IModifiableFolder parentFolder)
+                return null;
+
+            var createdItem = (IStorableChild)(mimeType switch
+            {
+                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false)
+                    .ConfigureAwait(false).GetAwaiter().GetResult(),
+                _ => parentFolder.CreateFileAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult()
+            });
+
+            var rootId = parentDocumentId.Split(':', 2)[0];
+            return $"{rootId}:{createdItem.Id}";
+        }
+
+        /// <inheritdoc/>
         public override ParcelFileDescriptor? OpenDocument(string? documentId, string? mode, CancellationSignal? signal)
         {
+            documentId = documentId == "null" ? null : documentId;
             if (documentId is null)
                 return null;
 
@@ -59,49 +82,39 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var fileAccess = ToFileAccess(mode);
-            if (fileAccess is null)
-                return null;
-
-            var stream = childFile.TryOpenStreamAsync(fileAccess.Value).ConfigureAwait(false).GetAwaiter().GetResult();
+            var stream = childFile.TryOpenStreamAsync(fileAccess).ConfigureAwait(false).GetAwaiter().GetResult();
             if (stream is null)
                 return null;
 
-            var pipe = ParcelFileDescriptor.CreatePipe();
-            if (pipe is null)
-                return null;
+            var parcelFileMode = ToParcelFileMode(mode);
+            return _storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
+            
+            // var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
+            // if (storageManager is null)
+            //     return null;
+            //
+            // var parcelFileMode = ToParcelFileMode(mode);
+            // return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper!));
 
-            var readingPipe = pipe[0];
-            var writingPipe = pipe[1];
-
-            try
+            static ParcelFileMode ToParcelFileMode(string? fileMode)
             {
-                using var output = new ParcelFileDescriptor.AutoCloseOutputStream(writingPipe);
-                var buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                return fileMode switch
                 {
-                    output.Write(buffer, 0, bytesRead);
-                }
-                output.Flush();
+                    "r" => ParcelFileMode.ReadOnly,
+                    "w" => ParcelFileMode.WriteOnly,
+                    "rw" => ParcelFileMode.ReadWrite,
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
+                };
             }
-            catch (IOException e)
+            
+            static FileAccess ToFileAccess(string? fileMode)
             {
-                System.Diagnostics.Debug.WriteLine("Error writing to pipe: " + e.Message);
-            }
-
-            return readingPipe;
-
-            static FileAccess? ToFileAccess(string? mode)
-            {
-                if (string.IsNullOrEmpty(mode))
-                    return null;
-
-                return mode switch
+                return fileMode switch
                 {
                     "r" => FileAccess.Read,
                     "w" => FileAccess.Write,
                     "rw" => FileAccess.ReadWrite,
-                    _ => FileAccess.Read
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
                 };
             }
         }
@@ -109,6 +122,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override ICursor? QueryDocument(string? documentId, string[]? projection)
         {
+            documentId = documentId == "null" ? null : documentId;
             var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
             if (documentId is null)
                 return matrix;
@@ -117,13 +131,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is null)
                 return matrix;
 
-            AddStorable(matrix, storable, documentId);
+            AddDocumentAsync(matrix, storable, documentId).ConfigureAwait(false).GetAwaiter().GetResult();
             return matrix;
         }
 
         /// <inheritdoc/>
         public override ICursor? QueryChildDocuments(string? parentDocumentId, string[]? projection, string? sortOrder)
         {
+            parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
             var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
             if (parentDocumentId is null)
                 return matrix;
@@ -135,10 +150,130 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
-                AddStorable(matrix, item, null);
+                AddDocumentAsync(matrix, item, null).ConfigureAwait(false).GetAwaiter().GetResult();
             }
 
             return matrix;
+        }
+
+        /// <inheritdoc/>
+        public override void RemoveDocument(string? documentId, string? parentDocumentId)
+        {
+            DeleteDocument(documentId);
+        }
+
+        /// <inheritdoc/>
+        public override void DeleteDocument(string? documentId)
+        {
+            documentId = documentId == "null" ? null : documentId;
+            if (documentId is null)
+                return;
+            
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is not IStorableChild storableChild)
+                return;
+
+            var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            if (parentFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            // Revoke permissions first
+            RevokeDocumentPermission(documentId);
+            
+            // Perform deletion
+            modifiableFolder.DeleteAsync(storableChild).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc/>
+        public override string? MoveDocument(string? sourceDocumentId, string? sourceParentDocumentId, string? targetParentDocumentId)
+        {
+            sourceDocumentId = sourceDocumentId == "null" ? null : sourceDocumentId;
+            sourceParentDocumentId = sourceParentDocumentId == "null" ? null : sourceParentDocumentId;
+            targetParentDocumentId = targetParentDocumentId == "null" ? null : targetParentDocumentId;
+            if (sourceDocumentId is null || targetParentDocumentId is null || sourceParentDocumentId is null)
+                return null;
+
+            var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
+            if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+
+            var sourceParentStorable = GetStorableForDocumentId(sourceParentDocumentId);
+            if (sourceParentStorable is not IModifiableFolder sourceParentFolder)
+                return null;
+            
+            var sourceStorable = GetStorableForDocumentId(sourceDocumentId);
+            switch (sourceStorable)
+            {
+                case IChildFile file:
+                {
+                    var movedFile = destinationFolder.MoveFromAsync(file, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, movedFile.Name);
+                }
+                
+                case IChildFolder folder:
+                {
+                    var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, movedFolder.Name);
+                }
+                
+                default: return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override string? RenameDocument(string? documentId, string? displayName)
+        {
+            if (string.IsNullOrWhiteSpace(displayName))
+                return null;
+            
+            documentId = documentId == "null" ? null : documentId;
+            if (documentId is null)
+                return null;
+            
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is not IStorableChild storableChild)
+                return null;
+            
+            var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            if (parentFolder is not IRenamableFolder renamableFolder)
+                return null;
+            
+            var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> uriWrapper })
+                return uriWrapper.Inner.ToString();
+            
+            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
+        }
+
+        /// <inheritdoc/>
+        public override string? CopyDocument(string? sourceDocumentId, string? targetParentDocumentId)
+        {
+            sourceDocumentId = sourceDocumentId == "null" ? null : sourceDocumentId;
+            targetParentDocumentId = targetParentDocumentId == "null" ? null : targetParentDocumentId;
+            if (sourceDocumentId is null || targetParentDocumentId is null)
+                return null;
+
+            var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
+            if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+            
+            var sourceStorable = GetStorableForDocumentId(sourceDocumentId);
+            switch (sourceStorable)
+            {
+                case IFile file:
+                {
+                    var copiedFile = destinationFolder.CreateCopyOfAsync(file, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, copiedFile.Name);
+                }
+                
+                case IFolder folder:
+                {
+                    var copiedFolder = destinationFolder.CreateCopyOfAsync(folder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, copiedFolder.Name);
+                }
+                
+                default: return null;
+            }
         }
     }
 }

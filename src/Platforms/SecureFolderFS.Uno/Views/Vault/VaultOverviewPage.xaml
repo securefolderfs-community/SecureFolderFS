@@ -9,7 +9,8 @@
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
-    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
+    xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -18,17 +19,17 @@
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm2:HealthWidgetViewModel">
             <ucw:HealthWidget
                 CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
-                CurrentProgress="{x:Bind CurrentProgress, Mode=OneWay}"
-                IsProgressing="{x:Bind HealthOverlayViewModel.IsProgressing, Mode=OneWay}"
+                CurrentProgress="{x:Bind HealthReportViewModel.CurrentProgress, Mode=OneWay}"
+                IsProgressing="{x:Bind HealthReportViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                Severity="{x:Bind HealthOverlayViewModel.Severity, Mode=OneWay}"
+                Severity="{x:Bind HealthReportViewModel.Severity, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
                 StatusTitle="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Resource Graphs  -->
-        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm2:GraphsWidgetViewModel">
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm3:GraphsWidgetViewModel">
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
                 ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"
@@ -64,7 +65,7 @@
                 <!--  Vault read-only InfoBar  -->
                 <InfoBar
                     x:Name="ReadOnlyInfoBar"
-                    x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
+                    x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:ResourceString Rid=VaultReadOnlyMode}"

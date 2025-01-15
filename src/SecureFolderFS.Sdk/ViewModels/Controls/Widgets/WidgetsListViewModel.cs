@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -14,14 +15,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     [Bindable(true)]
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
+        private readonly INavigator _dashboardNavigator;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
 
         public IWidgetsCollectionModel WidgetsCollectionModel { get; }
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetsCollectionModel widgetsCollectionModel)
+        public WidgetsListViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator dashboardNavigator, IWidgetsCollectionModel widgetsCollectionModel)
         {
+            _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             WidgetsCollectionModel = widgetsCollectionModel;
             Widgets = new();
@@ -51,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             switch (widgetModel.WidgetId)
             {
                 case Constants.Widgets.HEALTH_WIDGET_ID:
-                    return new HealthWidgetViewModel(_unlockedVaultViewModel, widgetModel);
+                    return new HealthWidgetViewModel(_unlockedVaultViewModel, _dashboardNavigator, widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
                     return new GraphsWidgetViewModel(_unlockedVaultViewModel, widgetModel);

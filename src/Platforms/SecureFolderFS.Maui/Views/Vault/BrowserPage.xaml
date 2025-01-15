@@ -1,0 +1,86 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.Vault.BrowserPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="ThisPage"
+    x:DataType="local:BrowserPage">
+
+    <ContentPage.Resources>
+        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
+        <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
+        <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
+        <ToolbarItem
+            Command="{Binding ViewModel.NewItemCommand}"
+            CommandParameter="File"
+            Order="Secondary"
+            Text="Create new file" />
+        <ToolbarItem
+            Command="{Binding ViewModel.NewItemCommand}"
+            CommandParameter="Folder"
+            Order="Secondary"
+            Text="Create new folder" />
+        <ToolbarItem
+            Command="{Binding ViewModel.ImportItemCommand}"
+            CommandParameter="File"
+            Order="Secondary"
+            Text="Import file" />
+        <ToolbarItem
+            Command="{Binding ViewModel.ImportItemCommand}"
+            CommandParameter="Folder"
+            Order="Secondary"
+            Text="Import folder" />
+    </ContentPage.ToolbarItems>
+
+    <Shell.TitleView>
+        <VerticalStackLayout VerticalOptions="Center">
+            <Label
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+            <Label
+                FontSize="14"
+                Opacity="0.6"
+                Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}" />
+        </VerticalStackLayout>
+    </Shell.TitleView>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <uc:BreadcrumbBar
+            Grid.Row="0"
+            Margin="56,0,0,0"
+            HeightRequest="32"
+            ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
+
+        <uc:BrowserControl
+            x:Name="Browser"
+            Grid.Row="1"
+            IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+            ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
+            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}" />
+
+        <uc:TransferControl
+            Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
+            IsVisible="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
+            PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
+            PrimaryCommand="{Binding ViewModel.TransferViewModel.ConfirmCommand, Mode=OneWay}"
+            VerticalOptions="End" />
+    </Grid>
+</ContentPage>

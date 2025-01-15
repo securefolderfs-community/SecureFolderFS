@@ -13,12 +13,15 @@ namespace SecureFolderFS.Sdk.ViewModels
     [Bindable(true)]
     public sealed partial class UnlockedVaultViewModel : ObservableObject, IAsyncDisposable
     {
-        [ObservableProperty] private bool _IsReadOnly;
-
         /// <summary>
         /// Gets the unlocked root folder of the vault.
         /// </summary>
         public IVFSRoot StorageRoot { get; }
+
+        /// <summary>
+        /// Gets the options of the unlocked vault.
+        /// </summary>
+        public FileSystemOptions Options { get; }
 
         /// <summary>
         /// Gets the vault view model associated with the vault.
@@ -28,8 +31,8 @@ namespace SecureFolderFS.Sdk.ViewModels
         public UnlockedVaultViewModel(IVFSRoot storageRoot, VaultViewModel vaultViewModel)
         {
             StorageRoot = storageRoot;
+            Options = storageRoot.Options;
             VaultViewModel = vaultViewModel;
-            IsReadOnly = storageRoot.Options.IsReadOnly;
         }
 
         /// <inheritdoc/>

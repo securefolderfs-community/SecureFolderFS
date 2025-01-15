@@ -1,133 +1,176 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IHealthModel"/>
-    public sealed class HealthModel : IHealthModel
+    [Inject<IVaultService>]
+    public sealed partial class HealthModel : IHealthModel, IProgress<IResult>
     {
+        private readonly IFolderScanner _folderScanner;
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
-        private readonly IAsyncValidator<IFile, IResult> _fileValidator;
-        private readonly IAsyncValidator<IFolder, IResult> _folderValidator;
-        private readonly bool _isOptimized;
+        private readonly ProgressModel<TotalProgress> _progress;
+        private readonly IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? _structureValidator;
         private int _updateCount;
         private int _updateInterval;
         private volatile int _totalFilesScanned;
         private volatile int _totalFoldersScanned;
 
         /// <inheritdoc/>
-        public IFolderScanner<IStorableChild> FolderScanner { get; }
-
-        /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile, IResult> fileValidator, IAsyncValidator<IFolder, IResult> folderValidator)
+        public HealthModel(IFolderScanner folderScanner, ProgressModel<TotalProgress> progress, IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator)
         {
-            FolderScanner = folderScanner;
-            _isOptimized = true;
+            ServiceProvider = DI.Default;
             _scannedFiles = new();
             _scannedFolders = new();
-            _fileValidator = fileValidator;
-            _folderValidator = folderValidator;
+            _folderScanner = folderScanner;
+            _progress = progress;
+            _structureValidator = structureValidator;
         }
 
         /// <inheritdoc/>
-        public async Task ScanAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken = default)
+        public async Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken = default)
         {
-            progress.PrecisionProgress?.Report(0d);
-            _totalFilesScanned = 0;
-            _totalFoldersScanned = 0;
-            _scannedFiles.Clear();
-            _scannedFolders.Clear();
-
-            // Start collecting items
-            progress.CallbackProgress?.Report(new());
-            await Task.Delay(750, cancellationToken);
-
-            await foreach (var item in FolderScanner.ScanFolderAsync(cancellationToken))
+            await Task.Run(async () =>
             {
-                if (cancellationToken.IsCancellationRequested)
-                    return;
+                _progress.PercentageProgress?.Report(0d);
 
-                switch (item)
+                _totalFilesScanned = 0;
+                _totalFoldersScanned = 0;
+                _scannedFiles.Clear();
+                _scannedFolders.Clear();
+
+                // Start collecting items
+                _progress.CallbackProgress?.Report(new());
+                await Task.Delay(750, cancellationToken);
+
+                // Do not forget to add the RootFolder
+                AddScannedItem(_folderScanner.RootFolder);
+
+                // Continue enumeration as usual
+                await foreach (var item in _folderScanner.ScanFolderAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    case IChildFile file:
-                        _scannedFiles.Add(file);
-                        break;
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
 
-                    case IChildFolder folder:
-                        _scannedFolders.Add(folder);
-                        break;
-
-                    default:
+                    if (VaultService.IsNameReserved(item.Name))
                         continue;
+
+                    AddScannedItem(item);
                 }
-                
-                if (!_isOptimized)
-                    progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
+
+                if (Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
+                {
+                    var totalUpdatesOptimized = (int)((_scannedFiles.Count + _scannedFolders.Count) * Constants.Widgets.Health.INTERVAL_MULTIPLIER);
+                    _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / Math.Max(100, totalUpdatesOptimized);
+                }
+
+                // Report initial progress
+                ReportProgress(_progress);
+                await Task.Delay(750, cancellationToken);
+
+                // Begin scanning
+                await ScanStructureAsync(cancellationToken).ConfigureAwait(false);
+
+                // Report final progress
+                ReportProgress(_progress);
+                await Task.Delay(1500, cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
+        }
+
+        private void AddScannedItem(IStorable storable)
+        {
+            switch (storable)
+            {
+                case IChildFile file:
+                    _scannedFiles.Add(file);
+                    break;
+
+                case IChildFolder folder:
+                    _scannedFolders.Add(folder);
+                    break;
+
+                default: return;
             }
 
-            if (_isOptimized)
+            if (!Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
+                _progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
+        }
+
+        /// <inheritdoc/>
+        public void Report(IResult value)
+        {
+            switch (value)
             {
-                var totalUpdatesOptimized = (int)((_scannedFiles.Count + _scannedFolders.Count) * 0.2d);
-                _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / Math.Max(100, totalUpdatesOptimized);
+                case IResult<StorableType> typeResult:
+                {
+                    if (typeResult.Value == StorableType.File)
+                        Interlocked.Increment(ref _totalFilesScanned);
+                    else if (typeResult.Value == StorableType.Folder)
+                        Interlocked.Increment(ref _totalFoldersScanned);
+                    break;
+                }
+
+                case IResult<IStorable> storableResult:
+                {
+                    if (storableResult.Value is IFile)
+                        Interlocked.Increment(ref _totalFilesScanned);
+                    else if (storableResult.Value is IFolder)
+                        Interlocked.Increment(ref _totalFoldersScanned);
+
+                    IssueFound?.Invoke(this, new(value, storableResult.Value as IStorableChild));
+                    break;
+                }
+
+                default: return;
             }
-            
-            // Report initial progress
-            ReportProgress(progress);
-            await Task.Delay(750, cancellationToken);
 
-            await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
-            GC.Collect();
-
-            // Report final progress
-            ReportProgress(progress);
-            await Task.Delay(1500, cancellationToken);
+            ReportProgress(_progress);
         }
 
-        private async Task ScanFilesAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
+        private async Task ScanStructureAsync(CancellationToken cancellationToken)
         {
-            await Parallel.ForEachAsync(_scannedFiles, cancellationToken, async (file, token) =>
+            if (_structureValidator is null)
+                return;
+
+            if (Constants.Widgets.Health.IS_SCANNING_PARALLELIZED)
             {
-                await ScanAsync<IChildFile>(file, _fileValidator, token);
+                var tasks = new List<Task>(_scannedFolders.Count);
+                foreach (var folder in _scannedFolders)
+                    tasks.Add(ScanFolderAsync(folder, cancellationToken));
 
-                // Report progress
-                Interlocked.Increment(ref _totalFilesScanned);
-                ReportProgress(progress);
-            });
-        }
-
-        private async Task ScanFoldersAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
-        {
-            await Parallel.ForEachAsync(_scannedFolders, cancellationToken, async (folder, token) =>
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+            else
             {
-                await ScanAsync<IChildFolder>(folder, _folderValidator, token);
+                foreach (var folder in _scannedFolders)
+                    await ScanFolderAsync(folder, cancellationToken).ConfigureAwait(false);
+            }
 
-                // Report progress
-                Interlocked.Increment(ref _totalFoldersScanned);
-                ReportProgress(progress);
-            });
-        }
-
-        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable, IResult> asyncValidator, CancellationToken cancellationToken)
-            where TStorable : IStorableChild
-        {
-            var result = await asyncValidator.ValidateResultAsync(storable, cancellationToken);
-            if (!result.Successful)
-                IssueFound?.Invoke(this, new(storable, result));
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            async Task ScanFolderAsync(IChildFolder folder, CancellationToken token)
+            {
+                // We do not care about the result, since we assume it is reported through IProgress
+                _ = await _structureValidator.ValidateResultAsync((folder, this), token).ConfigureAwait(false);
+            }
         }
 
         private void ReportProgress(ProgressModel<TotalProgress> progress)
         {
-            if (_isOptimized)
+            if (Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
             {
                 _updateCount++;
                 if (_updateCount < _updateInterval)
@@ -136,7 +179,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 _updateCount = 0;
             }
 
-            progress.PrecisionProgress?.Report((double)(_totalFilesScanned + _totalFoldersScanned) / (_scannedFiles.Count + _scannedFolders.Count) * 100d);
+            progress.PercentageProgress?.Report((double)(_totalFilesScanned + _totalFoldersScanned) / (_scannedFiles.Count + _scannedFolders.Count) * 100d);
             progress.CallbackProgress?.Report(new(_totalFilesScanned + _totalFoldersScanned, _scannedFiles.Count + _scannedFolders.Count));
         }
 

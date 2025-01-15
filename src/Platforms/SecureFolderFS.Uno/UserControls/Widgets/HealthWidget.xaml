@@ -17,7 +17,7 @@
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
 
-        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:HealthWidget">
+        <DataTemplate x:Key="DetailedHealthTemplate" x:DataType="local:HealthWidget">
             <StackPanel Margin="0,-4,0,0" DataContext="{Binding ElementName=HealthControl}">
                 <!--  Vault status  -->
                 <TextBlock
@@ -48,7 +48,7 @@
                 </Grid>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:HealthWidget">
+        <DataTemplate x:Key="NotDetailedHealthTemplate" x:DataType="local:HealthWidget">
             <Grid />
         </DataTemplate>
     </UserControl.Resources>
@@ -80,41 +80,41 @@
 
         <!--  Health status  -->
         <ContentPresenter
-            x:Name="DetailedHealthContentPresenter"
+            x:Name="HealthContentPresenter"
             Grid.Column="1"
             VerticalContentAlignment="Center"
             Canvas.ZIndex="1" />
 
         <!--  Options  -->
-        <Grid Grid.Column="2">
+        <StackPanel
+            Grid.Column="2"
+            Margin="0,-6,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="4">
 
             <!--  Start scanning  -->
-            <StackPanel
-                Margin="0,-6,0,0"
-                HorizontalAlignment="Right"
+            <SplitButton
+                Height="36"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="4"
+                VerticalContentAlignment="Center"
+                Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                CommandParameter=""
+                Content="Start scanning"
+                IsEnabled="True"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
-                <Button
-                    Height="36"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Command="{x:Bind StartScanningCommand, Mode=OneWay}"
-                    Content="Start scanning"
-                    IsEnabled="True" />
-                <Button
-                    Width="36"
-                    Height="36"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                    IsEnabled="True"
-                    ToolTipService.ToolTip="Go to Vault Health">
-                    <FontIcon FontSize="15" Glyph="&#xE76C;" />
-                </Button>
-            </StackPanel>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                            CommandParameter="include_file_contents"
+                            IsEnabled="False"
+                            Text="Include file contents (slower)" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
 
             <!--  Cancel  -->
             <Button
@@ -122,7 +122,19 @@
                 Command="{x:Bind CancelCommand, Mode=OneWay}"
                 Content="{l:ResourceString Rid=Cancel}"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-        </Grid>
+
+            <!--  Open health details  -->
+            <Button
+                Width="36"
+                Height="36"
+                Padding="0"
+                HorizontalAlignment="Center"
+                Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                IsEnabled="True"
+                ToolTipService.ToolTip="Go to Vault Health">
+                <FontIcon FontSize="15" Glyph="&#xE76C;" />
+            </Button>
+        </StackPanel>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -132,7 +144,7 @@
                         <AdaptiveTrigger MinWindowWidth="350" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource DetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <!--  Small window  -->
@@ -141,7 +153,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource NotDetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

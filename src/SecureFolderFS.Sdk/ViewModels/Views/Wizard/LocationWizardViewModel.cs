@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
@@ -68,7 +69,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
-            SelectedFolder = await FileExplorerService.PickFolderAsync(cancellationToken);
+            // Remove previous bookmark
+            if (SelectedFolder is IBookmark bookmark)
+                await bookmark.RemoveBookmarkAsync(cancellationToken);
+            
+            SelectedFolder = await FileExplorerService.PickFolderAsync(true, cancellationToken);
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }
 

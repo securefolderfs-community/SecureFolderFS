@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.Directories
         public DirectoryIdCache(IFileSystemStatistics statistics)
         {
             _statistics = statistics;
-            _cache = new(Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
+            _cache = new(Constants.Caching.RECOMMENDED_SIZE_DIRECTORY_ID);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Core.FileSystem.Directories
             lock (_lock)
             {
                 // Remove first item from cache if exceeds size
-                if (_cache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID)
+                if (_cache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORY_ID)
                     _cache.Remove(_cache.Keys.First());
 
                 // Copy directoryId to cache

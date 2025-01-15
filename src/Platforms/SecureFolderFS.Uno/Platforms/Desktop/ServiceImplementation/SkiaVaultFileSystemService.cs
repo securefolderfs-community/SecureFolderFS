@@ -21,29 +21,5 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             yield return new SkiaWebDavFileSystem();
             yield return new FuseFileSystem();
         }
-
-        /// <inheritdoc/>
-        public override FileSystemOptions GetFileSystemOptions(IVaultModel vaultModel, string fileSystemId)
-        {
-            var statistics = new ConsolidatedStatisticsModel();
-            return fileSystemId switch
-            {
-                Core.WebDav.Constants.FileSystem.FS_ID => new WebDavOptions()
-                {
-                    VolumeName = vaultModel.VaultName, // TODO: Sanitize name
-                    HealthStatistics = statistics,
-                    FileSystemStatistics = statistics
-                },
-
-                Core.FUSE.Constants.FileSystem.FS_ID => new FuseOptions()
-                {
-                    VolumeName = vaultModel.VaultName, // TODO: Sanitize name
-                    HealthStatistics = statistics,
-                    FileSystemStatistics = statistics
-                },
-
-                _ => base.GetFileSystemOptions(vaultModel, fileSystemId)
-            };
-        }
     }
 }

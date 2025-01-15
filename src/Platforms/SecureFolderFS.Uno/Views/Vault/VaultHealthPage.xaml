@@ -1,0 +1,218 @@
+﻿<Page
+    x:Class="SecureFolderFS.Uno.Views.Vault.VaultHealthPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
+    xmlns:vm2="using:SecureFolderFS.UI.ViewModels.Health"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+        <vc:CountToStringConverter x:Key="CountToStringConverter" />
+        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <!--  Directory Issue  -->
+        <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Expandable"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <Border Margin="-16">
+                        <ListView
+                            Margin="-16,0"
+                            IsItemClickEnabled="False"
+                            ItemsSource="{x:Bind Issues, Mode=OneWay}"
+                            SelectionMode="None">
+                            <ListView.ItemTemplateSelector>
+                                <ts:HealthIssueTemplateSelector
+                                    DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                                    IssueTemplate="{StaticResource IssueTemplate}"
+                                    NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                            </ListView.ItemTemplateSelector>
+                        </ListView>
+                    </Border>
+                </ucab:ActionBlockControl.ExpanderContent>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+
+        <!--  Name Issue  -->
+        <DataTemplate x:Key="NameIssueTemplate" x:DataType="vm2:HealthNameIssueViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Default"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Grid MaxWidth="200">
+                        <TextBlock
+                            FontSize="14"
+                            Opacity="0.8"
+                            Tapped="NameText_Tapped"
+                            Text="{x:Bind ItemName, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}"
+                            Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+
+                        <TextBox
+                            x:Name="NameEdit"
+                            Width="200"
+                            IsEnabled="{x:Bind IsEditing, Mode=OneWay}"
+                            IsEnabledChanged="NameEdit_IsEnabledChanged"
+                            LostFocus="NameEdit_LostFocus"
+                            PreviewKeyDown="NameEdit_PreviewKeyDown"
+                            Text="{x:Bind ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </Grid>
+                </ucab:ActionBlockControl.ActionElement>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+
+        <!--  Base Issue  -->
+        <DataTemplate x:Key="IssueTemplate" x:DataType="vm:HealthIssueViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Default"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Margin="0,0,0,4" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Scan details  -->
+        <Grid Grid.Row="0" RowSpacing="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <InfoBar
+                Title="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issue(s)'}"
+                Grid.Row="0"
+                VerticalContentAlignment="Center"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="{x:Bind ViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
+                <ProgressRing
+                    Width="16"
+                    Height="16"
+                    Margin="0,-54,16,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    IsActive="True"
+                    IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                    Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+            </InfoBar>
+            <ListView
+                Grid.Row="1"
+                IsItemClickEnabled="False"
+                ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollMode="Enabled"
+                SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter ContentMargin="0,0,0,4" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplateSelector>
+                    <ts:HealthIssueTemplateSelector
+                        DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                        IssueTemplate="{StaticResource IssueTemplate}"
+                        NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                </ListView.ItemTemplateSelector>
+            </ListView>
+        </Grid>
+
+        <!--  Continuation action  -->
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal"
+            Spacing="8">
+            <!--<Button Width="124" Content="Ignore" />-->
+            <Button
+                Width="124"
+                Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
+                Content="Repair"
+                IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Opacity="0.8"
+                Text="During repair, your vault will be set into read-only mode."
+                TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+    </Grid>
+</Page>

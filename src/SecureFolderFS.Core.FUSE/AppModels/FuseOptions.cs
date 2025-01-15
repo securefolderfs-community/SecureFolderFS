@@ -44,12 +44,12 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         /// </summary>
         public bool PrintDebugInformation { get; init; } // TODO: Use ILogger in the base class
 
-        public static FuseOptions ToOptions(IDictionary<string, object> options, IFolder contentFolder)
+        public static FuseOptions ToOptions(IDictionary<string, object> options)
         {
             return new()
             {
                 VolumeName = (string?)options.Get(nameof(VolumeName)) ?? throw new ArgumentNullException(nameof(VolumeName)),
-                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? new HealthStatistics(contentFolder),
+                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? new HealthStatistics(),
                 FileSystemStatistics = (IFileSystemStatistics?)options.Get(nameof(FileSystemStatistics)) ?? new FileSystemStatistics(),
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,

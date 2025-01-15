@@ -123,6 +123,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private void AddVault(IVaultModel vaultModel)
         {
             var listItem = new VaultListItemViewModel(new(vaultModel), _vaultCollectionModel);
+            _ = listItem.InitAsync();
+
             Items.Add(listItem);
             HasVaults = true;
         }

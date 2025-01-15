@@ -1,0 +1,51 @@
+﻿<local:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.FilePreviewModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mt="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
+    Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
+    x:DataType="local:FilePreviewModalPage"
+    IsImmersive="True">
+
+    <local:BaseModalPage.Resources>
+        <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
+        <vc:MediaToSourceConverter x:Key="MediaToSourceConverter" />
+
+        <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
+            <mt:MediaElement
+                ShouldAutoPlay="True"
+                ShouldLoopPlayback="True"
+                Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
+        </DataTemplate>
+        <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
+            <uc:PanPinchContainer>
+                <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+            </uc:PanPinchContainer>
+        </DataTemplate>
+        <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
+            <ScrollView
+                Padding="8"
+                HorizontalScrollBarVisibility="Always"
+                Orientation="Both"
+                VerticalScrollBarVisibility="Always">
+                <Label Text="{Binding Source, Mode=OneWay}" />
+            </ScrollView>
+        </DataTemplate>
+    </local:BaseModalPage.Resources>
+
+    <local:BaseModalPage.ModalContent>
+        <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
+            <uc:ContentPresentation.TemplateSelector>
+                <ts:PreviewerTemplateSelector
+                    ImageTemplate="{StaticResource ImageTemplate}"
+                    TextTemplate="{StaticResource TextTemplate}"
+                    VideoTemplate="{StaticResource VideoTemplate}" />
+            </uc:ContentPresentation.TemplateSelector>
+        </uc:ContentPresentation>
+    </local:BaseModalPage.ModalContent>
+</local:BaseModalPage>

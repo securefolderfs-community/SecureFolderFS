@@ -5,8 +5,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.SystemStorageEx;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT_InitializeObject(filePicker);
@@ -79,11 +79,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 return null;
 
             //return new WindowsStorageFile(file);
-            return new SystemFile(file.Path);
+            return new SystemFileEx(file.Path);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT_InitializeObject(folderPicker);
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 return null;
 
             //return new WindowsStorageFolder(folder);
-            return new SystemFolder(folder.Path);
+            return new SystemFolderEx(folder.Path);
         }
 
         private static void WinRT_InitializeObject(object obj)

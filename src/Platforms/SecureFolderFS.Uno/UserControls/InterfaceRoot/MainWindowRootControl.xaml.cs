@@ -4,10 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
@@ -112,13 +113,27 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             App.Instance?.MainWindow?.Activate();
         }
 
-        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        private void MenuCloseApp_Click(object sender, RoutedEventArgs e)
         {
             if (App.Instance is null)
                 return;
 
             App.Instance.UseForceClose = true;
             Application.Current.Exit();
+        }
+
+        private void MenuShowApp_Click(object sender, RoutedEventArgs e)
+        {
+            App.Instance?.MainWindow?.Activate();
+        }
+
+        private void MenuLockAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            foreach (var item in ViewModel.VaultCollectionModel)
+                WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
         }
     }
 }

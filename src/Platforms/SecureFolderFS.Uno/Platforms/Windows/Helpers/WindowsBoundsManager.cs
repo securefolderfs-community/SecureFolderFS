@@ -1,7 +1,16 @@
+// Some parts of the following code were used from WinUIEx on the MIT License basis.
+// See the associated license file for more information.
+
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
+using SecureFolderFS.Uno.PInvoke;
+using SecureFolderFS.Uno.Platforms.Windows.Extensions;
 using Vanara.PInvoke;
+using Windows.Storage;
+using static Vanara.PInvoke.User32;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 {
@@ -11,6 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         private readonly Win32NativeWindowMessageReceiver _messageReceiver;
         private readonly Window _window;
         private readonly IntPtr _hWnd;
+        private bool _isRestoringWindowState;
 
         public int MinWidth { get; set; }
 
@@ -24,19 +34,146 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             _messageReceiver.MessageReceived += MessageReceiver_MessageReceived;
         }
 
+        public bool LoadWindowState(string windowId)
+        {
+#if UNPACKAGED
+            // Unpackaged scenario is currently unsupported
+            return false;
+#endif
+            var dataContainer = GetDataContainer(false);
+            if (dataContainer is null)
+                return false;
+
+            var dataKey = $"WindowState_{windowId}";
+            byte[]? windowStateBuffer = null;
+
+            if (dataContainer.TryGetValue(dataKey, out var rawObj) && rawObj is string base64)
+                windowStateBuffer = Convert.FromBase64String(base64);
+
+            if (windowStateBuffer is null)
+                return false;
+
+            var monitors = UnsafeNative.GetMonitorInfos();
+            using var memoryStream = new MemoryStream(windowStateBuffer);
+            using var binaryReader = new BinaryReader(memoryStream);
+
+            // Read monitors count
+            var monitorCount = binaryReader.ReadInt32();
+            if (monitorCount != monitors.Count)
+                return false; // Amount of monitors changed
+
+            foreach (var item in monitors)
+            {
+                // Skip monitor name (important, do not remove)
+                _ = binaryReader.ReadString();
+
+                var left = binaryReader.ReadInt32();
+                var top = binaryReader.ReadInt32();
+                var right = binaryReader.ReadInt32();
+                var bottom = binaryReader.ReadInt32();
+
+                if (item.rcMonitor.Left != left ||
+                    item.rcMonitor.Top != top ||
+                    item.rcMonitor.Right != right ||
+                    item.rcMonitor.Bottom != bottom)
+                    return false; // Monitor layout changed
+            }
+
+            var sizeWindowPlacement = Marshal.SizeOf<WINDOWPLACEMENT>();
+            var windowPlacementBuffer = binaryReader.ReadBytes(sizeWindowPlacement);
+            var pWindowPlacementBuffer = Marshal.AllocHGlobal(sizeWindowPlacement);
+
+            Marshal.Copy(windowPlacementBuffer, 0, pWindowPlacementBuffer, sizeWindowPlacement);
+            var windowPlacement = Marshal.PtrToStructure<WINDOWPLACEMENT>(pWindowPlacementBuffer);
+            Marshal.FreeHGlobal(pWindowPlacementBuffer);
+
+            if (windowPlacement is { showCmd: ShowWindowCommand.SW_SHOWMINIMIZED, flags: WindowPlacementFlags.WPF_RESTORETOMAXIMIZED })
+                windowPlacement.showCmd = ShowWindowCommand.SW_MAXIMIZE;
+            else if (windowPlacement.showCmd != ShowWindowCommand.SW_MAXIMIZE)
+                windowPlacement.showCmd = ShowWindowCommand.SW_NORMAL;
+
+            _isRestoringWindowState = true;
+            _ = SetWindowPlacement(_window.GetWindowHandle(), ref windowPlacement);
+            _isRestoringWindowState = false;
+
+            return true;
+        }
+
+        public void SaveWindowState(string windowId)
+        {
+            var dataContainer = GetDataContainer(true);
+            if (dataContainer is null)
+                return;
+
+            using var memoryStream = new MemoryStream();
+            using var binaryWriter = new BinaryWriter(memoryStream);
+            var monitors = UnsafeNative.GetMonitorInfos();
+
+            binaryWriter.Write(monitors.Count);
+            foreach (var item in monitors)
+            {
+                binaryWriter.Write(item.szDevice);
+                binaryWriter.Write(item.rcMonitor.Left);
+                binaryWriter.Write(item.rcMonitor.Top);
+                binaryWriter.Write(item.rcMonitor.Right);
+                binaryWriter.Write(item.rcMonitor.Bottom);
+            }
+
+            var windowPlacement = new WINDOWPLACEMENT();
+            _ = GetWindowPlacement(_window.GetWindowHandle(), ref windowPlacement);
+
+            var sizeWindowPlacement = Marshal.SizeOf<WINDOWPLACEMENT>();
+            var pWindowPlacementBuffer = Marshal.AllocHGlobal(sizeWindowPlacement);
+            Marshal.StructureToPtr(windowPlacement, pWindowPlacementBuffer, false);
+            
+            var windowPlacementBuffer = new byte[sizeWindowPlacement];
+            Marshal.Copy(pWindowPlacementBuffer, windowPlacementBuffer, 0, sizeWindowPlacement);
+            Marshal.FreeHGlobal(pWindowPlacementBuffer);
+
+            binaryWriter.Write(windowPlacementBuffer);
+            binaryWriter.Flush();
+            dataContainer[$"WindowState_{windowId}"] = Convert.ToBase64String(memoryStream.ToArray());
+        }
+
+        private IDictionary<string, object>? GetDataContainer(bool createIfMissing)
+        {
+            try
+            {
+                if (ApplicationData.Current.LocalSettings.Containers.TryGetValue(UI.Constants.DATA_CONTAINER_ID, out var container))
+                    return container.Values;
+                else if (createIfMissing)
+                    return ApplicationData.Current.LocalSettings.CreateContainer(UI.Constants.DATA_CONTAINER_ID, ApplicationDataCreateDisposition.Always).Values;
+            }
+            catch (Exception) { }
+
+            return null;
+        }
+
         private void MessageReceiver_MessageReceived(object? sender, WindowMessageEventArgs e)
         {
-            switch ((User32.WindowMessage)e.NativeMessage.uMsg)
+            switch ((WindowMessage)e.NativeMessage.uMsg)
             {
-                case User32.WindowMessage.WM_GETMINMAXINFO:
+                case WindowMessage.WM_GETMINMAXINFO:
                 unsafe
                 {
-                    var rect2 = (User32.MINMAXINFO*)e.NativeMessage.lparam;
-                    var currentDpi = User32.GetDpiForWindow(_hWnd);
+                    if (_isRestoringWindowState)
+                        break;
+
+                    var rect2 = (MINMAXINFO*)e.NativeMessage.lparam;
+                    var currentDpi = GetDpiForWindow(_hWnd);
 
                     // Restrict min-size
                     rect2->minTrackSize.cx = (int)Math.Max(MinWidth * (currentDpi / 96f), rect2->minTrackSize.cx);
                     rect2->minTrackSize.cy = (int)Math.Max(MinHeight * (currentDpi / 96f), rect2->minTrackSize.cy);
+
+                    break;
+                }
+
+                case WindowMessage.WM_DPICHANGED:
+                {
+                    if (_isRestoringWindowState)
+                        e.Handled = true;
+
                     break;
                 }
             }

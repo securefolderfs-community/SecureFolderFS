@@ -2,6 +2,8 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
 using IOPath = System.IO.Path;
 
@@ -9,41 +11,112 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     internal sealed partial class FileSystemProvider
     {
-        private bool AddStorable(MatrixCursor matrix, IStorable storable, string? documentId)
+        private bool AddRoot(MatrixCursor matrix, SafRoot safRoot, int iconRid)
+        {
+            var row = matrix.NewRow();
+            if (row is null)
+                return false;
+
+            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.Inner, safRoot.RootId);
+            row.Add(DocumentsContract.Root.ColumnRootId, safRoot.RootId);
+            row.Add(DocumentsContract.Root.ColumnDocumentId, rootFolderId);
+            row.Add(DocumentsContract.Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
+            row.Add(DocumentsContract.Root.ColumnIcon, iconRid);
+            row.Add(DocumentsContract.Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+
+            return true;
+        }
+        
+        private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, string? documentId)
         {
             documentId ??= GetDocumentIdForStorable(storable, null);
             var row = matrix.NewRow();
             if (row is null)
                 return false;
 
-            // TODO(saf): Implement columns
-            row.Add(Document.ColumnSize, 6);
-            row.Add(Document.ColumnLastModified, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
-
-            row.Add(Document.ColumnDocumentId, documentId);
-            row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
-
-            if (storable is not IFolder)
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
-            else
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersLastModified | DocumentContractFlags.DirPrefersGrid));
-
-            if (string.IsNullOrEmpty(storable.Name))
-            {
-                var safRoot = _rootCollection?.GetRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
-                row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
-            }
-            else
-                row.Add(Document.ColumnDisplayName, storable.Name);
-
+            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            if (safRoot is null)
+                return false;
+            
+            AddDocumentId();
+            AddDisplayName();
+            await AddSizeAsync();
+            AddMimeType();
+            AddFlags();
+            
             return true;
+
+            async Task AddSizeAsync()
+            {
+                if (storable is not IStorableProperties storableProperties)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                var basicProperties = await storableProperties.TryGetPropertiesAsync();
+                if (basicProperties is not ISizeProperties sizeProperties)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                var sizeProperty = await sizeProperties.GetSizeAsync();
+                if (sizeProperty is null)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                row.Add(Document.ColumnSize, sizeProperty.Value);
+            }
+            void AddFlags()
+            {
+                var baseFlags = (DocumentContractFlags)0;
+                if (!safRoot.StorageRoot.Options.IsReadOnly)
+                {
+                    baseFlags |= DocumentContractFlags.SupportsCopy
+                                 | DocumentContractFlags.SupportsMove
+                                 | DocumentContractFlags.SupportsRename
+                                 | DocumentContractFlags.SupportsDelete
+                                 | DocumentContractFlags.SupportsRemove;
+                }
+                
+                if (storable is IFile)
+                {
+                    if (!safRoot.StorageRoot.Options.IsReadOnly)
+                        baseFlags |= DocumentContractFlags.SupportsWrite;
+                    
+                    row.Add(Document.ColumnFlags, (int)baseFlags);
+                }
+                else
+                {
+                    baseFlags |= DocumentContractFlags.DirPrefersGrid;
+                    if (!safRoot.StorageRoot.Options.IsReadOnly)
+                        baseFlags |= DocumentContractFlags.DirSupportsCreate;
+                    
+                    row.Add(Document.ColumnFlags, (int)baseFlags);
+                }
+            }
+            void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
+            void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);
+            void AddDisplayName()
+            {
+                if (string.IsNullOrEmpty(storable.Name))
+                {
+                    var safRoot = _rootCollection?.GetSafRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
+                    row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
+                }
+                else
+                    row.Add(Document.ColumnDisplayName, storable.Name);
+            }
         }
 
         private string? GetDocumentIdForStorable(IStorable storable, string? rootId)
         {
             var safRoot = rootId is not null
-                ? _rootCollection?.GetRootForRootId(rootId)
-                : _rootCollection?.GetRootForStorable(storable);
+                ? _rootCollection?.GetSafRootForRootId(rootId)
+                : _rootCollection?.GetSafRootForStorable(storable);
 
             if (safRoot is null)
                 return null;
@@ -59,16 +132,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (_rootCollection is null)
                 return null;
 
-            var split = documentId.Split(':');
+            // Split the documentId into two:
+            // 1. RootID - The source root of the document provider where the item belongs
+            // 2. Path - The path to an item
+            var split = documentId.Split(':', 2);
             if (split.Length < 2)
-                throw new FileNotFoundException("Invalid document ID: " + documentId);
+                return null;
 
+            // Extract RootID and Path
             var rootId = split[0];
-            var safRoot = _rootCollection.GetRootForRootId(rootId);
+            var path = split[1];
+            
+            // Get root
+            var safRoot = _rootCollection.GetSafRootForRootId(rootId);
             if (safRoot is null)
                 return null;
 
-            var path = split[1];
+            // Return base folder if the path is empty
             if (string.IsNullOrEmpty(path))
                 return safRoot.StorageRoot.Inner;
 
@@ -80,9 +160,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is IFolder)
                 return Document.MimeTypeDir;
 
-            // Get extension without the starting . (dot)
-            var extension = IOPath.GetExtension(storable.Name).Substring(1);
-            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension) ?? string.Empty;
+            // Get the extension
+            var extension = IOPath.GetExtension(storable.Name);
+            if (string.IsNullOrEmpty(extension))
+                return "application/octet-stream";
+
+            // Remove the starting . (dot)
+            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1)) ?? string.Empty;
         }
     }
 }

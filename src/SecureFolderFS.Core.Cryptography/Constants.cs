@@ -2,10 +2,9 @@
 {
     public static class Constants
     {
-        public const int ARGON2_KEK_LENGTH = 32;
-
-        public static class KeyChains
+        public static class KeyTraits
         {
+            public const int ARGON2_KEK_LENGTH = 32;
             public const int ENCKEY_LENGTH = 32;
             public const int MACKEY_LENGTH = 32;
             public const int SALT_LENGTH = 16;
@@ -14,10 +13,13 @@
         public static class CipherId
         {
             public const string NONE = ""; // Empty string
-            public const string AES_CTR_HMAC = "AES-CTR HMAC";
-            public const string AES_GCM = "AES-GCM";
-            public const string XCHACHA20_POLY1305 = "XChaCha20-Poly1305";
             public const string AES_SIV = "AES-SIV";
+            public const string AES_GCM = "AES-GCM";
+            public const string AES_CTR_HMAC = "AES-CTR HMAC";
+            public const string XCHACHA20_POLY1305 = "XChaCha20-Poly1305";
+
+            public const string ENCODING_BASE4K = "Base4K";
+            public const string ENCODING_BASE64URL = "Base64Url";
         }
 
         internal static class Crypto

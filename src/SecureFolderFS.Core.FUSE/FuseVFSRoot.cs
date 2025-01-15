@@ -13,8 +13,8 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public FuseVFSRoot(FuseWrapper fuseWrapper, IFolder storageRoot, FileSystemOptions options)
-            : base(storageRoot, options)
+        public FuseVFSRoot(FuseWrapper fuseWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
             _fuseWrapper = fuseWrapper;
         }

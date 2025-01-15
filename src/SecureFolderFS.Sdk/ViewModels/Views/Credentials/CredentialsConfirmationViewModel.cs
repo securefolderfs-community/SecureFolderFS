@@ -48,6 +48,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         public async Task ConfirmAsync(CancellationToken cancellationToken)
         {
+            if (IsRemoving)
+                await RemoveAsync(cancellationToken);
+            else
+                await ModifyAsync(cancellationToken);
+        }
+        
+        private async Task ModifyAsync(CancellationToken cancellationToken)
+        {
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var key = await _credentialsTcs.Task;
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
@@ -71,8 +79,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             }
         }
 
-        [RelayCommand]
-        public async Task RemoveAsync(CancellationToken cancellationToken)
+        private async Task RemoveAsync(CancellationToken cancellationToken)
         {
             if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
                 return;
@@ -91,6 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 AuthenticationMethod = authenticationMethod,
                 ContentCipherId = configuredOptions.ContentCipherId,
                 FileNameCipherId = configuredOptions.FileNameCipherId,
+                NameEncodingId = configuredOptions.NameEncodingId,
                 VaultId = configuredOptions.VaultId,
                 Version = configuredOptions.Version
             };

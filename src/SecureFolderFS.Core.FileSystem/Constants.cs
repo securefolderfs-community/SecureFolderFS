@@ -20,12 +20,13 @@
         {
             public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
             public const string DIRECTORY_ID_FILENAME = "dirid.iv";
+            public const string RECYCLE_BIN_NAME = "recycle_bin.vi";
         }
 
         public static class Caching
         {
             public const int RECOMMENDED_SIZE_CHUNK = 6;
-            public const int RECOMMENDED_SIZE_DIRECTORYID = 1000;
+            public const int RECOMMENDED_SIZE_DIRECTORY_ID = 1000;
             public const int RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES = 2000;
             public const int RECOMMENDED_SIZE_Plaintext_FILENAMES = 2000;
         }

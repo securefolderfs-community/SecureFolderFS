@@ -4,7 +4,7 @@ using SecureFolderFS.UI.ValueConverters;
 namespace SecureFolderFS.Maui.ValueConverters
 {
     /// <inheritdoc cref="BaseBoolInvertConverter"/>
-    public sealed class BoolInvertConverter : BaseBoolInvertConverter, IValueConverter
+    internal sealed class BoolInvertConverter : BaseBoolInvertConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

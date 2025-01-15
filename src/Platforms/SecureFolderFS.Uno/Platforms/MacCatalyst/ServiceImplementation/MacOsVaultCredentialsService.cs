@@ -10,7 +10,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 
 namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 {
@@ -20,9 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         /// <inheritdoc/>
         public override IEnumerable<string> GetContentCiphers()
         {
-            // TODO: AES-GCM is supported in NET 9 for Catalyst
-            //yield return Core.Cryptography.Constants.CipherId.AES_GCM;
-            
+            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
             yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
         }
 

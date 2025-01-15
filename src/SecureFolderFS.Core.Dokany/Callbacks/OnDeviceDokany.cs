@@ -4,9 +4,11 @@ using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using System;
 using System.Collections.Generic;
@@ -17,8 +19,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Extensions;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -346,12 +346,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics, fileName);
+                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics.Security, fileName);
                 var itemsEnumerable = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
 
                 foreach (var item in itemsEnumerable)
                 {
-                    if (PathHelpers.IsCoreFile(item.Name))
+                    if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
                     var plaintextName = NativePathHelpers.GetPlaintextPath(item.FullName, Specifics, directoryId);
@@ -524,7 +524,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             while (directoryEnumerator.MoveNext())
             {
                 // Check for any files except core files
-                canDelete &= PathHelpers.IsCoreFile(Path.GetFileName(directoryEnumerator.Current));
+                canDelete &= PathHelpers.IsCoreName(Path.GetFileName(directoryEnumerator.Current));
 
                 // If the flag changed (directory is not empty), break the loop
                 if (!canDelete)

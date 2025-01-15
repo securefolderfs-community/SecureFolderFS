@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
@@ -8,34 +9,36 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
-    public sealed class FileValidator : IAsyncValidator<IFile, IResult>
+    public sealed class FileValidator : BaseFileSystemValidator<IFile>
     {
-        private readonly IFolder _contentFolder;
+        private IResult<StorableType> FileSuccess { get; } = Result<StorableType>.Success(StorableType.File);
 
-        public FileValidator(IFolder contentFolder)
+        public FileValidator(FileSystemSpecifics specifics)
+            : base(specifics)
         {
-            _contentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
-        public Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
+        public override Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement file validation (invalid chunks, invalid name, checksum mismatch, etc...?)
+            if (PathHelpers.IsCoreName(value.Name))
+                return Task.CompletedTask;
+
+            // TODO: Implement file validation (invalid chunks, checksum mismatch, etc...?)
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
+        public override async Task<IResult> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
         {
             try
             {
-                await ValidateAsync(value, cancellationToken);
-                return Result.Success;
+                await ValidateAsync(value, cancellationToken).ConfigureAwait(false);
+                return FileSuccess;
             }
             catch (Exception ex)
             {
-                _ = ex;
-                return Result.Failure(ex); // TODO: Return appropriate IHealthResult based on the exception
+                return Result<IStorable>.Failure(value, ex);
             }
         }
     }

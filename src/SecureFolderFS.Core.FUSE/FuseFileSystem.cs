@@ -1,12 +1,13 @@
 ﻿using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Core.FUSE
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fuseOptions = FuseOptions.ToOptions(options, folder);
+            var fuseOptions = FuseOptions.ToOptions(options);
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
 
@@ -53,13 +54,15 @@ namespace SecureFolderFS.Core.FUSE
                 Directory.CreateDirectory(mountPoint);
 
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fuseOptions);
-            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
+            fuseOptions.SetupValidators(specifics);
+
+            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions);
             var fuseCallbacks = new OnDeviceFuse(specifics, handlesManager);
             var fuseWrapper = new FuseWrapper(fuseCallbacks);
             fuseWrapper.StartFileSystem(mountPoint, fuseOptions);
 
             await Task.CompletedTask;
-            return new FuseVFSRoot(fuseWrapper, new SystemFolder(mountPoint), fuseOptions);
+            return new FuseVFSRoot(fuseWrapper, new SystemFolderEx(mountPoint), specifics);
         }
     }
 }

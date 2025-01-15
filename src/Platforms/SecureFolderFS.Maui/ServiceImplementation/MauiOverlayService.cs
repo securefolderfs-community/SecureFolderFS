@@ -1,6 +1,7 @@
 using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.Views;
+using SecureFolderFS.Maui.Views.Modals;
 using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
 using SecureFolderFS.Sdk.Services;
@@ -24,6 +25,9 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
+                PreviewerOverlayViewModel => new FilePreviewModalPage(navigation),
+                RenameOverlayViewModel => new RenamePrompt(),
+                NewItemOverlayViewModel => new NewItemPrompt(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),

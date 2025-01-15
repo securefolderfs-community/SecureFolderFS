@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
@@ -59,9 +59,6 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\FluentAvalonia LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -154,9 +151,6 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <EmbeddedResource Include="Assets\AppAssets\Shields\error_shield.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>

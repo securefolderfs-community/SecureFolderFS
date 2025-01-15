@@ -14,7 +14,7 @@ using OwlCore.Storage.Memory;
 using SecureFolderFS.Uno.Helpers;
 #endif
 
-namespace SecureFolderFS.Uno.Platforms.Desktop
+namespace SecureFolderFS.Uno.Platforms.MacCatalyst
 {
     /// <inheritdoc cref="IFileSystem"/>
     internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem

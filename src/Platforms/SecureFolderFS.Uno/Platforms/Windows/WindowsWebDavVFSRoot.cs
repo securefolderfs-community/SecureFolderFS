@@ -8,8 +8,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
 using System.IO;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Uno.UnsafeNative;
+using SecureFolderFS.Uno.PInvoke;
 #endif
 
 namespace SecureFolderFS.Uno.Platforms.Windows
@@ -25,8 +24,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Core.WebDav.Constants.FileSystem.FS_NAME;
 
-        public WindowsWebDavVFSRoot(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
-            : base(storageRoot, options)
+        public WindowsWebDavVFSRoot(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
             _webDavWrapper = webDavWrapper;
         }
@@ -40,8 +39,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows
             _disposed = await _webDavWrapper.CloseFileSystemAsync();
             if (_disposed)
             {
+                await base.DisposeAsync();
                 FileSystemManager.Instance.RemoveRoot(this);
-                await CloseExplorerShellAsync(Inner.Id);
+                await CloseExplorerShellAsync(storageRoot.Id);
             }
         }
 
@@ -50,9 +50,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 #if WINDOWS
             try
             {
-                var formattedPath = PathHelpers.EnsureNoTrailingPathSeparator(path);
                 var shellWindows = new SHDocVw.ShellWindows();
-
                 foreach (SHDocVw.InternetExplorer ie in shellWindows)
                 {
                     var formattedName = Path.GetFileNameWithoutExtension(ie.FullName);
@@ -61,7 +59,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 
                     var url = ie.LocationURL.Replace('/', Path.DirectorySeparatorChar);
                     var formattedUrl = Uri.UnescapeDataString(url);
-                    if (!formattedUrl.Contains(formattedPath))
+                    if (!formattedUrl.Contains(path))
                         continue;
 
                     var windowClosed = false;
@@ -70,7 +68,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
                         // Attach closing event
                         ie.WindowClosing += Window_Closing;
 
-                        // Try quit first
+                        // Try to quit first
                         ie.Quit();
 
                         // Wait a short delay
@@ -80,7 +78,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
                         {
                             // Retry with WM_CLOSE
                             var hWnd = new IntPtr(ie.HWND);
-                            _ = UnsafeNativeApis.SendMessageA(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                            _ = UnsafeNative.SendMessageA(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                         }
                     }
                     catch (Exception ex)
@@ -95,7 +93,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
                     }
                     continue;
 
-                    void Window_Closing(bool IsChildWindow, ref bool Cancel)
+                    void Window_Closing(bool isChildWindow, ref bool cancel)
                     {
                         windowClosed = true;
                     }

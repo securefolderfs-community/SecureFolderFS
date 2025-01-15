@@ -22,17 +22,19 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
-    [Inject<IVaultCredentialsService>, Inject<IVaultManagerService>]
+    [Inject<IVaultCredentialsService>, Inject<IVaultManagerService>, Inject<IVaultService>]
     [Bindable(true)]
     public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
     {
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
-        [ObservableProperty] private CipherViewModel? _ContentCipher;
-        [ObservableProperty] private CipherViewModel? _FileNameCipher;
-        [ObservableProperty] private ObservableCollection<CipherViewModel> _ContentCiphers = new();
-        [ObservableProperty] private ObservableCollection<CipherViewModel> _FileNameCiphers = new();
+        [ObservableProperty] private VaultOptionViewModel? _ContentCipher;
+        [ObservableProperty] private VaultOptionViewModel? _FileNameCipher;
+        [ObservableProperty] private VaultOptionViewModel? _EncodingOption;
+        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _ContentCiphers = new();
+        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _FileNameCiphers = new();
+        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _EncodingOptions = new();
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions = new();
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
 
@@ -61,6 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
+            ArgumentNullException.ThrowIfNull(EncodingOption);
             ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
 
             // Await the credentials
@@ -74,6 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
+                    NameEncodingId = EncodingOption.Id,
                     AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
                     VaultId = _vaultId
                 };
@@ -98,13 +102,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override async void OnAppearing()
         {
-            // Get ciphers
-            EnumerateCiphers(VaultCredentialsService.GetContentCiphers(), ContentCiphers);
-            EnumerateCiphers(VaultCredentialsService.GetFileNameCiphers(), FileNameCiphers);
+            // Get options
+            EnumerateOptions(VaultService.GetEncodingOptions(), EncodingOptions);
+            EnumerateOptions(VaultCredentialsService.GetContentCiphers(), ContentCiphers);
+            EnumerateOptions(VaultCredentialsService.GetFileNameCiphers(), FileNameCiphers);
 
             // Set default cipher options
             ContentCipher = ContentCiphers.FirstOrDefault();
             FileNameCipher = FileNameCiphers.FirstOrDefault();
+            EncodingOption = EncodingOptions.FirstOrDefault();
 
             // Get authentication options
             AuthenticationOptions.Clear();
@@ -115,7 +121,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             RegisterViewModel.CurrentViewModel = AuthenticationOptions.FirstOrDefault();
             return;
 
-            static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
+            static void EnumerateOptions(IEnumerable<string> source, ICollection<VaultOptionViewModel> destination)
             {
                 destination.Clear();
                 foreach (var item in source)

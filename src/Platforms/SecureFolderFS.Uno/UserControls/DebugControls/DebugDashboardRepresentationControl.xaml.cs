@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
@@ -18,7 +20,7 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
     public sealed partial class DebugDashboardRepresentationControl : UserControl
     {
         private MainWindowRootControl? _rootControl;
-        private INavigationControl? _rootNavigationControl;
+        private INavigator? _rootNavigationControl;
         private VaultOverviewViewModel? _overviewViewModel;
         private VaultPropertiesViewModel? _propertiesViewModel;
         private GraphsWidgetViewModel? _graphsWidgetViewModel;
@@ -32,7 +34,7 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
             InitializeComponent();
 
             _rootControl = App.Instance?.MainWindow?.Content as MainWindowRootControl;
-            _rootNavigationControl = (_rootControl?.RootNavigationService as INavigationControlContract)?.NavigationControl;
+            _rootNavigationControl = (_rootControl?.RootNavigationService as INavigationControlContract)?.Navigator;
             ResetView();
         }
 

@@ -9,7 +9,7 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
-    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
+    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels.Authentication;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk"
     x:Name="ThisLoginControl">
 
@@ -101,7 +101,7 @@
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
-        <local:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
+        <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
                     ErrorTemplate="{StaticResource ErrorTemplate}"

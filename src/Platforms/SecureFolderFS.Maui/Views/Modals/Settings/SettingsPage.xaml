@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Settings"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
     Title="{l:ResourceString Rid=Settings}"
     x:DataType="local:SettingsPage">
@@ -23,7 +24,7 @@
 
                                 <Picker
                                     BindingContext="{x:Reference ThisPage}"
-                                    ItemDisplayBinding="{Binding DisplayName, Mode=OneWay}"
+                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
                                     ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
                                     SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
                                     WidthRequest="96" />

@@ -9,18 +9,26 @@ namespace SecureFolderFS.Core.DataModels
     public sealed class VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
-        /// Gets scheme type of the vault for content encryption.
+        /// Gets the ID for content encryption.
         /// </summary>
         [JsonPropertyName(Associations.ASSOC_CONTENT_CIPHER_ID)]
         [DefaultValue("")]
         public required string ContentCipherId { get; init; }
 
         /// <summary>
-        /// Gets scheme type of the vault for name encryption.
+        /// Gets the ID for file name encryption.
         /// </summary>
         [JsonPropertyName(Associations.ASSOC_FILENAME_CIPHER_ID)]
         [DefaultValue("")]
         public required string FileNameCipherId { get; init; }
+
+        /// <summary>
+        /// Gets the ID for file name encoding.
+        /// </summary>
+        //[JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
+        //[DefaultValue("")]
+        [JsonIgnore]
+        public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
 
         ///// <summary>
         ///// Gets the specialization of the vault that hints how the user data should be handled.

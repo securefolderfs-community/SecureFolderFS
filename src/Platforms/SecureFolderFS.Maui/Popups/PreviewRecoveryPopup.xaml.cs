@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Popups
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            return Task.CompletedTask;
+            return CloseAsync();
         }
         
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

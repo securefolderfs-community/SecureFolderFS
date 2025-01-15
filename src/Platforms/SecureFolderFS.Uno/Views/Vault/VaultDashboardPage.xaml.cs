@@ -34,6 +34,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardViewModel viewModel)
@@ -51,7 +52,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             {
                 // Remove the reference to the NavigationControl so the page can get properly garbage collected
                 ViewModel.DashboardNavigation.ResetNavigation();
-                ViewModel.DashboardNavigation.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+                ViewModel.DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             }
             
             Navigation.Dispose();
@@ -67,7 +68,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             _isLoaded = true;
             
             // Attach navigation event
-            ViewModel.DashboardNavigation.NavigationChanged += DashboardNavigationService_NavigationChanged;
+            ViewModel.DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
 
             // Initialize navigation
             if (ViewModel.DashboardNavigation.SetupNavigation(Navigation, true))
@@ -80,7 +81,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
                         new(ViewModel.VaultNavigation, ViewModel.DashboardNavigation, ViewModel.UnlockedVaultViewModel),
-                        new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultViewModel.VaultModel.Folder)));
+                        new(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigation, new WidgetsCollectionModel(ViewModel.VaultViewModel.VaultModel.Folder)));
 
                     _ = vaultOverviewViewModel.InitAsync();
                     return vaultOverviewViewModel;
@@ -93,7 +94,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             await LoadComponentsAsync();
         }
 
-        private async void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
+        private async void DashboardNavigation_NavigationChanged(object? sender, IViewDesignation? e)
         {
             var canGoBack = e is not VaultOverviewViewModel;
             if (canGoBack)

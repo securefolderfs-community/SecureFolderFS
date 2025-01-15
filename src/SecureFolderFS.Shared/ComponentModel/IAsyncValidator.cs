@@ -26,7 +26,7 @@ namespace SecureFolderFS.Shared.ComponentModel
     public interface IAsyncValidator<in T, TResult> : IAsyncValidator<T>
     {
         /// <summary>
-        /// Validates <paramref name="value"/> and returns <see cref="IResult"/> of validation.
+        /// Validates <paramref name="value"/> and returns <see cref="TResult"/> of validation.
         /// </summary>
         /// <param name="value">The value to validate.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>

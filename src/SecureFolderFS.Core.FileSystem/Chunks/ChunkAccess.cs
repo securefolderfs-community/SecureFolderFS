@@ -39,11 +39,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public virtual int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
         {
             // Rent buffer
-            var PlaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
+            var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
                 // ArrayPool may return larger array than requested
-                var realPlaintextChunk = PlaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
+                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
                 // Read chunk
                 var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             finally
             {
                 // Return buffer
-                ArrayPool<byte>.Shared.Return(PlaintextChunk);
+                ArrayPool<byte>.Shared.Return(plaintextChunk);
             }
         }
 
@@ -78,11 +78,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public virtual int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
         {
             // Rent buffer
-            var PlaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
+            var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
                 // ArrayPool may return larger array than requested
-                var realPlaintextChunk = PlaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
+                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
                 // Read chunk
                 var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             finally
             {
                 // Return buffer
-                ArrayPool<byte>.Shared.Return(PlaintextChunk);
+                ArrayPool<byte>.Shared.Return(plaintextChunk);
             }
         }
 
@@ -120,11 +120,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public virtual void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
             // Rent buffer
-            var PlaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
+            var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
                 // ArrayPool may return larger array than requested
-                var realPlaintextChunk = PlaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
+                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
                 // Read chunk
                 var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
@@ -162,7 +162,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             finally
             {
                 // Return buffer
-                ArrayPool<byte>.Shared.Return(PlaintextChunk);
+                ArrayPool<byte>.Shared.Return(plaintextChunk);
             }
         }
 

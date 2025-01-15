@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
@@ -28,9 +30,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public virtual bool IsNameReserved(string? name)
         {
             return name is not null && (
-                   name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
-                   name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
-                   name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
+                    PathHelpers.IsCoreName(name) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <inheritdoc/>
+        public virtual IEnumerable<string> GetEncodingOptions()
+        {
+            // TODO: (v3) Swap default order when Base4K (Vault V3) is implemented
+            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL;
+            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE4K;
         }
 
         /// <inheritdoc/>
@@ -44,6 +55,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR),
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
+                NameEncodingId = config.FileNameEncodingId,
                 VaultId = config.Uid,
                 Version = config.Version
             };
@@ -58,6 +70,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             return configVersion.Version switch
             {
                 Core.Constants.Vault.Versions.V1 => Migrators.GetMigratorV1_V2(vaultFolder, StreamSerializer.Instance),
+                Core.Constants.Vault.Versions.V2 => Migrators.GetMigratorV2_V3(vaultFolder, StreamSerializer.Instance),
                 _ => throw new ArgumentOutOfRangeException(nameof(configVersion.Version))
             };
         }

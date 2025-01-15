@@ -91,6 +91,14 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
+        public string? ToolTip
+        {
+            get => (string?)GetValue(ToolTipProperty);
+            set => SetValue(ToolTipProperty, value);
+        }
+        public static readonly DependencyProperty ToolTipProperty =
+            DependencyProperty.Register(nameof(ToolTip), typeof(string), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
+
         public FrameworkElement CustomDescription
         {
             get => (FrameworkElement)GetValue(CustomDescriptionProperty);

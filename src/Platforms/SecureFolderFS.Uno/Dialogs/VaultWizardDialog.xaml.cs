@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             _previousViewModel = ViewModel.CurrentViewModel;
             ViewModel.CurrentViewModel = viewModel;
-            _ = Navigation.NavigateAsync(viewModel, (NavigationTransitionInfo?)null);
+            _ = Navigation.NavigateAsync(viewModel);
 
             var shouldShowBack = ViewModel.CurrentViewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
             await BackTitle.AnimateBackAsync(shouldShowBack);

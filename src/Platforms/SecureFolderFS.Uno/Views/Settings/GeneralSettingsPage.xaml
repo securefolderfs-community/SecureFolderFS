@@ -113,7 +113,7 @@
                             SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="vm:LanguageViewModel">
-                                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
+                                    <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>

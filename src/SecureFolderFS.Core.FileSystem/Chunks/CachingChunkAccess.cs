@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
     /// <inheritdoc cref="ChunkAccess"/>
     internal sealed class CachingChunkAccess : ChunkAccess
     {
-        private readonly Dictionary<long, ChunkBuffer> _chunkCache;
+        private readonly OrderedDictionary<long, ChunkBuffer> _chunkCache;
 
         /// <inheritdoc/>
         public override bool FlushAvailable
@@ -33,16 +33,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public override int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
         {
             // Get chunk
-            var PlaintextChunk = GetChunk(chunkNumber);
-            if (PlaintextChunk is null)
+            var plaintextChunk = GetChunk(chunkNumber);
+            if (plaintextChunk is null)
                 return -1;
 
             // Copy from chunk
-            var count = Math.Min(PlaintextChunk.ActualLength - offsetInChunk, destination.Length);
+            var count = Math.Min(plaintextChunk.ActualLength - offsetInChunk, destination.Length);
             if (count < 0)
                 return -1;
 
-            PlaintextChunk.Buffer.AsSpan(offsetInChunk, count).CopyTo(destination);
+            plaintextChunk.Buffer.AsSpan(offsetInChunk, count).CopyTo(destination);
 
             return count;
         }
@@ -51,23 +51,23 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public override int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
         {
             // Get chunk
-            var PlaintextChunk = GetChunk(chunkNumber);
-            if (PlaintextChunk is null)
+            var plaintextChunk = GetChunk(chunkNumber);
+            if (plaintextChunk is null)
                 return -1;
 
             // Update state of chunk
-            PlaintextChunk.WasModified = true;
+            plaintextChunk.WasModified = true;
 
             // Copy to chunk
             var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
             if (count < 0)
                 return -1;
 
-            var destination = PlaintextChunk.Buffer.AsSpan(offsetInChunk, count);
+            var destination = plaintextChunk.Buffer.AsSpan(offsetInChunk, count);
             source.Slice(0, count).CopyTo(destination);
 
             // Update actual length
-            PlaintextChunk.ActualLength = Math.Max(PlaintextChunk.ActualLength, count + offsetInChunk);
+            plaintextChunk.ActualLength = Math.Max(plaintextChunk.ActualLength, count + offsetInChunk);
 
             return count;
         }
@@ -76,29 +76,29 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public override void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
             // Get chunk
-            var PlaintextChunk = GetChunk(chunkNumber);
-            if (PlaintextChunk is null)
+            var plaintextChunk = GetChunk(chunkNumber);
+            if (plaintextChunk is null)
                 return;
 
             // Add read length of existing chunk data to the full length if specified
-            length += includeCurrentLength ? PlaintextChunk.ActualLength : 0;
+            length += includeCurrentLength ? plaintextChunk.ActualLength : 0;
             length = Math.Max(length, 0);
 
             // Determine whether to extend or truncate the chunk
-            if (length < PlaintextChunk.ActualLength)
+            if (length < plaintextChunk.ActualLength)
             {
                 // Truncate chunk
-                PlaintextChunk.ActualLength = Math.Min(PlaintextChunk.ActualLength, length);
+                plaintextChunk.ActualLength = Math.Min(plaintextChunk.ActualLength, length);
             }
-            else if (PlaintextChunk.ActualLength < length)
+            else if (plaintextChunk.ActualLength < length)
             {
                 // Extend chunk
-                PlaintextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
+                plaintextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
             }
             else
                 return; // Ignore resizing the same length
 
-            PlaintextChunk.WasModified = true;
+            plaintextChunk.WasModified = true;
         }
 
         /// <inheritdoc/>
@@ -120,7 +120,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             lock (_chunkCache)
             {
-                if (!_chunkCache.TryGetValue(chunkNumber, out var PlaintextChunk))
+                if (!_chunkCache.TryGetValue(chunkNumber, out var plaintextChunk))
                 {
                     // Cache miss, update stats
                     fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheAccess);
@@ -133,8 +133,8 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                         return null;
 
                     // Create plaintext and set it to cache
-                    PlaintextChunk = new ChunkBuffer(buffer, read);
-                    SetChunk(chunkNumber, PlaintextChunk);
+                    plaintextChunk = new ChunkBuffer(buffer, read);
+                    SetChunk(chunkNumber, plaintextChunk);
                 }
                 else
                 {
@@ -143,11 +143,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheHit);
                 }
 
-                return PlaintextChunk;
+                return plaintextChunk;
             }
         }
 
-        private void SetChunk(long chunkNumber, ChunkBuffer PlaintextChunk)
+        private void SetChunk(long chunkNumber, ChunkBuffer plaintextChunk)
         {
             lock (_chunkCache)
             {
@@ -164,7 +164,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     }
                 }
 
-                _chunkCache[chunkNumber] = PlaintextChunk;
+                _chunkCache[chunkNumber] = plaintextChunk;
             }
         }
 

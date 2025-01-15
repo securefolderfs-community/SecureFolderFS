@@ -74,9 +74,20 @@
                 ToolTipText="SecureFolderFS">
                 <hni:TaskbarIcon.ContextFlyout>
                     <MenuFlyout Placement="Top">
-                        <MenuFlyoutItem Click="CloseApp_Click" Text="Exit">
+                        <MenuFlyoutItem Click="MenuShowApp_Click" Text="View in app">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8BB;" />
+                                <FontIcon Glyph="&#xE8A7;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Click="MenuLockAll_Click" Text="Lock all vaults">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72E;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Click="MenuCloseApp_Click" Text="Exit">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF78A;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                     </MenuFlyout>

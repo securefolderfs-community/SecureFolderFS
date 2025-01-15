@@ -5,6 +5,7 @@ using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Helpers;
@@ -41,8 +42,9 @@ namespace SecureFolderFS.Core.WebDav
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var webDavOptions = WebDavOptions.ToOptions(options, folder);
+            var webDavOptions = WebDavOptions.ToOptions(options);
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, webDavOptions);
+            webDavOptions.SetupValidators(specifics);
 
             // Check if the port is available
             if (!PortHelpers.IsPortAvailable(webDavOptions.Port))
@@ -63,6 +65,7 @@ namespace SecureFolderFS.Core.WebDav
             var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
 
             return await MountAsync(
+                specifics,
                 httpListener,
                 webDavOptions,
                 dispatcher,
@@ -70,6 +73,7 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         protected abstract Task<IVFSRoot> MountAsync(
+            FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,
             IRequestDispatcher requestDispatcher,

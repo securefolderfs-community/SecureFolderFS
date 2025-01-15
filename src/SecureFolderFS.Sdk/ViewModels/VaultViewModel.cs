@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
@@ -14,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
+    [Inject<IVaultService>]
     [Inject<IVaultFileSystemService>]
     [Bindable(true)]
     public sealed partial class VaultViewModel : ObservableObject
@@ -36,15 +40,20 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Get the file system
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
 
+            // Format volume name
+            var volumeName = FormattingHelpers.SanitizeVolumeName(VaultModel.VaultName, VaultModel.Folder.Name);
+
             // Configure options
             var options = new Dictionary<string, object>()
             {
                 { nameof(FileSystemOptions.IsReadOnly), isReadOnly },
-                { nameof(FileSystemOptions.VolumeName), VaultModel.VaultName } // TODO: Sanitize name
+                { nameof(FileSystemOptions.VolumeName), volumeName }
             };
 
+            var contentFolder = await GetOrCreateContentFolder();
+            _ = contentFolder ?? throw new InvalidOperationException("Could not retrieve the content folder.");
+
             // Create the storage layer
-            var contentFolder = await VaultModel.GetContentFolderAsync();
             var storageRoot = await fileSystem.MountAsync(contentFolder, unlockContract, options);
 
             // Update last access date
@@ -55,6 +64,15 @@ namespace SecureFolderFS.Sdk.ViewModels
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
             return new(storageRoot, this);
+        }
+
+        private async Task<IFolder?> GetOrCreateContentFolder()
+        {
+            var contentFolder = await SafetyHelpers.NoThrowAsync(async () => await VaultModel.GetContentFolderAsync());
+            if (VaultModel.Folder is not IModifiableFolder modifiableFolder)
+                return contentFolder;
+
+            return contentFolder ?? await modifiableFolder.CreateFolderAsync(VaultService.ContentFolderName);
         }
     }
 }

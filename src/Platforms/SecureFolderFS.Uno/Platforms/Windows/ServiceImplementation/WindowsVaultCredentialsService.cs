@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.ViewModels;
 using Windows.Security.Credentials;
 

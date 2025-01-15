@@ -5,8 +5,8 @@ using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     foreach (var file in _directoryInfo.GetFiles())
                     {
-                        if (PathHelpers.IsCoreFile(file.Name))
+                        if (PathHelpers.IsCoreName(file.Name))
                             continue;
 
                         yield return new DiskStoreFile(LockingManager, file, IsWritable);
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     foreach (var folder in _directoryInfo.GetDirectories())
                     {
-                        if (PathHelpers.IsCoreFile(folder.Name))
+                        if (PathHelpers.IsCoreName(folder.Name))
                             continue;
 
                         yield return new DiskStoreCollection(LockingManager, folder, IsWritable);
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     foreach (var folder in _directoryInfo.GetDirectories())
                     {
-                        if (PathHelpers.IsCoreFile(folder.Name))
+                        if (PathHelpers.IsCoreName(folder.Name))
                             continue;
 
 
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
                     foreach (var file in _directoryInfo.GetFiles())
                     {
-                        if (PathHelpers.IsCoreFile(file.Name))
+                        if (PathHelpers.IsCoreName(file.Name))
                             continue;
 
                         yield return new EncryptingDiskStoreFile(LockingManager, file, IsWritable, _specifics);

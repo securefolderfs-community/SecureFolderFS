@@ -10,7 +10,7 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI">
+    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels.Authentication;assembly=SecureFolderFS.UI">
 
     <ContentView.Resources>
         <!--  Password Template  -->
@@ -66,7 +66,7 @@
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
-        <uc:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
+        <uc:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:RegistrationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
             </uc:ContentPresentation.TemplateSelector>

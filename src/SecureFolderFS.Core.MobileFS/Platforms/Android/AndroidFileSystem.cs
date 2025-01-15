@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Shared.ComponentModel;
@@ -29,15 +30,16 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         /// <inheritdoc/>
         public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fileSystemOptions = FileSystemOptions.ToOptions(options, () => new HealthStatistics(folder), static () => new FileSystemStatistics());
+            var fileSystemOptions = FileSystemOptions.ToOptions(options, static () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
-            var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            fileSystemOptions.SetupValidators(specifics);
 
-            await Task.CompletedTask;
-            return new AndroidVFSRoot(storageRoot, fileSystemOptions);
+            var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new AndroidVFSRoot(storageRoot, specifics);
         }
     }
 }
