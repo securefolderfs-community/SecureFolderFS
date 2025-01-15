@@ -239,7 +239,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
             
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
-            if (renamedItem is IWrapper<global::Android.Net.Uri> uriWrapper)
+            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> uriWrapper })
                 return uriWrapper.Inner.ToString();
             
             throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
