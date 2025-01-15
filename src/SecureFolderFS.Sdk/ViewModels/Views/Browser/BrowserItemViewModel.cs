@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -148,6 +149,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                     return;
 
                 var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
+                if (!Path.HasExtension(formattedName))
+                    formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
+                
                 var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
 
                 Title = formattedName;

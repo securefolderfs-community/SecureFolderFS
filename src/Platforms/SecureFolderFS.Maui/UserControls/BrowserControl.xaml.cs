@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using AndroidX.Lifecycle;
 using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -18,6 +19,23 @@ namespace SecureFolderFS.Maui.UserControls
             RefreshCommand?.Execute(null);
             refreshView.IsRefreshing = false;
         }
+        
+        private void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
+        {
+            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
+                return;
+            
+            if (!IsSelecting)
+                itemViewModel.OpenCommand.Execute(null);
+        }
+        
+        public bool IsSelecting
+        {
+            get => (bool)GetValue(IsSelectingProperty);
+            set => SetValue(IsSelectingProperty, value);
+        }
+        public static readonly BindableProperty IsSelectingProperty =
+            BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false);
         
         public ICommand? RefreshCommand
         {

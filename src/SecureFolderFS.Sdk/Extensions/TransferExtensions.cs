@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.Extensions
         where TStorable : IStorable
         {
             var collection = items.ToOrAsCollection();
+            transferViewModel.IsProgressing = true;
             transferViewModel.Report(new(0, collection.Count));
             
             for (var i = 0; i < collection.Count; i++)
@@ -37,10 +38,11 @@ namespace SecureFolderFS.Sdk.Extensions
                 
                 var item = collection.ElementAt(i);
                 await callback(item, cancellationToken);
-                transferViewModel.Report(new(i, collection.Count));
+                transferViewModel.Report(new((i + 1), collection.Count));
             }
 
             await Task.Delay(1000);
+            transferViewModel.IsProgressing = false;
             transferViewModel.IsVisible = false;
         }
     }

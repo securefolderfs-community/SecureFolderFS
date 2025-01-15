@@ -22,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     public partial class BrowserViewModel : ObservableObject, IViewDesignation
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
         [ObservableProperty] private TransferViewModel? _TransferViewModel;
@@ -55,6 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         partial void OnCurrentFolderChanged(FolderViewModel? value)
         {
+            IsSelecting = false;
             Title = value?.Title;
             if (string.IsNullOrEmpty(Title))
                 Title = VaultViewModel.VaultName;
@@ -80,6 +82,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
             if (CurrentFolder is not null)
                 await CurrentFolder.ListContentsAsync(cancellationToken);
+        }
+        
+        [RelayCommand]
+        protected virtual void ToggleSelection()
+        {
+            IsSelecting = !IsSelecting;
         }
 
         [RelayCommand]

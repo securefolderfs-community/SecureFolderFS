@@ -9,11 +9,16 @@
     x:DataType="local:BrowserPage">
 
     <ContentPage.Resources>
+        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
         <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.NewItemCommand}"
             CommandParameter="File"
@@ -64,6 +69,7 @@
         <uc:BrowserControl
             x:Name="Browser"
             Grid.Row="1"
+            IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
             RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}" />
 

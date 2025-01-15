@@ -10,14 +10,15 @@
 
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
+        <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
-            <CollectionView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="Multiple">
+            <CollectionView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:BrowserItemViewModel">
-                        <apesui:ContextMenuContainer>
+                        <apesui:ContextMenuContainer x:Name="ItemContainer">
                             <apesui:ContextMenuContainer.MenuItems>
                                 <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
                                 <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
@@ -50,7 +51,7 @@
                                 </Grid>
                             </apesui:ContextMenuContainer.Content>
                             <apesui:ContextMenuContainer.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenCommand}" />
+                                <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
                             </apesui:ContextMenuContainer.GestureRecognizers>
                         </apesui:ContextMenuContainer>
                     </DataTemplate>

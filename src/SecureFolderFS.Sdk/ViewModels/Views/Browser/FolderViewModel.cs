@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 
@@ -47,12 +46,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
-        protected override void UpdateStorable(IStorable storable)
-        {
-            Folder = (IFolder)storable;
-        }
-
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
             Items.Clear();
@@ -75,6 +68,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public virtual void OnDisappearing()
         {
+        }
+        
+        /// <inheritdoc/>
+        protected override void UpdateStorable(IStorable storable)
+        {
+            Folder = (IFolder)storable;
         }
 
         /// <inheritdoc/>
