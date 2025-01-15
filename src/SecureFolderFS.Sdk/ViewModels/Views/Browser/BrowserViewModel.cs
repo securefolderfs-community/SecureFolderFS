@@ -54,10 +54,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
         }
 
-        partial void OnCurrentFolderChanged(FolderViewModel? value)
+        partial void OnCurrentFolderChanged(FolderViewModel? oldValue, FolderViewModel? newValue)
         {
+            oldValue?.UnselectAll();
             IsSelecting = false;
-            Title = value?.Title;
+            Title = newValue?.Title;
             if (string.IsNullOrEmpty(Title))
                 Title = VaultViewModel.VaultName;
         }
@@ -88,6 +89,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         protected virtual void ToggleSelection()
         {
             IsSelecting = !IsSelecting;
+            CurrentFolder?.UnselectAll();
         }
 
         [RelayCommand]

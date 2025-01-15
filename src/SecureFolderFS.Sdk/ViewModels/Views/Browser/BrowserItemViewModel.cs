@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -25,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _IsSelected;
         [ObservableProperty] private IImage? _Thumbnail;
 
         /// <inheritdoc/>
@@ -49,23 +51,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
         {
-            if (Inner is not IStorableChild innerChild)
-                return;
+            var items = ParentFolder?.GetSelectedItems().ToArray();
+            if (items?.IsEmpty() ?? true)
+                items = [ this ];
             
             if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder?.Folder is not IModifiableFolder modifiableParent)
                 return;
 
             try
             {
+                // Disable selection, if called with selected items
+                ParentFolder.BrowserViewModel.IsSelecting = false;
+                
                 using var cts = new CancellationTokenSource();
                 var destination = await transferViewModel.SelectFolderAsync(TransferType.Move, cts);
-                if (destination is null)
+                if (destination is not { Folder: IModifiableFolder destinationFolder })
                     return;
+                
+                foreach (var item in items)
+                {
+                    if (destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
+                        return;
+                }
 
-                if (destination.Folder is not IModifiableFolder destinationFolder)
-                    return;
-
-                await transferViewModel.TransferAsync(innerChild, async (storable, token) =>
+                await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (storable, token) =>
                 {
                     // Move
                     var movedItem = await destinationFolder.MoveStorableFromAsync(storable, modifiableParent, false, token);
@@ -87,32 +96,44 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 _ = ex;
                 // TODO: Report error
             }
+            finally
+            {
+                transferViewModel.IsVisible = false;
+                transferViewModel.IsProgressing = false;
+            }
         }
         
         [RelayCommand]
         protected virtual async Task CopyAsync(CancellationToken cancellationToken)
         {
-            if (Inner is not IStorableChild innerChild)
-                return;
+            var items = ParentFolder?.GetSelectedItems().ToArray();
+            if (items?.IsEmpty() ?? true)
+                items = [ this ];
             
             if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
             try
             {
+                // Disable selection, if called with selected items
+                ParentFolder.BrowserViewModel.IsSelecting = false;
+
                 using var cts = new CancellationTokenSource();
                 var destination = await transferViewModel.SelectFolderAsync(TransferType.Copy, cts);
-                if (destination is null)
+                if (destination is not { Folder: IModifiableFolder destinationFolder })
                     return;
 
-                if (destination.Folder is not IModifiableFolder destinationFolder)
-                    return;
+                foreach (var item in items)
+                {
+                    if (destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
+                        return;
+                }
 
-                await transferViewModel.TransferAsync(innerChild, async (storable, token) =>
+                await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (storable, token) =>
                 {
                     // Copy
                     var copiedItem = await destinationFolder.CreateCopyOfStorableAsync(storable, false, token);
-                    
+
                     // Add to destination
                     destination.Items.Add(copiedItem switch
                     {
@@ -126,6 +147,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             {
                 _ = ex;
                 // TODO: Report error
+            }
+            finally
+            {
+                transferViewModel.IsVisible = false;
+                transferViewModel.IsProgressing = false;
             }
         }
 
@@ -170,9 +196,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (ParentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
-            // TODO: Show an overlay to ask the user. Deletion is always permanent
-            await modifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
-            ParentFolder.Items.Remove(this);
+            // TODO: Show an overlay to ask the user **when deleting permanently**
+            // TODO: If moving to trash, show TransferViewModel (with try..catch..finally), otherwise don't show anything
+            
+            var items = ParentFolder.GetSelectedItems().ToArray();
+            if (items.IsEmpty())
+                items = [this];
+            
+            // Disable selection, if called with selected items
+            ParentFolder.BrowserViewModel.IsSelecting = false;
+
+            foreach (var item in items)
+            {
+                await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
+                ParentFolder?.Items.Remove(item);
+            }
         }
 
         [RelayCommand]

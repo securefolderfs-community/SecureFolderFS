@@ -24,8 +24,10 @@ namespace SecureFolderFS.Maui.UserControls
         {
             if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
                 return;
-            
-            if (!IsSelecting)
+
+            if (IsSelecting)
+                itemViewModel.IsSelected = !itemViewModel.IsSelected;
+            else
                 itemViewModel.OpenCommand.Execute(null);
         }
         

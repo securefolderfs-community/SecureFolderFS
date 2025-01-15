@@ -39,10 +39,10 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
 
-                                    <ContentView
-                                        Grid.Column="0"
-                                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                                        VerticalOptions="Center" />
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                                        <ContentView Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
                                     <Label
                                         Grid.Column="1"
                                         FontSize="15"

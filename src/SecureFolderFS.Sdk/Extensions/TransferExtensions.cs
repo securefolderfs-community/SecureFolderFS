@@ -30,6 +30,7 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
+            transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count));
             
             for (var i = 0; i < collection.Count; i++)
