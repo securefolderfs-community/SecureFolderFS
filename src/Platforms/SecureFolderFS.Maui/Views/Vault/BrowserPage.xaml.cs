@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             ViewModel = query.ToViewModel<BrowserViewModel>();
-            if (ViewModel?.CurrentFolder?.Navigator is MauiNavigationService navigationService)
+            if (ViewModel?.CurrentFolder is not null && ViewModel.Navigator is MauiNavigationService navigationService)
             {
                 navigationService.SetupNavigation(this);
                 navigationService.Views.Add(ViewModel.CurrentFolder);
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         public async Task<bool> GoBackAsync()
         {
-            if (ViewModel?.CurrentFolder?.Navigator is not MauiNavigationService navigationService)
+            if (ViewModel?.Navigator is not MauiNavigationService navigationService)
                 return false;
 
             var index = navigationService.IndexInNavigation;
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         public async Task<bool> GoForwardAsync()
         {
-            if (ViewModel?.CurrentFolder?.Navigator is not MauiNavigationService navigationService)
+            if (ViewModel?.Navigator is not MauiNavigationService navigationService)
                 return false;
 
             var index = navigationService.IndexInNavigation;
@@ -115,7 +115,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel.BaseFolder.Id == ViewModel.CurrentFolder.Folder.Id)
                 return base.OnBackButtonPressed();
             
-            _ = ViewModel.CurrentFolder.Navigator.GoBackAsync();
+            _ = ViewModel.Navigator.GoBackAsync();
             return true;
         }
 

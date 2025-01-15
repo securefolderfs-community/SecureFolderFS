@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 TransferType.Copy => "Copy",
                 TransferType.Move => "Move",
-                TransferType.Delete => "Delete",
+                TransferType.Recycle => "Recycle",
                 _ => "Transfer"
             };
         }

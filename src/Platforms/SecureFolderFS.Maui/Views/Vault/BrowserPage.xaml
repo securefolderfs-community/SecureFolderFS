@@ -64,16 +64,17 @@
         <uc:BrowserControl
             x:Name="Browser"
             Grid.Row="1"
-            ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}" />
+            ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
+            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}" />
 
         <uc:TransferControl
-            Title="{Binding ViewModel.CurrentFolder.TransferViewModel.Title, Mode=OneWay}"
+            Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"
             Grid.Row="0"
             Grid.RowSpan="2"
-            CancelCommand="{Binding ViewModel.CurrentFolder.TransferViewModel.CancelCommand, Mode=OneWay}"
-            IsVisible="{Binding ViewModel.CurrentFolder.TransferViewModel.IsVisible, Mode=OneWay}"
-            PrimaryButtonText="{Binding ViewModel.CurrentFolder.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
-            PrimaryCommand="{Binding ViewModel.CurrentFolder.TransferViewModel.ConfirmCommand, Mode=OneWay}"
+            CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
+            IsVisible="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
+            PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
+            PrimaryCommand="{Binding ViewModel.TransferViewModel.ConfirmCommand, Mode=OneWay}"
             VerticalOptions="End" />
     </Grid>
 </ContentPage>

@@ -13,10 +13,10 @@
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
-        <ListView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="None">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:BrowserItemViewModel">
-                    <ViewCell>
+        <RefreshView Refreshing="RefreshView_Refreshing">
+            <CollectionView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="Multiple">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BrowserItemViewModel">
                         <apesui:ContextMenuContainer>
                             <apesui:ContextMenuContainer.MenuItems>
                                 <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
@@ -53,9 +53,9 @@
                                 <TapGestureRecognizer Command="{Binding OpenCommand}" />
                             </apesui:ContextMenuContainer.GestureRecognizers>
                         </apesui:ContextMenuContainer>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
     </Grid>
 </ContentView>

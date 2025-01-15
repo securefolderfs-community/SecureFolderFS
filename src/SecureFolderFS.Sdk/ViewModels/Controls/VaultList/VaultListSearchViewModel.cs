@@ -4,11 +4,13 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
+    [Bindable(true)]
     public sealed partial class VaultListSearchViewModel(IEnumerable<VaultListItemViewModel> sidebarItems) : ObservableObject
     {
         private ISearchModel SearchModel { get; } = new SidebarSearchModel(sidebarItems);

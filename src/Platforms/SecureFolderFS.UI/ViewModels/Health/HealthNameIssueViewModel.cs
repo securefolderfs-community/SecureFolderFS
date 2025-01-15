@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
@@ -7,6 +8,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.UI.ViewModels.Health
 {
     /// <inheritdoc cref="HealthIssueViewModel"/>
+    [Bindable(true)]
     public sealed partial class HealthNameIssueViewModel : HealthIssueViewModel
     {
         [ObservableProperty] private bool _IsEditing;

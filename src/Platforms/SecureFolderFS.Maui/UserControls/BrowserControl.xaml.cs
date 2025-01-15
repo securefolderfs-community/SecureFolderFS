@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -8,6 +9,23 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
+        
+        private void RefreshView_Refreshing(object? sender, EventArgs e)
+        {
+            if (sender is not RefreshView refreshView)
+                return;
+
+            RefreshCommand?.Execute(null);
+            refreshView.IsRefreshing = false;
+        }
+        
+        public ICommand? RefreshCommand
+        {
+            get => (ICommand?)GetValue(RefreshCommandProperty);
+            set => SetValue(RefreshCommandProperty, value);
+        }
+        public static readonly BindableProperty RefreshCommandProperty =
+            BindableProperty.Create(nameof(RefreshCommand), typeof(ICommand), typeof(BrowserControl), defaultValue: null);
         
         public IList<BrowserItemViewModel>? ItemsSource
         {

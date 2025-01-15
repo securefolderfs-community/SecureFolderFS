@@ -91,17 +91,17 @@
                 Text="{l:ResourceString Rid=NoVaultsMessage}" />
         </VerticalStackLayout>
 
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="Android">
-                <mdc:FAB
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Margin="0,0,32,32"
-                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-                    HorizontalOptions="End"
-                    IconData="{x:Static mdci:Material.Add}"
-                    VerticalOptions="End" />
-            </On>
-        </OnPlatform>
+        <Grid Grid.Row="0" Grid.RowSpan="2">
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <mdc:FAB
+                        Margin="0,0,32,32"
+                        Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                        HorizontalOptions="End"
+                        IconData="{x:Static mdci:Material.Add}"
+                        VerticalOptions="End" />
+                </On>
+            </OnPlatform>
+        </Grid>
     </Grid>
 </local:ContentPageExtended>

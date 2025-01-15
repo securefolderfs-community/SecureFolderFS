@@ -13,9 +13,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
-        public INavigator Navigator { get; }
-        
-        public TransferViewModel? TransferViewModel { get; }
+        /// <summary>
+        /// Gets the <see cref="Sdk.ViewModels.Views.Browser.BrowserViewModel"/> instance, which this folder belongs to.
+        /// </summary>
+        public BrowserViewModel BrowserViewModel { get; }
         
         /// <summary>
         /// Gets the folder associated with this view model.
@@ -30,18 +31,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder, FolderViewModel parentFolder, TransferViewModel? transferViewModel)
-            : this(folder, parentFolder.Navigator, transferViewModel, parentFolder)
-        {
-        }
-
-        public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel? transferViewModel, FolderViewModel? parentFolder)
+        public FolderViewModel(IFolder folder, BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
             : base(parentFolder)
         {
             Folder = folder;
-            Navigator = navigator;
+            BrowserViewModel = browserViewModel;
             Title = folder.Name;
-            TransferViewModel = transferViewModel;
             Items = new();
         }
 
@@ -60,12 +55,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
+            Items.Clear();
             await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 Items.Add(item switch
                 {
                     IFile file => new FileViewModel(file, this).WithInitAsync(),
-                    IFolder folder => new FolderViewModel(folder, this, TransferViewModel).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }
@@ -87,7 +83,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (Items.IsEmpty())
                 _ = ListContentsAsync(cancellationToken);
             
-            await Navigator.NavigateAsync(this);
+            await BrowserViewModel.Navigator.NavigateAsync(this);
         }
     }
 }

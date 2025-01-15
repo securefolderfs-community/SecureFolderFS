@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,6 +11,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.UI.ViewModels.Health
 {
     /// <inheritdoc cref="HealthIssueViewModel"/>
+    [Bindable(true)]
     public sealed partial class HealthDirectoryIssueViewModel : HealthIssueViewModel, IAsyncInitialize
     {
         [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _Issues;

@@ -51,8 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (Inner is not IStorableChild innerChild)
                 return;
             
-            if (ParentFolder?.TransferViewModel is not { IsProgressing: false } transferViewModel
-                || ParentFolder?.Folder is not IModifiableFolder modifiableParent)
+            if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder?.Folder is not IModifiableFolder modifiableParent)
                 return;
 
             try
@@ -77,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                     destination.Items.Add(movedItem switch
                     {
                         IFile file => new FileViewModel(file, destination),
-                        IFolder folder => new FolderViewModel(folder, destination, transferViewModel),
+                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destination),
                         _ => throw new ArgumentOutOfRangeException(nameof(movedItem))
                     });
                 }, cts.Token);
@@ -95,7 +94,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (Inner is not IStorableChild innerChild)
                 return;
             
-            if (ParentFolder?.TransferViewModel is not { IsProgressing: false } transferViewModel)
+            if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
             try
@@ -117,7 +116,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                     destination.Items.Add(copiedItem switch
                     {
                         IFile file => new FileViewModel(file, destination),
-                        IFolder folder => new FolderViewModel(folder, destination, transferViewModel),
+                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destination),
                         _ => throw new ArgumentOutOfRangeException(nameof(copiedItem))
                     });
                 }, cts.Token);
@@ -138,19 +137,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (Inner is not IStorableChild innerChild)
                 return;
 
-            var viewModel = new RenameOverlayViewModel("Rename item") { Message = "Choose a new name" };
-            var result = await OverlayService.ShowAsync(viewModel);
-            if (!result.Positive())
-                return;
+            try
+            {
+                var viewModel = new RenameOverlayViewModel("Rename item") { Message = "Choose a new name" };
+                var result = await OverlayService.ShowAsync(viewModel);
+                if (!result.Positive())
+                    return;
 
-            if (string.IsNullOrWhiteSpace(viewModel.NewName))
-                return;
+                if (string.IsNullOrWhiteSpace(viewModel.NewName))
+                    return;
 
-            var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
-            var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
+                var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
+                var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
 
-            Title = formattedName;
-            UpdateStorable(renamedStorable);
+                Title = formattedName;
+                UpdateStorable(renamedStorable);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Report error
+                _ = ex;
+            }
         }
 
         [RelayCommand]

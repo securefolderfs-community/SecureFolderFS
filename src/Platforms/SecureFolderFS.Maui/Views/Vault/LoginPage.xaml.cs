@@ -61,7 +61,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             var navigator = DI.Service<INavigationService>();
             var browserViewModel = new BrowserViewModel(navigator, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
             var transferViewModel = new TransferViewModel(browserViewModel);
-            var folderViewModel = new FolderViewModel(rootFolder, navigator, transferViewModel, null);
+            var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
             _ = folderViewModel.ListContentsAsync();
             
             browserViewModel.TransferViewModel = transferViewModel;
