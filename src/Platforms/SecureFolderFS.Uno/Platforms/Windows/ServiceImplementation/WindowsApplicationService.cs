@@ -32,8 +32,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {
-            var osInfo = Environment.OSVersion;
-            return $"Windows {osInfo.VersionString}";
+            return Environment.OSVersion.VersionString;
         }
 
         /// <inheritdoc/>
