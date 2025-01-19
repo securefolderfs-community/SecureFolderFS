@@ -24,7 +24,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
-            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, "localhost", options.Port, options.VolumeName);
+            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, options.Domain, options.Port, options.VolumeName);
             var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
             if (mountPath is null)
             {

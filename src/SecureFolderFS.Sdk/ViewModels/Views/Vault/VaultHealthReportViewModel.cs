@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private SeverityType _Severity;
+        [ObservableProperty] private ICommand? _StartScanningCommand;
         [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _FoundIssues;
 
         /// <inheritdoc/>

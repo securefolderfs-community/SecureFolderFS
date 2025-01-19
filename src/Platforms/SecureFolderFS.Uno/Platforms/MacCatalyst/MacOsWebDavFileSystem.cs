@@ -20,13 +20,14 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst
     internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem
     {
         protected override async Task<IVFSRoot> MountAsync(
+            FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
 #if __MACCATALYST__
-            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, "localhost", options.Port, options.VolumeName);
+            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, options.Domain, options.Port, options.VolumeName);
             var remoteUri = new Uri(remotePath);
 
             // Mount WebDAV volume via AppleScript
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst
 
             Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
             await Task.CompletedTask;
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), options);
+            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
 #else
             throw new PlatformNotSupportedException();
 #endif

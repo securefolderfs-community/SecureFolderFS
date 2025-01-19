@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         /// </summary>
         /// <param name="ciphertextPath">The ciphertext path that points to a directory.</param>
         /// <returns>If successful, value is non-zero.</returns>
-        public abstract ulong OpenDirectoryHandle(string ciphertextPath); // TODO: Add open flags as needed
+        public abstract ulong OpenDirectoryHandle(string ciphertextPath);
 
         /// <summary>
         /// Gets a handle of type <typeparamref name="THandle"/> with associated <paramref name="handleId"/>.

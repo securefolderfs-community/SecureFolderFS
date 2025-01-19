@@ -104,7 +104,11 @@ namespace SecureFolderFS.Uno.Helpers
 
                 // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
                 // so it has to be run in another thread to prevent blocking the server from responding.
-                _ = Task.Run(() => UnsafeNative.WNetAddConnection2(netResource, null!, null!, UnsafeNative.CONNECT_TEMPORARY), cancellationToken);
+                _ = Task.Run(() =>
+                {
+                    var error = UnsafeNative.WNetAddConnection2(netResource, null!, null!, UnsafeNative.CONNECT_TEMPORARY);
+                    _ = error;
+                }, cancellationToken);
             }
             else if (OperatingSystem.IsMacCatalyst())
             {

@@ -24,9 +24,6 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag())
                 return FileSystem.Constants.INVALID_HANDLE;
 
-            // TODO: Temporary fix for file share issue
-            //share = FileShare.ReadWrite | FileShare.Delete;
-
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
 
@@ -40,7 +37,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
                 plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new Win32FileHandle(plaintextStream); // TODO: For now it's Win32FileHandle
+            var fileHandle = new Win32FileHandle(plaintextStream);
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle

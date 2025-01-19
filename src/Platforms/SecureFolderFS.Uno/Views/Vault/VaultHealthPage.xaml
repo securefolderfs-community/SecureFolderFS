@@ -157,16 +157,26 @@
                 IsClosable="False"
                 IsOpen="True"
                 Severity="{x:Bind ViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
-                <ProgressRing
-                    Width="16"
-                    Height="16"
-                    Margin="0,-54,16,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    IsActive="True"
-                    IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
-                    Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+                <Grid>
+                    <ProgressRing
+                        Width="16"
+                        Height="16"
+                        Margin="0,-54,16,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        IsActive="True"
+                        IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                        Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+                    <Button
+                        Margin="0,-54,16,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind ViewModel.StartScanningCommand, Mode=OneWay}"
+                        CommandParameter="rescan"
+                        Content="Start scanning"
+                        Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                </Grid>
             </InfoBar>
             <ListView
                 Grid.Row="1"

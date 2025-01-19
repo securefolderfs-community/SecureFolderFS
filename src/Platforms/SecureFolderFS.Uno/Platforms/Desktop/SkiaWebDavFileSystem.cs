@@ -14,11 +14,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
 #if WINDOWS
         /// <inheritdoc/>
         protected override Task<IVFSRoot> MountAsync(
-            int port,
-            string domain,
-            string protocol,
+            FileSystemSpecifics specifics,
             HttpListener listener,
-            FileSystemOptions options,
+            WebDavOptions options,
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {

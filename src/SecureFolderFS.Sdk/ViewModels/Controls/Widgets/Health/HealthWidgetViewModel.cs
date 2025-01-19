@@ -30,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         private readonly INavigator _dashboardNavigator;
         private IHealthModel? _vaultHealthModel;
         private CancellationTokenSource? _cts;
+        private string? _lastScanMode;
 
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private string? _LastCheckedText;
@@ -44,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _context = SynchronizationContext.Current;
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
-            HealthReportViewModel = new(unlockedVaultViewModel, _context);
+            HealthReportViewModel = new(unlockedVaultViewModel, _context) { StartScanningCommand = StartScanningCommand };
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
             Title = "HealthNoProblems".ToLocalized();
         }
@@ -64,6 +65,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             }
             _vaultHealthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
             _vaultHealthModel.IssueFound += VaultHealthModel_IssueFound;
+
+            // Get persisted last scanned date
+            var rawLastScanDate = await WidgetModel.GetWidgetDataAsync(cancellationToken);
+            if (rawLastScanDate is null)
+                return;
+
+            if (!DateTime.TryParse(rawLastScanDate, out var lastScanDate))
+                return;
+
+            var localizedDate = LocalizationService.LocalizeDate(lastScanDate);
+            LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
         }
 
         /// <inheritdoc/>
@@ -114,7 +126,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _savedState.AddMultiple(HealthReportViewModel.FoundIssues);
             HealthReportViewModel.FoundIssues.Clear();
 
-            // Determine whether to include file contents
+            // Determine scan mode
+            if (mode?.Contains("rescan", StringComparison.OrdinalIgnoreCase) ?? false)
+                mode = _lastScanMode;
+            else
+                _lastScanMode = mode;
+
             var includeFileContents = mode?.Contains("include_file_contents", StringComparison.OrdinalIgnoreCase) ?? false;
 
             // Begin scanning
@@ -141,10 +158,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (_vaultHealthModel is null)
                 return;
 
+            // Begin scanning
             _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
             await _vaultHealthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
             EndScanning();
-            _context?.Post(_ => HealthReportViewModel.CanResolve = true, null);
+
+            // Finish scanning
+            var scanDate = DateTime.Now;
+            _context?.Post(_ =>
+            {
+                HealthReportViewModel.CanResolve = !HealthReportViewModel.FoundIssues.IsEmpty();
+                var localizedDate = LocalizationService.LocalizeDate(scanDate);
+                LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
+            }, null);
+
+            // Persist last scanned date
+            await WidgetModel.SetWidgetDataAsync(scanDate.ToString("o"), cancellationToken);
         }
 
         private void EndScanning()
@@ -158,10 +187,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
                 HealthReportViewModel.IsProgressing = false;
                 HealthReportViewModel.CurrentProgress = 0d;
                 _savedState.Clear();
-
-                // Update date TODO: Persist last checked date
-                var localizedDate = LocalizationService.LocalizeDate(DateTime.Now);
-                LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
 
                 // Update status
                 Title = HealthReportViewModel.Severity switch

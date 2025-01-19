@@ -103,7 +103,6 @@
                 Command="{x:Bind StartScanningCommand, Mode=OneWay}"
                 CommandParameter=""
                 Content="Start scanning"
-                IsEnabled="True"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                 <SplitButton.Flyout>
                     <MenuFlyout>
