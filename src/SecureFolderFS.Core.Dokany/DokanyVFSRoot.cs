@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.Dokany
             _disposed = await Task.Run(_dokanyWrapper.CloseFileSystem);
             if (_disposed)
             {
-                FileSystemManager.Instance.RemoveRoot(this);
+                FileSystemManager.Instance.FileSystems.Remove(this);
                 await base.DisposeAsync();
             }
         }

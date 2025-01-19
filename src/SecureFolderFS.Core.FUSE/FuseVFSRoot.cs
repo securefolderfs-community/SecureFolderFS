@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FUSE
 
             _disposed = await _fuseWrapper.CloseFileSystemAsync();
             if (_disposed)
-                FileSystemManager.Instance.RemoveRoot(this);
+                FileSystemManager.Instance.FileSystems.Remove(this);
         }
     }
 }

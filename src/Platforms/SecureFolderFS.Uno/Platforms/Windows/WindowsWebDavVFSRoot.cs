@@ -40,7 +40,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
             if (_disposed)
             {
                 await base.DisposeAsync();
-                FileSystemManager.Instance.RemoveRoot(this);
+                FileSystemManager.Instance.FileSystems.Remove(this);
                 await CloseExplorerShellAsync(storageRoot.Id);
             }
         }

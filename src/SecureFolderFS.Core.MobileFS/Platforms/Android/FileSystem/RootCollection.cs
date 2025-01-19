@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             _context = context;
             Roots = new();
 
-            FileSystemManager.Instance.CollectionChanged += FileSystemManager_CollectionChanged;
+            FileSystemManager.Instance.FileSystems.CollectionChanged += FileSystemManager_CollectionChanged;
         }
 
         public SafRoot? GetSafRootForRootId(string rootId)
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public void Dispose()
         {
-            FileSystemManager.Instance.CollectionChanged -= FileSystemManager_CollectionChanged;
+            FileSystemManager.Instance.FileSystems.CollectionChanged -= FileSystemManager_CollectionChanged;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (!_disposed)
             {
                 _disposed = true;
-                FileSystemManager.Instance.RemoveRoot(this);
+                FileSystemManager.Instance.FileSystems.Remove(this);
             }
 
             return ValueTask.CompletedTask;

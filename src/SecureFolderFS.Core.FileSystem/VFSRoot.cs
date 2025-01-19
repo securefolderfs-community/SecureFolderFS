@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem
             Options = specifics.FileSystemOptions;
 
             // Automatically add created root
-            FileSystemManager.Instance.AddRoot(this);
+            FileSystemManager.Instance.FileSystems.Add(this);
         }
 
         /// <inheritdoc/>
