@@ -23,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;
         [ObservableProperty] private string? _ActiveFileSystemText;
+        [ObservableProperty] private string? _FileSystemDescriptionText;
 
         /// <inheritdoc/>
         public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
@@ -44,6 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
             FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown") + $" + {vaultOptions.NameEncodingId}";
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
+            FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
 
             await UpdateSecurityTextAsync(cancellationToken);
         }

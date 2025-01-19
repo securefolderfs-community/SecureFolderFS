@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -38,9 +37,6 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
-
-            // TODO: Remove once the port is displayed in the UI.
-            Debug.WriteLine($"WebDAV server started on port {options.Port}.");
 
             // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
             return new WindowsWebDavVFSRoot(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), specifics);

@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.Services
         IReadOnlyList<CultureInfo> AppLanguages { get; }
 
         /// <summary>
-        /// Tries to gets the localized string for the <paramref name="resourceKey"/>.
+        /// Tries to get the localized string for the <paramref name="resourceKey"/>.
         /// </summary>
         /// <param name="resourceKey">The resource key that associates with translations.</param>
         /// <returns>If successful, returns a localized string for the <see cref="CurrentCulture"/>; otherwise null.</returns>

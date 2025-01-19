@@ -44,7 +44,6 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
-
         /// <summary>
         /// Sets the read-only status of the file system.
         /// </summary>
@@ -52,6 +51,15 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public void DangerousSetReadOnly(bool value)
         {
             IsReadOnly = value;
+        }
+
+        /// <summary>
+        /// Gets an optional, detailed description of the file system-specific information to display for the user.
+        /// </summary>
+        /// <returns>If available, returns a short description about the file system specifics; otherwise null.</returns>
+        public virtual string? GetDescription()
+        {
+            return null;
         }
 
         /// <summary>

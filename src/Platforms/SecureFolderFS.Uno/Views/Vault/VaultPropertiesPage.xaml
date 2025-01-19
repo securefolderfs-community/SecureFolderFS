@@ -60,7 +60,8 @@
                         <TextBlock
                             IsTextSelectionEnabled="True"
                             Opacity="0.6"
-                            Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.FileSystemDescriptionText, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>

@@ -1,5 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.AppModels;
+﻿using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
@@ -29,6 +28,12 @@ namespace SecureFolderFS.Core.WebDav.AppModels
         /// This property does not guarantee that the specified port will be used.
         /// </remarks>
         public int Port { get => _port; init => _port = value; }
+
+        /// <inheritdoc/>
+        public override string? GetDescription()
+        {
+            return $"{Protocol}://{Domain}:{Port}";
+        }
 
         internal void SetPortInternal(int value) => _port = value;
 
