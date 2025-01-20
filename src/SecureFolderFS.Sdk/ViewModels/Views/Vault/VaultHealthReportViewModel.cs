@@ -58,9 +58,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ResolveAsync(CancellationToken cancellationToken)
         {
+            // Get the readonly status and set IsReadOnly to true
+            var isReadOnly = UnlockedVaultViewModel.Options.IsReadOnly;
             UnlockedVaultViewModel.Options.DangerousSetReadOnly(true);
+
+            // Resolve issues and restore readonly status
             await VaultFileSystemService.ResolveIssuesAsync(FoundIssues, UnlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
-            UnlockedVaultViewModel.Options.DangerousSetReadOnly(false);
+            UnlockedVaultViewModel.Options.DangerousSetReadOnly(isReadOnly);
         }
 
         private void IssueResolved(HealthIssueViewModel issueViewModel, IResult result)
