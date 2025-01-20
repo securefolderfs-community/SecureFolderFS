@@ -1,13 +1,12 @@
 using System;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Dispatching;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
-
 #if __MACCATALYST__
 using System.Diagnostics;
 using OwlCore.Storage.Memory;

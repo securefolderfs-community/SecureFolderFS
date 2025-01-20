@@ -169,6 +169,7 @@
                         Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                         Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
                     <Button
+                        Height="36"
                         Margin="0,-54,16,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
