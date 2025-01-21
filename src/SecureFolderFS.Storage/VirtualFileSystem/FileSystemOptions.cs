@@ -40,6 +40,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
         /// </summary>
         public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
+        
+        /// <summary>
+        /// Gets or sets whether to use recycle bin for the vault.
+        /// </summary>
+        public bool IsRecycleBinEnabled { get; protected set => SetField(ref field, value); }
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;

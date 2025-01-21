@@ -56,8 +56,8 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.FileSystemOptions.IsReadOnly);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), new RequestHandlerProvider(), null);
+            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, encryptingDiskStore), new RequestHandlerProvider(), null);
 
             return await MountAsync(
                 specifics,

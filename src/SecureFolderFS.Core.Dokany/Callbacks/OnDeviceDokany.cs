@@ -72,7 +72,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                         case FileMode.CreateNew:
                         {
-                            if (Specifics.FileSystemOptions.IsReadOnly)
+                            if (Specifics.Options.IsReadOnly)
                                 throw FileSystemExceptions.FileSystemReadOnly;
 
                             if (Directory.Exists(ciphertextPath))
@@ -166,7 +166,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 try
                 {
-                    if (Specifics.FileSystemOptions.IsReadOnly && mode.IsWriteFlag())
+                    if (Specifics.Options.IsReadOnly && mode.IsWriteFlag())
                         throw FileSystemExceptions.FileSystemReadOnly;
 
                     var openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
@@ -231,7 +231,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
-            if (info.DeleteOnClose && !Specifics.FileSystemOptions.IsReadOnly)
+            if (info.DeleteOnClose && !Specifics.Options.IsReadOnly)
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
                 if (ciphertextPath is null)
@@ -392,7 +392,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
         {
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             try
@@ -488,7 +488,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             // Just check if we can delete the file - the true deletion is done in Cleanup()
 
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             // Get ciphertext path
@@ -512,7 +512,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
         {
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             var canDelete = true;
@@ -548,7 +548,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             CloseHandle(info);
             InvalidateContext(info);
 
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileNameCombined, info);
 
             var newPathExists = info.IsDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
@@ -719,7 +719,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
         {
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             try

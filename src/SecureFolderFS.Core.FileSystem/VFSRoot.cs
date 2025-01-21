@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem
         {
             this.storageRoot = storageRoot;
             this.specifics = specifics;
-            Options = specifics.FileSystemOptions;
+            Options = specifics.Options;
 
             // Automatically add created root
             FileSystemManager.Instance.FileSystems.Add(this);

@@ -4,11 +4,11 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
 
@@ -20,8 +20,8 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         /// <inheritdoc/>
         public override IEnumerable<string> GetContentCiphers()
         {
-            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
-            yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+            yield return Constants.CipherId.AES_GCM;
+            yield return Constants.CipherId.XCHACHA20_POLY1305;
         }
 
         /// <inheritdoc/>
@@ -29,14 +29,14 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Constants.Vault.Authentication.SEPARATOR);
+            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
 
             foreach (var item in authenticationMethods)
             {
                 yield return item switch
                 {
-                    Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
-                    Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

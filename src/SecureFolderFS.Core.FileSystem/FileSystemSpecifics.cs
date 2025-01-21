@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem
 
         public required StreamsAccess StreamsAccess { get; init; }
 
-        public required FileSystemOptions FileSystemOptions { get; init; }
+        public required FileSystemOptions Options { get; init; }
 
         public required UniversalCache<string, BufferHolder> DirectoryIdCache { get; init; }
         
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.FileSystem
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
                 DirectoryIdCache = new(true, options.FileSystemStatistics.DirectoryIdCache),
-                FileSystemOptions = options,
+                Options = options,
                 StreamsAccess = StreamsAccess.CreateNew(security, options.IsCachingChunks, options.FileSystemStatistics),
                 Security = security
             };

@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {

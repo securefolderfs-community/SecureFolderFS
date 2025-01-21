@@ -7,13 +7,13 @@ namespace SecureFolderFS.Core.DataModels
     public sealed class VaultKeystoreDataModel
     {
         /// <summary>
-        /// Gets wrapped version stored in keystore of the encryption key.
+        /// Gets the wrapped version of the DEK key.
         /// </summary>
         [JsonPropertyName("c_encryptionKey")]
         public byte[]? WrappedEncKey { get; init; }
 
         /// <summary>
-        /// Gets wrapped version stored in keystore of the mac key.
+        /// Gets the wrapped version of the MAC key.
         /// </summary>
         [JsonPropertyName("c_macKey")]
         public byte[]? WrappedMacKey { get; init; }

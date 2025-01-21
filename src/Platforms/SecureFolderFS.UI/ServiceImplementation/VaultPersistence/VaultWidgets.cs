@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {

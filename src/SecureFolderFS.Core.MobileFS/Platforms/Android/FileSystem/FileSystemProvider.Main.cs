@@ -59,6 +59,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parentStorable is not IModifiableFolder parentFolder)
                 return null;
 
+            var safRoot = _rootCollection?.GetSafRootForStorable(parentStorable);
+            if (safRoot is null)
+                return null;
+
+            if (safRoot.StorageRoot.Options.IsReadOnly)
+                return null;
+
             var createdItem = (IStorableChild)(mimeType switch
             {
                 DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false)
@@ -80,13 +87,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var file = GetStorableForDocumentId(documentId);
             if (file is not IChildFile childFile)
                 return null;
+            
+            var safRoot = _rootCollection?.GetSafRootForStorable(file);
+            if (safRoot is null)
+                return null;
 
             var fileAccess = ToFileAccess(mode);
+            if (safRoot.StorageRoot.Options.IsReadOnly && fileAccess.HasFlag(FileAccess.Write))
+                return null;
+            
             var stream = childFile.TryOpenStreamAsync(fileAccess).ConfigureAwait(false).GetAwaiter().GetResult();
             if (stream is null)
                 return null;
 
             var parcelFileMode = ToParcelFileMode(mode);
+            if (safRoot.StorageRoot.Options.IsReadOnly && parcelFileMode is ParcelFileMode.WriteOnly or ParcelFileMode.ReadWrite)
+                return null;
+            
             return _storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
             
             // var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
@@ -172,6 +189,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var storable = GetStorableForDocumentId(documentId);
             if (storable is not IStorableChild storableChild)
                 return;
+            
+            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            if (safRoot is null)
+                return;
+            
+            if (safRoot.StorageRoot.Options.IsReadOnly)
+                return;
 
             var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             if (parentFolder is not IModifiableFolder modifiableFolder)
@@ -195,6 +219,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
             if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+            
+            var safRoot = _rootCollection?.GetSafRootForStorable(destinationStorable);
+            if (safRoot is null)
+                return null;
+            
+            if (safRoot.StorageRoot.Options.IsReadOnly)
                 return null;
 
             var sourceParentStorable = GetStorableForDocumentId(sourceParentDocumentId);
@@ -234,6 +265,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is not IStorableChild storableChild)
                 return null;
             
+            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            if (safRoot is null)
+                return null;
+            
+            if (safRoot.StorageRoot.Options.IsReadOnly)
+                return null;
+            
             var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             if (parentFolder is not IRenamableFolder renamableFolder)
                 return null;
@@ -255,6 +293,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
             if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+            
+            var safRoot = _rootCollection?.GetSafRootForStorable(destinationStorable);
+            if (safRoot is null)
+                return null;
+            
+            if (safRoot.StorageRoot.Options.IsReadOnly)
                 return null;
             
             var sourceStorable = GetStorableForDocumentId(sourceDocumentId);

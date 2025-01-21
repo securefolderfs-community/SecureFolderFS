@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Dokany
             {
                 FileSystemName = Constants.Dokan.FS_TYPE_ID,
                 MaximumComponentLength = Constants.Dokan.MAX_COMPONENT_LENGTH,
-                VolumeName = specifics.FileSystemOptions.VolumeName,
+                VolumeName = specifics.Options.VolumeName,
                 FileSystemFeatures = FileSystemFeatures.CasePreservedNames
                                      | FileSystemFeatures.CaseSensitiveSearch
                                      | FileSystemFeatures.PersistentAcls
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.Dokany
             if (dokanyOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
-            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions);
+            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess, specifics.Options);
             var dokanyCallbacks = new OnDeviceDokany(specifics, handlesManager, volumeModel);
             var dokanyWrapper = new DokanyWrapper(dokanyCallbacks);
             dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);

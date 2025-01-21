@@ -83,7 +83,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
@@ -206,7 +206,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
-            if (Specifics.FileSystemOptions.IsReadOnly)
+            if (Specifics.Options.IsReadOnly)
             {
                 bytesWritten = 0;
                 return Trace(DokanResult.AccessDenied, fileName, info);
