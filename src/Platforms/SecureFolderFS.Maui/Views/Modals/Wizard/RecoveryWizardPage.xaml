@@ -16,6 +16,6 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <uc:RecoveryPreviewControl ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}" MasterKey="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
+        <uc:RecoveryPreviewControl ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}" RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}" />
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System.ComponentModel;
@@ -14,8 +15,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     {
         [ObservableProperty] private NewVaultCreationType _CreationType;
 
-        public MainWizardViewModel()
+        public IVaultCollectionModel VaultCollectionModel { get; }
+
+        public MainWizardViewModel(IVaultCollectionModel vaultCollectionModel)
         {
+            VaultCollectionModel = vaultCollectionModel;
             CanCancel = true;
             CanContinue = true;
             Title = "AddNewVault".ToLocalized();

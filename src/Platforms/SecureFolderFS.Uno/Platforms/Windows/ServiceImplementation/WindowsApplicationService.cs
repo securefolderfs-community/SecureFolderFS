@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
-using Windows.ApplicationModel;
 using Windows.System;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
@@ -21,16 +20,19 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         {
             get
             {
-                var packageVersion = Package.Current.Id.Version;
+#if UNPACKAGED
+                return base.AppVersion;
+#else
+                var packageVersion = global::Windows.ApplicationModel.Package.Current.Id.Version;
                 return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+#endif
             }
         }
 
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {
-            var osInfo = Environment.OSVersion;
-            return $"Windows {osInfo.VersionString}";
+            return Environment.OSVersion.VersionString;
         }
 
         /// <inheritdoc/>

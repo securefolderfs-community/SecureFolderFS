@@ -7,24 +7,53 @@ using System.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     [Bindable(true)]
-    public sealed partial class ErrorViewModel : ReportableViewModel
+    public partial class ErrorViewModel : ReportableViewModel
     {
-        [ObservableProperty] private string? _ErrorTitle;
+        /// <summary>
+        /// Gets the error message of the <see cref="IResult"/>. If no errors are reported, value is null.
+        /// </summary>
         [ObservableProperty] private string? _ErrorMessage;
+
+        /// <summary>
+        /// Gets the exception message of the <see cref="IResult"/>. If no errors are reported, value is null.
+        /// </summary>
+        [ObservableProperty] private string? _ExceptionMessage;
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public ErrorViewModel(string? errorTitle, string? errorMessage)
+        public ErrorViewModel(string? title)
         {
-            _ErrorTitle = errorTitle;
-            _ErrorMessage = errorMessage;
+            Title = title;
+        }
+
+        public ErrorViewModel(IResult? error)
+        {
+            Report(error);
         }
 
         /// <inheritdoc/>
-        public override void Report(IResult? result)
+        public sealed override void Report(IResult? result)
         {
-            ErrorMessage = result?.GetMessage();
+            UpdateStatus(result);
+        }
+
+        /// <summary>
+        /// Updates the current state upon error report.
+        /// </summary>
+        /// <param name="result">The <see cref="IResult"/> that was reported.</param>
+        protected virtual void UpdateStatus(IResult? result)
+        {
+            if (result is { Successful: false })
+            {
+                ErrorMessage = result.GetMessage();
+                ExceptionMessage = result.GetExceptionMessage();
+            }
+            else
+            {
+                ErrorMessage = null;
+                ExceptionMessage = null;
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.Helpers
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -47,9 +47,11 @@ namespace SecureFolderFS.UI.Helpers
         {
             return ServiceCollection
 
-                    // Singleton services
-                    .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
+                // Singleton services
+                    .AddSingleton<IVaultService, VaultService>()
+                    .AddSingleton<IVaultManagerService, VaultManagerService>()
                     .AddSingleton<IChangelogService, GitHubChangelogService>()
+                    .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
 
                 ; // Finish service initialization
         }

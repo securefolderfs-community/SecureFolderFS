@@ -1,10 +1,10 @@
-﻿using System;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem
 {
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem
 
         public required StreamsAccess StreamsAccess { get; init; }
 
-        public required FileSystemOptions FileSystemOptions { get; init; }
+        public required FileSystemOptions Options { get; init; }
 
         public required UniversalCache<string, BufferHolder> DirectoryIdCache { get; init; }
         
@@ -46,15 +46,15 @@ namespace SecureFolderFS.Core.FileSystem
             return new()
             {
                 ContentFolder = contentFolder,
-                PlaintextFileNameCache = options.EnableFileNameCache
-                    ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
+                PlaintextFileNameCache = options.IsCachingFileNames
+                    ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
-                CiphertextFileNameCache = options.EnableFileNameCache
+                CiphertextFileNameCache = options.IsCachingFileNames
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
                 DirectoryIdCache = new(true, options.FileSystemStatistics.DirectoryIdCache),
-                FileSystemOptions = options,
-                StreamsAccess = StreamsAccess.CreateNew(security, options.EnableChunkCache, options.FileSystemStatistics),
+                Options = options,
+                StreamsAccess = StreamsAccess.CreateNew(security, options.IsCachingChunks, options.FileSystemStatistics),
                 Security = security
             };
         }

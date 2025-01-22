@@ -18,7 +18,11 @@ namespace SecureFolderFS.Maui.Prompts
                 return Result.Failure(null);
             
             var page = Shell.Current.CurrentPage;
-            ViewModel.MasterKey = await page.DisplayPromptAsync("RecoverAccess".ToLocalized(), "EnterRecoveryKey".ToLocalized());
+            ViewModel.RecoveryKey = await page.DisplayPromptAsync(
+                ViewModel.Title,
+                ViewModel.Message,
+                "Confirm".ToLocalized(),
+                "Cancel".ToLocalized());
             
             var result = await ViewModel.RecoverAsync(default);
             if (!result)

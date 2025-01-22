@@ -19,7 +19,7 @@
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
             <Grid Padding="{OnPlatform Android='12,0'}">
-                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
+                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" RecoveryKey="{Binding RecoveryKey, Mode=OneWay}" />
             </Grid>
         </DataTemplate>
     </tv:Popup.Resources>
@@ -44,8 +44,8 @@
         <uc:ContentPresentation
             Grid.Row="1"
             HorizontalOptions="Fill"
-            VerticalOptions="Center"
-            ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
+            Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
+            VerticalOptions="Center">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
             </uc:ContentPresentation.TemplateSelector>

@@ -6,16 +6,23 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
 
     <StackPanel Spacing="8">
         <uc:PasswordControl x:Name="Password" PasswordSubmitted="Password_PasswordSubmitted" />
+
+        <!--  TODO(uno): #18589  -->
         <Button
             x:Name="ContinueButton"
             HorizontalAlignment="Center"
-            x:Load="{x:Bind ProvideContinuationButton, Mode=OneWay}"
             Click="Password_PasswordSubmitted"
-            Content="{l:ResourceString Name=Continue}"
-            Style="{ThemeResource AccentButtonStyle}" />
+            Content="{l:ResourceString Rid=Continue}"
+            Style="{ThemeResource AccentButtonStyle}"
+            Visibility="{x:Bind ProvideContinuationButton, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
     </StackPanel>
 </UserControl>

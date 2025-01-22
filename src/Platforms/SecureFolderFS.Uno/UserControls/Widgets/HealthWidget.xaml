@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
@@ -12,28 +13,42 @@
     mc:Ignorable="d not_win">
 
     <UserControl.Resources>
-        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
+        <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
 
-        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:HealthWidget">
-            <StackPanel Margin="0,-4,0,0">
+        <DataTemplate x:Key="DetailedHealthTemplate" x:DataType="local:HealthWidget">
+            <StackPanel Margin="0,-4,0,0" DataContext="{Binding ElementName=HealthControl}">
                 <!--  Vault status  -->
                 <TextBlock
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontWeight="Medium"
-                    Text="{Binding Path=VaultHealthState, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}"
+                    Text="{Binding Path=StatusTitle, Mode=OneWay}"
                     TextTrimming="CharacterEllipsis" />
-                <!--  Last checked  -->
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Opacity="0.6"
-                    Text="{Binding Path=HealthLastCheckedText, ElementName=HealthControl, Mode=OneWay, FallbackValue='Last checked: No data'}"
-                    TextTrimming="CharacterEllipsis" />
+
+                <!--  Subtitle  -->
+                <Grid>
+                    <!--  Last checked  -->
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Opacity="0.6"
+                        Text="{Binding Path=LastCheckedText, Mode=OneWay, FallbackValue='Last checked: Unspecified'}"
+                        TextTrimming="CharacterEllipsis"
+                        Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+
+                    <!--  Progress  -->
+                    <ProgressBar
+                        Margin="0,8,0,0"
+                        VerticalAlignment="Center"
+                        IsIndeterminate="{Binding Path=CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                        Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Value="{Binding Path=CurrentProgress, Mode=OneWay}" />
+                </Grid>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:HealthWidget">
+        <DataTemplate x:Key="NotDetailedHealthTemplate" x:DataType="local:HealthWidget">
             <Grid />
         </DataTemplate>
     </UserControl.Resources>
@@ -52,28 +67,25 @@
                 Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Stretch="UniformToFill">
-                <win:Image.Source>
-                    <SvgImageSource UriSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/GreenShield.svg" />
-                </win:Image.Source>
-            </win:Image>
+                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
+                Stretch="UniformToFill" />
             <not_win:Image
                 Width="64"
                 Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="/Assets/AppAssets/GreenShield.png"
+                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
                 Stretch="UniformToFill" />
         </Grid>
 
         <!--  Health status  -->
         <ContentPresenter
-            x:Name="DetailedHealthContentPresenter"
+            x:Name="HealthContentPresenter"
             Grid.Column="1"
             VerticalContentAlignment="Center"
             Canvas.ZIndex="1" />
 
-        <!--  Start scanning  -->
+        <!--  Options  -->
         <StackPanel
             Grid.Column="2"
             Margin="0,-6,0,0"
@@ -81,20 +93,43 @@
             VerticalAlignment="Center"
             Orientation="Horizontal"
             Spacing="4">
-            <Button
+
+            <!--  Start scanning  -->
+            <SplitButton
+                Height="36"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                CommandParameter=""
                 Content="Start scanning"
-                IsEnabled="False" />
+                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                            CommandParameter="include_file_contents"
+                            IsEnabled="False"
+                            Text="Include file contents (slower)" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+
+            <!--  Cancel  -->
+            <Button
+                VerticalAlignment="Center"
+                Command="{x:Bind CancelCommand, Mode=OneWay}"
+                Content="{l:ResourceString Rid=Cancel}"
+                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!--  Open health details  -->
             <Button
                 Width="36"
-                Height="35"
+                Height="36"
                 Padding="0"
                 HorizontalAlignment="Center"
                 Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                IsEnabled="False"
+                IsEnabled="True"
                 ToolTipService.ToolTip="Go to Vault Health">
                 <FontIcon FontSize="15" Glyph="&#xE76C;" />
             </Button>
@@ -108,7 +143,7 @@
                         <AdaptiveTrigger MinWindowWidth="350" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource DetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <!--  Small window  -->
@@ -117,7 +152,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource NotDetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

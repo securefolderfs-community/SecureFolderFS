@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 if (enumConversionValues.TryGetValue(enumValue, out var convertedValue))
                     enumValue = convertedValue;
 
-                // else.. use value from the cast above
+                // else... use value from the cast above
             }
 
             try

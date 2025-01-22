@@ -3,6 +3,7 @@ namespace SecureFolderFS.UI
     public static class Constants
     {
         public const string MAIN_WINDOW_ID = "SecureFolderFS_mainwindow";
+        public const string DATA_CONTAINER_ID = "SecureFolderFS_datacontainer";
         public const string STORABLE_BOOKMARK_RID = "bookmark:";
 
         public static class GitHub
@@ -19,7 +20,7 @@ namespace SecureFolderFS.UI
             public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
             public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
-            public const string ICON_ASSET_PATH = "Assets/AppAssets/AppIcon.ico";
+            public const string ICON_ASSET_PATH = "Assets/AppAssets/app_icon.ico";
         }
 
         public static class AppThemes

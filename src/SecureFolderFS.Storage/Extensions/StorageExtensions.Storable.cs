@@ -1,4 +1,7 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -13,6 +16,18 @@ namespace SecureFolderFS.Storage.Extensions
                 return storable.Id;
 
             return bookmark.BookmarkId;
+        }
+
+        public static async Task<IBasicProperties?> TryGetPropertiesAsync(this IStorableProperties storableProperties)
+        {
+            try
+            {
+                return await storableProperties.GetPropertiesAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

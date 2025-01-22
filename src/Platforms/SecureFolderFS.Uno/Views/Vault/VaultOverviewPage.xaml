@@ -9,7 +9,8 @@
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
-    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
+    xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -17,21 +18,25 @@
         <!--  Vault Health  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm2:HealthWidgetViewModel">
             <ucw:HealthWidget
-                HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
+                CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
+                CurrentProgress="{x:Bind HealthReportViewModel.CurrentProgress, Mode=OneWay}"
+                IsProgressing="{x:Bind HealthReportViewModel.IsProgressing, Mode=OneWay}"
+                LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                Severity="{x:Bind HealthReportViewModel.Severity, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
-                VaultHealthState="{x:Bind VaultHealthState, Mode=OneWay}" />
+                StatusTitle="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Resource Graphs  -->
-        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm2:GraphsWidgetViewModel">
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm3:GraphsWidgetViewModel">
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
                 ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"
-                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubHeader, Mode=OneWay}"
                 WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}"
                 WriteGraphIsExtended="{x:Bind WriteGraphViewModel.IsExtended, Mode=TwoWay}"
-                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubHeader, Mode=OneWay}" />
         </DataTemplate>
     </Page.Resources>
 
@@ -56,12 +61,22 @@
 
             <!--  Vault options  -->
             <StackPanel Spacing="4">
+
+                <!--  Vault read-only InfoBar  -->
+                <InfoBar
+                    x:Name="ReadOnlyInfoBar"
+                    x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:ResourceString Rid=VaultReadOnlyMode}"
+                    Severity="Informational" />
+
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=ViewVault}"
+                    Title="{l:ResourceString Rid=ViewVault}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=ViewVaultDescription}">
+                    Description="{l:ResourceString Rid=ViewVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
@@ -72,10 +87,10 @@
 
                 <!--  Vault properties  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=VaultProperties}"
+                    Title="{l:ResourceString Rid=VaultProperties}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=VaultPropertiesDescription}">
+                    Description="{l:ResourceString Rid=VaultPropertiesDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
@@ -86,10 +101,10 @@
 
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=LockVault}"
+                    Title="{l:ResourceString Rid=LockVault}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=LockVaultDescription}">
+                    Description="{l:ResourceString Rid=LockVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>

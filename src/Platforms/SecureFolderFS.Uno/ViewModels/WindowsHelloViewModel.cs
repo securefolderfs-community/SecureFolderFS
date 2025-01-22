@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.ViewModels
         protected WindowsHelloViewModel(IFolder vaultFolder, string vaultId)
             : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
         {
-            DisplayName = "WindowsHello".ToLocalized();
+            Title = "WindowsHello".ToLocalized();
             VaultFolder = vaultFolder;
             VaultId = vaultId;
             Icon = "\uEB68";
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Uno.ViewModels
             // to use the length of the string ID as part of the SecretKey length above
             var written = Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_PART_LENGTH));
             if (written != encodedVaultIdLength)
-                throw new FormatException("The allocated and vault ID written bytes amount were different.");
+                throw new FormatException("The allocated buffer and vault ID written bytes amount were different.");
             
             // Return a copy of the challenge since the original version is being disposed of
             return challenge.CreateCopy();

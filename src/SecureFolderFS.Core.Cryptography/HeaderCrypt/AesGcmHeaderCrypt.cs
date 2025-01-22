@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;
 
         /// <inheritdoc/>
-        public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
+        public override int HeaderPlaintextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
         public AesGcmHeaderCrypt(SecretKey encKey, SecretKey macKey)
             : base(encKey, macKey)
@@ -21,36 +21,36 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         }
 
         /// <inheritdoc/>
-        public override void CreateHeader(Span<byte> cleartextHeader)
+        public override void CreateHeader(Span<byte> plaintextHeader)
         {
             // Nonce
-            secureRandom.GetNonZeroBytes(cleartextHeader.Slice(0, HEADER_NONCE_SIZE));
+            secureRandom.GetNonZeroBytes(plaintextHeader.Slice(0, HEADER_NONCE_SIZE));
 
             // Content key
-            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
+            secureRandom.GetBytes(plaintextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
         }
 
         /// <inheritdoc/>
-        public override void EncryptHeader(ReadOnlySpan<byte> cleartextHeader, Span<byte> ciphertextHeader)
+        public override void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
         {
             // Nonce
-            cleartextHeader.GetHeaderNonce().CopyTo(ciphertextHeader);
+            plaintextHeader.GetHeaderNonce().CopyTo(ciphertextHeader);
 
             // Encrypt
             AesGcm128.Encrypt(
-                cleartextHeader.GetHeaderContentKey(),
+                plaintextHeader.GetHeaderContentKey(),
                 encKey,
-                cleartextHeader.GetHeaderNonce(),
+                plaintextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
                 default);
         }
 
         /// <inheritdoc/>
-        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> cleartextHeader)
+        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
         {
             // Nonce
-            ciphertextHeader.GetHeaderNonce().CopyTo(cleartextHeader);
+            ciphertextHeader.GetHeaderNonce().CopyTo(plaintextHeader);
 
             // Decrypt
             return AesGcm128.TryDecrypt(
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                 encKey,
                 ciphertextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
-                cleartextHeader.Slice(HEADER_NONCE_SIZE),
+                plaintextHeader.Slice(HEADER_NONCE_SIZE),
                 default);
         }
     }

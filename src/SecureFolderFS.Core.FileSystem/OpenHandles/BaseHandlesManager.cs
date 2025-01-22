@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,11 +18,13 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         protected readonly object handlesLock = new();
         protected readonly StreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
+        protected readonly FileSystemOptions fileSystemOptions;
         protected readonly Dictionary<ulong, IDisposable> handles;
 
-        protected BaseHandlesManager(StreamsAccess streamsAccess)
+        protected BaseHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
         {
             this.streamsAccess = streamsAccess;
+            this.fileSystemOptions = fileSystemOptions;
             this.handlesGenerator = new();
             this.handles = new();
         }
@@ -42,7 +45,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         /// </summary>
         /// <param name="ciphertextPath">The ciphertext path that points to a directory.</param>
         /// <returns>If successful, value is non-zero.</returns>
-        public abstract ulong OpenDirectoryHandle(string ciphertextPath); // TODO: Add open flags as needed
+        public abstract ulong OpenDirectoryHandle(string ciphertextPath);
 
         /// <summary>
         /// Gets a handle of type <typeparamref name="THandle"/> with associated <paramref name="handleId"/>.
@@ -66,7 +69,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         }
 
         /// <summary>
-        /// Removes <paramref name="handleId"/> from the manager and disposes of the <see cref="ObjectHandle"/>.
+        /// Removes <paramref name="handleId"/> from the manager and disposes of the associated handle.
         /// </summary>
         /// <param name="handleId">The ID of the handle.</param>
         public virtual void CloseHandle(ulong handleId)

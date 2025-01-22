@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
-    [Inject<IVaultService>]
+    [Inject<IVaultService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
     public sealed partial class CredentialsSelectionViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (vaultOptions.VaultId is null)
                 return;
 
-            await foreach (var item in VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
+            await foreach (var item in VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
             {
                 // Don't add authentication methods to list which are already in use
                 if (vaultOptions.AuthenticationMethod.Contains(item.Id))
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (vaultOptions.VaultId is null)
                 return null;
 
-            return await VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
+            return await VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
                 .FirstOrDefaultAsync(x => x.Id == ConfiguredViewModel?.Id, cancellationToken: cancellationToken);
         }
 

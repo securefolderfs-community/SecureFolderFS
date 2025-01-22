@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             argon2id.Iterations = Constants.Crypto.Argon2.ITERATIONS;
             argon2id.MemorySize = Constants.Crypto.Argon2.MEMORY_SIZE;
 
-            argon2id.GetBytes(Constants.ARGON2_KEK_LENGTH).CopyTo(result);
+            argon2id.GetBytes(Constants.KeyTraits.ARGON2_KEK_LENGTH).CopyTo(result);
         }
     }
 }

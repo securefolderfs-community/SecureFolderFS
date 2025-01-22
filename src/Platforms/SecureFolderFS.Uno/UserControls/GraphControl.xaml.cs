@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using LiveChartsCore;
 using LiveChartsCore.Drawing;
-using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
@@ -50,8 +48,8 @@ namespace SecureFolderFS.Uno.UserControls
             if (sender is not CartesianChart chart)
                 return;
 
-            chart.Series = new ISeries[]
-            {
+            chart.Series =
+            [
                 new LineSeries<double>()
                 {
                     Values = Data,
@@ -67,17 +65,17 @@ namespace SecureFolderFS.Uno.UserControls
                     IsHoverable = false,
                     GeometrySize = 0d // TODO: Setting this to 0 causes a bug with jumping line series
                 }
-            };
-            chart.XAxes = new ICartesianAxis[]
-            {
+            ];
+            chart.XAxes =
+            [
                 new Axis()
                 {
                     Labeler = x => string.Empty,
                     ShowSeparatorLines = false
                 }
-            };
-            chart.YAxes = new ICartesianAxis[]
-            {
+            ];
+            chart.YAxes =
+            [
                 new Axis()
                 {
                     ShowSeparatorLines = false,
@@ -85,7 +83,7 @@ namespace SecureFolderFS.Uno.UserControls
                     LabelsPaint = new SolidColorPaint(SKColors.Gray),
                     MinLimit = 0d
                 }
-            };
+            ];
 
             await Task.Delay(25);
             GraphLoaded = true;
@@ -96,13 +94,13 @@ namespace SecureFolderFS.Uno.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public ICollection? Data
+        public ICollection<double>? Data
         {
-            get => (ICollection?)GetValue(DataProperty);
+            get => (ICollection<double>?)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(ICollection), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(Data), typeof(ICollection<double>), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
 
         public string? GraphHeader
         {

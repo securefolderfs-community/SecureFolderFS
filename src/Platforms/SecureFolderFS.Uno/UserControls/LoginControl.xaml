@@ -7,8 +7,9 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.UI.ViewModels"
+    xmlns:vm="using:SecureFolderFS.UI.ViewModels.Authentication"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
     xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="ThisLoginControl"
@@ -35,7 +36,7 @@
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Continue}"
+                    Content="{l:ResourceString Rid=Continue}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -54,14 +55,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=LoginKeyFile}" />
+                    Text="{l:ResourceString Rid=LoginKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Authenticate}"
+                    Content="{l:ResourceString Rid=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -80,14 +81,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=LoginWindowsHello}" />
+                    Text="{l:ResourceString Rid=LoginWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Authenticate}"
+                    Content="{l:ResourceString Rid=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -100,7 +101,7 @@
                 <InfoBar
                     IsClosable="False"
                     IsOpen="True"
-                    Message="{l:ResourceString Name=VaultNeedsMigration}"
+                    Message="{l:ResourceString Rid=VaultNeedsMigration}"
                     Severity="Informational" />
 
                 <!--  Migrate  -->
@@ -109,7 +110,7 @@
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind OpenMigrationOverlayCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Migrate}"
+                    Content="{l:ResourceString Rid=Migrate}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <!--  Version info  -->
@@ -140,46 +141,11 @@
 
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
-            <StackPanel Spacing="4">
-                <InfoBar
-                    Title="{l:ResourceString Name=Error}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:ResourceString Name=VaultLoadError}"
-                    Severity="Error" />
-
-                <TextBlock
-                    x:Name="ErrorTitle"
-                    HorizontalAlignment="Center"
-                    x:Load="{x:Bind ErrorTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Text="{x:Bind ErrorTitle, Mode=OneWay}" />
-
-                <Expander
-                    x:Name="ErrorDetails"
-                    Width="600"
-                    x:Load="{x:Bind ErrorMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                    <Expander.Header>
-                        <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
-                    </Expander.Header>
-                    <ScrollViewer
-                        Height="200"
-                        MaxWidth="600"
-                        Padding="4"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            FontSize="12"
-                            HorizontalTextAlignment="Center"
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.8"
-                            Text="{x:Bind ErrorMessage, Mode=OneWay}"
-                            TextWrapping="Wrap" />
-                    </ScrollViewer>
-                </Expander>
-            </StackPanel>
+            <uc:ErrorControl
+                Title="{l:ResourceString Rid=VaultLoadError}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ExceptionMessage="{x:Bind ExceptionMessage, Mode=OneWay}" />
         </DataTemplate>
     </UserControl.Resources>
 

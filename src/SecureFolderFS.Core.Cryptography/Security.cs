@@ -43,10 +43,11 @@ namespace SecureFolderFS.Core.Cryptography
         /// </summary>
         /// <param name="encKey">The DEK key that this class takes ownership of.</param>
         /// <param name="macKey">The MAC key that this class takes ownership of.</param>
-        /// <param name="contentCipherId">The content cipher id.</param>
-        /// <param name="fileNameCipherId">The file name cipher id.</param>
+        /// <param name="contentCipherId">The content cipher ID.</param>
+        /// <param name="fileNameCipherId">The file name cipher ID.</param>
+        /// <param name="fileNameEncodingId">The file name encoding ID.</param>
         /// <returns>A new <see cref="Security"/> object.</returns>
-        public static Security CreateNew(SecretKey encKey, SecretKey macKey, string contentCipherId, string fileNameCipherId)
+        public static Security CreateNew(SecretKey encKey, SecretKey macKey, string contentCipherId, string fileNameCipherId, string fileNameEncodingId)
         {
             // Initialize crypt implementation
             IHeaderCrypt headerCrypt = contentCipherId switch
@@ -65,7 +66,7 @@ namespace SecureFolderFS.Core.Cryptography
             };
             INameCrypt? nameCrypt = fileNameCipherId switch
             {
-                CipherId.AES_SIV => new AesSivNameCrypt(encKey, macKey),
+                CipherId.AES_SIV => new AesSivNameCrypt(encKey, macKey, fileNameEncodingId),
                 CipherId.NONE => null,
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipherId))
             };

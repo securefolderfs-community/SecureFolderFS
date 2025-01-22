@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
         {
             var intent = new Intent(Intent.ActionOpenDocument)
                 .AddCategory(Intent.CategoryOpenable)
@@ -47,13 +47,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 return null;
 
             var file = new AndroidFile(result, MainActivity.Instance);
-            await file.AddBookmarkAsync(cancellationToken);
+            if (persist)
+                await file.AddBookmarkAsync(cancellationToken);
 
             return file;
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
         {
             var initialPath = AndroidPathExtensions.GetExternalDirectory();
             if (AOSEnvironment.ExternalStorageDirectory is not null)
@@ -63,8 +64,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var intent = new Intent(Intent.ActionOpenDocumentTree);
 
             intent.PutExtra(DocumentsContract.ExtraInitialUri, initialFolderUri);
-            intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-            intent.AddFlags(ActivityFlags.GrantWriteUriPermission);
+            if (persist)
+            {
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+                intent.AddFlags(ActivityFlags.GrantWriteUriPermission);
+            }
 
             // RequestCodeFolderPicker 0x000007D0
             var result = await StartActivityAsync(intent, 0x000007D0);
@@ -72,7 +76,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 return null;
 
             var folder = new AndroidFolder(result, MainActivity.Instance);
-            await folder.AddBookmarkAsync(cancellationToken);
+            if (persist)
+                await folder.AddBookmarkAsync(cancellationToken);
 
             return folder;
         }

@@ -1,5 +1,5 @@
-﻿using NSec.Cryptography;
-using System;
+﻿using System;
+using NSec.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {

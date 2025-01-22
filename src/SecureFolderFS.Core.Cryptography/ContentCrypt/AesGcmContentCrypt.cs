@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
     internal sealed class AesGcmContentCrypt : BaseContentCrypt
     {
         /// <inheritdoc/>
-        public override int ChunkCleartextSize { get; } = CHUNK_CLEARTEXT_SIZE;
+        public override int ChunkPlaintextSize { get; } = CHUNK_PLAINTEXT_SIZE;
 
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
+        public override void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
             secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
@@ -34,17 +34,17 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
             // Encrypt
             AesGcm128.Encrypt(
-                cleartextChunk,
+                plaintextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + cleartextChunk.Length),
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + plaintextChunk.Length),
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, plaintextChunk.Length),
                 associatedData);
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
+        public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> plaintextChunk)
         {
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),
                 ciphertextChunk.GetChunkTag(),
-                cleartextChunk.Slice(0, ciphertextChunk.Length - (CHUNK_NONCE_SIZE + CHUNK_TAG_SIZE)),
+                plaintextChunk.Slice(0, ciphertextChunk.Length - (CHUNK_NONCE_SIZE + CHUNK_TAG_SIZE)),
                 associatedData);
         }
     }

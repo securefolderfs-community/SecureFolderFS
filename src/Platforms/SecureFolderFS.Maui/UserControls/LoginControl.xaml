@@ -9,7 +9,7 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
-    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
+    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels.Authentication;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk"
     x:Name="ThisLoginControl">
 
@@ -27,13 +27,13 @@
                             <mdc:Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Name=Continue}" />
+                                Text="{l:ResourceString Rid=Continue}" />
                         </On>
                         <On Platform="iOS">
                             <Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Name=Continue}" />
+                                Text="{l:ResourceString Rid=Continue}" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>
@@ -88,20 +88,20 @@
                     <Label
                         FontSize="17"
                         HorizontalOptions="Center"
-                        Text="Vault could not be loaded" />
+                        Text="{l:ResourceString Rid=VaultLoadError}" />
                     <Label
                         FontSize="12"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
                         Opacity="0.6"
-                        Text="{Binding ErrorMessage, Mode=OneWay}" />
+                        Text="{Binding Message, Mode=OneWay}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
-        <local:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
+        <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
                     ErrorTemplate="{StaticResource ErrorTemplate}"

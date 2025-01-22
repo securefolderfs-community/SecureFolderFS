@@ -70,7 +70,7 @@
             ChartStrokeColor="#00AED4"
             Click="ReadGraph_Click"
             Data="{x:Bind ReadGraphData, Mode=OneWay}"
-            GraphHeader="{l:ResourceString Name=ReadSpeeds}"
+            GraphHeader="{l:ResourceString Rid=ReadSpeeds}"
             GraphSubheader="{x:Bind ReadGraphSubheader, Mode=OneWay}">
             <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
@@ -85,7 +85,7 @@
             ChartStrokeColor="#008D74"
             Click="WriteGraph_Click"
             Data="{x:Bind WriteGraphData, Mode=OneWay}"
-            GraphHeader="{l:ResourceString Name=WriteSpeeds}"
+            GraphHeader="{l:ResourceString Rid=WriteSpeeds}"
             GraphSubheader="{x:Bind WriteGraphSubheader, Mode=OneWay}"
             RenderTransformOrigin="1.0,0.0">
             <uc:GraphControl.RenderTransform>

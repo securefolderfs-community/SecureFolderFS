@@ -83,6 +83,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
                 return Trace(DokanResult.InvalidHandle, fileName, info);
 
@@ -149,8 +152,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 // Invalid handle...
                 contextHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
-                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
+                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle);
                 openedNewHandle = true;
+            }
+
+            // Re-check handle
+            if (fileHandle is null)
+            {
+                bytesRead = 0;
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
 
             try
@@ -196,6 +206,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
+            if (Specifics.Options.IsReadOnly)
+            {
+                bytesWritten = 0;
+                return Trace(DokanResult.AccessDenied, fileName, info);
+            }
+
             var ciphertextPath = GetCiphertextPath(fileName);
             var appendToFile = offset == -1;
             var contextHandle = FileSystem.Constants.INVALID_HANDLE;
@@ -213,8 +229,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 // Invalid handle...
                 contextHandle = handlesManager.OpenFileHandle(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
-                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
+                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle);
                 openedNewHandle = true;
+            }
+
+            // Re-check handle
+            if (fileHandle is null)
+            {
+                bytesWritten = 0;
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
 
             try
@@ -249,6 +272,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 bytesWritten = 0;
                 return Trace(NtStatus.HandleNoLongerValid, fileName, info);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                bytesWritten = 0;
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
             catch (IOException ioEx)
             {
@@ -310,7 +338,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info);
 
         // TODO: Add checks for nullable in places where this function is called
-        protected abstract string? GetCiphertextPath(string cleartextName);
+        protected abstract string? GetCiphertextPath(string plaintextName);
 
         protected void CloseHandle(IDokanFileInfo info)
         {
@@ -364,7 +392,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
 #if !DEBUG
             return result;
-#endif
+#else
+            if (Debugger.IsAttached)
+                return result;
 
             if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return result;
@@ -376,6 +406,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             Debug.WriteLine(message);
 
             return result;
+#endif
         }
 
         protected static NtStatus Trace(NtStatus result, string? fileName, IDokanFileInfo info, [CallerMemberName] string methodName = "", params object[]? args)

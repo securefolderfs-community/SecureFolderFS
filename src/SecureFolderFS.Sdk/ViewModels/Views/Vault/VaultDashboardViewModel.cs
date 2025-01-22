@@ -1,44 +1,57 @@
-﻿using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    public sealed partial class VaultDashboardViewModel : BaseDashboardViewModel, IRecipient<VaultLockedMessage>
+    public sealed partial class VaultDashboardViewModel : BaseDesignationViewModel, IRecipient<VaultLockedMessage>, IUnlockedViewContext, IDisposable
     {
         public INavigationService VaultNavigation { get; }
         
         public INavigationService DashboardNavigation { get; }
 
+        /// <inheritdoc/>
+        public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
+
+        /// <inheritdoc/>
+        public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
+
         public VaultDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService vaultNavigation, INavigationService dashboardNavigation)
-            : base(unlockedVaultViewModel)
         {
+            UnlockedVaultViewModel = unlockedVaultViewModel;
             VaultNavigation = vaultNavigation;
             DashboardNavigation = dashboardNavigation;
             DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
+            VaultViewModel.PropertyChanged += VaultViewModel_PropertyChanged;
 
             WeakReferenceMessenger.Default.Register(this);
-        }
-
-        /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
             // Free resources that are used by the dashboard
-            if (VaultModel.Equals(message.VaultModel))
+            if (UnlockedVaultViewModel.VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
+        }
+
+        private void VaultViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (DashboardNavigation.CurrentView is not VaultOverviewViewModel)
+                return;
+
+            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+                return;
+
+            Title = VaultViewModel.VaultName;
         }
 
         [RelayCommand]
@@ -58,8 +71,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+            VaultViewModel.PropertyChanged -= VaultViewModel_PropertyChanged;
             DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             DashboardNavigation.Dispose();
         }

@@ -1,4 +1,5 @@
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
 {

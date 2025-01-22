@@ -9,8 +9,8 @@
         /// <summary>
         /// Wraps an object into <see cref="IWrapper{T}"/>.
         /// </summary>
-        /// <param name="obj">The object to wrap.</param>
+        /// <param name="wrapped">The object to wrap.</param>
         /// <returns>A wrapped object by the implementation represented by <see cref="IWrapper{T}"/>.</returns>
-        IWrapper<T> Wrap(T obj);
+        IWrapper<T> Wrap(T wrapped);
     }
 }

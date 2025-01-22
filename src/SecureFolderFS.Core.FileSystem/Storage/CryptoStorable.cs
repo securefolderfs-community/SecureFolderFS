@@ -1,6 +1,7 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.StorageProperties;
 using System;
 using System.IO;
 using System.Threading;
@@ -9,11 +10,12 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IStorable"/>
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IStorableProperties
         where TCapability : IStorable
     {
         protected readonly CryptoFolder? parent;
         protected readonly FileSystemSpecifics specifics;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
@@ -58,12 +60,15 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // If the parent of parent is null, then we can assume we are at the root level and should use ContentFolder
             var ciphertextParentOfParent = await ciphertextParentFolder.GetParentAsync(cancellationToken) ?? specifics.ContentFolder;
 
-            var plaintextName = await DecryptNameAsync(ciphertextParent.Name, ciphertextParentOfParent);
+            var plaintextName = await DecryptNameAsync(ciphertextParent.Name, ciphertextParentOfParent, cancellationToken);
             if (plaintextName is null)
                 return null;
 
             return (IFolder?)Wrap(ciphertextParent, plaintextName);
         }
+
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected virtual IWrapper<IFile> Wrap(IFile file, params object[] objects)
         {
@@ -88,14 +93,15 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// </summary>
         /// <param name="plaintextName">The name to encrypt.</param>
         /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
-        protected virtual async Task<string> EncryptNameAsync(string plaintextName, IFolder parentFolder)
+        protected virtual async Task<string> EncryptNameAsync(string plaintextName, IFolder parentFolder, CancellationToken cancellationToken = default)
         {
             if (specifics.Security.NameCrypt is null)
                 return plaintextName;
 
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics, plaintextName);
-            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, plaintextName);
+            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
 
             return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }
@@ -105,14 +111,15 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// </summary>
         /// <param name="ciphertextName">The name to decrypt.</param>
         /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a decrypted name.</returns>
-        protected virtual async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder)
+        protected virtual async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder, CancellationToken cancellationToken = default)
         {
             if (specifics.Security.NameCrypt is null)
                 return ciphertextName;
 
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics, ciphertextName);
-            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextName);
+            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
 
             return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
         }

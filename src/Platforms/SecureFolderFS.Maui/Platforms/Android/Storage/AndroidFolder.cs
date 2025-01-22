@@ -2,22 +2,65 @@ using System.Runtime.CompilerServices;
 using Android.Provider;
 using Android.Webkit;
 using AndroidX.DocumentFile.Provider;
+using AndroidX.Navigation;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName // TODO: Implement: IGetFirstByName, IGetItem
+    internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName, IRenamableFolder // TODO: Implement: IGetFirstByName, IGetItem
     {
+        private static Exception RenameException { get; } = new IOException("Could not rename the item.");
+        
         /// <inheritdoc/>
-        protected override DocumentFile? Document { get; }
+        public override string Name { get; }
+        
+        /// <inheritdoc/>
+        public override DocumentFile? Document { get; }
 
         public AndroidFolder(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromTreeUri(activity, uri);
+            Name = Document?.Name ?? base.Name;
+        }
+
+        /// <inheritdoc/>
+        public Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
+        {
+            switch (storable)
+            {
+                case AndroidFolder folder:
+                {
+                    if (activity.ContentResolver is null)
+                        return Task.FromException<IStorableChild>(RenameException);
+
+                    var uri = DocumentsContract.RenameDocument(activity.ContentResolver, folder.Inner, newName);
+                    if (uri is null)
+                        return Task.FromException<IStorableChild>(RenameException);
+
+                    return Task.FromResult<IStorableChild>(new AndroidFolder(uri, activity, parent, permissionRoot));
+                }
+
+                case AndroidFile file:
+                {
+                    if (activity.ContentResolver is null)
+                        return Task.FromException<IStorableChild>(RenameException);
+
+                    var uri = DocumentsContract.RenameDocument(activity.ContentResolver, file.Inner, newName);
+                    if (uri is null)
+                        return Task.FromException<IStorableChild>(RenameException);
+
+                    return Task.FromResult<IStorableChild>(new AndroidFile(uri, activity, parent, permissionRoot));
+                }
+
+                default: return Task.FromException<IStorableChild>(new ArgumentOutOfRangeException(nameof(storable)));
+            }
         }
 
         /// <inheritdoc/>
@@ -139,9 +182,19 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 .ConfigureAwait(false);
 
             if (target is null)
-                throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");
+                throw new FileNotFoundException($"No storage item with the name '{name}' could be found.");
 
             return target;
+        }
+        
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Document is null)
+                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
+
+            properties ??= new AndroidFileProperties(Document);
+            return Task.FromResult(properties);
         }
     }
 }

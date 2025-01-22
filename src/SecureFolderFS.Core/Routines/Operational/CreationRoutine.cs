@@ -39,9 +39,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         public void SetCredentials(SecretKey passkey)
         {
             // Allocate shallow keys which will be later disposed of
-            using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
-            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
+            using var encKey = new SecureKey(KeyTraits.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(KeyTraits.MACKEY_LENGTH);
+            var salt = new byte[KeyTraits.SALT_LENGTH];
 
             // Fill keys
             using var secureRandom = RandomNumberGenerator.Create();
@@ -65,6 +65,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 Version = Versions.LATEST_VERSION,
                 ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID).TryCast<string>() ?? CipherId.XCHACHA20_POLY1305,
                 FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string>() ?? CipherId.AES_SIV,
+                FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string>() ?? CipherId.ENCODING_BASE64URL,
                 AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string>() ?? throw new InvalidOperationException($"Cannot create vault without specifying {Associations.ASSOC_AUTHENTICATION}."),
                 Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string>() ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]

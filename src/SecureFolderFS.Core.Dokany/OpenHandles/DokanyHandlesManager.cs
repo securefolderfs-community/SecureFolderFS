@@ -1,5 +1,7 @@
-﻿using SecureFolderFS.Core.FileSystem.OpenHandles;
+﻿using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System.IO;
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
@@ -7,8 +9,8 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess)
-            : base(streamsAccess)
+        public DokanyHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+            : base(streamsAccess, fileSystemOptions)
         {
         }
 
@@ -19,24 +21,23 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             if (disposed)
                 return FileSystem.Constants.INVALID_HANDLE;
 
-            // TODO: Temporary fix for file share issue
-            //share = FileShare.ReadWrite | FileShare.Delete;
+            if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag())
+                return FileSystem.Constants.INVALID_HANDLE;
 
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
 
-            // Open cleartext stream on top of ciphertext stream
-            var cleartextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
-
-            if (cleartextStream is null)
+            // Open plaintext stream on top of ciphertext stream
+            var plaintextStream = streamsAccess.TryOpenPlaintextStream(ciphertextPath, ciphertextStream);
+            if (plaintextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Flush ChunkAccess if opened with Truncate flag
             if (mode == FileMode.Truncate)
-                cleartextStream.Flush();
+                plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new Win32FileHandle(cleartextStream); // TODO: For now it's Win32FileHandle
+            var fileHandle = new Win32FileHandle(plaintextStream);
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle

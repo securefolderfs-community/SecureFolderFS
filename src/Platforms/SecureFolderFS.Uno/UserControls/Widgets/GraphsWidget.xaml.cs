@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
@@ -169,21 +169,21 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(defaultValue: false));
 
-        public ICollection? ReadGraphData
+        public ICollection<double>? ReadGraphData
         {
-            get => (ICollection?)GetValue(ReadGraphDataProperty);
+            get => (ICollection<double>?)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(ICollection), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(ICollection<double>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
-        public ICollection? WriteGraphData
+        public ICollection<double>? WriteGraphData
         {
-            get => (ICollection?)GetValue(WriteGraphDataProperty);
+            get => (ICollection<double>?)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(ICollection), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(ICollection<double>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
         public string? ReadGraphSubheader
         {

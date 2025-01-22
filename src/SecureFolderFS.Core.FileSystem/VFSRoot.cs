@@ -1,42 +1,49 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem
 {
     /// <inheritdoc cref="IVFSRoot"/>
-    public abstract class VFSRoot : IVFSRoot
+    public abstract class VFSRoot : IVFSRoot, IWrapper<FileSystemSpecifics>
     {
-        /// <inheritdoc/>
-        public IFolder Inner { get; }
+        protected readonly IFolder storageRoot;
+        protected readonly FileSystemSpecifics specifics;
 
         /// <inheritdoc/>
-        public string StorageName { get; }
+        IFolder IWrapper<IFolder>.Inner => storageRoot;
+
+        /// <inheritdoc/>
+        FileSystemSpecifics IWrapper<FileSystemSpecifics>.Inner => specifics;
 
         /// <inheritdoc/>
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
-        public virtual IReadWriteStatistics ReadWriteStatistics { get; }
+        public FileSystemOptions Options { get; }
 
-        protected VFSRoot(IFolder storageRoot, FileSystemOptions options)
+        protected VFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
         {
-            Inner = storageRoot;
-            StorageName = options.VolumeName;
-            ReadWriteStatistics = options.FileSystemStatistics;
+            this.storageRoot = storageRoot;
+            this.specifics = specifics;
+            Options = specifics.Options;
 
             // Automatically add created root
-            FileSystemManager.Instance.AddRoot(this);
+            FileSystemManager.Instance.FileSystems.Add(this);
         }
 
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            _ = DisposeAsync();
+            specifics.Dispose();
         }
 
         /// <inheritdoc/>
-        public abstract ValueTask DisposeAsync();
+        public virtual ValueTask DisposeAsync()
+        {
+            Dispose();
+            return ValueTask.CompletedTask;
+        }
     }
 }

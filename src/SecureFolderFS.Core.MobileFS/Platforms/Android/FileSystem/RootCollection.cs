@@ -18,15 +18,15 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             _context = context;
             Roots = new();
 
-            FileSystemManager.Instance.CollectionChanged += FileSystemManager_CollectionChanged;
+            FileSystemManager.Instance.FileSystems.CollectionChanged += FileSystemManager_CollectionChanged;
         }
 
-        public SafRoot? GetRootForRootId(string rootId)
+        public SafRoot? GetSafRootForRootId(string rootId)
         {
             return Roots.FirstOrDefault(x => x.RootId == rootId);
         }
 
-        public SafRoot? GetRootForStorable(IStorable storable)
+        public SafRoot? GetSafRootForStorable(IStorable storable)
         {
             foreach (var safRoot in Roots)
             {
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 // TODO: Make the authority change resistant to avoid unexpected errors
                 // Authority taken from ContentProviderAttribute on FileSystemProvider
-                var rootsUri = DocumentsContract.BuildRootsUri("com.securefolderfs.securefolderfs.provider");
+                var rootsUri = DocumentsContract.BuildRootsUri("org.securefolderfs.securefolderfs.provider");
                 if (rootsUri is not null)
                     _context.ContentResolver?.NotifyChange(rootsUri, null);
             }
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public void Dispose()
         {
-            FileSystemManager.Instance.CollectionChanged -= FileSystemManager_CollectionChanged;
+            FileSystemManager.Instance.FileSystems.CollectionChanged -= FileSystemManager_CollectionChanged;
         }
     }
 }

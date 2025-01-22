@@ -3,18 +3,23 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hni="using:H.NotifyIcon"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
+    xmlns:svfs="using:SecureFolderFS.Storage.VirtualFileSystem"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.InterfaceHost"
     xmlns:uc3="using:SecureFolderFS.Uno.UserControls.Navigation"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Loaded="MainWindowRootControl_Loaded"
     mc:Ignorable="d not_win">
 
     <UserControl.Resources>
+        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
+
         <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainHostViewModel">
             <uc2:MainAppHostControl ViewModel="{x:Bind}" />
         </DataTemplate>
@@ -44,5 +49,57 @@
                 <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
             </uc3:RootNavigationControl.TemplateSelector>
         </uc3:RootNavigationControl>
+
+        <!--  Debugging Button  -->
+        <Button
+            x:Name="DebugButton"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Width="32"
+            Height="32"
+            Padding="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            x:FieldModifier="public"
+            x:Load="{x:Bind IsDebugging, Mode=OneWay}"
+            Click="DebugButton_Click">
+            <FontIcon Glyph="&#xEBE8;" />
+        </Button>
+
+        <!--  Taskbar Icon  -->
+        <win:Border Grid.Row="0">
+            <hni:TaskbarIcon
+                x:Name="TaskbarIcon"
+                ContextMenuMode="SecondWindow"
+                DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
+                IconSource="ms-appx:///Assets/Icons/app_icon.ico"
+                MenuActivation="LeftOrRightClick"
+                PopupActivation="DoubleClick"
+                ToolTipText="SecureFolderFS">
+                <hni:TaskbarIcon.ContextFlyout>
+                    <MenuFlyout Placement="Top">
+                        <MenuFlyoutItem Click="MenuShowApp_Click" Text="View in app">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8A7;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem
+                            Click="MenuLockAll_Click"
+                            IsEnabled="{x:Bind svfs:FileSystemManager.Instance.FileSystems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                            Text="Lock all vaults">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72E;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Click="MenuCloseApp_Click" Text="Exit">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF78A;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </hni:TaskbarIcon.ContextFlyout>
+            </hni:TaskbarIcon>
+        </win:Border>
     </Grid>
 </UserControl>

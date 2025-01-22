@@ -16,14 +16,18 @@
 
     <UserControl.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <vc:IconSourceConverter x:Key="IconSourceConverter" />
     </UserControl.Resources>
 
     <NavigationView
         x:Name="Sidebar"
+        AllowDrop="True"
         DisplayModeChanged="Sidebar_DisplayModeChanged"
+        DragOver="Sidebar_DragOver"
+        Drop="Sidebar_Drop"
         ExpandedModeThresholdWidth="816"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
@@ -33,10 +37,7 @@
         PaneClosed="Sidebar_PaneClosed"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.VaultListViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        SelectionChanged="Sidebar_SelectionChanged"
-        AllowDrop="True"
-        DragOver="Sidebar_DragOver"
-        Drop="Sidebar_Drop">
+        SelectionChanged="Sidebar_SelectionChanged">
 
         <Grid>
             <Grid
@@ -55,6 +56,8 @@
                     Click="PaneShowButton_Click"
                     CornerRadius="0 6 6 0"
                     Visibility="Collapsed">
+
+                    <!--  TODO: Blocked by Uno - https://github.com/unoplatform/uno/pull/18267  -->
                     <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             EasingMode="EaseOut"
@@ -79,7 +82,7 @@
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox
                 ItemsSource="{x:Bind ViewModel.VaultListViewModel.SearchViewModel.SearchItems, Mode=OneWay}"
-                PlaceholderText="{l:ResourceString Name=Search}"
+                PlaceholderText="{l:ResourceString Rid=Search}"
                 QueryIcon="Find"
                 QuerySubmitted="SidebarSearchBox_QuerySubmitted"
                 TextChanged="SidebarSearchBox_TextChanged" />
@@ -101,7 +104,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
+                    AutomationProperties.Name="{l:ResourceString Rid=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
@@ -110,9 +113,11 @@
                             Margin="2,0,2,-4"
                             FontSize="16"
                             Glyph="&#xECC8;" />
-                        <TextBlock Text="{l:ResourceString Name=NewVault}" />
+                        <TextBlock Text="{l:ResourceString Rid=NewVault}" />
                     </StackPanel>
                 </Button>
+
+                <!--  TODO(uno): #18589  -->
                 <Button
                     x:Name="CompactAddVaultButton"
                     Grid.Column="0"
@@ -122,10 +127,10 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
+                    AutomationProperties.Name="{l:ResourceString Rid=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
-                    Style="{ThemeResource AccentButtonStyle}">
+                    Style="{ThemeResource AccentButtonStyle}"
+                    Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                     <FontIcon FontSize="16" Glyph="&#xECC8;" />
                 </Button>
 
@@ -138,7 +143,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    AutomationProperties.Name="{l:ResourceString Name=Settings}"
+                    AutomationProperties.Name="{l:ResourceString Rid=Settings}"
                     Background="Transparent"
                     BorderThickness="0"
                     Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}"
@@ -155,6 +160,7 @@
 
                 <win:TeachingTip
                     x:Name="BetaTeachingTip"
+                    Grid.Column="0"
                     MaxWidth="100"
                     x:FieldModifier="public"
                     CloseButtonClick="TeachingTip_CloseButtonClick"
@@ -171,40 +177,103 @@
             <DataTemplate x:DataType="vm:VaultListItemViewModel">
                 <NavigationViewItem
                     Height="64"
-                    AutomationProperties.Name="{x:Bind VaultModel.VaultName, Mode=OneWay}"
-                    ToolTipService.ToolTip="{x:Bind VaultModel.VaultName, Mode=OneWay}">
+                    AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xF540;" />
+                        <IconSourceElement IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel>
-                            <!--  Vault name  -->
-                            <TextBlock
-                                FontWeight="SemiBold"
-                                Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                        <Grid DataContext="{x:Bind}">
+                            <StackPanel Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                                <StackPanel.ChildrenTransitions>
+                                    <TransitionCollection>
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </StackPanel.ChildrenTransitions>
 
-                            <!--  Last opened  -->
-                            <TextBlock
-                                x:Name="LastOpenedText"
-                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                                FontSize="12"
-                                Opacity="0.6"
-                                Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
-                        </StackPanel>
+                                <!--  Vault name  -->
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis" />
+
+                                <!--  Last opened  -->
+                                <TextBlock
+                                    x:Name="LastOpenedText"
+                                    FontSize="12"
+                                    Opacity="0.6"
+                                    Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
+                                    Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                            </StackPanel>
+                            <TextBox
+                                x:Name="RenameBox"
+                                VerticalAlignment="Center"
+                                x:Load="{x:Bind IsRenaming, Mode=OneWay}"
+                                KeyDown="RenameBox_KeyDown"
+                                Loaded="RenameBox_Loaded"
+                                LostFocus="RenameBox_LostFocus"
+                                Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}" />
+                        </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
-                            <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Name=ShowEncryptedVault}">
+                            <!--  Show in Explorer  -->
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
+
+                            <!--  Rename  -->
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem
+                                Click="Rename_Click"
+                                DataContext="{x:Bind}"
+                                Text="{l:ResourceString Rid=Rename}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8AC;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Change icon  -->
+                            <MenuFlyoutItem
+                                Command="{x:Bind CustomizeCommand, Mode=OneWay}"
+                                CommandParameter="Icon"
+                                Text="Change icon">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70F;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Move up/down  -->
+                            <MenuFlyoutSeparator Visibility="{x:Bind CanMove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <MenuFlyoutItem
+                                x:Name="MoveUp"
+                                Command="{x:Bind MoveItemCommand, Mode=OneWay}"
+                                CommandParameter="up"
+                                Text="{l:ResourceString Rid=MoveUp}"
+                                Visibility="{x:Bind CanMoveUp, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70E;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Name="MoveDown"
+                                Command="{x:Bind MoveItemCommand, Mode=OneWay}"
+                                CommandParameter="down"
+                                Text="{l:ResourceString Rid=MoveDown}"
+                                Visibility="{x:Bind CanMoveDown, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70D;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Remove  -->
+                            <MenuFlyoutSeparator />
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
-                                Text="{l:ResourceString Name=RemoveFromList}">
+                                Text="{l:ResourceString Rid=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />
                                 </MenuFlyoutItem.Icon>

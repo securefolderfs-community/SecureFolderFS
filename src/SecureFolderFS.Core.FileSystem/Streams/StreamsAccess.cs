@@ -1,7 +1,7 @@
-﻿using SecureFolderFS.Core.CryptFiles;
-using SecureFolderFS.Core.Cryptography;
+﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
-using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Core.FileSystem.CryptFiles;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 
@@ -23,20 +23,23 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// </summary>
         /// <param name="id">The unique ID of the file.</param>
         /// <param name="ciphertextStream">The ciphertext stream to wrap by the plaintext stream.</param>
+        /// <param name="takeFailureOwnership">Determines whether to close the <paramref name="ciphertextStream"/> when a new plaintext stream fails to open.</param>
         /// <returns>If successful, returns a new instance of plaintext <see cref="Stream"/>.</returns>
-        public Stream OpenPlaintextStream(string id, Stream ciphertextStream)
+        public Stream OpenPlaintextStream(string id, Stream ciphertextStream, bool takeFailureOwnership = true)
         {
             try
             {
                 // Get or create encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
+                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderPlaintextSize));
 
                 // Open a new stream for that file registering existing ciphertext stream
                 return openCryptFile.OpenStream(ciphertextStream);
             }
             catch (Exception)
             {
-                ciphertextStream.Dispose();
+                if (takeFailureOwnership)
+                    ciphertextStream.Dispose();
+
                 throw;
             }
         }

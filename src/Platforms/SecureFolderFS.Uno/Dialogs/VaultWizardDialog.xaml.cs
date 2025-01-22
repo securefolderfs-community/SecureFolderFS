@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             _previousViewModel = ViewModel.CurrentViewModel;
             ViewModel.CurrentViewModel = viewModel;
-            _ = Navigation.NavigateAsync(viewModel, (NavigationTransitionInfo?)null);
+            _ = Navigation.NavigateAsync(viewModel);
 
             var shouldShowBack = ViewModel.CurrentViewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
             await BackTitle.AnimateBackAsync(shouldShowBack);
@@ -88,7 +88,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             ViewModel.NavigationRequested += ViewModel_NavigationRequested;
-            await NavigateAsync(new MainWizardViewModel());
+            await NavigateAsync(new MainWizardViewModel(ViewModel.VaultCollectionModel));
         }
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)

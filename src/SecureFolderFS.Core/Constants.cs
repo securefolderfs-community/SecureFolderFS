@@ -45,6 +45,7 @@ namespace SecureFolderFS.Core
             {
                 public const string ASSOC_CONTENT_CIPHER_ID = "contentCipherScheme";
                 public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
+                public const string ASSOC_FILENAME_ENCODING_ID = "filenameEncoding";
                 public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
@@ -55,16 +56,17 @@ namespace SecureFolderFS.Core
             {
                 public const int V1 = 1;
                 public const int V2 = 2;
-                public const int LATEST_VERSION = V2;
+                public const int V3 = 3;
+                public const int LATEST_VERSION = V2; // TODO: (v3) Update version
             }
         }
 
         public static class FileSystemId
         {
-            public const string FS_DOKAN = "DOKANY";
             public const string FS_FUSE = "FUSE";
             public const string FS_WEBDAV = "WEBDAV";
             public const string FS_ANDROID = "ANDROID_DOCUMENTS_PROVIDER";
+            public const string FS_IOS = "IOS_FILE_PROVIDER";
             public const string FS_LOCAL = "ABSTRACT_STORAGE";
         }
     }

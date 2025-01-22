@@ -13,6 +13,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             ViewModel = query.ToViewModel<VaultDashboardViewModel>();

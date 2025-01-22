@@ -10,7 +10,7 @@
     Closing="AgreementDialog_Closing"
     DefaultButton="Primary"
     PrimaryButtonClick="AgreementDialog_PrimaryButtonClick"
-    PrimaryButtonText="{l:ResourceString Name=Continue}"
+    PrimaryButtonText="{l:ResourceString Rid=Continue}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">

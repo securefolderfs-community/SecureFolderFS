@@ -1,8 +1,12 @@
 using Android.App;
 using Android.Content;
 using Android.Provider;
+using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
+using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
@@ -11,12 +15,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
     internal sealed class AndroidFile : AndroidStorable, IChildFile
     {
         /// <inheritdoc/>
-        protected override DocumentFile? Document { get; }
+        public override string Name { get; }
+
+        /// <inheritdoc/>
+        public override DocumentFile? Document { get; }
 
         public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromSingleUri(activity, uri);
+            Name = Document?.Name ?? base.Name;
         }
 
         /// <inheritdoc/>
@@ -32,14 +40,35 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 return Task.FromResult(stream);
             }
 
-            stream = accessMode == FileAccess.Read
-                ? activity.ContentResolver?.OpenInputStream(Inner)
-                : activity.ContentResolver?.OpenOutputStream(Inner);
+            if (accessMode == FileAccess.Read)
+            {
+                stream = activity.ContentResolver?.OpenInputStream(Inner);
+            }
+            else
+            {
+                var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
+                var outputStream = (activity.ContentResolver?.OpenOutputStream(Inner) as OutputStreamInvoker)?.BaseOutputStream;
+                if (inputStream is null || outputStream is null)
+                    return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
+                var combinedInputStream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
+                stream = combinedInputStream;
+            }
+            
             if (stream is null)
                 return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
             return Task.FromResult(stream);
+        }
+        
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Document is null)
+                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
+
+            properties ??= new AndroidFileProperties(Document);
+            return Task.FromResult(properties);
         }
 
         private static bool IsVirtualFile(Context context, AndroidUri uri)
@@ -75,6 +104,33 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
 
             return null;
+        }
+        
+        private static long GetFileSize(ContentResolver? contentResolver, AndroidUri uri)
+        {
+            if (contentResolver is null)
+                return 0L;
+            
+            try
+            {
+                // Try to get file size using content resolver
+                using var cursor = contentResolver.Query(uri, null, null, null, null);
+                if (cursor != null && cursor.MoveToFirst())
+                {
+                    int sizeIndex = cursor.GetColumnIndex(IOpenableColumns.Size);
+                    if (sizeIndex != -1)
+                    {
+                        return cursor.GetLong(sizeIndex);
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback method if content resolver fails
+            }
+
+            // If size can't be determined, return -1
+            return -1;
         }
     }
 }

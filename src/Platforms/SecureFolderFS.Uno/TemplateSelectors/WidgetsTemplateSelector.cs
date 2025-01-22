@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
@@ -18,7 +19,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             {
                 HealthWidgetViewModel => HealthWidgetTemplate,
                 GraphsWidgetViewModel => GraphsWidgetTemplate,
-                // TODO: AggregatedDataWidgetTemplate
+                AggregatedDataWidgetViewModel => AggregatedDataWidgetTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

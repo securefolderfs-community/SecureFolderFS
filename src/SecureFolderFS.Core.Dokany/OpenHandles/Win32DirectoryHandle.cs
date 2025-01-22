@@ -8,7 +8,6 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         /// <inheritdoc/>
         public override void Dispose()
         {
-            // TODO: Close hFolder handle?
         }
     }
 }

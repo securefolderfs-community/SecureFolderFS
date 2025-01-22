@@ -35,13 +35,13 @@
                     HorizontalAlignment="Center"
                     FontSize="22"
                     FontWeight="SemiBold"
-                    Text="{l:ResourceString Name=Welcome}" />
+                    Text="{l:ResourceString Rid=Welcome}" />
 
                 <TextBlock
                     MaxWidth="450"
                     HorizontalAlignment="Center"
                     Opacity="0.6"
-                    Text="{l:ResourceString Name=NoVaultsMessage}"
+                    Text="{l:ResourceString Rid=NoVaultsMessage}"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
             </StackPanel>
@@ -52,7 +52,7 @@
                 Padding="32,6"
                 HorizontalAlignment="Center"
                 Command="{x:Bind ViewModel.AddNewVaultCommand, Mode=OneWay}"
-                Content="{l:ResourceString Name=NewVault}"
+                Content="{l:ResourceString Rid=NewVault}"
                 Style="{ThemeResource AccentButtonStyle}" />
         </Grid>
 
@@ -67,7 +67,7 @@
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            AutomationProperties.Name="{l:ResourceString Name=Settings}"
+            AutomationProperties.Name="{l:ResourceString Rid=Settings}"
             Background="Transparent"
             BorderThickness="0"
             Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}">

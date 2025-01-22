@@ -14,12 +14,16 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.ApplicationModel;
+using H.NotifyIcon;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Uno
 {
     public partial class App : Application
     {
         public static App? Instance { get; private set; }
+
+        public bool UseForceClose { get; set; }
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -92,30 +96,33 @@ namespace SecureFolderFS.Uno
 
         private static void EnsureEarlyWindow(Window window)
         {
+            // Set window content
             window.Content = new MainWindowRootControl();
 
+            // Attach event for window closing
+            window.Closed += Window_Closed;
+
 #if WINDOWS
+            var appWindow = window.AppWindow;
+
 #if !UNPACKAGED
             // Set icon
-            window.AppWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
+            appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
 #endif
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
 
             // Set title
-            window.AppWindow.Title = "SecureFolderFS";
-
-            // Attach event for window closing
-            window.AppWindow.Closing += AppWindow_Closing;
+            appWindow.Title = nameof(SecureFolderFS);
 
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
                 // Extend title bar
-                window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
                 // Set window buttons background to transparent
-                window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
             else if (window.Content is MainWindowRootControl rootControl)
             {
@@ -130,27 +137,42 @@ namespace SecureFolderFS.Uno
             boundsManager.MinWidth = 662;
             boundsManager.MinHeight = 572;
 
+            // Load saved window state
+            if (!boundsManager.LoadWindowState(UI.Constants.MAIN_WINDOW_ID))
+                window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
+
 #else
-            _ = window;
+            window.Title = nameof(SecureFolderFS);
+            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
         }
 
-#if WINDOWS
-        private static async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+        private static async void Window_Closed(object sender, WindowEventArgs args)
         {
-            try
+#if WINDOWS
+            if (App.Instance?.MainWindow is { } mainWindow)
             {
-                FileSystemManager.Instance.FileSystems.DisposeElements();
+                var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(mainWindow);
+                boundsManager.SaveWindowState(UI.Constants.MAIN_WINDOW_ID);
             }
-            catch (Exception ex)
-            {
-                _ = ex;
-            }
+#endif
 
             var settingsService = DI.Service<ISettingsService>();
-            await settingsService.TrySaveAsync();
+            var shouldForceClose = (!App.Instance?.UseForceClose) ?? false;
+            shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
+
+            if (shouldForceClose)
+            {
+                args.Handled = true;
+                App.Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
+            }
+            else
+            {
+                await SafetyHelpers.NoThrowAsync(async () => await settingsService.TrySaveAsync());
+                SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeElements());
+                App.Current.Exit();
+            }
         }
-#endif
 
         #endregion
 
@@ -172,9 +194,9 @@ namespace SecureFolderFS.Uno
             var factory = LoggerFactory.Create(builder =>
             {
 #if __WASM__
-            builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__ || __MACCATALYST__
-            builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
                 builder.AddConsole();
 #endif

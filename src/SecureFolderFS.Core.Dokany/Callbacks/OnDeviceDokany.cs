@@ -4,9 +4,11 @@ using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using System;
 using System.Collections.Generic;
@@ -70,6 +72,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                         case FileMode.CreateNew:
                         {
+                            if (Specifics.Options.IsReadOnly)
+                                throw FileSystemExceptions.FileSystemReadOnly;
+
                             if (Directory.Exists(ciphertextPath))
                                 return Trace(DokanResult.FileExists, fileName, info, access, share, mode, options, attributes);
 
@@ -87,7 +92,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                             // Create new DirectoryID
                             var directoryId = Guid.NewGuid().ToByteArray();
-                            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
                             // Initialize directory with DirectoryID
                             using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
@@ -109,8 +114,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var pathExists = true;
                 var pathIsDirectory = false;
 
-                var readWriteAttributes = (access & Constants.FileSystem.DATA_ACCESS) == 0;
-                var readAccess = (access & Constants.FileSystem.DATA_WRITE_ACCESS) == 0;
+                var readWriteAttributes = (access & Constants.Dokan.DATA_ACCESS) == 0;
+                var readAccess = (access & Constants.Dokan.DATA_WRITE_ACCESS) == 0;
 
                 try
                 {
@@ -161,6 +166,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 try
                 {
+                    if (Specifics.Options.IsReadOnly && mode.IsWriteFlag())
+                        throw FileSystemExceptions.FileSystemReadOnly;
+
                     var openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
                     if (mode == FileMode.CreateNew && readAccess)
                         openAccess = System.IO.FileAccess.ReadWrite;
@@ -223,7 +231,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
-            if (info.DeleteOnClose)
+            if (info.DeleteOnClose && !Specifics.Options.IsReadOnly)
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
                 if (ciphertextPath is null)
@@ -233,7 +241,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     if (info.IsDirectory)
                     {
-                        var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                        var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                         Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
                         Directory.Delete(ciphertextPath, true);
                     }
@@ -260,19 +268,19 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     return Trace(DokanResult.PathNotFound, fileName, info);
                 }
 
-                FileSystemInfo finfo = new FileInfo(ciphertextPath);
-                if (!finfo.Exists)
-                    finfo = new DirectoryInfo(ciphertextPath);
+                FileSystemInfo fsInfo = new FileInfo(ciphertextPath);
+                if (!fsInfo.Exists)
+                    fsInfo = new DirectoryInfo(ciphertextPath);
                 
                 fileInfo = new FileInformation()
                 {
-                    FileName = finfo.Name,
-                    Attributes = finfo.Attributes,
-                    CreationTime = finfo.CreationTime,
-                    LastAccessTime = finfo.LastAccessTime,
-                    LastWriteTime = finfo.LastWriteTime,
-                    Length = finfo is FileInfo fileInfo2
-                        ? Specifics.Security.ContentCrypt.CalculateCleartextSize(fileInfo2.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize)
+                    FileName = fsInfo.Name,
+                    Attributes = fsInfo.Attributes,
+                    CreationTime = fsInfo.CreationTime,
+                    LastAccessTime = fsInfo.LastAccessTime,
+                    LastWriteTime = fsInfo.LastWriteTime,
+                    Length = fsInfo is FileInfo fileInfo2
+                        ? Specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo2.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
                         : 0L
                 };
 
@@ -308,7 +316,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
         {
-            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP)
+            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.Dokan.MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP)
             {
                 _vaultDriveInfoTries++;
                 _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
@@ -338,12 +346,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics, fileName);
+                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics.Security, fileName);
                 var itemsEnumerable = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
 
                 foreach (var item in itemsEnumerable)
                 {
-                    if (PathHelpers.IsCoreFile(item.Name))
+                    if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
                     var plaintextName = NativePathHelpers.GetPlaintextPath(item.FullName, Specifics, directoryId);
@@ -366,7 +374,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         LastAccessTime = item.LastAccessTime,
                         LastWriteTime = item.LastWriteTime,
                         Length = item is FileInfo fileInfo
-                            ? Specifics.Security.ContentCrypt.CalculateCleartextSize(fileInfo.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize)
+                            ? Specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
                             : 0L
                     });
                 }
@@ -384,6 +392,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
         {
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             try
             {
                 // MS-FSCC 2.6 File Attributes : There is no file attribute with the value 0x00000000
@@ -475,9 +486,17 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus DeleteFile(string fileName, IDokanFileInfo info)
         {
-            var ciphertextPath = GetCiphertextPath(fileName);
-
             // Just check if we can delete the file - the true deletion is done in Cleanup()
+
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
+            // Get ciphertext path
+            var ciphertextPath = GetCiphertextPath(fileName);
+            if (ciphertextPath is null)
+                return Trace(NtStatus.ObjectPathInvalid, fileName, info);
+
+            // Perform checks
             if (Directory.Exists(ciphertextPath))
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
@@ -493,17 +512,19 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
         {
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             var canDelete = true;
             var ciphertextPath = GetCiphertextPath(fileName);
             if (ciphertextPath is null)
                 return Trace(NtStatus.ObjectPathInvalid, fileName, info);
 
             using var directoryEnumerator = Directory.EnumerateFileSystemEntries(ciphertextPath).GetEnumerator();
-
             while (directoryEnumerator.MoveNext())
             {
                 // Check for any files except core files
-                canDelete &= PathHelpers.IsCoreFile(Path.GetFileName(directoryEnumerator.Current));
+                canDelete &= PathHelpers.IsCoreName(Path.GetFileName(directoryEnumerator.Current));
 
                 // If the flag changed (directory is not empty), break the loop
                 if (!canDelete)
@@ -519,7 +540,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             var oldCiphertextPath = GetCiphertextPath(oldName);
             var newCiphertextPath = GetCiphertextPath(newName);
-
             var fileNameCombined = $"{oldName} -> {newName}";
 
             if (oldCiphertextPath is null || newCiphertextPath is null)
@@ -528,8 +548,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             CloseHandle(info);
             InvalidateContext(info);
 
-            var newPathExists = info.IsDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileNameCombined, info);
 
+            var newPathExists = info.IsDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
             try
             {
                 if (!newPathExists)
@@ -605,9 +627,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 return base.SetEndOfFile(fileName, length, info);
             }
-            catch (IOException ioEx)
+            catch (IOException ex)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                if (ErrorHandlingHelpers.NtStatusFromException(ex, out var ntStatus))
                     return Trace((NtStatus)ntStatus, fileName, info);
 
                 throw;
@@ -697,6 +719,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
         {
+            if (Specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             try
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
@@ -770,9 +795,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 return base.WriteFile(fileName, buffer, bufferLength, out bytesWritten, offset, info);
             }
-            catch (IOException ioEx)
+            catch (IOException ex)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                if (ErrorHandlingHelpers.NtStatusFromException(ex, out var ntStatus))
                 {
                     bytesWritten = 0;
                     return Trace((NtStatus)ntStatus, fileName, info);
@@ -797,10 +822,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        protected override string? GetCiphertextPath(string cleartextName)
+        protected override string? GetCiphertextPath(string plaintextName)
         {
             var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-            return NativePathHelpers.GetCiphertextPath(cleartextName, Specifics, directoryId);
+            return NativePathHelpers.GetCiphertextPath(plaintextName, Specifics, directoryId);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <DotNetVersion>net8.0</DotNetVersion>
+    <DotNetVersion>net9.0</DotNetVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -62,7 +62,7 @@
     <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
       <PropertyGroup>
         <IsMacCatalyst>true</IsMacCatalyst>
-        <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
       </PropertyGroup>
     </When>
     <When Condition="$(TargetFramework.Contains('windows10'))">

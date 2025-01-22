@@ -1,0 +1,47 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.TransferControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    x:Name="RootControl">
+
+    <Grid
+        Padding="16"
+        x:DataType="local:TransferControl"
+        Background="{StaticResource SecondaryBrush}"
+        BackgroundColor="Gray"
+        BindingContext="{x:Reference RootControl}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Grid.Column="0"
+            FontSize="18"
+            Text="{Binding Title, Mode=OneWay}"
+            VerticalOptions="Center" />
+
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                    <mdc:IconButton
+                        Command="{Binding CancelCommand, Mode=OneWay}"
+                        IconData="{x:Static mdci:Material.Close}"
+                        Style="{DynamicResource OutlinedIconButtonStyle}" />
+                    <uc:ActivityButton Command="{Binding PrimaryCommand, Mode=OneWay}" Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                </HorizontalStackLayout>
+            </On>
+            <On Platform="iOS">
+                <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                    <Button Command="{Binding CancelCommand, Mode=OneWay}" Text="{l:ResourceString Rid=Cancel}" />
+                    <uc:ActivityButton Command="{Binding PrimaryCommand, Mode=OneWay}" Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                </HorizontalStackLayout>
+            </On>
+        </OnPlatform>
+    </Grid>
+</ContentView>

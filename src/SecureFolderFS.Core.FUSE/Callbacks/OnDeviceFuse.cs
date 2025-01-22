@@ -1,6 +1,6 @@
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
 using System.Runtime.CompilerServices;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int ChMod(ReadOnlySpan<byte> path, mode_t mode, FuseFileInfoRef fiRef)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Chown(ReadOnlySpan<byte> path, uint uid, uint gid, FuseFileInfoRef fiRef)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Create(ReadOnlySpan<byte> path, mode_t mode, ref FuseFileInfo fi)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -151,7 +151,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSyncDir(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -198,7 +198,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -errno;
 
                 if (File.Exists(ciphertextPath))
-                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
+                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculatePlaintextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
 
                 return 0;
             }
@@ -255,7 +255,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int MkDir(ReadOnlySpan<byte> path, mode_t mode)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -270,7 +270,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             // Create new DirectoryID
             var directoryId = Guid.NewGuid().ToByteArray();
-            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
             // Initialize directory with DirectoryID
             using var directoryIdStream = File.Create(directoryIdPath);
@@ -309,7 +309,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if ((fi.flags & O_TMPFILE) != 0)
                 options |= FileOptions.DeleteOnClose;
 
-            if (MountOptions!.IsReadOnly && (mode == FileMode.Create || mode == FileMode.Truncate || (fi.flags & O_WRONLY) != 0 || (fi.flags & O_RDWR) != 0))
+            if (FuseOptions!.IsReadOnly && (mode == FileMode.Create || mode == FileMode.Truncate || (fi.flags & O_WRONLY) != 0 || (fi.flags & O_RDWR) != 0))
                 return -EROFS;
 
             var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
@@ -361,7 +361,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
-                if (PathHelpers.IsCoreFile(entry))
+                if (PathHelpers.IsCoreName(entry))
                     continue;
 
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
@@ -385,7 +385,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int RemoveXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -404,7 +404,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Rename(ReadOnlySpan<byte> path, ReadOnlySpan<byte> newPath, int flags)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -424,17 +424,17 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int RmDir(ReadOnlySpan<byte> path)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreFile(x)))
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreName(x)))
                 return -ENOTEMPTY;
 
-            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
             // Remove DirectoryID
             File.Delete(directoryIdPath);
@@ -451,7 +451,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int SetXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name, ReadOnlySpan<byte> value, int flags)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -488,7 +488,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -529,7 +529,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         /// </remarks>
         public override unsafe int Unlink(ReadOnlySpan<byte> path)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -550,7 +550,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int UpdateTimestamps(ReadOnlySpan<byte> path, ref timespec atime, ref timespec mtime, FuseFileInfoRef fiRef)
         {
-            if (MountOptions!.IsReadOnly)
+            if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -612,12 +612,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return buffer.Length;
         }
 
-        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> cleartextName)
+        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> plaintextName)
         {
-            fixed (byte *cleartextNamePtr = cleartextName)
+            fixed (byte *plaintextNamePtr = plaintextName)
             {
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), Specifics, directoryId);
+                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(plaintextNamePtr, plaintextName.Length), Specifics, directoryId);
             }
         }
     }

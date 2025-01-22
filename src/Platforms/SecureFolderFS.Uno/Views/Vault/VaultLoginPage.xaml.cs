@@ -33,6 +33,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultLoginViewModel viewModel)
@@ -70,7 +71,6 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
-            _ = dashboardViewModel.InitAsync();
 
             await ViewModel.VaultNavigation.TryNavigateAndForgetAsync(dashboardViewModel);
         }

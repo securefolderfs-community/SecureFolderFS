@@ -15,7 +15,9 @@
 
         <!--  Title  -->
         <StackPanel
+            x:Name="TitlePanel"
             HorizontalAlignment="Left"
+            x:FieldModifier="public"
             Orientation="Horizontal"
             Spacing="6">
             <TextBlock
@@ -28,9 +30,8 @@
                 CharacterSpacing="32"
                 FontSize="9"
                 FontWeight="Thin"
-                Loaded="VersionTitle_Loaded"
                 Opacity="0.8"
-                Text="BETA" />
+                Text="Beta5" />
         </StackPanel>
     </Border>
 </UserControl>
