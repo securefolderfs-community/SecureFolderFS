@@ -13,38 +13,72 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static class AbstractRecycleBinHelpers
     {
-        public static async Task RestoreAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
-            if (specifics.Options.IsReadOnly)
-                return;
-            
-            // Get recycle bin
-            var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
-            
             // Read configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
             await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
 
             // Deserialize configuration
             var deserialized = await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
-            if (deserialized is not { OriginalPath: { }})
+            if (deserialized is not { OriginalPath: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
-            // Get parent destination folder
-            var id = Path.GetDirectoryName(deserialized.OriginalPath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
-            var parentFolder = await specifics.ContentFolder.GetItemRecursiveAsync(id, cancellationToken);
-            if (parentFolder is not IModifiableFolder modifiableParent)
-                throw new UnauthorizedAccessException("The parent folder is not modifiable.");
+            return deserialized;
+        }
+        
+        public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        {
+            // Get recycle bin
+            var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             
-            await RestoreAsync(item, modifiableParent, specifics, cancellationToken);
+            // Deserialize configuration
+            var deserialized = await GetItemDataModelAsync(item, recycleBin, specifics, streamSerializer, cancellationToken);
+            if (deserialized is not { OriginalPath: not null })
+                throw new FormatException("Could not deserialize recycle bin configuration file.");
+            
+            // Check if destination item exists
+            var id = deserialized.OriginalPath.Replace('/', Path.DirectorySeparatorChar);
+            try
+            {
+                _ = await recycleBin.GetItemByRelativePathAsync(id, cancellationToken);
+                
+                // Destination item already exists, user must choose a new location
+                return null;
+            }
+            catch (Exception) { }
+
+            // Check if destination folder exists
+            var parentId = Path.GetDirectoryName(id) ?? string.Empty;
+            try
+            {
+                var parentItem = await recycleBin.GetItemByRelativePathAsync(parentId, cancellationToken);
+                
+                // Assume the parent is a folder and return it
+                return parentItem as IModifiableFolder;
+            }
+            catch (Exception) { }
+            
+            // No destination folder has been found, user must choose a new location
+            return null;
         }
 
-        public static async Task RestoreAsync(IStorableChild item, IModifiableFolder destinationFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        public static async Task RestoreAsync(IStorableChild item, IModifiableFolder destinationFolder, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+            
+            // Deserialize configuration
+            var deserialized = await GetItemDataModelAsync(item, recycleBin, specifics, streamSerializer, cancellationToken);
+           
+            // Rename the item to correct name
+            var originalName = Path.GetFileName(deserialized.OriginalPath) ?? throw new IOException("Could not get file name.");
+            var renamedItem = await renamableRecycleBin.RenameAsync(item, originalName, cancellationToken);
+
+            // Move item to destination
+            _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
         }
         
         public static async Task DeleteOrTrashAsync(IModifiableFolder sourceFolder, IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
@@ -90,10 +124,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 return await specifics.ContentFolder.GetFolderByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
             }
-            catch (Exception ex)
-            {
-                _ = ex;
-            }
+            catch (Exception) { }
             
             if (specifics.ContentFolder is not IModifiableFolder modifiableFolder)
                 throw new UnauthorizedAccessException("The content folder is not modifiable.");
