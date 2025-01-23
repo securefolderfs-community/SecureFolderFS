@@ -2,6 +2,7 @@ using MauiIcons.Core;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -61,6 +62,16 @@ namespace SecureFolderFS.Maui.Views
                 Order = ToolbarItemOrder.Secondary
             });
             ExToolbarItems.Add(new ExMenuItem()
+            {
+                Text = "Settings".ToLocalized(),
+                Command = ViewModel.OpenSettingsCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+#elif ANDROID
+            if (!ToolbarItems.IsEmpty())
+                return;
+            
+            ToolbarItems.Add(new()
             {
                 Text = "Settings".ToLocalized(),
                 Command = ViewModel.OpenSettingsCommand,

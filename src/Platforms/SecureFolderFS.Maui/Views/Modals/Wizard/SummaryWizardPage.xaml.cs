@@ -20,6 +20,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         }
 
         /// <inheritdoc/>
+        protected override bool OnBackButtonPressed()
+        {
+            OverlayViewModel.CancellationCommand.Execute(null);
+            return true;
+        }
+
+        /// <inheritdoc/>
         protected override void OnAppearing()
         {
             OverlayViewModel.CurrentViewModel = ViewModel;

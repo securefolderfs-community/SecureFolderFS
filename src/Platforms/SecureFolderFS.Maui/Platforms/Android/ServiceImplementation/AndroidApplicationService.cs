@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {
-            return DeviceInfo.VersionString;
+            return $"Android {DeviceInfo.VersionString}";
         }
 
         /// <inheritdoc/>

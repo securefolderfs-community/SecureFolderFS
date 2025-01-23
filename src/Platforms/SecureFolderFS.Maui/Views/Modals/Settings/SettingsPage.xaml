@@ -11,41 +11,44 @@
     Title="{l:ResourceString Rid=Settings}"
     x:DataType="local:SettingsPage">
 
-    <VerticalStackLayout>
-        <TableView>
-            <TableRoot>
-                <TableSection Title="{l:ResourceString Rid=SettingsGeneral}">
-                    <uc:SplitCell LeftText="{l:ResourceString Rid=Language}">
-                        <uc:SplitCell.RightSide>
-                            <Border>
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="Transparent" />
-                                </Border.Stroke>
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout>
+            <TableView>
+                <TableRoot>
+                    <TableSection Title="{l:ResourceString Rid=SettingsGeneral}">
+                        <uc:SplitCell LeftText="{l:ResourceString Rid=Language}">
+                            <uc:SplitCell.RightSide>
+                                <Border>
+                                    <Border.Stroke>
+                                        <SolidColorBrush Color="Transparent" />
+                                    </Border.Stroke>
 
-                                <Picker
-                                    BindingContext="{x:Reference ThisPage}"
-                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
-                                    ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
-                                    SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
-                                    WidthRequest="96" />
-                            </Border>
-                        </uc:SplitCell.RightSide>
-                    </uc:SplitCell>
-                    <SwitchCell On="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" Text="{l:ResourceString Rid=AutoLock}" />
-                    <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Rid=Telemetry}" />
-                </TableSection>
+                                    <Picker
+                                        BindingContext="{x:Reference ThisPage}"
+                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
+                                        ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
+                                        SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
+                                        WidthRequest="96" />
+                                </Border>
+                            </uc:SplitCell.RightSide>
+                        </uc:SplitCell>
+                        <SwitchCell On="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" Text="{l:ResourceString Rid=AutoLock}" />
+                        <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Rid=Telemetry}" />
+                    </TableSection>
 
-                <TableSection Title="{l:ResourceString Rid=SettingsAbout}">
-                    <uc:SplitCell
-                        Command="{Binding AboutViewModel.CopyAppVersionCommand}"
-                        LeftText="{l:ResourceString Rid=Version}"
-                        RightText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
-                    <uc:SplitCell
-                        Command="{Binding AboutViewModel.CopySystemVersionCommand}"
-                        LeftText="{l:ResourceString Rid=SystemVersion}"
-                        RightText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
-                </TableSection>
-            </TableRoot>
-        </TableView>
-    </VerticalStackLayout>
+                    <TableSection Title="{l:ResourceString Rid=SettingsAbout}">
+                        <uc:SplitCell
+                            Command="{Binding AboutViewModel.CopyAppVersionCommand}"
+                            LeftText="{l:ResourceString Rid=Version}"
+                            RightText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
+                        <uc:SplitCell
+                            Command="{Binding AboutViewModel.CopySystemVersionCommand}"
+                            LeftText="{l:ResourceString Rid=SystemVersion}"
+                            RightText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+
 </md:BaseModalPage>
