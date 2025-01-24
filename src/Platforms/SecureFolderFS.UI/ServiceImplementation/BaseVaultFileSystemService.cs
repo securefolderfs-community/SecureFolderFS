@@ -16,6 +16,7 @@ using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -134,6 +135,45 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     DeletionTimestamp = dataModel.DeletionTimestamp
                 };
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
+        {
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+                return;
+            
+            var specifics = specificsWrapper.Inner;
+            var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
+                recycleBinItem,
+                specifics,
+                StreamSerializer.Instance,
+                cancellationToken);
+
+            // Prompt the user to pick the folder when the default destination couldn't be used
+            if (destinationFolder is null)
+            {
+                // TODO: Add starting directory parameter
+                var fileExplorerService = DI.Service<IFileExplorerService>();
+                destinationFolder = await fileExplorerService.PickFolderAsync(false, cancellationToken) as IModifiableFolder;
+                if (destinationFolder is null)
+                    return;
+
+                if (!destinationFolder.Id.Contains(vfsRoot.Inner.Id, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Invalid folder chosen outside of vault
+                    // TODO: Return IResult or throw
+                    return;
+                }
+            }
+
+            // Restore the item to chosen destination
+            await AbstractRecycleBinHelpers.RestoreAsync(
+                recycleBinItem,
+                destinationFolder,
+                specifics,
+                StreamSerializer.Instance,
+                cancellationToken);
         }
 
         /// <inheritdoc/>

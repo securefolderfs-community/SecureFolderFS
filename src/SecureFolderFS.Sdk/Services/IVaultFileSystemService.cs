@@ -41,6 +41,10 @@ namespace SecureFolderFS.Sdk.Services
 
         Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, IDisposable contractOrRoot, IssueDelegate? issueDelegate, CancellationToken cancellationToken = default);
         
+        // TODO: Move to health service and recyclebin service
+        
         IAsyncEnumerable<RecycleBinItemViewModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
+        
+        Task RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
     }
 }
