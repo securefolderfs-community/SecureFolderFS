@@ -16,7 +16,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IVaultFileSystemService>]
+    [Inject<IRecycleBinService>]
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
@@ -33,8 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in VaultFileSystemService.GetRecycleBinItemsAsync(
-                               _unlockedVaultViewModel.StorageRoot, cancellationToken))
+            await foreach (var item in RecycleBinService.GetRecycleBinItemsAsync(_unlockedVaultViewModel.StorageRoot, cancellationToken))
             {
                 Items.Add(item);
             }
@@ -51,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 if (item.CiphertextItem is not IStorableChild storableChild)
                     continue;
                 
-                await VaultFileSystemService.RestoreItemAsync(_unlockedVaultViewModel.StorageRoot, storableChild, cancellationToken);
+                await RecycleBinService.RestoreItemAsync(_unlockedVaultViewModel.StorageRoot, storableChild, cancellationToken);
                 Items.Remove(item);
             }
         }

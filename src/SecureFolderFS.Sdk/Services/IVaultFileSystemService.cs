@@ -1,12 +1,11 @@
-﻿using System;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -17,6 +16,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the local representation of a file system.
         /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A new local file system instance.</returns>
         Task<IFileSystem> GetLocalFileSystemAsync(CancellationToken cancellationToken);
 
@@ -27,7 +27,8 @@ namespace SecureFolderFS.Sdk.Services
         /// Returned file systems that are available, may not be supported on this device. 
         /// Use <see cref="IFileSystem.GetStatusAsync"/> to check if a given file system is supported.
         /// </remarks>
-        /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>An <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
         IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
 
         /// <summary>
@@ -41,10 +42,6 @@ namespace SecureFolderFS.Sdk.Services
 
         Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, IDisposable contractOrRoot, IssueDelegate? issueDelegate, CancellationToken cancellationToken = default);
         
-        // TODO: Move to health service and recyclebin service
-        
-        IAsyncEnumerable<RecycleBinItemViewModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
-        
-        Task RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
+        // TODO: Move to health service
     }
 }
