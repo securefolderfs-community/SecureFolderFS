@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,8 +18,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -288,5 +288,15 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                     if (s is MainAppHostControl sender)
                         _ = sender.SetupNavigationAsync();
                 }));
+        
+        private void NavigationItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+#if HAS_UNO
+            if (sender is not NavigationViewItem navigationViewItem)
+                return;
+            
+            navigationViewItem.ContextFlyout.ShowAt(navigationViewItem);
+#endif
+        }
     }
 }

@@ -121,6 +121,7 @@
                 <Button
                     x:Name="CompactAddVaultButton"
                     Grid.Column="0"
+                    Width="36"
                     Height="36"
                     Margin="-16,16,0,0"
                     HorizontalAlignment="Left"
@@ -178,6 +179,8 @@
                 <NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    DoubleTapped="NavigationItem_DoubleTapped"
+                    IsDoubleTapEnabled="True"
                     ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <IconSourceElement IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
@@ -216,7 +219,7 @@
                         </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
-                        <MenuFlyout>
+                        <MenuFlyout x:Name="ItemFlyout">
                             <!--  Show in Explorer  -->
                             <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>

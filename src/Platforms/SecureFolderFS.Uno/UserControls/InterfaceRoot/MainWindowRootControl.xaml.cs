@@ -16,6 +16,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
+using Uno.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -101,8 +102,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 #if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
 #endif
-
-            global::Uno.UI.WindowExtensions.EnableHotReload(window);
+            window.EnableHotReload();
             window.Activate();
 #endif
         }
