@@ -34,6 +34,7 @@
     <Resource Language="ms-MY"/>
     <Resource Language="id-ID"/>
     <Resource Language="hi-IN"/>
+    <Resource Language="zh-CN"/>
   </Resources>
 
   <Applications>
