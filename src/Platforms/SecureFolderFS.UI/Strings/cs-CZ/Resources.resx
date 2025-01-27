@@ -118,109 +118,109 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>Přidat existující</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Přidat existující trezor</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Vyberte existující trezor z vašeho zařízení</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Přidat nový trezor</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>Přihlásit</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>Ověření pomocí {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Automaticky zamknout trezory</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Zamknout všechny trezory, když je zařízení uzamčeno</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Spustit se systémem</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Spustit SecureFolderFS při spuštění systému</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Zpět</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Zrušit</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Novinky</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Skvěle!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Zobrazit nejnovější poznámky k vydání pro tuto verzi</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Při načítání seznamu změn došlo k problému.</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Zkontrolovat aktualizace</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Zavřít</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Potvrdit</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Pokračovat</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Zkopírováno</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Zkopírovat verzi aplikace</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Kopírovat verzi operačního systému</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Zkopírovat verzi aplikace</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Vyberte verzi, kterou chcete zkopírovat do schránky</value>
   </data>
   <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
+    <value>Vytvořit nový</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Nový trezor</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Vytvořit nový trezor SecurefolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Aktuální heslo</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Šifrování údajů</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Zakázat nedávno přístupný seznam</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Dočasně zakázat seznam nedávných souborů při odemknutí trezorů</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>Stahuji {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Šifrovat</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Heslo pro přihlášení</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
@@ -229,43 +229,43 @@
     <value>Export settings</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Šifrování názvů souboru</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Poskytovatel souboru</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Vyberte preferovaný typ virtuálního souborového systému</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Potřebuje pozornost</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Nenalezeny žádné problémy</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Nalezené problémy</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importovat nastavení</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Instaluji...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Nesprávné heslo</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Zadané heslo není správné.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>Soubor klíče</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Jazyky</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Vybrat jazyk zobrazení</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
     <value>Last checked: {0}</value>
@@ -393,7 +393,7 @@
     <value>Privacy</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Social</value>
@@ -420,157 +420,157 @@
     <value>Choose application theme</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Světlé</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Výchozí systémové nastavení</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Licence třetí strany</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Zobrazit knihovny třetích stran používané zabezpečenými složkami</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Odemknutí</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Vault byl přidán</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Údaje o trezoru</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>Trezor je uzamčen</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Vlastnosti Trezoru</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Zobrazení informací o tomto trezoru</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>Obnova trezoru</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Vstupní údaje</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Zobrazit na GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Zobrazit repozitáře</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Zobrazit trezory</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>Zobrazit tento trezor v Průzkumníku</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Www stránky</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Vítejte ve SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Novinky</value>
   </data>
   <data name="WindowsHello" xml:space="preserve">
-    <value>Windows Hello</value>
+    <value>Windows Ahoj</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Rychlosti zápisu</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Přidejte</value>
   </data>
   <data name="VaultLoadError" xml:space="preserve">
-    <value>Vault could not be loaded</value>
+    <value>Trezor se nepodařilo načíst</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>Detaily výjimky</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Open</value>
+    <value>Otevřít</value>
   </data>
   <data name="SelectFolderToContinue" xml:space="preserve">
-    <value>Select a folder to continue</value>
+    <value>Pro pokračování vyberte složku</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>Zvolený trezor nemusí být podporován</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
-    <value>Vault folder is invalid</value>
+    <value>Složka Trezoru je neplatná</value>
   </data>
   <data name="SelectedValidVault" xml:space="preserve">
-    <value>Found a valid vault folder</value>
+    <value>Nalezena správná složka trezoru</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>Vybraný trezor bude přepsáno</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>Bude vytvořen nový trezor ve vybrané složce</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
-    <value>No location selected</value>
+    <value>Není vybrána žádná poloha</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>Typ uzamčení</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
-    <value>Advanced options</value>
+    <value>Pokročilé možnosti</value>
     <comment>Use a short-hand name, if possible</comment>
   </data>
   <data name="Setup" xml:space="preserve">
-    <value>Setup</value>
+    <value>Průvodce instalací</value>
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>Nastavit autentizaci klíčového souboru</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>Nastavit ověřování systému Windows Hello</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
-    <value>Login options</value>
+    <value>Možnosti přihlašení</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Bezpečnost</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
-    <value>View recovery codes</value>
+    <value>Zobrazit obnovovací kódy</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>Přístupové kódy obnovy pro tento trezor pro případ, že zapomenete vaše přihlašovací údaje</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use recovery key</value>
+    <value>Použít recovery klíč</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>Změnit přístupové údaje</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>Změňte způsob přihlášení do tohoto trezoru</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
+    <value>Dvoufázové ověření</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>Nastavení nebo změna dvoufaktorového ověřování</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>Upravit stávající</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Select authentication option</value>
+    <value>Zvolit možnost ověřování</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
-    <value>All options</value>
+    <value>Všechna nastavení</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>Autentizovat pomocí klíčového souboru</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
     <value>Authenticate with Windows Hello</value>
@@ -643,5 +643,29 @@
   </data>
   <data name="LearnMore" xml:space="preserve">
     <value>Learn more</value>
+  </data>
+  <data name="VaultAlreadyExists" xml:space="preserve">
+    <value>The selected vault already exists</value>
+  </data>
+  <data name="UnlockAsReadOnly" xml:space="preserve">
+    <value>Unlock as read-only</value>
+  </data>
+  <data name="VaultReadOnlyMode" xml:space="preserve">
+    <value>The vault is in read-only mode</value>
+  </data>
+  <data name="HealthReport" xml:space="preserve">
+    <value>Health report</value>
+    <comment>Title for health report view</comment>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move up</value>
+    <comment>Change order of vaults</comment>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move down</value>
+    <comment>Change order of vaults</comment>
   </data>
 </root>
