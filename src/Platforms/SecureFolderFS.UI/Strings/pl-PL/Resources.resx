@@ -393,7 +393,7 @@
     <value>Prywatność</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Pokaż zaszyfrowany sejf w Eksploratorze plików</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Społeczność</value>
@@ -643,5 +643,29 @@
   </data>
   <data name="LearnMore" xml:space="preserve">
     <value>Dowiedz się więcej</value>
+  </data>
+  <data name="VaultAlreadyExists" xml:space="preserve">
+    <value>The selected vault already exists</value>
+  </data>
+  <data name="UnlockAsReadOnly" xml:space="preserve">
+    <value>Unlock as read-only</value>
+  </data>
+  <data name="VaultReadOnlyMode" xml:space="preserve">
+    <value>The vault is in read-only mode</value>
+  </data>
+  <data name="HealthReport" xml:space="preserve">
+    <value>Health report</value>
+    <comment>Title for health report view</comment>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Move up</value>
+    <comment>Change order of vaults</comment>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Move down</value>
+    <comment>Change order of vaults</comment>
   </data>
 </root>
