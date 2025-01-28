@@ -21,7 +21,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         /// <inheritdoc/>
         protected override CultureInfo GetCurrentCulture()
         {
-            // PrimaryLanguageOverride may return an empty string and thus it is better to use null as the "empty" equivalent
+            // PrimaryLanguageOverride may return an empty string, and thus it is better to use null as the "empty" equivalent
             var primaryLanguageOverride = string.IsNullOrEmpty(ApplicationLanguages.PrimaryLanguageOverride) ? null : ApplicationLanguages.PrimaryLanguageOverride;
 
             // Prefer PrimaryLanguageOverride as the default language identifier here since it provides
@@ -61,9 +61,25 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             // We need to deflate the SupportedLanguages list by ManifestLanguages
             foreach (var item in ApplicationLanguages.ManifestLanguages)
             {
+                // Sometimes, the ManifestLanguage may contain a language that is made of three or more segments (e.g. zh-Hans-CN),
+                // in such cases it is impossible to pass the "Contains" check. To remediate this, we need to split
+                // the language and only use the first and the last parts which should point to the actual culture.
+                var parts = item.Split('-');
+
+                // Assemble the language qualifier from the given parts.
+                // If dealing with only one language segment, use the first part instead.
+                var qualifier = parts.Length > 1
+                    ? $"{parts.First()}-{parts.Last()}"
+                    : parts.First();
+
+                // Skip over a culture, if it was not found
+                var foundCulture = SupportedLanguages.FirstOrDefault(x => x.Contains(qualifier));
+                if (foundCulture is null)
+                    continue;
+
                 // Instead of returning entries of ManifestLanguages, we return our own
                 // entries of SupportedLanguages that fully qualify each language
-                yield return new(SupportedLanguages.First(x => x.Contains(item)));
+                yield return new(foundCulture);
             }
         }
     }

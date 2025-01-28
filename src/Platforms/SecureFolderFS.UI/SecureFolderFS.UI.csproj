@@ -186,6 +186,12 @@
       <EmbeddedResource Update="Strings\de-DE\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Update="Strings\ro-RO\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\zh-CN\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Update="Strings\hi-IN\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <SubType>Designer</SubType>

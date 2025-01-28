@@ -31,9 +31,11 @@
     <Resource Language="da-DK"/>
     <Resource Language="uk-UA"/>
     <Resource Language="pt-PT"/>
+    <Resource Language="ro-RO"/>
     <Resource Language="ms-MY"/>
     <Resource Language="id-ID"/>
     <Resource Language="hi-IN"/>
+    <Resource Language="zh-CN"/>
   </Resources>
 
   <Applications>

@@ -34,8 +34,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
             "ms-MY",
             "pl-PL",
             "pt-PT",
+            "ro-RO",
             // "ru-RU",
             "uk-UA",
+            "zh-CN"
         };
 
         protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;

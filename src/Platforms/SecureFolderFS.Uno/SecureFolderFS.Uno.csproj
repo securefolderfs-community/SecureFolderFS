@@ -139,7 +139,7 @@
         <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
         <!-- Languages -->
-        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
+        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN</AppxDefaultResourceQualifiers>
         <DefaultLanguage>en-US</DefaultLanguage>
 
         <!-- Bundle WinAppSDK binaries in SelfContained -->
