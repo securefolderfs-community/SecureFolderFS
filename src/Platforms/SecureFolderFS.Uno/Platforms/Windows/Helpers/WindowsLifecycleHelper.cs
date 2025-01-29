@@ -25,12 +25,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     internal sealed class WindowsLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } =
-#if WINAPPSDK_PACKAGED
-            Directory.GetCurrentDirectory();
-#else
-            ApplicationData.Current.LocalFolder.Path;
-#endif
+        protected override string AppDirectory { get; } = ApplicationData.Current.LocalFolder.Path;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
