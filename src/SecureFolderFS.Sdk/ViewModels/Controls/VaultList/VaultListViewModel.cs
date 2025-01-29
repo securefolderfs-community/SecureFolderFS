@@ -139,7 +139,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             {
                 Items.Remove(itemToRemove);
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
                 // This happens rarely but the vault is actually removed
             }
