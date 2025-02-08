@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        private readonly KeyChain _keyChain;
+        private readonly KeySequence _keySequence;
         private readonly IVaultModel _vaultModel;
         private readonly LoginViewType _loginViewMode;
         private readonly IVaultWatcherModel _vaultWatcherModel;
@@ -39,12 +39,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode, KeyChain? keyChain = null)
+        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode, KeySequence? keySequence = null)
         {
             ServiceProvider = DI.Default;
             _loginViewMode = loginViewMode;
             _vaultModel = vaultModel;
-            _keyChain = keyChain ?? new();
+            _keySequence = keySequence ?? new();
             _vaultWatcherModel = new VaultWatcherModel(vaultModel.Folder);
             _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //
 
             // Dispose previous state, if any
-            _keyChain.Dispose();
+            _keySequence.Dispose();
             _loginSequence?.Dispose();
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
@@ -130,8 +130,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private void RestartLoginProcess()
         {
-            // Dispose built keychain
-            _keyChain.Dispose();
+            // Dispose built key sequence
+            _keySequence.Dispose();
 
             // Reset login sequence only if chain is longer than one authentication
             if (_loginSequence?.Count > 1)
@@ -147,7 +147,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
+                var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keySequence, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, false));
                 return true;
             }
@@ -207,7 +207,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
             // Add authentication
-            _keyChain.Add(e.Authentication);
+            _keySequence.Add(e.Authentication);
 
             var result = ProceedAuthentication();
             if (!result.Successful && CurrentViewModel is not ErrorViewModel)
@@ -256,7 +256,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
-            _keyChain.Dispose();
+            _keySequence.Dispose();
             _loginSequence?.Dispose();
         }
     }

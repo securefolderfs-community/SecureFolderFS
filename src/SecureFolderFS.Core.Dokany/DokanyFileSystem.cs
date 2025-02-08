@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.Dokany
             };
 
             if (dokanyOptions.MountPoint is null)
-                dokanyOptions.SetMountPointInternal(PathHelpers.GetFreeMountPath(dokanyOptions.VolumeName));
+                dokanyOptions.DangerousSetMountPoint(PathHelpers.GetFreeMountPath(dokanyOptions.VolumeName));
             
             if (dokanyOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");

@@ -8,6 +8,7 @@
             public const int ENCKEY_LENGTH = 32;
             public const int MACKEY_LENGTH = 32;
             public const int SALT_LENGTH = 16;
+            public const string KEY_TEXT_SEPARATOR = "@@@";
         }
 
         public static class CipherId

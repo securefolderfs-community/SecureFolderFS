@@ -12,11 +12,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Toggles the recycle bin feature on or off.
         /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="value">The value to set for the recycle bin state.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns a <see cref="Task"/> that represents the asynchronous operation. Value is a boolean indicating success or failure.</returns>
-        Task<bool> ToggleRecycleBinAsync(IVFSRoot vfsRoot, bool value, CancellationToken cancellationToken = default);
+        Task<bool> ToggleRecycleBinAsync(IFolder vaultFolder, IVFSRoot vfsRoot, bool value, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves the items in the recycle bin asynchronously.

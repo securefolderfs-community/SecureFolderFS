@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Dokany.AppModels
         /// </summary>
         public string? MountPoint { get => _mountPoint; init => _mountPoint = value; }
 
-        internal void SetMountPointInternal(string? value) => _mountPoint = value;
+        internal void DangerousSetMountPoint(string? value) => _mountPoint = value;
 
         public static DokanyOptions ToOptions(IDictionary<string, object> options)
         {

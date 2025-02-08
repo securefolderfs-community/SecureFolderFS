@@ -4,8 +4,6 @@ namespace SecureFolderFS.Core
 {
     public static class Constants
     {
-        public const string KEY_TEXT_SEPARATOR = "@@@";
-
         public static class Vault
         {
             public static class Names
@@ -46,6 +44,7 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_CONTENT_CIPHER_ID = "contentCipherScheme";
                 public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
                 public const string ASSOC_FILENAME_ENCODING_ID = "filenameEncoding";
+                public const string ASSOC_RECYCLE_SIZE = "recycleBinSize";
                 public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";

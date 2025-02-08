@@ -30,9 +30,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <summary>
         /// Gets the user credentials.
         /// </summary>
-        public KeyChain Credentials { get; }
+        public KeySequence Credentials { get; }
 
-        public RegisterViewModel(AuthenticationType authenticationStage, KeyChain? credentials = null)
+        public RegisterViewModel(AuthenticationType authenticationStage, KeySequence? credentials = null)
         {
             _authenticationStage = authenticationStage;
             Credentials = credentials ?? new();

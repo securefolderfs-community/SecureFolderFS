@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Core.Contracts;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using System;
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private SecretKey? _encKey;
+        private SecretKey? _dekKey;
         private SecretKey? _macKey;
 
         public UnlockRoutine(VaultReader vaultReader)
@@ -38,19 +38,19 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             // Derive keystore
             var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
-            _encKey = encKey;
+            _dekKey = encKey;
             _macKey = macKey;
         }
 
         /// <inheritdoc/>
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_encKey);
+            ArgumentNullException.ThrowIfNull(_dekKey);
             ArgumentNullException.ThrowIfNull(_macKey);
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            using (_encKey)
+            using (_dekKey)
             using (_macKey)
             {
                 // Create MAC key copy for the validator that can be disposed here
@@ -62,14 +62,14 @@ namespace SecureFolderFS.Core.Routines.Operational
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here
-                return new SecurityContract(_encKey.CreateCopy(), _macKey.CreateCopy(), _keystoreDataModel, _configDataModel);
+                return new SecurityWrapper(KeyPair.ImportKeys(_dekKey, _macKey), _configDataModel);
             }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _encKey?.Dispose();
+            _dekKey?.Dispose();
             _macKey?.Dispose();
         }
     }

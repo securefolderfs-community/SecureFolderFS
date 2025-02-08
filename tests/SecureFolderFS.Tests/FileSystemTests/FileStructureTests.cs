@@ -26,7 +26,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
+            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
+            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;

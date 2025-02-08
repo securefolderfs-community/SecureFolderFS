@@ -14,9 +14,9 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         protected readonly AesSiv128 aesSiv128;
         protected readonly string fileNameEncodingId;
 
-        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey, string fileNameEncodingId)
+        protected BaseNameCrypt(KeyPair keyPair, string fileNameEncodingId)
         {
-            this.aesSiv128 = AesSiv128.CreateInstance(encKey, macKey);
+            this.aesSiv128 = AesSiv128.CreateInstance(keyPair.DekKey, keyPair.MacKey);
             this.fileNameEncodingId = fileNameEncodingId;
         }
 

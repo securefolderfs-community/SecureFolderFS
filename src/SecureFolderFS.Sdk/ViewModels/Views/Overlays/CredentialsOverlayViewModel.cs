@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IVaultService>, Inject<IVaultCredentialsService>]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
-        private readonly KeyChain _keyChain;
+        private readonly KeySequence _keySequence;
         private readonly IVaultModel _vaultModel;
         private readonly AuthenticationType _authenticationStage;
 
@@ -36,12 +36,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public CredentialsOverlayViewModel(IVaultModel vaultModel, AuthenticationType authenticationStage)
         {
             ServiceProvider = DI.Default;
-            _keyChain = new();
+            _keySequence = new();
             _vaultModel = vaultModel;
             _authenticationStage = authenticationStage;
 
-            RegisterViewModel = new(authenticationStage, _keyChain);
-            LoginViewModel = new(vaultModel, LoginViewType.Basic, _keyChain);
+            RegisterViewModel = new(authenticationStage, _keySequence);
+            LoginViewModel = new(vaultModel, LoginViewType.Basic, _keySequence);
             SelectionViewModel = new(vaultModel.Folder, authenticationStage);
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
@@ -77,8 +77,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 CanContinue = false;
 
                 // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
-                // The flag is manipulating the order at which keys are placed in the keychain, so it shouldn't matter if it's cleared here
-                _keyChain.Dispose();
+                // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
+                _keySequence.Dispose();
                 SelectedViewModel = new CredentialsResetViewModel(_vaultModel.Folder, e.UnlockContract, RegisterViewModel).WithInitAsync();
             }
             else

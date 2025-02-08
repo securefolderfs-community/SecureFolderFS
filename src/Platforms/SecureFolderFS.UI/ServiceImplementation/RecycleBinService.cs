@@ -19,10 +19,15 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public class RecycleBinService : IRecycleBinService
     {
         /// <inheritdoc/>
-        public Task<bool> ToggleRecycleBinAsync(IVFSRoot vfsRoot, bool value, CancellationToken cancellationToken = default)
+        public async Task<bool> ToggleRecycleBinAsync(IFolder vaultFolder, IVFSRoot vfsRoot, bool value, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement toggle
-            throw new NotImplementedException();
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+                return false;
+
+            // TODO: Update configuration data model with appropriate IsRecycleBinEnabled value
+
+            vfsRoot.Options.DangerousSetRecycleBin(value);
+            return true;
         }
 
         /// <inheritdoc/>
@@ -69,7 +74,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (destinationFolder is null)
                     return;
 
-                if (!destinationFolder.Id.Contains(vfsRoot.Inner.Id, StringComparison.OrdinalIgnoreCase))
+                if (!destinationFolder.Id.Contains(vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                 {
                     // Invalid folder chosen outside of vault
                     // TODO: Return IResult or throw

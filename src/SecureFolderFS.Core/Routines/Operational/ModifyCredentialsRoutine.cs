@@ -1,5 +1,6 @@
-﻿using SecureFolderFS.Core.Contracts;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class ModifyCredentialsRoutine : IModifyCredentialsRoutine
     {
         private readonly VaultWriter _vaultWriter;
-        private KeystoreContract? _unlockContract;
+        private KeyPair? _keyPair;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
 
@@ -34,10 +34,10 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetUnlockContract(IDisposable unlockContract)
         {
-            if (unlockContract is not KeystoreContract contract)
+            if (unlockContract is not KeyPair keyPair)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            _unlockContract = contract;
+            _keyPair = keyPair;
         }
 
         /// <inheritdoc/>
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetCredentials(SecretKey passkey)
         {
-            ArgumentNullException.ThrowIfNull(_unlockContract);
+            ArgumentNullException.ThrowIfNull(_keyPair);
 
             // Generate new salt
             using var secureRandom = RandomNumberGenerator.Create();
@@ -72,29 +72,30 @@ namespace SecureFolderFS.Core.Routines.Operational
             secureRandom.GetNonZeroBytes(salt);
 
             // Encrypt new keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, _unlockContract.EncKey, _unlockContract.MacKey, salt);
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, _keyPair.DekKey, _keyPair.MacKey, salt);
         }
 
         /// <inheritdoc/>
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_unlockContract);
+            ArgumentNullException.ThrowIfNull(_keyPair);
             ArgumentNullException.ThrowIfNull(_configDataModel);
 
             // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(_configDataModel, _unlockContract.MacKey, _configDataModel.PayloadMac);
+            VaultParser.CalculateConfigMac(_configDataModel, _keyPair.MacKey, _configDataModel.PayloadMac);
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
-            return _unlockContract;
+            // Key copies need to be created because the original ones are disposed of here
+            return new SecurityWrapper(KeyPair.ImportKeys(_keyPair.DekKey, _keyPair.MacKey), _configDataModel);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _unlockContract?.Dispose();
+            _keyPair?.Dispose();
         }
     }
 }

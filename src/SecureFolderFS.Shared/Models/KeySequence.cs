@@ -8,7 +8,7 @@ namespace SecureFolderFS.Shared.Models
     /// <summary>
     /// A class used to concatenate a collection of keys in a stack-like behavior into one, singular <see cref="IKey"/> instance.
     /// </summary>
-    public sealed class KeyChain : IKey
+    public sealed class KeySequence : IKey
     {
         private readonly List<IKey> _keys;
 
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Shared.Models
 
         public IReadOnlyCollection<IKey> Keys => _keys;
 
-        public KeyChain()
+        public KeySequence()
         {
             _keys = new();
         }

@@ -28,7 +28,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Arrange
             const string dataString = "test";
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
+            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Arrange
             var data = new byte[300_000];
             Random.Shared.NextBytes(data);
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
+            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;

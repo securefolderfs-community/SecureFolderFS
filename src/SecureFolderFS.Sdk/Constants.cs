@@ -17,10 +17,9 @@
 
             public static class Health
             {
-                public static bool ARE_UPDATES_OPTIMIZED = true;
-                public static bool IS_SCANNING_PARALLELIZED = false;
-                public static bool IS_DISCOVERY_ASSUMED_FAST = true;
-                public static double INTERVAL_MULTIPLIER = 0.2d;
+                public const bool ARE_UPDATES_OPTIMIZED = true;
+                public const bool IS_SCANNING_PARALLELIZED = false;
+                public const double INTERVAL_MULTIPLIER = 0.2d;
             }
         }
 

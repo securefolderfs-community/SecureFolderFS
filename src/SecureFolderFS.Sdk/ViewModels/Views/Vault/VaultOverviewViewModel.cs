@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             if (SettingsService.UserSettings.OpenFolderOnUnlock)
-                _ = FileExplorerService.TryOpenInFileExplorerAsync(UnlockedVaultViewModel.StorageRoot.Inner, cancellationToken);
+                _ = FileExplorerService.TryOpenInFileExplorerAsync(UnlockedVaultViewModel.StorageRoot.VirtualizedRoot, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);
         }

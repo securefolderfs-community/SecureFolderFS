@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Routines.Operational;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -55,7 +54,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             var recoveryRoutine = routines.RecoverVault();
-            var keySplit = encodedRecoveryKey.Split(Core.Constants.KEY_TEXT_SEPARATOR);
+            var keySplit = encodedRecoveryKey.Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
             var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
             if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))
@@ -81,7 +80,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             credentialsRoutine.SetOptions(options);
             credentialsRoutine.SetCredentials(newPasskeySecret);
 
-            _ = await credentialsRoutine.FinalizeAsync(cancellationToken);
+            using var result = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }
     }
 }

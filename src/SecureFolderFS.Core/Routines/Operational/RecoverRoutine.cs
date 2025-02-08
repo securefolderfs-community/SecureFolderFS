@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Core.Contracts;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using System;
@@ -12,23 +12,21 @@ namespace SecureFolderFS.Core.Routines.Operational
     /// <inheritdoc cref="ICredentialsRoutine"/>
     public sealed class RecoverRoutine : ICredentialsRoutine
     {
-        private readonly SecretKey _encKey;
+        private readonly SecretKey _dekKey;
         private readonly SecretKey _macKey;
         private readonly VaultReader _vaultReader;
-        private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
 
         public RecoverRoutine(VaultReader vaultReader)
         {
             _vaultReader = vaultReader;
-            _encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
+            _dekKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
             _macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync(cancellationToken);
             _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
         }
 
@@ -36,7 +34,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         public void SetCredentials(SecretKey passkey)
         {
             // Copy the first part (DEK) of the master key
-            passkey.Key.AsSpan(0, Cryptography.Constants.KeyTraits.ENCKEY_LENGTH).CopyTo(_encKey.Key);
+            passkey.Key.AsSpan(0, Cryptography.Constants.KeyTraits.ENCKEY_LENGTH).CopyTo(_dekKey.Key);
 
             // Copy the second part (MAC) of the master key
             passkey.Key.AsSpan(Cryptography.Constants.KeyTraits.MACKEY_LENGTH).CopyTo(_macKey.Key);
@@ -46,9 +44,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
-            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            using (_encKey)
+            using (_dekKey)
             using (_macKey)
             {
                 // Create MAC key copy for the validator that can be disposed here
@@ -60,14 +57,14 @@ namespace SecureFolderFS.Core.Routines.Operational
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here
-                return new SecurityContract(_encKey.CreateCopy(), _macKey.CreateCopy(), _keystoreDataModel, _configDataModel);
+                return new SecurityWrapper(KeyPair.ImportKeys(_dekKey, _macKey), _configDataModel);
             }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _encKey.Dispose();
+            _dekKey.Dispose();
             _macKey.Dispose();
         }
     }

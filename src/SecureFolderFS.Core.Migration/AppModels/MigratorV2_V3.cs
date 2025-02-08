@@ -38,8 +38,8 @@ namespace SecureFolderFS.Core.Migration.AppModels
         /// <inheritdoc/>
         public async Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default)
         {
-            if (credentials is not KeyChain keyChain)
-                throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeyChain)}.");
+            if (credentials is not KeySequence keySequence)
+                throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeySequence)}.");
 
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
-            Argon2id.DeriveKey(keyChain.ToArray(), _v2KeystoreDataModel.Salt, kek);
+            Argon2id.DeriveKey(keySequence.ToArray(), _v2KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
