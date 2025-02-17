@@ -1,12 +1,10 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -112,6 +110,9 @@ namespace SecureFolderFS.Storage.Extensions
                     if (existing is not null)
                         throw new FileAlreadyExistsException(folderToMove.Name);
                 }
+                catch (FileNotFoundException)
+                {
+                }
                 catch (DirectoryNotFoundException)
                 {
                 }
@@ -167,6 +168,25 @@ namespace SecureFolderFS.Storage.Extensions
                 IChildFolder childFolder => childFolder,
                 _ => throw new InvalidOperationException("The provided name does not point to a folder.")
             };
+        }
+
+        /// <summary>
+        /// From the provided <see cref="IStorable"/>, traverses the provided relative or the same matching path and returns the item at that path.
+        /// </summary>
+        /// <param name="from">The item to start with when traversing.</param>
+        /// <param name="relativePath">The path of the storable item to return, relative to the provided item.</param>
+        /// <param name="cancellationToken">A token to cancel the ongoing operation.</param>
+        /// <returns>The <see cref="IStorable"/> item found at the relative path.</returns>
+        /// <exception cref="ArgumentException">
+        /// A parent directory was specified, but the provided <see cref="IStorable"/> is not addressable.
+        /// Or, the provided relative path named a folder, but the item was a file.
+        /// Or, an empty path part was found.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">A parent folder was requested, but the storable item did not return a parent.</exception>
+        /// <exception cref="FileNotFoundException">A named item was specified in a folder, but the item wasn't found.</exception>
+        public static async Task<IStorable> GetItemByRelativePathOrSelfAsync(this IStorable from, string relativePath, CancellationToken cancellationToken = default)
+        {
+            return from.Id == relativePath? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
         }
 
         /// <returns>Value is <see cref="IResult{T}"/> depending on whether the file was created successfully.</returns>

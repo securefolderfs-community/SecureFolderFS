@@ -15,9 +15,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <summary>
         /// Gets the storage object that represents a singular item within the Recycle Bin.
         /// </summary>
-        public IStorable CiphertextItem { get; }
+        public IStorableChild CiphertextItem { get; }
 
-        public RecycleBinItemViewModel(IStorable ciphertextItem)
+        public RecycleBinItemViewModel(IStorableChild ciphertextItem)
         {
             CiphertextItem = ciphertextItem;
         }

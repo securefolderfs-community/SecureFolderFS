@@ -38,12 +38,14 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await modifiableFolder.DeleteAsync(file);
 
             // Assert
-            var items = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
-            items.First().Title.Should().BeEquivalentTo(fileName);
+            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
+            recycleBinItems.First().Title.Should().BeEquivalentTo(fileName);
+            
+            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
         }
 
         [Test]
-        public async Task Create_FolderWith_SubFile_Delete_BaseFolder_InspectRecycleBin_NoThrow()
+        public async Task Create_FolderWith_SubFile_SubFolder_Delete_And_InspectRecycleBin_NoThrow()
         {
             ArgumentNullException.ThrowIfNull(_storageRoot);
             ArgumentNullException.ThrowIfNull(_recycleBinService);
@@ -51,40 +53,58 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Arrange
             var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
             
-            // Act
-            var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;
-            _ = subFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
-
-            var createdFile = await subFolder.CreateFileAsync("SUB_FILE");
-            await subFolder.DeleteAsync(createdFile);
-            
-            // Assert
-            var items = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
-            items.First().Title.Should().BeEquivalentTo("SUB_FILE");
-        }
-
-        [Test]
-        public async Task Create_FolderWith_SubFile_SubFolder_Delete_EachItem_InspectRecycleBin_NoThrow()
-        {
-            ArgumentNullException.ThrowIfNull(_storageRoot);
-            ArgumentNullException.ThrowIfNull(_recycleBinService);
-
-            // Arrange
-            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
-
             // Act
             var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;
             _ = subFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
 
             var createdFile = await subFolder.CreateFileAsync("SUB_FILE");
             var createdFolder = await subFolder.CreateFolderAsync("SUB_FOLDER");
-
+            
             await subFolder.DeleteAsync(createdFile);
             await subFolder.DeleteAsync(createdFolder);
-
+            
             // Assert
-            var items = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
-            items.Should().NotBeEmpty();
+            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
+            var first = recycleBinItems[0];
+            var second = recycleBinItems[1];
+            
+            first.Title.Should().BeEquivalentTo("SUB_FILE");
+            second.Title.Should().BeEquivalentTo("SUB_FOLDER");
+            
+            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
+        }
+
+        [Test]
+        public async Task Create_FolderWith_SubFile_SubFolder_Delete_And_Restore_NoThrow()
+        {
+            ArgumentNullException.ThrowIfNull(_storageRoot);
+            ArgumentNullException.ThrowIfNull(_recycleBinService);
+
+            // Arrange
+            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
+            
+            // Act
+            var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;
+            _ = subFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
+
+            var createdFile = await subFolder.CreateFileAsync("SUB_FILE");
+            var createdFolder = await subFolder.CreateFolderAsync("SUB_FOLDER");
+            
+            await subFolder.DeleteAsync(createdFile);
+            await subFolder.DeleteAsync(createdFolder);
+            
+            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
+            var first = recycleBinItems[0];
+            var second = recycleBinItems[1];
+
+            await _recycleBinService.RestoreItemAsync(_storageRoot, first.CiphertextItem);
+            await _recycleBinService.RestoreItemAsync(_storageRoot, second.CiphertextItem);
+            
+            // Assert
+            var restoredItems = await subFolder.GetItemsAsync().ToArrayAsync();
+            restoredItems.Should().HaveCount(2);
+            
+            Assert.Pass($"{nameof(restoredItems)}:\n" + string.Join('\n', restoredItems.Select(x => x.Id)));
         }
     }
 }

@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var itemId = Path.Combine(parentId, deserialized.OriginalName);
             try
             {
-                _ = await recycleBin.GetItemByRelativePathAsync(itemId, cancellationToken);
+                _ = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(itemId, cancellationToken);
                 
                 // Destination item already exists, user must choose a new location
                 return null;
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             // Check if destination folder exists
             try
             {
-                var parentItem = await recycleBin.GetItemByRelativePathAsync(parentId, cancellationToken);
+                var parentItem = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(parentId, cancellationToken);
                 
                 // Assume the parent is a folder and return it
                 return parentItem as IModifiableFolder;
@@ -82,6 +82,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Move item to destination
             _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+            
+            // Delete old configuration file
+            var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
+            await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
         }
         
         public static async Task DeleteOrTrashAsync(IModifiableFolder sourceFolder, IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)

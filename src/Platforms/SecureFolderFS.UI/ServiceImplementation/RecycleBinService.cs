@@ -13,6 +13,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -49,10 +50,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (dataModel.ParentPath is null || dataModel.OriginalName is null)
                     continue;
                 
-                var parentFolder = specifics.ContentFolder.Id == dataModel.ParentPath
-                    ? specifics.ContentFolder
-                    : await specifics.ContentFolder.GetItemByRelativePathAsync(dataModel.ParentPath, cancellationToken) as IFolder;
-                
+                var parentFolder = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(dataModel.ParentPath, cancellationToken) as IFolder;
                 if (parentFolder is null)
                     continue;
                     
