@@ -105,8 +105,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ulong ThreadSafeIncrement()
             {
-                Interlocked.Increment(ref _handleCounter);
-                return _handleCounter;
+                return Interlocked.Increment(ref _handleCounter);
             }
         }
     }
