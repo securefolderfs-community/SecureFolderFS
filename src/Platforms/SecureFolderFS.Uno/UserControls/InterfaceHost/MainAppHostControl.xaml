@@ -15,6 +15,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -270,11 +271,21 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 
-                            <!--  Remove  -->
+                            <!--  Lock  -->
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
+                                Command="{x:Bind RequestLockCommand, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=LockVault}"
+                                Visibility="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE72E;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Remove  -->
+                            <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
+                                IsEnabled="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Text="{l:ResourceString Rid=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />

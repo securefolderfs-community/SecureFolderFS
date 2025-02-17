@@ -11,10 +11,12 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         private EventHandler? _desktopLocked;
 
         /// <inheritdoc/>
-        public event EventHandler? DesktopLocked
+        public event EventHandler? DesktopLocked // TODO: Disabled on MacOS due to exception when adding a observer
         {
             add
             {
+                return;
+                
                 _desktopLocked += value;
                 NSNotificationCenter.DefaultCenter.AddObserver((NSString)"com.apple.screenIsLocked",
                     NSKeyValueObservingOptions.New, _ =>
@@ -24,6 +26,8 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
             }
             remove
             {
+                return;
+                
                 _desktopLocked -= value;
                 NSNotificationCenter.DefaultCenter.RemoveObserver((NSString)"com.apple.screenIsLocked");
             }

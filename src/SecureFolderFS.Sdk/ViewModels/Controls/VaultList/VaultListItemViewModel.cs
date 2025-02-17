@@ -27,17 +27,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         [ObservableProperty] private bool _IsRenaming;
-        [ObservableProperty] private bool _CanMove;
-        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private bool _CanMoveDown;
-        [ObservableProperty] private bool _CanRemoveVault;
+        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _CanMove;
         [ObservableProperty] private IImage? _CustomIcon;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
 
         public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
-            CanRemoveVault = true;
+            IsUnlocked = false;
             VaultViewModel = vaultViewModel;
             _vaultCollectionModel = vaultCollectionModel;
 
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
             {
                 // Prevent from removing vault if it is unlocked
-                CanRemoveVault = false;
+                IsUnlocked = true;
             }
         }
 
@@ -66,7 +66,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         public void Receive(VaultLockedMessage message)
         {
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-                CanRemoveVault = true;
+                IsUnlocked = false;
+        }
+        
+        [RelayCommand]
+        private void RequestLock()
+        {
+            WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]
