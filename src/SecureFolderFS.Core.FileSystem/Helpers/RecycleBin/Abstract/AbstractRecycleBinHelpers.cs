@@ -1,22 +1,22 @@
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static class AbstractRecycleBinHelpers
     {
-        public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Read configuration file
-            var configurationFile = await recycleBin.GetFileByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
+            var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
             await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
 
             // Deserialize configuration
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(item, recycleBin, specifics, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
             if (deserialized is not { OriginalPath: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
             
@@ -65,13 +65,16 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
         public static async Task RestoreAsync(IStorableChild item, IModifiableFolder destinationFolder, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
+            if (specifics.Options.IsReadOnly)
+                throw new UnauthorizedAccessException("The vault is read-only.");
+                
             // Get recycle bin
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
             
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(item, recycleBin, specifics, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
            
             // Rename the item to correct name
             var originalName = Path.GetFileName(deserialized.OriginalPath) ?? throw new IOException("Could not get file name.");
@@ -84,8 +87,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         public static async Task DeleteOrTrashAsync(IModifiableFolder sourceFolder, IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
-                return;
-            
+                throw new UnauthorizedAccessException("The vault is read-only.");
+
             if (!specifics.Options.IsRecycleBinEnabled)
             {
                 await sourceFolder.DeleteAsync(item, cancellationToken);

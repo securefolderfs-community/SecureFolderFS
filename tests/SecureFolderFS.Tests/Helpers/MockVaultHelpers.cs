@@ -1,6 +1,6 @@
 ﻿using OwlCore.Storage;
-using OwlCore.Storage.Memory;
 using SecureFolderFS.Core;
+using SecureFolderFS.Storage.MemoryStorageEx;
 
 namespace SecureFolderFS.Tests.Helpers
 {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.Tests.Helpers
         private static async Task<IFolder> SetupMockVault(string configString, string keystoreString, CancellationToken cancellationToken)
         {
             var vaultPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), "TestVault");
-            var vaultFolder = new MemoryFolder(vaultPath, Path.GetFileName(vaultPath));
+            var vaultFolder = new MemoryFolderEx(vaultPath, Path.GetFileName(vaultPath));
 
             // Create necessary vault configuration
             var configFile = await vaultFolder.CreateFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, false, cancellationToken);

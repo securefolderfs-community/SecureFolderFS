@@ -77,6 +77,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await OverlayService.ShowAsync(previewRecoveryOverlay);
         }
 
+        [RelayCommand]
+        private async Task ViewRecycleBinAsync(CancellationToken cancellationToken)
+        {
+            var recycleOverlay = new RecycleBinOverlayViewModel(UnlockedVaultViewModel);
+            _ = recycleOverlay.InitAsync(cancellationToken);
+
+            await OverlayService.ShowAsync(recycleOverlay);
+        }
+
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
             var items = await VaultCredentialsService.GetLoginAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);

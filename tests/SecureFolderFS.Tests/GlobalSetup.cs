@@ -33,6 +33,7 @@ namespace SecureFolderFS.Tests
                 .AddSingleton<IVaultService, VaultService>()
                 //.AddSingleton<IApplicationService, MockApplicationService>()
                 .AddSingleton<IVaultManagerService, VaultManagerService>()
+                .AddSingleton<IRecycleBinService, RecycleBinService>()
                 .AddSingleton<IVaultFileSystemService, MockVaultFileSystemService>()
                 .AddSingleton<IVaultCredentialsService, MockVaultCredentialsService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()

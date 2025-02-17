@@ -96,6 +96,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 IsReadOnly = GetOption<bool?>(options, nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
+                IsRecycleBinEnabled = (bool?)options.Get(nameof(IsRecycleBinEnabled)) ?? false
             };
         }
 

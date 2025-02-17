@@ -1,4 +1,3 @@
-using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -54,6 +53,7 @@ namespace SecureFolderFS.Core.FUSE.AppModels
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+                IsRecycleBinEnabled = (bool?)options.Get(nameof(IsRecycleBinEnabled)) ?? false,
 
                 // FUSE specific
                 MountPoint = (string?)options.Get(nameof(MountPoint)),

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,10 +44,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBinFolder, specifics, StreamSerializer.Instance, cancellationToken);
+                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBinFolder, StreamSerializer.Instance, cancellationToken);
                 yield return new(item)
                 {
-                    Title = item.Name,
+                    Title = Path.GetFileName(dataModel.OriginalPath),
                     DeletionTimestamp = dataModel.DeletionTimestamp
                 };
             }

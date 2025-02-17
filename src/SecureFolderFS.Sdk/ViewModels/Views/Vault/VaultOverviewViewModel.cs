@@ -53,7 +53,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             Title = VaultViewModel.VaultName;
         }
 
-
         /// <inheritdoc/>
         public void Dispose()
         {

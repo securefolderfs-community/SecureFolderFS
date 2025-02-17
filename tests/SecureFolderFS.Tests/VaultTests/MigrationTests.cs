@@ -8,7 +8,7 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Tests.Helpers;
 
-namespace SecureFolderFS.Tests.ServiceTests
+namespace SecureFolderFS.Tests.VaultTests
 {
     [TestFixture]
     public class MigrationTests

@@ -1,9 +1,3 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -12,6 +6,12 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -20,7 +20,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        
+
+        [ObservableProperty] private bool _IsRecycleBinEnabled;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
 
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
@@ -37,6 +38,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 Items.Add(item);
             }
+
+            IsRecycleBinEnabled = _unlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled;
+        }
+
+        [RelayCommand]
+        private async Task ToggleRecycleBinAsync(CancellationToken cancellationToken)
+        {
+            var isEnabled = IsRecycleBinEnabled;
+            var isSuccess = await RecycleBinService.ToggleRecycleBinAsync(
+                _unlockedVaultViewModel.VaultViewModel.VaultModel.Folder,
+                _unlockedVaultViewModel.StorageRoot,
+                !isEnabled,
+                cancellationToken);
+
+            IsRecycleBinEnabled = !isSuccess ? isEnabled : !isEnabled;
         }
 
         [RelayCommand]

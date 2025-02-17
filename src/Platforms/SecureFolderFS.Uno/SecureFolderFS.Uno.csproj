@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net9.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net9.0-windows10.0.26100</TargetFrameworks>
@@ -271,6 +271,9 @@
   <ItemGroup>
     <Page Update="Dialogs\AgreementDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\RecycleBinDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\ChangelogDialog.xaml">

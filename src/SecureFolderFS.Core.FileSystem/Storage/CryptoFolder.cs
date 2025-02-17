@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.StorageProperties;
 
@@ -96,9 +98,9 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // We need to get the equivalent on the disk
             var ciphertextName = await EncryptNameAsync(item.Name, Inner, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
-            
+
             // Delete the ciphertext item
-            await modifiableFolder.DeleteAsync(ciphertextItem, cancellationToken);
+            await AbstractRecycleBinHelpers.DeleteOrTrashAsync(modifiableFolder, ciphertextItem, specifics, StreamSerializer.Instance, cancellationToken);
         }
 
         /// <inheritdoc/>

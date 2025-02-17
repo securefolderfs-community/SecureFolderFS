@@ -96,5 +96,7 @@
                 <FontIcon Glyph="&#xE777;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
+
+        <Button Command="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}" Content="recycle" />
     </StackPanel>
 </Page>
