@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
 using SecureFolderFS.Shared.Models;
@@ -30,11 +31,11 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 throw new NotSupportedException("Renaming folder contents is not supported.");
             
             // We need to get the equivalent on the disk
-            var ciphertextName = await EncryptNameAsync(storable.Name, Inner, cancellationToken);
+            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(storable.Name, Inner, specifics, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
             
             // Encrypt name
-            var newCiphertextName = await EncryptNameAsync(newName, Inner, cancellationToken);
+            var newCiphertextName = await AbstractPathHelpers.EncryptNameAsync(newName, Inner, specifics, cancellationToken);
             var renamedCiphertextItem = await renamableFolder.RenameAsync(ciphertextItem, newCiphertextName, cancellationToken);
 
             var plaintextId = Path.Combine(Inner.Id, newName);
@@ -54,7 +55,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var plaintextName = await DecryptNameAsync(item.Name, Inner, cancellationToken);
+                var plaintextName = await AbstractPathHelpers.DecryptNameAsync(item.Name, Inner, specifics, cancellationToken);
                 if (plaintextName is null)
                     continue;
 
@@ -70,7 +71,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            var ciphertextName = await EncryptNameAsync(name, Inner, cancellationToken);
+            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(name, Inner, specifics, cancellationToken);
             return await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken) switch
             {
                 IChildFile file => (IStorableChild)Wrap(file, name),
@@ -96,7 +97,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // TODO: Get by ID instead of name
             
             // We need to get the equivalent on the disk
-            var ciphertextName = await EncryptNameAsync(item.Name, Inner, cancellationToken);
+            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, Inner, specifics, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
 
             // Delete the ciphertext item
@@ -109,7 +110,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = await EncryptNameAsync(name, Inner, cancellationToken);
+            var encryptedName = await AbstractPathHelpers.EncryptNameAsync(name, Inner, specifics, cancellationToken);
             var folder = await modifiableFolder.CreateFolderAsync(encryptedName, overwrite, cancellationToken);
             if (folder is not IModifiableFolder createdModifiableFolder)
                 throw new ArgumentException("The created folder is not modifiable.");
@@ -134,7 +135,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = await EncryptNameAsync(name, Inner, cancellationToken);
+            var encryptedName = await AbstractPathHelpers.EncryptNameAsync(name, Inner, specifics, cancellationToken);
             var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
             return (IChildFile)Wrap(file, name);

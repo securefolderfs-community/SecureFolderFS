@@ -66,7 +66,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
             if (overwrite && existingFolder is not null)
                 await DeleteAsync(existingFolder, cancellationToken);
 
-            var emptyMemoryFolder = new MemoryFolderEx($"{Guid.NewGuid()}", name);
+            var emptyMemoryFolder = new MemoryFolderEx(Path.Combine(Id, name), name);
             emptyMemoryFolder.SetParent(this);
 
             var folder = overwrite ? emptyMemoryFolder : (existingFolder ?? emptyMemoryFolder);
@@ -87,7 +87,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
             if (overwrite && existingFile is not null)
                 await DeleteAsync(existingFile, cancellationToken);
 
-            var emptyMemoryFolder = new MemoryFileEx($"{Guid.NewGuid()}", name, new MemoryStream());
+            var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, new MemoryStream());
             emptyMemoryFolder.SetParent(this);
             
             var file = overwrite ? emptyMemoryFolder : (existingFile ?? emptyMemoryFolder);

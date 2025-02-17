@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Deserialize configuration
             var deserialized = await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
-            if (deserialized is not { OriginalPath: not null })
+            if (deserialized is not { ParentPath: not null }) // TODO: Is this check needed?
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
             return deserialized;
@@ -34,14 +34,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
-            if (deserialized is not { OriginalPath: not null })
+            if (deserialized is not { ParentPath: not null, OriginalName: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
             
             // Check if destination item exists
-            var id = deserialized.OriginalPath.Replace('/', Path.DirectorySeparatorChar);
+            var parentId = deserialized.ParentPath.Replace('/', Path.DirectorySeparatorChar);
+            var itemId = Path.Combine(parentId, deserialized.OriginalName);
             try
             {
-                _ = await recycleBin.GetItemByRelativePathAsync(id, cancellationToken);
+                _ = await recycleBin.GetItemByRelativePathAsync(itemId, cancellationToken);
                 
                 // Destination item already exists, user must choose a new location
                 return null;
@@ -49,7 +50,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             catch (Exception) { }
 
             // Check if destination folder exists
-            var parentId = Path.GetDirectoryName(id) ?? string.Empty;
             try
             {
                 var parentItem = await recycleBin.GetItemByRelativePathAsync(parentId, cancellationToken);
@@ -77,8 +77,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
            
             // Rename the item to correct name
-            var originalName = Path.GetFileName(deserialized.OriginalPath) ?? throw new IOException("Could not get file name.");
-            var renamedItem = await renamableRecycleBin.RenameAsync(item, originalName, cancellationToken);
+            _ = deserialized.OriginalName ?? throw new IOException("Could not get file name.");
+            var renamedItem = await renamableRecycleBin.RenameAsync(item, deserialized.OriginalName, cancellationToken);
 
             // Move item to destination
             _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
@@ -113,7 +113,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             await using var serializedStream = await streamSerializer.SerializeAsync(
                 new RecycleBinItemDataModel()
                 {
-                    OriginalPath = item.Id.Replace(Path.DirectorySeparatorChar, '/'),
+                    OriginalName = item.Name,
+                    ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
                     DeletionTimestamp = DateTime.Now
                 }, cancellationToken);
             

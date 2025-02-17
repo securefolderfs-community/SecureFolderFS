@@ -1,11 +1,9 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
@@ -63,41 +61,43 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             return finalPath;
         }
-
-        public static async Task<bool> GetDirectoryIdAsync(IFolder folderOfDirectoryId, FileSystemSpecifics specifics, Memory<byte> directoryId, CancellationToken cancellationToken)
+        
+        /// <summary>
+        /// Encrypts the provided <paramref name="plaintextName"/>.
+        /// </summary>
+        /// <param name="plaintextName">The name to encrypt.</param>
+        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
+        public static async Task<string> EncryptNameAsync(string plaintextName, IFolder parentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
-            if (folderOfDirectoryId.Id == specifics.ContentFolder.Id)
-                return false;
+            if (specifics.Security.NameCrypt is null)
+                return plaintextName;
 
-            BufferHolder? cachedId;
-            if (specifics.DirectoryIdCache.IsAvailable)
-            {
-                cachedId = specifics.DirectoryIdCache.CacheGet(folderOfDirectoryId.Id);
-                if (cachedId is not null)
-                {
-                    cachedId.Buffer.CopyTo(directoryId);
-                    return true;
-                }
-            }
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, plaintextName);
+            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
 
-            var directoryIdFile = await folderOfDirectoryId.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
-            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken).ConfigureAwait(false);
-            
-            int read;
-            if (specifics.DirectoryIdCache.IsAvailable)
-            {
-                cachedId = new(Constants.DIRECTORY_ID_SIZE);
-                read = await directoryIdStream.ReadAsync(cachedId.Buffer, cancellationToken).ConfigureAwait(false);
-                specifics.DirectoryIdCache.CacheSet(folderOfDirectoryId.Id, cachedId);
-            }
-            else
-                read = await directoryIdStream.ReadAsync(directoryId, cancellationToken).ConfigureAwait(false);
-            
-            if (read < Constants.DIRECTORY_ID_SIZE)
-                throw new IOException($"The data inside Directory ID file is of incorrect size: {read}.");
+            return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION;
+        }
 
-            // The Directory ID is not empty - return true
-            return true;
+        /// <summary>
+        /// Decrypts the provided <paramref name="ciphertextName"/>.
+        /// </summary>
+        /// <param name="ciphertextName">The name to decrypt.</param>
+        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a decrypted name.</returns>
+        public static async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return ciphertextName;
+
+            var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
+            var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
+
+            return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
         }
     }
 }

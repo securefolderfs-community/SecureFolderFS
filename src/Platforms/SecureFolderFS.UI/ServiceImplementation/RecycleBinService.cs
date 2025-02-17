@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
@@ -45,9 +46,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     continue;
 
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBinFolder, StreamSerializer.Instance, cancellationToken);
+                if (dataModel.ParentPath is null || dataModel.OriginalName is null)
+                    continue;
+                
+                var parentFolder = specifics.ContentFolder.Id == dataModel.ParentPath
+                    ? specifics.ContentFolder
+                    : await specifics.ContentFolder.GetItemByRelativePathAsync(dataModel.ParentPath, cancellationToken) as IFolder;
+                
+                if (parentFolder is null)
+                    continue;
+                    
+                var plaintextName = await AbstractPathHelpers.DecryptNameAsync(dataModel.OriginalName, parentFolder, specifics, cancellationToken);
                 yield return new(item)
                 {
-                    Title = Path.GetFileName(dataModel.OriginalPath),
+                    Title = plaintextName,
                     DeletionTimestamp = dataModel.DeletionTimestamp
                 };
             }

@@ -7,10 +7,16 @@ namespace SecureFolderFS.Core.FileSystem.DataModels
     public sealed class RecycleBinItemDataModel
     {
         /// <summary>
-        /// Gets the original (relative) ciphertext path of the item before it was deleted.
+        /// Gets the original ciphertext name of the item before it was deleted.
         /// </summary>
-        [JsonPropertyName("originalPath")]
-        public required string? OriginalPath { get; init; }
+        [JsonPropertyName("originalName")]
+        public required string? OriginalName { get; init; }
+        
+        /// <summary>
+        /// Gets the original (relative) ciphertext path of the folder where the item resided before it was deleted.
+        /// </summary>
+        [JsonPropertyName("parentPath")]
+        public required string? ParentPath { get; init; }
         
         /// <summary>
         /// Gets the <see cref="DateTime"/> timestamp of the deletion.
