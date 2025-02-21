@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -114,16 +115,19 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        protected override void RemoveItem(int index)
+        protected override async void RemoveItem(int index)
         {
             var removedItem = this[index];
 
             // Remove persisted
-            if (VaultConfigurations.SavedVaults is not null)
-                VaultConfigurations.SavedVaults.RemoveAt(index);
-
+            VaultConfigurations.SavedVaults?.RemoveAt(index);
+            
             // Remove widget data for that vault
             VaultWidgets.SetForVault(removedItem.Folder.Id, null);
+            
+            // Remove bookmark
+            if (removedItem.Folder is IBookmark bookmark)
+                await bookmark.RemoveBookmarkAsync();
 
             // Remove from cache
             base.RemoveItem(index);

@@ -25,9 +25,18 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <VerticalStackLayout>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
         <!--  Top widgets  -->
-        <CollectionView Margin="20,16" ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
+        <CollectionView
+            Grid.Row="0"
+            Margin="20,16"
+            ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
             <CollectionView.ItemTemplate>
                 <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
             </CollectionView.ItemTemplate>
@@ -39,7 +48,10 @@
         <!--  Top buttons  -->
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
-                <Grid Padding="20,16" ColumnSpacing="24">
+                <Grid
+                    Grid.Row="1"
+                    Padding="20,16"
+                    ColumnSpacing="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -64,7 +76,7 @@
         </OnPlatform>
 
         <!--  Options list  -->
-        <TableView>
+        <TableView Grid.Row="2">
             <TableRoot>
                 <OnPlatform x:TypeArguments="TableSection">
                     <On Platform="iOS">
@@ -106,8 +118,9 @@
                         Detail="{l:ResourceString Rid=TwoFactorDescription}"
                         Text="{l:ResourceString Rid=TwoFactor}" />
                     <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="{l:ResourceString Rid=RecoveryCodes}" />
+                    <TextCell Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}" Text="{l:ResourceString Rid=RecycleBin}" />
                 </TableSection>
             </TableRoot>
         </TableView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

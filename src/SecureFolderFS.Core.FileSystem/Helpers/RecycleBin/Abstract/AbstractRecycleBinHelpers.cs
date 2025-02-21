@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
@@ -30,7 +31,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
-            var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
+            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
+            if (recycleBin is null)
+                throw new DirectoryNotFoundException("Could not find recycle bin folder.");
             
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
@@ -69,7 +72,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new UnauthorizedAccessException("The vault is read-only.");
                 
             // Get recycle bin
-            var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
+            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
             
@@ -104,6 +107,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
             
+            // Get source Directory ID
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, sourceFolder.Id);
+            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(sourceFolder, specifics, directoryId, cancellationToken);
+            
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
             var movedItem = await renamableRecycleBin.MoveStorableFromAsync(item, sourceFolder, false, cancellationToken);
@@ -119,20 +126,31 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 {
                     OriginalName = item.Name,
                     ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
+                    DirectoryId = directoryIdResult ? directoryId : [],
                     DeletionTimestamp = DateTime.Now
                 }, cancellationToken);
             
             // Write to destination stream
             await serializedStream.CopyToAsync(configurationStream, cancellationToken);
         }
-        
-        public static async Task<IFolder> GetOrCreateRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+
+        public static async Task<IFolder?> GetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             try
             {
                 return await specifics.ContentFolder.GetFolderByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        
+        public static async Task<IFolder> GetOrCreateRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        {
+            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
+            if (recycleBin is not null)
+                return recycleBin;
             
             if (specifics.ContentFolder is not IModifiableFolder modifiableFolder)
                 throw new UnauthorizedAccessException("The content folder is not modifiable.");

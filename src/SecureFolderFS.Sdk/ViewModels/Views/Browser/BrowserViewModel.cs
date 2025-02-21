@@ -95,33 +95,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task NewItemAsync(string? itemType, CancellationToken cancellationToken)
         {
-            if (itemType is null)
-                return;
-
-            itemType = itemType.ToLower();
-            if (itemType is not ("folder" or "file"))
-                return;
-            
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
+
+            IResult result;
+            if (itemType is not ("Folder" or "File"))
+            {
+                var storableTypeViewModel = new StorableTypeOverlayViewModel();
+                result = await OverlayService.ShowAsync(storableTypeViewModel);
+                if (result.Aborted())
+                    return;
+
+                itemType = storableTypeViewModel.StorableType.ToString();
+            }
             
-            var viewModel = new NewItemOverlayViewModel();
-            var result = await OverlayService.ShowAsync(viewModel);
-            if (result.Aborted() || viewModel.ItemName is null)
+            var newItemViewModel = new NewItemOverlayViewModel();
+            result = await OverlayService.ShowAsync(newItemViewModel);
+            if (result.Aborted() || newItemViewModel.ItemName is null)
                 return;
 
             switch (itemType)
             {
-                case "file":
+                case "File":
                 {
-                    var file = await modifiableFolder.CreateFileAsync(viewModel.ItemName, false, cancellationToken);
+                    var file = await modifiableFolder.CreateFileAsync(newItemViewModel.ItemName, false, cancellationToken);
                     CurrentFolder.Items.Add(new FileViewModel(file, CurrentFolder));
                     break;
                 }
 
-                case "folder":
+                case "Folder":
                 {
-                    var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
+                    var folder = await modifiableFolder.CreateFolderAsync(newItemViewModel.ItemName, false, cancellationToken);
                     CurrentFolder.Items.Add(new FolderViewModel(folder, this, CurrentFolder));
                     break;
                 }
@@ -131,19 +135,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task ImportItemAsync(string? itemType, CancellationToken cancellationToken)
         {
-            if (itemType is null)
-                return;
-
-            itemType = itemType.ToLower();
-            if (itemType is not ("folder" or "file"))
-                return;
-            
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
+            if (itemType is not ("Folder" or "File"))
+            {
+                var storableTypeViewModel = new StorableTypeOverlayViewModel();
+                var result = await OverlayService.ShowAsync(storableTypeViewModel);
+                if (result.Aborted())
+                    return;
+
+                itemType = storableTypeViewModel.StorableType.ToString();
+            }
+
             switch (itemType)
             {
-                case "file":
+                case "File":
                 {
                     var file = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
                     if (file is null)
@@ -154,7 +161,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                     break;
                 }
 
-                case "folder":
+                case "Folder":
                 {
                     var folder = await FileExplorerService.PickFolderAsync(false, cancellationToken);
                     if (folder is null)

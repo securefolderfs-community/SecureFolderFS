@@ -75,8 +75,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             if (specifics.Security.NameCrypt is null)
                 return plaintextName;
 
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, plaintextName);
-            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
+            var directoryId = AllocateDirectoryId(specifics.Security, plaintextName);
+            var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
 
             return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }

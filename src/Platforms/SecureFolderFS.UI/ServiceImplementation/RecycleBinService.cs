@@ -6,14 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -34,13 +32,16 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<RecycleBinItemViewModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<RecycleBinItemModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
-                throw new NotSupportedException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
 
             var specifics = specificsWrapper.Inner;
-            var recycleBinFolder = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specifics, cancellationToken);
+            var recycleBinFolder = await AbstractRecycleBinHelpers.GetRecycleBinAsync(specifics, cancellationToken);
+            if (recycleBinFolder is null)
+                yield break;
+            
             await foreach (var item in recycleBinFolder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
@@ -50,56 +51,60 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (dataModel.ParentPath is null || dataModel.OriginalName is null)
                     continue;
                 
-                var parentFolder = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(dataModel.ParentPath, cancellationToken) as IFolder;
-                if (parentFolder is null)
-                    continue;
-                    
-                var plaintextName = await AbstractPathHelpers.DecryptNameAsync(dataModel.OriginalName, parentFolder, specifics, cancellationToken);
-                yield return new(item)
-                {
-                    Title = plaintextName,
-                    DeletionTimestamp = dataModel.DeletionTimestamp
-                };
+                // Decrypt name only when using name encryption
+                var plaintextName = specifics.Security.NameCrypt is null
+                    ? dataModel.OriginalName
+                    : specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(dataModel.OriginalName), dataModel.DirectoryId);
+
+                yield return new RecycleBinItemModel(plaintextName, item, dataModel.DeletionTimestamp);
             }
         }
 
         /// <inheritdoc/>
-        public async Task RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
+        public async Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
-                return;
+                return Result.Failure(new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported."));
 
-            var specifics = specificsWrapper.Inner;
-            var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
-                recycleBinItem,
-                specifics,
-                StreamSerializer.Instance,
-                cancellationToken);
-
-            // Prompt the user to pick the folder when the default destination couldn't be used
-            if (destinationFolder is null)
+            try
             {
-                // TODO: Add starting directory parameter
-                var fileExplorerService = DI.Service<IFileExplorerService>();
-                destinationFolder = await fileExplorerService.PickFolderAsync(false, cancellationToken) as IModifiableFolder;
+                var specifics = specificsWrapper.Inner;
+                var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
+                    recycleBinItem,
+                    specifics,
+                    StreamSerializer.Instance,
+                    cancellationToken);
+
+                // Prompt the user to pick the folder when the default destination couldn't be used
                 if (destinationFolder is null)
-                    return;
-
-                if (!destinationFolder.Id.Contains(vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                 {
-                    // Invalid folder chosen outside of vault
-                    // TODO: Return IResult or throw
-                    return;
-                }
-            }
+                    // TODO: Add starting directory parameter
+                    var fileExplorerService = DI.Service<IFileExplorerService>();
+                    destinationFolder = await fileExplorerService.PickFolderAsync(false, cancellationToken) as IModifiableFolder;
+                    if (destinationFolder is null)
+                        return Result.Failure(new OperationCanceledException("The user did not pick destination a folder."));
 
-            // Restore the item to chosen destination
-            await AbstractRecycleBinHelpers.RestoreAsync(
-                recycleBinItem,
-                destinationFolder,
-                specifics,
-                StreamSerializer.Instance,
-                cancellationToken);
+                    if (!destinationFolder.Id.Contains(vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Invalid folder chosen outside of vault
+                        // TODO: Return IResult or throw
+                        return Result.Failure(new InvalidOperationException("The folder is outside of the virtualized storage folder."));
+                    }
+                }
+                // Restore the item to chosen destination
+                await AbstractRecycleBinHelpers.RestoreAsync(
+                    recycleBinItem,
+                    destinationFolder,
+                    specifics,
+                    StreamSerializer.Instance,
+                    cancellationToken);
+
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
         }
     }
 }

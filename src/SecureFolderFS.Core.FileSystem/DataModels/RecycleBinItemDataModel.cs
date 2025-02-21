@@ -19,6 +19,12 @@ namespace SecureFolderFS.Core.FileSystem.DataModels
         public required string? ParentPath { get; init; }
         
         /// <summary>
+        /// Gets the Directory ID of the directory where this item originally belonged to.
+        /// </summary>
+        [JsonPropertyName("directoryId")]
+        public required byte[]? DirectoryId { get; init; }
+        
+        /// <summary>
         /// Gets the <see cref="DateTime"/> timestamp of the deletion.
         /// </summary>
         [JsonPropertyName("deletionTimestamp")]

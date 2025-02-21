@@ -21,24 +21,12 @@
             Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.NewItemCommand}"
-            CommandParameter="File"
             Order="Secondary"
-            Text="Create new file" />
-        <ToolbarItem
-            Command="{Binding ViewModel.NewItemCommand}"
-            CommandParameter="Folder"
-            Order="Secondary"
-            Text="Create new folder" />
+            Text="Create new item" />
         <ToolbarItem
             Command="{Binding ViewModel.ImportItemCommand}"
-            CommandParameter="File"
             Order="Secondary"
-            Text="Import file" />
-        <ToolbarItem
-            Command="{Binding ViewModel.ImportItemCommand}"
-            CommandParameter="Folder"
-            Order="Secondary"
-            Text="Import folder" />
+            Text="Import existing item" />
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>

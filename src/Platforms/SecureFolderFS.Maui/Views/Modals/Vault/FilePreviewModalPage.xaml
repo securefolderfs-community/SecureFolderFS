@@ -1,8 +1,9 @@
-﻿<local:BaseModalPage
-    x:Class="SecureFolderFS.Maui.Views.Modals.FilePreviewModalPage"
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Vault.FilePreviewModalPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mt="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
@@ -12,7 +13,7 @@
     x:DataType="local:FilePreviewModalPage"
     IsImmersive="True">
 
-    <local:BaseModalPage.Resources>
+    <md:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
         <vc:MediaToSourceConverter x:Key="MediaToSourceConverter" />
 
@@ -36,9 +37,9 @@
                 <Label Text="{Binding Source, Mode=OneWay}" />
             </ScrollView>
         </DataTemplate>
-    </local:BaseModalPage.Resources>
+    </md:BaseModalPage.Resources>
 
-    <local:BaseModalPage.ModalContent>
+    <md:BaseModalPage.ModalContent>
         <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:PreviewerTemplateSelector
@@ -47,5 +48,5 @@
                     VideoTemplate="{StaticResource VideoTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
-    </local:BaseModalPage.ModalContent>
-</local:BaseModalPage>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

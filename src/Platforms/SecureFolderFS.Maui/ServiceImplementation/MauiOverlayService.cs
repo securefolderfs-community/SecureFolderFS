@@ -1,8 +1,8 @@
 using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.Views;
-using SecureFolderFS.Maui.Views.Modals;
 using SecureFolderFS.Maui.Views.Modals.Settings;
+using SecureFolderFS.Maui.Views.Modals.Vault;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -26,10 +26,12 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
                 PreviewerOverlayViewModel => new FilePreviewModalPage(navigation),
+                RecycleBinOverlayViewModel => new RecycleBinModalPage(navigation),
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
+                StorableTypeOverlayViewModel => new StorableTypePrompt(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))

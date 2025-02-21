@@ -46,12 +46,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             if (SelectedFolder is null)
-                return Task.FromResult<IResult>(Result.Failure(null));
+                return Result.Failure(null);
 
-            return Task.FromResult<IResult>(Result.Success);
+            // Confirm bookmark
+            if (SelectedFolder is IBookmark bookmark)
+                await bookmark.AddBookmarkAsync(cancellationToken);
+
+            return Result.Success;
         }
 
         /// <inheritdoc/>
@@ -69,10 +73,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
-            // Remove previous bookmark
-            if (SelectedFolder is IBookmark bookmark)
-                await bookmark.RemoveBookmarkAsync(cancellationToken);
-            
             SelectedFolder = await FileExplorerService.PickFolderAsync(true, cancellationToken);
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }

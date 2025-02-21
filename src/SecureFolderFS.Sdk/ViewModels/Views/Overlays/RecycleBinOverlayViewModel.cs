@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -28,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             ServiceProvider = DI.Default;
             Items = new();
+            Title = "RecycleBin".ToLocalized();
             _unlockedVaultViewModel = unlockedVaultViewModel;
         }
         
@@ -36,7 +38,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             await foreach (var item in RecycleBinService.GetRecycleBinItemsAsync(_unlockedVaultViewModel.StorageRoot, cancellationToken))
             {
-                Items.Add(item);
+                Items.Add(new(item.CiphertextItem, _unlockedVaultViewModel.StorageRoot, Items)
+                {
+                    Title = item.PlaintextName,
+                    DeletionTimestamp = item.DeletionTimestamp
+                });
             }
 
             IsRecycleBinEnabled = _unlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled;
@@ -63,10 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             foreach (var item in items.ToArray())
             {
-                if (item.CiphertextItem is not IStorableChild storableChild)
-                    continue;
-                
-                await RecycleBinService.RestoreItemAsync(_unlockedVaultViewModel.StorageRoot, storableChild, cancellationToken);
+                await RecycleBinService.RestoreItemAsync(_unlockedVaultViewModel.StorageRoot, item.CiphertextItem, cancellationToken);
                 Items.Remove(item);
             }
         }

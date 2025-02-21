@@ -1,9 +1,11 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -25,7 +27,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="RecycleBinItemViewModel"/> of recycle bin items.</returns>
-        IAsyncEnumerable<RecycleBinItemViewModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<RecycleBinItemModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Restores an item from the recycle bin asynchronously.
@@ -33,7 +35,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="recycleBinItem">The item to restore.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
+        Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
     }
 }

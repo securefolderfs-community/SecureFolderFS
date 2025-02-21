@@ -1,28 +1,24 @@
-using CommunityToolkit.Maui.Views;
+using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
-#if IOS
-using Microsoft.Maui.Controls.PlatformConfiguration;
-using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
-#endif
 
-namespace SecureFolderFS.Maui.Views.Modals
+namespace SecureFolderFS.Maui.Views.Modals.Vault
 {
-    public partial class FilePreviewModalPage : BaseModalPage, IOverlayControl
+    public partial class RecycleBinModalPage : BaseModalPage, IOverlayControl
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
         
-        public FilePreviewModalPage(INavigation sourceNavigation)
+        public RecycleBinModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
             BindingContext = this;
-            
+
+            _ = new MauiIcon(); // Workaround for XFC0000
             InitializeComponent();
         }
         
@@ -49,7 +45,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = viewable as PreviewerOverlayViewModel;
+            ViewModel = viewable as RecycleBinOverlayViewModel;
             OnPropertyChanged(nameof(ViewModel));
         }
         
@@ -62,25 +58,16 @@ namespace SecureFolderFS.Maui.Views.Modals
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
-            if ((Presentation.Content as ContentView)?.Content is not MediaElement mediaElement)
-                return;
-
-            mediaElement.Stop();
-            mediaElement.Handler?.DisconnectHandler();
-            mediaElement.Dispose();
-            mediaElement.Source = null;
-            
-            _modalTcs.TrySetResult(Result.Success);
             base.OnDisappearing();
+            _modalTcs.TrySetResult(Result.Success);
         }
 
-        public PreviewerOverlayViewModel? ViewModel
+        public RecycleBinOverlayViewModel? ViewModel
         {
-            get => (PreviewerOverlayViewModel?)GetValue(ViewModelProperty);
+            get => (RecycleBinOverlayViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(PreviewerOverlayViewModel), typeof(FilePreviewModalPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(RecycleBinOverlayViewModel), typeof(RecycleBinModalPage), null);
     }
 }
-

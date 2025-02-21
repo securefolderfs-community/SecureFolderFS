@@ -39,7 +39,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Assert
             var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
-            recycleBinItems.First().Title.Should().BeEquivalentTo(fileName);
+            recycleBinItems.First().PlaintextName.Should().BeEquivalentTo(fileName);
             
             Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
         }
@@ -68,8 +68,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
             
-            first.Title.Should().BeEquivalentTo("SUB_FILE");
-            second.Title.Should().BeEquivalentTo("SUB_FOLDER");
+            first.PlaintextName.Should().BeEquivalentTo("SUB_FILE");
+            second.PlaintextName.Should().BeEquivalentTo("SUB_FOLDER");
             
             Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
         }

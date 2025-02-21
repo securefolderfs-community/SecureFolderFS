@@ -109,6 +109,14 @@
     <Compile Update="ServiceImplementation\MauiClipboardService.cs">
       <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
     </Compile>
+    <Compile Update="Views\Modals\Vault\FilePreviewModalPage.xaml.cs">
+      <DependentUpon>FilePreviewModalPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Modals\Vault\RecycleBinModalPage.xaml.cs">
+      <DependentUpon>RecycleBinPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -149,6 +157,13 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\Vault\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\Vault\FilePreviewModalPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\Vault\RecycleBinModalPage.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>
