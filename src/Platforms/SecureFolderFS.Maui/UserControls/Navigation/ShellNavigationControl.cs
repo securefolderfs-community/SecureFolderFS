@@ -1,6 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Views.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 

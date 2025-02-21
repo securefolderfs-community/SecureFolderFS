@@ -2,18 +2,18 @@ using System;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
-    public abstract class BaseBoolInvertConverter : BaseConverter
+    public abstract class BaseCountToBoolConverter : BaseConverter
     {
         /// <inheritdoc/>
         protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
-            if (value is not bool boolVal)
+            if (value is not int numValue)
                 return false;
 
             if (parameter is string strParam && strParam.Equals("invert", StringComparison.OrdinalIgnoreCase))
-                return boolVal;
+                return !(numValue > 0);
 
-            return !boolVal;
+            return numValue > 0;
         }
         
         /// <inheritdoc/>

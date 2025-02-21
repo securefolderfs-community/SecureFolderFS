@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> ToggleRecycleBinAsync(IFolder vaultFolder, IVFSRoot vfsRoot, bool value, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Retrieves the items in the recycle bin asynchronously.
+        /// Retrieves the items found in the recycle bin.
         /// </summary>
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
@@ -30,12 +30,20 @@ namespace SecureFolderFS.Sdk.Services
         IAsyncEnumerable<RecycleBinItemModel> GetRecycleBinItemsAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Restores an item from the recycle bin asynchronously.
+        /// Restores an item from the recycle bin.
         /// </summary>
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="recycleBinItem">The item to restore.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
         Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Permanently deletes an item from the recycle bin.
+        /// </summary>
+        /// <param name="recycleBinItem">The item to delete.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
+        Task<IResult> DeletePermanentlyAsync(IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
     }
 }

@@ -1,6 +1,5 @@
 using System.Windows.Input;
-using AndroidX.Lifecycle;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 
 namespace SecureFolderFS.Maui.UserControls
 {

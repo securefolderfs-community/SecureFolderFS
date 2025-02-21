@@ -9,19 +9,19 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<IFileExplorerService>]
     [Bindable(true)]
-    public partial class BrowserViewModel : ObservableObject, IViewDesignation
+    public partial class BrowserViewModel : BaseDesignationViewModel
     {
-        [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
@@ -43,20 +43,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 new(vaultViewModel.VaultName, NavigateBreadcrumbCommand)
             };
         }
-        
-        /// <inheritdoc/>
-        public virtual void OnAppearing()
-        {
-        }
-
-        /// <inheritdoc/>
-        public virtual void OnDisappearing()
-        {
-        }
 
         partial void OnCurrentFolderChanged(FolderViewModel? oldValue, FolderViewModel? newValue)
         {
-            oldValue?.UnselectAll();
+            oldValue?.Items.UnselectAll();
             IsSelecting = false;
             Title = newValue?.Title;
             if (string.IsNullOrEmpty(Title))
@@ -86,10 +76,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         }
         
         [RelayCommand]
-        protected virtual void ToggleSelection()
+        protected virtual void ToggleSelection(bool? value = null)
         {
-            IsSelecting = !IsSelecting;
-            CurrentFolder?.UnselectAll();
+            IsSelecting = value ?? !IsSelecting;
+            CurrentFolder?.Items.UnselectAll();
         }
 
         [RelayCommand]

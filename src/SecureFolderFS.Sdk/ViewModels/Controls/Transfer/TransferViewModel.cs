@@ -1,13 +1,14 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
-using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 {

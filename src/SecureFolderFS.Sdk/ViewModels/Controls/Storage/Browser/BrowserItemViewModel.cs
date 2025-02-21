@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
@@ -19,19 +18,12 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
     [Inject<IFileExplorerService>, Inject<IOverlayService>]
     [Bindable(true)]
-    public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
+    public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
-        [ObservableProperty] private string? _Title;
-        [ObservableProperty] private bool _IsSelected;
-        [ObservableProperty] private IImage? _Thumbnail;
-
-        /// <inheritdoc/>
-        public abstract IStorable Inner { get; }
-
         /// <summary>
         /// Gets the parent <see cref="FolderViewModel"/> that this item resides in, if any.
         /// </summary>
@@ -46,16 +38,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Updates the <see cref="BrowserItemViewModel.Inner"/> storable instance of this item.
+        /// </summary>
+        /// <param name="storable">The new storable object to use.</param>
         protected abstract void UpdateStorable(IStorable storable);
 
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
         {
-            var items = ParentFolder?.GetSelectedItems().ToArray();
-            if (items?.IsEmpty() ?? true)
+            if (ParentFolder is null)
+                return;
+            
+            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            if (items.IsEmpty())
                 items = [ this ];
             
-            if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder?.Folder is not IModifiableFolder modifiableParent)
+            if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
                 return;
 
             try
@@ -68,11 +67,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 if (destination is not { Folder: IModifiableFolder destinationFolder })
                     return;
                 
-                foreach (var item in items)
-                {
-                    if (destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
-                        return;
-                }
+                if (items.Any(item => destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
+                    return;
 
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (storable, token) =>
                 {
@@ -106,11 +102,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task CopyAsync(CancellationToken cancellationToken)
         {
-            var items = ParentFolder?.GetSelectedItems().ToArray();
-            if (items?.IsEmpty() ?? true)
+            if (ParentFolder is null)
+                return;
+            
+            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            if (items.IsEmpty())
                 items = [ this ];
             
-            if (ParentFolder?.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
+            if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
             try
@@ -199,7 +198,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             // TODO: Show an overlay to ask the user **when deleting permanently**
             // TODO: If moving to trash, show TransferViewModel (with try..catch..finally), otherwise don't show anything
             
-            var items = ParentFolder.GetSelectedItems().ToArray();
+            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [this];
             

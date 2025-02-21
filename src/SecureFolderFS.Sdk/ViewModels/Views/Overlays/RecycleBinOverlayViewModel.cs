@@ -1,18 +1,15 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -20,32 +17,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IRecycleBinService>]
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
     {
-        private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-
+        [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private bool _IsRecycleBinEnabled;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
+        [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
 
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
         {
             ServiceProvider = DI.Default;
             Items = new();
             Title = "RecycleBin".ToLocalized();
-            _unlockedVaultViewModel = unlockedVaultViewModel;
+            UnlockedVaultViewModel = unlockedVaultViewModel;
         }
         
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in RecycleBinService.GetRecycleBinItemsAsync(_unlockedVaultViewModel.StorageRoot, cancellationToken))
+            await foreach (var item in RecycleBinService.GetRecycleBinItemsAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken))
             {
-                Items.Add(new(item.CiphertextItem, _unlockedVaultViewModel.StorageRoot, Items)
+                Items.Add(new(item.CiphertextItem, this)
                 {
                     Title = item.PlaintextName,
                     DeletionTimestamp = item.DeletionTimestamp
                 });
             }
 
-            IsRecycleBinEnabled = _unlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled;
+            IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled;
         }
 
         [RelayCommand]
@@ -53,25 +50,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             var isEnabled = IsRecycleBinEnabled;
             var isSuccess = await RecycleBinService.ToggleRecycleBinAsync(
-                _unlockedVaultViewModel.VaultViewModel.VaultModel.Folder,
-                _unlockedVaultViewModel.StorageRoot,
+                UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder,
+                UnlockedVaultViewModel.StorageRoot,
                 !isEnabled,
                 cancellationToken);
 
             IsRecycleBinEnabled = !isSuccess ? isEnabled : !isEnabled;
         }
+        
+        [RelayCommand]
+        public void ToggleSelection(bool? value = null)
+        {
+            IsSelecting = value ?? !IsSelecting;
+            Items.UnselectAll();
+        }
 
         [RelayCommand]
-        private async Task RestoreItemsAsync(IEnumerable<RecycleBinItemViewModel>? items, CancellationToken cancellationToken)
+        public void SelectAll()
         {
-            if (items is null)
-                return;
-
-            foreach (var item in items.ToArray())
-            {
-                await RecycleBinService.RestoreItemAsync(_unlockedVaultViewModel.StorageRoot, item.CiphertextItem, cancellationToken);
-                Items.Remove(item);
-            }
+            IsSelecting = true;
+            Items.SelectAll();
         }
     }
 }

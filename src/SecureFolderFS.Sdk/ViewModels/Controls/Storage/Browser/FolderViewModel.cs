@@ -4,16 +4,17 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
         /// <summary>
-        /// Gets the <see cref="Sdk.ViewModels.Views.Browser.BrowserViewModel"/> instance, which this folder belongs to.
+        /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this folder belongs to.
         /// </summary>
         public BrowserViewModel BrowserViewModel { get; }
         

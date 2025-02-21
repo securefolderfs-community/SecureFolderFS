@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var intent = new Intent(Intent.ActionOpenDocument)
                 .AddCategory(Intent.CategoryOpenable)
@@ -40,21 +40,19 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 .SetType("*/*");
 
             var pickerIntent = Intent.CreateChooser(intent, "Select file");
+            
+            // TODO: Determine if GrantReadUriPermission and GrantWriteUriPermission are needed for access persistence
 
             // FilePicker 0x2AF9
             var result = await StartActivityAsync(pickerIntent, 0x2AF9);
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            var file = new AndroidFile(result, MainActivity.Instance);
-            if (persist)
-                await file.AddBookmarkAsync(cancellationToken);
-
-            return file;
+            return new AndroidFile(result, MainActivity.Instance);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var initialPath = AndroidPathExtensions.GetExternalDirectory();
             if (AOSEnvironment.ExternalStorageDirectory is not null)
@@ -64,7 +62,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var intent = new Intent(Intent.ActionOpenDocumentTree);
 
             intent.PutExtra(DocumentsContract.ExtraInitialUri, initialFolderUri);
-            if (persist)
+            if (offerPersistence)
             {
                 intent.AddFlags(ActivityFlags.GrantReadUriPermission);
                 intent.AddFlags(ActivityFlags.GrantWriteUriPermission);
@@ -75,11 +73,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            var folder = new AndroidFolder(result, MainActivity.Instance);
-            if (persist)
-                await folder.AddBookmarkAsync(cancellationToken);
-
-            return folder;
+            return new AndroidFolder(result, MainActivity.Instance);
         }
 
         private async Task<AndroidUri?> StartActivityAsync(Intent? pickerIntent, int requestCode)

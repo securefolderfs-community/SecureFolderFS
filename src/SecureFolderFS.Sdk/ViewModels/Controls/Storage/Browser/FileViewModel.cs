@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
     [Inject<IOverlayService>]
     [Bindable(true)]

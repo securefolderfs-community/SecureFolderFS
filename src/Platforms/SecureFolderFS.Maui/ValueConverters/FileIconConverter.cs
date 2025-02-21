@@ -1,7 +1,8 @@
 using System.Globalization;
 using MauiIcons.Core;
 using MauiIcons.Material;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -11,15 +12,15 @@ namespace SecureFolderFS.Maui.ValueConverters
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
+            if (parameter is not View { BindingContext: IWrapper<IStorable> storableWrapper })
                 return null;
 
             return value switch
             {
                 IImage image => ToImage(image),
-                _ => itemViewModel switch
+                _ => storableWrapper switch
                 {
-                    FolderViewModel => new MauiIcon() { Icon = MaterialIcons.Folder },
+                    { Inner: IFolder } => new MauiIcon() { Icon = MaterialIcons.Folder },
                     _ => new MauiIcon() { Icon = MaterialIcons.Description }
                 }
             };

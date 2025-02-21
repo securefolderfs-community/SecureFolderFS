@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -98,6 +99,30 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     specifics,
                     StreamSerializer.Instance,
                     cancellationToken);
+
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IResult> DeletePermanentlyAsync(IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var recycleBin = await recycleBinItem.GetParentAsync(cancellationToken);
+                if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                    return Result.Failure(new InvalidOperationException("The recycle bin is not modifiable."));
+
+                // Get the associated configuration file
+                var configurationFile = await recycleBin.GetFileByNameAsync($"{recycleBinItem.Name}.json", cancellationToken);
+
+                // Delete both items
+                await modifiableRecycleBin.DeleteAsync(recycleBinItem, cancellationToken);
+                await modifiableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
 
                 return Result.Success;
             }

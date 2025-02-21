@@ -13,7 +13,6 @@
         Padding="16"
         x:DataType="local:TransferControl"
         Background="{StaticResource SecondaryBrush}"
-        BackgroundColor="Gray"
         BindingContext="{x:Reference RootControl}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
