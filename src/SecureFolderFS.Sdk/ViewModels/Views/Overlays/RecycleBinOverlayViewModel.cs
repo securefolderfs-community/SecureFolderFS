@@ -21,13 +21,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private bool _IsRecycleBinEnabled;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
         [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
+        
+        public INavigator OuterNavigator { get; }
 
-        public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
+        public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
         {
             ServiceProvider = DI.Default;
             Items = new();
             Title = "RecycleBin".ToLocalized();
             UnlockedVaultViewModel = unlockedVaultViewModel;
+            OuterNavigator = outerNavigator;
         }
         
         /// <inheritdoc/>

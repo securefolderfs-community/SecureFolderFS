@@ -15,33 +15,35 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<IFileExplorerService>]
     [Bindable(true)]
-    public partial class BrowserViewModel : BaseDesignationViewModel
+    public partial class BrowserViewModel : BaseDesignationViewModel, IFolderPicker
     {
+        private readonly IViewable? _rootView;
+        
         [ObservableProperty] private bool _IsSelecting;
-        [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
         [ObservableProperty] private TransferViewModel? _TransferViewModel;
         [ObservableProperty] private ObservableCollection<BreadcrumbItemViewModel> _Breadcrumbs;
         
         public IFolder BaseFolder { get; }
         
-        public INavigator Navigator { get; }
+        public INavigator InnerNavigator { get; }
+        
+        public INavigator? OuterNavigator { get; }
 
-        public BrowserViewModel(INavigator navigator, IFolder baseFolder, VaultViewModel vaultViewModel)
+        public BrowserViewModel(IFolder baseFolder, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
         {
             ServiceProvider = DI.Default;
-            Navigator = navigator;
+            _rootView = rootView;
+            InnerNavigator = innerNavigator;
+            OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;
-            VaultViewModel = vaultViewModel;
-            Breadcrumbs = new()
-            {
-                new(vaultViewModel.VaultName, NavigateBreadcrumbCommand)
-            };
+            Breadcrumbs = [ new(rootView?.Title, NavigateBreadcrumbCommand) ];
         }
 
         partial void OnCurrentFolderChanged(FolderViewModel? oldValue, FolderViewModel? newValue)
@@ -50,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             IsSelecting = false;
             Title = newValue?.Title;
             if (string.IsNullOrEmpty(Title))
-                Title = VaultViewModel.VaultName;
+                Title = _rootView?.Title;
         }
 
         [RelayCommand]
@@ -64,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             var difference = lastIndex - breadcrumbIndex;
             for (var i = 0; i < difference; i++)
             {
-                await Navigator.GoBackAsync();
+                await InnerNavigator.GoBackAsync();
             }
         }
 
@@ -153,7 +155,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                 case "Folder":
                 {
-                    var folder = await FileExplorerService.PickFolderAsync(false, cancellationToken);
+                    var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
                     if (folder is null)
                         return;
                     
@@ -162,6 +164,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     break;
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        {
+            if (OuterNavigator is null || TransferViewModel is null)
+                return null;
+
+            await OuterNavigator.NavigateAsync(this);
+            var pickedFolder = await TransferViewModel.PickFolderAsync(null, false, cancellationToken);
+            if (pickedFolder is null)
+                return null;
+
+            await OuterNavigator.GoBackAsync();
+            return pickedFolder;
         }
     }
 }

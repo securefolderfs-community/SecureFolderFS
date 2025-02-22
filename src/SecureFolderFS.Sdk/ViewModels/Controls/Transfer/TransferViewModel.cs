@@ -4,22 +4,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 {
     [Bindable(true)]
-    public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>
+    public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>, IFolderPicker
     {
         private readonly BrowserViewModel _browserViewModel;
-        private TaskCompletionSource<FolderViewModel?>? _tcs;
+        private TaskCompletionSource<IFolder?>? _tcs;
         private CancellationTokenSource? _cts;
         
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _IsVisible;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private TransferType _TransferType;
@@ -55,31 +58,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 };
             }
         }
-
-        public async Task<FolderViewModel?> SelectFolderAsync(TransferType transferType, CancellationTokenSource? cts)
+        
+        public CancellationTokenSource GetCancellation()
         {
-            try
-            {
-                _tcs?.TrySetCanceled();
-                _tcs = new();
-                _cts = cts;
-                TransferType = transferType;
-                Title = "Choose destination folder";
-                IsVisible = true;
-                return await _tcs.Task;
-            }
-            finally
-            {
-                _tcs = null;
-                _cts = null;
-            }
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
+            
+            CanCancel = true;
+            return _cts;
+        }
+
+        /// <inheritdoc/>
+        public Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true,
+            CancellationToken cancellationToken = default)
+        {
+            _tcs?.TrySetCanceled(CancellationToken.None);
+            _tcs = new TaskCompletionSource<IFolder?>();
+
+            if (filter is TransferFilter transferFilter)
+                TransferType = transferFilter.TransferType;
+
+            Title = "ChooseDestinationFolder".ToLocalized();
+            IsProgressing = false;
+            IsVisible = true;
+
+            return _tcs.Task;
         }
 
         [RelayCommand]
         private void Confirm()
         {
             // Only used for confirming the destination folder
-            _tcs?.TrySetResult(_browserViewModel.CurrentFolder);
+            _tcs?.TrySetResult(_browserViewModel.CurrentFolder?.Folder);
         }
 
         [RelayCommand]
@@ -87,17 +97,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         {
             if (_tcs is not null)
             {
-                _tcs?.TrySetCanceled();
+                _tcs.TrySetCanceled(CancellationToken.None);
                 IsVisible = false;
-                return;
             }
-
-            // Cancel here using the provided CancellationTokenSource
-            if (_cts is not null)
+            else if (_cts is not null)
             {
-                Title = "Cancelling";
+                CanCancel = false;
+                Title = "Cancelling".ToLocalized();
                 await _cts.CancelAsync();
-
                 IsVisible = false;
             }
         }

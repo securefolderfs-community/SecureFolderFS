@@ -197,7 +197,7 @@
                                 <!--  Vault name  -->
                                 <TextBlock
                                     FontWeight="SemiBold"
-                                    Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}"
+                                    Text="{x:Bind VaultViewModel.Title, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis" />
 
                                 <!--  Last opened  -->
@@ -215,7 +215,7 @@
                                 KeyDown="RenameBox_KeyDown"
                                 Loaded="RenameBox_Loaded"
                                 LostFocus="RenameBox_LostFocus"
-                                Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}" />
+                                Text="{x:Bind VaultViewModel.Title, Mode=OneWay}" />
                         </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>

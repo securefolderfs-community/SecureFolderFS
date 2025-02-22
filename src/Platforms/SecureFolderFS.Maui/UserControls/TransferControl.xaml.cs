@@ -9,6 +9,14 @@ namespace SecureFolderFS.Maui.UserControls
             InitializeComponent();
         }
         
+        public bool CanCancel
+        {
+            get => (bool)GetValue(CanCancelProperty);
+            set => SetValue(CanCancelProperty, value);
+        }
+        public static readonly BindableProperty CanCancelProperty =
+            BindableProperty.Create(nameof(CanCancel), typeof(bool), typeof(TransferControl), defaultValue: true);
+        
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);

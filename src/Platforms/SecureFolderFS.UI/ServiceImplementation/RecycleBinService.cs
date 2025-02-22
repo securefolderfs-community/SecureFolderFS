@@ -9,10 +9,10 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -62,7 +62,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
+        public async Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, IFolderPicker folderPicker, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
                 return Result.Failure(new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported."));
@@ -80,18 +80,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (destinationFolder is null)
                 {
                     // TODO: Add starting directory parameter
-                    var fileExplorerService = DI.Service<IFileExplorerService>();
-                    destinationFolder = await fileExplorerService.PickFolderAsync(false, cancellationToken) as IModifiableFolder;
+                    destinationFolder = await folderPicker.PickFolderAsync(null, false, cancellationToken) as IModifiableFolder;
                     if (destinationFolder is null)
                         return Result.Failure(new OperationCanceledException("The user did not pick destination a folder."));
-
+                    
                     if (!destinationFolder.Id.Contains(vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         // Invalid folder chosen outside of vault
                         // TODO: Return IResult or throw
                         return Result.Failure(new InvalidOperationException("The folder is outside of the virtualized storage folder."));
                     }
+                    
+                    if (destinationFolder is not IWrapper<IFolder> { Inner: IModifiableFolder ciphertextFolder })
+                        return Result.Failure(new NotSupportedException("Could not retrieve inner ciphertext item from the picked folder."));
+
+                    destinationFolder = ciphertextFolder;
                 }
+
                 // Restore the item to chosen destination
                 await AbstractRecycleBinHelpers.RestoreAsync(
                     recycleBinItem,

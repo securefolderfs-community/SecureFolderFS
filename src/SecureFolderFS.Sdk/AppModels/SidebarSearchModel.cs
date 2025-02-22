@@ -1,10 +1,10 @@
-﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var splitQuery = query.ToLowerInvariant().Split(' ');
             foreach (var item in _items)
             {
-                var found = splitQuery.All(item.VaultViewModel.VaultName.Contains);
+                var found = item.VaultViewModel.Title is not null && splitQuery.All(item.VaultViewModel.Title.Contains);
                 if (found)
                     yield return item;
             }

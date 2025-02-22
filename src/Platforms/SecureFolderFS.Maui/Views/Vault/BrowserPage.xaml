@@ -65,6 +65,7 @@
             Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"
             Grid.Row="0"
             Grid.RowSpan="2"
+            CanCancel="{Binding ViewModel.TransferViewModel.CanCancel, Mode=OneWay}"
             CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
             IsVisible="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
             PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"

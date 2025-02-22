@@ -48,10 +48,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (DashboardNavigation.CurrentView is not VaultOverviewViewModel)
                 return;
 
-            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+            if (e.PropertyName != nameof(VaultViewModel.Title))
                 return;
 
-            Title = VaultViewModel.VaultName;
+            Title = VaultViewModel.Title;
         }
 
         [RelayCommand]

@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 // Prepare the recovery view
                 _recoveryViewModel.VaultId = vaultOptions.VaultId;
-                _recoveryViewModel.VaultName = _vaultModel.VaultName;
+                _recoveryViewModel.Title = _vaultModel.VaultName;
                 _recoveryViewModel.RecoveryKey = e.UnlockContract.ToString();
 
                 // Change view to recovery

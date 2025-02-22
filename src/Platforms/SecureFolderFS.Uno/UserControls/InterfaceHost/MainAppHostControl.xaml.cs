@@ -126,7 +126,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
 
             textBox.Focus(FocusState.Programmatic);
-            textBox.Text = itemViewModel.VaultViewModel.VaultName;
+            textBox.Text = itemViewModel.VaultViewModel.Title;
             textBox.SelectAll();
         }
 
@@ -154,7 +154,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 

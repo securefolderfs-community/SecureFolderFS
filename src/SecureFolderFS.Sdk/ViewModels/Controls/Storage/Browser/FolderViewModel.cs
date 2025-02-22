@@ -83,7 +83,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (Items.IsEmpty())
                 _ = ListContentsAsync(cancellationToken);
             
-            await BrowserViewModel.Navigator.NavigateAsync(this);
+            await BrowserViewModel.InnerNavigator.NavigateAsync(this);
         }
     }
 }

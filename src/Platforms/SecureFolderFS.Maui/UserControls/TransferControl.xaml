@@ -31,13 +31,17 @@
                     <mdc:IconButton
                         Command="{Binding CancelCommand, Mode=OneWay}"
                         IconData="{x:Static mdci:Material.Close}"
+                        IsEnabled="{Binding CanCancel, Mode=OneWay}"
                         Style="{DynamicResource OutlinedIconButtonStyle}" />
                     <uc:ActivityButton Command="{Binding PrimaryCommand, Mode=OneWay}" Text="{Binding PrimaryButtonText, Mode=OneWay}" />
                 </HorizontalStackLayout>
             </On>
             <On Platform="iOS">
                 <HorizontalStackLayout Grid.Column="1" Spacing="8">
-                    <Button Command="{Binding CancelCommand, Mode=OneWay}" Text="{l:ResourceString Rid=Cancel}" />
+                    <Button
+                        Command="{Binding CancelCommand, Mode=OneWay}"
+                        IsEnabled="{Binding CanCancel, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Cancel}" />
                     <uc:ActivityButton Command="{Binding PrimaryCommand, Mode=OneWay}" Text="{Binding PrimaryButtonText, Mode=OneWay}" />
                 </HorizontalStackLayout>
             </On>

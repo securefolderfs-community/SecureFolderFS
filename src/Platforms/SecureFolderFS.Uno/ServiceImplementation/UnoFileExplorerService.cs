@@ -4,17 +4,62 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Storage.SystemStorageEx;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.Pickers;
+using SecureFolderFS.Storage.SystemStorageEx;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="IFileExplorerService"/>
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
+        /// <inheritdoc/>
+        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool persist = true, CancellationToken cancellationToken = default)
+        {
+            var filePicker = new FileOpenPicker();
+            WinRT_InitializeObject(filePicker);
+
+            if (filter is NameFilter nameFilter)
+            {
+                foreach (var item in nameFilter.Names)
+                    filePicker.FileTypeFilter.Add(item);
+            }
+            else
+                filePicker.FileTypeFilter.Add("*");
+
+            var file = await filePicker.PickSingleFileAsync().AsTask(cancellationToken);
+            if (file is null)
+                return null;
+
+            //return new WindowsStorageFile(file);
+            return new SystemFileEx(file.Path);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool persist = true, CancellationToken cancellationToken = default)
+        {
+            var folderPicker = new FolderPicker();
+            WinRT_InitializeObject(folderPicker);
+
+            if (filter is NameFilter nameFilter)
+            {
+                foreach (var item in nameFilter.Names)
+                    folderPicker.FileTypeFilter.Add(item);
+            }
+            else
+                folderPicker.FileTypeFilter.Add("*");
+            
+            var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
+            if (folder is null)
+                return null;
+
+            //return new WindowsStorageFolder(folder);
+            return new SystemFolderEx(folder.Path);
+        }
+        
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
@@ -58,43 +103,6 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             await dataStream.CopyToAsync(stream, cancellationToken);
 
             return true;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
-        {
-            var filePicker = new FileOpenPicker();
-            WinRT_InitializeObject(filePicker);
-
-            if (filter is not null)
-            {
-                foreach (var item in filter)
-                    filePicker.FileTypeFilter.Add(item);
-            }
-            else
-                filePicker.FileTypeFilter.Add("*");
-
-            var file = await filePicker.PickSingleFileAsync().AsTask(cancellationToken);
-            if (file is null)
-                return null;
-
-            //return new WindowsStorageFile(file);
-            return new SystemFileEx(file.Path);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
-        {
-            var folderPicker = new FolderPicker();
-            WinRT_InitializeObject(folderPicker);
-
-            folderPicker.FileTypeFilter.Add("*");
-            var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
-            if (folder is null)
-                return null;
-
-            //return new WindowsStorageFolder(folder);
-            return new SystemFolderEx(folder.Path);
         }
 
         private static void WinRT_InitializeObject(object obj)

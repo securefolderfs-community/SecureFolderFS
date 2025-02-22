@@ -1,12 +1,11 @@
-﻿using OwlCore.Storage;
-using OwlCore.Storage.Memory;
-using SecureFolderFS.Storage.Renamable;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using OwlCore.Storage.Memory;
+using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Storage.MemoryStorageEx
 {
@@ -24,35 +23,33 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
         public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {
             var oldPath = storable.Id;
-            var newPath = System.IO.Path.Combine(Id, newName);
+            var newPath = Path.Combine(Id, newName);
 
             await Task.CompletedTask;
-            if (storable is MemoryFileEx memoryFile)
+            switch (storable)
             {
-                // Use reflection to get the private _memoryStream member
-                var memoryStreamField = typeof(MemoryFile).GetField("_memoryStream", BindingFlags.NonPublic | BindingFlags.Instance);
-                var memoryStream = (MemoryStream?)memoryStreamField?.GetValue(memoryFile);
-                if (memoryStream is null)
-                    throw new MemberAccessException("Could not access _memoryStream");
+                case MemoryFileEx memoryFile:
+                {
+                    FolderContents.Remove(oldPath);
+                    var newFile = new MemoryFileEx(newPath, newName, memoryFile.InternalStream);
+                    newFile.SetParent(this);
+                    FolderContents.Add(newPath, newFile);
 
-                FolderContents.Remove(oldPath);
-                var newFile = new MemoryFileEx(newPath, newName, memoryStream);
-                newFile.SetParent(this);
-                FolderContents.Add(newPath, newFile);
+                    return newFile;
+                }
 
-                return newFile;
+                case IFolder:
+                {
+                    FolderContents.Remove(oldPath);
+                    var newFolder = new MemoryFolderEx(newPath, newName);
+                    newFolder.SetParent(this);
+                    FolderContents.Add(newPath, newFolder);
+
+                    return newFolder;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(storable));
             }
-            else if (storable is IFolder)
-            {
-                FolderContents.Remove(oldPath);
-                var newFolder = new MemoryFolderEx(newPath, newName);
-                newFolder.SetParent(this);
-                FolderContents.Add(newPath, newFolder);
-
-                return newFolder;
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(storable));
         }
 
         /// <inheritdoc/>

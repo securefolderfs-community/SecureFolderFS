@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -61,13 +62,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Disable selection, if called with selected items
                 ParentFolder.BrowserViewModel.IsSelecting = false;
-                
-                using var cts = new CancellationTokenSource();
-                var destination = await transferViewModel.SelectFolderAsync(TransferType.Move, cts);
-                if (destination is not { Folder: IModifiableFolder destinationFolder })
+
+                using var cts = transferViewModel.GetCancellation();
+                var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Move), false, cts.Token);
+                if (destination is not IModifiableFolder destinationFolder)
+                    return;
+
+                // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
+                // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
+                var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
+                if (destinationViewModel is null)
                     return;
                 
-                if (items.Any(item => destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
+                if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (storable, token) =>
@@ -79,10 +86,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id);
                     
                     // Add to destination
-                    destination.Items.Add(movedItem switch
+                    destinationViewModel.Items.Add(movedItem switch
                     {
-                        IFile file => new FileViewModel(file, destination),
-                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destination),
+                        IFile file => new FileViewModel(file, destinationViewModel),
+                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(movedItem))
                     });
                 }, cts.Token);
@@ -117,27 +124,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 // Disable selection, if called with selected items
                 ParentFolder.BrowserViewModel.IsSelecting = false;
 
-                using var cts = new CancellationTokenSource();
-                var destination = await transferViewModel.SelectFolderAsync(TransferType.Copy, cts);
-                if (destination is not { Folder: IModifiableFolder destinationFolder })
+                using var cts = transferViewModel.GetCancellation();
+                var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Copy), false, cts.Token);
+                if (destination is not IModifiableFolder modifiableDestination)
+                    return;
+                
+                // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
+                // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
+                var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
+                if (destinationViewModel is null)
                     return;
 
-                foreach (var item in items)
-                {
-                    if (destination.Folder.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
-                        return;
-                }
+                if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
+                    return;
 
                 await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (storable, token) =>
                 {
                     // Copy
-                    var copiedItem = await destinationFolder.CreateCopyOfStorableAsync(storable, false, token);
+                    var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(storable, false, token);
 
                     // Add to destination
-                    destination.Items.Add(copiedItem switch
+                    destinationViewModel.Items.Add(copiedItem switch
                     {
-                        IFile file => new FileViewModel(file, destination),
-                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destination),
+                        IFile file => new FileViewModel(file, destinationViewModel),
+                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(copiedItem))
                     });
                 }, cts.Token);
@@ -218,7 +228,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder?.Folder is not IModifiableFolder parentModifiableFolder)
                 return;
             
-            var destination = await FileExplorerService.PickFolderAsync(false, cancellationToken);
+            var destination = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
             if (destination is not IModifiableFolder destinationFolder)
                 return;
 

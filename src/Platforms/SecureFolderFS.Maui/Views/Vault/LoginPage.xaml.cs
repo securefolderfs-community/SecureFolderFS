@@ -3,6 +3,7 @@ using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
@@ -56,21 +57,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Initialize DashboardViewModel and use the same navigation for dashboard
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
-
-            var rootFolder = args.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot;
-            var navigator = DI.Service<INavigationService>();
-            var browserViewModel = new BrowserViewModel(navigator, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
-            var transferViewModel = new TransferViewModel(browserViewModel);
-            var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
-            _ = folderViewModel.ListContentsAsync();
-            
-            browserViewModel.TransferViewModel = transferViewModel;
-            browserViewModel.CurrentFolder = folderViewModel;
+            var browserViewModel = BrowserHelpers.CreateBrowser(args.UnlockedVaultViewModel, outerNavigator: ViewModel.VaultNavigation);
             
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache
 
-            var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel);
+            var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel, dashboardNavigation, ViewModel.VaultNavigation);
             var overviewViewModel = new VaultOverviewViewModel(
                 args.UnlockedVaultViewModel,
                 new(ViewModel.VaultNavigation,

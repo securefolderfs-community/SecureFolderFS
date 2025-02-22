@@ -5,6 +5,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.Services
@@ -34,9 +35,10 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="vfsRoot">The root of the virtual file system.</param>
         /// <param name="recycleBinItem">The item to restore.</param>
+        /// <param name="folderPicker">The <see cref="IFolderPicker"/> instance to use when the destination folder no longer exists..</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
-        Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, CancellationToken cancellationToken = default);
+        Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, IFolderPicker folderPicker, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Permanently deletes an item from the recycle bin.

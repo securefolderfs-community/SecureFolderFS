@@ -138,7 +138,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             IsRenaming = false;
             if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))
-                VaultViewModel.VaultName = newName;
+                VaultViewModel.Title = newName;
         }
 
         [RelayCommand]

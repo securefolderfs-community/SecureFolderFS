@@ -39,7 +39,7 @@
                     FontAttributes="Bold"
                     FontSize="16"
                     HorizontalOptions="Center"
-                    Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
+                    Text="{Binding ViewModel.Title, Mode=OneWay}" />
             </VerticalStackLayout>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>

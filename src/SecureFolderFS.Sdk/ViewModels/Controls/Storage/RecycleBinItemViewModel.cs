@@ -8,16 +8,18 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Bindable(true)]
-    [Inject<IRecycleBinService>]
+    [Inject<IRecycleBinService>, Inject<IApplicationService>]
     public sealed partial class RecycleBinItemViewModel : StorageItemViewModel
     {
         [ObservableProperty] private DateTime? _DeletionTimestamp;
@@ -40,12 +42,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (items.IsEmpty())
                 items = [ this ];
 
+            IFolderPicker folderPicker = ApplicationService.IsDesktop
+                ? DI.Service<IFileExplorerService>()
+                : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
+            
             foreach (var item in items)
             {
                 if (item.Inner is not IStorableChild innerChild)
                     continue;
                 
-                var result = await RecycleBinService.RestoreItemAsync(OverlayViewModel.UnlockedVaultViewModel.StorageRoot, innerChild, cancellationToken);
+                var result = await RecycleBinService.RestoreItemAsync(OverlayViewModel.UnlockedVaultViewModel.StorageRoot, innerChild, folderPicker, cancellationToken);
                 if (result.Successful)
                     OverlayViewModel.Items.Remove(item);
             }

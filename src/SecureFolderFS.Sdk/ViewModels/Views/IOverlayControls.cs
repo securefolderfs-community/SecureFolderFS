@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
     /// <summary>
     /// Represents basic overlay controls to display in the UI.
     /// </summary>
-    public interface IOverlayControls : IViewable, INotifyPropertyChanged
+    public interface IOverlayControls : IViewable
     {
         /// <summary>
         /// Gets whether the continuation should be possible or not.

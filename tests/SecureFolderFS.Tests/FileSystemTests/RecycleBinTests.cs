@@ -12,6 +12,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
     {
         private IVFSRoot? _storageRoot;
         private IRecycleBinService? _recycleBinService;
+        private IFileExplorerService? _fileExplorerService;
 
         [SetUp]
         public async Task Initialize()
@@ -20,6 +21,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync(CancellationToken.None);
             
             _recycleBinService = DI.Service<IRecycleBinService>();
+            _fileExplorerService = DI.Service<IFileExplorerService>();
             _storageRoot = await MountVault(localFileSystem, (nameof(FileSystemOptions.IsRecycleBinEnabled), true));
         }
 
@@ -79,6 +81,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
         {
             ArgumentNullException.ThrowIfNull(_storageRoot);
             ArgumentNullException.ThrowIfNull(_recycleBinService);
+            ArgumentNullException.ThrowIfNull(_fileExplorerService);
 
             // Arrange
             var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
@@ -97,8 +100,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
 
-            await _recycleBinService.RestoreItemAsync(_storageRoot, first.CiphertextItem);
-            await _recycleBinService.RestoreItemAsync(_storageRoot, second.CiphertextItem);
+            await _recycleBinService.RestoreItemAsync(_storageRoot, first.CiphertextItem, _fileExplorerService);
+            await _recycleBinService.RestoreItemAsync(_storageRoot, second.CiphertextItem, _fileExplorerService);
             
             // Assert
             var restoredItems = await subFolder.GetItemsAsync().ToArrayAsync();

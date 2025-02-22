@@ -61,7 +61,7 @@
                                 <Label
                                     FontAttributes="Bold"
                                     FontSize="16"
-                                    Text="{Binding VaultViewModel.VaultName, Mode=OneWay}"
+                                    Text="{Binding VaultViewModel.Title, Mode=OneWay}"
                                     VerticalOptions="Center" />
                                 <Label IsVisible="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                             </VerticalStackLayout>

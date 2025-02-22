@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             UnlockedVaultViewModel = unlockedVaultViewModel;
             WidgetsViewModel = widgetsViewModel;
             VaultControlsViewModel = vaultControlsViewModel;
-            Title = unlockedVaultViewModel.VaultViewModel.VaultName;
+            Title = unlockedVaultViewModel.VaultViewModel.Title;
             VaultViewModel.PropertyChanged += VaultViewModel_PropertyChanged;
         }
 
@@ -47,10 +47,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private void VaultViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+            if (e.PropertyName != nameof(VaultViewModel.Title))
                 return;
 
-            Title = VaultViewModel.VaultName;
+            Title = VaultViewModel.Title;
         }
 
         /// <inheritdoc/>

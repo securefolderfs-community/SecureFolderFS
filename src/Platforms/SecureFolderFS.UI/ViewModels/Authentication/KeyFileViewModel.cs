@@ -14,6 +14,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {
@@ -84,7 +85,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], false, cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync(new NameFilter([ ".key", "*" ]), false, cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 

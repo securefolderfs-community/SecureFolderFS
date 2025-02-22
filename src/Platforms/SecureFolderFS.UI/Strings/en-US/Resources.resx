@@ -668,4 +668,7 @@
     <value>Move down</value>
     <comment>Change order of vaults</comment>
   </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+      <value>Choose destination folder</value>
+  </data>
 </root>

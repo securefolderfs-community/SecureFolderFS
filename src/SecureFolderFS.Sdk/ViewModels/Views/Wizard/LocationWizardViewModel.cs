@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
-            SelectedFolder = await FileExplorerService.PickFolderAsync(true, cancellationToken);
+            SelectedFolder = await FileExplorerService.PickFolderAsync(null, true, cancellationToken);
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }
 
