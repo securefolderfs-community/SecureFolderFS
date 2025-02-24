@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private RegisterViewModel? _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
-        
+
         public IDisposable? UnlockContract { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;

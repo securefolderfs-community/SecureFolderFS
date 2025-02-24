@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private bool _IsComplementing;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
-        
+
         public required IDisposable UnlockContract { private get; init; }
 
         public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationType authenticationStage)
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             else
                 await ModifyAsync(cancellationToken);
         }
-        
+
         private async Task ModifyAsync(CancellationToken cancellationToken)
         {
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);

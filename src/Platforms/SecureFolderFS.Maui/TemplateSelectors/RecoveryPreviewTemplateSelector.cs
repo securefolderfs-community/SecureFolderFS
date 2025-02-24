@@ -7,7 +7,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? LoginTemplate { get; set; }
 
         public DataTemplate? RecoveryTemplate { get; set; }
-        
+
         /// <inheritdoc/>
         protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {

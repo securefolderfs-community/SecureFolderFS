@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Prompts
     internal sealed class RecoveryPrompt : IOverlayControl
     {
         public RecoveryOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {

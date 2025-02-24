@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.Prompts
     public sealed class RenamePrompt : IOverlayControl
     {
         public RenameOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {

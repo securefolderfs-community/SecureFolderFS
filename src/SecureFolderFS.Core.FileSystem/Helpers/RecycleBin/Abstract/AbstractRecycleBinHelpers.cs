@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             return deserialized;
         }
-        
+
         public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
             await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
         }
-        
+
         public static async Task DeleteOrTrashAsync(IModifiableFolder sourceFolder, IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
@@ -145,7 +145,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 return null;
             }
         }
-        
+
         public static async Task<IFolder> GetOrCreateRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);

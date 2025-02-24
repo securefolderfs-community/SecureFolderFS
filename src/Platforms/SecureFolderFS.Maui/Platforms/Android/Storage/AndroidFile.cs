@@ -60,7 +60,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.FromResult(stream);
         }
-        
+
         /// <inheritdoc/>
         public override Task<IBasicProperties> GetPropertiesAsync()
         {
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return null;
         }
-        
+
         private static long GetFileSize(ContentResolver? contentResolver, AndroidUri uri)
         {
             if (contentResolver is null)

@@ -16,10 +16,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
     internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName, IRenamableFolder // TODO: Implement: IGetFirstByName, IGetItem
     {
         private static Exception RenameException { get; } = new IOException("Could not rename the item.");
-        
+
         /// <inheritdoc/>
         public override string Name { get; }
-        
+
         /// <inheritdoc/>
         public override DocumentFile? Document { get; }
 
@@ -186,7 +186,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return target;
         }
-        
+
         /// <inheritdoc/>
         public override Task<IBasicProperties> GetPropertiesAsync()
         {

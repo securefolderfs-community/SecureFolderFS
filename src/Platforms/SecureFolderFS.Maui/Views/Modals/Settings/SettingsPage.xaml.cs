@@ -18,15 +18,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        
+
         public SettingsOverlayViewModel? OverlayViewModel { get; private set; }
-        
+
         public GeneralSettingsViewModel? GeneralViewModel { get; private set; }
-        
+
         public PreferencesSettingsViewModel? PreferencesViewModel { get; private set; }
-        
+
         public PrivacySettingsViewModel? PrivacyViewModel { get; private set; }
-        
+
         public AboutSettingsViewModel? AboutViewModel { get; private set; }
 
         public SettingsPage(INavigation sourceNavigation)
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
 
             return await _modalTcs.Task;
         }
-        
+
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {

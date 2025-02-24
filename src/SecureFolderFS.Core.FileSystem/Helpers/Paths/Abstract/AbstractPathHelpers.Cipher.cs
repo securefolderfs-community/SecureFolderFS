@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             return finalPath;
         }
-        
+
         /// <summary>
         /// Encrypts the provided <paramref name="plaintextName"/>.
         /// </summary>

@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty UnsecurePasswordProperty =
             BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultValue: null, defaultBindingMode: BindingMode.TwoWay);
-        
+
         public bool ShowInvalidPasswordMessage
         {
             get => (bool)GetValue(ShowInvalidPasswordMessageProperty);

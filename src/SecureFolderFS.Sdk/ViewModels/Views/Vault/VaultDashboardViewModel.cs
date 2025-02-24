@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultDashboardViewModel : BaseDesignationViewModel, IRecipient<VaultLockedMessage>, IUnlockedViewContext, IDisposable
     {
         public INavigationService VaultNavigation { get; }
-        
+
         public INavigationService DashboardNavigation { get; }
 
         /// <inheritdoc/>

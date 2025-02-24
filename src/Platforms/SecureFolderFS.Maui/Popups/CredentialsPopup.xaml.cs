@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -29,13 +29,13 @@ namespace SecureFolderFS.Maui.Popups
         {
             ViewModel = (CredentialsOverlayViewModel)viewable;
         }
-        
+
         /// <inheritdoc/>
         public Task HideAsync()
         {
             return CloseAsync();
         }
-        
+
         private void TableRoot_Loaded(object? sender, EventArgs e)
         {
             if (ViewModel?.SelectionViewModel is not { } selectionViewModel || sender is not TableView tableView)
@@ -103,7 +103,7 @@ namespace SecureFolderFS.Maui.Popups
                 _ = ex;
             }    
         }
-        
+
         private async void ConfirmationViewButton_Click(object? sender, EventArgs e)
         {
             if (ViewModel?.SelectedViewModel is not CredentialsConfirmationViewModel credentialsConfirmation)
@@ -120,7 +120,7 @@ namespace SecureFolderFS.Maui.Popups
                 _ = ex;
             }
         }
-        
+
         public CredentialsOverlayViewModel? ViewModel
         {
             get => (CredentialsOverlayViewModel?)GetValue(ViewModelProperty);

@@ -11,7 +11,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
     {
         /// <inheritdoc/>
         public override bool IsDesktop { get; } = true;
-        
+
         /// <inheritdoc/>
         public override string Platform { get; } = "Mac Catalyst - Uno";
 

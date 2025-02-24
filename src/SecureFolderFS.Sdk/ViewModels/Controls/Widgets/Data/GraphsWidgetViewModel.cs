@@ -66,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                 CalculateStatistics();
             }
         }
-        
+
         private void CalculateStatistics()
         {
             var read = Convert.ToInt64(ByteSize.FromBytes(_currentReadAmount).MegaBytes);

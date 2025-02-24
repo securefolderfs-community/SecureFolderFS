@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             (PreviewerViewModel as IDisposable)?.Dispose();
             PreviewerViewModel = previewer as IViewable;
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {

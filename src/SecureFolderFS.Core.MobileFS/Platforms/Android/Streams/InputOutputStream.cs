@@ -9,16 +9,16 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         private bool _disposed;
         private long _position;
         private long _length;
-        
+
         /// <inheritdoc/>
         public override bool CanRead => true;
-        
+
         /// <inheritdoc/>
         public override bool CanSeek => true;
-        
+
         /// <inheritdoc/>
         public override bool CanWrite => true;
-        
+
         /// <inheritdoc/>
         public override long Length => _length;
 
@@ -124,13 +124,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                     _length = _position;
             }
         }
-        
+
         /// <inheritdoc/>
         public override void Flush()
         {
             _outputStream.Flush();
         }
-        
+
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
@@ -145,7 +145,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             Position = newPosition;
             return _position;
         }
-        
+
         /// <inheritdoc/>
         public override void SetLength(long value)
         {

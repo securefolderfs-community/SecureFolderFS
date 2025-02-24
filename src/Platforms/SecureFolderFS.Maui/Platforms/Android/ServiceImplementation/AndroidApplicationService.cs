@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
         /// <inheritdoc/>
         public override string Platform { get; } = "Android - MAUI";
-        
+
         /// <inheritdoc/>
         public override Task OpenUriAsync(Uri uri)
         {
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             return Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {

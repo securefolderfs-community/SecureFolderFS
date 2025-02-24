@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.AppModels
     internal sealed class ImageStream : IImage
     {
         private readonly Stream _stream;
-        
+
         public StreamImageSource Source { get; }
 
         public ImageStream(Stream stream)

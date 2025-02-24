@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     {
         private readonly INavigator _innerNavigator;
         private readonly INavigator _outerNavigator;
-        
+
         [ObservableProperty] private string? _SecurityText;
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;

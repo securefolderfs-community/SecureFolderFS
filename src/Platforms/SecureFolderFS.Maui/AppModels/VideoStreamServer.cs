@@ -72,7 +72,7 @@ namespace SecureFolderFS.Maui.AppModels
             _videoStream.Dispose();
             _httpListener.Abort();
         }
-        
+
         private static int GetAvailablePort()
         {
             using var listener = new TcpListener(IPAddress.Loopback, 0);

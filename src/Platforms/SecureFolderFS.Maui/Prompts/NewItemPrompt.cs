@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.Prompts
     internal sealed class NewItemPrompt : IOverlayControl
     {
         public NewItemOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {

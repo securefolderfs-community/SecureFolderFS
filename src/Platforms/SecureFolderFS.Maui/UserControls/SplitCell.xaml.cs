@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.UserControls
     {
         private readonly Label _leftLabel;
         private readonly Label _rightLabel;
-        
+
         public SplitCell()
         {
             InitializeComponent();
@@ -24,12 +24,12 @@ namespace SecureFolderFS.Maui.UserControls
             };
             RootGrid.BindingContext = this;
         }
-        
+
         private void SplitCell_Tapped(object? sender, EventArgs e)
         {
             Command?.Execute(CommandParameter);
         }
-        
+
         private static void SetText(BindableObject bindable, bool isRightSide, object? newValue)
         {
             if (bindable is not SplitCell splitCell)
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.UserControls
                 splitCell.LeftSide = text is null ? null : splitCell._leftLabel;
             }
         }
-        
+
         public ICommand? Command
         {
             get => (ICommand?)GetValue(CommandProperty);
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty CommandParameterProperty =
             BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(SplitCell), null);
-        
+
         public View? LeftSide
         {
             get => (View?)GetValue(LeftSideProperty);
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty LeftSideProperty =
             BindableProperty.Create(nameof(LeftSide), typeof(View), typeof(SplitCell), null);
-        
+
         public View? RightSide
         {
             get => (View?)GetValue(RightSideProperty);
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty RightSideProperty =
             BindableProperty.Create(nameof(RightSide), typeof(View), typeof(SplitCell), null);
-        
+
         public string? LeftText
         {
             get => (string?)GetValue(LeftTextProperty);
@@ -88,7 +88,7 @@ namespace SecureFolderFS.Maui.UserControls
         public static readonly BindableProperty LeftTextProperty =
             BindableProperty.Create(nameof(LeftText), typeof(string), typeof(SplitCell), null, propertyChanged:
                 (bindable, _, newValue) => SetText(bindable, false, newValue));
-        
+
         public string? RightText
         {
             get => (string?)GetValue(RightTextProperty);

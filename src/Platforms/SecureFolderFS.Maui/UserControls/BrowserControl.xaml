@@ -48,6 +48,7 @@
                                     <Label
                                         Grid.Column="1"
                                         FontSize="15"
+                                        LineBreakMode="TailTruncation"
                                         Text="{Binding Title, Mode=OneWay}"
                                         VerticalOptions="Center" />
                                 </Grid>

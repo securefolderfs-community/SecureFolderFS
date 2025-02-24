@@ -59,7 +59,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             //return new WindowsStorageFolder(folder);
             return new SystemFolderEx(folder.Path);
         }
-        
+
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 Process.Start("xdg-open", folder.Id);
                 return Task.CompletedTask;
             }
-        
+
 #if __MACOS__ || __MACCATALYST__
             Process.Start("sh", ["-c", $"open {folder.Id}"]);
             return Task.CompletedTask;

@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public ICommand? Command
         {
             get => (ICommand?)GetValue(CommandProperty);

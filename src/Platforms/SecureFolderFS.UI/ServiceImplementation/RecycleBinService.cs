@@ -112,7 +112,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 return Result.Failure(ex);
             }
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> DeletePermanentlyAsync(IStorableChild recycleBinItem, CancellationToken cancellationToken = default)
         {

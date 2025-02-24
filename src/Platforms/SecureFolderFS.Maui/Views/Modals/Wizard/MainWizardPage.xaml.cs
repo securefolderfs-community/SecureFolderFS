@@ -66,7 +66,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverlayViewModel));
         }
-        
+
         /// <inheritdoc/>
         public async Task HideAsync()
         {

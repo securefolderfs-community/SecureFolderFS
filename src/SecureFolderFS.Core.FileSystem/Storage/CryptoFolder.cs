@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             : base(plaintextId, inner, specifics, parent)
         {
         }
-        
+
         /// <inheritdoc/>
         public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {

@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.Services
         Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, IStorableChild storable, CancellationToken cancellationToken = default);
 
         Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, IDisposable contractOrRoot, IssueDelegate? issueDelegate, CancellationToken cancellationToken = default);
-        
+
         // TODO: Move to health service
     }
 }

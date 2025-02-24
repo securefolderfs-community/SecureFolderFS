@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
         {
             InitializeComponent();
         }
-        
+
         public string? TotalRead
         {
             get => (string?)GetValue(TotalReadProperty);
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
         }
         public static readonly BindableProperty TotalReadProperty =
             BindableProperty.Create(nameof(TotalRead), typeof(string), typeof(AggregatedDataWidget), null);
-        
+
         public string? TotalWrite
         {
             get => (string?)GetValue(TotalWriteProperty);

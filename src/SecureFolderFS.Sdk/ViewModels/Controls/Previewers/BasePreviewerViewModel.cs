@@ -14,10 +14,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// Gets the data source of the previewer.
         /// </summary>
         [ObservableProperty] private TSource? _Source;
-        
+
         /// <inheritdoc cref="IViewable.Title"/>
         [ObservableProperty] private string? _Title;
-        
+
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
     }

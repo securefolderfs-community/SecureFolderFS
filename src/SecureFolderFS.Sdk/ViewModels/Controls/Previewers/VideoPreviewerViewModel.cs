@@ -15,13 +15,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     public sealed partial class VideoPreviewerViewModel : BasePreviewerViewModel<IDisposable>, IDisposable
     {
         private readonly IFile _file;
-        
+
         public VideoPreviewerViewModel(IFile file)
         {
             _file = file;
             ServiceProvider = DI.Default;
         }
-        
+
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             
             Source = streamedVideo;
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {

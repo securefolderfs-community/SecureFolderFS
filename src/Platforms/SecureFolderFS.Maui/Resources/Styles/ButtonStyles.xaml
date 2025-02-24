@@ -1,0 +1,50 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style x:Key="BaseButtonStyle" TargetType="Button">
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style
+        x:Key="DefaultButtonStyle"
+        BasedOn="{StaticResource BaseButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
+        <Setter Property="TextColor" Value="{StaticResource QuarternaryLightColor}" />
+    </Style>
+
+    <Style
+        x:Key="AccentButtonStyle"
+        BasedOn="{StaticResource BaseButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ThemePrimaryColorBrush}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor}, Dark={StaticResource PrimaryContrastingLightColor}}" />
+    </Style>
+
+    <Style
+        x:Key="TransparentButtonStyle"
+        BasedOn="{StaticResource BaseButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{SolidColorBrush Color=Transparent}" />
+        <Setter Property="TextColor" Value="{StaticResource TertiaryLightColor}" />
+
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
+                            <Setter Property="TextColor" Value="{StaticResource QuarternaryLightColor}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled" />
+                    <VisualState x:Name="PointerOver" />
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
+</ResourceDictionary>

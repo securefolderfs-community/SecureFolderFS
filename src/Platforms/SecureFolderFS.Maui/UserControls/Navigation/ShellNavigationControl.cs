@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
     internal sealed class ShellNavigationControl : INavigator
     {
         public static ShellNavigationControl Instance { get; } = new();
-        
+
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync(IViewDesignation? view)
         {

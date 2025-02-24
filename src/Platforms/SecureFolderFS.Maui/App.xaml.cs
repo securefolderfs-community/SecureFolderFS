@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Maui.Mappers;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -7,7 +8,7 @@ namespace SecureFolderFS.Maui
     public partial class App : Application
     {
         public static App Instance => (App)Application.Current!;
-        
+
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
@@ -18,13 +19,16 @@ namespace SecureFolderFS.Maui
 #else
             null;
 #endif
-        
+
         public event EventHandler? AppResumed;
         public event EventHandler? AppPutToForeground;
 
         public App()
         {
             InitializeComponent();
+            
+            // Configure mappers
+            CustomMappers.AddEntryMappers();
 
             // Configure exception handlers
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

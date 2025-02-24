@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        
+
         public FilePreviewModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             ViewModel = viewable as PreviewerOverlayViewModel;
             OnPropertyChanged(nameof(ViewModel));
         }
-        
+
         /// <inheritdoc/>
         public async Task HideAsync()
         {

@@ -7,7 +7,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
     public class MemoryFileEx : MemoryFile
     {
         internal MemoryStream InternalStream { get; }
-        
+
         /// <inheritdoc/>
         public MemoryFileEx(MemoryStream memoryStream)
             : base(memoryStream)

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Views.Vault
     public sealed partial class VaultDashboardPage : Page
     {
         private bool _isLoaded;
-        
+
         public VaultDashboardViewModel? ViewModel
         {
             get => DataContext.TryCast<VaultDashboardViewModel>();

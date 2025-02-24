@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         private void RefreshView_Refreshing(object? sender, EventArgs e)
         {
             if (sender is not RefreshView refreshView)
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.UserControls
             RefreshCommand?.Execute(null);
             refreshView.IsRefreshing = false;
         }
-        
+
         private void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
             if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Maui.UserControls
             else
                 itemViewModel.OpenCommand.Execute(null);
         }
-        
+
         public bool IsSelecting
         {
             get => (bool)GetValue(IsSelectingProperty);
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IsSelectingProperty =
             BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false);
-        
+
         public ICommand? RefreshCommand
         {
             get => (ICommand?)GetValue(RefreshCommandProperty);
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty RefreshCommandProperty =
             BindableProperty.Create(nameof(RefreshCommand), typeof(ICommand), typeof(BrowserControl), defaultValue: null);
-        
+
         public IList<BrowserItemViewModel>? ItemsSource
         {
             get => (IList<BrowserItemViewModel>?)GetValue(ItemsSourceProperty);

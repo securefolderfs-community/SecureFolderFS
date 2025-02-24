@@ -288,7 +288,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                     if (s is MainAppHostControl sender)
                         _ = sender.SetupNavigationAsync();
                 }));
-        
+
         private void NavigationItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
 #if HAS_UNO

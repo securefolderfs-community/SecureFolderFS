@@ -89,7 +89,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         public abstract Task<IBasicProperties> GetPropertiesAsync();
 

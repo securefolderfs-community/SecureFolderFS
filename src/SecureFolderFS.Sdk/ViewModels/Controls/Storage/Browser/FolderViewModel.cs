@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this folder belongs to.
         /// </summary>
         public BrowserViewModel BrowserViewModel { get; }
-        
+
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
@@ -50,17 +51,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
             Items.Clear();
-            await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
+            
+            var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);
+            foreach (var item in items.OrderBy(x => x is IFile).ThenBy(x => x.Name))
             {
                 Items.Add(item switch
                 {
-                    IFile file => new FileViewModel(file, this).WithInitAsync(),
-                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(),
+                    IFile file => new FileViewModel(file, this).WithInitAsync(cancellationToken),
+                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(cancellationToken),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }
         }
-        
+
         /// <inheritdoc/>
         public virtual void OnAppearing()
         {
@@ -70,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public virtual void OnDisappearing()
         {
         }
-        
+
         /// <inheritdoc/>
         protected override void UpdateStorable(IStorable storable)
         {

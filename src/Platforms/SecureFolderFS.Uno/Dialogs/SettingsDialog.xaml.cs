@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class SettingsDialog : ContentDialog, IOverlayControl
     {
         private bool _firstNavigated;
-        
+
         public SettingsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<SettingsOverlayViewModel>();

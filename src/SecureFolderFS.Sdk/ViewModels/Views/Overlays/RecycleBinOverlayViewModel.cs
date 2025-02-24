@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private bool _IsRecycleBinEnabled;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
         [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
-        
+
         public INavigator OuterNavigator { get; }
 
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             UnlockedVaultViewModel = unlockedVaultViewModel;
             OuterNavigator = outerNavigator;
         }
-        
+
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             IsRecycleBinEnabled = !isSuccess ? isEnabled : !isEnabled;
         }
-        
+
         [RelayCommand]
         public void ToggleSelection(bool? value = null)
         {

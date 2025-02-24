@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id);
                     
                     // Add to destination
-                    destinationViewModel.Items.Add(movedItem switch
+                    destinationViewModel.InsertSorted(movedItem switch
                     {
                         IFile file => new FileViewModel(file, destinationViewModel),
                         IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 transferViewModel.IsProgressing = false;
             }
         }
-        
+
         [RelayCommand]
         protected virtual async Task CopyAsync(CancellationToken cancellationToken)
         {
@@ -144,7 +144,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(storable, false, token);
 
                     // Add to destination
-                    destinationViewModel.Items.Add(copiedItem switch
+                    destinationViewModel.InsertSorted(copiedItem switch
                     {
                         IFile file => new FileViewModel(file, destinationViewModel),
                         IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
@@ -238,7 +238,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             
             ParentFolder.Items.Remove(this);
         }
-        
+
         [RelayCommand]
         protected abstract Task OpenAsync(CancellationToken cancellationToken);
     }

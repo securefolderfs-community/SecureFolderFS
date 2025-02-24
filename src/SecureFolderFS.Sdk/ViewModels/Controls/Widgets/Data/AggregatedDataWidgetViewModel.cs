@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 
         [ObservableProperty] private string? _TotalRead;
         [ObservableProperty] private string? _TotalWrite;
-        
+
         public AggregatedDataWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                 }
             }
         }
-        
+
         /// <inheritdoc/>
         public override void Dispose()
         {

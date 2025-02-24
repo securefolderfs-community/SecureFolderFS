@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         /// <inheritdoc cref="IViewable.Title"/>
         [ObservableProperty] private string? _Title;
-        
+
         /// <summary>
         /// Gets or sets the value indicating whether the item is selected in view.
         /// </summary>

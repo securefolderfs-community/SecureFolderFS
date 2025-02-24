@@ -32,13 +32,13 @@ namespace SecureFolderFS.Maui.Popups
         {
             ViewModel = (PreviewRecoveryOverlayViewModel)viewable;
         }
-        
+
         /// <inheritdoc/>
         public Task HideAsync()
         {
             return CloseAsync();
         }
-        
+
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.CurrentViewModel)

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Views
             ExToolbarItems = new ObservableCollection<ExMenuItemBase>();
             InitializeComponent();
         }
-        
+
         public IList<ExMenuItemBase> ExToolbarItems
         {
             get => (IList<ExMenuItemBase>)GetValue(ExToolbarItemsProperty);

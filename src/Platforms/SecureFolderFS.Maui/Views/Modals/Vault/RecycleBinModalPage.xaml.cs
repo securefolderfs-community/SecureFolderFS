@@ -11,7 +11,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        
+
         public RecycleBinModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             _ = new MauiIcon(); // Workaround for XFC0000
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             ViewModel = viewable as RecycleBinOverlayViewModel;
             OnPropertyChanged(nameof(ViewModel));
         }
-        
+
         /// <inheritdoc/>
         public async Task HideAsync()
         {

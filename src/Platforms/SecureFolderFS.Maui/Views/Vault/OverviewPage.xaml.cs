@@ -43,7 +43,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         }
         public static readonly BindableProperty OverviewViewModelProperty =
             BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage), null);
-        
+
         public VaultPropertiesViewModel? PropertiesViewModel
         {
             get => (VaultPropertiesViewModel?)GetValue(PropertiesViewModelProperty);

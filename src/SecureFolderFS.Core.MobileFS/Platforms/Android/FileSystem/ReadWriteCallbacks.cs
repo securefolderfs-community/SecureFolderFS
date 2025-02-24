@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
             }
         }
-        
+
         /// <inheritdoc/>
         public override int OnWrite(long offset, int size, byte[]? data)
         {

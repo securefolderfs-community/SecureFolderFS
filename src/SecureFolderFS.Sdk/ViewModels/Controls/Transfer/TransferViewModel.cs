@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         private readonly BrowserViewModel _browserViewModel;
         private TaskCompletionSource<IFolder?>? _tcs;
         private CancellationTokenSource? _cts;
-        
+
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _IsVisible;
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 };
             }
         }
-        
+
         public CancellationTokenSource GetCancellation()
         {
             _cts?.Dispose();

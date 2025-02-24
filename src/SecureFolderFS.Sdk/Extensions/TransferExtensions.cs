@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             return TransferAsync(transferViewModel, [ item ], callback, cancellationToken);
         }
-        
+
         public static async Task TransferAsync<TStorable>(
             this TransferViewModel transferViewModel,
             IEnumerable<TStorable> items,

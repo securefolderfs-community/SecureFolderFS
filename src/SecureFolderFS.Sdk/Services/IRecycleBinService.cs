@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
         Task<IResult> RestoreItemAsync(IVFSRoot vfsRoot, IStorableChild recycleBinItem, IFolderPicker folderPicker, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Permanently deletes an item from the recycle bin.
         /// </summary>

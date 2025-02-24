@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var stream = await Inner.OpenStreamAsync(access, cancellationToken);
             return CreatePlaintextStream(stream);
         }
-        
+
         /// <inheritdoc/>
         public override async Task<IBasicProperties> GetPropertiesAsync()
         {

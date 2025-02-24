@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public bool CanCancel
         {
             get => (bool)GetValue(CanCancelProperty);
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty CanCancelProperty =
             BindableProperty.Create(nameof(CanCancel), typeof(bool), typeof(TransferControl), defaultValue: true);
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(TransferControl), defaultValue: null);
-        
+
         public string? PrimaryButtonText
         {
             get => (string?)GetValue(PrimaryButtonTextProperty);
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty PrimaryButtonTextProperty =
             BindableProperty.Create(nameof(PrimaryButtonText), typeof(string), typeof(TransferControl), defaultValue: null);
-        
+
         public ICommand? CancelCommand
         {
             get => (ICommand?)GetValue(CancelCommandProperty);
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty CancelCommandProperty =
             BindableProperty.Create(nameof(CancelCommand), typeof(ICommand), typeof(TransferControl), defaultValue: null);
-        
+
         public ICommand? PrimaryCommand
         {
             get => (ICommand?)GetValue(PrimaryCommandProperty);

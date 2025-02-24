@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 IsUnlocked = false;
         }
-        
+
         [RelayCommand]
         private void RequestLock()
         {

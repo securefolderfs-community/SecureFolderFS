@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.Extensions
 
             return enumerable.ToArray();
         }
-        
+
         public static TDestination? FirstOrDefaultType<TSource, TDestination>(this IEnumerable<TSource> enumerable)
             where TDestination : class, TSource
         {
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Shared.Extensions
                 collection.Add(item);
             }
         }
-        
+
         public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
         {
             foreach (var item in list)

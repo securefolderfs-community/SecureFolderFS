@@ -17,25 +17,17 @@
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <ContentView HorizontalOptions="Fill">
-                <VerticalStackLayout HorizontalOptions="Fill" Spacing="24">
+                <VerticalStackLayout HorizontalOptions="Fill" Spacing="16">
                     <local:PasswordControl
                         HorizontalOptions="Fill"
                         ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
                         UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <mdc:Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Rid=Continue}" />
-                        </On>
-                        <On Platform="iOS">
-                            <Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Rid=Continue}" />
-                        </On>
-                    </OnPlatform>
+                    <Button
+                        Command="{Binding ProvideCredentialsCommand}"
+                        HorizontalOptions="Fill"
+                        IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=Continue}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>

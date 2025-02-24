@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.UserControls
     public sealed partial class BackButtonTitleControl : UserControl
     {
         private bool _isBackShown;
-        
+
         public event RoutedEventHandler Click;
 
         public BackButtonTitleControl()

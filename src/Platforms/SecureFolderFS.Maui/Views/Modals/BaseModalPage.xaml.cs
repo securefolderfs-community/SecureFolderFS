@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             _ = bindable;
 #endif
         }
-        
+
         public bool IsImmersive
         {
             get => (bool)GetValue(IsImmersiveProperty);

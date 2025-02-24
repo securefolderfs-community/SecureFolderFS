@@ -28,7 +28,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             
             OnPropertyChanged(nameof(ViewModel));
         }
-        
+
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
@@ -129,7 +129,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             ViewModel.CurrentFolder = folder;
             await Browser.FadeTo(1.0d, 125u);
         }
-        
+
         public BrowserViewModel? ViewModel
         {
             get => (BrowserViewModel?)GetValue(ViewModelProperty);

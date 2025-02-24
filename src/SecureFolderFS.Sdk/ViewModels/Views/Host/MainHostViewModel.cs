@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await VaultListViewModel.InitAsync(cancellationToken);
             await _systemMonitorModel.InitAsync(cancellationToken);
         }
-        
+
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {

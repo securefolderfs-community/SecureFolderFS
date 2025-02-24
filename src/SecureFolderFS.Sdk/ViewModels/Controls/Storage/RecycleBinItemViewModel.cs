@@ -24,10 +24,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         [ObservableProperty] private DateTime? _DeletionTimestamp;
         [ObservableProperty] private RecycleBinOverlayViewModel _OverlayViewModel;
-        
+
         /// <inheritdoc/>
         public override IStorable Inner { get; }
-        
+
         public RecycleBinItemViewModel(IStorableChild ciphertextItem, RecycleBinOverlayViewModel overlayViewModel)
         {
             ServiceProvider = DI.Default;

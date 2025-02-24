@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? HealthWidgetTemplate { get; set; }
 
         public DataTemplate? AggregatedDataWidgetTemplate { get; set; }
-        
+
         /// <inheritdoc/>
         protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {

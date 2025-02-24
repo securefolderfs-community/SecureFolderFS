@@ -19,8 +19,9 @@
     </vw:ContentPageExtended.Resources>
 
     <VerticalStackLayout
-        Padding="64,0"
-        Spacing="32"
+        Margin="0,0,0,96"
+        Padding="16,0"
+        Spacing="64"
         VerticalOptions="Center">
 
         <!--  Login heading  -->
@@ -29,15 +30,16 @@
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_material:Material Lock}"
-                    IconSize="40"
+                    IconSize="80"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_cupertino:Cupertino Lock}"
-                    IconSize="40"
+                    IconSize="80"
                     OnPlatforms="iOS" />
             </Grid>
             <Label
+                FontAttributes="Bold"
                 FontSize="20"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
@@ -46,23 +48,14 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <VerticalStackLayout Spacing="{OnPlatform Android=8}">
+        <VerticalStackLayout Spacing="4">
             <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="iOS">
-                    <Button
-                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
-                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                        Text="{l:ResourceString Rid=RecoverAccess}" />
-                </On>
-                <On Platform="Android">
-                    <mdc:Button
-                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
-                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                        Style="{DynamicResource TextButtonStyle}"
-                        Text="{l:ResourceString Rid=RecoverAccess}" />
-                </On>
-            </OnPlatform>
+            <Button
+                Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                Style="{StaticResource TransparentButtonStyle}"
+                Text="{l:ResourceString Rid=RecoverAccess}" />
         </VerticalStackLayout>
     </VerticalStackLayout>
 </vw:ContentPageExtended>

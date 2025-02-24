@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     public sealed partial class ImagePreviewerViewModel : BasePreviewerViewModel<IImage>, IDisposable
     {
         private readonly IFile? _file;
-        
+
         public ImagePreviewerViewModel(IFile file)
         {
             ServiceProvider = DI.Default;

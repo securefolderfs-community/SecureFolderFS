@@ -60,7 +60,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             return new AndroidFolder(result, MainActivity.Instance);
         }
-        
+
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
