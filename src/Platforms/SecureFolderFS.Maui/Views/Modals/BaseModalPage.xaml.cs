@@ -43,12 +43,14 @@ namespace SecureFolderFS.Maui.Views.Modals
             BindableProperty.Create(nameof(IsImmersive), typeof(bool), typeof(BaseModalPage), false, propertyChanged:
                 (bindable, _, newValue) =>
                 {
+#if ANDROID
                     if (bindable is not BaseModalPage modalPage)
                         return;
 
                     modalPage.ModalBorder.StrokeShape = !(bool)newValue
                         ? new RoundRectangle() { CornerRadius = new(24, 24, 0, 0) }
                         : new Rectangle();
+#endif
                 });
 
         public View? ModalContent

@@ -35,7 +35,7 @@
         <!--  Top widgets  -->
         <CollectionView
             Grid.Row="0"
-            Margin="20,16"
+            Margin="16,16"
             ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
             <CollectionView.ItemTemplate>
                 <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
@@ -50,27 +50,23 @@
             <On Platform="Android">
                 <Grid
                     Grid.Row="1"
-                    Padding="20,16"
-                    ColumnSpacing="24">
+                    Padding="16,16"
+                    ColumnSpacing="16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <mdc:Button
+                    <Button
                         Grid.Column="0"
                         Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
                         HeightRequest="48"
-                        Style="{DynamicResource FilledTonalButtonStyle}"
-                        Text="{l:ResourceString Rid=ViewInFiles}"
-                        WidthRequest="180" />
-                    <mdc:Button
+                        Text="{l:ResourceString Rid=ViewInFiles}" />
+                    <Button
                         Grid.Column="1"
                         Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
                         HeightRequest="48"
-                        Style="{DynamicResource FilledTonalButtonStyle}"
-                        Text="{l:ResourceString Rid=LockVault}"
-                        WidthRequest="180" />
+                        Text="{l:ResourceString Rid=LockVault}" />
                 </Grid>
             </On>
         </OnPlatform>

@@ -1,9 +1,16 @@
 using MauiIcons.Core;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
+
+#if IOS
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+#endif
 
 namespace SecureFolderFS.Maui.Views.Modals.Vault
 {

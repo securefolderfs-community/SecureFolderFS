@@ -1,5 +1,5 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Maui.Mappers;
+using APES.UI.XF;
+using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -7,7 +7,7 @@ namespace SecureFolderFS.Maui
 {
     public partial class App : Application
     {
-        public static App Instance => (App)Application.Current!;
+        public static App Instance => (App)Current!;
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            APES.UI.XF.ContextMenuContainer.Init();
+            ContextMenuContainer.Init();
             
             var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
             return new Window(appShell);

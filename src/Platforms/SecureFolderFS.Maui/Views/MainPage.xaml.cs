@@ -1,4 +1,5 @@
 using MauiIcons.Core;
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
