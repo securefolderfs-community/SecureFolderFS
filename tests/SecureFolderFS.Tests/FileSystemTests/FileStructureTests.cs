@@ -42,7 +42,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             Assert.ThrowsAsync<FileNotFoundException>(async () => await subFolder.GetFirstByNameAsync("SUB_FILE"));
             Assert.ThrowsAsync<FileNotFoundException>(async () => await subFolder.GetFirstByNameAsync("SUB_FOLDER"));
         }
-        
+
         [Test]
         public async Task Create_FolderWith_SubFile_SubFolder_Delete_BaseFolder_ShouldThrow()
         {

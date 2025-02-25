@@ -60,7 +60,7 @@
                     <On Platform="iOS">
                         <HorizontalStackLayout Spacing="4">
                             <ImageButton
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Paperplane}"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp}"
                                 Command="{Binding ExportCommand, Mode=OneWay}"
                                 CommandParameter="Share"
                                 HorizontalOptions="End" />

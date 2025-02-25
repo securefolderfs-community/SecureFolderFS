@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             return true;
         }
-        
+
         private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, string? documentId)
         {
             documentId ??= GetDocumentIdForStorable(storable, null);

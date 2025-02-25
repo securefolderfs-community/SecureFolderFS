@@ -109,7 +109,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <mdc:Button
+                        <Button
                             x:Name="CloseButton"
                             Grid.Column="0"
                             Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
@@ -117,10 +117,10 @@
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Style="{DynamicResource FilledTonalButtonStyle}"
+                            Style="{StaticResource TransparentButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
-                        <mdc:Button
+                        <Button
                             x:Name="PrimaryButton"
                             Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
                             Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
@@ -128,6 +128,7 @@
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                             IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Style="{StaticResource AccentButtonStyle}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>

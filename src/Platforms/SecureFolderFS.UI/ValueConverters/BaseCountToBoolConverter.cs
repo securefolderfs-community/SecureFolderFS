@@ -15,7 +15,7 @@ namespace SecureFolderFS.UI.ValueConverters
 
             return numValue > 0;
         }
-        
+
         /// <inheritdoc/>
         protected override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {

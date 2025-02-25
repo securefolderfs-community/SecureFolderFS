@@ -7,9 +7,9 @@ namespace SecureFolderFS.Uno.Extensions
     public class OnPlatform : MarkupExtension
     {
         public object? Windows { get; set; }
-        
+
         public object? Skia { get; set; }
-        
+
         /// <inheritdoc/>
         protected override object? ProvideValue()
         {

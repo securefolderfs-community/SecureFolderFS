@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage.StorageProperties
             var plaintextSize = _specifics.Security.ContentCrypt.CalculatePlaintextSize(sizeProperty.Value);
             return new GenericProperty<long>(plaintextSize);
         }
-        
+
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorageProperty<object>> GetPropertiesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {

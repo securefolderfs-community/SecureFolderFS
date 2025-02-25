@@ -26,7 +26,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the status of the file system provider.</returns>
         Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
-        
+
         Task<IVFSRoot> MountAsync(IFolder vaultFolder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default);
     }
 }

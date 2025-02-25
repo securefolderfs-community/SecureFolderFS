@@ -28,7 +28,7 @@ namespace SecureFolderFS.Storage.Extensions
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToCopy))
             };
         }
-        
+
         /// <summary>
         /// Moves a storable from the source folder into the destination folder. Returns the new storable that resides in the destination folder.
         /// </summary>
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Storage.Extensions
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToMove))
             };
         }        
-        
+
         /// <summary>
         /// Creates a copy of the provided folder within this folder.
         /// </summary>
@@ -137,7 +137,7 @@ namespace SecureFolderFS.Storage.Extensions
                 return movedFolder;
             }
         }
-        
+
         /// <summary>
         /// Gets a file in the current directory by name.
         /// </summary>

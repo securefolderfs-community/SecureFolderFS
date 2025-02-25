@@ -5,7 +5,9 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:MainWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
@@ -13,24 +15,50 @@
     Shell.PresentationMode="ModalAnimated">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout Spacing="32" VerticalOptions="Center">
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <Label
                 FontSize="20"
-                HorizontalOptions="Center"
-                Text="Select an option to add new vault" />
+                HorizontalOptions="Start"
+                Text="Choose an option to add a new vault" />
 
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                        <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Rid=AddExisting}" />
-                        <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Rid=CreateNew}" />
-                    </HorizontalStackLayout>
+                    <VerticalStackLayout Spacing="4">
+                        <Button
+                            mi:MauiIcon.Value="{mi_material:Material Create}"
+                            Clicked="Existing_Clicked"
+                            ContentLayout="Top, 10"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="{l:ResourceString Rid=AddExisting}" />
+
+                        <Button
+                            mi:MauiIcon.Value="{mi_material:Material CreateNewFolder}"
+                            Clicked="New_Clicked"
+                            ContentLayout="Top, 10"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="{l:ResourceString Rid=CreateNew}" />
+                    </VerticalStackLayout>
                 </On>
                 <On Platform="iOS">
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                        <Button Clicked="Existing_Clicked" Text="{l:ResourceString Rid=AddExisting}" />
-                        <Button Clicked="New_Clicked" Text="{l:ResourceString Rid=CreateNew}" />
-                    </HorizontalStackLayout>
+                    <VerticalStackLayout Spacing="4">
+                        <Button
+                            mi:MauiIcon.Value="{mi_cupertino:Cupertino PlusCircle}"
+                            Clicked="Existing_Clicked"
+                            ContentLayout="Top, 10"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="{l:ResourceString Rid=AddExisting}" />
+
+                        <Button
+                            mi:MauiIcon.Value="{mi_cupertino:Cupertino Pencil}"
+                            Clicked="New_Clicked"
+                            ContentLayout="Top, 10"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="{l:ResourceString Rid=CreateNew}" />
+                    </VerticalStackLayout>
                 </On>
             </OnPlatform>
         </VerticalStackLayout>
