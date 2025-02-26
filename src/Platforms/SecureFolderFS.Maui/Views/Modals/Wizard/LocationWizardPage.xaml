@@ -17,41 +17,40 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Padding="16,0"
-            Loaded="RootLayout_Loaded"
-            Spacing="16">
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <Label
                 FontSize="20"
                 HorizontalOptions="Start"
                 Text="Select a location of your vault" />
 
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <Button
-                        x:Name="AndroidBrowseButton"
-                        mi:MauiIcon.Value="{mi_material:Material Folder}"
-                        Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
-                        ContentLayout="{Binding BrowseButtonContentLayout, Mode=OneWay}"
-                        FontSize="14"
-                        Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
-                </On>
-                <On Platform="iOS">
-                    <Button
-                        x:Name="IOSBrowseButton"
-                        mi:MauiIcon.Value="{mi_cupertino:Cupertino Folder}"
-                        Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
-                        ContentLayout="Right, 164"
-                        FontSize="14"
-                        Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
-                </On>
-            </OnPlatform>
+            <VerticalStackLayout Spacing="8">
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <Button
+                            x:Name="AndroidBrowseButton"
+                            mi:MauiIcon.Value="{mi_material:Material Folder}"
+                            Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
+                            ContentLayout="{Binding BrowseButtonContentLayout, Mode=OneWay}"
+                            FontSize="14"
+                            Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    </On>
+                    <On Platform="iOS">
+                        <Button
+                            x:Name="IOSBrowseButton"
+                            mi:MauiIcon.Value="{mi_cupertino:Cupertino Folder}"
+                            Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
+                            ContentLayout="Right, 164"
+                            FontSize="14"
+                            Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    </On>
+                </OnPlatform>
 
-            <!--  Message  -->
-            <Label
-                HorizontalOptions="Center"
-                HorizontalTextAlignment="Center"
-                Text="{Binding ViewModel.Message, Mode=OneWay}" />
+                <!--  Message  -->
+                <Label
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
+            </VerticalStackLayout>
 
             <!--  The purpose of this label is to supersede the width measurement of text in the button  -->
             <Label

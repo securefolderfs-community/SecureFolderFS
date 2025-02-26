@@ -29,6 +29,8 @@ namespace SecureFolderFS.Maui
             
             // Configure mappers
             CustomMappers.AddEntryMappers();
+            CustomMappers.AddLabelMappers();
+            CustomMappers.AddPickerMappers();
 
             // Configure exception handlers
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

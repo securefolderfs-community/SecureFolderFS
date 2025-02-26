@@ -15,31 +15,34 @@
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout
+            Margin="0,0,0,96"
             HorizontalOptions="Center"
-            Spacing="32"
+            Spacing="16"
             VerticalOptions="Center">
 
             <Grid>
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_material:Material Check}"
+                    IconSize="80"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_cupertino:Cupertino TrayArrowDownFill}"
+                    IconSize="80"
                     OnPlatforms="iOS" />
             </Grid>
 
             <VerticalStackLayout Spacing="4">
                 <Label
+                    FontAttributes="Bold"
                     FontSize="20"
                     HorizontalOptions="Center"
-                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
+                    Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
                 <Label
-                    FontAttributes="Bold"
                     FontSize="16"
                     HorizontalOptions="Center"
-                    Text="{Binding ViewModel.Title, Mode=OneWay}" />
+                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>

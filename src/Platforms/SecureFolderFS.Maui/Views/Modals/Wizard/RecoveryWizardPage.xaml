@@ -16,6 +16,11 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <uc:RecoveryPreviewControl ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}" RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}" />
+        <VerticalStackLayout Padding="16,0">
+            <uc:RecoveryPreviewControl
+                ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}"
+                RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}"
+                VerticalOptions="Start" />
+        </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -17,6 +16,26 @@
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
             <ContentView>
                 <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="16">
+                        <!--  Icon  -->
+                        <Grid>
+                            <mi:MauiIcon
+                                Icon="{mi_material:Material Password}"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Icon="{mi_cupertino:Cupertino Textbox}"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            Text="{l:ResourceString Rid=SetupPassword}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
                     <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
                     <local:PasswordControl Title="{l:ResourceString Rid=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
                 </VerticalStackLayout>
@@ -26,40 +45,33 @@
         <!--  Key File Template  -->
         <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileCreationViewModel">
             <ContentView>
-                <VerticalStackLayout Spacing="24">
-                    <!--  Logo  -->
-                    <Grid>
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_material:Material Key}"
-                            OnPlatforms="Android" />
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_cupertino:Cupertino Doc}"
-                            OnPlatforms="iOS" />
-                    </Grid>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="16">
+                        <!--  Icon  -->
+                        <Grid>
+                            <mi:MauiIcon
+                                Icon="{mi_material:Material Key}"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Icon="{mi_cupertino:Cupertino Doc}"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+                        </Grid>
 
-                    <!--  Title  -->
-                    <Label
-                        HorizontalOptions="Center"
-                        Opacity="0.6"
-                        Text="{l:ResourceString Rid=SetupKeyFile}" />
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            Text="{l:ResourceString Rid=SetupKeyFile}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
                     <!--  Authenticate  -->
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <mdc:Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                HorizontalOptions="Center"
-                                Text="{l:ResourceString Rid=Setup}" />
-                        </On>
-                        <On Platform="iOS">
-                            <Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                HorizontalOptions="Center"
-                                Text="{l:ResourceString Rid=Setup}" />
-                        </On>
-                    </OnPlatform>
+                    <Button
+                        Command="{Binding ProvideCredentialsCommand}"
+                        HorizontalOptions="Fill"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=Setup}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>

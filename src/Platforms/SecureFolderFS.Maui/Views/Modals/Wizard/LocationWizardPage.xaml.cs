@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using Android.Health.Connect.DataTypes;
-using SecureFolderFS.Maui.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
@@ -22,12 +20,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         }
 
         /// <inheritdoc/>
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             OverlayViewModel.CurrentViewModel = ViewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-            
             base.OnAppearing();
+            
+            // Wait for the control to load
+            await Task.Delay(50);
+            LayoutBrowseButton();
         }
 
         /// <inheritdoc/>
@@ -59,21 +60,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             BrowseButtonContentLayout = new(Button.ButtonContentLayout.ImagePosition.Right, gap);
         }
 
-        private async void RootLayout_Loaded(object? sender, EventArgs e)
-        {
-            // Wait for the control to load
-            await Task.Delay(100);
-
-            LayoutBrowseButton();
-        }
-
         private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(ViewModel.SelectedLocation))
                 return;
 
             // Wait for the UI to update
-            await Task.Delay(100);
+            await Task.Delay(50);
             LayoutBrowseButton();
         }
 

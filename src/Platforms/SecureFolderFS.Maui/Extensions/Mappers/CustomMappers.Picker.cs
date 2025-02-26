@@ -1,7 +1,6 @@
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using SecureFolderFS.Maui.UserControls.Common;
-
 #if ANDROID
 using Android.Graphics.Drawables.Shapes;
 using Paint = Android.Graphics.Paint;
@@ -12,25 +11,23 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
 {
     public static partial class CustomMappers
     {
-        public static void AddEntryMappers()
+        public static void AddPickerMappers()
         {
-            EntryHandler.Mapper.AppendToMapping($"{nameof(CustomMappers)}.{nameof(Entry)}", (handler, view) =>
+            PickerHandler.Mapper.AppendToMapping($"{nameof(CustomMappers)}.{nameof(Picker)}", (handler, view) =>
             {
-                if (view is not ModernEntry)
+                if (view is not ModernPicker)
                     return;
+
 #if ANDROID
                 var outerRadii = Enumerable.Range(1, 8).Select(_ => 24f).ToArray();
                 var roundRectShape = new RoundRectShape(outerRadii, null, null);
                 var shape = new ShapeDrawable(roundRectShape);
-                    
-                shape.Paint!.Color = (App.Instance.Resources["BorderLightColor"] as Color)!.ToPlatform();
-                shape.Paint.StrokeWidth = 4;
-                shape.Paint.SetStyle(Paint.Style.Stroke);
+
+                shape.Paint!.Color = (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
+                shape.Paint.StrokeWidth = 0;
+                shape.Paint.SetStyle(Paint.Style.FillAndStroke);
+                handler.PlatformView.SetTextColor((App.Instance.Resources["QuarternaryLightColor"] as Color)!.ToPlatform());
                 handler.PlatformView.Background = shape;
-                handler.PlatformView.SetPadding(40, 32,40, 32);
-#elif IOS
-                handler.PlatformView.Layer.BorderColor = (App.Current.Resources["BorderLightColor"] as Color).ToPlatform().CGColor;
-                handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.RoundedRect;
 #endif
             });
         }

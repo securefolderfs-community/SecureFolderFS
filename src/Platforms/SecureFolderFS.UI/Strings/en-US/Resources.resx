@@ -686,4 +686,7 @@
   <data name="Share" xml:space="preserve">
       <value>Share</value>
   </data>
+  <data name="SetupPassword" xml:space="preserve">
+      <value>Setup password authentication</value>
+  </data>
 </root>
