@@ -1,6 +1,9 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.OS;
+using AndroidX.Activity;
+using Microsoft.Maui.Platform;
 
 namespace SecureFolderFS.Maui
 {
@@ -20,6 +23,18 @@ namespace SecureFolderFS.Maui
         public MainActivity()
         {
             Instance ??= this;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnCreate(Bundle? savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            
+            // Enable edge to edge
+            EdgeToEdge.Enable(this);
+#pragma warning disable CA1422
+            Window?.SetStatusBarColor((App.Instance.Resources["PrimaryLightColor"] as Color)!.ToPlatform());
+#pragma warning restore CA1422
         }
 
         /// <inheritdoc/>
