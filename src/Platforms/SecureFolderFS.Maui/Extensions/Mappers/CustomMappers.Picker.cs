@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
         {
             PickerHandler.Mapper.AppendToMapping($"{nameof(CustomMappers)}.{nameof(Picker)}", (handler, view) =>
             {
-                if (view is not ModernPicker)
+                if (view is not ModernPicker modernPicker)
                     return;
 
 #if ANDROID
@@ -23,11 +23,14 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 var roundRectShape = new RoundRectShape(outerRadii, null, null);
                 var shape = new ShapeDrawable(roundRectShape);
 
-                shape.Paint!.Color = (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
+                shape.Paint!.Color = modernPicker.IsTransparent
+                    ? Colors.Transparent.ToPlatform()
+                    : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
                 shape.Paint.StrokeWidth = 0;
                 shape.Paint.SetStyle(Paint.Style.FillAndStroke);
                 handler.PlatformView.SetTextColor((App.Instance.Resources["QuarternaryLightColor"] as Color)!.ToPlatform());
                 handler.PlatformView.Background = shape;
+                handler.PlatformView.SetPadding(32, 32,32, 32);
 #endif
             });
         }

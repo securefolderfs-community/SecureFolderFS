@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Settings"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
     Title="{l:ResourceString Rid=Settings}"
@@ -23,12 +24,12 @@
                                         <SolidColorBrush Color="Transparent" />
                                     </Border.Stroke>
 
-                                    <Picker
+                                    <ucc:ModernPicker
                                         BindingContext="{x:Reference ThisPage}"
+                                        IsTransparent="True"
                                         ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
                                         ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
-                                        SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
-                                        WidthRequest="96" />
+                                        SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}" />
                                 </Border>
                             </uc:SplitCell.RightSide>
                         </uc:SplitCell>
