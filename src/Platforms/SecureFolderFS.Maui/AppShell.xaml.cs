@@ -15,6 +15,7 @@ namespace SecureFolderFS.Maui
             Routing.RegisterRoute("LoginPage", typeof(LoginPage));
             Routing.RegisterRoute("OverviewPage", typeof(OverviewPage));
             Routing.RegisterRoute("BrowserPage", typeof(BrowserPage));
+            Routing.RegisterRoute("HealthPage", typeof(HealthPage));
         }
     }
 }

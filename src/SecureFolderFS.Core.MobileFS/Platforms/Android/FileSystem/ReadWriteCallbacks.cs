@@ -25,11 +25,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 if (data is null)
                     return 0;
-                
+
                 // Seek to the requested offset
                 if (offset > 0)
                     _stream.Seek(offset, SeekOrigin.Begin);
-                
+
                 // Read the requested data
                 return _stream.Read(data.AsSpan(0, size));
             }
@@ -48,11 +48,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 if (data is null)
                     return 0;
-                
+
                 // Seek to the requested offset
                 if (offset > 0)
                     _stream.Seek(offset, SeekOrigin.Begin);
-                
+
                 // Write the requested data
                 _stream.Write(data.AsSpan(0, size));
 

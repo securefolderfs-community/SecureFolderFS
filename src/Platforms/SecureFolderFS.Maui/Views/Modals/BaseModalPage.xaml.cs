@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.Views.Modals
 
             var closeVisible = !string.IsNullOrEmpty(modalPage.CloseText);
             var primaryVisible = !string.IsNullOrEmpty(modalPage.PrimaryText);
-            
+
             modalPage.ButtonsGrid.IsVisible = primaryVisible || closeVisible;
 #else
             _ = bindable;

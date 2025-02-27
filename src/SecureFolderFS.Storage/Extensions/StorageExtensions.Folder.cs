@@ -76,7 +76,7 @@ namespace SecureFolderFS.Storage.Extensions
                         await copiedFolder.CreateCopyOfAsync(file, overwrite, cancellationToken);
                         break;
                     }
-                    
+
                     case IFolder subFolder:
                     {
                         // Recursively copy the subfolder

@@ -34,19 +34,19 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is null)
                 throw new DirectoryNotFoundException("Could not find recycle bin folder.");
-            
+
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
             if (deserialized is not { ParentPath: not null, OriginalName: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
-            
+
             // Check if destination item exists
             var parentId = deserialized.ParentPath.Replace('/', Path.DirectorySeparatorChar);
             var itemId = Path.Combine(parentId, deserialized.OriginalName);
             try
             {
                 _ = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(itemId, cancellationToken);
-                
+
                 // Destination item already exists, user must choose a new location
                 return null;
             }
@@ -56,12 +56,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             try
             {
                 var parentItem = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(parentId, cancellationToken);
-                
+
                 // Assume the parent is a folder and return it
                 return parentItem as IModifiableFolder;
             }
             catch (Exception) { }
-            
+
             // No destination folder has been found, user must choose a new location
             return null;
         }
@@ -70,12 +70,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         {
             if (specifics.Options.IsReadOnly)
                 throw new UnauthorizedAccessException("The vault is read-only.");
-                
+
             // Get recycle bin
             var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
-            
+
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
            
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Move item to destination
             _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
-            
+
             // Delete old configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
             await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
@@ -101,21 +101,21 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 await sourceFolder.DeleteAsync(item, cancellationToken);
                 return;
             }
-            
+
             // Get recycle bin
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
-            
+
             // Get source Directory ID
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, sourceFolder.Id);
             var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(sourceFolder, specifics, directoryId, cancellationToken);
-            
+
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
             var movedItem = await renamableRecycleBin.MoveStorableFromAsync(item, sourceFolder, false, cancellationToken);
             _ = await renamableRecycleBin.RenameAsync(movedItem, guid, cancellationToken);
-            
+
             // Create configuration file
             var configurationFile = await renamableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
             await using var configurationStream = await configurationFile.OpenReadWriteAsync(cancellationToken);
@@ -129,7 +129,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     DirectoryId = directoryIdResult ? directoryId : [],
                     DeletionTimestamp = DateTime.Now
                 }, cancellationToken);
-            
+
             // Write to destination stream
             await serializedStream.CopyToAsync(configurationStream, cancellationToken);
         }
@@ -151,7 +151,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not null)
                 return recycleBin;
-            
+
             if (specifics.ContentFolder is not IModifiableFolder modifiableFolder)
                 throw new UnauthorizedAccessException("The content folder is not modifiable.");
 

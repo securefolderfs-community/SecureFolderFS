@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.UserControls
         public SplitCell()
         {
             InitializeComponent();
-            
+
             _leftLabel = new()
             {
                 VerticalOptions = LayoutOptions.Center,

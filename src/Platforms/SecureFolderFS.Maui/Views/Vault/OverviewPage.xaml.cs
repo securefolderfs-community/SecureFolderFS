@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                 OverviewViewModel = ViewModel.DashboardNavigation.Views.FirstOrDefaultType<IViewDesignation, VaultOverviewViewModel>();
                 PropertiesViewModel = ViewModel.DashboardNavigation.Views.FirstOrDefaultType<IViewDesignation, VaultPropertiesViewModel>();
             }
-            
+
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverviewViewModel));
             OnPropertyChanged(nameof(PropertiesViewModel));

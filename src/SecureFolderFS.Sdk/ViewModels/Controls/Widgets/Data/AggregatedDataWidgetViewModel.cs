@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             _bytesWritten = new();
             TotalRead = "0B";
             TotalWrite = "0B";
-            
+
             _fileSystemStatistics.BytesRead = new Progress<long>(x =>
             {
                 if (x > 0)
@@ -47,10 +47,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                 if (x > 0)
                     _pendingBytesWritten += (ulong)x;
             });
-            
+
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
-            
+
             return Task.CompletedTask;
         }
 
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                     TotalRead = _bytesRead.ToString().Replace(" ", string.Empty);
                     _pendingBytesRead = 0UL;
                 }
-                
+
                 if (_pendingBytesWritten > 0UL)
                 {
                     _bytesWritten = _bytesWritten.AddBytes(_pendingBytesWritten);

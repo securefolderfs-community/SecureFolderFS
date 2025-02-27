@@ -2,22 +2,64 @@
     x:Class="SecureFolderFS.Maui.UserControls.Widgets.HealthWidget"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="RootControl">
 
-    <HorizontalStackLayout
+    <ContentView.Resources>
+        <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
+    </ContentView.Resources>
+
+    <Grid
         x:DataType="local:HealthWidget"
         BindingContext="{x:Reference RootControl}"
-        Spacing="4">
+        ColumnSpacing="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
         <Image
+            Grid.Column="0"
             Margin="-4,0,0,0"
             HeightRequest="48"
-            Source="success_shield.png" />
+            Source="{Binding Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
+            VerticalOptions="Center" />
+
         <Label
+            Grid.Column="1"
             FontAttributes="Bold"
             FontSize="18"
-            Text="{l:ResourceString Rid=HealthNoProblems}"
+            Text="{Binding StatusTitle, Mode=OneWay}"
             VerticalOptions="Center" />
-    </HorizontalStackLayout>
+
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <Button
+                    Grid.Column="2"
+                    Padding="8"
+                    mi:MauiIcon.Value="{mi_material:Material ChevronRight}"
+                    Command="{Binding OpenVaultHealthCommand, Mode=OneWay}"
+                    HeightRequest="48"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    VerticalOptions="Center"
+                    WidthRequest="48" />
+            </On>
+            <On Platform="iOS">
+                <Button
+                    Grid.Column="2"
+                    Padding="8"
+                    mi:MauiIcon.Value="{mi_cupertino:Cupertino ChevronRight}"
+                    Command="{Binding OpenVaultHealthCommand, Mode=OneWay}"
+                    HeightRequest="48"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    VerticalOptions="Center"
+                    WidthRequest="48" />
+            </On>
+        </OnPlatform>
+    </Grid>
 </ContentView>

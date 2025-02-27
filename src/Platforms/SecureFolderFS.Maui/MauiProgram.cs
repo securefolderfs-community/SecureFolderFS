@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif
-                
+
                 // Handlers
                 .ConfigureMauiHandlers(handlers =>
                 {
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Maui
                     handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
 #endif
                 })
-                
+
                 ; // Finish initialization
 
             return builder.Build();

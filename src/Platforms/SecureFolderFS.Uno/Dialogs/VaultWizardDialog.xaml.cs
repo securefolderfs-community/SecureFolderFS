@@ -108,10 +108,10 @@ namespace SecureFolderFS.Uno.Dialogs
                 // Main (if 'Create new' selected) -> Credentials
                 MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel(
                     (IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
-                
+
                 // Credentials -> Recovery
                 CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
-                
+
                 // Recovery -> Summary
                 RecoveryWizardViewModel viewModel => new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel),
 

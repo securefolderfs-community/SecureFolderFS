@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui
         public App()
         {
             InitializeComponent();
-            
+
             // Configure mappers
             CustomMappers.AddEntryMappers();
             CustomMappers.AddLabelMappers();
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui
         protected override Window CreateWindow(IActivationState? activationState)
         {
             ContextMenuContainer.Init();
-            
+
             var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
             return new Window(appShell);
         }
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            
+
             // Create and initialize AppShell
             var appShell = new AppShell();
             await appShell.MainViewModel.InitAsync();

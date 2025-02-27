@@ -29,11 +29,11 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         {
             if (Inner is not IRenamableFolder renamableFolder)
                 throw new NotSupportedException("Renaming folder contents is not supported.");
-            
+
             // We need to get the equivalent on the disk
             var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(storable.Name, Inner, specifics, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
-            
+
             // Encrypt name
             var newCiphertextName = await AbstractPathHelpers.EncryptNameAsync(newName, Inner, specifics, cancellationToken);
             var renamedCiphertextItem = await renamableFolder.RenameAsync(ciphertextItem, newCiphertextName, cancellationToken);
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             // TODO: Invalidate cache on success
             // TODO: Get by ID instead of name
-            
+
             // We need to get the equivalent on the disk
             var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, Inner, specifics, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
@@ -149,7 +149,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             var innerProperties = await storableProperties.GetPropertiesAsync();
             properties ??= new CryptoFileProperties(specifics, innerProperties);
-            
+
             return properties;
         }
     }

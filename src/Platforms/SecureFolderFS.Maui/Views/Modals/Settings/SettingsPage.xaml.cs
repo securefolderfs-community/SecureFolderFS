@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             _modalTcs = new();
             _sourceNavigation = sourceNavigation;
             BindingContext = this;
-            
+
             InitializeComponent();
         }
 
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             PreferencesViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new PreferencesSettingsViewModel().WithInitAsync());
             PrivacyViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new PrivacySettingsViewModel().WithInitAsync());
             AboutViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new AboutSettingsViewModel().WithInitAsync());
-            
+
             OnPropertyChanged(nameof(OverlayViewModel));
             OnPropertyChanged(nameof(GeneralViewModel));
             OnPropertyChanged(nameof(PreferencesViewModel));

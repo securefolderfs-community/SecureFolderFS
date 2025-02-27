@@ -19,7 +19,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (ViewModel is null)
                 return Shared.Models.Result.Failure(null);
-            
+
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
             return Shared.Models.Result.Success;
         }
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (ViewModel?.SelectionViewModel is not { } selectionViewModel || sender is not TableView tableView)
                 return;
-            
+
             // Init "Modify existing" section
             if (selectionViewModel.ConfiguredViewModel is not null)
             {
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.Popups
                 {
                     Title = "ModifyExisting".ToLocalized()
                 };
-                
+
                 // Modify existing
                 modifyExistingSection.Add(new TextCell()
                 {
@@ -56,7 +56,7 @@ namespace SecureFolderFS.Maui.Popups
                     Detail = "ChangeCurrentAuthentication".ToLocalized(),
                     Command = selectionViewModel.ItemSelectedCommand
                 });
-                
+
                 // Remove credentials
                 if (selectionViewModel.CanRemoveCredentials)
                     modifyExistingSection.Add(new TextCell()
@@ -65,13 +65,13 @@ namespace SecureFolderFS.Maui.Popups
                         Detail = "RemoveAuthenticationDescription".ToLocalized(),
                         Command = selectionViewModel.RemoveCredentialsCommand
                     });
-                
+
                 tableView.Root.Add(modifyExistingSection);
             }
-            
+
             // Init "All options" section
             var allOptionsSection = tableView.Root.Last();
-            
+
             // Add items to the options section
             // Note: We could hook up CollectionChanged event and listen for item
             //      changes, however, it'd be inefficient and unnecessary
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (ViewModel?.SelectedViewModel is not CredentialsResetViewModel credentialsResetViewModel)
                 return;
-            
+
             try
             {
                 await credentialsResetViewModel.ConfirmAsync(default);

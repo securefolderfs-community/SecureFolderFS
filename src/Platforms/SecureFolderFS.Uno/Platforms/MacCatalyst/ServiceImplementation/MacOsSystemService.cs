@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
             add
             {
                 return;
-                
+
                 _desktopLocked += value;
                 NSNotificationCenter.DefaultCenter.AddObserver((NSString)"com.apple.screenIsLocked",
                     NSKeyValueObservingOptions.New, _ =>
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
             remove
             {
                 return;
-                
+
                 _desktopLocked -= value;
                 NSNotificationCenter.DefaultCenter.RemoveObserver((NSString)"com.apple.screenIsLocked");
             }

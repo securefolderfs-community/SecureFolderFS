@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                 ViewModel.DashboardNavigation.ResetNavigation();
                 ViewModel.DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             }
-            
+
             Navigation.Dispose();
             base.OnNavigatingFrom(e);
         }
@@ -63,10 +63,10 @@ namespace SecureFolderFS.Uno.Views.Vault
         {
             if (_isLoaded || ViewModel is null)
                 return;
-            
+
             // Update _isLoaded flag
             _isLoaded = true;
-            
+
             // Attach navigation event
             ViewModel.DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
 

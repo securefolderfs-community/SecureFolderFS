@@ -18,12 +18,13 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
                 VaultLoginViewModel => "LoginPage",
                 VaultDashboardViewModel => "OverviewPage",
                 BrowserViewModel => "BrowserPage",
+                VaultHealthReportViewModel => "HealthPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(view))
             };
 
             url = ParseUrl(view, url);
             await Shell.Current.GoToAsync(url, view.ToViewModelParameter());
-            
+
             return true;
         }
 
@@ -47,7 +48,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             // the login/dashboard view model, and so we need to synchronize the Shell navigation and modify the url in such a way
             // that the aforementioned pages are popped from Shell in specific instances. This approach does not corrupt
             // the navigation chain, but merely aligns it with our stack.
-            
+
             // Logging in, remove LoginPage when going back
             if (target is VaultDashboardViewModel && Shell.Current.CurrentPage is LoginPage)
                 url = $"../{url}";

@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             authenticationViewModel ??= await GetExistingCreationForLoginAsync(cancellationToken);
             if (authenticationViewModel is null)
                 return;
-            
+
             if (UnlockContract is null || RegisterViewModel is null)
                 return;
 

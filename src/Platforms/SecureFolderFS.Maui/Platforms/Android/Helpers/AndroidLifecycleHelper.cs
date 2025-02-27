@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                     .AddSingleton<IIapService, DebugIapService>()
                     .AddSingleton<IUpdateService, DebugUpdateService>()
                     .AddSingleton<ILocalizationService, ResourceLocalizationService>()
-                
+
                     .WithMauiServices(settingsFolder)
                 ;
         }

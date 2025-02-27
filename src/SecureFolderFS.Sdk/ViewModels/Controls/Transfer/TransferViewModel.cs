@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 Title = "Done";
                 return;
             }
-            
+
             Title = $"{TransferType switch
             {
                 TransferType.Copy => "Copying",
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         {
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
-            
+
             CanCancel = true;
             return _cts;
         }

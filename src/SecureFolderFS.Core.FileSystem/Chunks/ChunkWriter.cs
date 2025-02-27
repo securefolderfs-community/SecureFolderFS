@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             // Check position bounds
             if (streamPosition > ciphertextStream.Length)
                 return;
-            
+
             // Write to stream at correct chunk
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);

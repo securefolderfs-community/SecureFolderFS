@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
@@ -16,7 +15,11 @@
     <ContentPage.Resources>
         <!--  Health Widget  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
-            <ucw:HealthWidget />
+            <ucw:HealthWidget
+                LastCheckedText="{Binding LastCheckedText, Mode=OneWay}"
+                OpenVaultHealthCommand="{Binding OpenVaultHealthCommand, Mode=OneWay}"
+                Severity="{Binding HealthReportViewModel.Severity, Mode=OneWay}"
+                StatusTitle="{Binding Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Aggregated Data Statistics Widget  -->

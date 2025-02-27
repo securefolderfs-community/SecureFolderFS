@@ -45,17 +45,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             IFolderPicker folderPicker = ApplicationService.IsDesktop
                 ? DI.Service<IFileExplorerService>()
                 : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
-            
+
             foreach (var item in items)
             {
                 if (item.Inner is not IStorableChild innerChild)
                     continue;
-                
+
                 var result = await RecycleBinService.RestoreItemAsync(OverlayViewModel.UnlockedVaultViewModel.StorageRoot, innerChild, folderPicker, cancellationToken);
                 if (result.Successful)
                     OverlayViewModel.Items.Remove(item);
             }
-            
+
             OverlayViewModel.ToggleSelection(false);
         }
 
@@ -70,12 +70,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             {
                 if (item.Inner is not IStorableChild innerChild)
                     continue;
-                
+
                 var result = await RecycleBinService.DeletePermanentlyAsync(innerChild, cancellationToken);
                 if (result.Successful)
                     OverlayViewModel.Items.Remove(item);
             }
-            
+
             OverlayViewModel.ToggleSelection(false);
         }
     }

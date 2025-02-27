@@ -61,7 +61,7 @@ namespace SecureFolderFS.Uno.Dialogs
         {
             if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
                 return;
-            
+
             _firstNavigated = true;
             var target = GetViewForTag(tag);
             if (ViewModel.NavigationService.Views.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)

@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             _chunkAccess = chunkAccess;
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
-            
+
             if (CanSeek)
                 _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
@@ -215,7 +215,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         {
             if (!CanSeek)
                 throw FileSystemExceptions.StreamNotSeekable;
-            
+
             var seekPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
@@ -336,7 +336,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // Check if there is data already written only when we can seek
                     if (CanSeek && Inner.Length > 0L)
                         return false;
-                    
+
                     // Make sure we save the header state
                     _headerBuffer.IsHeaderReady = true;
 

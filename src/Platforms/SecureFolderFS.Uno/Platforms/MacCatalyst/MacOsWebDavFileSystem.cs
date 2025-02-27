@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst
             // Mount WebDAV volume via AppleScript
             Process.Start("/usr/bin/osascript", ["-e", $"mount volume \"{remoteUri.AbsoluteUri}\""]);
             var mountPoint = $"/Volumes/{options.VolumeName}";
-            
+
             // Create wrapper
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPoint);
             webDavWrapper.StartFileSystem();

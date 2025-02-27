@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.AppModels
                             context.Response.Close();   
                             continue;
                         }
-                    
+
                         context.Response.StatusCode = (int)HttpStatusCode.OK;
                         context.Response.ContentType = _mimeType;
                         context.Response.ContentLength64 = _videoStream.Length;

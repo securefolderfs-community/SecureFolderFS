@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
                 if (destinationViewModel is null)
                     return;
-                
+
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
@@ -81,10 +81,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 {
                     // Move
                     var movedItem = await destinationFolder.MoveStorableFromAsync(storable, modifiableParent, false, token);
-                    
+
                     // Remove existing from folder
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id);
-                    
+
                     // Add to destination
                     destinationViewModel.InsertSorted(movedItem switch
                     {
@@ -128,7 +128,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Copy), false, cts.Token);
                 if (destination is not IModifiableFolder modifiableDestination)
                     return;
-                
+
                 // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
                 // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
                 var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
@@ -186,7 +186,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
-                
+
                 var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
 
                 Title = formattedName;

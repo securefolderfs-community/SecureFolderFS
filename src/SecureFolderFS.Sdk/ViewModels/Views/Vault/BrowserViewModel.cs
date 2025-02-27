@@ -158,7 +158,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
                     if (folder is null)
                         return;
-                    
+
                     var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
                     CurrentFolder.InsertSorted(new FolderViewModel(copiedFolder, this, CurrentFolder));
                     break;

@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.UserControls
             _panGestureRecognizer.PanUpdated += OnPanUpdatedAsync;
             _pinchGestureRecognizer.PinchUpdated += OnPinchUpdatedAsync;
             _doubleTapGestureRecognizer.Tapped += DoubleTappedAsync;
-            
+
             GestureRecognizers.Add(_panGestureRecognizer);
             GestureRecognizers.Add(_pinchGestureRecognizer);
             GestureRecognizers.Add(_doubleTapGestureRecognizer);

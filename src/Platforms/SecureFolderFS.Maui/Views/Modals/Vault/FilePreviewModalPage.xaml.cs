@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
             BindingContext = this;
-            
+
             InitializeComponent();
         }
 

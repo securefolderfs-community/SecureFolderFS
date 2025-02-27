@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await SetupNavigationAsync();
             if (ViewModel is null)
                 return;
-            
+
             // Find existing target or create new
             var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
@@ -294,7 +294,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 #if HAS_UNO
             if (sender is not NavigationViewItem navigationViewItem)
                 return;
-            
+
             navigationViewItem.ContextFlyout.ShowAt(navigationViewItem);
 #endif
         }

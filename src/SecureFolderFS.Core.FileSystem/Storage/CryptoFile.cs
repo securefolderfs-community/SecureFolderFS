@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             var innerProperties = await storableProperties.GetPropertiesAsync();
             properties ??= new CryptoFileProperties(specifics, innerProperties);
-            
+
             return properties;
         }
 

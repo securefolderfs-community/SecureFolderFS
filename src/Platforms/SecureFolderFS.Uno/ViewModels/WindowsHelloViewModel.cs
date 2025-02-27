@@ -64,7 +64,7 @@ namespace SecureFolderFS.Uno.ViewModels
             var result = await KeyCredentialManager.RequestCreateAsync(id, KeyCredentialCreationOption.ReplaceExisting).AsTask(cancellationToken);
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to create the credential.");
-            
+
             return await CreateSignatureAsync(result.Credential, data, cancellationToken);
         }
 
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Uno.ViewModels
             var result = await KeyCredentialManager.OpenAsync(id).AsTask(cancellationToken);
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to open the credential.");
-            
+
             return await CreateSignatureAsync(result.Credential, data, cancellationToken);
         }
 
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Uno.ViewModels
             var written = Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_PART_LENGTH));
             if (written != encodedVaultIdLength)
                 throw new FormatException("The allocated buffer and vault ID written bytes amount were different.");
-            
+
             // Return a copy of the challenge since the original version is being disposed of
             return challenge.CreateCopy();
         }
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Uno.ViewModels
             var signed = await credential.RequestSignAsync(buffer).AsTask(cancellationToken);
             if (signed.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to sign the data.");
-            
+
             var secretKey = new SecureKey((int)signed.Result.Length);
             signed.Result.CopyTo(secretKey.Key);
 

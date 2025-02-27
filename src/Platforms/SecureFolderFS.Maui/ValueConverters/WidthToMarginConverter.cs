@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.ValueConverters
             dValue = Math.Max(dValue, 0d);
             var strParam = parameter as string;
             var adjusted = AdjustValue(dValue, strParam);
-            
+
             return strParam?.Contains("right", StringComparison.OrdinalIgnoreCase) ?? false
                 ? new Thickness(0d, 0d, adjusted, 0d)
                 : new Thickness(adjusted, 0d, 0d, 0d);

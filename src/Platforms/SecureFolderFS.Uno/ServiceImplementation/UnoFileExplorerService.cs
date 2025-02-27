@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             }
             else
                 folderPicker.FileTypeFilter.Add("*");
-            
+
             var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
             if (folder is null)
                 return null;

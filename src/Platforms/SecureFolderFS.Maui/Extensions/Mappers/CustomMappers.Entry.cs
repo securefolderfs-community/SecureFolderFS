@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 var outerRadii = Enumerable.Range(1, 8).Select(_ => 24f).ToArray();
                 var roundRectShape = new RoundRectShape(outerRadii, null, null);
                 var shape = new ShapeDrawable(roundRectShape);
-                    
+
                 shape.Paint!.Color = (App.Instance.Resources["BorderLightColor"] as Color)!.ToPlatform();
                 shape.Paint.StrokeWidth = 4;
                 shape.Paint.SetStyle(Paint.Style.Stroke);

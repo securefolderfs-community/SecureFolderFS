@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.UserControls
                 {
                     if (newValue is not (bool and true))
                         return;
-                    
+
                     if (bindable is not PasswordControl passwordControl)
                         return;
 

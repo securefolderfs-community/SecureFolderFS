@@ -81,12 +81,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                                  | DocumentContractFlags.SupportsDelete
                                  | DocumentContractFlags.SupportsRemove;
                 }
-                
+
                 if (storable is IFile)
                 {
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.SupportsWrite;
-                    
+
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
                 else
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     baseFlags |= DocumentContractFlags.DirPrefersGrid;
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.DirSupportsCreate;
-                    
+
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
             }

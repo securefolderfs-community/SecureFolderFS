@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
 
                 if (value < 0)
                     throw new ArgumentOutOfRangeException(nameof(value));
-                
+
                 if (value != _position)
                 {
                     // Reset input stream and skip to the desired position

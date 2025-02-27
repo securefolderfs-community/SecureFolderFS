@@ -271,7 +271,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 FileSystemInfo fsInfo = new FileInfo(ciphertextPath);
                 if (!fsInfo.Exists)
                     fsInfo = new DirectoryInfo(ciphertextPath);
-                
+
                 fileInfo = new FileInformation()
                 {
                     FileName = fsInfo.Name,
@@ -580,7 +580,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     // File
                     File.Delete(newCiphertextPath);
                     File.Move(oldCiphertextPath, newCiphertextPath);
-                    
+
                     return Trace(DokanResult.Success, fileNameCombined, info);
                 }
                 else
@@ -646,7 +646,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     fileHandle.Lock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);
                 }
-                
+
                 return Trace(DokanResult.InvalidHandle, fileName, info);
             }
             catch (IOException)

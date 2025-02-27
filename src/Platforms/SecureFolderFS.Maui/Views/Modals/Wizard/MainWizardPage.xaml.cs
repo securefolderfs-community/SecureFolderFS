@@ -86,7 +86,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             if (e.Current.Location.OriginalString.Contains("NavigationPage"))
                 return;
-                
+
             Shell.Current.Navigated -= Shell_Navigated;
             if (OverlayViewModel is not null)
                 OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;

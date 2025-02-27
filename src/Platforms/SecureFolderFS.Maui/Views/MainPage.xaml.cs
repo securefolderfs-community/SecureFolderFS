@@ -55,7 +55,7 @@ namespace SecureFolderFS.Maui.Views
 #if IOS
             if (!ExToolbarItems.IsEmpty())
                 return;
-            
+
             ExToolbarItems.Add(new ExMenuItem()
             {
                 Text = "NewVault".ToLocalized(),
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Maui.Views
 #elif ANDROID
             if (!ToolbarItems.IsEmpty())
                 return;
-            
+
             ToolbarItems.Add(new()
             {
                 Text = "Settings".ToLocalized(),

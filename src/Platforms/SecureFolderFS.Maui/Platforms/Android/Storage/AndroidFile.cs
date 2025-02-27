@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 var combinedInputStream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
                 stream = combinedInputStream;
             }
-            
+
             if (stream is null)
                 return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
@@ -110,7 +110,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         {
             if (contentResolver is null)
                 return 0L;
-            
+
             try
             {
                 // Try to get file size using content resolver

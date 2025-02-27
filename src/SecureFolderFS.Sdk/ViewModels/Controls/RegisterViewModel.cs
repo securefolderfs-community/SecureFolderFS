@@ -47,7 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 if (CurrentViewModel is null)
                     return;
-                
+
                 await CurrentViewModel.RevokeAsync(null, cancellationToken);
                 Credentials.RemoveAt(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1);
                 CanContinue = false;

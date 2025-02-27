@@ -19,7 +19,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (ViewModel is null)
                 return Shared.Models.Result.Failure(null);
-            
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Maui.Popups
 #else
                 var height = 376d;
 #endif
-                
+
                 var displayInfo = DeviceDisplay.MainDisplayInfo;
                 var width = (displayInfo.Width / displayInfo.Density) - 38; // Account for artificial margin
                 ThisPopup.Size = new(width, height);

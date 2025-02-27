@@ -22,21 +22,21 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 {
                     if (!await Navigator.GoBackAsync())
                         return false;
-                        
+
                     IndexInNavigation--;
                     CurrentView = Views[IndexInNavigation];
-                    
+
                     return true;
                 }
-                
+
                 case NavigationType.Forward:
                 {
                     if (!await Navigator.GoForwardAsync())
                         return false;
-                        
+
                     IndexInNavigation++;
                     CurrentView = Views[IndexInNavigation];
-                    
+
                     return true;
                 }
 

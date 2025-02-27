@@ -32,11 +32,11 @@ namespace SecureFolderFS.Sdk.Extensions
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count));
-            
+
             for (var i = 0; i < collection.Count; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var item = collection.ElementAt(i);
                 await callback(item, cancellationToken);
                 transferViewModel.Report(new((i + 1), collection.Count));

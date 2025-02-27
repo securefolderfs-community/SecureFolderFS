@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             var classification = FileTypeHelper.GetClassification(file);
             var stream = await file.OpenReadAsync(cancellationToken);
-            
+
             return new VideoStreamServer(stream, classification.MimeType);
         }
     }

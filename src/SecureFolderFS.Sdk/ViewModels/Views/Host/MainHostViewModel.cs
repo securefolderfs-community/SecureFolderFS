@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
                     NavigationService.Views.Remove(viewModel);
                     (viewModel as IDisposable)?.Dispose();
                     break;
-                
+
                 case NotifyCollectionChangedAction.Reset:
                     NavigationService.Views.DisposeElements();
                     NavigationService.Views.Clear();

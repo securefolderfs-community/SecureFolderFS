@@ -42,7 +42,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             var recycleBinFolder = await AbstractRecycleBinHelpers.GetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBinFolder is null)
                 yield break;
-            
+
             await foreach (var item in recycleBinFolder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
@@ -51,7 +51,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBinFolder, StreamSerializer.Instance, cancellationToken);
                 if (dataModel.ParentPath is null || dataModel.OriginalName is null)
                     continue;
-                
+
                 // Decrypt name only when using name encryption
                 var plaintextName = specifics.Security.NameCrypt is null
                     ? dataModel.OriginalName
@@ -83,14 +83,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     destinationFolder = await folderPicker.PickFolderAsync(null, false, cancellationToken) as IModifiableFolder;
                     if (destinationFolder is null)
                         return Result.Failure(new OperationCanceledException("The user did not pick destination a folder."));
-                    
+
                     if (!destinationFolder.Id.Contains(vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                     {
                         // Invalid folder chosen outside of vault
                         // TODO: Return IResult or throw
                         return Result.Failure(new InvalidOperationException("The folder is outside of the virtualized storage folder."));
                     }
-                    
+
                     if (destinationFolder is not IWrapper<IFolder> { Inner: IModifiableFolder ciphertextFolder })
                         return Result.Failure(new NotSupportedException("Could not retrieve inner ciphertext item from the picked folder."));
 

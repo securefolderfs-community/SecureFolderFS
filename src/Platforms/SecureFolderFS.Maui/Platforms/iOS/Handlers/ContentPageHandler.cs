@@ -52,7 +52,7 @@ namespace SecureFolderFS.Maui.Handlers
             {
                 // Create a popup UIMenu
                 var menu = UIMenu.Create(string.Empty, null, UIMenuIdentifier.Edit, UIMenuOptions.DisplayInline, secondaryItems);
-                
+
                 // Set ellipsis icon image (can also use UIImage.ActionsImage for a filled ellipsis)
                 var menuButton = new UIBarButtonItem(UIImage.FromBundle("cupertino_ellipsis.png"), menu);
 

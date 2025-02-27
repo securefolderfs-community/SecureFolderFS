@@ -51,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
             Items.Clear();
-            
+
             var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);
             foreach (var item in items.OrderBy(x => x is IFile).ThenBy(x => x.Name))
             {
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (Items.IsEmpty())
                 _ = ListContentsAsync(cancellationToken);
-            
+
             await BrowserViewModel.InnerNavigator.NavigateAsync(this);
         }
     }

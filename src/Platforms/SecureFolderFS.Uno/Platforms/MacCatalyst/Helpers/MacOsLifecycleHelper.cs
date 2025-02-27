@@ -58,9 +58,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
                 .AddSingleton<ILocalizationService, ResourceLocalizationService>()
-                
+
                 .WithUnoServices(settingsFolder)
-                
+
                 ;
         }
     }

@@ -16,11 +16,11 @@ namespace SecureFolderFS.Maui.Prompts
         {
             if (ViewModel is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
             var fileText = "File".ToLocalized();
             var folderText = "Folder".ToLocalized();
-            
+
             var chosenOption = await page.DisplayActionSheet(
                 ViewModel.Title,
                 "Cancel".ToLocalized(),
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Prompts
                 ViewModel.StorableType = StorableType.Folder;
             else
                 ViewModel.StorableType = StorableType.None;
-            
+
             return ViewModel.StorableType == StorableType.None ? Result.Failure(null) : Result.Success;
         }
 
