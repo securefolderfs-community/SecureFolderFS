@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty PresentationProperty =
             BindableProperty.Create(nameof(Presentation), typeof(object), typeof(ContentPresentation), null, propertyChanged:
-                (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
+                static (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
 
         public DataTemplateSelector? TemplateSelector
         {
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TemplateSelectorProperty =
             BindableProperty.Create(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentPresentation), null, propertyChanged:
-                (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.Presentation));
+                static (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.Presentation));
 
         private static void ApplyTemplate(BindableObject bindable, object? newValue)
         {

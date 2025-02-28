@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             // Get widgets
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
-            
+
             var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);
             if (itemToRemove is null)
                 return false;

@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
 
             // Make sure to also add it to streams manager
             _streamsManager.AddStream(ciphertextStream);
-            
+
             // Open the plaintext stream
             return new PlaintextStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
         }

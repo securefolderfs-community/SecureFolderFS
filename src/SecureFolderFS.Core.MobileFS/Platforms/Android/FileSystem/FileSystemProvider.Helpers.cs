@@ -37,13 +37,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var safRoot = _rootCollection?.GetSafRootForStorable(storable);
             if (safRoot is null)
                 return false;
-            
+
             AddDocumentId();
             AddDisplayName();
             await AddSizeAsync();
             AddMimeType();
             AddFlags();
-            
+
             return true;
 
             async Task AddSizeAsync()
@@ -142,7 +142,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             // Extract RootID and Path
             var rootId = split[0];
             var path = split[1];
-            
+
             // Get root
             var safRoot = _rootCollection.GetSafRootForRootId(rootId);
             if (safRoot is null)

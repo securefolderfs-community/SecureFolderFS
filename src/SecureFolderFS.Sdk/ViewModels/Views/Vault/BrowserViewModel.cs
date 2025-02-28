@@ -100,7 +100,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                 itemType = storableTypeViewModel.StorableType.ToString();
             }
-            
+
             var newItemViewModel = new NewItemOverlayViewModel();
             result = await OverlayService.ShowAsync(newItemViewModel);
             if (result.Aborted() || newItemViewModel.ItemName is null)

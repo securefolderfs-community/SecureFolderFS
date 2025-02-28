@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CommandParameterProperty, value);
         }
         public static readonly BindableProperty CommandParameterProperty =
-            BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(SplitCell), null);
+            BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(SplitCell));
 
         public View? LeftSide
         {
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(LeftSideProperty, value);
         }
         public static readonly BindableProperty LeftSideProperty =
-            BindableProperty.Create(nameof(LeftSide), typeof(View), typeof(SplitCell), null);
+            BindableProperty.Create(nameof(LeftSide), typeof(View), typeof(SplitCell));
 
         public View? RightSide
         {
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(RightSideProperty, value);
         }
         public static readonly BindableProperty RightSideProperty =
-            BindableProperty.Create(nameof(RightSide), typeof(View), typeof(SplitCell), null);
+            BindableProperty.Create(nameof(RightSide), typeof(View), typeof(SplitCell));
 
         public string? LeftText
         {
@@ -86,8 +86,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(LeftTextProperty, value);
         }
         public static readonly BindableProperty LeftTextProperty =
-            BindableProperty.Create(nameof(LeftText), typeof(string), typeof(SplitCell), null, propertyChanged:
-                (bindable, _, newValue) => SetText(bindable, false, newValue));
+            BindableProperty.Create(nameof(LeftText), typeof(string), typeof(SplitCell), propertyChanged:
+                static (bindable, _, newValue) => SetText(bindable, false, newValue));
 
         public string? RightText
         {
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(RightTextProperty, value);
         }
         public static readonly BindableProperty RightTextProperty =
-            BindableProperty.Create(nameof(RightText), typeof(string), typeof(SplitCell), null, propertyChanged:
-                (bindable, _, newValue) => SetText(bindable, true, newValue));
+            BindableProperty.Create(nameof(RightText), typeof(string), typeof(SplitCell), propertyChanged:
+                static (bindable, _, newValue) => SetText(bindable, true, newValue));
     }
 }

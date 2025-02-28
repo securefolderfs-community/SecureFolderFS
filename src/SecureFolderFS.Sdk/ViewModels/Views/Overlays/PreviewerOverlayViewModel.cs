@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 TypeHint.PlainText => new TextPreviewerViewModel(file),
                 _ => null
             });
-            
+
             if (previewer is null)
                 return;
 

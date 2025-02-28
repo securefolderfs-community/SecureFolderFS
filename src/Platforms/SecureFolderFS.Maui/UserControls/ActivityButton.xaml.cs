@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CommandProperty, value);
         }
         public static readonly BindableProperty CommandProperty =
-            BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ActivityButton), null);
+            BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ActivityButton));
 
         public string? Text
         {
@@ -23,8 +23,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(TextProperty, value);
         }
         public static readonly BindableProperty TextProperty =
-            BindableProperty.Create(nameof(Text), typeof(string), typeof(ActivityButton), null,
-                propertyChanged: (bindable, oldValue, newValue) =>
+            BindableProperty.Create(nameof(Text), typeof(string), typeof(ActivityButton), propertyChanged:
+                static (bindable, oldValue, newValue) =>
                 {
                     if (bindable is not ActivityButton activityButton)
                         return;
@@ -45,8 +45,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsProgressingProperty, value);
         }
         public static readonly BindableProperty IsProgressingProperty =
-            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(ActivityButton), false,
-                propertyChanged: (bindable, oldValue, newValue) =>
+            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(ActivityButton), false, propertyChanged:
+                static (bindable, oldValue, newValue) =>
                 {
                     if (bindable is not ActivityButton activityButton)
                         return;

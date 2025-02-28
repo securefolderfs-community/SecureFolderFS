@@ -78,7 +78,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             if (OverlayViewModel is not null)
                 OverlayViewModel.CurrentViewModel = ViewModel;
-            
+
             base.OnAppearing();
         }
 
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             Shell.Current.Navigated -= Shell_Navigated;
             if (OverlayViewModel is not null)
                 OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
-            
+
             _modalTcs.TrySetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
                 ? Result.Success
                 : Result.Failure(null));

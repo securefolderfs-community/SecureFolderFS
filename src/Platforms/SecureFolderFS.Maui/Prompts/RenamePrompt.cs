@@ -15,14 +15,14 @@ namespace SecureFolderFS.Maui.Prompts
         {
             if (ViewModel is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
             ViewModel.NewName = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
                 "Cancel".ToLocalized());
-            
+
             if (string.IsNullOrWhiteSpace(ViewModel.NewName))
                 return Result.Failure(null);
 

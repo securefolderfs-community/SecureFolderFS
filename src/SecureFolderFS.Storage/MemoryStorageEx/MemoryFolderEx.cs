@@ -86,7 +86,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
 
             var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, new MemoryStream());
             emptyMemoryFolder.SetParent(this);
-            
+
             var file = overwrite ? emptyMemoryFolder : (existingFile ?? emptyMemoryFolder);
             FolderContents[file.Id] = file;
 

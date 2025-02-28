@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Extensions
         public static void InsertSorted(this FolderViewModel folderViewModel, BrowserItemViewModel itemViewModel)
         {
             var insertIndex = -1;
-            
+
             // Folders first, then alphabetical by name
             for (var i = 0; i < folderViewModel.Items.Count; i++)
             {

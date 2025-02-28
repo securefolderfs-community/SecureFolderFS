@@ -41,7 +41,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty IsImmersiveProperty =
             BindableProperty.Create(nameof(IsImmersive), typeof(bool), typeof(BaseModalPage), false, propertyChanged:
-                (bindable, _, newValue) =>
+                static (bindable, _, newValue) =>
                 {
 #if ANDROID
                     if (bindable is not BaseModalPage modalPage)
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty PrimaryTextProperty =
             BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, _) => UpdateButtonsVisibility(bindable));
+                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public string? CloseText
         {
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty CloseTextProperty =
             BindableProperty.Create(nameof(CloseText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, _) => UpdateButtonsVisibility(bindable));
+                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public bool PrimaryEnabled
         {

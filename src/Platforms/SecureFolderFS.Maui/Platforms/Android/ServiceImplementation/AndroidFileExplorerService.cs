@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 .SetType("*/*");
 
             var pickerIntent = Intent.CreateChooser(intent, "Select file");
-            
+
             // TODO: Determine if GrantReadUriPermission and GrantWriteUriPermission are needed for access persistence
 
             // FilePicker 0x2AF9

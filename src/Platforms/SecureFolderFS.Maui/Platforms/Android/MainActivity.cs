@@ -29,7 +29,7 @@ namespace SecureFolderFS.Maui
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            
+
             // Enable edge to edge
             EdgeToEdge.Enable(this);
 #pragma warning disable CA1422

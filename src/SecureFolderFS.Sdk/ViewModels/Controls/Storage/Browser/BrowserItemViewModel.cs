@@ -50,11 +50,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (ParentFolder is null)
                 return;
-            
+
             var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
-            
+
             if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
                 return;
 
@@ -111,11 +111,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (ParentFolder is null)
                 return;
-            
+
             var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
-            
+
             if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
@@ -169,7 +169,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (ParentFolder?.Folder is not IRenamableFolder renamableFolder)
                 return;
-            
+
             if (Inner is not IStorableChild innerChild)
                 return;
 
@@ -207,11 +207,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             // TODO: Show an overlay to ask the user **when deleting permanently**
             // TODO: If moving to trash, show TransferViewModel (with try..catch..finally), otherwise don't show anything
-            
+
             var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [this];
-            
+
             // Disable selection, if called with selected items
             ParentFolder.BrowserViewModel.IsSelecting = false;
 
@@ -227,7 +227,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (ParentFolder?.Folder is not IModifiableFolder parentModifiableFolder)
                 return;
-            
+
             var destination = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
             if (destination is not IModifiableFolder destinationFolder)
                 return;
@@ -235,7 +235,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Copy and delete
             await destinationFolder.CreateCopyOfStorableAsync(Inner, false, cancellationToken);
             await parentModifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
-            
+
             ParentFolder.Items.Remove(this);
         }
 

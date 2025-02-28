@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage.StorageProperties
             var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken);
             if (sizeProperty is null)
                 return null;
-            
+
             var plaintextSize = _specifics.Security.ContentCrypt.CalculatePlaintextSize(sizeProperty.Value);
             return new GenericProperty<long>(plaintextSize);
         }

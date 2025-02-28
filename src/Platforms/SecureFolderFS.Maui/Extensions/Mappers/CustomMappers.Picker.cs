@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 shape.Paint.SetStyle(Paint.Style.FillAndStroke);
                 handler.PlatformView.SetTextColor((App.Instance.Resources["QuarternaryLightColor"] as Color)!.ToPlatform());
                 handler.PlatformView.Background = shape;
-                handler.PlatformView.SetPadding(32, 32,32, 32);
+                handler.PlatformView.SetPadding(32, 24, 32, 24);
 #endif
             });
         }

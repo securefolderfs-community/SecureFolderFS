@@ -16,7 +16,7 @@
     <Grid
         x:DataType="local:HealthWidget"
         BindingContext="{x:Reference RootControl}"
-        ColumnSpacing="4">
+        ColumnSpacing="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />

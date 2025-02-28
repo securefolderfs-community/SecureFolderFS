@@ -256,30 +256,30 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             if (string.IsNullOrWhiteSpace(displayName))
                 return null;
-            
+
             documentId = documentId == "null" ? null : documentId;
             if (documentId is null)
                 return null;
-            
+
             var storable = GetStorableForDocumentId(documentId);
             if (storable is not IStorableChild storableChild)
                 return null;
-            
+
             var safRoot = _rootCollection?.GetSafRootForStorable(storable);
             if (safRoot is null)
                 return null;
-            
+
             if (safRoot.StorageRoot.Options.IsReadOnly)
                 return null;
-            
+
             var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             if (parentFolder is not IRenamableFolder renamableFolder)
                 return null;
-            
+
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
             if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> uriWrapper })
                 return uriWrapper.Inner.ToString();
-            
+
             throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
         }
 
@@ -294,14 +294,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
             if (destinationStorable is not IModifiableFolder destinationFolder)
                 return null;
-            
+
             var safRoot = _rootCollection?.GetSafRootForStorable(destinationStorable);
             if (safRoot is null)
                 return null;
-            
+
             if (safRoot.StorageRoot.Options.IsReadOnly)
                 return null;
-            
+
             var sourceStorable = GetStorableForDocumentId(sourceDocumentId);
             switch (sourceStorable)
             {

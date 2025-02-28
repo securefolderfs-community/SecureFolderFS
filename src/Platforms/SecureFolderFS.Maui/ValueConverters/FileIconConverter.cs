@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                     _ => new MauiIcon() { Icon = MaterialIcons.Description }
                 }
             };
-            
+
             static object? ToImage(IImage image)
             {
                 // TODO: Implement IImage

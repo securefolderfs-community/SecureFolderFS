@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel.CurrentViewModel = ViewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             base.OnAppearing();
-            
+
             // Wait for the control to load
             await Task.Delay(50);
             LayoutBrowseButton();
@@ -48,10 +48,10 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 #else
                 (Button?)null;
 #endif
-            
+
             if (browseButton is null)
                 return;
-            
+
             const int adjustment = 64;
             var availableWidth = browseButton.Width;
             var textWidth = InvisibleSelectedLocation.Width;

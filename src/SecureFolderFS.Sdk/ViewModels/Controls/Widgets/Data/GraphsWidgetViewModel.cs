@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 
             _fileSystemStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
             _fileSystemStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
-            
+
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
         }

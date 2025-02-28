@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.AppModels
         {
             _httpListener.Start();
             _ = BeginListeningAsync();
-            
+
             return Task.CompletedTask;
 
             async Task BeginListeningAsync()

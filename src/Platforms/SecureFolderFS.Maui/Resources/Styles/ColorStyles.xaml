@@ -19,16 +19,21 @@
     <Color x:Key="PrimaryContrastingDarkColor">#F0F0F0</Color>
 
     <!--  Background Colors  -->
-    <Color x:Key="BackgroundFillPrimaryLightColor">#F0F0F0</Color>
+    <Color x:Key="BackgroundFillPrimaryLightColor">#F7F7F9</Color>
     <Color x:Key="BackgroundFillPrimaryDarkColor">#181C1A</Color>
     <Color x:Key="BackgroundFillSecondaryLightColor">#E8EBFD</Color>
     <Color x:Key="BackgroundFillSecondaryDarkColor">#2C2D34</Color>
 
     <Color x:Key="CardFillPrimaryLightColor">#D3E5F9</Color>
     <Color x:Key="CardFillPrimaryDarkColor">#35393E</Color>
+    <Color x:Key="ShimFillPrimaryColor">#DDE7E7E9</Color>
 
     <!--  Border Colors  -->
     <Color x:Key="BorderLightColor">#CECECE</Color>
+
+    <!--  Other Colors  -->
+    <Color x:Key="LightTransparentColor">#00FFFFFF</Color>
+    <Color x:Key="DarkTransparentColor">#00000000</Color>
 
     <!--  ======= BRUSHES =======  -->
 
@@ -46,7 +51,6 @@
     <SolidColorBrush x:Key="ThemeBackgroundFillColorBrush" Color="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor}, Dark={StaticResource BackgroundFillPrimaryDarkColor}}" />
     <SolidColorBrush x:Key="ThemeBackgroundFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource BackgroundFillSecondaryLightColor}, Dark={StaticResource BackgroundFillSecondaryDarkColor}}" />
     <SolidColorBrush x:Key="ThemeCardFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource CardFillPrimaryLightColor}, Dark={StaticResource CardFillPrimaryDarkColor}}" />
-
 
 
 

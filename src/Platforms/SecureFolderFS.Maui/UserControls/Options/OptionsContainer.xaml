@@ -1,0 +1,21 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Options.OptionsContainer"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="ThisControl">
+
+    <VerticalStackLayout Spacing="8">
+        <Label
+            FontAttributes="Bold"
+            FontSize="17"
+            Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+
+        <Border Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+
+            <ContentView Content="{Binding InnerContent, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        </Border>
+    </VerticalStackLayout>
+</ContentView>

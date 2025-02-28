@@ -121,10 +121,10 @@ namespace SecureFolderFS.Sdk.AppModels
 
             // Remove persisted
             VaultConfigurations.SavedVaults?.RemoveAt(index);
-            
+
             // Remove widget data for that vault
             VaultWidgets.SetForVault(removedItem.Folder.Id, null);
-            
+
             // Remove bookmark
             if (removedItem.Folder is IBookmark bookmark)
                 await bookmark.RemoveBookmarkAsync();

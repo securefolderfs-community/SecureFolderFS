@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             var directoryIdFile = await folderOfDirectoryId.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
             await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken).ConfigureAwait(false);
-            
+
             int read;
             if (specifics.DirectoryIdCache.IsAvailable)
             {
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             }
             else
                 read = await directoryIdStream.ReadAsync(directoryId, cancellationToken).ConfigureAwait(false);
-            
+
             if (read < Constants.DIRECTORY_ID_SIZE)
                 throw new IOException($"The data inside Directory ID file is of incorrect size: {read}.");
 

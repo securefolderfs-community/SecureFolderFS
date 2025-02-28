@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         {
             if (folder is not IWrapper<NSUrl> wrapper)
                 return Task.CompletedTask;
-            
+
             // Open the folder in the Files app
             var documentPicker = new UIDocumentPickerViewController(wrapper.Inner, UIDocumentPickerMode.Open);
             UIApplication.SharedApplication.KeyWindow?.RootViewController?.PresentViewController(documentPicker, true, null);

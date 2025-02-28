@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             var streamedVideo = await MediaService.StreamVideoAsync(_file, cancellationToken);
             if (streamedVideo is IAsyncInitialize asyncInitialize)
                 await asyncInitialize.InitAsync(cancellationToken);
-            
+
             Source = streamedVideo;
         }
 
