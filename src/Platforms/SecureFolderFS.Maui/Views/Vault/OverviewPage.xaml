@@ -89,13 +89,18 @@
                             <VerticalStackLayout>
                                 <uco:OptionsControl Title="{l:ResourceString Rid=ViewInFiles}" Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" />
                                 <uco:OptionsControl Title="{l:ResourceString Rid=LockVault}" Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" />
+                                <uco:OptionsControl
+                                    Title="{l:ResourceString Rid=RecycleBin}"
+                                    Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
+                                    IsSeparatorVisible="False" />
                             </VerticalStackLayout>
                         </On>
                         <On Platform="Android">
                             <VerticalStackLayout>
+                                <uco:OptionsControl Title="Open file browser" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
                                 <uco:OptionsControl
-                                    Title="Open file browser"
-                                    Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}"
+                                    Title="{l:ResourceString Rid=RecycleBin}"
+                                    Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
                                     IsSeparatorVisible="False" />
                             </VerticalStackLayout>
                         </On>
@@ -109,11 +114,10 @@
                     <VerticalStackLayout>
                         <uco:OptionsControl Title="{l:ResourceString Rid=Security}" SlotText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
                         <uco:OptionsControl Title="{l:ResourceString Rid=DataEncryption}" SlotText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
-                        <uco:OptionsControl Title="{l:ResourceString Rid=FileNameEncryption}" SlotText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
                         <uco:OptionsControl
-                            Title="{l:ResourceString Rid=RecycleBin}"
-                            Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
-                            IsSeparatorVisible="False" />
+                            Title="{l:ResourceString Rid=FileNameEncryption}"
+                            IsSeparatorVisible="False"
+                            SlotText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
                     </VerticalStackLayout>
                 </uco:OptionsContainer.InnerContent>
             </uco:OptionsContainer>
