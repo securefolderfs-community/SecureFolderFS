@@ -8,7 +8,9 @@
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
-    CanBeDismissedByTappingOutsideOfPopup="True">
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
+                            Dark={StaticResource BackgroundFillPrimaryDarkColor}}">
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">

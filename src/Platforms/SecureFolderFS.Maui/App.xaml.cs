@@ -1,5 +1,6 @@
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
+using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -58,7 +59,10 @@ namespace SecureFolderFS.Maui
 
             // Create and initialize AppShell
             var appShell = new AppShell();
-            await appShell.MainViewModel.InitAsync();
+            await appShell.MainViewModel.InitAsync().ConfigureAwait(false);
+
+            // Initialize ThemeHelper
+            await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
 
             return appShell;
         }

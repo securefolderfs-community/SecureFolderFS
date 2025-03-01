@@ -1,9 +1,12 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Utils;
 using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 
@@ -79,10 +82,28 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
         }
 
         /// <inheritdoc/>
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            await Task.Delay(50);
+            ThemePicker.Items.Clear();
+            ThemePicker.Items.Add("ThemeSystemDefault".ToLocalized());
+            ThemePicker.Items.Add("ThemeLight".ToLocalized());
+            ThemePicker.Items.Add("ThemeDark".ToLocalized());
+            ThemePicker.SelectedIndex = (int)MauiThemeHelper.Instance.CurrentTheme;
+        }
+
+        /// <inheritdoc/>
         protected override void OnDisappearing()
         {
             _modalTcs.TrySetResult(Result.Success);
             base.OnDisappearing();
+        }
+
+        private async void ThemePicker_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            await MauiThemeHelper.Instance.SetThemeAsync((ThemeType)ThemePicker.SelectedIndex);
         }
     }
 }
