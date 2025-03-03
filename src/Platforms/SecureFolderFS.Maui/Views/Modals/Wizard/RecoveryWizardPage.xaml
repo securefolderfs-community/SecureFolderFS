@@ -10,10 +10,10 @@
     x:DataType="local:RecoveryWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
-    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout Padding="16,0">

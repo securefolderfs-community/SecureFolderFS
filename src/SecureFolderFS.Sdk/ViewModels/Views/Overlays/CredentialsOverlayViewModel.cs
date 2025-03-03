@@ -27,7 +27,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly IVaultModel _vaultModel;
         private readonly AuthenticationType _authenticationStage;
 
-        [ObservableProperty] private bool _CanContinue; // TODO: Use OverlayViewModel.IsPrimaryButtonEnabled
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
@@ -45,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             SelectionViewModel = new(vaultModel.Folder, authenticationStage);
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
-            PrimaryButtonText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             RegisterViewModel.PropertyChanged += RegisterViewModel_PropertyChanged;
@@ -73,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (e.IsRecovered)
             {
                 Title = "SetCredentials".ToLocalized();
-                PrimaryButtonText = "Confirm".ToLocalized();
+                PrimaryText = "Confirm".ToLocalized();
                 CanContinue = false;
 
                 // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
@@ -84,7 +83,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             else
             {
                 Title = "SelectAuthentication".ToLocalized();
-                PrimaryButtonText = null;
+                PrimaryText = null;
                 SelectionViewModel.UnlockContract = e.UnlockContract;
                 SelectionViewModel.RegisterViewModel = RegisterViewModel;
                 SelectedViewModel = SelectionViewModel;
@@ -95,7 +94,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             CanContinue = e.IsRemoving || (SelectionViewModel.RegisterViewModel?.CanContinue ?? false);
             Title = e.IsRemoving ? "RemoveAuthentication".ToLocalized() : "Authenticate".ToLocalized();
-            PrimaryButtonText = "Confirm".ToLocalized();
+            PrimaryText = "Confirm".ToLocalized();
             SelectedViewModel = e;
         }
 

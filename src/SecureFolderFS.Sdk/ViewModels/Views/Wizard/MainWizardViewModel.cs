@@ -23,8 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CanCancel = true;
             CanContinue = true;
             Title = "AddNewVault".ToLocalized();
-            CancelText = "Cancel".ToLocalized();
-            ContinueText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
         }
 
         /// <inheritdoc/>

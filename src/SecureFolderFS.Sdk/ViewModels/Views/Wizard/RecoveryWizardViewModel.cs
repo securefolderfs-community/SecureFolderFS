@@ -30,8 +30,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             ServiceProvider = DI.Default;
             Title = "VaultRecovery".ToLocalized();
-            ContinueText = "Continue".ToLocalized();
-            CancelText = "Cancel".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
             CanContinue = true;
             CanCancel = false;
             Folder = folder;

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<ISettingsService>, Inject<IFileExplorerService>]
+    [Inject<ISettingsService>, Inject<IFileExplorerService>, Inject<IApplicationService>]
     [Bindable(true)]
     public sealed partial class VaultOverviewViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize, IDisposable
     {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (SettingsService.UserSettings.OpenFolderOnUnlock)
+            if (ApplicationService.IsDesktop && SettingsService.UserSettings.OpenFolderOnUnlock)
                 _ = FileExplorerService.TryOpenInFileExplorerAsync(UnlockedVaultViewModel.StorageRoot.VirtualizedRoot, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);

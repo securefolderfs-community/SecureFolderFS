@@ -40,8 +40,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CreationType = creationType;
             CanCancel = true;
             CanContinue = false;
-            CancelText = "Cancel".ToLocalized();
-            ContinueText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
             Title = creationType == NewVaultCreationType.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 

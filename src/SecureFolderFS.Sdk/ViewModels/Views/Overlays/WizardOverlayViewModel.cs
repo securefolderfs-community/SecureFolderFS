@@ -26,8 +26,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             VaultCollectionModel = vaultCollectionModel;
-            PrimaryButtonText = "Continue".ToLocalized();
-            SecondaryButtonText = "Cancel".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
         }
 
         /// <inheritdoc />
@@ -75,10 +75,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 newValue.PropertyChanged += CurrentViewModel_PropertyChanged;
                 newValue.OnAppearing();
 
-                PrimaryButtonEnabled = newValue.CanContinue;
-                SecondaryButtonEnabled = newValue.CanCancel;
-                PrimaryButtonText = newValue.ContinueText;
-                SecondaryButtonText = newValue.CancelText;
+                CanContinue = newValue.CanContinue;
+                CanCancel = newValue.CanCancel;
+                PrimaryText = newValue.PrimaryText;
+                SecondaryText = newValue.SecondaryText;
             }
 
             Title = newValue?.Title;
@@ -91,23 +91,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             switch (e.PropertyName)
             {
-                case nameof(BaseWizardViewModel.CanContinue):
-                    PrimaryButtonEnabled = CurrentViewModel.CanContinue;
+                case nameof(CanContinue):
+                    CanContinue = CurrentViewModel.CanContinue;
                     break;
 
-                case nameof(BaseWizardViewModel.CanCancel):
-                    SecondaryButtonEnabled = CurrentViewModel.CanCancel;
+                case nameof(CanCancel):
+                    CanCancel = CurrentViewModel.CanCancel;
                     break;
 
-                case nameof(BaseWizardViewModel.ContinueText):
-                    PrimaryButtonText = CurrentViewModel.ContinueText;
+                case nameof(PrimaryText):
+                    PrimaryText = CurrentViewModel.PrimaryText;
                     break;
 
-                case nameof(BaseWizardViewModel.CancelText):
-                    SecondaryButtonText = CurrentViewModel.CancelText;
+                case nameof(SecondaryText):
+                    SecondaryText = CurrentViewModel.SecondaryText;
                     break;
 
-                case nameof(BaseWizardViewModel.Title):
+                case nameof(Title):
                     Title = CurrentViewModel.Title;
                     break;
             }

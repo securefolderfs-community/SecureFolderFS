@@ -11,7 +11,7 @@
     x:DataType="local:SummaryWizardPage"
     CloseCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    CloseText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    CloseText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout

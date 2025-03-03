@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Shared.ComponentModel;
 using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -34,10 +36,10 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetUnlockContract(IDisposable unlockContract)
         {
-            if (unlockContract is not KeyPair keyPair)
+            if (unlockContract is not IWrapper<Security> securityWrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            _keyPair = keyPair;
+            _keyPair = securityWrapper.Inner.KeyPair;
         }
 
         /// <inheritdoc/>

@@ -122,7 +122,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 await confirmationViewModel.RegisterViewModel.RevokeCredentialsAsync(default);
 
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
-            ViewModel.PrimaryButtonText = null;
+            ViewModel.PrimaryText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();
 
             await BackTitle.AnimateBackAsync(false);

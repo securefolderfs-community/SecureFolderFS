@@ -48,9 +48,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             _RegisterViewModel = new(AuthenticationType.FirstStageOnly);
             _vaultId = Guid.NewGuid().ToString();
 
-            ContinueText = "Continue".ToLocalized();
             Title = "SetCredentials".ToLocalized();
-            CancelText = "Cancel".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
             CanContinue = false;
             CanCancel = true;
 
