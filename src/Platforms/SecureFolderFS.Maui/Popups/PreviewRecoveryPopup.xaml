@@ -9,8 +9,7 @@
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
     CanBeDismissedByTappingOutsideOfPopup="True"
-    Color="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
-                            Dark={StaticResource BackgroundFillPrimaryDarkColor}}">
+    Color="Transparent">
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
@@ -26,31 +25,35 @@
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <Grid
-        x:Name="RootGrid"
-        Margin="16,0"
+    <Border
         Padding="16"
-        RowSpacing="24"
+        Background="{StaticResource ThemeBackgroundFillColorBrush}"
         WidthRequest="392">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
 
-        <Label
-            Grid.Row="0"
-            FontAttributes="Bold"
-            FontSize="24"
-            Text="{Binding ViewModel.Title, Mode=OneWay}" />
+        <Grid RowSpacing="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <uc:ContentPresentation
-            Grid.Row="1"
-            HorizontalOptions="Fill"
-            Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
-            VerticalOptions="Center">
-            <uc:ContentPresentation.TemplateSelector>
-                <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
-            </uc:ContentPresentation.TemplateSelector>
-        </uc:ContentPresentation>
-    </Grid>
+            <Label
+                Grid.Row="0"
+                FontAttributes="Bold"
+                FontSize="24"
+                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+
+            <uc:ContentPresentation
+                Grid.Row="1"
+                HorizontalOptions="Fill"
+                Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
+                VerticalOptions="Center">
+                <uc:ContentPresentation.TemplateSelector>
+                    <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
+                </uc:ContentPresentation.TemplateSelector>
+            </uc:ContentPresentation>
+        </Grid>
+    </Border>
 </tv:Popup>

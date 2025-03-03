@@ -67,6 +67,9 @@ namespace SecureFolderFS.Maui.Popups
                         Command = selectionViewModel.RemoveCredentialsCommand
                     });
 
+                if (itemsPanel.Children.LastOrDefault() is OptionsControl optionsControl)
+                    optionsControl.IsSeparatorVisible = false;
+
                 layout.Children.Insert(0, container);
             }
 
@@ -87,6 +90,9 @@ namespace SecureFolderFS.Maui.Popups
                     CommandParameter = item
                 });
             }
+
+            if (allOptionsSection.LastOrDefault() is OptionsControl optionsControl2)
+                optionsControl2.IsSeparatorVisible = false;
         }
 
         private async void ResetViewButton_Click(object? sender, EventArgs e)
