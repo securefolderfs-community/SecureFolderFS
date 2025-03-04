@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
             ServiceProvider = DI.Default;
-            Title = vaultViewModel.VaultName;
+            Title = vaultViewModel.Title;
             VaultNavigation = vaultNavigation;
             VaultViewModel = vaultViewModel;
             _LoginViewModel = new(vaultViewModel.VaultModel, LoginViewType.Full);
