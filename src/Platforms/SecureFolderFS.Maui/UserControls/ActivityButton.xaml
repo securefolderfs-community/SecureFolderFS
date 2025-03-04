@@ -2,24 +2,10 @@
     x:Class="SecureFolderFS.Maui.UserControls.ActivityButton"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     x:Name="ThisControl">
 
-    <Grid x:DataType="local:ActivityButton" BindingContext="{x:Reference Name=ThisControl}">
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="iOS">
-                <Grid>
-                    <Button x:Name="IOSButton" Command="{Binding Command, Mode=OneWay}" />
-                    <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" />
-                </Grid>
-            </On>
-            <On Platform="Android">
-                <Grid>
-                    <mdc:Button x:Name="AndroidButton" Command="{Binding Command, Mode=OneWay}" />
-                    <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" WidthRequest="20" />
-                </Grid>
-            </On>
-        </OnPlatform>
+    <Grid BindingContext="{x:Reference Name=ThisControl}">
+        <Button x:Name="ActionButton" Command="{Binding Command, Mode=OneWay}" />
+        <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" />
     </Grid>
 </ContentView>

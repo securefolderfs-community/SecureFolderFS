@@ -10,7 +10,7 @@
             FontSize="17"
             Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
 
-        <Border Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}">
+        <Border Background="{OnPlatform Android={StaticResource ThemeElevatedFillPrimaryColorBrush}}">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>

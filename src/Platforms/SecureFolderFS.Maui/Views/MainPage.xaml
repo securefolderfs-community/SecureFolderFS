@@ -29,11 +29,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <SearchBar
-            Grid.Row="0"
-            HeightRequest="24"
-            IsVisible="True"
-            Placeholder="Search" />
+        <!--  TODO: Implement SearchBar  -->
 
         <ListView
             Grid.Row="1"

@@ -64,30 +64,24 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            _ = folder;
-            
-            OpenFilesApp();
-            return Task.CompletedTask;
-        }
-        
-        public static void OpenFilesApp()
-        {
             try
             {
                 var context = MainActivity.Instance;
                 if (context is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var intent = new Intent(Intent.ActionView);
-                intent.SetType("*/*"); // Opens Files app without filtering any file type
+                intent.SetType("*/*");
                 intent.AddCategory(Intent.CategoryDefault);
                 intent.AddFlags(ActivityFlags.NewTask);
-
                 context.StartActivity(intent);
+
+                return Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error opening Files app: {ex.Message}");
+                _ = ex;
+                return Task.CompletedTask;
             }
         }
 

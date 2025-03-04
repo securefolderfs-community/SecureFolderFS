@@ -32,11 +32,7 @@ namespace SecureFolderFS.Maui.UserControls
                     if (activityButton.IsProgressing)
                         return;
 
-#if ANDROID
-                    activityButton.AndroidButton.Text = activityButton.Text;
-#elif IOS
-                    activityButton.IOSButton.Text = activityButton.Text;
-#endif
+                    activityButton.ActionButton.Text = activityButton.Text ?? string.Empty;
                 });
 
         public bool IsProgressing
@@ -51,15 +47,9 @@ namespace SecureFolderFS.Maui.UserControls
                     if (bindable is not ActivityButton activityButton)
                         return;
 
-#if ANDROID
-                    activityButton.AndroidButton.Text = activityButton.IsProgressing
+                    activityButton.ActionButton.Text = activityButton.IsProgressing
                         ? string.Empty
-                        : activityButton.Text;
-#elif IOS
-                    activityButton.IOSButton.Text = activityButton.IsProgressing
-                        ? string.Empty
-                        : activityButton.Text;
-#endif
+                        : activityButton.Text ?? string.Empty;
                 });
     }
 }
