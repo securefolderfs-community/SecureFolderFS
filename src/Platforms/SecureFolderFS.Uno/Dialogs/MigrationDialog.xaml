@@ -15,7 +15,7 @@
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     Closing="MigrationDialog_Closing"
     DefaultButton="Primary"
-    IsSecondaryButtonEnabled="{x:Bind ViewModel.SecondaryButtonEnabled, Mode=OneWay}"
+    IsSecondaryButtonEnabled="{x:Bind ViewModel.CanCancel, Mode=OneWay}"
     PrimaryButtonClick="MigrationDialog_PrimaryButtonClick"
     PrimaryButtonText="{x:Bind ViewModel.PrimaryText, Mode=OneWay}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"

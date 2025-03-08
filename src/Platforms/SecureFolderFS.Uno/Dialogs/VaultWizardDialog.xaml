@@ -11,7 +11,7 @@
     HorizontalContentAlignment="Stretch"
     Closing="ContentDialog_Closing"
     DefaultButton="Primary"
-    IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonText="{x:Bind ViewModel.PrimaryText, Mode=OneWay}"
