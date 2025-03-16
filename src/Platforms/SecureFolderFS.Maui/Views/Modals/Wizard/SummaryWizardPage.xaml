@@ -23,13 +23,13 @@
             <Grid>
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mi_material:Material Check}"
-                    IconSize="80"
+                    Icon="{mi_material:Material Icon=Check,
+                                                IconSize=80}"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mi_cupertino:Cupertino TrayArrowDownFill}"
-                    IconSize="80"
+                    Icon="{mi_cupertino:Cupertino Icon=TrayArrowDownFill,
+                                                  IconSize=80}"
                     OnPlatforms="iOS" />
             </Grid>
 
