@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 
 namespace SecureFolderFS.Sdk.Extensions

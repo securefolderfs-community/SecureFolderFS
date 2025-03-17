@@ -2,11 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Shared.Extensions
 {
     public static class CollectionExtensions
     {
+        public static void Insert<T>(this IList<T> collection, T item, IItemSorter<T> sorter)
+        {
+            var correctIndex = sorter.GetInsertIndex(item, collection);
+            collection.Insert(correctIndex, item);
+        }
+        
         public static ICollection<T> ToOrAsCollection<T>(this IEnumerable<T> enumerable)
         {
             if (enumerable is ICollection<T> collection)
