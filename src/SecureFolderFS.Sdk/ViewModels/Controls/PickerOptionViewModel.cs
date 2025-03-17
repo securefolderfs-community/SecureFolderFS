@@ -2,13 +2,13 @@
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels
+namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     /// <summary>
-    /// Represents a vault option.
+    /// Represents a picker option with a <see cref="IViewable.Title"/> property and a unique ID.
     /// </summary>
     [Bindable(true)]
-    public sealed class VaultOptionViewModel(string id, string? title = null) : ObservableObject, IViewable
+    public sealed class PickerOptionViewModel(string id, string? title = null) : ObservableObject, IViewable
     {
         /// <summary>
         /// Gets the unique ID associated with this option.

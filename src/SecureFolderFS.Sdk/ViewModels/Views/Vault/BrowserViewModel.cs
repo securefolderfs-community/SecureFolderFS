@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -35,11 +36,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigator InnerNavigator { get; }
 
         public INavigator? OuterNavigator { get; }
+        
+        public ViewOptionsViewModel ViewOptions { get; }
 
         public BrowserViewModel(IFolder baseFolder, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
         {
             ServiceProvider = DI.Default;
             _rootView = rootView;
+            ViewOptions = new();
             InnerNavigator = innerNavigator;
             OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;

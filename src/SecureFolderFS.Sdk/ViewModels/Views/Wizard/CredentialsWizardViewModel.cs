@@ -29,12 +29,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
-        [ObservableProperty] private VaultOptionViewModel? _ContentCipher;
-        [ObservableProperty] private VaultOptionViewModel? _FileNameCipher;
-        [ObservableProperty] private VaultOptionViewModel? _EncodingOption;
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _ContentCiphers = new();
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _FileNameCiphers = new();
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _EncodingOptions = new();
+        [ObservableProperty] private PickerOptionViewModel? _ContentCipher;
+        [ObservableProperty] private PickerOptionViewModel? _FileNameCipher;
+        [ObservableProperty] private PickerOptionViewModel? _EncodingOption;
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _ContentCiphers = new();
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _FileNameCiphers = new();
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _EncodingOptions = new();
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions = new();
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
 
@@ -121,7 +121,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             RegisterViewModel.CurrentViewModel = AuthenticationOptions.FirstOrDefault();
             return;
 
-            static void EnumerateOptions(IEnumerable<string> source, ICollection<VaultOptionViewModel> destination)
+            static void EnumerateOptions(IEnumerable<string> source, ICollection<PickerOptionViewModel> destination)
             {
                 destination.Clear();
                 foreach (var item in source)
