@@ -1,10 +1,12 @@
 using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
+using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Maui.Views;
 using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Vault;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -29,6 +31,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 RecycleBinOverlayViewModel => new RecycleBinModalPage(navigation),
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),
+                ViewOptionsViewModel => new ViewOptionsSheet(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),

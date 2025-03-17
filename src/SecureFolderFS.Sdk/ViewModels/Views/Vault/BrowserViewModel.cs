@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigator InnerNavigator { get; }
 
         public INavigator? OuterNavigator { get; }
-        
+
         public ViewOptionsViewModel ViewOptions { get; }
 
         public BrowserViewModel(IFolder baseFolder, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
@@ -86,6 +86,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             IsSelecting = value ?? !IsSelecting;
             CurrentFolder?.Items.UnselectAll();
+        }
+
+        [RelayCommand]
+        protected virtual async Task ChangeViewOptionsAsync(CancellationToken cancellationToken)
+        {
+            await OverlayService.ShowAsync(ViewOptions);
         }
 
         [RelayCommand]

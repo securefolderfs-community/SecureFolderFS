@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
     public sealed class KindSorter : BaseFolderSorter
     {
         private readonly bool _isAscending;
-        
+
         public static IItemSorter<BrowserItemViewModel> Ascending { get; } = new KindSorter(true);
 
         public static IItemSorter<BrowserItemViewModel> Descending { get; } = new KindSorter(false);
@@ -17,17 +17,17 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
         {
             _isAscending = isAscending;
         }
-        
+
         /// <inheritdoc/>
         public override int Compare(BrowserItemViewModel? x, BrowserItemViewModel? y)
         {
             if (x is null || y is null)
                 return 0;
-            
+
             var result = string.Compare(GetKind(x), GetKind(y), StringComparison.OrdinalIgnoreCase);
             return _isAscending ? result : -result;
         }
-        
+
         private static string GetKind(BrowserItemViewModel item)
         {
             switch (item)

@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.Helpers
         /// Gets the singleton instance of <see cref="MauiThemeHelper"/>.
         /// </summary>
         public static MauiThemeHelper Instance { get; } = new();
-        
+
         /// <inheritdoc/>
         protected override void UpdateTheme()
         {

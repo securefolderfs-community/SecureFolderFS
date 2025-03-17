@@ -50,7 +50,7 @@ namespace SecureFolderFS.UI.Helpers
 
             return Task.CompletedTask;
         }
-        
+
         /// <summary>
         /// Updates the UI to reflect the new changes, if necessary.
         /// </summary>

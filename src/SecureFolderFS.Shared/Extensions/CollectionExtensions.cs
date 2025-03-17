@@ -13,7 +13,7 @@ namespace SecureFolderFS.Shared.Extensions
             var correctIndex = sorter.GetInsertIndex(item, collection);
             collection.Insert(correctIndex, item);
         }
-        
+
         public static ICollection<T> ToOrAsCollection<T>(this IEnumerable<T> enumerable)
         {
             if (enumerable is ICollection<T> collection)
