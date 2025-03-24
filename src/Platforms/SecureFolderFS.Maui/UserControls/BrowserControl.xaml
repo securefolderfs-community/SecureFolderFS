@@ -11,12 +11,16 @@
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
+        <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
-            <CollectionView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+            <CollectionView
+                ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
+                ItemsSource="{Binding ItemsSource, Mode=OneWay}"
+                SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:BrowserItemViewModel">
                         <apesui:ContextMenuContainer x:Name="ItemContainer">

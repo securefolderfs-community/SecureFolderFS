@@ -23,15 +23,37 @@
                         <uco:OptionsContainer Title="{l:ResourceString Rid=ViewOptions}">
                             <uco:OptionsContainer.InnerContent>
                                 <VerticalStackLayout>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=SortBy}" IsSeparatorVisible="False">
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=SortBy}">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
                                                 IsTransparent="True"
                                                 ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
                                                 ItemsSource="{Binding ViewModel.SortOptions, Mode=OneWay}"
-                                                Loaded="VisualElement_OnLoaded"
                                                 SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
+                                        </uco:OptionsControl.Slot>
+                                    </uco:OptionsControl>
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay}">
+                                        <uco:OptionsControl.Slot>
+                                            <ucc:ModernPicker
+                                                BindingContext="{x:Reference ThisSheet}"
+                                                IsTransparent="True"
+                                                ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
+                                                ItemsSource="{Binding ViewModel.ViewOptions, Mode=OneWay}"
+                                                SelectedItem="{Binding ViewModel.CurrentViewOption, Mode=TwoWay}" />
+                                        </uco:OptionsControl.Slot>
+                                    </uco:OptionsControl>
+                                    <uco:OptionsControl
+                                        Title="{l:ResourceString Rid=ItemSize}"
+                                        IsSeparatorVisible="False"
+                                        IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay}">
+                                        <uco:OptionsControl.Slot>
+                                            <ucc:ModernPicker
+                                                BindingContext="{x:Reference ThisSheet}"
+                                                IsTransparent="True"
+                                                ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
+                                                ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                                SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
                                 </VerticalStackLayout>

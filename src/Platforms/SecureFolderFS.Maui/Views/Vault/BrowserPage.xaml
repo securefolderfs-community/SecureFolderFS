@@ -65,7 +65,8 @@
             Grid.Row="1"
             IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
-            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}" />
+            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
+            ViewType="{Binding ViewModel.ViewOptions.BrowserViewType, Mode=OneWay}" />
 
         <uc:TransferControl
             Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"

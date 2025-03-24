@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -53,6 +54,14 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IList<BrowserItemViewModel>), typeof(BrowserControl), defaultValue: null);
+        
+        public BrowserViewType ViewType
+        {
+            get => (BrowserViewType)GetValue(ViewTypeProperty);
+            set => SetValue(ViewTypeProperty, value);
+        }
+        public static readonly BindableProperty ViewTypeProperty =
+            BindableProperty.Create(nameof(ViewType), typeof(BrowserViewType), typeof(BrowserControl), defaultValue: BrowserViewType.ListView);
     }
 }
 

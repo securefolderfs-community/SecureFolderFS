@@ -99,14 +99,6 @@ namespace SecureFolderFS.Maui.Sheets
         }
         public static readonly BindableProperty ViewModelProperty =
             BindableProperty.Create(nameof(ViewModel), typeof(ViewOptionsViewModel), typeof(ViewOptionsSheet), null);
-
-        private void VisualElement_OnLoaded(object? sender, EventArgs e)
-        {
-            if (sender is not Picker picker)
-                return;
-
-            _ = picker.BindingContext;
-        }
     }
 }
 
