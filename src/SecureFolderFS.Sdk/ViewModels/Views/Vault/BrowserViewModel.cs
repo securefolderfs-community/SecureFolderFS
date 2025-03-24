@@ -15,6 +15,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 
@@ -91,7 +92,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         protected virtual async Task ChangeViewOptionsAsync(CancellationToken cancellationToken)
         {
+            if (CurrentFolder is null)
+                return;
+            
             await OverlayService.ShowAsync(ViewOptions);
+            ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
         }
 
         [RelayCommand]
@@ -121,14 +126,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 case "File":
                 {
                     var file = await modifiableFolder.CreateFileAsync(newItemViewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.InsertSorted(new FileViewModel(file, CurrentFolder));
+                    CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder), ViewOptions.GetSorter());
                     break;
                 }
 
                 case "Folder":
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(newItemViewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.InsertSorted(new FolderViewModel(folder, this, CurrentFolder));
+                    CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder), ViewOptions.GetSorter());
                     break;
                 }
             }
@@ -159,7 +164,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                         return;
 
                     var copiedFile = await modifiableFolder.CreateCopyOfAsync(file, false, cancellationToken);
-                    CurrentFolder.InsertSorted(new FileViewModel(copiedFile, CurrentFolder));
+                    CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), ViewOptions.GetSorter());
                     break;
                 }
 
@@ -170,7 +175,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                         return;
 
                     var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
-                    CurrentFolder.InsertSorted(new FolderViewModel(copiedFolder, this, CurrentFolder));
+                    CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), ViewOptions.GetSorter());
                     break;
                 }
             }

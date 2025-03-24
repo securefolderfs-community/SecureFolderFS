@@ -20,6 +20,10 @@
             Order="Secondary"
             Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
+            Command="{Binding ViewModel.ChangeViewOptionsCommand}"
+            Order="Secondary"
+            Text="View Options" />
+        <ToolbarItem
             Command="{Binding ViewModel.NewItemCommand}"
             Order="Secondary"
             Text="Create new item" />

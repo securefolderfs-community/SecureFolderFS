@@ -1,8 +1,6 @@
 using APES.UI.XF;
 using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-using The49.Maui.BottomSheet;
-
+using Plugin.Maui.BottomSheet.Hosting;
 #if ANDROID
 using Material.Components.Maui.Extensions;
 using MauiIcons.Material;
@@ -28,7 +26,7 @@ namespace SecureFolderFS.Maui
                 // Plugins
                 .UseMauiCommunityToolkitMediaElement()  // https://github.com/CommunityToolkit/Maui
                 .UseMauiCommunityToolkit()              // https://github.com/CommunityToolkit/Maui
-                .UseBottomSheet()                       // https://github.com/the49ltd/The49.Maui.BottomSheet
+                .UseBottomSheet()                       // https://github.com/lucacivale/Maui.BottomSheet
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
 
 #if ANDROID

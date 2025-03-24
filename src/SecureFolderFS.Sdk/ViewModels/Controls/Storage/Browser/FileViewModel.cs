@@ -6,6 +6,7 @@ using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -21,8 +22,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// </summary>
         public IFile File { get; protected set; }
 
-        public FileViewModel(IFile file, FolderViewModel? parentFolder)
-            : base(parentFolder)
+        public FileViewModel(IFile file, BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
+            : base(browserViewModel, parentFolder)
         {
             ServiceProvider = DI.Default;
             File = file;

@@ -15,11 +15,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
         /// <summary>
-        /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this folder belongs to.
-        /// </summary>
-        public BrowserViewModel BrowserViewModel { get; }
-
-        /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
         public IFolder Folder { get; protected set; }
@@ -33,10 +28,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public override IStorable Inner => Folder;
 
         public FolderViewModel(IFolder folder, BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
-            : base(parentFolder)
+            : base(browserViewModel, parentFolder)
         {
             Folder = folder;
-            BrowserViewModel = browserViewModel;
             Title = folder.Name;
             Items = new();
         }
@@ -53,15 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             Items.Clear();
 
             var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);
-            foreach (var item in items.OrderBy(x => x is IFile).ThenBy(x => x.Name))
+            BrowserViewModel.ViewOptions.GetSorter()?.SortCollection(items.Select(x => (BrowserItemViewModel)(x switch
             {
-                Items.Add(item switch
-                {
-                    IFile file => new FileViewModel(file, this).WithInitAsync(cancellationToken),
-                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(cancellationToken),
-                    _ => throw new ArgumentOutOfRangeException(nameof(item))
-                });
-            }
+                IFile file => new FileViewModel(file, BrowserViewModel, this).WithInitAsync(cancellationToken),
+                IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(cancellationToken),
+                _ => throw new ArgumentOutOfRangeException(nameof(x))
+            })), Items);
         }
 
         /// <inheritdoc/>

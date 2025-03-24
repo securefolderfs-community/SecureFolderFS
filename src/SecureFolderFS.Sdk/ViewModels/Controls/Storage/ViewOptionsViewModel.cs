@@ -27,14 +27,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             Title = "ViewOptions".ToLocalized();
         }
 
-        public IItemSorter<BrowserItemViewModel>? GetSorter()
+        public IItemSorter<BrowserItemViewModel> GetSorter()
         {
             return CurrentSortOption?.Id switch
             {
                 nameof(NameSorter) => IsAscending ? NameSorter.Ascending : NameSorter.Descending,
                 nameof(KindSorter) => IsAscending ? KindSorter.Ascending : KindSorter.Descending,
                 nameof(SizeSorter) => IsAscending ? SizeSorter.Ascending : SizeSorter.Descending,
-                _ => null
+                _ => NameSorter.Descending
             };
         }
     }

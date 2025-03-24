@@ -1,6 +1,9 @@
 using OwlCore.Storage;
+using Plugin.Maui.BottomSheet.Hosting;
+using Plugin.Maui.BottomSheet.Navigation;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.ServiceImplementation.Settings;
+using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ServiceImplementation.Settings;
@@ -17,7 +20,8 @@ namespace SecureFolderFS.Maui.Extensions
                     .AddSingleton<IOverlayService, MauiOverlayService>()
                     .AddTransient<INavigationService, MauiNavigationService>()
                     .AddSingleton<IClipboardService, MauiClipboardService>()
-                    //.AddSingleton<IThreadingService, ThreadingService>()
+                    .AddSingleton<IBottomSheetNavigationService, BottomSheetNavigationService>()
+                    .AddBottomSheet<ViewOptionsSheet>(nameof(ViewOptionsSheet))
                 ;
         }
     }

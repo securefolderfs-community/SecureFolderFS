@@ -1,18 +1,47 @@
-﻿<t49:BottomSheet
+﻿<btsh:BottomSheet
     x:Class="SecureFolderFS.Maui.Sheets.ViewOptionsSheet"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:t49="https://schemas.the49.com/dotnet/2023/maui"
+    xmlns:btsh="http://pluginmauibottomsheet.com"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Sheets"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
+    xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisSheet"
     BindingContext="{x:Reference ThisSheet}"
-    Dismissed="ViewOptionsSheet_Dismissed"
-    HasHandle="True">
+    HasHandle="True"
+    IsCancelable="True"
+    IsModal="True"
+    States="Medium">
 
-    <t49:BottomSheet.Detents>
-        <t49:MediumDetent />
-    </t49:BottomSheet.Detents>
+    <btsh:BottomSheet.Content>
+        <btsh:BottomSheetContent>
+            <btsh:BottomSheetContent.ContentTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Padding="16,32" Spacing="16">
+                        <uco:OptionsContainer Title="{l:ResourceString Rid=ViewOptions}">
+                            <uco:OptionsContainer.InnerContent>
+                                <VerticalStackLayout>
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=SortBy}" IsSeparatorVisible="False">
+                                        <uco:OptionsControl.Slot>
+                                            <ucc:ModernPicker
+                                                BindingContext="{x:Reference ThisSheet}"
+                                                IsTransparent="True"
+                                                ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
+                                                ItemsSource="{Binding ViewModel.SortOptions, Mode=OneWay}"
+                                                Loaded="VisualElement_OnLoaded"
+                                                SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
+                                        </uco:OptionsControl.Slot>
+                                    </uco:OptionsControl>
+                                </VerticalStackLayout>
+                            </uco:OptionsContainer.InnerContent>
+                        </uco:OptionsContainer>
 
-    <Grid>
-        <Label Text="{Binding ViewModel.Title, Mode=OneWay}" />
-    </Grid>
-</t49:BottomSheet>
+                        <Button Clicked="Button_Clicked" Text="Close" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </btsh:BottomSheetContent.ContentTemplate>
+        </btsh:BottomSheetContent>
+    </btsh:BottomSheet.Content>
+</btsh:BottomSheet>

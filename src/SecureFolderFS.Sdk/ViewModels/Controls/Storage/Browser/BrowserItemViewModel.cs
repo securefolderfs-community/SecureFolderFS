@@ -13,6 +13,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -26,13 +27,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
         /// <summary>
+        /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this item belongs to.
+        /// </summary>
+        public BrowserViewModel BrowserViewModel { get; }
+        
+        /// <summary>
         /// Gets the parent <see cref="FolderViewModel"/> that this item resides in, if any.
         /// </summary>
         public FolderViewModel? ParentFolder { get; }
 
-        protected BrowserItemViewModel(FolderViewModel? parentFolder)
+        protected BrowserItemViewModel(BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
         {
             ServiceProvider = DI.Default;
+            BrowserViewModel = browserViewModel;
             ParentFolder = parentFolder;
         }
 
@@ -51,17 +58,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder is null)
                 return;
 
-            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
 
-            if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
                 return;
 
             try
             {
                 // Disable selection, if called with selected items
-                ParentFolder.BrowserViewModel.IsSelecting = false;
+                BrowserViewModel.IsSelecting = false;
 
                 using var cts = transferViewModel.GetCancellation();
                 var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Move), false, cts.Token);
@@ -70,7 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
                 // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
-                var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
+                var destinationViewModel = BrowserViewModel.CurrentFolder;
                 if (destinationViewModel is null)
                     return;
 
@@ -86,12 +93,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id);
 
                     // Add to destination
-                    destinationViewModel.InsertSorted(movedItem switch
+                    destinationViewModel.Items.Insert(movedItem switch
                     {
-                        IFile file => new FileViewModel(file, destinationViewModel),
+                        IFile file => new FileViewModel(file, BrowserViewModel, destinationViewModel),
                         IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(movedItem))
-                    });
+                    }, BrowserViewModel.ViewOptions.GetSorter());
                 }, cts.Token);
             }
             catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
@@ -112,17 +119,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder is null)
                 return;
 
-            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
 
-            if (ParentFolder.BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
             try
             {
                 // Disable selection, if called with selected items
-                ParentFolder.BrowserViewModel.IsSelecting = false;
+                BrowserViewModel.IsSelecting = false;
 
                 using var cts = transferViewModel.GetCancellation();
                 var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Copy), false, cts.Token);
@@ -131,7 +138,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
                 // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
-                var destinationViewModel = ParentFolder.BrowserViewModel.CurrentFolder;
+                var destinationViewModel = BrowserViewModel.CurrentFolder;
                 if (destinationViewModel is null)
                     return;
 
@@ -144,12 +151,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(storable, false, token);
 
                     // Add to destination
-                    destinationViewModel.InsertSorted(copiedItem switch
+                    destinationViewModel.Items.Insert(copiedItem switch
                     {
-                        IFile file => new FileViewModel(file, destinationViewModel),
-                        IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
+                        IFile file => new FileViewModel(file, BrowserViewModel, destinationViewModel),
+                        IFolder folder => new FolderViewModel(folder, BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(copiedItem))
-                    });
+                    }, BrowserViewModel.ViewOptions.GetSorter());
                 }, cts.Token);
             }
             catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
