@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this item belongs to.
         /// </summary>
         public BrowserViewModel BrowserViewModel { get; }
-        
+
         /// <summary>
         /// Gets the parent <see cref="FolderViewModel"/> that this item resides in, if any.
         /// </summary>

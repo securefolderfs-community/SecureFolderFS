@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
             var fileSystemOptions = FileSystemOptions.ToOptions(options, () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
             fileSystemOptions.SetupValidators(specifics);
-            
+
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
             return new IOSVFSRoot(storageRoot, specifics);
         }

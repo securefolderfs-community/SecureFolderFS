@@ -17,10 +17,10 @@ namespace SecureFolderFS.Maui.ValueConverters
                 BrowserViewType.MediumGridView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
                 BrowserViewType.LargeGridView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
 
-                BrowserViewType.SmallGalleryView => new GridItemsLayout(8, ItemsLayoutOrientation.Vertical) { },
+                BrowserViewType.SmallGalleryView => new GridItemsLayout(8, ItemsLayoutOrientation.Vertical),
                 BrowserViewType.MediumGalleryView => new GridItemsLayout(5, ItemsLayoutOrientation.Vertical),
                 BrowserViewType.LargeGalleryView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical),
-                
+
                 BrowserViewType.ColumnView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical),
                 _ => new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             };

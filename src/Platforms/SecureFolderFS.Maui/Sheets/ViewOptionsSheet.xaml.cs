@@ -19,13 +19,13 @@ namespace SecureFolderFS.Maui.Sheets
         {
             _tcs = new();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
             if (_viewModel is null)
                 return Result.Failure(null);
-            
+
             var sheetNavigationService = DI.Service<IBottomSheetNavigationService>();
             await sheetNavigationService.NavigateToAsync(nameof(ViewOptionsSheet), new BottomSheetNavigationParameters()
             {
@@ -73,12 +73,12 @@ namespace SecureFolderFS.Maui.Sheets
     public partial class ViewOptionsSheet : BottomSheet, IQueryAttributable
     {
         public TaskCompletionSource<IResult>? TaskCompletion { get; set; }
-        
+
         public ViewOptionsSheet()
         {
             InitializeComponent();
         }
-        
+
         private async void Button_Clicked(object? sender, EventArgs e)
         {
             var sheetNavigationService = DI.Service<IBottomSheetNavigationService>();

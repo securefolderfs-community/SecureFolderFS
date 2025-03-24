@@ -77,7 +77,7 @@ namespace SecureFolderFS.Maui.Handlers
 
             // Assign the navigation bar buttons
             navigationItem.RightBarButtonItems = rightBarItems.ToArray();
-            
+
             static UIMenuElement CreateUIMenuElement(ExMenuItemBase item)
             {
                 // Create a UIAction for each ToolbarItem

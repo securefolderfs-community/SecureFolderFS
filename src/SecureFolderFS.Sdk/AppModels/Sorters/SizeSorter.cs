@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
 
             var size1 = GetSizeAsync(x).ConfigureAwait(false).GetAwaiter().GetResult();
             var size2 = GetSizeAsync(y).ConfigureAwait(false).GetAwaiter().GetResult();
-                
+
             var result = size1.CompareTo(size2);
             return _isAscending ? result : -result;
         }

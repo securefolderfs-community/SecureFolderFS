@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             // Open the folder in the Files app
             var documentPicker = new UIDocumentPickerViewController(wrapper.Inner, UIDocumentPickerMode.Open);
             UIApplication.SharedApplication.KeyWindow?.RootViewController?.PresentViewController(documentPicker, true, null);
-            
+
             return Task.CompletedTask;
         }
 

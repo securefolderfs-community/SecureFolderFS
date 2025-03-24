@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IList<BrowserItemViewModel>), typeof(BrowserControl), defaultValue: null);
-        
+
         public BrowserViewType ViewType
         {
             get => (BrowserViewType)GetValue(ViewTypeProperty);

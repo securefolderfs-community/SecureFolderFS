@@ -94,7 +94,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             if (CurrentFolder is null)
                 return;
-            
+
             await OverlayService.ShowAsync(ViewOptions);
             ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
         }

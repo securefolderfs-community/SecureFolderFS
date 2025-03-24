@@ -5,12 +5,12 @@ namespace SecureFolderFS.Sdk.Enums
         // List View and Column View
         ListView,
         ColumnView,
-        
+
         // Grid View
         SmallGridView,
         MediumGridView,
         LargeGridView,
-        
+
         // Gallery View
         SmallGalleryView,
         MediumGalleryView,

@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
                     var extension = Path.GetExtension(item.Inner.Name);
                     return string.IsNullOrEmpty(extension) ? "File" : extension;
                 }
-                
+
                 default: return "Unknown";
             }
         }
