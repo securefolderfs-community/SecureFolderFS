@@ -1,5 +1,8 @@
+using System.ComponentModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.ServiceImplementation;
+using SecureFolderFS.Maui.UserControls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
@@ -120,6 +123,24 @@ namespace SecureFolderFS.Maui.Views.Vault
             return true;
         }
 
+        /// <inheritdoc/>
+        protected override void OnAppearing()
+        {
+            if (ViewModel is not null)
+                ViewModel.ViewOptions.PropertyChanged += ViewOptions_PropertyChanged;
+
+            base.OnAppearing();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDisappearing()
+        {
+            if (ViewModel is not null)
+                ViewModel.ViewOptions.PropertyChanged -= ViewOptions_PropertyChanged;
+
+            base.OnDisappearing();
+        }
+
         private async Task AnimateViewChangeAsync(FolderViewModel? folder)
         {
             if (ViewModel is null)
@@ -128,6 +149,16 @@ namespace SecureFolderFS.Maui.Views.Vault
             await Browser.FadeTo(0.0d, 125u);
             ViewModel.CurrentFolder = folder;
             await Browser.FadeTo(1.0d, 125u);
+        }
+
+        private async void ViewOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(ViewOptionsViewModel.BrowserViewType))
+                return;
+
+            Browser.ItemsSource = null;
+            await Task.Delay(100);
+            Browser.SetBinding(BrowserControl.ItemsSourceProperty, "ViewModel.CurrentFolder.Items");
         }
 
         public BrowserViewModel? ViewModel

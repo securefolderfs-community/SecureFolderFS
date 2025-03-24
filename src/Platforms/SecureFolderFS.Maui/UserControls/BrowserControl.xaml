@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;assembly=SecureFolderFS.Sdk"
     x:Name="RootControl">
@@ -11,8 +12,135 @@
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
+        <vc:ViewTypeToDimensionsConverter x:Key="ViewTypeToDimensionsConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
+
+        <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer x:Name="ItemContainer">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="Delete" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        Padding="13,4"
+                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
+                        ColumnSpacing="13">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                            <ContentView Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label
+                            Grid.Column="1"
+                            FontSize="15"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer x:Name="ItemContainer">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="Delete" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        Padding="16"
+                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
+                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                        RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ContentView
+                            Grid.Row="0"
+                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Row="1"
+                            FontSize="15"
+                            HorizontalOptions="Center"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            HorizontalOptions="End"
+                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
+                            VerticalOptions="End" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer x:Name="ItemContainer">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="Delete" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
+                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}">
+                        <ContentView
+                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            HorizontalOptions="End"
+                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
+                            VerticalOptions="End" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
@@ -22,46 +150,10 @@
                 ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                 SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:BrowserItemViewModel">
-                        <apesui:ContextMenuContainer x:Name="ItemContainer">
-                            <apesui:ContextMenuContainer.MenuItems>
-                                <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
-                                <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
-                                <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
-                                <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
-                                <apesui:ContextMenuItem
-                                    Command="{Binding DeleteCommand}"
-                                    IsDestructive="True"
-                                    Text="Delete" />
-                            </apesui:ContextMenuContainer.MenuItems>
-                            <apesui:ContextMenuContainer.Content>
-                                <Grid
-                                    x:Name="SourceGrid"
-                                    Padding="13,4"
-                                    Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
-                                    ColumnSpacing="13">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
-                                        <ContentView Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" VerticalOptions="Center" />
-                                    </HorizontalStackLayout>
-                                    <Label
-                                        Grid.Column="1"
-                                        FontSize="15"
-                                        LineBreakMode="TailTruncation"
-                                        Text="{Binding Title, Mode=OneWay}"
-                                        VerticalOptions="Center" />
-                                </Grid>
-                            </apesui:ContextMenuContainer.Content>
-                            <apesui:ContextMenuContainer.GestureRecognizers>
-                                <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
-                            </apesui:ContextMenuContainer.GestureRecognizers>
-                        </apesui:ContextMenuContainer>
-                    </DataTemplate>
+                    <ts:BrowserViewItemTemplateSelector
+                        GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
+                        GridItemTemplate="{StaticResource GridItemTemplate}"
+                        ListItemTemplate="{StaticResource ListItemTemplate}" />
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>

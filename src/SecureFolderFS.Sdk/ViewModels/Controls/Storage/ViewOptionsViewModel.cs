@@ -61,13 +61,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         
         partial void OnCurrentViewOptionChanged(PickerOptionViewModel? value)
         {
-            if (!SetLayoutSizeOption(value))
-                BrowserViewType = value?.Id switch
-                {
-                    nameof(BrowserViewType.ListView) => BrowserViewType.ListView,
-                    nameof(BrowserViewType.ColumnView) => BrowserViewType.ColumnView,
-                    _ => BrowserViewType
-                };
+            switch (value?.Id)
+            {
+                case nameof(BrowserViewType.ListView):
+                    BrowserViewType = BrowserViewType.ListView;
+                    break;
+                
+                case nameof(BrowserViewType.ColumnView):
+                    BrowserViewType = BrowserViewType.ColumnView;
+                    break;
+                
+                default:
+                    SetLayoutSizeOption(CurrentSizeOption);
+                    break;
+            }
         }
 
         partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)
