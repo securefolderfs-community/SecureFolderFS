@@ -70,11 +70,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 case nameof(BrowserViewType.ColumnView):
                     BrowserViewType = BrowserViewType.ColumnView;
                     break;
-
-                default:
-                    SetLayoutSizeOption(CurrentSizeOption);
-                    break;
             }
+
+            SetLayoutSizeOption(CurrentSizeOption);
         }
 
         partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)

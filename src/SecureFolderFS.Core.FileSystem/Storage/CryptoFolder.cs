@@ -148,7 +148,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 throw new NotSupportedException($"Properties on {nameof(CryptoFolder)}.{nameof(Inner)} are not supported.");
 
             var innerProperties = await storableProperties.GetPropertiesAsync();
-            properties ??= new CryptoFolderProperties(specifics, innerProperties);
+            properties ??= new CryptoFolderProperties(innerProperties);
 
             return properties;
         }
