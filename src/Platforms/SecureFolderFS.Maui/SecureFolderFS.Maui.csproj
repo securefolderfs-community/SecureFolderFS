@@ -117,6 +117,10 @@
       <DependentUpon>RecycleBinPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Popups\PropertiesPopup.xaml.cs">
+      <DependentUpon>PropertiesPopup.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -165,6 +169,9 @@
     <MauiXaml Update="Views\Modals\Vault\RecycleBinModalPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Popups\PropertiesPopup.xaml">
+      <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>
 

@@ -1,15 +1,13 @@
-using System.ComponentModel;
 using CommunityToolkit.Maui.Views;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.Maui.Popups
 {
-    public partial class PreviewRecoveryPopup : Popup, IOverlayControl
+    public partial class PropertiesPopup : Popup, IOverlayControl
     {
-        public PreviewRecoveryPopup()
+        public PropertiesPopup()
         {
             InitializeComponent();
         }
@@ -27,7 +25,7 @@ namespace SecureFolderFS.Maui.Popups
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = (PreviewRecoveryOverlayViewModel)viewable;
+            ViewModel = (PropertiesOverlayViewModel)viewable;
         }
 
         /// <inheritdoc/>
@@ -36,13 +34,13 @@ namespace SecureFolderFS.Maui.Popups
             return CloseAsync();
         }
 
-        public PreviewRecoveryOverlayViewModel? ViewModel
+        public PropertiesOverlayViewModel? ViewModel
         {
-            get => (PreviewRecoveryOverlayViewModel?)GetValue(ViewModelProperty);
+            get => (PropertiesOverlayViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(PreviewRecoveryOverlayViewModel), typeof(PreviewRecoveryPopup), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(PropertiesOverlayViewModel), typeof(PropertiesPopup), null);
     }
 }
 

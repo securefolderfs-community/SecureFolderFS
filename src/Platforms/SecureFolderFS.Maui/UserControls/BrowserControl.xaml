@@ -12,13 +12,13 @@
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
-        <vc:ViewTypeToDimensionsConverter x:Key="ViewTypeToDimensionsConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
 
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
                     <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
                     <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
@@ -60,6 +60,7 @@
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
                     <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
                     <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
@@ -111,6 +112,7 @@
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
                     <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
                     <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />

@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
     [Bindable(true)]
-    [Obsolete("Use BaseDesignationViewModel and IOverlayControls.")]
+    [Obsolete("Use BaseDesignationViewModel and IOverlayControls.")] // TODO: Does this need to be Obsolete?
     public abstract partial class OverlayViewModel : BaseDesignationViewModel, IOverlayControls
     {
         /// <inheritdoc cref="IOverlayControls.CanContinue"/>

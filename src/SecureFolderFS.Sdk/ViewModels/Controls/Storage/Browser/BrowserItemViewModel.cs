@@ -19,6 +19,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -51,6 +52,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// </summary>
         /// <param name="storable">The new storable object to use.</param>
         protected abstract void UpdateStorable(IStorable storable);
+
+        [RelayCommand]
+        protected virtual async Task OpenPropertiesAsync(CancellationToken cancellationToken)
+        {
+            if (Inner is not IStorableProperties storableProperties)
+                return;
+
+            var properties = await storableProperties.GetPropertiesAsync();
+            var propertiesOverlay = new PropertiesOverlayViewModel(Inner, properties);
+            _ = propertiesOverlay.InitAsync(cancellationToken);
+
+            await OverlayService.ShowAsync(propertiesOverlay);
+        }
 
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)

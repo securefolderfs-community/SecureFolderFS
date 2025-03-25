@@ -33,6 +33,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
+                PropertiesOverlayViewModel => new PropertiesPopup(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),

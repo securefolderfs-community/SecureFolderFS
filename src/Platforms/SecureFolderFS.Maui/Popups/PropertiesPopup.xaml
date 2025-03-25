@@ -1,0 +1,56 @@
+﻿<tv:Popup
+    x:Class="SecureFolderFS.Maui.Popups.PropertiesPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="ThisPopup"
+    BindingContext="{x:Reference ThisPopup}"
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="Transparent">
+
+    <tv:Popup.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </tv:Popup.Resources>
+
+    <Border
+        Padding="16"
+        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+        WidthRequest="392">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+
+        <VerticalStackLayout Spacing="16">
+            <Label
+                FontAttributes="Bold"
+                FontSize="22"
+                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+
+            <VerticalStackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="{l:ResourceString Rid=ItemType}" />
+                <Label Text="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="{l:ResourceString Rid=DateModified}" />
+                <Label Text="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="{l:ResourceString Rid=Size}" />
+                <Label Text="{Binding ViewModel.SizeText, Mode=OneWay}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</tv:Popup>
