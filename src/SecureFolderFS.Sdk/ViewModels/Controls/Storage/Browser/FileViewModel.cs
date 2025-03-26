@@ -1,4 +1,5 @@
-﻿using OwlCore.Storage;
+﻿using System.Collections.Generic;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -6,11 +7,14 @@ using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IMediaService>]
     [Bindable(true)]
     public partial class FileViewModel : BrowserItemViewModel
     {
@@ -31,10 +35,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // TODO: Load thumbnail
-            return Task.CompletedTask;
+            var typeHint = FileTypeHelper.GetType(File);
+            if (typeHint == TypeHint.Image)
+            {
+                var image = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
+                Thumbnail = image;
+            }
         }
 
         /// <inheritdoc/>

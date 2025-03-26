@@ -104,7 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     var movedItem = await destinationFolder.MoveStorableFromAsync(storable, modifiableParent, false, token);
 
                     // Remove existing from folder
-                    ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id);
+                    ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id)?.Dispose();
 
                     // Add to destination
                     destinationViewModel.Items.Insert(movedItem switch
@@ -239,7 +239,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             foreach (var item in items)
             {
                 await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
-                ParentFolder?.Items.Remove(item);
+                ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
             }
         }
 
@@ -257,7 +257,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             await destinationFolder.CreateCopyOfStorableAsync(Inner, false, cancellationToken);
             await parentModifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
 
-            ParentFolder.Items.Remove(this);
+            ParentFolder.Items.RemoveAndGet(this)?.Dispose();
         }
 
         [RelayCommand]

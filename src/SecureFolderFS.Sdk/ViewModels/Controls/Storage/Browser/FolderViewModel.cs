@@ -44,6 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
+            Items.DisposeElements();
             Items.Clear();
 
             var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);

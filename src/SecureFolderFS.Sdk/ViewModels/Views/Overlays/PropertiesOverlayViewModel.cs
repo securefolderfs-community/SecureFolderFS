@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MimeTypes;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -36,8 +36,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (MimeTypeMap.TryGetMimeType(_storable.Name, out var mimeType))
-                FileTypeText = mimeType;
+            var typeClassification = FileTypeHelper.GetClassification(_storable);
+            FileTypeText = typeClassification.MimeType;
 
             if (_properties is ISizeProperties sizeProperties)
             {

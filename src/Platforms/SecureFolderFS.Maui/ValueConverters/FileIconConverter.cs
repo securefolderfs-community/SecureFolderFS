@@ -2,6 +2,7 @@ using System.Globalization;
 using MauiIcons.Core;
 using MauiIcons.Material;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Shared.ComponentModel;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
@@ -27,8 +28,16 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             static object? ToImage(IImage image)
             {
-                // TODO: Implement IImage
-                return null;
+                switch (image)
+                {
+                    case ImageStream imageStream:
+                    {
+                        imageStream.Stream.Position = 0L;
+                        return new Image() { Source = imageStream.Source, Aspect = Aspect.AspectFill };
+                    }
+                    
+                    default: return null; // TODO: Add more IImage implementations
+                }
             }
         }
 

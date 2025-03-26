@@ -49,15 +49,20 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
+        public static T? RemoveAndGet<T>(this ICollection<T> collection, T item)
+        {
+            return collection.Remove(item) ? item : default;
+        }
+
+        public static T? RemoveMatch<T>(this ICollection<T> list, Func<T, bool> predicate)
         {
             foreach (var item in list)
             {
                 if (predicate(item))
-                    return list.Remove(item);
+                    return list.Remove(item) ? item : default;
             }
 
-            return false;
+            return default;
         }
 
         public static bool IsEmpty<T>(this IEnumerable<T>? enumerable)

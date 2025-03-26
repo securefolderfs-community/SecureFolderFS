@@ -41,7 +41,12 @@
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
                             <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
-                            <ContentView Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" VerticalOptions="Center" />
+                            <ContentView
+                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                HeightRequest="32"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="32" />
                         </HorizontalStackLayout>
                         <Label
                             Grid.Column="1"

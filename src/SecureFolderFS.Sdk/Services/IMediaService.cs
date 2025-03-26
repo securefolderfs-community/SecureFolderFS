@@ -14,8 +14,10 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="file">The <see cref="IFile"/> to read.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the image read from file.</returns>
-        Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken);
+        Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken = default);
 
-        Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken);
+        Task<IImageStream> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
+
+        Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
     }
 }
