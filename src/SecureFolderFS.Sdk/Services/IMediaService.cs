@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the image read from file.</returns>
         Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken = default);
 
-        Task<IImageStream> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
+        Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
 
         Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
     }

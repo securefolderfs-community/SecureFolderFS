@@ -37,12 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var typeHint = FileTypeHelper.GetType(File);
-            if (typeHint == TypeHint.Image)
-            {
-                var image = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
-                Thumbnail = image;
-            }
+            Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -1,11 +1,18 @@
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI;
 using SkiaSharp;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
+using Stream = System.IO.Stream;
+
+#if ANDROID
+using Android.Media;
+using AndroidUri = Android.Net.Uri;
+#endif
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
@@ -20,16 +27,116 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IImageStream> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
+        public async Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
         {
-            await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-            using var original = SKBitmap.Decode(sourceStream);
+            var typeHint = FileTypeHelper.GetType(file);
+            switch (typeHint)
+            {
+                case TypeHint.Image:
+                {
+                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
+                    return ResizeImage(sourceStream, Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE);
+                }
 
+                case TypeHint.Media:
+                {
+#if ANDROID
+                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
+                    var videoPath = Path.Combine(FileSystem.CacheDirectory, $"temp_video_{Guid.NewGuid()}.{Path.GetExtension(file.Name)}");
+                    var androidUri = AndroidUri.Parse(videoPath);
+                    var contentResolver = MainActivity.Instance?.ContentResolver;
+                    if (androidUri is null || contentResolver is null)
+                        break;
+                    
+                    var bytesRead = 0;
+                    var totalBytes = 0;
+                    var buffer = new byte[8192];
+                    const int MAX_BYTES_TO_COPY = 5 * 1024 * 1024;
+
+                    try
+                    {
+                        await using var tempStream = File.Create(videoPath);
+                        while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0 &&
+                               totalBytes < MAX_BYTES_TO_COPY)
+                        {
+                            await tempStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+                            totalBytes += bytesRead;
+                        }
+
+                        var stream = Android_ExtractFrame(videoPath, TimeSpan.FromSeconds(0));
+                        if (stream is null)
+                            break;
+
+                        return new ImageStream(stream);
+                    }
+                    finally
+                    {
+                        File.Delete(videoPath);
+                    }
+#elif IOS
+                    IOS_ExtractFrame();
+#endif
+                    
+                    break;
+                }
+            }
+            
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
+        {
+            var classification = FileTypeHelper.GetClassification(file);
+            var stream = await file.OpenReadAsync(cancellationToken);
+
+            return new VideoStreamServer(stream, classification.MimeType);
+        }
+        
+#if ANDROID
+        private static Stream? Android_ExtractFrame(string path, TimeSpan captureTime)
+        {
+            using var retriever = new MediaMetadataRetriever();
+            retriever.SetDataSource(path);
+            
+            var frameBitmap = retriever.GetFrameAtTime(captureTime.Ticks, Option.Closest);
+            if (frameBitmap is null)
+                return null;
+
+            var destinationStream = new OnDemandDisposableStream();
+            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, Constants.Application.IMAGE_THUMBNAIL_QUALITY, destinationStream);
+            destinationStream.Position = 0L;
+
+            return destinationStream;
+        }
+#endif
+
+#if IOS || MACCATALYST
+    private static void IOS_ExtractFrame(string videoPath, string outputPath, TimeSpan captureTime)
+    {
+        var asset = new AVAsset(NSUrl.FromFilename(videoPath));
+        var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
+        CMTime time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
+
+        NSError error;
+        var imageRef = generator.CopyCGImageAtTime(time, out error);
+        if (imageRef != null)
+        {
+            using var image = new UIImage(imageRef);
+            using var data = image.AsJPEG(0.8f);
+            File.WriteAllBytes(outputPath, data.ToArray());
+        }
+    }
+#endif
+        
+        private static ImageStream ResizeImage(Stream sourceStream, uint maxSize)
+        {
+            using var original = SKBitmap.Decode(sourceStream);
             if (original is null)
                 throw new BadImageFormatException("Failed to load image.");
 
             // Calculate new dimensions while maintaining aspect ratio
-            var scale = Math.Min((float)UI.Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE / original.Width, (float)UI.Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE / original.Height);
+            var scale = Math.Min((float)maxSize / original.Width, (float)maxSize / original.Height);
             var newWidth = (int)(original.Width * scale);
             var newHeight = (int)(original.Height * scale);
 
@@ -44,15 +151,6 @@ namespace SecureFolderFS.Maui.ServiceImplementation
 
             destinationStream.Position = 0L;
             return new ImageStream(destinationStream);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
-        {
-            var classification = FileTypeHelper.GetClassification(file);
-            var stream = await file.OpenReadAsync(cancellationToken);
-
-            return new VideoStreamServer(stream, classification.MimeType);
         }
     }
 }
