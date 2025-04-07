@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
@@ -53,7 +54,7 @@
                     FontSize="18"
                     HorizontalOptions="Center"
                     HorizontalTextAlignment="Center"
-                    Text="Recycle bin is empty. Delete some items to see them here." />
+                    Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
             </VerticalStackLayout>
 
             <Grid IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}">

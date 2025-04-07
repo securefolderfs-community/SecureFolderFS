@@ -692,4 +692,64 @@
   <data name="RecycleBin" xml:space="preserve">
       <value>Recycle bin</value>
   </data>
+  <data name="SortBy" xml:space="preserve">
+      <value>Sort by</value>
+  </data>
+  <data name="ItemLayout" xml:space="preserve">
+      <value>Item layout</value>
+  </data>
+  <data name="ViewOptions" xml:space="preserve">
+      <value>View Options</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+      <value>Name</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+      <value>Kind</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+      <value>Size</value>
+  </data>
+  <data name="ListViewLayout" xml:space="preserve">
+      <value>List view</value>
+  </data>
+  <data name="ColumnViewLayout" xml:space="preserve">
+      <value>Column view</value>
+  </data>
+  <data name="GridViewLayout" xml:space="preserve">
+      <value>Grid view</value>
+  </data>
+  <data name="GalleryViewLayout" xml:space="preserve">
+      <value>Gallery view</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+      <value>Item size</value>
+  </data>
+  <data name="SmallSize" xml:space="preserve">
+      <value>Small</value>
+  </data>
+  <data name="MediumSize" xml:space="preserve">
+      <value>Medium</value>
+  </data>
+  <data name="LargeSize" xml:space="preserve">
+      <value>Large</value>
+  </data>
+  <data name="EmptyRecycleBinDescription" xml:space="preserve">
+      <value>Recycle bin is empty. Delete some items to see them here.</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+      <value>Date modified</value>
+  </data>
+  <data name="ItemType" xml:space="preserve">
+      <value>Item type</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+      <value>Move</value>
+  </data>
+  <data name="ImportExisting" xml:space="preserve">
+      <value>Import existing</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+      <value>Select</value>
+  </data>
 </root>

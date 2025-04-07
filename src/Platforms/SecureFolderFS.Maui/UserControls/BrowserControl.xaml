@@ -40,7 +40,10 @@
                         </Grid.ColumnDefinitions>
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                            <CheckBox
+                                Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}, ConverterParameter='|White'}"
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <ContentView
                                 Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                                 HeightRequest="32"
@@ -102,6 +105,8 @@
                         <CheckBox
                             Grid.Row="0"
                             Grid.RowSpan="2"
+                            Margin="0,0,-8,-8"
+                            Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}, ConverterParameter='|White'}"
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
                             IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"

@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.Vault.BrowserPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
@@ -19,19 +20,19 @@
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
             Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.ChangeViewOptionsCommand}"
             Order="Secondary"
-            Text="View Options" />
+            Text="{l:ResourceString Rid=ViewOptions}" />
         <ToolbarItem
             Command="{Binding ViewModel.NewItemCommand}"
             Order="Secondary"
-            Text="Create new item" />
+            Text="{l:ResourceString Rid=CreateNew}" />
         <ToolbarItem
             Command="{Binding ViewModel.ImportItemCommand}"
             Order="Secondary"
-            Text="Import existing item" />
+            Text="{l:ResourceString Rid=ImportExisting}" />
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>

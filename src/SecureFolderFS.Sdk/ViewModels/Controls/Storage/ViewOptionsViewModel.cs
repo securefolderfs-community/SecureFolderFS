@@ -31,15 +31,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 new(nameof(SizeSorter), "Size".ToLocalized())
             ]);
             SizeOptions = new([
-                new("Small", "Small".ToLocalized()),
-                new("Medium", "Medium".ToLocalized()),
-                new("Large", "Large".ToLocalized())
+                new("Small", "SmallSize".ToLocalized()),
+                new("Medium", "MediumSize".ToLocalized()),
+                new("Large", "LargeSize".ToLocalized())
             ]);
             ViewOptions = new([
-                new(nameof(BrowserViewType.ListView), "ListView".ToLocalized()),
-                new(nameof(Enums.BrowserViewType.ColumnView), "ColumnView".ToLocalized()),
-                new("GridView", "GridView".ToLocalized()),
-                new("GalleryView", "GalleryView".ToLocalized())
+                new(nameof(BrowserViewType.ListView), "ListViewLayout".ToLocalized()),
+                new(nameof(Enums.BrowserViewType.ColumnView), "ColumnViewLayout".ToLocalized()),
+                new("GridView", "GridViewLayout".ToLocalized()),
+                new("GalleryView", "GalleryViewLayout".ToLocalized())
             ]);
 
             CurrentSortOption = SortOptions[0];
