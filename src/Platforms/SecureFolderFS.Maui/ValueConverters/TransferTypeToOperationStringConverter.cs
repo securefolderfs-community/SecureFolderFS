@@ -1,5 +1,6 @@
 using System.Globalization;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
@@ -13,9 +14,9 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             return transferType switch
             {
-                TransferType.Copy => "Copy",
-                TransferType.Move => "Move",
-                TransferType.Recycle => "Recycle",
+                TransferType.Copy => "Copy".ToLocalized(),
+                TransferType.Move => "Move".ToLocalized(),
+                TransferType.Select => "Confirm".ToLocalized(),
                 _ => "Transfer"
             };
         }

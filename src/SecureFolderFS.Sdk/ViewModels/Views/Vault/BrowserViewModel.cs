@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
@@ -188,7 +190,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 return null;
 
             await OuterNavigator.NavigateAsync(this);
-            var pickedFolder = await TransferViewModel.PickFolderAsync(null, false, cancellationToken);
+            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cancellationToken);
             if (pickedFolder is null)
                 return null;
 

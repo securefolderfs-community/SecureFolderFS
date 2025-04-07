@@ -6,7 +6,8 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPage"
-    x:DataType="local:BrowserPage">
+    x:DataType="local:BrowserPage"
+    Background="{StaticResource ThemeBackgroundFillColorBrush}">
 
     <ContentPage.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
