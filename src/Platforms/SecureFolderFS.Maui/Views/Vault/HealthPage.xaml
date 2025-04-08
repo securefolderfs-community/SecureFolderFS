@@ -1,7 +1,45 @@
 ﻿<ContentPage
     x:Class="SecureFolderFS.Maui.Views.Vault.HealthPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="{l:ResourceString Rid=HealthReport}"
+    x:DataType="local:HealthPage">
 
-    <Label Text="HealthPage" />
+    <VerticalStackLayout Padding="16">
+
+        <Border StrokeThickness="0" VerticalOptions="Start">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+
+            <Grid>
+                <Grid
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    HorizontalOptions="Start"
+                    WidthRequest="200" />
+
+                <Grid Padding="16" ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <ActivityIndicator Grid.Column="0" IsRunning="True" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Scanning items" />
+                        <Label Text="Scanned 10 of 100 items" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Grid>
+        </Border>
+
+
+        <Grid VerticalOptions="Start" />
+    </VerticalStackLayout>
 </ContentPage>
