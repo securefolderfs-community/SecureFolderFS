@@ -42,37 +42,11 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 {
 #if ANDROID
                     await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-                    var videoPath = Path.Combine(FileSystem.CacheDirectory, $"temp_video_{Guid.NewGuid()}.{Path.GetExtension(file.Name)}");
-                    var androidUri = AndroidUri.Parse(videoPath);
-                    var contentResolver = MainActivity.Instance?.ContentResolver;
-                    if (androidUri is null || contentResolver is null)
+                    var stream = Android_ExtractFrame(sourceStream, TimeSpan.FromSeconds(0));
+                    if (stream is null)
                         break;
                     
-                    var bytesRead = 0;
-                    var totalBytes = 0;
-                    var buffer = new byte[8192];
-                    const int MAX_BYTES_TO_COPY = 5 * 1024 * 1024;
-
-                    try
-                    {
-                        await using var tempStream = File.Create(videoPath);
-                        while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0 &&
-                               totalBytes < MAX_BYTES_TO_COPY)
-                        {
-                            await tempStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
-                            totalBytes += bytesRead;
-                        }
-
-                        var stream = Android_ExtractFrame(videoPath, TimeSpan.FromSeconds(0));
-                        if (stream is null)
-                            break;
-
-                        return new ImageStream(stream);
-                    }
-                    finally
-                    {
-                        File.Delete(videoPath);
-                    }
+                    return new ImageStream(stream);
 #elif IOS
                     IOS_ExtractFrame();
 #endif
@@ -94,10 +68,10 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
         
 #if ANDROID
-        private static Stream? Android_ExtractFrame(string path, TimeSpan captureTime)
+        private static Stream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
         {
             using var retriever = new MediaMetadataRetriever();
-            retriever.SetDataSource(path);
+            retriever.SetDataSource(new StreamedMediaSource(stream));
             
             var frameBitmap = retriever.GetFrameAtTime(captureTime.Ticks, Option.Closest);
             if (frameBitmap is null)
