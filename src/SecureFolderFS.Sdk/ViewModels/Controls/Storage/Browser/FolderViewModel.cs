@@ -48,10 +48,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             Items.Clear();
 
             var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);
-            BrowserViewModel.ViewOptions.GetSorter()?.SortCollection(items.Select(x => (BrowserItemViewModel)(x switch
+            BrowserViewModel.ViewOptions.GetSorter().SortCollection(items.Select(x => (BrowserItemViewModel)(x switch
             {
-                IFile file => new FileViewModel(file, BrowserViewModel, this).WithInitAsync(cancellationToken),
-                IFolder folder => new FolderViewModel(folder, BrowserViewModel, this).WithInitAsync(cancellationToken),
+                IFile file => new FileViewModel(file, BrowserViewModel, this),
+                IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),
                 _ => throw new ArgumentOutOfRangeException(nameof(x))
             })), Items);
         }

@@ -212,6 +212,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 Title = formattedName;
                 UpdateStorable(renamedStorable);
+                _ = InitAsync(cancellationToken);
             }
             catch (Exception ex)
             {

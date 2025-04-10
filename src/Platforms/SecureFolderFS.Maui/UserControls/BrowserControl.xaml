@@ -16,7 +16,7 @@
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
 
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer">
+            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
@@ -66,7 +66,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer">
+            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
@@ -120,7 +120,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer">
+            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />

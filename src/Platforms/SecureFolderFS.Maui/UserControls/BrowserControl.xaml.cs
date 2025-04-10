@@ -1,6 +1,8 @@
 using System.Windows.Input;
+using APES.UI.XF;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Maui.UserControls
 {
@@ -29,6 +31,15 @@ namespace SecureFolderFS.Maui.UserControls
                 itemViewModel.IsSelected = !itemViewModel.IsSelected;
             else
                 itemViewModel.OpenCommand.Execute(null);
+        }
+        
+        private void ItemContainer_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not BindableObject { BindingContext: BrowserItemViewModel itemViewModel })
+                return;
+            
+            if (itemViewModel.Thumbnail is null)
+                _ = itemViewModel.InitAsync();
         }
         
         public object? EmptyView

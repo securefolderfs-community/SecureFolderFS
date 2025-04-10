@@ -35,6 +35,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Gets or sets whether to enable caching for decrypted content chunks.
         /// </summary>
         public bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
+        
+        /// <summary>
+        /// Gets or sets whether to enable caching for Directory IDs.
+        /// </summary>
+        public bool IsCachingDirectoryIds { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
@@ -96,6 +101,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 IsReadOnly = GetOption<bool?>(options, nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
+                IsCachingDirectoryIds = GetOption<bool?>(options, nameof(IsCachingDirectoryIds)) ?? true,
                 IsRecycleBinEnabled = (bool?)options.Get(nameof(IsRecycleBinEnabled)) ?? false
             };
         }

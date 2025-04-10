@@ -11,7 +11,6 @@ using Stream = System.IO.Stream;
 
 #if ANDROID
 using Android.Media;
-using AndroidUri = Android.Net.Uri;
 #endif
 
 namespace SecureFolderFS.Maui.ServiceImplementation
@@ -78,7 +77,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 return null;
 
             var destinationStream = new OnDemandDisposableStream();
-            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, Constants.Application.IMAGE_THUMBNAIL_QUALITY, destinationStream);
+            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg!, Constants.Application.VIDEO_THUMBNAIL_QUALITY, destinationStream);
             destinationStream.Position = 0L;
 
             return destinationStream;
@@ -119,7 +118,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 throw new Exception("Failed to resize image.");
 
             using var image = SKImage.FromBitmap(resized);
-            using var encoded = image.Encode(SKEncodedImageFormat.Jpeg, UI.Constants.Application.IMAGE_THUMBNAIL_QUALITY);
+            using var encoded = image.Encode(SKEncodedImageFormat.Png, UI.Constants.Application.IMAGE_THUMBNAIL_QUALITY);
             var destinationStream = new OnDemandDisposableStream();
             encoded.SaveTo(destinationStream);
 

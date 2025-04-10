@@ -80,7 +80,9 @@ namespace SecureFolderFS.Core.FileSystem
                 CiphertextFileNameCache = options.IsCachingFileNames
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
-                DirectoryIdCache = new(true, options.FileSystemStatistics.DirectoryIdCache),
+                DirectoryIdCache = options.IsCachingDirectoryIds
+                    ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORY_ID, options.FileSystemStatistics.DirectoryIdCache)
+                    : new(false, options.FileSystemStatistics.DirectoryIdCache),
                 Options = options,
                 StreamsAccess = StreamsAccess.CreateNew(security, options.IsCachingChunks, options.FileSystemStatistics),
                 Security = security
