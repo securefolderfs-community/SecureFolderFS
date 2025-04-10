@@ -124,6 +124,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public void Dispose()
         {
             _unlockContract?.Dispose();
+            _vaultMigrator?.Dispose();
         }
     }
 }

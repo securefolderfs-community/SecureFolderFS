@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
-            Argon2id.DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
+            Argon2id.Old_DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
@@ -79,6 +79,9 @@ namespace SecureFolderFS.Core.Migration.AppModels
             // Begin progress report
             progress.PercentageProgress?.Report(0d);
 
+            // Vault Configuration ------------------------------------
+            //
+            var macKey = encAndMacKey.MacKey;
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new V2VaultConfigurationDataModel()
             {
@@ -89,11 +92,6 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 Uid = vaultId,
                 Version = Constants.Vault.Versions.V2
             };
-
-            // Calculate and update configuration MAC
-
-            var encKey = encAndMacKey.EncKey;
-            var macKey = encAndMacKey.MacKey;
 
             // Initialize HMAC
             using var hmacSha256 = new HMACSHA256(macKey.Key);
@@ -114,8 +112,18 @@ namespace SecureFolderFS.Core.Migration.AppModels
             // Create backup
             if (VaultFolder is IModifiableFolder modifiableFolder)
             {
-                await BackupHelpers.CreateConfigBackup(modifiableFolder, configStream, cancellationToken);
-                await BackupHelpers.CreateKeystoreBackup(modifiableFolder, cancellationToken);
+                await BackupHelpers.CreateBackup(
+                    modifiableFolder,
+                    Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME,
+                    Constants.Vault.Versions.V1,
+                    configStream,
+                    cancellationToken);
+
+                await BackupHelpers.CreateBackup(
+                    modifiableFolder,
+                    Constants.Vault.Names.VAULT_KEYSTORE_FILENAME,
+                    Constants.Vault.Versions.V1,
+                    cancellationToken);
             }
 
             await using var serializedStream = await _streamSerializer.SerializeAsync(v2ConfigDataModel, cancellationToken);
@@ -158,6 +166,11 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 EncKey.Dispose();
                 MacKey.Dispose();
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
         }
     }
 }

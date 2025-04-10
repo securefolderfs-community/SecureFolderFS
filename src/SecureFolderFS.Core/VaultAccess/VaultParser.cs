@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.VaultAccess
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
+            Argon2id.Old_DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Core.VaultAccess
         {
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.DeriveKey(passkey, salt, kek);
+            Argon2id.Old_DeriveKey(passkey, salt, kek);
 
             // Wrap keys
             using var rfc3394 = new Rfc3394KeyWrap();

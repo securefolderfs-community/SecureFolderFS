@@ -25,6 +25,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
         private readonly IAsyncSerializer<Stream> _streamSerializer;
         private V2VaultConfigurationDataModel? _v2ConfigDataModel;
         private VaultKeystoreDataModel? _v2KeystoreDataModel;
+        private SecretKey? _secretKeySequence;
 
         /// <inheritdoc/>
         public IFolder VaultFolder { get; }
@@ -40,6 +41,9 @@ namespace SecureFolderFS.Core.Migration.AppModels
         {
             if (credentials is not KeySequence keySequence)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeySequence)}.");
+            
+            _secretKeySequence?.Dispose();
+            _secretKeySequence = SecureKey.TakeOwnership(keySequence.ToArray());
 
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
@@ -56,7 +60,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
-            Argon2id.DeriveKey(keySequence.ToArray(), _v2KeystoreDataModel.Salt, kek);
+            Argon2id.Old_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
@@ -64,22 +68,26 @@ namespace SecureFolderFS.Core.Migration.AppModels
             rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             // Create copies of keys for later use
-            return new EncAndMacKey(encKey.CreateCopy(), macKey.CreateCopy());
+            return KeyPair.ImportKeys(encKey, macKey);
         }
 
         /// <inheritdoc/>
         public async Task MigrateAsync(IDisposable unlockContract, ProgressModel<IResult> progress, CancellationToken cancellationToken = default)
         {
-            if (_v2ConfigDataModel is null)
-                throw new InvalidOperationException($"{nameof(_v2ConfigDataModel)} is null.");
+            _ = _v2ConfigDataModel ?? throw new InvalidOperationException($"{nameof(_v2ConfigDataModel)} is null.");
+            _ = _v2KeystoreDataModel ?? throw new InvalidOperationException($"{nameof(_v2KeystoreDataModel)} is null.");
+            _ = _secretKeySequence ?? throw new InvalidOperationException($"{nameof(_secretKeySequence)} is null.");
 
-            if (unlockContract is not EncAndMacKey encAndMacKey)
+            if (unlockContract is not KeyPair keyPair)
                 throw new ArgumentException($"{nameof(unlockContract)} is not of correct type.");
 
             // Begin progress report
             progress.PercentageProgress?.Report(0d);
 
-            var vaultId = Guid.NewGuid().ToString();
+            // Vault Configuration ------------------------------------
+            //
+            var encKey = keyPair.DekKey;
+            var macKey = keyPair.MacKey;
             var v3ConfigDataModel = new VaultConfigurationDataModel()
             {
                 AuthenticationMethod = _v2ConfigDataModel.AuthenticationMethod,
@@ -89,11 +97,6 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 Uid = _v2ConfigDataModel.Uid,
                 Version = Constants.Vault.Versions.V3
             };
-
-            // Calculate and update configuration MAC
-
-            var encKey = encAndMacKey.EncKey;
-            var macKey = encAndMacKey.MacKey;
 
             // Initialize HMAC
             using var hmacSha256 = new HMACSHA256(macKey.Key);
@@ -108,22 +111,59 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(v3ConfigDataModel.PayloadMac);
+            
+            // Vault Keystore ------------------------------------
+            //
+            var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
+            Argon2id.V3_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
+            
+            using var rfc3394 = new Rfc3394KeyWrap();
+            var newWrappedEncKek = rfc3394.WrapKey(encKey, kek);
+            var newWrappedMacKek = rfc3394.WrapKey(macKey, kek);
 
+            var v3KeystoreDataModel = new VaultKeystoreDataModel()
+            {
+                Salt = _v2KeystoreDataModel.Salt,
+                WrappedEncKey = newWrappedEncKek,
+                WrappedMacKey = newWrappedMacKek
+            };
+            
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);
-
+            await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
+            
             // Create backup
             if (VaultFolder is IModifiableFolder modifiableFolder)
             {
-                await BackupHelpers.CreateConfigBackup(modifiableFolder, configStream, cancellationToken);
-                await BackupHelpers.CreateKeystoreBackup(modifiableFolder, cancellationToken);
+                await BackupHelpers.CreateBackup(
+                    modifiableFolder,
+                    Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME,
+                    Constants.Vault.Versions.V2,
+                    configStream,
+                    cancellationToken);
+                
+                await BackupHelpers.CreateBackup(
+                    modifiableFolder,
+                    Constants.Vault.Names.VAULT_KEYSTORE_FILENAME,
+                    Constants.Vault.Versions.V2,
+                    keystoreStream,
+                    cancellationToken);
             }
 
-            await using var serializedStream = await _streamSerializer.SerializeAsync(v3ConfigDataModel, cancellationToken);
-            await serializedStream.CopyToAsync(configStream, cancellationToken);
+            await using var serializedConfigStream = await _streamSerializer.SerializeAsync(v3ConfigDataModel, cancellationToken);
+            await using var serializedKeystoreStream = await _streamSerializer.SerializeAsync(v3KeystoreDataModel, cancellationToken);
+            await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
+            await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
 
             // End progress report
             progress.PercentageProgress?.Report(100d);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            _secretKeySequence?.Dispose();
         }
     }
 }

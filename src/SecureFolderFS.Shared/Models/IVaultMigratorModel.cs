@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Shared.Models
 {
-    public interface IVaultMigratorModel
+    // TODO: Needs docs
+    public interface IVaultMigratorModel : IDisposable
     {
         IFolder VaultFolder { get; }
 

@@ -8,23 +8,23 @@ namespace SecureFolderFS.Core.Migration.Helpers
 {
     internal static class BackupHelpers
     {
-        public static async Task CreateConfigBackup(IModifiableFolder vaultFolder, Stream configStream, CancellationToken cancellationToken)
+        public static async Task CreateBackup(IModifiableFolder folder, string originalName, int version, Stream stream, CancellationToken cancellationToken)
         {
-            var backupConfigName = $"{Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME}.bkup";
-            var backupConfigFile = await vaultFolder.CreateFileAsync(backupConfigName, true, cancellationToken);
-            await using var backupConfigStream = await backupConfigFile.OpenWriteAsync(cancellationToken);
+            var backupName = $"{originalName}_{version}.bkup";
+            var backupFile = await folder.CreateFileAsync(backupName, true, cancellationToken);
+            await using var backupStream = await backupFile.OpenWriteAsync(cancellationToken);
 
-            await configStream.CopyToAsync(backupConfigStream, cancellationToken);
-            configStream.Position = 0L;
+            await stream.CopyToAsync(backupStream, cancellationToken);
+            stream.Position = 0L;
         }
 
-        public static async Task CreateKeystoreBackup(IModifiableFolder vaultFolder, CancellationToken cancellationToken)
+        public static async Task CreateBackup(IModifiableFolder folder, string originalName, int version, CancellationToken cancellationToken)
         {
-            var keystoreFile = await vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
-            var backupKeystoreName = $"{Constants.Vault.Names.VAULT_KEYSTORE_FILENAME}.bkup";
-            var backupKeystoreFile = await vaultFolder.CreateFileAsync(backupKeystoreName, true, cancellationToken);
+            var backupName = $"{originalName}_{version}.bkup";
+            var backupFile = await folder.CreateFileAsync(backupName, true, cancellationToken);
+            var originalFile = await folder.GetFileByNameAsync(originalName, cancellationToken);
 
-            await keystoreFile.CopyContentsToAsync(backupKeystoreFile, cancellationToken);
+            await originalFile.CopyContentsToAsync(backupFile, cancellationToken);
         }
     }
 }
