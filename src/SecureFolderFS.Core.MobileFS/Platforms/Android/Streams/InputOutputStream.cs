@@ -66,11 +66,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         {
             // Adjust count if it would read past the end of the stream
             if (_length != -1)
-            {
                 count = (int)Math.Min(count, _length - _position);
-            }
 
-            if (count <= 0) return 0;
+            if (count <= 0)
+                return 0;
 
             int bytesRead;
             if (offset != 0)
@@ -79,19 +78,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 var tempBuffer = new byte[count];
                 bytesRead = _inputStream.Read(tempBuffer);
                 if (bytesRead > 0)
-                {
                     Array.Copy(tempBuffer, 0, buffer, offset, bytesRead);
-                }
             }
             else
-            {
                 bytesRead = _inputStream.Read(buffer);
-            }
 
             if (bytesRead > 0)
-            {
                 _position += bytesRead;
-            }
 
             return bytesRead;
         }
@@ -107,9 +100,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 _outputStream.Write(tempBuffer, 0, count);
             }
             else
-            {
                 _outputStream.Write(buffer, 0, count);
-            }
 
             // Update position after writing
             _position += count;
@@ -134,7 +125,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            long newPosition = origin switch
+            var newPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
                 SeekOrigin.Current => _position + offset,

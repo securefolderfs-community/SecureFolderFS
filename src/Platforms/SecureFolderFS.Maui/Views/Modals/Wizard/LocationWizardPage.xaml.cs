@@ -20,15 +20,11 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         }
 
         /// <inheritdoc/>
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             OverlayViewModel.CurrentViewModel = ViewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             base.OnAppearing();
-
-            // Wait for the control to load
-            await Task.Delay(50);
-            LayoutBrowseButton();
         }
 
         /// <inheritdoc/>
@@ -67,6 +63,11 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
             // Wait for the UI to update
             await Task.Delay(50);
+            LayoutBrowseButton();
+        }
+
+        private void ButtonStack_SizeChanged(object? sender, EventArgs e)
+        {
             LayoutBrowseButton();
         }
 

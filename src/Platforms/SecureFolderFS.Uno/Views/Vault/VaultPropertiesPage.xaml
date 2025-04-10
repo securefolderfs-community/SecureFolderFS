@@ -41,7 +41,7 @@
                     <StackPanel Grid.Column="0" Spacing="4">
                         <TextBlock Text="{l:ResourceString Rid=Security}" />
                         <TextBlock Text="{l:ResourceString Rid=DataEncryption}" />
-                        <TextBlock Text="{l:ResourceString Rid=FileNameEncryption}" />
+                        <TextBlock Text="{l:ResourceString Rid=NameEncryption}" />
                         <TextBlock Text="{l:ResourceString Rid=ActiveFileSystem}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">

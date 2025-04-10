@@ -5,7 +5,6 @@
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
-    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
@@ -29,112 +28,115 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <ScrollView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <!--  Top widgets  -->
-        <CollectionView
-            Grid.Row="0"
-            Margin="16,16"
-            ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
-            <CollectionView.ItemTemplate>
-                <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
-            </CollectionView.ItemTemplate>
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-        </CollectionView>
+            <!--  Top widgets  -->
+            <CollectionView
+                Grid.Row="0"
+                Margin="16,16"
+                ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}"
+                VerticalScrollBarVisibility="Never">
+                <CollectionView.ItemTemplate>
+                    <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                </CollectionView.ItemTemplate>
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+            </CollectionView>
 
-        <!--  Top buttons  -->
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="Android">
-                <Grid
-                    Grid.Row="1"
-                    Padding="16,16"
-                    ColumnSpacing="16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+            <!--  Top buttons  -->
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <Grid
+                        Grid.Row="1"
+                        Padding="16,16"
+                        ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                    <Button
-                        Grid.Column="0"
-                        Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
-                        HeightRequest="48"
-                        Text="{l:ResourceString Rid=ViewInFiles}" />
-                    <Button
-                        Grid.Column="1"
-                        Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
-                        HeightRequest="48"
-                        Text="{l:ResourceString Rid=LockVault}" />
-                </Grid>
-            </On>
-        </OnPlatform>
+                        <Button
+                            Grid.Column="0"
+                            Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
+                            HeightRequest="48"
+                            Text="{l:ResourceString Rid=ViewInFiles}" />
+                        <Button
+                            Grid.Column="1"
+                            Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
+                            HeightRequest="48"
+                            Text="{l:ResourceString Rid=LockVault}" />
+                    </Grid>
+                </On>
+            </OnPlatform>
 
-        <!--  Options list  -->
-        <VerticalStackLayout
-            Grid.Row="2"
-            Padding="16,0"
-            Spacing="16">
+            <!--  Options list  -->
+            <VerticalStackLayout
+                Grid.Row="2"
+                Padding="16,0"
+                Spacing="16">
 
-            <!--  Quick Actions  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}">
-                <uco:OptionsContainer.InnerContent>
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="iOS">
-                            <VerticalStackLayout>
-                                <uco:OptionsControl Title="{l:ResourceString Rid=ViewInFiles}" Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" />
-                                <uco:OptionsControl Title="{l:ResourceString Rid=LockVault}" Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" />
-                                <uco:OptionsControl
-                                    Title="{l:ResourceString Rid=RecycleBin}"
-                                    Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
-                                    IsSeparatorVisible="False" />
-                            </VerticalStackLayout>
-                        </On>
-                        <On Platform="Android">
-                            <VerticalStackLayout>
-                                <uco:OptionsControl Title="Open file browser" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
-                                <uco:OptionsControl
-                                    Title="{l:ResourceString Rid=RecycleBin}"
-                                    Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
-                                    IsSeparatorVisible="False" />
-                            </VerticalStackLayout>
-                        </On>
-                    </OnPlatform>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
+                <!--  Quick Actions  -->
+                <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}">
+                    <uco:OptionsContainer.InnerContent>
+                        <OnPlatform x:TypeArguments="View">
+                            <On Platform="iOS">
+                                <VerticalStackLayout>
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=ViewInFiles}" Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" />
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=LockVault}" Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" />
+                                    <uco:OptionsControl
+                                        Title="{l:ResourceString Rid=RecycleBin}"
+                                        Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
+                                        IsSeparatorVisible="False" />
+                                </VerticalStackLayout>
+                            </On>
+                            <On Platform="Android">
+                                <VerticalStackLayout>
+                                    <uco:OptionsControl Title="Open file browser" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
+                                    <uco:OptionsControl
+                                        Title="{l:ResourceString Rid=RecycleBin}"
+                                        Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
+                                        IsSeparatorVisible="False" />
+                                </VerticalStackLayout>
+                            </On>
+                        </OnPlatform>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
 
-            <!--  Vault Properties  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=VaultProperties}">
-                <uco:OptionsContainer.InnerContent>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=Security}" SlotText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
-                        <uco:OptionsControl Title="{l:ResourceString Rid=DataEncryption}" SlotText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=FileNameEncryption}"
-                            IsSeparatorVisible="False"
-                            SlotText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
-                    </VerticalStackLayout>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
+                <!--  Vault Properties  -->
+                <uco:OptionsContainer Title="{l:ResourceString Rid=VaultProperties}">
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=Security}" SlotText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
+                            <uco:OptionsControl Title="{l:ResourceString Rid=DataEncryption}" SlotText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=NameEncryption}"
+                                IsSeparatorVisible="False"
+                                SlotText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
 
-            <!--  Authentication  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=Authentication}">
-                <uco:OptionsContainer.InnerContent>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=ChangeCredentials}" Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}" />
-                        <uco:OptionsControl Title="{l:ResourceString Rid=TwoFactor}" Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}" />
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=RecoveryCodes}"
-                            Command="{Binding PropertiesViewModel.ViewRecoveryCommand}"
-                            IsSeparatorVisible="False" />
-                    </VerticalStackLayout>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
-        </VerticalStackLayout>
-    </Grid>
+                <!--  Authentication  -->
+                <uco:OptionsContainer Title="{l:ResourceString Rid=Authentication}">
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=ChangeCredentials}" Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}" />
+                            <uco:OptionsControl Title="{l:ResourceString Rid=TwoFactor}" Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}" />
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=RecoveryCodes}"
+                                Command="{Binding PropertiesViewModel.ViewRecoveryCommand}"
+                                IsSeparatorVisible="False" />
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 </ContentPage>

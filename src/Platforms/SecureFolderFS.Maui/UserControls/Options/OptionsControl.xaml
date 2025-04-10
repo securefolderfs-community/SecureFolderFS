@@ -20,6 +20,7 @@
             <Label
                 Grid.Column="0"
                 FontSize="15"
+                LineBreakMode="TailTruncation"
                 Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
                 VerticalOptions="Center" />
             <ContentView

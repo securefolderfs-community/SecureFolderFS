@@ -23,7 +23,7 @@
                 HorizontalOptions="Start"
                 Text="Select a location of your vault" />
 
-            <VerticalStackLayout Spacing="8">
+            <VerticalStackLayout SizeChanged="ButtonStack_SizeChanged" Spacing="8">
                 <OnPlatform x:TypeArguments="View">
                     <On Platform="Android">
                         <Button
