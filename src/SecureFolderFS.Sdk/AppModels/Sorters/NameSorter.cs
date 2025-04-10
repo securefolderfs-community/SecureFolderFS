@@ -23,6 +23,17 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
             if (x is null || y is null)
                 return 0;
 
+            // Ensure folders come before files
+            var xIsFolder = x is FolderViewModel;
+            var yIsFolder = y is FolderViewModel;
+
+            if (xIsFolder && !yIsFolder)
+                return -1;
+            
+            if (!xIsFolder && yIsFolder)
+                return 1;
+
+            // If both are same type, sort by name
             var result = string.Compare(x.Title, y.Title, StringComparison.OrdinalIgnoreCase);
             return _isAscending ? result : -result;
         }

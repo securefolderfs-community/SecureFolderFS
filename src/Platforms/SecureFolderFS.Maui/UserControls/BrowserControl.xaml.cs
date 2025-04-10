@@ -30,6 +30,14 @@ namespace SecureFolderFS.Maui.UserControls
             else
                 itemViewModel.OpenCommand.Execute(null);
         }
+        
+        public object? EmptyView
+        {
+            get => (object?)GetValue(EmptyViewProperty);
+            set => SetValue(EmptyViewProperty, value);
+        }
+        public static readonly BindableProperty EmptyViewProperty =
+            BindableProperty.Create(nameof(EmptyView), typeof(object), typeof(BrowserControl), defaultValue: null);
 
         public bool IsSelecting
         {

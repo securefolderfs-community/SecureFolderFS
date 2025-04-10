@@ -158,6 +158,7 @@
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
             <CollectionView
+                EmptyView="{Binding EmptyView, Mode=OneWay}"
                 ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
                 ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                 SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">

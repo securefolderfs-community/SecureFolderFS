@@ -42,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 new("GalleryView", "GalleryViewLayout".ToLocalized())
             ]);
 
+            IsAscending = true;
             CurrentSortOption = SortOptions[0];
             CurrentSizeOption = SizeOptions[1];
             CurrentViewOption = ViewOptions[0];

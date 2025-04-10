@@ -3,7 +3,7 @@
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="4.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="4.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="11.2.0" />
-    <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2" />
+    <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
     <PackageVersion Include="ContextMenuContainer" Version="1.2.3" />

@@ -752,4 +752,7 @@
   <data name="NameEncryption" xml:space="preserve">
       <value>Name encryption</value>
   </data>
+  <data name="NoItems" xml:space="preserve">
+      <value>No items</value>
+  </data>
 </root>
