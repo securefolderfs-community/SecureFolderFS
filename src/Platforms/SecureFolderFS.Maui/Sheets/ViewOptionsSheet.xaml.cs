@@ -1,10 +1,10 @@
-using System.Reflection;
 using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
@@ -29,30 +29,10 @@ namespace SecureFolderFS.Maui.Sheets
             var sheetNavigationService = DI.Service<IBottomSheetNavigationService>();
             await sheetNavigationService.NavigateToAsync(nameof(ViewOptionsSheet), new BottomSheetNavigationParameters()
             {
-                { "ViewModel", _viewModel }
+                { "ViewModel", _viewModel },
+                { "TaskCompletion", _tcs }
             });
 
-            var implementation = (BottomSheetNavigationService)sheetNavigationService;
-            var sheetNavigationServiceType = typeof(BottomSheetNavigationService);
-            var fieldInfo = sheetNavigationServiceType.GetField("_bottomSheetStack", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (fieldInfo is null)
-            {
-                _tcs.SetResult(Result.Failure(null));
-                return await _tcs.Task;
-            }
-
-            var objStack = fieldInfo.GetValue(implementation);
-            var stack = (Stack<IBottomSheet>?)objStack;
-            if (stack?.FirstOrDefault() is not BottomSheet sheet)
-            {
-                _tcs.SetResult(Result.Failure(null));
-                return await _tcs.Task;
-            }
-
-            if (sheet is not ViewOptionsSheet viewOptionsSheet)
-                return await _tcs.Task;
-
-            viewOptionsSheet.TaskCompletion = _tcs;
             return await _tcs.Task;
         }
 
@@ -72,24 +52,24 @@ namespace SecureFolderFS.Maui.Sheets
     
     public partial class ViewOptionsSheet : BottomSheet, IQueryAttributable
     {
-        public TaskCompletionSource<IResult>? TaskCompletion { get; set; }
+        private TaskCompletionSource<IResult>? _tcs;
 
         public ViewOptionsSheet()
         {
             InitializeComponent();
-        }
-
-        private async void Button_Clicked(object? sender, EventArgs e)
-        {
-            var sheetNavigationService = DI.Service<IBottomSheetNavigationService>();
-            await sheetNavigationService.ClearBottomSheetStackAsync();
-            TaskCompletion?.TrySetResult(Result.Success);
+            Closed += Sheet_Closed;
         }
 
         /// <inheritdoc/>
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             ViewModel = query.ToViewModel<ViewOptionsViewModel>();
+            _tcs = query.Get("TaskCompletion") as TaskCompletionSource<IResult>;
+        }
+        
+        private void Sheet_Closed(object? sender, EventArgs e)
+        {
+            _tcs?.TrySetResult(Result.Success);
         }
 
         public ViewOptionsViewModel? ViewModel

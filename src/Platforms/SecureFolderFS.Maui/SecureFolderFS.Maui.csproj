@@ -41,12 +41,12 @@
   <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Debug'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
   </PropertyGroup>
-  
+
   <Choose>
     <When Condition="'$(TargetFramework)'=='net9.0-android'">
       <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon ForegroundScale="0.5" Resize="True" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
+        <MauiIcon ForegroundScale="0.6" Resize="True" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
       </ItemGroup>
     </When>
 

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:btsh="http://pluginmauibottomsheet.com"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.Sheets"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
@@ -59,8 +58,6 @@
                                 </VerticalStackLayout>
                             </uco:OptionsContainer.InnerContent>
                         </uco:OptionsContainer>
-
-                        <Button Clicked="Button_Clicked" Text="Close" />
                     </VerticalStackLayout>
                 </DataTemplate>
             </btsh:BottomSheetContent.ContentTemplate>
