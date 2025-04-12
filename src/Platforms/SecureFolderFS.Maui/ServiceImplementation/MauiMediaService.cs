@@ -41,11 +41,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 {
 #if ANDROID
                     await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-                    var stream = Android_ExtractFrame(sourceStream, TimeSpan.FromSeconds(0));
-                    if (stream is null)
-                        break;
-                    
-                    return new ImageStream(stream);
+                    return Android_ExtractFrame(sourceStream, TimeSpan.FromSeconds(0));
 #elif IOS
                     IOS_ExtractFrame();
 #endif
@@ -67,7 +63,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
         
 #if ANDROID
-        private static Stream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
+        private static ImageStream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
         {
             using var retriever = new MediaMetadataRetriever();
             retriever.SetDataSource(new StreamedMediaSource(stream));
@@ -76,11 +72,11 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             if (frameBitmap is null)
                 return null;
 
-            var destinationStream = new OnDemandDisposableStream();
-            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg!, Constants.Application.VIDEO_THUMBNAIL_QUALITY, destinationStream);
-            destinationStream.Position = 0L;
+            using var frameStream = new MemoryStream();
+            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg!, Constants.Application.VIDEO_THUMBNAIL_QUALITY, frameStream);
+            frameStream.Position = 0L;
 
-            return destinationStream;
+            return ResizeImage(frameStream, Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE);
         }
 #endif
 

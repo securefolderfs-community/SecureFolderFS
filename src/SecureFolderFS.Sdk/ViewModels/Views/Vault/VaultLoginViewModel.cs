@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // if (contentFolder is IModifiableFolder modifiableFolder && item is not null)
             //     await modifiableFolder.DeleteAsync(item);
 
-            var recoveryKey = "3Ma2MaT/zYZ/ixHE+HQ5BwgG0HxVjOZlOj1CRB+YuzQ=@@@wI2h2FxAFVjf2eo1DHoRaWZOM9Y7pEYm3Y1rc7zxg3I=";
+            var recoveryKey = "P2is3YVLIlRFxYAbQOftXFzC8hHJmPHkqczlB8T9Fls=@@@gavy7AMs6WpRW7n5gALSofMaFf5Z1Jr+I3gy4jkKd4Q=";
             var unlockContract = await VaultManagerService.RecoverAsync(VaultViewModel.VaultModel.Folder, recoveryKey, cancellationToken);
 
             await Task.Delay(300);
