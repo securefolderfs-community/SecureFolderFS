@@ -64,6 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public virtual void OnDisappearing()
         {
+            Items.DisposeElements();
         }
 
         /// <inheritdoc/>

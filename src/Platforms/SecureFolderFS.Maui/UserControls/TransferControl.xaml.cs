@@ -16,6 +16,14 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty CanCancelProperty =
             BindableProperty.Create(nameof(CanCancel), typeof(bool), typeof(TransferControl), defaultValue: true);
+        
+        public bool IsProgressing
+        {
+            get => (bool)GetValue(IsProgressingProperty);
+            set => SetValue(IsProgressingProperty, value);
+        }
+        public static readonly BindableProperty IsProgressingProperty =
+            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(TransferControl), defaultValue: false);
 
         public string? Title
         {

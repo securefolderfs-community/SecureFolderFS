@@ -21,6 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         public virtual void Dispose()
         {
             Thumbnail?.Dispose();
+            Thumbnail = null;
         }
     }
 }

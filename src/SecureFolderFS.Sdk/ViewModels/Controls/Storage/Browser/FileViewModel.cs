@@ -37,6 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            Thumbnail?.Dispose();
             Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
         }
 

@@ -17,7 +17,6 @@ namespace SecureFolderFS.Sdk.Helpers
             var browserViewModel = new BrowserViewModel(rootFolder, innerNavigator, outerNavigator, unlockedVaultViewModel.VaultViewModel);
             var transferViewModel = new TransferViewModel(browserViewModel);
             var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
-            _ = folderViewModel.ListContentsAsync();
 
             browserViewModel.TransferViewModel = transferViewModel;
             browserViewModel.CurrentFolder = folderViewModel;

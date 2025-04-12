@@ -35,11 +35,13 @@ namespace SecureFolderFS.Maui.UserControls
         
         private void ItemContainer_Loaded(object? sender, EventArgs e)
         {
-            if (sender is not BindableObject { BindingContext: BrowserItemViewModel itemViewModel })
+            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
                 return;
             
-            if (itemViewModel.Thumbnail is null)
-                _ = itemViewModel.InitAsync();
+            if (fileViewModel.Thumbnail is not null)
+                return;
+
+            _ = Task.Run(async () => await fileViewModel.InitAsync());
         }
         
         public object? EmptyView

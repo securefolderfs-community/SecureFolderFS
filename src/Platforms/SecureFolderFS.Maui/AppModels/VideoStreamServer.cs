@@ -41,20 +41,26 @@ namespace SecureFolderFS.Maui.AppModels
                 {
                     try
                     {
+                        var response = context.Response;
                         if (context.Request.RawUrl != "/video")
                         {
-                            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                            context.Response.Close();   
+                            response.StatusCode = (int)HttpStatusCode.NotFound;
+                            response.Close();   
                             continue;
                         }
+                        
+                        response.ContentType = _mimeType;
+                        response.ContentLength64 = _videoStream.Length;
+                        response.Headers["Accept-Ranges"] = "bytes";
 
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
-                        context.Response.ContentType = _mimeType;
-                        context.Response.ContentLength64 = _videoStream.Length;
-                        context.Response.Headers["Accept-Ranges"] = "bytes";
-
-                        await _videoStream.CopyToAsync(context.Response.OutputStream, 64 * 1024, cancellationToken);
+                        await _videoStream.CopyToAsync(response.OutputStream, 64 * 1024, cancellationToken);
+                        await _videoStream.FlushAsync(cancellationToken);
                         _videoStream.Position = 0L;
+                        
+                        response.StatusCode = (int)HttpStatusCode.OK;
+                        response.StatusDescription = "OK";
+                        response.Close();
+                        
                         break;
                     }
                     catch (Exception)

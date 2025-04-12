@@ -53,6 +53,35 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             Breadcrumbs = [ new(rootView?.Title, NavigateBreadcrumbCommand) ];
         }
 
+        /// <inheritdoc/>
+        public override void OnAppearing()
+        {
+            _ = CurrentFolder?.ListContentsAsync();
+            base.OnAppearing();
+        }
+
+        /// <inheritdoc/>
+        public override void OnDisappearing()
+        {
+            CurrentFolder?.Dispose();
+            base.OnDisappearing();
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        {
+            if (OuterNavigator is null || TransferViewModel is null)
+                return null;
+
+            await OuterNavigator.NavigateAsync(this);
+            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cancellationToken);
+            if (pickedFolder is null)
+                return null;
+
+            await OuterNavigator.GoBackAsync();
+            return pickedFolder;
+        }
+
         partial void OnCurrentFolderChanged(FolderViewModel? oldValue, FolderViewModel? newValue)
         {
             oldValue?.Items.UnselectAll();
@@ -97,8 +126,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (CurrentFolder is null)
                 return;
 
+            var originalSortOption = ViewOptions.CurrentSortOption;
             await OverlayService.ShowAsync(ViewOptions);
-            ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            
+            if (originalSortOption != ViewOptions.CurrentSortOption)
+                ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
         }
 
         [RelayCommand]
@@ -189,21 +221,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     break;
                 }
             }
-        }
-
-        /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
-        {
-            if (OuterNavigator is null || TransferViewModel is null)
-                return null;
-
-            await OuterNavigator.NavigateAsync(this);
-            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cancellationToken);
-            if (pickedFolder is null)
-                return null;
-
-            await OuterNavigator.GoBackAsync();
-            return pickedFolder;
         }
     }
 }
