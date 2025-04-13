@@ -13,6 +13,7 @@
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
+        <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
 
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
@@ -92,6 +93,7 @@
                         <ContentView
                             Grid.Row="0"
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HeightRequest="{Binding BrowserViewModel.ViewOptions.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='48,64,132'}"
                             HorizontalOptions="Center"
                             VerticalOptions="Center" />
                         <Label
@@ -139,8 +141,10 @@
                         HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}">
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HeightRequest="{Binding BrowserViewModel.ViewOptions.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='57,82,137'}"
                             HorizontalOptions="Center"
-                            VerticalOptions="Center" />
+                            VerticalOptions="Center"
+                            WidthRequest="{Binding BrowserViewModel.ViewOptions.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='59,82,137'}" />
                         <CheckBox
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
@@ -159,6 +163,7 @@
         <RefreshView Refreshing="RefreshView_Refreshing">
             <CollectionView
                 EmptyView="{Binding EmptyView, Mode=OneWay}"
+                ItemSizingStrategy="MeasureFirstItem"
                 ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
                 ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                 SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">

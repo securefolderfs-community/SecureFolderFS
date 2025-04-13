@@ -1,0 +1,58 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.ProgressiveButton"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+    </ContentView.Resources>
+
+    <Border
+        x:Name="ProgressContainer"
+        BindingContext="{x:Reference Name=ThisControl}"
+        SizeChanged="ProgressContainer_SizeChanged"
+        StrokeThickness="0"
+        VerticalOptions="Start">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+
+        <Grid>
+            <Grid
+                x:Name="ProgressStrip"
+                Background="{StaticResource ThemeSecondaryColorBrush}"
+                HorizontalOptions="Start"
+                IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                WidthRequest="200" />
+
+            <Grid Padding="16" ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <mi:MauiIcon
+                    Grid.Column="0"
+                    Icon="{Binding DefaultIcon, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
+                <ActivityIndicator
+                    Grid.Column="0"
+                    IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay}" />
+
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="Scanning items" />
+                    <Label Text="Scanned 10 of 100 items" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+    </Border>
+
+</ContentView>

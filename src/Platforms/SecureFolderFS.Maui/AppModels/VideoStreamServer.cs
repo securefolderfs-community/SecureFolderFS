@@ -60,11 +60,10 @@ namespace SecureFolderFS.Maui.AppModels
                         response.StatusCode = (int)HttpStatusCode.OK;
                         response.StatusDescription = "OK";
                         response.Close();
-                        
-                        break;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        _ = ex;
                         break;
                     }
                 }

@@ -37,6 +37,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 cachedId = new(Constants.DIRECTORY_ID_SIZE);
                 read = await directoryIdStream.ReadAsync(cachedId.Buffer, cancellationToken).ConfigureAwait(false);
                 specifics.DirectoryIdCache.CacheSet(folderOfDirectoryId.Id, cachedId);
+                
+                cachedId.Buffer.CopyTo(directoryId);
             }
             else
                 read = await directoryIdStream.ReadAsync(directoryId, cancellationToken).ConfigureAwait(false);

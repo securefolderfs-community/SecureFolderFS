@@ -69,9 +69,9 @@ namespace SecureFolderFS.Maui.Views.Modals
         public static readonly BindableProperty PrimaryCommandProperty =
             BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage), null);
 
-        public ICommand CloseCommand
+        public ICommand? CloseCommand
         {
-            get => (ICommand)GetValue(CloseCommandProperty);
+            get => (ICommand?)GetValue(CloseCommandProperty);
             set => SetValue(CloseCommandProperty, value);
         }
         public static readonly BindableProperty CloseCommandProperty =

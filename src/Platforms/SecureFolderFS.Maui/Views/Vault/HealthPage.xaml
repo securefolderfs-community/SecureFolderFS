@@ -4,41 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
-    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     Title="{l:ResourceString Rid=HealthReport}"
     x:DataType="local:HealthPage">
 
     <VerticalStackLayout Padding="16">
-
-        <Border StrokeThickness="0" VerticalOptions="Start">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="12" />
-            </Border.StrokeShape>
-
-            <Grid>
-                <Grid
-                    Background="{StaticResource ThemeSecondaryColorBrush}"
-                    HorizontalOptions="Start"
-                    WidthRequest="200" />
-
-                <Grid Padding="16" ColumnSpacing="16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <ActivityIndicator Grid.Column="0" IsRunning="True" />
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="18"
-                            Text="Scanning items" />
-                        <Label Text="Scanned 10 of 100 items" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Grid>
-        </Border>
-
+        <uc:ProgressiveButton
+            x:Name="ProgressiveButton"
+            DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
+                                     iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
+            HorizontalOptions="Fill"
+            IsProgressing="True"
+            Progress="60" />
 
         <Grid VerticalOptions="Start" />
     </VerticalStackLayout>

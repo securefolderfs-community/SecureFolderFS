@@ -1,7 +1,7 @@
 // Some parts of the following code were used from MauiPanPinchContainer on the MIT License basis.
 // See the associated license file for more information.
 
-namespace SecureFolderFS.Maui.UserControls
+namespace SecureFolderFS.Maui.UserControls.Common
 {
     /// <summary>
     /// <para><see href="https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/gestures/pan"/></para>

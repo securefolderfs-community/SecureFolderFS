@@ -85,7 +85,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
     {
         var asset = new AVAsset(NSUrl.FromFilename(videoPath));
         var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
-        CMTime time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
+        var time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
 
         NSError error;
         var imageRef = generator.CopyCGImageAtTime(time, out error);

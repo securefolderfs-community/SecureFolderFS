@@ -34,22 +34,22 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 if (value < 0)
                     throw new ArgumentOutOfRangeException(nameof(value));
 
-                if (value != _position)
+                if (value == _position)
+                    return;
+                
+                // Reset input stream and skip to the desired position
+                _inputStream.Reset(); // Resets to the beginning of the stream
+
+                // Skip to the desired position
+                var skipAmount = value;
+                while (skipAmount > 0)
                 {
-                    // Reset input stream and skip to the desired position
-                    _inputStream.Reset(); // Resets to the beginning of the stream
-
-                    // Skip to the desired position
-                    var skipAmount = value;
-                    while (skipAmount > 0)
-                    {
-                        var skipped = _inputStream.Skip(skipAmount);
-                        if (skipped <= 0) break;
-                        skipAmount -= skipped;
-                    }
-
-                    _position = value;
+                    var skipped = _inputStream.Skip(skipAmount);
+                    if (skipped <= 0) break;
+                    skipAmount -= skipped;
                 }
+
+                _position = value;
             }
         }
 
