@@ -67,7 +67,10 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                Padding="16"
+                Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
@@ -82,7 +85,6 @@
                 <apesui:ContextMenuContainer.Content>
                     <Grid
                         x:Name="SourceGrid"
-                        Padding="16"
                         Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
                         HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
                         RowSpacing="8">
@@ -95,7 +97,8 @@
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                             HeightRequest="{Binding BrowserViewModel.ViewOptions.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='48,64,132'}"
                             HorizontalOptions="Center"
-                            VerticalOptions="Center" />
+                            VerticalOptions="Center"
+                            WidthRequest="{Binding Width, Source={x:Reference ItemContainer}}" />
                         <Label
                             Grid.Row="1"
                             FontSize="15"
