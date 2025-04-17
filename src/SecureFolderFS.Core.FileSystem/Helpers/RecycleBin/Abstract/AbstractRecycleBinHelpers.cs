@@ -1,19 +1,36 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static class AbstractRecycleBinHelpers
     {
+        public static async Task<long> GetOccupiedSizeAsync(IFolder recycleBin, CancellationToken cancellationToken = default)
+        {
+            var recycleBinConfig = await recycleBin.GetFileByNameAsync(Core.FileSystem.Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            var text = await recycleBinConfig.ReadAllTextAsync(null, cancellationToken);
+            if (!long.TryParse(text, out var value))
+                return 0L;
+
+            return Math.Max(0L, value);
+        }
+
+        public static async Task SetOccupiedSizeAsync(IFolder recycleBin, long value, CancellationToken cancellationToken = default)
+        {
+            var recycleBinConfig = await recycleBin.GetFileByNameAsync(Core.FileSystem.Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            await recycleBinConfig.WriteAllTextAsync(Math.Max(0L, value).ToString(), null, cancellationToken);
+        }
+
         public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Read configuration file
@@ -69,7 +86,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         public static async Task RestoreAsync(IStorableChild item, IModifiableFolder destinationFolder, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
-                throw new UnauthorizedAccessException("The vault is read-only.");
+                throw FileSystemExceptions.FileSystemReadOnly;
 
             // Get recycle bin
             var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
@@ -91,12 +108,18 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
         }
 
-        public static async Task DeleteOrTrashAsync(IModifiableFolder sourceFolder, IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        public static async Task DeleteOrRecycleAsync(
+            IModifiableFolder sourceFolder,
+            IStorableChild item,
+            FileSystemSpecifics specifics,
+            IAsyncSerializer<Stream> streamSerializer,
+            long sizeHint = -1L,
+            CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
-                throw new UnauthorizedAccessException("The vault is read-only.");
+                throw FileSystemExceptions.FileSystemReadOnly;
 
-            if (!specifics.Options.IsRecycleBinEnabled)
+            if (!specifics.Options.IsRecycleBinEnabled())
             {
                 await sourceFolder.DeleteAsync(item, cancellationToken);
                 return;
@@ -106,6 +129,25 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+
+            if (sizeHint < 0 && specifics.Options.RecycleBinSize > 0L)
+            {
+                sizeHint = item switch
+                {
+                    IFile file => await file.GetSizeAsync(cancellationToken),
+                    IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                    _ => 0L
+                };
+
+                var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+                var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
+
+                if (availableSize < sizeHint)
+                {
+                    await sourceFolder.DeleteAsync(item, cancellationToken);
+                    return;
+                }
+            }
 
             // Get source Directory ID
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, sourceFolder.Id);
@@ -127,7 +169,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     OriginalName = item.Name,
                     ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
                     DirectoryId = directoryIdResult ? directoryId : [],
-                    DeletionTimestamp = DateTime.Now
+                    DeletionTimestamp = DateTime.Now,
+                    Size = sizeHint
                 }, cancellationToken);
 
             // Write to destination stream

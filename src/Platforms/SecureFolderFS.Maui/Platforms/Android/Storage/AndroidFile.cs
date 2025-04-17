@@ -67,7 +67,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (Document is null)
                 return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
 
-            properties ??= new AndroidDocumentProperties(Document);
+            properties ??= new AndroidFileProperties(Document);
             return Task.FromResult(properties);
         }
 

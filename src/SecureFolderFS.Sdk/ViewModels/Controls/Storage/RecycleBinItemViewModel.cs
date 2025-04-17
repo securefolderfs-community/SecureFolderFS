@@ -1,8 +1,3 @@
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -15,6 +10,12 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Pickers;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -22,17 +23,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Inject<IRecycleBinService>, Inject<IApplicationService>]
     public sealed partial class RecycleBinItemViewModel : StorageItemViewModel
     {
+        private readonly IRecycleBinFolder _recycleBin;
+
         [ObservableProperty] private DateTime? _DeletionTimestamp;
         [ObservableProperty] private RecycleBinOverlayViewModel _OverlayViewModel;
 
         /// <inheritdoc/>
         public override IStorable Inner { get; }
 
-        public RecycleBinItemViewModel(IStorableChild ciphertextItem, RecycleBinOverlayViewModel overlayViewModel)
+        public RecycleBinItemViewModel(RecycleBinOverlayViewModel overlayViewModel, IStorableChild ciphertextItem, IRecycleBinFolder recycleBin)
         {
             ServiceProvider = DI.Default;
-            Inner = ciphertextItem;
             OverlayViewModel = overlayViewModel;
+            Inner = ciphertextItem;
+            _recycleBin = recycleBin;
         }
 
         [RelayCommand]
@@ -46,16 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 ? DI.Service<IFileExplorerService>()
                 : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
 
-            foreach (var item in items)
-            {
-                if (item.Inner is not IStorableChild innerChild)
-                    continue;
-
-                var result = await RecycleBinService.RestoreItemAsync(OverlayViewModel.UnlockedVaultViewModel.StorageRoot, innerChild, folderPicker, cancellationToken);
-                if (result.Successful)
-                    OverlayViewModel.Items.Remove(item);
-            }
-
+            await _recycleBin.RestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken);
             OverlayViewModel.ToggleSelection(false);
         }
 
@@ -71,9 +66,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (item.Inner is not IStorableChild innerChild)
                     continue;
 
-                var result = await RecycleBinService.DeletePermanentlyAsync(innerChild, cancellationToken);
-                if (result.Successful)
-                    OverlayViewModel.Items.Remove(item);
+                await _recycleBin.DeleteAsync(innerChild, cancellationToken);
+                OverlayViewModel.Items.Remove(item);
             }
 
             OverlayViewModel.ToggleSelection(false);

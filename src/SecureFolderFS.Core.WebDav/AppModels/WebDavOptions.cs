@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.WebDav.AppModels
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
                 IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
-                IsRecycleBinEnabled = (bool?)options.Get(nameof(IsRecycleBinEnabled)) ?? false,
+                RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
 
                 // WebDav specific
                 Protocol = (string?)options.Get(nameof(Protocol)) ?? "http",

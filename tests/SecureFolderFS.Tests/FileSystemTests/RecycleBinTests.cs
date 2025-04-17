@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Tests.FileSystemTests
@@ -22,7 +23,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             _recycleBinService = DI.Service<IRecycleBinService>();
             _fileExplorerService = DI.Service<IFileExplorerService>();
-            _storageRoot = await MountVault(localFileSystem, (nameof(FileSystemOptions.IsRecycleBinEnabled), true));
+            _storageRoot = await MountVault(localFileSystem, (nameof(FileSystemOptions.RecycleBinSize), -1L));
         }
 
         [Test]
@@ -40,10 +41,11 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await modifiableFolder.DeleteAsync(file);
 
             // Assert
-            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
-            recycleBinItems.First().PlaintextName.Should().BeEquivalentTo(fileName);
+            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
+            recycleBinItems.First().Name.Should().BeEquivalentTo(fileName);
 
-            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
+            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => (x as IWrapper<IStorableChild>)?.Inner.Id)));
         }
 
         [Test]
@@ -66,14 +68,15 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFolder);
 
             // Assert
-            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
+            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
 
-            first.PlaintextName.Should().BeEquivalentTo("SUB_FILE");
-            second.PlaintextName.Should().BeEquivalentTo("SUB_FOLDER");
+            first.Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
+            second.Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
 
-            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => x.CiphertextItem.Id)));
+            Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => (x as IWrapper<IStorableChild>)?.Inner.Id)));
         }
 
         [Test]
@@ -96,16 +99,19 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFile);
             await subFolder.DeleteAsync(createdFolder);
 
-            var recycleBinItems = await _recycleBinService.GetRecycleBinItemsAsync(_storageRoot).ToArrayAsync();
+            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
 
-            await _recycleBinService.RestoreItemAsync(_storageRoot, first.CiphertextItem, _fileExplorerService);
-            await _recycleBinService.RestoreItemAsync(_storageRoot, second.CiphertextItem, _fileExplorerService);
+            await recycleBin.RestoreItemsAsync([ first ], _fileExplorerService);
+            await recycleBin.RestoreItemsAsync([ second ], _fileExplorerService);
 
             // Assert
             var restoredItems = await subFolder.GetItemsAsync().ToArrayAsync();
             restoredItems.Should().HaveCount(2);
+            restoredItems[0].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
+            restoredItems[1].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
 
             Assert.Pass($"{nameof(restoredItems)}:\n" + string.Join('\n', restoredItems.Select(x => x.Id)));
         }

@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using OwlCore.Storage;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 
 namespace SecureFolderFS.Storage.Pickers
 {

@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.AppModels.Sorters
@@ -36,18 +37,7 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
             if (browserItemViewModel is not FileViewModel fileViewModel)
                 return -1L;
 
-            if (fileViewModel.File is not IStorableProperties storableProperties)
-                return 0L;
-
-            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
-            if (properties is not ISizeProperties sizeProperties)
-                return 0L;
-
-            var sizeProperty = await sizeProperties.GetSizeAsync().ConfigureAwait(false);
-            if (sizeProperty is null)
-                return 0L;
-
-            return sizeProperty.Value;
+            return await fileViewModel.File.GetSizeAsync().ConfigureAwait(false);
         }
     }
 }

@@ -29,5 +29,13 @@ namespace SecureFolderFS.Core.FileSystem.DataModels
         /// </summary>
         [JsonPropertyName("deletionTimestamp")]
         public required DateTime? DeletionTimestamp { get; init; }
+
+        /// <summary>
+        /// Gets the size in bytes of the item. The value might be less than zero indicating that the size was not calculated.
+        /// </summary>
+        [JsonPropertyName("size")]
+        public required long? Size { get; init; }
+
+        // TODO: Add MAC key signing for tamper proofing
     }
 }

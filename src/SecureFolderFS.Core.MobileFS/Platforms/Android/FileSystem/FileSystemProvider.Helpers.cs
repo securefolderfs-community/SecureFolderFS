@@ -48,27 +48,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             async Task AddSizeAsync()
             {
-                if (storable is not IStorableProperties storableProperties)
+                if (storable is not IFile file)
                 {
                     row.Add(Document.ColumnSize, 0);
                     return;
                 }
 
-                var basicProperties = await storableProperties.TryGetPropertiesAsync();
-                if (basicProperties is not ISizeProperties sizeProperties)
-                {
-                    row.Add(Document.ColumnSize, 0);
-                    return;
-                }
-
-                var sizeProperty = await sizeProperties.GetSizeAsync();
-                if (sizeProperty is null)
-                {
-                    row.Add(Document.ColumnSize, 0);
-                    return;
-                }
-
-                row.Add(Document.ColumnSize, sizeProperty.Value);
+                var size = await file.GetSizeAsync();
+                row.Add(Document.ColumnSize, size);
             }
             void AddFlags()
             {

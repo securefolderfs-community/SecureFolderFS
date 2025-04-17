@@ -1,12 +1,13 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         private readonly ChunkAccess _chunkAccess;
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
-        private readonly object _writeLock = new();
+        private readonly Lock _writeLock = new();
 
         private long _Length;
         private long _Position;

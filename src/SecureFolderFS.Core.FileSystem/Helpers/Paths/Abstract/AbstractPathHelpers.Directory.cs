@@ -1,11 +1,10 @@
+using OwlCore.Storage;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
@@ -20,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             BufferHolder? cachedId;
             if (specifics.DirectoryIdCache.IsAvailable)
             {
-                cachedId = specifics.DirectoryIdCache.CacheGet(folderOfDirectoryId.Id);
+                cachedId = specifics.DirectoryIdCache.CacheGet(Path.Combine(folderOfDirectoryId.Id, Constants.Names.DIRECTORY_ID_FILENAME));
                 if (cachedId is not null)
                 {
                     cachedId.Buffer.CopyTo(directoryId);
@@ -36,7 +35,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             {
                 cachedId = new(Constants.DIRECTORY_ID_SIZE);
                 read = await directoryIdStream.ReadAsync(cachedId.Buffer, cancellationToken).ConfigureAwait(false);
-                specifics.DirectoryIdCache.CacheSet(folderOfDirectoryId.Id, cachedId);
+                specifics.DirectoryIdCache.CacheSet(Path.Combine(folderOfDirectoryId.Id, Constants.Names.DIRECTORY_ID_FILENAME), cachedId);
                 
                 cachedId.Buffer.CopyTo(directoryId);
             }

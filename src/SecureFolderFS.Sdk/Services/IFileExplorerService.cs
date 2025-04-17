@@ -1,9 +1,9 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Storage.Pickers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.Services
 {

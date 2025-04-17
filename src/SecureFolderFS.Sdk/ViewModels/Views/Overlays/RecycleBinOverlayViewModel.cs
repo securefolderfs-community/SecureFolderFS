@@ -1,15 +1,18 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -17,6 +20,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IRecycleBinService>]
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
     {
+        private IRecycleBinFolder? _recycleBin;
+
         [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private bool _IsRecycleBinEnabled;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
@@ -36,29 +41,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in RecycleBinService.GetRecycleBinItemsAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken))
+            _recycleBin ??= await RecycleBinService.GetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
+            IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled();
+
+            await foreach (var item in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
-                Items.Add(new(item.CiphertextItem, this)
+                if (item is not IRecycleBinItem recycleBinItem)
+                    continue;
+
+                Items.Add(new(this, recycleBinItem.Inner, _recycleBin)
                 {
-                    Title = item.PlaintextName,
-                    DeletionTimestamp = item.DeletionTimestamp
+                    Title = recycleBinItem.Name,
+                    DeletionTimestamp = recycleBinItem.DeletionTimestamp
                 });
             }
-
-            IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled;
         }
 
         [RelayCommand]
         private async Task ToggleRecycleBinAsync(CancellationToken cancellationToken)
         {
             var isEnabled = IsRecycleBinEnabled;
-            var isSuccess = await RecycleBinService.ToggleRecycleBinAsync(
-                UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder,
+            await RecycleBinService.ConfigureRecycleBinAsync(
                 UnlockedVaultViewModel.StorageRoot,
-                !isEnabled,
+                isEnabled ? 0L : -1L,
                 cancellationToken);
 
-            IsRecycleBinEnabled = !isSuccess ? isEnabled : !isEnabled;
+            IsRecycleBinEnabled = !isEnabled;
         }
 
         [RelayCommand]

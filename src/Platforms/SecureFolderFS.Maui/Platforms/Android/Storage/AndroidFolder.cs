@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using Android.Provider;
 using Android.Webkit;
 using AndroidX.DocumentFile.Provider;
-using AndroidX.Navigation;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
@@ -193,7 +192,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (Document is null)
                 return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
 
-            properties ??= new AndroidDocumentProperties(Document);
+            properties ??= new AndroidFolderProperties(Document);
             return Task.FromResult(properties);
         }
     }

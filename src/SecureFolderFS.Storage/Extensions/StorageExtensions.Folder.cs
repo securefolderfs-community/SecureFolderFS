@@ -1,10 +1,9 @@
-﻿using System;
+﻿using OwlCore.Storage;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -189,34 +188,41 @@ namespace SecureFolderFS.Storage.Extensions
             return from.Id == relativePath? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
         }
 
-        /// <returns>Value is <see cref="IResult{T}"/> depending on whether the file was created successfully.</returns>
-        /// <inheritdoc cref="IModifiableFolder.CreateFileAsync"/>
-        public static async Task<IResult<IFile?>> CreateFileWithResultAsync(this IModifiableFolder folder, string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)
         {
-            try
+            if (folder is IStorableProperties storableProperties)
             {
-                var file = await folder.CreateFileAsync(desiredName, overwrite, cancellationToken);
-                return Result<IFile?>.Success(file);
+                var properties = await storableProperties.GetPropertiesAsync();
+                if (properties is ISizeProperties sizeProperties)
+                {
+                    var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken);
+                    if (sizeProperty is not null)
+                        return sizeProperty.Value;
+                }
             }
-            catch (Exception ex)
-            {
-                return Result<IFile?>.Failure(ex);
-            }
-        }
 
-        /// <returns>Value is <see cref="IResult{T}"/> depending on whether the folder was created successfully.</returns>
-        /// <inheritdoc cref="IModifiableFolder.CreateFolderAsync"/>
-        public static async Task<IResult<IFolder?>> CreateFolderWithResultAsync(this IModifiableFolder folder, string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
-        {
-            try
+            var totalSize = 0L;
+            await foreach (var item in folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
-                var folder2 = await folder.CreateFolderAsync(desiredName, overwrite, cancellationToken);
-                return Result<IFolder?>.Success(folder2);
+                switch (item)
+                {
+                    case IFile file:
+                    {
+                        // Get file size
+                        totalSize += await file.GetSizeAsync(cancellationToken);
+                        break;
+                    }
+
+                    case IFolder subFolder:
+                    {
+                        // Get recursive folder size
+                        totalSize += await subFolder.GetSizeAsync(cancellationToken);
+                        break;
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                return Result<IFolder?>.Failure(ex);
-            }
+
+            return totalSize;
         }
     }
 }

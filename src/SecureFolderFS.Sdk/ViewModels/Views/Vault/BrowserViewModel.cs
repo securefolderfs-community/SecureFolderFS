@@ -20,6 +20,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -41,6 +42,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigator? OuterNavigator { get; }
 
         public ViewOptionsViewModel ViewOptions { get; }
+
+        public required IVFSRoot StorageRoot { get; init; }
 
         public BrowserViewModel(IFolder baseFolder, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
         {

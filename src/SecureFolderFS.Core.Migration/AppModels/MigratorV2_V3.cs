@@ -93,6 +93,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 AuthenticationMethod = _v2ConfigDataModel.AuthenticationMethod,
                 ContentCipherId = _v2ConfigDataModel.ContentCipherId,
                 FileNameCipherId = _v2ConfigDataModel.FileNameCipherId,
+                FileNameEncodingId = Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes],
                 Uid = _v2ConfigDataModel.Uid,
                 Version = Constants.Vault.Versions.V3

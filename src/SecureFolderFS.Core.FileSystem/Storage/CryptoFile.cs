@@ -1,11 +1,11 @@
-﻿using System;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {

@@ -47,9 +47,14 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
-        /// Gets or sets whether to enable the recycle bin.
+        /// Gets or sets the maximum size in bytes of the recycle bin.
         /// </summary>
-        public bool IsRecycleBinEnabled { get; protected set => SetField(ref field, value); }
+        /// <remarks>
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
+        /// </remarks>
+        public long RecycleBinSize { get; protected set => SetField(ref field, value); }
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -64,12 +69,12 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         }
 
         /// <summary>
-        /// Sets the recycle bin status of the file system.
+        /// Sets the maximum size of the recycle bin.
         /// </summary>
-        /// <param name="value">If true, sets the file system to use the recycle bin.</param>
-        public void DangerousSetRecycleBin(bool value)
+        /// <param name="value">The size in bytes.</param>
+        public void DangerousSetRecycleBin(long value)
         {
-            IsRecycleBinEnabled = value;
+            RecycleBinSize = value;
         }
 
         /// <summary>
@@ -102,7 +107,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
                 IsCachingDirectoryIds = GetOption<bool?>(options, nameof(IsCachingDirectoryIds)) ?? true,
-                IsRecycleBinEnabled = (bool?)options.Get(nameof(IsRecycleBinEnabled)) ?? false
+                RecycleBinSize = GetOption<long?>(options, nameof(RecycleBinSize)) ?? 0L
             };
         }
 

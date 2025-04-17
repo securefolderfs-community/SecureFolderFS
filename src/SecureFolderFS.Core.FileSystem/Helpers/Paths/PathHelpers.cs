@@ -10,9 +10,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCoreName(string itemName)
         {
-            return 
+            return
                 itemName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.OrdinalIgnoreCase) ||
-                itemName.Contains(Constants.Names.RECYCLE_BIN_NAME, StringComparison.OrdinalIgnoreCase);
+                itemName.Contains(Constants.Names.RECYCLE_BIN_NAME, StringComparison.OrdinalIgnoreCase) ||
+                itemName.Contains(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -33,7 +34,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
             }
             else if (OperatingSystem.IsMacCatalyst())
             {
-                return $@"{Path.DirectorySeparatorChar}{Path.Combine("Volumes", nameHint)}{Path.DirectorySeparatorChar}";
+                return $"{Path.DirectorySeparatorChar}{Path.Combine("Volumes", nameHint)}{Path.DirectorySeparatorChar}";
             }
 
             return null;

@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.SystemStorageEx;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT_InitializeObject(filePicker);
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT_InitializeObject(folderPicker);
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             }
 
 #if __MACOS__ || __MACCATALYST__
-            Process.Start("sh", ["-c", $"open {folder.Id}"]);
+            Process.Start("sh", [ "-c", $"open {folder.Id}" ]);
             return Task.CompletedTask;
 #elif WINDOWS
             return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
@@ -89,10 +89,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (filter is not null)
             {
                 foreach (var item in filter)
-                    filePicker.FileTypeChoices.Add(item.Key, new[] { item.Value == "*" ? "." : item.Value });
+                    filePicker.FileTypeChoices.Add(item.Key, [ item.Value == "*" ? "." : item.Value ]);
             }
             else
-                filePicker.FileTypeChoices.Add("All Files", new[] { "." });
+                filePicker.FileTypeChoices.Add("All Files", [ "." ]);
 
             var file = await filePicker.PickSaveFileAsync().AsTask(cancellationToken);
             if (file is null)
@@ -107,10 +107,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
         private static void WinRT_InitializeObject(object obj)
         {
-            _ = obj;
 #if WINDOWS
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Instance?.MainWindow);
             WinRT.Interop.InitializeWithWindow.Initialize(obj, hwnd);
+#else
+            _ = obj;
 #endif
         }
     }

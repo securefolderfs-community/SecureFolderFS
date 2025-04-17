@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.StorageProperties;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetFirstByName, IRenamableFolder
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IRenamableFolder, IRecyclableFolder
     {
         public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
@@ -90,18 +91,36 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
+            await DeleteAsync(item, -1L, false, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(IStorableChild item, long sizeHint, bool deleteImmediately = false,
+            CancellationToken cancellationToken = default)
+        {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            // TODO: Invalidate cache on success
             // TODO: Get by ID instead of name
 
             // We need to get the equivalent on the disk
             var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, Inner, specifics, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
 
-            // Delete the ciphertext item
-            await AbstractRecycleBinHelpers.DeleteOrTrashAsync(modifiableFolder, ciphertextItem, specifics, StreamSerializer.Instance, cancellationToken);
+            if (deleteImmediately)
+            {
+                // Delete the ciphertext item
+                await modifiableFolder.DeleteAsync(item, cancellationToken);
+            }
+            else
+            {
+                // Delete or recycle the ciphertext item
+                await AbstractRecycleBinHelpers.DeleteOrRecycleAsync(modifiableFolder, ciphertextItem, specifics, StreamSerializer.Instance, sizeHint, cancellationToken);
+            }
+
+            // Remove deleted directory from cache
+            if (ciphertextItem is IFolder)
+                specifics.DirectoryIdCache.CacheRemove(Path.Combine(ciphertextItem.Id, Constants.Names.DIRECTORY_ID_FILENAME));
         }
 
         /// <inheritdoc/>

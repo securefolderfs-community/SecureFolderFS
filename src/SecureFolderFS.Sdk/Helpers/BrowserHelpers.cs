@@ -14,7 +14,10 @@ namespace SecureFolderFS.Sdk.Helpers
         {
             innerNavigator ??= DI.Service<INavigationService>();
             var rootFolder = unlockedVaultViewModel.StorageRoot.VirtualizedRoot;
-            var browserViewModel = new BrowserViewModel(rootFolder, innerNavigator, outerNavigator, unlockedVaultViewModel.VaultViewModel);
+            var browserViewModel = new BrowserViewModel(rootFolder, innerNavigator, outerNavigator, unlockedVaultViewModel.VaultViewModel)
+            {
+                StorageRoot = unlockedVaultViewModel.StorageRoot
+            };
             var transferViewModel = new TransferViewModel(browserViewModel);
             var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
 

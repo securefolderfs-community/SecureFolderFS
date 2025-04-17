@@ -1,10 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -18,12 +12,20 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.StorageProperties;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
@@ -224,23 +226,69 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task DeleteAsync(CancellationToken cancellationToken)
         {
-            if (ParentFolder?.Folder is not IModifiableFolder modifiableFolder)
+            if (ParentFolder is null)
                 return;
 
-            // TODO: Show an overlay to ask the user **when deleting permanently**
             // TODO: If moving to trash, show TransferViewModel (with try..catch..finally), otherwise don't show anything
-
-            var items = ParentFolder.BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
-                items = [this];
+                items = [ this ];
 
             // Disable selection, if called with selected items
-            ParentFolder.BrowserViewModel.IsSelecting = false;
+            BrowserViewModel.IsSelecting = false;
 
-            foreach (var item in items)
+            if (BrowserViewModel.StorageRoot.Options.IsRecycleBinEnabled())
             {
-                await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
-                ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
+                    return;
+
+                var sizes = new List<long>();
+                foreach (var item in items)
+                {
+                    sizes.Add(item.Inner switch
+                    {
+                        IFile file => await file.GetSizeAsync(cancellationToken),
+                        IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                        _ => 0L
+                    });
+                }
+
+                var recycleBin = await RecycleBinService.GetRecycleBinAsync(BrowserViewModel.StorageRoot, cancellationToken);
+                var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
+                var availableSize = BrowserViewModel.StorageRoot.Options.RecycleBinSize - occupiedSize;
+
+                if (availableSize < sizes.Sum())
+                {
+                    // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently
+                    for (var i = 0; i < items.Length; i++)
+                    {
+                        var item = items[i];
+                        await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], true, cancellationToken);
+                        ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < items.Length; i++)
+                    {
+                        var item = items[i];
+                        await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
+                        ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                    }
+                }
+            }
+            else
+            {
+                if (ParentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                    return;
+
+                // TODO: Show an overlay to ask the user **when deleting permanently**
+
+                foreach (var item in items)
+                {
+                    await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
+                    ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                }
             }
         }
 
