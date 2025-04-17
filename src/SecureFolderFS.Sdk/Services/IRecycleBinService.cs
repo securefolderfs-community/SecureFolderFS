@@ -25,5 +25,13 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns an <see cref="IRecycleBinFolder"/> instance.</returns>
         Task<IRecycleBinFolder> GetRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets or creates the recycle bin folder for a specific unlocked vault.
+        /// </summary>
+        /// <param name="vfsRoot">The root of the virtual file system.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns an <see cref="IRecycleBinFolder"/> instance.</returns>
+        Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
     }
 }

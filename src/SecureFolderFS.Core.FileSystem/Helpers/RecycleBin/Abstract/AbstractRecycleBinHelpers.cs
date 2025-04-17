@@ -106,6 +106,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             // Delete old configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
             await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
+
+            // Check if the item had any size
+            if (deserialized.Size is not ({ } size and > 0L))
+                return;
+
+            // Update occupied size
+            var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+            var newSize = occupiedSize - size;
+            await SetOccupiedSizeAsync(recycleBin, newSize, cancellationToken);
         }
 
         public static async Task DeleteOrRecycleAsync(
@@ -141,7 +150,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
                 var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
-
                 if (availableSize < sizeHint)
                 {
                     await sourceFolder.DeleteAsync(item, cancellationToken);
@@ -175,6 +183,14 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Write to destination stream
             await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+
+            // Update occupied size
+            if (specifics.Options.IsRecycleBinEnabled())
+            {
+                var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+                var newSize = occupiedSize + sizeHint;
+                await SetOccupiedSizeAsync(recycleBin, newSize, cancellationToken);
+            }
         }
 
         public static async Task<IFolder?> GetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)

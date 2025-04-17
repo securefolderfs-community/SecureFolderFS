@@ -242,6 +242,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
                     return;
 
+                var recycleBin = await RecycleBinService.TryGetOrCreateRecycleBinAsync(BrowserViewModel.StorageRoot, cancellationToken);
+                if (recycleBin is null)
+                    return;
+
                 var sizes = new List<long>();
                 foreach (var item in items)
                 {
@@ -253,10 +257,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     });
                 }
 
-                var recycleBin = await RecycleBinService.GetRecycleBinAsync(BrowserViewModel.StorageRoot, cancellationToken);
                 var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
                 var availableSize = BrowserViewModel.StorageRoot.Options.RecycleBinSize - occupiedSize;
-
                 if (availableSize < sizes.Sum())
                 {
                     // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently

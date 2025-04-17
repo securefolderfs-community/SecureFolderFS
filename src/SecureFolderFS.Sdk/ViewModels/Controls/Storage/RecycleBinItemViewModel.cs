@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
@@ -50,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 ? DI.Service<IFileExplorerService>()
                 : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
 
-            await _recycleBin.RestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken);
+            await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken);
             OverlayViewModel.ToggleSelection(false);
         }
 
@@ -66,8 +67,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (item.Inner is not IStorableChild innerChild)
                     continue;
 
-                await _recycleBin.DeleteAsync(innerChild, cancellationToken);
-                OverlayViewModel.Items.Remove(item);
+                try
+                {
+                    await _recycleBin.DeleteAsync(innerChild, cancellationToken);
+                    OverlayViewModel.Items.Remove(item);
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
             }
 
             OverlayViewModel.ToggleSelection(false);

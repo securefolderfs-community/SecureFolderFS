@@ -6,6 +6,7 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.AppModels;
 
@@ -32,11 +33,24 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
 
+            var recycleBin = await AbstractRecycleBinHelpers.GetRecycleBinAsync(specificsWrapper.Inner, cancellationToken);
+            if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
+
+            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specificsWrapper.Inner, StreamSerializer.Instance);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        {
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+
             var recycleBin = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specificsWrapper.Inner, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specificsWrapper.Inner);
+            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specificsWrapper.Inner, StreamSerializer.Instance);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await modifiableFolder.DeleteAsync(file);
 
             // Assert
-            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBin = await _recycleBinService.GetOrCreateRecycleBinAsync(_storageRoot);
             var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
             recycleBinItems.First().Name.Should().BeEquivalentTo(fileName);
 
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFolder);
 
             // Assert
-            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBin = await _recycleBinService.GetOrCreateRecycleBinAsync(_storageRoot);
             var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFile);
             await subFolder.DeleteAsync(createdFolder);
 
-            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            var recycleBin = await _recycleBinService.GetOrCreateRecycleBinAsync(_storageRoot);
             var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];

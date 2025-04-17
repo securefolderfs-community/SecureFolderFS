@@ -41,9 +41,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            _recycleBin ??= await RecycleBinService.GetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
-            IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled();
+            _recycleBin ??= await RecycleBinService.TryGetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
+            if (_recycleBin is null)
+                return;
 
+            IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled();
             await foreach (var item in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (item is not IRecycleBinItem recycleBinItem)
@@ -67,6 +69,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 cancellationToken);
 
             IsRecycleBinEnabled = !isEnabled;
+            if (IsRecycleBinEnabled)
+                _recycleBin ??= await RecycleBinService.TryGetOrCreateRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
         }
 
         [RelayCommand]

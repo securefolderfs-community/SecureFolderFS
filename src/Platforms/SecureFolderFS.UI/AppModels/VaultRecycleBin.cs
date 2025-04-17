@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -24,6 +25,7 @@ namespace SecureFolderFS.UI.AppModels
         private readonly IVFSRoot _vfsRoot;
         private readonly FileSystemSpecifics _specifics;
         private readonly IModifiableFolder _recycleBin;
+        private readonly IAsyncSerializer<Stream> _serializer;
 
         /// <inheritdoc/>
         public string Id => _recycleBin.Id;
@@ -31,11 +33,12 @@ namespace SecureFolderFS.UI.AppModels
         /// <inheritdoc/>
         public string Name => _recycleBin.Name;
 
-        public VaultRecycleBin(IModifiableFolder recycleBin, IVFSRoot vfsRoot, FileSystemSpecifics specifics)
+        public VaultRecycleBin(IModifiableFolder recycleBin, IVFSRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
         {
             _recycleBin = recycleBin;
             _vfsRoot = vfsRoot;
             _specifics = specifics;
+            _serializer = serializer;
         }
 
         /// <inheritdoc/>
@@ -152,9 +155,23 @@ namespace SecureFolderFS.UI.AppModels
             // Get the associated configuration file
             var configurationFile = await _recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
 
+            // Deserialize configuration
+            RecycleBinItemDataModel? itemDataModel;
+            await using (var configurationStream = await configurationFile.OpenReadAsync(cancellationToken))
+                itemDataModel = await _serializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
+
             // Delete both items
             await _recycleBin.DeleteAsync(item, cancellationToken);
             await _recycleBin.DeleteAsync(configurationFile, cancellationToken);
+
+            // Check if the item had any size
+            if (itemDataModel is not { Size: { } size and > 0L })
+                return;
+
+            // Update occupied size
+            var occupiedSize = await AbstractRecycleBinHelpers.GetOccupiedSizeAsync(_recycleBin, cancellationToken);
+            var newSize = occupiedSize - size;
+            await AbstractRecycleBinHelpers.SetOccupiedSizeAsync(_recycleBin, newSize, cancellationToken);
         }
 
         /// <inheritdoc/>
