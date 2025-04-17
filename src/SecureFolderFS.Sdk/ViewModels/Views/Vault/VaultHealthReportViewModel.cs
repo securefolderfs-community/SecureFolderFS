@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (severity != SeverityType.Success && FoundIssues.IsEmpty())
             {
                 _Severity = SeverityType.Success;
-                _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
+                _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)), null);
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (Severity != severity)
             {
                 _Severity = severity;
-                _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
+                _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)), null);
             }
 #pragma warning restore MVVMTK0034
         }

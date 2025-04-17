@@ -4,21 +4,86 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
+    xmlns:vm2="clr-namespace:SecureFolderFS.UI.ViewModels.Health;assembly=SecureFolderFS.UI"
     Title="{l:ResourceString Rid=HealthReport}"
     x:DataType="local:HealthPage">
 
-    <VerticalStackLayout Padding="16">
+    <ContentPage.Resources>
+        <vc:ExpandedStateToIconConverter x:Key="ExpandedStateToIconConverter" />
+
+        <!--  Directory Issue  -->
+        <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
+            <mtk:Expander x:Name="IssueExpander">
+                <mtk:Expander.Header>
+                    <Grid Padding="16,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Text="{Binding Title, Mode=OneWay}" />
+
+                        <mi:MauiIcon
+                            Grid.Column="1"
+                            Icon="{Binding IsExpanded, Mode=OneWay, Source={x:Reference IssueExpander}, Converter={StaticResource ExpandedStateToIconConverter}}"
+                            IconSize="19" />
+                    </Grid>
+                </mtk:Expander.Header>
+                <mtk:Expander.Content>
+                    <CollectionView ItemsSource="{Binding Issues, Mode=OneWay}">
+                        <CollectionView.ItemTemplate>
+                            <ts:HealthIssueTemplateSelector
+                                DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                                IssueTemplate="{StaticResource IssueTemplate}"
+                                NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </mtk:Expander.Content>
+            </mtk:Expander>
+        </DataTemplate>
+
+        <!--  Name Issue  -->
+        <DataTemplate x:Key="NameIssueTemplate" x:DataType="vm2:HealthNameIssueViewModel">
+            <uco:OptionsControl Title="{Binding Title, Mode=OneWay}" SlotText="{Binding ItemName, Mode=OneWay}" />
+        </DataTemplate>
+
+        <!--  Base Issue  -->
+        <DataTemplate x:Key="IssueTemplate" x:DataType="vm:HealthIssueViewModel">
+            <Label Text="{Binding Title, Mode=OneWay}" />
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Padding="16" Spacing="32">
         <uc:ProgressiveButton
             x:Name="ProgressiveButton"
+            Title="{Binding ViewModel.Title, Mode=OneWay}"
+            Command="{Binding ViewModel.StartScanningCommand, Mode=OneWay}"
             DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
                                      iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
             HorizontalOptions="Fill"
-            IsProgressing="True"
-            Progress="60" />
+            IsProgressing="{Binding ViewModel.IsProgressing, Mode=OneWay}"
+            Progress="{Binding ViewModel.CurrentProgress, Mode=OneWay}"
+            Subtitle="Scanned 10 out of 100" />
 
-        <Grid VerticalOptions="Start" />
+        <uco:OptionsContainer Title="Found Issues">
+            <uco:OptionsContainer.InnerContent>
+                <CollectionView ItemsSource="{Binding ViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
+                    <CollectionView.ItemTemplate>
+                        <ts:HealthIssueTemplateSelector
+                            DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                            IssueTemplate="{StaticResource IssueTemplate}"
+                            NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </uco:OptionsContainer.InnerContent>
+        </uco:OptionsContainer>
     </VerticalStackLayout>
 </ContentPage>

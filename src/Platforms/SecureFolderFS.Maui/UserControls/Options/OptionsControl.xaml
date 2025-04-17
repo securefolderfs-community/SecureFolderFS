@@ -11,10 +11,13 @@
     </ContentView.Resources>
 
     <VerticalStackLayout>
-        <Grid Padding="16,0" HeightRequest="40">
+        <Grid
+            Padding="16,0"
+            ColumnSpacing="32"
+            HeightRequest="40">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <Label
@@ -26,6 +29,7 @@
             <ContentView
                 Grid.Column="1"
                 Content="{Binding Slot, Mode=OneWay, Source={x:Reference ThisControl}}"
+                HorizontalOptions="End"
                 VerticalOptions="Center" />
         </Grid>
 

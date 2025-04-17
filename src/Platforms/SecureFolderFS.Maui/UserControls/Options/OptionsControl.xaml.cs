@@ -20,6 +20,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
             optionsControl._slotLabel ??= new()
             {
                 VerticalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.TailTruncation,
                 FontSize = 15d
             };
 

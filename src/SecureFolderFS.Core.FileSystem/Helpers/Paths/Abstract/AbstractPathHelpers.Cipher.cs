@@ -91,13 +91,20 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a decrypted name.</returns>
         public static async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
-            if (specifics.Security.NameCrypt is null)
-                return ciphertextName;
+            try
+            {
+                if (specifics.Security.NameCrypt is null)
+                    return ciphertextName;
 
-            var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
-            var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
+                var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
+                var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
 
-            return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
+                return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

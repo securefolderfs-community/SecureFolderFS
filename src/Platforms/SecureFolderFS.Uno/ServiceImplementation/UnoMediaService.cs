@@ -4,9 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Imaging;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Uno.AppModels;
+using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
@@ -24,8 +26,15 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             return new ImageBitmap(bitmapImage, null);
 
-            //var mimeType = MimeTypeMap.GetMimeType(file.Id);
-            //return await ImagingHelpers.GetBitmapFromStreamAsync(winrtStream, mimeType, cancellationToken);
+            // TODO: Check if it works
+            var classification = FileTypeHelper.GetClassification(file);
+            return await ImagingHelpers.GetBitmapFromStreamAsync(winrtStream, classification.MimeType, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IImageStream?>(null);
         }
 
         /// <inheritdoc/>

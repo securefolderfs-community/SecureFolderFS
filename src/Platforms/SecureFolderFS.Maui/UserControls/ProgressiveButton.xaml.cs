@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using MauiIcons.Material;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -30,6 +31,30 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty DefaultIconProperty =
             BindableProperty.Create(nameof(DefaultIcon), typeof(Enum), typeof(ProgressiveButton), MaterialIcons.Search);
+        
+        public ICommand? Command
+        {
+            get => (ICommand?)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
+        public static readonly BindableProperty CommandProperty =
+            BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ProgressiveButton));
+        
+        public string? Title
+        {
+            get => (string?)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+        public static readonly BindableProperty TitleProperty =
+            BindableProperty.Create(nameof(Title), typeof(string), typeof(ProgressiveButton));
+        
+        public string? Subtitle
+        {
+            get => (string?)GetValue(SubtitleProperty);
+            set => SetValue(SubtitleProperty, value);
+        }
+        public static readonly BindableProperty SubtitleProperty =
+            BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(ProgressiveButton));
         
         public bool IsProgressing
         {

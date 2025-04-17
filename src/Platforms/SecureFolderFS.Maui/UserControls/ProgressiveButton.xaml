@@ -9,6 +9,7 @@
 
     <ContentView.Resources>
         <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </ContentView.Resources>
 
     <Border
@@ -22,6 +23,11 @@
         </Border.StrokeShape>
 
         <Grid>
+            <Grid
+                BackgroundColor="{StaticResource ShimFillPrimaryColor}"
+                HorizontalOptions="Fill"
+                Opacity="0.5" />
+
             <Grid
                 x:Name="ProgressStrip"
                 Background="{StaticResource ThemeSecondaryColorBrush}"
@@ -37,6 +43,7 @@
 
                 <mi:MauiIcon
                     Grid.Column="0"
+                    Margin="9,8"
                     Icon="{Binding DefaultIcon, Mode=OneWay}"
                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
                 <ActivityIndicator
@@ -48,9 +55,22 @@
                     <Label
                         FontAttributes="Bold"
                         FontSize="18"
-                        Text="Scanning items" />
-                    <Label Text="Scanned 10 of 100 items" />
+                        IsVisible="{Binding Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding Title, Mode=OneWay}" />
+                    <Label IsVisible="{Binding Subtitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding Subtitle, Mode=OneWay}" />
                 </VerticalStackLayout>
+            </Grid>
+
+            <Grid>
+                <Grid.Behaviors>
+                    <mtk:TouchBehavior
+                        Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        DefaultAnimationDuration="150"
+                        DefaultBackgroundColor="{AppThemeBinding Light={StaticResource LightTransparentColor},
+                                                                 Dark={StaticResource DarkTransparentColor}}"
+                        PressedAnimationDuration="150"
+                        PressedBackgroundColor="#AAFFFFFF" />
+                </Grid.Behaviors>
             </Grid>
         </Grid>
     </Border>

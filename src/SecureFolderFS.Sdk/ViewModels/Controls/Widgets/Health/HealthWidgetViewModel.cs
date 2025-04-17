@@ -84,7 +84,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (!HealthReportViewModel.IsProgressing)
                 return;
 
-            _context?.Post(_ => HealthReportViewModel.CurrentProgress = Math.Round(value), null);
+            _context.PostOrExecute(_ => HealthReportViewModel.CurrentProgress = Math.Round(value));
         }
 
         /// <inheritdoc/>
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (!HealthReportViewModel.IsProgressing)
                 return;
 
-            _context?.Post(_ =>
+            _context.PostOrExecute(_ =>
             {
                 if (value.Total == 0)
                     Title = value.Achieved == 0
@@ -103,7 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
                     Title = value.Achieved == value.Total
                             ? "Scan completed"
                             : $"Scanning items ({value.Achieved} of {value.Total})";
-            }, null);
+            });
         }
 
         [RelayCommand]
@@ -150,7 +150,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _cts?.Dispose();
             _cts = new();
             EndScanning();
-            _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
+            _context.PostOrExecute(_ => HealthReportViewModel.CanResolve = false);
         }
 
         private async Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken)
@@ -159,18 +159,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
                 return;
 
             // Begin scanning
-            _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
+            _context.PostOrExecute(_ => HealthReportViewModel.CanResolve = false);
             await _vaultHealthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
             EndScanning();
 
             // Finish scanning
             var scanDate = DateTime.Now;
-            _context?.Post(_ =>
+            _context.PostOrExecute(_ =>
             {
                 HealthReportViewModel.CanResolve = !HealthReportViewModel.FoundIssues.IsEmpty();
                 var localizedDate = LocalizationService.LocalizeDate(scanDate);
                 LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
-            }, null);
+            });
 
             // Persist last scanned date
             await WidgetModel.SetWidgetDataAsync(scanDate.ToString("o"), cancellationToken);
@@ -181,7 +181,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (!HealthReportViewModel.IsProgressing)
                 return;
 
-            _context?.Post(_ =>
+            _context.PostOrExecute(_ =>
             {
                 // Reset progress
                 HealthReportViewModel.IsProgressing = false;
@@ -195,7 +195,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
                     SeverityType.Critical => "HealthProblems".ToLocalized(),
                     _ => "HealthNoProblems".ToLocalized()
                 };
-            }, null);
+            });
         }
 
         private async void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
@@ -204,7 +204,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
                 return;
 
             var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result, e.Storable);
-            _context?.Post(_ => HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)), null);
+            _context.PostOrExecute(_ => HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)));
         }
 
         /// <inheritdoc/>

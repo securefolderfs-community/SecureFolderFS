@@ -1,10 +1,8 @@
-using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.UI.ViewModels.Health;
 
-namespace SecureFolderFS.Uno.TemplateSelectors
+namespace SecureFolderFS.Maui.TemplateSelectors
 {
-    internal sealed class HealthIssueTemplateSelector : BaseTemplateSelector<HealthIssueViewModel>
+    internal sealed class HealthIssueTemplateSelector : DataTemplateSelector
     {
         public DataTemplate? IssueTemplate { get; set; }
 
@@ -13,9 +11,9 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? FileDataIssueTemplate { get; set; }
 
         public DataTemplate? DirectoryIssueTemplate { get; set; }
-
+        
         /// <inheritdoc/>
-        protected override DataTemplate? SelectTemplateCore(HealthIssueViewModel? item, DependencyObject container)
+        protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
             return item switch
             {
@@ -23,7 +21,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 HealthFileDataIssueViewModel => FileDataIssueTemplate,
                 HealthDirectoryIssueViewModel => DirectoryIssueTemplate,
                 not null => IssueTemplate,
-                _ => base.SelectTemplateCore(item, container)
+                _ => null
             };
         }
     }
