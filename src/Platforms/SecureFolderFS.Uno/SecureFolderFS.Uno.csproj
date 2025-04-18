@@ -87,6 +87,7 @@
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
+        <PackageReference Include="Vanara.PInvoke.Shell32" />
       </ItemGroup>
 
       <ItemGroup>

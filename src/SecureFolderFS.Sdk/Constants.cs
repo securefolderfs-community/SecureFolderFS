@@ -30,8 +30,9 @@
 
         public static class Vault
         {
-            public const string VAULT_ICON_FILENAME = "vault.icon";
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
+            public const string VAULT_ICON_FILENAME = "vault_icon";
+            public const string VAULT_ICON_FILENAME_ICO = "vault_icon.ico";
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
             public const string VAULT_README_MESSAGE = """
                                                               PLEASE READ BEFORE USING THIS VAULT

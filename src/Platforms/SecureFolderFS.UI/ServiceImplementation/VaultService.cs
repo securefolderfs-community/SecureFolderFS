@@ -7,7 +7,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;

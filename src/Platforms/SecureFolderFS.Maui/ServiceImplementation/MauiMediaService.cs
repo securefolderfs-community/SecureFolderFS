@@ -61,7 +61,13 @@ namespace SecureFolderFS.Maui.ServiceImplementation
 
             return new VideoStreamServer(stream, classification.MimeType);
         }
-        
+
+        /// <inheritdoc/>
+        public Task<bool> TrySetFolderIcon(IFolder folder, Stream imageStream, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
 #if ANDROID
         private static ImageStream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
         {

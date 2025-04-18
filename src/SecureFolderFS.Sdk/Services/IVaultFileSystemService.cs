@@ -1,8 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,8 +7,6 @@ namespace SecureFolderFS.Sdk.Services
 {
     public interface IVaultFileSystemService
     {
-        public delegate void IssueDelegate(HealthIssueViewModel issueViewModel, IResult result);
-
         /// <summary>
         /// Gets the local representation of a file system.
         /// </summary>
@@ -30,18 +24,5 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>An <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
         IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the <see cref="HealthIssueViewModel"/> implementation for associated <see cref="IResult"/> from item validation.
-        /// </summary>
-        /// <param name="result">The result of validation.</param>
-        /// <param name="storable">The affected storable.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If available, value is <see cref="HealthIssueViewModel"/>; otherwise false.</returns>
-        Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, IStorableChild storable, CancellationToken cancellationToken = default);
-
-        Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, IDisposable contractOrRoot, IssueDelegate? issueDelegate, CancellationToken cancellationToken = default);
-
-        // TODO: Move to health service
     }
 }

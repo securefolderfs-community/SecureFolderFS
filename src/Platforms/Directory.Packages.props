@@ -35,5 +35,6 @@
     <PackageVersion Include="Uno.WinUI" Version="5.3.90" />
     <PackageVersion Include="Uno.WinUI.Lottie" Version="5.3.90" />
     <PackageVersion Include="Vanara.PInvoke.ComCtl32" Version="4.1.2" />
+    <PackageVersion Include="Vanara.PInvoke.Shell32" Version="4.1.2" />
   </ItemGroup>
 </Project>

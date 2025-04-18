@@ -39,5 +39,16 @@ namespace SecureFolderFS.UI
             public const int IMAGE_THUMBNAIL_QUALITY = 80;
             public const int VIDEO_THUMBNAIL_QUALITY = 30;
         }
+
+        public static class FileData
+        {
+            public const string DESKTOP_INI_ICON_CONFIGURATION = """
+                                                                 [.ShellClassInfo]
+                                                                 IconResource={0},0
+                                                                 InfoTip={1}
+                                                                 [ViewState]
+                                                                 FolderType = Generic
+                                                                 """;
+        }
     }
 }

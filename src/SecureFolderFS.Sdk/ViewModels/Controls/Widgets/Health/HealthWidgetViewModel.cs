@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
-    [Inject<ILocalizationService>, Inject<IVaultFileSystemService>]
+    [Inject<ILocalizationService>, Inject<IVaultHealthService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
@@ -203,7 +203,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (e.Result.Successful || e.Storable is null)
                 return;
 
-            var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result, e.Storable);
+            var issueViewModel = await VaultHealthService.GetIssueViewModelAsync(e.Result, e.Storable);
             _context.PostOrExecute(_ => HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)));
         }
 

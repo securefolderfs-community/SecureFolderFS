@@ -21,7 +21,7 @@ using System.Windows.Input;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    [Inject<IVaultFileSystemService>]
+    [Inject<IVaultHealthService>]
     public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
     {
         private readonly SynchronizationContext? _context;
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             UnlockedVaultViewModel.Options.DangerousSetReadOnly(true);
 
             // Resolve issues and restore readonly status
-            await VaultFileSystemService.ResolveIssuesAsync(FoundIssues, UnlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
+            await VaultHealthService.ResolveIssuesAsync(FoundIssues, UnlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
             UnlockedVaultViewModel.Options.DangerousSetReadOnly(isReadOnly);
         }
 

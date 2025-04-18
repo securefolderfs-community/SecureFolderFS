@@ -107,11 +107,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     if (sourceIconFile is null)
                         return;
 
-                    // TODO: Resize icon (don't load large icons)
-                    // TODO: Add .ico file with desktop.ini
+                    // Update vault icon
                     var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
-                    await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken);
+                    await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
                     await UpdateIconAsync(cancellationToken);
+
+                    // Update folder icon
+                    await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
+                    await MediaService.TrySetFolderIcon(modifiableFolder, iconStream, cancellationToken);
 
                     break;
                 }

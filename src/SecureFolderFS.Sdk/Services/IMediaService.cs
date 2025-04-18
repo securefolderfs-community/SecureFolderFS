@@ -1,6 +1,7 @@
-﻿using System;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,5 +20,7 @@ namespace SecureFolderFS.Sdk.Services
         Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
 
         Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
+
+        Task<bool> TrySetFolderIcon(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default);
     }
 }
