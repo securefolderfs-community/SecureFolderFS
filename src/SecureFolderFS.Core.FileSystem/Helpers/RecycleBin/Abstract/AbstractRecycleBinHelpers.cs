@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Deserialize configuration
             var deserialized = await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
-            if (deserialized is not { ParentPath: not null }) // TODO: Is this check needed?
+            if (deserialized is not { ParentPath: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
             return deserialized;

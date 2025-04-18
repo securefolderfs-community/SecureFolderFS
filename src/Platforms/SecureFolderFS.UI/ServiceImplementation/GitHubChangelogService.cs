@@ -17,7 +17,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         private IApplicationService ApplicationService { get; } = DI.Service<IApplicationService>();
 
         /// <inheritdoc/>
-        public async Task<ChangelogDataModel> GetLatestAsync(Version version, CancellationToken cancellationToken)
+        public async Task<ChangelogDataModel> GetLatestAsync(Version version, CancellationToken cancellationToken = default)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
@@ -38,7 +38,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ChangelogDataModel> GetSinceAsync(Version version, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<ChangelogDataModel> GetSinceAsync(Version version, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;

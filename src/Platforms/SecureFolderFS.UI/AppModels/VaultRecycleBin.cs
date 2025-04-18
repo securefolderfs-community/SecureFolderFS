@@ -113,7 +113,6 @@ namespace SecureFolderFS.UI.AppModels
                 if (destinationFolder is null)
                     throw new OperationCanceledException("The user did not pick destination a folder.");
 
-                // TODO: Check if the destinationFolder is outside the virtualized root, in which case, throw an exception.
                 if (!destinationFolder.Id.Contains(_vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                     throw new InvalidOperationException("The folder is outside of the virtualized storage folder.");
 

@@ -30,10 +30,9 @@ namespace SecureFolderFS.Sdk.Helpers
         public static TypeHint GetTypeFromMime(string mimeType)
         {
             return Image()
-                   ?? PlainText()
+                   ?? Plaintext()
                    ?? Document()
                    ?? Media()
-                   // TODO
                    ?? TypeHint.Unclassified;
 
             TypeHint? Media()
@@ -59,7 +58,7 @@ namespace SecureFolderFS.Sdk.Helpers
                     ? TypeHint.Document : null;
             }
 
-            TypeHint? PlainText()
+            TypeHint? Plaintext()
             {
                 return mimeType.StartsWith("text/")
                     && !mimeType.Equals("text/csv")
