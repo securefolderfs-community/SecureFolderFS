@@ -17,6 +17,17 @@ namespace SecureFolderFS.Maui.Views.Vault
             ViewModel = query.ToViewModel<VaultHealthReportViewModel>();
             OnPropertyChanged(nameof(ViewModel));
         }
+        
+        private void ProgressiveButton_Clicked(object? sender, EventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+            
+            if (ViewModel.HealthViewModel.IsProgressing)
+                ViewModel.HealthViewModel.CancelScanningCommand.Execute(null);
+            else
+                ViewModel.HealthViewModel.StartScanningCommand.Execute(null);
+        }
 
         public VaultHealthReportViewModel? ViewModel
         {

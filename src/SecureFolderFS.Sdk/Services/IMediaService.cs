@@ -21,6 +21,6 @@ namespace SecureFolderFS.Sdk.Services
 
         Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
 
-        Task<bool> TrySetFolderIcon(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default);
+        Task<bool> TrySetFolderIconAsync(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default);
     }
 }

@@ -151,12 +151,12 @@
             </Grid.RowDefinitions>
 
             <InfoBar
-                Title="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issue(s)'}"
+                Title="{x:Bind ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issue(s)'}"
                 Grid.Row="0"
                 VerticalContentAlignment="Center"
                 IsClosable="False"
                 IsOpen="True"
-                Severity="{x:Bind ViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
+                Severity="{x:Bind ViewModel.HealthViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
                 <Grid>
                     <ProgressRing
                         Width="16"
@@ -165,24 +165,24 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         IsActive="True"
-                        IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
-                        Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+                        IsIndeterminate="{x:Bind ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                        Visibility="{x:Bind ViewModel.HealthViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Value="{x:Bind ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}" />
                     <Button
                         Height="36"
                         Margin="0,-54,16,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Command="{x:Bind ViewModel.StartScanningCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
                         CommandParameter="rescan"
                         Content="Start scanning"
-                        Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                        Visibility="{x:Bind ViewModel.HealthViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
                 </Grid>
             </InfoBar>
             <ListView
                 Grid.Row="1"
                 IsItemClickEnabled="False"
-                ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollMode="Enabled"
                 SelectionMode="None">

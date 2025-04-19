@@ -114,7 +114,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
                     // Update folder icon
                     await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
-                    await MediaService.TrySetFolderIcon(modifiableFolder, iconStream, cancellationToken);
+                    await MediaService.TrySetFolderIconAsync(modifiableFolder, iconStream, cancellationToken);
 
                     break;
                 }

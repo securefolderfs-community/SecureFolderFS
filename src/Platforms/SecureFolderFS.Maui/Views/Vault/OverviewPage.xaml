@@ -18,8 +18,8 @@
             <ucw:HealthWidget
                 LastCheckedText="{Binding LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{Binding OpenVaultHealthCommand, Mode=OneWay}"
-                Severity="{Binding HealthReportViewModel.Severity, Mode=OneWay}"
-                StatusTitle="{Binding Title, Mode=OneWay}" />
+                Severity="{Binding HealthViewModel.Severity, Mode=OneWay}"
+                StatusTitle="{Binding HealthViewModel.Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Aggregated Data Statistics Widget  -->

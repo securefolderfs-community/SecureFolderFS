@@ -1,122 +1,71 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Contexts;
-using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
     [Inject<IVaultHealthService>]
-    public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
+    public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IDisposable
     {
-        private readonly SynchronizationContext? _context;
-
+        private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+        
         [ObservableProperty] private bool _CanResolve;
-        [ObservableProperty] private bool _IsProgressing;
-        [ObservableProperty] private double _CurrentProgress;
-        [ObservableProperty] private SeverityType _Severity;
-        [ObservableProperty] private ICommand? _StartScanningCommand;
-        [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _FoundIssues;
-
-        /// <inheritdoc/>
-        public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
-
-        /// <inheritdoc/>
-        public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
-
-        public VaultHealthReportViewModel(UnlockedVaultViewModel unlockedVaultViewModel, SynchronizationContext? context)
+        [ObservableProperty] private VaultHealthViewModel _HealthViewModel;
+        
+        public VaultHealthReportViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultHealthViewModel healthViewModel)
         {
             ServiceProvider = DI.Default;
-            UnlockedVaultViewModel = unlockedVaultViewModel;
+            HealthViewModel = healthViewModel;
             Title = "HealthReport".ToLocalized();
-            FoundIssues = new();
-            FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
-            _context = context;
-        }
-
-        partial void OnIsProgressingChanged(bool value)
-        {
-            _ = value;
-            UpdateSeverity(FoundIssues);
+            HealthViewModel.StateChanged += HealthViewModel_StateChanged;
+            _unlockedVaultViewModel = unlockedVaultViewModel;
         }
 
         [RelayCommand]
         private async Task ResolveAsync(CancellationToken cancellationToken)
         {
             // Get the readonly status and set IsReadOnly to true
-            var isReadOnly = UnlockedVaultViewModel.Options.IsReadOnly;
-            UnlockedVaultViewModel.Options.DangerousSetReadOnly(true);
+            var isReadOnly = _unlockedVaultViewModel.Options.IsReadOnly;
+            _unlockedVaultViewModel.Options.DangerousSetReadOnly(true);
 
             // Resolve issues and restore readonly status
-            await VaultHealthService.ResolveIssuesAsync(FoundIssues, UnlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
-            UnlockedVaultViewModel.Options.DangerousSetReadOnly(isReadOnly);
+            await VaultHealthService.ResolveIssuesAsync(HealthViewModel.FoundIssues, _unlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
+            _unlockedVaultViewModel.Options.DangerousSetReadOnly(isReadOnly);
         }
 
         private void IssueResolved(HealthIssueViewModel issueViewModel, IResult result)
         {
             if (result.Successful)
-                FoundIssues.RemoveMatch(x => x.Inner.Id == issueViewModel.Inner.Id);
+                HealthViewModel.FoundIssues.RemoveMatch(x => x.Inner.Id == issueViewModel.Inner.Id);
         }
-
-        private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        
+        private void HealthViewModel_StateChanged(object? sender, EventArgs e)
         {
-            if (IsProgressing)
-                return;
-
-            UpdateSeverity(e is
+            CanResolve = e switch
             {
-                Action:
-                    NotifyCollectionChangedAction.Add or
-                    NotifyCollectionChangedAction.Replace or
-                    NotifyCollectionChangedAction.Move,
-                NewItems: not null
-            } ? e.NewItems : FoundIssues);
+                ScanningStartedEventArgs => false,
+                ScanningFinishedEventArgs args => !args.WasCanceled && !HealthViewModel.FoundIssues.IsEmpty(),
+                _ => CanResolve
+            };
         }
-
-        private void UpdateSeverity(IEnumerable enumerable)
-        {
-#pragma warning disable MVVMTK0034
-            var severity = Severity;
-            if (severity != SeverityType.Success && FoundIssues.IsEmpty())
-            {
-                _Severity = SeverityType.Success;
-                _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)), null);
-                return;
-            }
-
-            foreach (HealthIssueViewModel item in enumerable)
-            {
-                if (severity < item.Severity)
-                    severity = item.Severity;
-            }
-
-            if (Severity != severity)
-            {
-                _Severity = severity;
-                _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)), null);
-            }
-#pragma warning restore MVVMTK0034
-        }
-
+        
         /// <inheritdoc/>
         public void Dispose()
         {
-            FoundIssues.CollectionChanged -= FoundIssues_CollectionChanged;
+            HealthViewModel.StateChanged -= HealthViewModel_StateChanged;
+            HealthViewModel.Dispose();
         }
     }
 }

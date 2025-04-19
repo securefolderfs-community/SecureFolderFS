@@ -63,7 +63,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<bool> TrySetFolderIcon(IFolder folder, Stream imageStream, CancellationToken cancellationToken = default)
+        public Task<bool> TrySetFolderIconAsync(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(false);
         }

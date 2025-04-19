@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<bool> TrySetFolderIcon(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default)
+        public async Task<bool> TrySetFolderIconAsync(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default)
         {
 #if WINDOWS
             try

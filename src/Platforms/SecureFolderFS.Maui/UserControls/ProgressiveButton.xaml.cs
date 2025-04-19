@@ -1,10 +1,12 @@
-using System.Windows.Input;
+using CommunityToolkit.Maui.Core;
 using MauiIcons.Material;
 
 namespace SecureFolderFS.Maui.UserControls
 {
     public partial class ProgressiveButton : ContentView
     {
+        public event EventHandler? Clicked;
+        
         public ProgressiveButton()
         {
             InitializeComponent();
@@ -24,6 +26,11 @@ namespace SecureFolderFS.Maui.UserControls
             LayoutProgressStrip();
         }
         
+        private void TouchBehavior_TouchGestureCompleted(object? sender, TouchGestureCompletedEventArgs e)
+        {
+            Clicked?.Invoke(this, EventArgs.Empty);
+        }
+        
         public Enum? DefaultIcon
         {
             get => (Enum?)GetValue(DefaultIconProperty);
@@ -31,14 +38,6 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty DefaultIconProperty =
             BindableProperty.Create(nameof(DefaultIcon), typeof(Enum), typeof(ProgressiveButton), MaterialIcons.Search);
-        
-        public ICommand? Command
-        {
-            get => (ICommand?)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
-        public static readonly BindableProperty CommandProperty =
-            BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ProgressiveButton));
         
         public string? Title
         {

@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.Vault.HealthPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -38,7 +39,7 @@
                     </Grid>
                 </mtk:Expander.Header>
                 <mtk:Expander.Content>
-                    <CollectionView ItemsSource="{Binding Issues, Mode=OneWay}">
+                    <CollectionView Margin="12,0" ItemsSource="{Binding Issues, Mode=OneWay}">
                         <CollectionView.ItemTemplate>
                             <ts:HealthIssueTemplateSelector
                                 DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
@@ -62,20 +63,31 @@
     </ContentPage.Resources>
 
     <VerticalStackLayout Padding="16" Spacing="32">
-        <uc:ProgressiveButton
-            x:Name="ProgressiveButton"
-            Title="{Binding ViewModel.Title, Mode=OneWay}"
-            Command="{Binding ViewModel.StartScanningCommand, Mode=OneWay}"
-            DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
-                                     iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
-            HorizontalOptions="Fill"
-            IsProgressing="{Binding ViewModel.IsProgressing, Mode=OneWay}"
-            Progress="{Binding ViewModel.CurrentProgress, Mode=OneWay}"
-            Subtitle="Scanned 10 out of 100" />
+        <apesui:ContextMenuContainer x:Name="ItemContainer">
+            <apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuItem
+                    Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
+                    CommandParameter="include_file_contents"
+                    IsEnabled="False"
+                    Text="Include file contents (slower)" />
+            </apesui:ContextMenuContainer.MenuItems>
+            <apesui:ContextMenuContainer.Content>
+                <uc:ProgressiveButton
+                    x:Name="ProgressiveButton"
+                    Title="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
+                    Clicked="ProgressiveButton_Clicked"
+                    DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
+                                             iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
+                    HorizontalOptions="Fill"
+                    IsProgressing="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
+                    Progress="{Binding ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}"
+                    Subtitle="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}" />
+            </apesui:ContextMenuContainer.Content>
+        </apesui:ContextMenuContainer>
 
         <uco:OptionsContainer Title="Found Issues">
             <uco:OptionsContainer.InnerContent>
-                <CollectionView ItemsSource="{Binding ViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
+                <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
                     <CollectionView.ItemTemplate>
                         <ts:HealthIssueTemplateSelector
                             DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
