@@ -5,8 +5,6 @@
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
-    xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -41,7 +39,10 @@
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
                     <ViewCell>
                         <ViewCell.ContextActions>
-                            <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
+                            <MenuFlyoutItem
+                                Command="{Binding RemoveVaultCommand}"
+                                IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                Text="{l:ResourceString Rid=RemoveFromList}" />
                         </ViewCell.ContextActions>
 
                         <HorizontalStackLayout
@@ -74,7 +75,7 @@
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Spacing="16"
             VerticalOptions="Center">
-            <Image Source="app_icon.png" WidthRequest="64" />
+            <Image HeightRequest="100" Source="{AppThemeBinding Light='vault_light.svg', Dark='vault_dark.svg'}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="24"
@@ -90,11 +91,19 @@
         <Grid Grid.Row="0" Grid.RowSpan="2">
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
-                    <mdc:FAB
-                        Margin="0,0,32,32"
+                    <Button
+                        Margin="0,0,16,32"
+                        mi:MauiIcon.Value="{mi_material:Material Icon=Add,
+                                                                 IconSize=26,
+                                                                 IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
+                                                                                            Dark={StaticResource PrimaryContrastingLightColor}}}"
                         Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                        FontSize="16"
                         HorizontalOptions="End"
-                        IconData="{x:Static mdci:Material.Add}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=NewVault}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
+                                                    Dark={StaticResource PrimaryContrastingLightColor}}"
                         VerticalOptions="End" />
                 </On>
             </OnPlatform>

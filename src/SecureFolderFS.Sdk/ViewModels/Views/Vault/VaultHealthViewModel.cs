@@ -170,7 +170,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
-            _cts?.Cancel();
+            _cts?.TryCancel();
             _cts?.Dispose();
             FoundIssues.CollectionChanged -= FoundIssues_CollectionChanged;
             if (_healthModel is not null)

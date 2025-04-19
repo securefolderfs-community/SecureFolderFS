@@ -6,7 +6,6 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -103,25 +102,14 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Grid Grid.Row="1" Padding="8">
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="iOS">
-                            <Button
-                                Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
-                                HorizontalOptions="Center"
-                                Text="Select all"
-                                VerticalOptions="Center" />
-                        </On>
-                        <On Platform="Android">
-                            <mdc:Button
-                                Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
-                                HorizontalOptions="Center"
-                                Style="{DynamicResource TextButtonStyle}"
-                                Text="Select all"
-                                VerticalOptions="Center" />
-                        </On>
-                    </OnPlatform>
-                </Grid>
+                <Button
+                    Grid.Row="1"
+                    Margin="8"
+                    Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
+                    HorizontalOptions="Center"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    Text="Select all"
+                    VerticalOptions="Center" />
             </Grid>
         </Grid>
     </md:BaseModalPage.ModalContent>

@@ -1,8 +1,7 @@
 ﻿<Application
     x:Class="SecureFolderFS.Maui.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:mds="clr-namespace:Material.Components.Maui.Styles;assembly=Material.Components.Maui">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -10,9 +9,6 @@
                 <ResourceDictionary Source="Resources/Styles/ColorStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/ButtonStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-
-                <!--  Platform styles for Android  -->
-                <mds:MaterialStyles Dark="#1791ff" Light="#158de0" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

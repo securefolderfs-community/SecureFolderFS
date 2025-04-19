@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 namespace SecureFolderFS.Shared.Extensions
@@ -10,6 +11,17 @@ namespace SecureFolderFS.Shared.Extensions
                 action(state);
             else
                 synchronizationContext.Post(action, state);
+        }
+
+        public static void TryCancel(this CancellationTokenSource cancellationTokenSource)
+        {
+            try
+            {
+                cancellationTokenSource.Cancel();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

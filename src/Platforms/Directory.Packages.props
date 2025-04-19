@@ -10,7 +10,6 @@
     <PackageVersion Include="H.NotifyIcon.Uno.WinUI" Version="2.3.0" />
     <PackageVersion Include="IconPacks.Material" Version="1.0.8940.2-build" />
     <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc5.3" />
-    <PackageVersion Include="Material.Components.Maui" Version="0.2.2-preview" />
     <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.50" />

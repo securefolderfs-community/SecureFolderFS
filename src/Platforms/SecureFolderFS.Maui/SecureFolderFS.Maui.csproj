@@ -84,7 +84,6 @@
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
     <PackageReference Include="IconPacks.Material" />
-    <PackageReference Include="Material.Components.Maui" />
     <PackageReference Include="Microsoft.Maui.Controls" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
     <PackageReference Include="Microsoft.Maui.Core" />

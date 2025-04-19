@@ -2,7 +2,6 @@ using APES.UI.XF;
 using CommunityToolkit.Maui;
 using Plugin.Maui.BottomSheet.Hosting;
 #if ANDROID
-using Material.Components.Maui.Extensions;
 using MauiIcons.Material;
 #elif IOS
 using MauiIcons.Cupertino;
@@ -31,7 +30,6 @@ namespace SecureFolderFS.Maui
 
 #if ANDROID
                 .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons
-                .UseMaterialComponents()                // https://github.com/mdc-maui/mdc-maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif
