@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage.StorageProperties
         {
             _properties = properties;
         }
-        
+
         /// <inheritdoc/>
         public async Task<IStorageProperty<DateTime>> GetDateCreatedAsync(CancellationToken cancellationToken = default)
         {

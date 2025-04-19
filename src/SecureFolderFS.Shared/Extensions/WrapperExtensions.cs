@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.Extensions
                     wrapper = innerWrapper;
                     continue;
                 }
-                
+
                 break;
             }
 

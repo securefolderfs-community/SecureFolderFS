@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
         {
             if (credentials is not KeySequence keySequence)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeySequence)}.");
-            
+
             _secretKeySequence?.Dispose();
             _secretKeySequence = SecureKey.TakeOwnership(keySequence.ToArray());
 
@@ -112,12 +112,12 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(v3ConfigDataModel.PayloadMac);
-            
+
             // Vault Keystore ------------------------------------
             //
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             Argon2id.V3_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
-            
+
             using var rfc3394 = new Rfc3394KeyWrap();
             var newWrappedEncKek = rfc3394.WrapKey(encKey, kek);
             var newWrappedMacKek = rfc3394.WrapKey(macKey, kek);
@@ -128,12 +128,12 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 WrappedEncKey = newWrappedEncKek,
                 WrappedMacKey = newWrappedMacKek
             };
-            
+
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);
             await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
-            
+
             // Create backup
             if (VaultFolder is IModifiableFolder modifiableFolder)
             {
@@ -143,7 +143,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                     Constants.Vault.Versions.V2,
                     configStream,
                     cancellationToken);
-                
+
                 await BackupHelpers.CreateBackup(
                     modifiableFolder,
                     Constants.Vault.Names.VAULT_KEYSTORE_FILENAME,

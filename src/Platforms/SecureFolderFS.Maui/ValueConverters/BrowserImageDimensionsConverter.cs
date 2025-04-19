@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 BrowserViewType.LargeGridView or BrowserViewType.LargeGalleryView => large,
                 _ => 0d
             };
-            
+
             throw new NotImplementedException();
         }
 

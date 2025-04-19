@@ -45,11 +45,11 @@ namespace SecureFolderFS.Maui.ServiceImplementation
 #elif IOS
                     IOS_ExtractFrame();
 #endif
-                    
+
                     break;
                 }
             }
-            
+
             return null;
         }
 
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             using var retriever = new MediaMetadataRetriever();
             retriever.SetDataSource(new StreamedMediaSource(stream));
-            
+
             var frameBitmap = retriever.GetFrameAtTime(captureTime.Ticks, Option.Closest);
             if (frameBitmap is null)
                 return null;
@@ -103,7 +103,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
     }
 #endif
-        
+
         private static ImageStream ResizeImage(Stream sourceStream, uint maxSize)
         {
             using var original = SKBitmap.Decode(sourceStream);

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty CommandProperty =
             BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ActivityButton));
-        
+
         public FontAttributes FontAttributes
         {
             get => (FontAttributes)GetValue(FontAttributesProperty);
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty FontAttributesProperty =
             BindableProperty.Create(nameof(FontAttributes), typeof(FontAttributes), typeof(ActivityButton), defaultValue: FontAttributes.None);
-        
+
         public Style? ButtonStyle
         {
             get => (Style?)GetValue(ButtonStyleProperty);

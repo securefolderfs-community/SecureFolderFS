@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.AppModels
     internal sealed class StreamedMediaSource : MediaDataSource
     {
         private readonly Stream _sourceStream;
-        
+
         /// <inheritdoc/>
         public override long Size => _sourceStream.Length;
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.AppModels
         {
             if (buffer is null)
                 return 0;
-            
+
             _sourceStream.Position = position;
             return _sourceStream.Read(buffer, offset, size);
         }

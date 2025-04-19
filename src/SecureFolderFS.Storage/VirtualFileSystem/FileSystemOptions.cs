@@ -35,7 +35,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Gets or sets whether to enable caching for decrypted content chunks.
         /// </summary>
         public bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
-        
+
         /// <summary>
         /// Gets or sets whether to enable caching for Directory IDs.
         /// </summary>

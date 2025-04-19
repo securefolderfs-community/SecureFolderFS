@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.AppModels
                             response.Close();   
                             continue;
                         }
-                        
+
                         response.ContentType = _mimeType;
                         response.ContentLength64 = _videoStream.Length;
                         response.Headers["Accept-Ranges"] = "bytes";
@@ -56,7 +56,7 @@ namespace SecureFolderFS.Maui.AppModels
                         await _videoStream.CopyToAsync(response.OutputStream, 64 * 1024, cancellationToken);
                         await _videoStream.FlushAsync(cancellationToken);
                         _videoStream.Position = 0L;
-                        
+
                         response.StatusCode = (int)HttpStatusCode.OK;
                         response.StatusDescription = "OK";
                         response.Close();

@@ -66,7 +66,7 @@ namespace SecureFolderFS.Maui.Sheets
             ViewModel = query.ToViewModel<ViewOptionsViewModel>();
             _tcs = query.Get("TaskCompletion") as TaskCompletionSource<IResult>;
         }
-        
+
         private void Sheet_Closed(object? sender, EventArgs e)
         {
             _tcs?.TrySetResult(Result.Success);

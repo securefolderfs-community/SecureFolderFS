@@ -6,12 +6,12 @@ namespace SecureFolderFS.Maui.UserControls
     public partial class ProgressiveButton : ContentView
     {
         public event EventHandler? Clicked;
-        
+
         public ProgressiveButton()
         {
             InitializeComponent();
         }
-        
+
         private void LayoutProgressStrip()
         {
             var adjustedProgress = Math.Max(Math.Min(Progress, 100d), 0d);
@@ -20,12 +20,12 @@ namespace SecureFolderFS.Maui.UserControls
 
             ProgressStrip.WidthRequest = width;
         }
-        
+
         private void ProgressContainer_SizeChanged(object? sender, EventArgs e)
         {
             LayoutProgressStrip();
         }
-        
+
         private void TouchBehavior_TouchGestureCompleted(object? sender, TouchGestureCompletedEventArgs e)
         {
             Clicked?.Invoke(this, EventArgs.Empty);
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Maui.UserControls
                 {
                     if (bindable is not ProgressiveButton progressiveButton)
                         return;
-                    
+
                     progressiveButton.LayoutProgressStrip();
                 });
     }

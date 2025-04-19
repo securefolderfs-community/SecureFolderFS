@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.AppModels
             Source = new();
             Source.Stream = (ct) => Task.FromResult(stream);
         }
-        
+
         /// <inheritdoc/>
         public async Task CopyToAsync(Stream destination, CancellationToken cancellationToken = default)
         {

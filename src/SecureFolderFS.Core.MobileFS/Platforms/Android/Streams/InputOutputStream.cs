@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
 
                 if (value == _position)
                     return;
-                
+
                 // Reset input stream and skip to the desired position
                 _inputStream.Reset(); // Resets to the beginning of the stream
 

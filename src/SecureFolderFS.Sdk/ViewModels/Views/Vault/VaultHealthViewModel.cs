@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private readonly SynchronizationContext? _context;
         private readonly List<HealthIssueViewModel> _savedState;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        
+
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private string? _Subtitle;
         [ObservableProperty] private string? _StatusTitle;
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             FoundIssues = new();
             FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }
-        
+
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
@@ -65,11 +65,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
-            
+
             _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
             _healthModel.IssueFound += HealthModel_IssueFound;
         }
-        
+
         /// <inheritdoc/>
         public void Report(double value)
         {
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             _context.PostOrExecute(_ => CurrentProgress = Math.Round(value));
         }
-        
+
         /// <inheritdoc/>
         public void Report(TotalProgress value)
         {
@@ -92,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     Title = value.Achieved == 0
                         ? "Collecting items..."
                         : $"Collecting items ({value.Achieved})";
-                    
+
                     StatusTitle = "Collecting items...";
                     Subtitle = value.Achieved == 0
                         ? "Items are being collected"
@@ -111,13 +111,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 }
             });
         }
-        
+
         partial void OnIsProgressingChanged(bool value)
         {
             _ = value;
             UpdateSeverity(FoundIssues);
         }
-        
+
         private void UpdateSeverity(IEnumerable enumerable)
         {
 #pragma warning disable MVVMTK0034
@@ -142,7 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
 #pragma warning restore MVVMTK0034
         }
-        
+
         private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsProgressing)
@@ -157,7 +157,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 NewItems: not null
             } ? e.NewItems : FoundIssues);
         }
-        
+
         private async void HealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
             if (e.Result.Successful || e.Storable is null)

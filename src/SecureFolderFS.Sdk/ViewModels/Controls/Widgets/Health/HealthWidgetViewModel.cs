@@ -67,14 +67,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         {
             if (e is not ScanningFinishedEventArgs)
                 return;
-            
+
             var scanDate = DateTime.Now;
             _context.PostOrExecute(_ =>
             {
                 var localizedDate = LocalizationService.LocalizeDate(scanDate);
                 LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
             });
-            
+
             // Persist last scanned date
             await WidgetModel.SetWidgetDataAsync(scanDate.ToString("o")).ConfigureAwait(false);
         }

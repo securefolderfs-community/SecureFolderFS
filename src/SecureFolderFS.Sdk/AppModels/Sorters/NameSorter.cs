@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
 
             if (xIsFolder && !yIsFolder)
                 return -1;
-            
+
             if (!xIsFolder && yIsFolder)
                 return 1;
 

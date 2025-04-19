@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.AppModels
         {
             base.Dispose(true);
         }
-        
+
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {

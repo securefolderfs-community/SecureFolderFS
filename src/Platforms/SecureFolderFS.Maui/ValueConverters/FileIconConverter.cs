@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                         imageStream.Stream.Position = 0L;
                         return new Image() { Source = imageStream.Source, Aspect = Aspect.AspectFill };
                     }
-                    
+
                     default: return null; // TODO: Add more IImage implementations
                 }
             }

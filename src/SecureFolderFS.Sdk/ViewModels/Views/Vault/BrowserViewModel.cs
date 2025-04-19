@@ -69,7 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             CurrentFolder?.Dispose();
             base.OnDisappearing();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
@@ -131,7 +131,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             var originalSortOption = ViewOptions.CurrentSortOption;
             await OverlayService.ShowAsync(ViewOptions);
-            
+
             if (originalSortOption != ViewOptions.CurrentSortOption)
                 ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
         }
@@ -202,7 +202,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                     var copiedFile = await modifiableFolder.CreateCopyOfAsync(file, false, cancellationToken);
                     CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), ViewOptions.GetSorter());
-                    
+
                     break;
                 }
 
@@ -210,7 +210,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 {
                     if (TransferViewModel is null)
                         return;
-                    
+
                     var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
                     if (folder is null)
                         return;
@@ -220,7 +220,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                         var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, token);
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), ViewOptions.GetSorter());
                     }, cancellationToken);
-                    
+
                     break;
                 }
             }

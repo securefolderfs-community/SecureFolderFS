@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Begin scanning
             StateChanged?.Invoke(this, new ScanningStartedEventArgs());
             await _healthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
-            
+
             // Finish scanning
             EndScanning();
             StateChanged?.Invoke(this, new ScanningFinishedEventArgs(false));
