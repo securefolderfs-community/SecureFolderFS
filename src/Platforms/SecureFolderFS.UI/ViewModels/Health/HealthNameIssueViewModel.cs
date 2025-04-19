@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
         {
             OriginalName = storable.Name;
             ItemName = storable.Name;
-            Severity = SeverityType.Warning;
+            Severity = Severity.Warning;
         }
 
         partial void OnIsEditingChanged(bool value)

@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
-    public enum SeverityType
+    public enum Severity
     {
         /// <summary>
         /// Informational status.

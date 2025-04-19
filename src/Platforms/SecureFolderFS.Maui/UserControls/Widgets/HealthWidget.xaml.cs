@@ -10,13 +10,13 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
             InitializeComponent();
         }
 
-        public SeverityType Severity
+        public Severity Severity
         {
-            get => (SeverityType)GetValue(SeverityProperty);
+            get => (Severity)GetValue(SeverityProperty);
             set => SetValue(SeverityProperty, value);
         }
         public static readonly BindableProperty SeverityProperty =
-            BindableProperty.Create(nameof(Severity), typeof(SeverityType), typeof(HealthWidget), SeverityType.Default);
+            BindableProperty.Create(nameof(Severity), typeof(Severity), typeof(HealthWidget), Severity.Default);
 
         public string? StatusTitle
         {

@@ -70,10 +70,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 File.SetAttributes(desktopIniFile.Id, FileAttributes.Hidden | FileAttributes.System);
                 var folderSettings = new Shell32.SHFOLDERCUSTOMSETTINGS()
                 {
-                    dwMask = Shell32.FOLDERCUSTOMSETTINGSMASK.FCSM_ICONFILE,
+                    cchIconFile = 0,
                     pszIconFile = iconFile.Name,
-                    dwSize = (uint)Marshal.SizeOf<Shell32.SHFOLDERCUSTOMSETTINGS>(),
-                    cchIconFile = 0
+                    dwMask = Shell32.FOLDERCUSTOMSETTINGSMASK.FCSM_ICONFILE,
+                    dwSize = (uint)Marshal.SizeOf<Shell32.SHFOLDERCUSTOMSETTINGS>()
                 };
                 Shell32.SHGetSetFolderCustomSettings(ref folderSettings, folder.Id, Shell32.FCS.FCS_FORCEWRITE);
                 Shell32.SHChangeNotify(Shell32.SHCNE.SHCNE_UPDATEITEM, Shell32.SHCNF.SHCNF_PATHW, folder.Id);

@@ -9,9 +9,12 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels.Authentication;assembly=SecureFolderFS.UI">
 
     <ContentView.Resources>
+        <vc:PasswordToStrengthConverter x:Key="PasswordToStrengthConverter" />
+
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
             <ContentView>
@@ -36,7 +39,10 @@
                             VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
-                    <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+                    <VerticalStackLayout>
+                        <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+                        <ProgressBar Progress="{Binding PrimaryPassword, Mode=OneWay, Converter={StaticResource PasswordToStrengthConverter}}" />
+                    </VerticalStackLayout>
                     <local:PasswordControl Title="{l:ResourceString Rid=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
                 </VerticalStackLayout>
             </ContentView>

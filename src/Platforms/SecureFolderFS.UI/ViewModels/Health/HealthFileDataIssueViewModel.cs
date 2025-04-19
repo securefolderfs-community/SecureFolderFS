@@ -15,7 +15,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
         public HealthFileDataIssueViewModel(IStorableChild storable, IResult? result, string? title = null)
             : base(storable, result, title)
         {
-            Severity = SeverityType.Critical;
+            Severity = Severity.Critical;
         }
     }
 }

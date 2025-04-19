@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// <summary>
         /// Gets the stage (step) availability of the given authentication type.
         /// </summary>
-        public abstract AuthenticationType Availability { get; }
+        public abstract AuthenticationStage Availability { get; }
 
         /// <summary>
         /// Occurs when credentials have been provided by the user.

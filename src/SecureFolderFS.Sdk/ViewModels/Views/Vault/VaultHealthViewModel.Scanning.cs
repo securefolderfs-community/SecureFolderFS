@@ -81,8 +81,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // Update status
                 Title = Severity switch
                 {
-                    SeverityType.Warning => "HealthAttention".ToLocalized(),
-                    SeverityType.Critical => "HealthProblems".ToLocalized(),
+                    Enums.Severity.Warning => "HealthAttention".ToLocalized(),
+                    Enums.Severity.Critical => "HealthProblems".ToLocalized(),
                     _ => "HealthNoProblems".ToLocalized()
                 };
                 StatusTitle = "Perform integrity check";

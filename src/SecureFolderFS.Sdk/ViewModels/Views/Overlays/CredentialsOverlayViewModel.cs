@@ -25,14 +25,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         private readonly KeySequence _keySequence;
         private readonly IVaultModel _vaultModel;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
 
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
-        public CredentialsOverlayViewModel(IVaultModel vaultModel, AuthenticationType authenticationStage)
+        public CredentialsOverlayViewModel(IVaultModel vaultModel, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _keySequence = new();
@@ -57,8 +57,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken);
             SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
             {
-                AuthenticationType.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
-                AuthenticationType.ProceedingStageOnly => await loginMethods.ElementAtOrDefaultAsync(1, cancellationToken),
+                AuthenticationStage.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
+                AuthenticationStage.ProceedingStageOnly => await loginMethods.ElementAtOrDefaultAsync(1, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
             };
 

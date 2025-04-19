@@ -33,7 +33,7 @@ namespace SecureFolderFS.Uno.ViewModels
         protected IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
+        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         protected WindowsHelloViewModel(IFolder vaultFolder, string vaultId)
             : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)

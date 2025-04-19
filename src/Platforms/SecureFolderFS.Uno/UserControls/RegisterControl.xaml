@@ -7,6 +7,7 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm3="using:SecureFolderFS.UI.ViewModels.Authentication"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -14,17 +15,16 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <vc:PasswordToStrengthConverter x:Key="PasswordToStrengthConverter" />
+
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordCreationViewModel">
             <StackPanel Spacing="16">
-                <local:PasswordControl
-                    x:Name="FirstPassword"
-                    Title="{l:ResourceString Rid=NewPassword}"
-                    UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
-                <local:PasswordControl
-                    x:Name="SecondPassword"
-                    Title="{l:ResourceString Rid=RepeatPassword}"
-                    UnsecurePassword="{x:Bind SecondaryPassword, Mode=TwoWay}" />
+                <StackPanel>
+                    <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
+                    <ProgressBar Background="Transparent" Value="{x:Bind PrimaryPassword, Mode=OneWay, Converter={StaticResource PasswordToStrengthConverter}}" />
+                </StackPanel>
+                <local:PasswordControl Title="{l:ResourceString Rid=RepeatPassword}" UnsecurePassword="{x:Bind SecondaryPassword, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
 

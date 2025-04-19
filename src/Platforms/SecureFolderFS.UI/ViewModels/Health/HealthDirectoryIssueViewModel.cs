@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
         public HealthDirectoryIssueViewModel(IStorableChild storable, IResult result, string? title = null)
             : base(storable, result, title)
         {
-            Severity = SeverityType.Warning;
+            Severity = Severity.Warning;
             Issues = new();
         }
 

@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _StatusTitle;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private double _CurrentProgress;
-        [ObservableProperty] private SeverityType _Severity;
+        [ObservableProperty] private Severity _Severity;
         [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _FoundIssues;
 
         /// <inheritdoc/>
@@ -122,9 +122,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
 #pragma warning disable MVVMTK0034
             var severity = Severity;
-            if (severity != SeverityType.Success && FoundIssues.IsEmpty())
+            if (severity != Enums.Severity.Success && FoundIssues.IsEmpty())
             {
-                _Severity = SeverityType.Success;
+                _Severity = Enums.Severity.Success;
                 _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)));
                 return;
             }

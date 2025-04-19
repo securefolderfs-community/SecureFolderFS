@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeFirstAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.FirstStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.FirstStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeSecondAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.ProceedingStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.ProceedingStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);

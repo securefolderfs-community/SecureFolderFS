@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsSelectionViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
 
         [ObservableProperty] private bool _CanRemoveCredentials;
         [ObservableProperty] private RegisterViewModel? _RegisterViewModel;
@@ -34,12 +34,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
-        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType authenticationStage)
+        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
-            _CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
+            _CanRemoveCredentials = authenticationStage != AuthenticationStage.FirstStageOnly;
             _AuthenticationOptions = new();
         }
 
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                CanComplement = _authenticationStage != AuthenticationStage.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
                 UnlockContract = UnlockContract,
                 ConfiguredViewModel = ConfiguredViewModel
             });

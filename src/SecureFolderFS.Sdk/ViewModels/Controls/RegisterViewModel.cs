@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class RegisterViewModel : ObservableObject, IDisposable
     {
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
         private bool _credentialsAdded;
 
         [ObservableProperty] private bool _CanContinue;
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// </summary>
         public KeySequence Credentials { get; }
 
-        public RegisterViewModel(AuthenticationType authenticationStage, KeySequence? credentials = null)
+        public RegisterViewModel(AuthenticationStage authenticationStage, KeySequence? credentials = null)
         {
             _authenticationStage = authenticationStage;
             Credentials = credentials ?? new();
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     return;
 
                 await CurrentViewModel.RevokeAsync(null, cancellationToken);
-                Credentials.RemoveAt(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1);
+                Credentials.RemoveAt(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1);
                 CanContinue = false;
                 _credentialsAdded = false;
             }
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // In case the authentication was not reported, try to extract it manually, if possible
             if (!_credentialsAdded && CurrentViewModel is IWrapper<IKey> keyWrapper)
             {
-                Credentials.SetOrAdd(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1, keyWrapper.Inner);
+                Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, keyWrapper.Inner);
                 _credentialsAdded = true;
             }
 
@@ -102,7 +102,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
             _credentialsAdded = true;
-            Credentials.SetOrAdd(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1, e.Authentication);
+            Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
             CanContinue = true;
         }
 

@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             ServiceProvider = DI.Default;
             Folder = folder;
             _credentialsTcs = new();
-            _RegisterViewModel = new(AuthenticationType.FirstStageOnly);
+            _RegisterViewModel = new(AuthenticationStage.FirstStageOnly);
             _vaultId = Guid.NewGuid().ToString();
 
             Title = "SetCredentials".ToLocalized();

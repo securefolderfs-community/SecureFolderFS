@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         private IFileExplorerService FileExplorerService { get; } = DI.Service<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
+        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;

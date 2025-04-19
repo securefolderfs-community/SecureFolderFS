@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsConfirmationViewModel : ObservableObject, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
         [ObservableProperty] private bool _IsRemoving;
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         public required IDisposable UnlockContract { private get; init; }
 
-        public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationType authenticationStage)
+        public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
@@ -69,8 +69,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
                 return _authenticationStage switch
                 {
-                    AuthenticationType.ProceedingStageOnly => [ configuredOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
-                    AuthenticationType.FirstStageOnly => configuredOptions.AuthenticationMethod.Length > 1
+                    AuthenticationStage.ProceedingStageOnly => [ configuredOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
+                    AuthenticationStage.FirstStageOnly => configuredOptions.AuthenticationMethod.Length > 1
                         ? [ RegisterViewModel.CurrentViewModel.Id, configuredOptions.AuthenticationMethod[1] ]
                         : [ RegisterViewModel.CurrentViewModel.Id ],
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private async Task RemoveAsync(CancellationToken cancellationToken)
         {
-            if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
+            if (_authenticationStage != AuthenticationStage.ProceedingStageOnly)
                 return;
 
             var key = RegisterViewModel.Credentials.Keys.First();
