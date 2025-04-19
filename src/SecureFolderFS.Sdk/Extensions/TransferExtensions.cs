@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Shared.Extensions;
 
@@ -11,6 +12,11 @@ namespace SecureFolderFS.Sdk.Extensions
 {
     public static class TransferExtensions
     {
+        public static bool IsPickingItems(this TransferViewModel transferViewModel)
+        {
+            return transferViewModel.IsVisible && transferViewModel.TransferType == TransferType.Select;
+        }
+        
         public static Task TransferAsync<TStorable>(
             this TransferViewModel transferViewModel,
             TStorable item,

@@ -257,25 +257,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     });
                 }
 
-                var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
-                var availableSize = BrowserViewModel.StorageRoot.Options.RecycleBinSize - occupiedSize;
-                if (availableSize < sizes.Sum())
-                {
-                    // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently
-                    for (var i = 0; i < items.Length; i++)
-                    {
-                        var item = items[i];
-                        await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], true, cancellationToken);
-                        ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
-                    }
-                }
-                else
+                if (BrowserViewModel.StorageRoot.Options.IsRecycleBinUnlimited())
                 {
                     for (var i = 0; i < items.Length; i++)
                     {
                         var item = items[i];
                         await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
                         ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                    }
+                }
+                else
+                {
+                    var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
+                    var availableSize = BrowserViewModel.StorageRoot.Options.RecycleBinSize - occupiedSize;
+                    if (availableSize < sizes.Sum())
+                    {
+                        // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently
+                        for (var i = 0; i < items.Length; i++)
+                        {
+                            var item = items[i];
+                            await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], true, cancellationToken);
+                            ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                        }
+                    }
+                    else
+                    {
+                        for (var i = 0; i < items.Length; i++)
+                        {
+                            var item = items[i];
+                            await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
+                            ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                        }
                     }
                 }
             }

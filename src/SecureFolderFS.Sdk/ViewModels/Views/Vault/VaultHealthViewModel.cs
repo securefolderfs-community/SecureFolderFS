@@ -23,7 +23,7 @@ using SecureFolderFS.Storage.Scanners;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    [Inject<IVaultHealthService>]
+    [Inject<IVaultHealthService>, Inject<IVaultService>]
     public sealed partial class VaultHealthViewModel : ObservableObject, IProgress<double>, IProgress<TotalProgress>, INotifyStateChanged, IViewable, IAsyncInitialize, IDisposable
     {
         private CancellationTokenSource? _cts;
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             var vaultModel = _unlockedVaultViewModel.VaultViewModel.VaultModel;
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
-            var folderScanner = new DeepFolderScanner(contentFolder);
+            var folderScanner = new DeepFolderScanner(contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
 
             _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);

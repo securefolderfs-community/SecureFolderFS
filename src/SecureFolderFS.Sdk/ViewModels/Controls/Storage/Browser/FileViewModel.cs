@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Shared;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Helpers;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -50,6 +47,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         protected override async Task OpenAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.TransferViewModel?.IsPickingItems() ?? false)
+                return;
+            
             using var viewModel = new PreviewerOverlayViewModel();
             await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
             await OverlayService.ShowAsync(viewModel);

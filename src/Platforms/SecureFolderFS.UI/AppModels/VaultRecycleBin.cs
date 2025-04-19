@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.DataModels;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -130,6 +131,9 @@ namespace SecureFolderFS.UI.AppModels
             await foreach (var item in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                
+                if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);

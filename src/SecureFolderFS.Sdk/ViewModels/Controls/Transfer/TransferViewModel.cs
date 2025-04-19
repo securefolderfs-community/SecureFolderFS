@@ -69,8 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true,
-            CancellationToken cancellationToken = default)
+        public Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             _tcs?.TrySetCanceled(CancellationToken.None);
             _tcs = new TaskCompletionSource<IFolder?>();
@@ -96,9 +95,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         private async Task CancelAsync()
         {
             if (_tcs is not null)
-            {
-                _tcs.TrySetCanceled(CancellationToken.None);
-                IsVisible = false;
+            { 
+                IsVisible = !_tcs.TrySetCanceled(CancellationToken.None);
             }
             else if (_cts is not null)
             {

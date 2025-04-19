@@ -41,7 +41,7 @@
 
                     <VerticalStackLayout>
                         <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
-                        <ProgressBar Progress="{Binding PrimaryPassword, Mode=OneWay, Converter={StaticResource PasswordToStrengthConverter}}" />
+                        <ProgressBar Progress="{Binding PrimaryPassword, Mode=OneWay, Converter={StaticResource PasswordToStrengthConverter}, ConverterParameter='0.01'}" />
                     </VerticalStackLayout>
                     <local:PasswordControl Title="{l:ResourceString Rid=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
                 </VerticalStackLayout>

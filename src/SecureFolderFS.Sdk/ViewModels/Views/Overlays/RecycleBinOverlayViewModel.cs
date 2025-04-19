@@ -24,8 +24,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private bool _IsRecycleBinEnabled;
-        [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
         [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
+        [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
 
         public INavigator OuterNavigator { get; }
 

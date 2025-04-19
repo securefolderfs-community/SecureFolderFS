@@ -77,7 +77,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 return null;
 
             await OuterNavigator.NavigateAsync(this);
-            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cancellationToken);
+            var cts = TransferViewModel.GetCancellation();
+            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cts.Token);
             if (pickedFolder is null)
                 return null;
 

@@ -11,9 +11,9 @@ namespace SecureFolderFS.UI.AppModels
     /// <inheritdoc cref="IBasicProperties"/>
     internal sealed class RecycleBinProperties : IBasicProperties, ISizeProperties
     {
-        private readonly IFolder _recycleBin;
+        private readonly IModifiableFolder _recycleBin;
 
-        public RecycleBinProperties(IFolder recycleBin)
+        public RecycleBinProperties(IModifiableFolder recycleBin)
         {
             _recycleBin = recycleBin;
         }

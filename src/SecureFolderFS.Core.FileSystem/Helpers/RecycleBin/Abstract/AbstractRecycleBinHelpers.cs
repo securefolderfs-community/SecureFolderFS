@@ -1,3 +1,7 @@
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
@@ -6,18 +10,14 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static class AbstractRecycleBinHelpers
     {
-        public static async Task<long> GetOccupiedSizeAsync(IFolder recycleBin, CancellationToken cancellationToken = default)
+        public static async Task<long> GetOccupiedSizeAsync(IModifiableFolder recycleBin, CancellationToken cancellationToken = default)
         {
-            var recycleBinConfig = await recycleBin.GetFileByNameAsync(Core.FileSystem.Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
             var text = await recycleBinConfig.ReadAllTextAsync(null, cancellationToken);
             if (!long.TryParse(text, out var value))
                 return 0L;
@@ -25,9 +25,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             return Math.Max(0L, value);
         }
 
-        public static async Task SetOccupiedSizeAsync(IFolder recycleBin, long value, CancellationToken cancellationToken = default)
+        public static async Task SetOccupiedSizeAsync(IModifiableFolder recycleBin, long value, CancellationToken cancellationToken = default)
         {
-            var recycleBinConfig = await recycleBin.GetFileByNameAsync(Core.FileSystem.Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
             await recycleBinConfig.WriteAllTextAsync(Math.Max(0L, value).ToString(), null, cancellationToken);
         }
 
@@ -112,9 +112,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 return;
 
             // Update occupied size
-            var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+            var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
             var newSize = occupiedSize - size;
-            await SetOccupiedSizeAsync(recycleBin, newSize, cancellationToken);
+            await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
         }
 
         public static async Task DeleteOrRecycleAsync(
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     _ => 0L
                 };
 
-                var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
                 if (availableSize < sizeHint)
                 {
@@ -187,9 +187,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())
             {
-                var occupiedSize = await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
                 var newSize = occupiedSize + sizeHint;
-                await SetOccupiedSizeAsync(recycleBin, newSize, cancellationToken);
+                await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
             }
         }
 

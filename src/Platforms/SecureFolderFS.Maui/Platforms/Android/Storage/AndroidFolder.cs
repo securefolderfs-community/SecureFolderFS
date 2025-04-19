@@ -154,6 +154,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (overwrite && existingFile is not null)
                 existingFile.Delete();
 
+            if (existingFile is not null)
+                return Task.FromResult<IChildFile>(new AndroidFile(existingFile.Uri, activity, this, permissionRoot));
+
             var newFile = Document?.CreateFile(mimeType, name);
             if (newFile is null)
                 return Task.FromException<IChildFile>(new UnauthorizedAccessException("Could not create Android file."));

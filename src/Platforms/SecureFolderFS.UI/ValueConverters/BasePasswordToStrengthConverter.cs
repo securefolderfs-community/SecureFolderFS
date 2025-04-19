@@ -12,6 +12,10 @@ namespace SecureFolderFS.UI.ValueConverters
             if (value is not string password)
                 return 0d;
 
+            var normalization = 1d;
+            if (parameter is string strParam && double.TryParse(strParam, out var dParam))
+                normalization = dParam;
+
             return ValidationHelpers.ValidatePassword(password) switch
             {
                 PasswordStrength.VeryWeak => 10d,
@@ -20,7 +24,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 PasswordStrength.Strong => 85d,
                 PasswordStrength.VeryStrong => 100d,
                 _ => 0d
-            };
+            } * normalization;
         }
 
         /// <inheritdoc/>

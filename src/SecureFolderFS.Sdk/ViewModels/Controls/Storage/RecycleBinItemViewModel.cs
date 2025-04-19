@@ -51,7 +51,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 ? DI.Service<IFileExplorerService>()
                 : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
 
-            await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken);
+            if (await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken))
+            {
+                foreach (var item in items)
+                    OverlayViewModel.Items.Remove(item);
+            }
             OverlayViewModel.ToggleSelection(false);
         }
 
