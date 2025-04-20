@@ -66,6 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override void OnDisappearing()
         {
+            TransferViewModel?.CancelCommand.Execute(null);
             CurrentFolder?.Dispose();
             base.OnDisappearing();
         }
@@ -76,14 +77,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (OuterNavigator is null || TransferViewModel is null)
                 return null;
 
-            await OuterNavigator.NavigateAsync(this);
-            var cts = TransferViewModel.GetCancellation();
-            var pickedFolder = await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cts.Token);
-            if (pickedFolder is null)
-                return null;
-
-            await OuterNavigator.GoBackAsync();
-            return pickedFolder;
+            try
+            {
+                await OuterNavigator.NavigateAsync(this);
+                var cts = TransferViewModel.GetCancellation();
+                return await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cts.Token);
+            }
+            finally
+            {
+                await OuterNavigator.GoBackAsync();
+            }
         }
 
         partial void OnCurrentFolderChanged(FolderViewModel? oldValue, FolderViewModel? newValue)

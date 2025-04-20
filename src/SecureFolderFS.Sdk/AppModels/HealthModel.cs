@@ -121,6 +121,7 @@ namespace SecureFolderFS.Sdk.AppModels
                         Interlocked.Increment(ref _totalFilesScanned);
                     else if (typeResult.Value == StorableType.Folder)
                         Interlocked.Increment(ref _totalFoldersScanned);
+
                     break;
                 }
 
