@@ -1,9 +1,11 @@
-﻿using System;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
@@ -12,14 +14,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
     /// </summary>
     public static partial class AbstractPathHelpers
     {
+        // TODO: Add a comment that this method assumes that items have a backing store
         public static async Task<string?> GetCiphertextPathAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
             if (specifics.Security.NameCrypt is null)
                 return plaintextStorable.Id;
 
+            var finalPath = string.Empty;
             var currentStorable = plaintextStorable;
             var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
-            var finalPath = string.Empty;
 
             while (await currentStorable.GetParentAsync(cancellationToken).ConfigureAwait(false) is IChildFolder currentParent)
             {
@@ -34,6 +37,41 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             }
 
             return Path.Combine(specifics.ContentFolder.Id, finalPath);
+        }
+
+        public static async Task<IStorableChild?> GetCiphertextItemAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return plaintextStorable;
+
+            var folderChain = new List<IChildFolder>();
+            var currentStorable = plaintextStorable;
+
+            while (await currentStorable.GetParentAsync(cancellationToken).ConfigureAwait(false) is IChildFolder currentParent)
+            {
+                folderChain.Insert(0, currentParent);
+                currentStorable = currentParent;
+            }
+
+            // Remove the first item (root)
+            folderChain.RemoveAt(0);
+
+            var finalFolder = specifics.ContentFolder;
+            var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
+            foreach (var item in folderChain)
+            {
+                // Walk through plaintext folder chain and retrieve ciphertext folders
+                var subResult = await GetDirectoryIdAsync(finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+                var subCiphertextName = specifics.Security.NameCrypt.EncryptName(item.Name, subResult ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+
+                finalFolder = await finalFolder.GetFolderByNameAsync($"{subCiphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", cancellationToken);
+            }
+
+            // Encrypt and retrieve the final item
+            var result = await GetDirectoryIdAsync(finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+            var ciphertextName = specifics.Security.NameCrypt.EncryptName(plaintextStorable.Name, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+
+            return await finalFolder.GetFirstByNameAsync($"{ciphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", cancellationToken);
         }
 
         public static async Task<string?> GetPlaintextPathAsync(IStorableChild ciphertextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)

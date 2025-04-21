@@ -17,12 +17,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT_InitializeObject(filePicker);
 
-            if (filter is NameFilter nameFilter)
+            if (options is NameFilter nameFilter)
             {
                 foreach (var item in nameFilter.Names)
                     filePicker.FileTypeFilter.Add(item);
@@ -39,18 +39,24 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT_InitializeObject(folderPicker);
 
-            if (filter is NameFilter nameFilter)
+            if (options is NameFilter nameFilter)
             {
                 foreach (var item in nameFilter.Names)
                     folderPicker.FileTypeFilter.Add(item);
             }
             else
                 folderPicker.FileTypeFilter.Add("*");
+
+            if (options is StartingFolderOptions startingFolderOptions)
+            {
+                if (Enum.TryParse(startingFolderOptions.Location, true, out PickerLocationId pickerLocationId))
+                    folderPicker.SuggestedStartLocation = pickerLocationId;
+            }
 
             var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
             if (folder is null)

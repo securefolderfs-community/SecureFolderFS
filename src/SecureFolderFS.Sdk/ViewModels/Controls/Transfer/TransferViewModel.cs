@@ -48,6 +48,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 _ => string.Empty,
             }} {GetItemsCount(value)} item(s)";
 
+            return;
+
             static string GetItemsCount(TotalProgress totalProgress)
             {
                 return totalProgress switch
@@ -69,13 +71,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             _tcs?.TrySetCanceled(CancellationToken.None);
             _tcs = new TaskCompletionSource<IFolder?>();
 
-            if (filter is TransferFilter transferFilter)
-                TransferType = transferFilter.TransferType;
+            if (options is TransferOptions transferOptions)
+                TransferType = transferOptions.TransferType;
 
             Title = "ChooseDestinationFolder".ToLocalized();
             IsProgressing = false;

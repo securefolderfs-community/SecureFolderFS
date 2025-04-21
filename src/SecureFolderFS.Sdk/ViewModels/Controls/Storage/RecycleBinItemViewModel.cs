@@ -5,7 +5,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
@@ -18,7 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 {
     [Bindable(true)]
     [Inject<IRecycleBinService>, Inject<IApplicationService>]
@@ -26,17 +25,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         private readonly IRecycleBinFolder _recycleBin;
 
+        [ObservableProperty] private string? _OriginalPath;
         [ObservableProperty] private DateTime? _DeletionTimestamp;
         [ObservableProperty] private RecycleBinOverlayViewModel _OverlayViewModel;
 
         /// <inheritdoc/>
         public override IStorable Inner { get; }
 
-        public RecycleBinItemViewModel(RecycleBinOverlayViewModel overlayViewModel, IStorableChild ciphertextItem, IRecycleBinFolder recycleBin)
+        public RecycleBinItemViewModel(RecycleBinOverlayViewModel overlayViewModel, IRecycleBinItem recycleBinItem, IRecycleBinFolder recycleBin)
         {
             ServiceProvider = DI.Default;
             OverlayViewModel = overlayViewModel;
-            Inner = ciphertextItem;
+            Inner = recycleBinItem.Inner;
+            Title = recycleBinItem.Name;
+            OriginalPath = recycleBinItem.Id;
+            DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;
         }
 

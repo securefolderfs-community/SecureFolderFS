@@ -9,6 +9,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -109,19 +110,24 @@ namespace SecureFolderFS.UI.AppModels
 
             async Task<IModifiableFolder?> GetDestinationFolderAsync()
             {
-                // TODO: Add starting directory parameter
-                var destinationFolder = await folderPicker.PickFolderAsync(null, false, cancellationToken) as IModifiableFolder;
-                if (destinationFolder is null)
+                if (await folderPicker.PickFolderAsync(new StartingFolderOptions("ComputerFolder"), false, cancellationToken) is not IModifiableFolder destinationFolder)
                     throw new OperationCanceledException("The user did not pick destination a folder.");
 
                 if (!destinationFolder.Id.Contains(_vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                     throw new InvalidOperationException("The folder is outside of the virtualized storage folder.");
 
-                var deepestWrapper = (destinationFolder as IWrapper<IFolder>)?.GetDeepestWrapper();
-                if (deepestWrapper is null)
-                    throw new NotSupportedException("Could not retrieve inner ciphertext item from the picked folder.");
+                // Get deepest implementation
+                var deepestImplementation = (destinationFolder as IWrapper<IFolder>)?.GetDeepestWrapper().Inner as IModifiableFolder ?? destinationFolder;
 
-                return deepestWrapper.Inner as IModifiableFolder;
+                // Only return the deepest implementation if it's ciphertext
+                if (deepestImplementation.Id.Contains(_specifics.ContentFolder.Id, StringComparison.OrdinalIgnoreCase))
+                    return deepestImplementation;
+
+                if (deepestImplementation is not IStorableChild plaintextChild)
+                    return null;
+                
+                // Return the equivalent ciphertext implementation
+                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _specifics, cancellationToken) as IModifiableFolder;
             }
         }
 
@@ -145,7 +151,19 @@ namespace SecureFolderFS.UI.AppModels
                     ? dataModel.OriginalName
                     : _specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(dataModel.OriginalName), dataModel.DirectoryId);
 
-                yield return new RecycleBinItem(item, dataModel.DeletionTimestamp ?? default, plaintextName, this);
+                string? plaintextParentPath = null;
+                var parentStorable = await _specifics.ContentFolder.TryGetItemByRelativePathOrSelfAsync(dataModel.ParentPath, cancellationToken);
+                if (parentStorable?.Id.Equals(_specifics.ContentFolder.Id, StringComparison.OrdinalIgnoreCase) ?? false)
+                    plaintextParentPath = _specifics.ContentFolder.Id;
+                else if (parentStorable is IStorableChild parentStorableChild)
+                    plaintextParentPath = await AbstractPathHelpers.GetPlaintextPathAsync(parentStorableChild, _specifics, cancellationToken);
+
+                yield return new RecycleBinItem(item, this)
+                {
+                    Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
+                    Name = plaintextName ?? item.Name,
+                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default
+                };
             }
         }
 

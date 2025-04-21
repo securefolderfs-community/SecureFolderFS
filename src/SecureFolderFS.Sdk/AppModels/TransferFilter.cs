@@ -4,8 +4,8 @@ using SecureFolderFS.Storage.Pickers;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <summary>
-    /// Represents a transfer type filter.
+    /// Represents a transfer type options.
     /// </summary>
     /// <param name="TransferType">The type of transfer to use.</param>
-    public sealed record TransferFilter(TransferType TransferType) : FilterOptions;
+    public sealed record TransferOptions(TransferType TransferType) : PickerOptions;
 }

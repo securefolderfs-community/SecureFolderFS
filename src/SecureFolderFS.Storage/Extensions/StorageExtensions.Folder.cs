@@ -185,7 +185,20 @@ namespace SecureFolderFS.Storage.Extensions
         /// <exception cref="FileNotFoundException">A named item was specified in a folder, but the item wasn't found.</exception>
         public static async Task<IStorable> GetItemByRelativePathOrSelfAsync(this IStorable from, string relativePath, CancellationToken cancellationToken = default)
         {
-            return from.Id == relativePath? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
+            return from.Id == relativePath ? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
+        }
+
+        /// <inheritdoc cref="GetItemByRelativePathOrSelfAsync"/>
+        public static async Task<IStorable?> TryGetItemByRelativePathOrSelfAsync(this IStorable from, string relativePath, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return from.Id == relativePath ? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)

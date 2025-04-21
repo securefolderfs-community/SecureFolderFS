@@ -4,7 +4,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
@@ -51,11 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 if (item is not IRecycleBinItem recycleBinItem)
                     continue;
 
-                Items.Add(new(this, recycleBinItem.Inner, _recycleBin)
-                {
-                    Title = recycleBinItem.Name,
-                    DeletionTimestamp = recycleBinItem.DeletionTimestamp
-                });
+                Items.Add(new(this, recycleBinItem, _recycleBin));
             }
         }
 

@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 BrowserViewModel.IsSelecting = false;
 
                 using var cts = transferViewModel.GetCancellation();
-                var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Move), false, cts.Token);
+                var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Move), false, cts.Token);
                 if (destination is not IModifiableFolder destinationFolder)
                     return;
 
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 BrowserViewModel.IsSelecting = false;
 
                 using var cts = transferViewModel.GetCancellation();
-                var destination = await transferViewModel.PickFolderAsync(new TransferFilter(TransferType.Copy), false, cts.Token);
+                var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Copy), false, cts.Token);
                 if (destination is not IModifiableFolder modifiableDestination)
                     return;
 

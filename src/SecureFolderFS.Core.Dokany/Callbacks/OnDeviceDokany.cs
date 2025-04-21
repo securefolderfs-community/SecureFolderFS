@@ -19,6 +19,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -243,11 +245,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     {
                         var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                         Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
-                        Directory.Delete(ciphertextPath, true);
+                        NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, Specifics, StorableType.Folder);
                     }
                     else
                     {
-                        File.Delete(ciphertextPath);
+                        NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, Specifics, StorableType.File);
                     }
                 }
                 catch (UnauthorizedAccessException)

@@ -8,7 +8,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
     internal sealed class MockFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             var guid = Guid.NewGuid().ToString();
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             var guid = Guid.NewGuid().ToString();

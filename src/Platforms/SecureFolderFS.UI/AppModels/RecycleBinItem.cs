@@ -12,23 +12,20 @@ namespace SecureFolderFS.UI.AppModels
         private readonly IRecycleBinFolder? _recycleBin;
 
         /// <inheritdoc/>
-        public string Id { get; }
+        public required string Id { get; init; }
 
         /// <inheritdoc/>
-        public string Name { get; }
+        public required string Name { get; init; }
+
+        /// <inheritdoc/>
+        public required DateTime DeletionTimestamp { get; init; }
 
         /// <inheritdoc/>
         public IStorableChild Inner { get; }
 
-        /// <inheritdoc/>
-        public DateTime DeletionTimestamp { get; }
-
-        public RecycleBinItem(IStorableChild inner, DateTime deletionTimestamp, string? plaintextName, IRecycleBinFolder? recycleBin)
+        public RecycleBinItem(IStorableChild inner, IRecycleBinFolder? recycleBin)
         {
             Inner = inner;
-            Id = plaintextName ?? inner.Id;
-            Name = plaintextName ?? inner.Name;
-            DeletionTimestamp = deletionTimestamp;
             _recycleBin = recycleBin;
         }
 

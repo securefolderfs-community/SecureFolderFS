@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var intent = new Intent(Intent.ActionOpenDocument)
                 .AddCategory(Intent.CategoryOpenable)
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var initialPath = AndroidPathExtensions.GetExternalDirectory();
             if (AOSEnvironment.ExternalStorageDirectory is not null)

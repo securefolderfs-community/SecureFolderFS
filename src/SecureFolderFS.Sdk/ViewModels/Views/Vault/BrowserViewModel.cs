@@ -1,8 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
@@ -21,6 +17,10 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             if (OuterNavigator is null || TransferViewModel is null)
                 return null;
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 await OuterNavigator.NavigateAsync(this);
                 var cts = TransferViewModel.GetCancellation();
-                return await TransferViewModel.PickFolderAsync(new TransferFilter(TransferType.Select), false, cts.Token);
+                return await TransferViewModel.PickFolderAsync(new TransferOptions(TransferType.Select), false, cts.Token);
             }
             finally
             {

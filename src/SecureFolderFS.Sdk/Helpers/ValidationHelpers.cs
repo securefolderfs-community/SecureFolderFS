@@ -56,6 +56,7 @@ namespace SecureFolderFS.Sdk.Helpers
 
             if (password.Length >= 8)
                 score++;
+
             if (password.Length >= 10)
                 score++;
 
