@@ -96,7 +96,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         {
             if (_tcs is not null)
             { 
-                IsVisible = !_tcs.TrySetCanceled(CancellationToken.None);
+                _tcs.TrySetCanceled(CancellationToken.None);
+                IsVisible = false;
             }
             else if (_cts is not null)
             {

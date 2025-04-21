@@ -138,6 +138,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is not null)
                 ViewModel.ViewOptions.PropertyChanged -= ViewOptions_PropertyChanged;
 
+            ViewModel?.OnDisappearing();
             base.OnDisappearing();
         }
 

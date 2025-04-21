@@ -755,4 +755,13 @@
   <data name="NoItems" xml:space="preserve">
       <value>No items</value>
   </data>
+  <data name="Data" xml:space="preserve">
+      <value>Data</value>
+  </data>
+  <data name="EnableFileThumbnails" xml:space="preserve">
+      <value>Enable file thumbnails</value>
+  </data>
+  <data name="OpenFileBrowser" xml:space="preserve">
+      <value>Open file browser</value>
+  </data>
 </root>

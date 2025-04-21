@@ -37,6 +37,20 @@ namespace SecureFolderFS.Sdk.Services.Settings
 
         #endregion
 
+        #region File Browser
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to enable item thumbnails in the file browser.
+        /// </summary>
+        bool AreThumbnailsEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to enable the file content cache.
+        /// </summary>
+        bool IsContentCacheEnabled { get; set; }
+
+        #endregion
+
         #region Privacy
 
         /// <summary>

@@ -98,7 +98,7 @@
                             </On>
                             <On Platform="Android">
                                 <VerticalStackLayout>
-                                    <uco:OptionsControl Title="Open file browser" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
                                     <uco:OptionsControl
                                         Title="{l:ResourceString Rid=RecycleBin}"
                                         Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"

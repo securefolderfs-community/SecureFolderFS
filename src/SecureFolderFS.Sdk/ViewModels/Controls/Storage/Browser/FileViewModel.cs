@@ -11,7 +11,7 @@ using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IOverlayService>, Inject<IMediaService>]
+    [Inject<IOverlayService>, Inject<IMediaService>, Inject<ISettingsService>]
     [Bindable(true)]
     public partial class FileViewModel : BrowserItemViewModel
     {
@@ -35,7 +35,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             Thumbnail?.Dispose();
-            Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
+            
+            if (SettingsService.UserSettings.AreThumbnailsEnabled)
+                Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
         }
 
         /// <inheritdoc/>

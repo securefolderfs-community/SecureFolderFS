@@ -62,26 +62,44 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
 
         #endregion
 
+        #region File Browser
+
+        /// <inheritdoc/>
+        public bool AreThumbnailsEnabled
+        {
+            get => GetSetting(static () => true);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public bool IsContentCacheEnabled
+        {
+            get => GetSetting(static () => true);
+            set => SetSetting(value);
+        }
+
+        #endregion
+
         #region Privacy
 
         /// <inheritdoc/>
         public virtual bool IsTelemetryEnabled
         {
-            get => GetSetting(() => true);
+            get => GetSetting(static () => true);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public virtual bool LockOnSystemLock
         {
-            get => GetSetting(() => false);
+            get => GetSetting(static () => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public virtual bool DisableRecentAccess
         {
-            get => GetSetting(() => false);
+            get => GetSetting(static () => false);
             set => SetSetting(value);
         }
 
@@ -98,6 +116,8 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
                 nameof(ContinueOnLastVault) => $"{nameof(ContinueOnLastVault)}: {ContinueOnLastVault}",
                 nameof(OpenFolderOnUnlock) => $"{nameof(OpenFolderOnUnlock)}: {OpenFolderOnUnlock}",
                 nameof(ReduceToBackground) => $"{nameof(ReduceToBackground)}: {ReduceToBackground}",
+                nameof(AreThumbnailsEnabled) => $"{nameof(AreThumbnailsEnabled)}: {AreThumbnailsEnabled}",
+                nameof(IsContentCacheEnabled) => $"{nameof(IsContentCacheEnabled)}: {IsContentCacheEnabled}",
                 _ => null
             };
 

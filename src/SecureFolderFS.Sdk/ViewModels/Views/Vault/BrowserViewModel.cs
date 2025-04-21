@@ -66,7 +66,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override void OnDisappearing()
         {
-            TransferViewModel?.CancelCommand.Execute(null);
+            if (TransferViewModel is not null)
+            {
+                if (TransferViewModel.IsVisible && !TransferViewModel.IsProgressing)
+                    TransferViewModel?.CancelCommand.Execute(null);
+            }
+            
             CurrentFolder?.Dispose();
             base.OnDisappearing();
         }
@@ -85,7 +90,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
             finally
             {
-                await OuterNavigator.GoBackAsync();
+                if (OuterNavigator is INavigationService { CurrentView: BrowserViewModel })
+                    await OuterNavigator.GoBackAsync();
+
+                _ = 0;
             }
         }
 

@@ -95,13 +95,35 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
-           
-            // Rename the item to correct name
             _ = deserialized.OriginalName ?? throw new IOException("Could not get file name.");
-            var renamedItem = await renamableRecycleBin.RenameAsync(item, deserialized.OriginalName, cancellationToken);
+            _ = deserialized.ParentPath ?? throw new IOException("Could not get parent path.");
 
-            // Move item to destination
-            _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+            if (!destinationFolder.Id.EndsWith(deserialized.ParentPath))
+            {
+                // Destination folder is different than original destination
+                // A new item name should be chosen fit for the new folder (so that Directory ID match)
+
+                var plaintextName = specifics.Security.NameCrypt?.DecryptName(Path.GetFileNameWithoutExtension(deserialized.OriginalName), deserialized.DirectoryId) ?? deserialized.OriginalName;
+                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextName, destinationFolder, specifics, cancellationToken);
+
+                // Rename the item to correct name
+                var renamedItem = await renamableRecycleBin.RenameAsync(item, ciphertextName, cancellationToken);
+
+                // Move item to destination
+                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+            }
+            else
+            {
+                // Destination folder is the same as the original destination
+                // The same name could be used since the Directory IDs match
+                // TODO: Check if the Directory IDs actually match and fallback to above method if not
+
+                // Rename the item to correct name
+                var renamedItem = await renamableRecycleBin.RenameAsync(item, deserialized.OriginalName, cancellationToken);
+
+                // Move item to destination
+                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+            }
 
             // Delete old configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);

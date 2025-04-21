@@ -21,21 +21,21 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public virtual bool WasBetaNotificationShown1
         {
-            get => GetSetting(() => false);
+            get => GetSetting(static () => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public virtual bool ShouldShowVaultTutorial
         {
-            get => GetSetting(() => true);
+            get => GetSetting(static () => true);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public virtual bool IsIntroduced
         {
-            get => GetSetting(() => false);
+            get => GetSetting(static () => false);
             set => SetSetting(value);
         }
 
@@ -70,7 +70,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public virtual DateTime UpdateLastChecked
         {
-            get => GetSetting<DateTime>(() => new());
+            get => GetSetting<DateTime>(static () => new());
             set => SetSetting(value);
         }
     }

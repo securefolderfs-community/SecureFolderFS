@@ -51,6 +51,19 @@
                 </uco:OptionsContainer.InnerContent>
             </uco:OptionsContainer>
 
+            <!--  File Browser  -->
+            <uco:OptionsContainer Title="{l:ResourceString Rid=Data}">
+                <uco:OptionsContainer.InnerContent>
+                    <VerticalStackLayout>
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}">
+                            <uco:OptionsControl.Slot>
+                                <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />
+                            </uco:OptionsControl.Slot>
+                        </uco:OptionsControl>
+                    </VerticalStackLayout>
+                </uco:OptionsContainer.InnerContent>
+            </uco:OptionsContainer>
+
             <!--  About  -->
             <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsAbout}">
                 <uco:OptionsContainer.InnerContent>
