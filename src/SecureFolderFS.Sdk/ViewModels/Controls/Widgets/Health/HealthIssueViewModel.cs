@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
-    [Inject<IClipboardService>]
+    [Inject<IClipboardService>(Visibility = "protected"), Inject<IOverlayService>(Visibility = "protected")]
     [Bindable(true)]
     public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorableChild>
     {

@@ -43,6 +43,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Resolve issues and restore readonly status
             await VaultHealthService.ResolveIssuesAsync(HealthViewModel.FoundIssues, _unlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
             _unlockedVaultViewModel.Options.DangerousSetReadOnly(isReadOnly);
+
+            // Disable repair option until the vault is re-scanned
+            CanResolve = false;
         }
 
         private void IssueResolved(HealthIssueViewModel issueViewModel, IResult result)

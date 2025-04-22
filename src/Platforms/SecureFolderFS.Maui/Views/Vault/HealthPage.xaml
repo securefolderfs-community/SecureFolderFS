@@ -53,7 +53,10 @@
 
         <!--  Name Issue  -->
         <DataTemplate x:Key="NameIssueTemplate" x:DataType="vm2:HealthNameIssueViewModel">
-            <uco:OptionsControl Title="{Binding Title, Mode=OneWay}" SlotText="{Binding ItemName, Mode=OneWay}" />
+            <uco:OptionsControl
+                Title="{Binding Title, Mode=OneWay}"
+                Command="{Binding EditCommand}"
+                SlotText="{Binding ItemName, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Base Issue  -->
@@ -62,8 +65,15 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <VerticalStackLayout Padding="16" Spacing="32">
-        <apesui:ContextMenuContainer x:Name="ItemContainer">
+    <Grid Padding="16" RowSpacing="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Scan button  -->
+        <apesui:ContextMenuContainer x:Name="ItemContainer" Grid.Row="0">
             <apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuItem
                     Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
@@ -85,7 +95,8 @@
             </apesui:ContextMenuContainer.Content>
         </apesui:ContextMenuContainer>
 
-        <uco:OptionsContainer Title="Found Issues">
+        <!--  Issues list  -->
+        <uco:OptionsContainer Title="Found Issues" Grid.Row="1">
             <uco:OptionsContainer.InnerContent>
                 <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
                     <CollectionView.ItemTemplate>
@@ -97,5 +108,16 @@
                 </CollectionView>
             </uco:OptionsContainer.InnerContent>
         </uco:OptionsContainer>
-    </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="2"
+            IsVisible="{Binding ViewModel.CanResolve, Mode=OneWay}"
+            Spacing="8">
+            <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=Repair}" />
+            <Label
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="{l:ResourceString Rid=RepairDescription}" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

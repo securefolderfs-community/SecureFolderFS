@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
@@ -19,15 +20,15 @@
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
-                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
-                        Text="Delete" />
+                        Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
                     <Grid
@@ -72,15 +73,15 @@
                 Padding="16"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
-                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
-                        Text="Delete" />
+                        Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
                     <Grid
@@ -127,15 +128,15 @@
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
-                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="Properties" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="Rename" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
-                        Text="Delete" />
+                        Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
                     <Grid

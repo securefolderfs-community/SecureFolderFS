@@ -764,4 +764,28 @@
   <data name="OpenFileBrowser" xml:space="preserve">
       <value>Open file browser</value>
   </data>
+  <data name="DeleteImmediately" xml:space="preserve">
+      <value>Delete immediately</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+      <value>Delete</value>
+  </data>
+  <data name="GetInfo" xml:space="preserve">
+      <value>Get info</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+      <value>Restore</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+      <value>Repair</value>
+  </data>
+  <data name="RepairDescription" xml:space="preserve">
+      <value>During repair, your vault will be set into read-only mode.</value>
+  </data>
+  <data name="ChooseNewName" xml:space="preserve">
+      <value>Choose a new name</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+      <value>Export</value>
+  </data>
 </root>

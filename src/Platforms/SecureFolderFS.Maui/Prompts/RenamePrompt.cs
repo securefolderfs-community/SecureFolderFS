@@ -21,7 +21,8 @@ namespace SecureFolderFS.Maui.Prompts
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
-                "Cancel".ToLocalized());
+                "Cancel".ToLocalized(),
+                initialValue: ViewModel.NewName);
 
             if (string.IsNullOrWhiteSpace(ViewModel.NewName))
                 return Result.Failure(null);

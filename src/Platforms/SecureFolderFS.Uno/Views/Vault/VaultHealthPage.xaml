@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
@@ -216,13 +217,13 @@
             <Button
                 Width="124"
                 Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
-                Content="Repair"
+                Content="{l:ResourceString Rid=Repair}"
                 IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
             <TextBlock
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity="0.8"
-                Text="During repair, your vault will be set into read-only mode."
+                Text="{l:ResourceString Rid=RepairDescription}"
                 TextTrimming="CharacterEllipsis" />
         </StackPanel>
     </Grid>

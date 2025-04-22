@@ -1,6 +1,5 @@
 using System.Globalization;
 using MauiIcons.Core;
-using MauiIcons.Material;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Shared.ComponentModel;
@@ -19,11 +18,20 @@ namespace SecureFolderFS.Maui.ValueConverters
             return value switch
             {
                 IImage image => ToImage(image),
+                
+#if ANDROID
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new MauiIcon() { Icon = MaterialIcons.Folder },
-                    _ => new MauiIcon() { Icon = MaterialIcons.Description }
+                    { Inner: IFolder } => new MauiIcon() { Icon = MauiIcons.Material.MaterialIcons.Folder, IconAutoScaling = true },
+                    _ => new MauiIcon() { Icon = MauiIcons.Material.MaterialIcons.Description, IconAutoScaling = true }
                 }
+#else
+                _ => storableWrapper switch
+                {
+                    { Inner: IFolder } => new MauiIcon() { Icon = MauiIcons.Cupertino.CupertinoIcons.Folder },
+                    _ => new MauiIcon() { Icon = MauiIcons.Cupertino.CupertinoIcons.Doc }
+                }
+#endif
             };
 
             static object? ToImage(IImage image)

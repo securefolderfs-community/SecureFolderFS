@@ -106,7 +106,7 @@
                     Grid.Row="1"
                     Margin="8"
                     Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
-                    HorizontalOptions="Center"
+                    HorizontalOptions="Fill"
                     Style="{StaticResource TransparentButtonStyle}"
                     Text="Select all"
                     VerticalOptions="Center" />

@@ -198,7 +198,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             try
             {
-                var viewModel = new RenameOverlayViewModel("Rename item") { Message = "Choose a new name" };
+                var viewModel = new RenameOverlayViewModel("Rename".ToLocalized()) { Message = "ChooseNewName".ToLocalized(), NewName = Inner.Name };
                 var result = await OverlayService.ShowAsync(viewModel);
                 if (!result.Positive())
                     return;
