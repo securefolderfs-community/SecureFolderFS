@@ -38,9 +38,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual IEnumerable<string> GetEncodingOptions()
         {
-            // TODO: (v3) Swap default order when Base4K (Vault V3) is implemented
-            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL;
             yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE4K;
+            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL;
         }
 
         /// <inheritdoc/>

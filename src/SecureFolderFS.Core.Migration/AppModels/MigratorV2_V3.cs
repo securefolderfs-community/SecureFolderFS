@@ -94,6 +94,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 ContentCipherId = _v2ConfigDataModel.ContentCipherId,
                 FileNameCipherId = _v2ConfigDataModel.FileNameCipherId,
                 FileNameEncodingId = Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL,
+                RecycleBinSize = 0L,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes],
                 Uid = _v2ConfigDataModel.Uid,
                 Version = Constants.Vault.Versions.V3
@@ -106,6 +107,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v3ConfigDataModel.ContentCipherId)));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v3ConfigDataModel.FileNameCipherId)));
+            hmacSha256.AppendData(BitConverter.GetBytes(v3ConfigDataModel.RecycleBinSize));
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(v3ConfigDataModel.FileNameEncodingId));
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(v3ConfigDataModel.Uid));
             hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(v3ConfigDataModel.AuthenticationMethod));

@@ -5,7 +5,6 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
     /// TODO: Needs docs
     public static class Argon2id
     {
-        // TODO: (v3) Remove references when V3 is ready
         public static void Old_DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
         {
             using var argon2id = new Konscious.Security.Cryptography.Argon2id(password.ToArray());

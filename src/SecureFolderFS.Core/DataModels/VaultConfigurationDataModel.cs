@@ -25,20 +25,20 @@ namespace SecureFolderFS.Core.DataModels
         /// <summary>
         /// Gets the ID for file name encoding.
         /// </summary>
-        //[JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)] // TODO: (V3) Uncomment, set DefaultValue()
+        [JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
         [DefaultValue("")]
-        [JsonIgnore]
         public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
 
         /// <summary>
         /// Gets the size of the recycle bin.
         /// </summary>
         /// <remarks>
-        /// If the provided value is zero or less, the recycle bin feature is considered as disabled.
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
         /// </remarks>
-        //[JsonPropertyName(Associations.ASSOC_RECYCLE_SIZE)] // TODO: (V3) Uncomment, set DefaultValue()
+        [JsonPropertyName(Associations.ASSOC_RECYCLE_SIZE)]
         [DefaultValue(0L)]
-        [JsonIgnore]
         public long RecycleBinSize { get; set; } = 0L;
 
         ///// <summary>

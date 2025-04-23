@@ -82,8 +82,8 @@
             internal static class Argon2
             {
                 public const int DEGREE_OF_PARALLELISM = 2;
-                public const int ITERATIONS = 4;
-                public const int MEMORY_SIZE_KB = 64; // 1kB * 64 = 64mB
+                public const int ITERATIONS = 2;
+                public const int MEMORY_SIZE_KB = 48234; // ~48MiB
             }
         }
     }

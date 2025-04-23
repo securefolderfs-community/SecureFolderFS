@@ -27,7 +27,8 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                              // Version
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
-            //hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                                // FileNameEncodingId // TODO: (v3) Hash Encoding ID
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));                                       // RecycleBinSize
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                                  // FileNameEncodingId
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                                 // Id
             hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                           // AuthMethod
 
@@ -49,7 +50,7 @@ namespace SecureFolderFS.Core.VaultAccess
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.Old_DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
+            Argon2id.V3_DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
@@ -76,7 +77,7 @@ namespace SecureFolderFS.Core.VaultAccess
         {
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.Old_DeriveKey(passkey, salt, kek);
+            Argon2id.V3_DeriveKey(passkey, salt, kek);
 
             // Wrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
