@@ -22,15 +22,19 @@ namespace SecureFolderFS.Maui.UserControls
             refreshView.IsRefreshing = false;
         }
 
-        private void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
+        private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
-            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
+            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel } view)
                 return;
 
             if (IsSelecting)
                 itemViewModel.IsSelected = !itemViewModel.IsSelected;
             else
-                itemViewModel.OpenCommand.Execute(null);
+            {
+                view.IsEnabled = false;
+                await itemViewModel.OpenCommand.ExecuteAsync(null);
+                view.IsEnabled = true;
+            }
         }
 
         private void ItemContainer_Loaded(object? sender, EventArgs e)

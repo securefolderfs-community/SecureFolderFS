@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using OwlCore.Storage;
@@ -12,7 +13,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual IEnumerable<string> GetContentCiphers()
         {
-            yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+            if (!OperatingSystem.IsIOS())
+                yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+            
             yield return Core.Cryptography.Constants.CipherId.AES_GCM;
         }
 

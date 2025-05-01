@@ -46,7 +46,7 @@ namespace SecureFolderFS.Storage.Extensions
                 IChildFolder folderToMove => (TStorable)await destinationFolder.MoveFromAsync(folderToMove, source, overwrite, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToMove))
             };
-        }        
+        }
 
         /// <summary>
         /// Creates a copy of the provided folder within this folder.
@@ -194,6 +194,19 @@ namespace SecureFolderFS.Storage.Extensions
             try
             {
                 return from.Id == relativePath ? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="IGetFirstByName.GetFirstByNameAsync"/>
+        public static async Task<IStorable?> TryGetFirstByNameAsync(this IFolder folder, string name, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFirstByNameAsync(name, cancellationToken);
             }
             catch (Exception)
             {

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var typeClassification = FileTypeHelper.GetClassification(_storable);
-            FileTypeText = typeClassification.MimeType;
+            FileTypeText = _storable is IFolder ? "inode/directory" : typeClassification.MimeType;
 
             if (_properties is ISizeProperties sizeProperties)
             {

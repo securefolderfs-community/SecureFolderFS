@@ -2,8 +2,12 @@
     x:Class="SecureFolderFS.Maui.Views.Modals.Vault.FilePreviewModalPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:mt="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
@@ -38,12 +42,32 @@
                 <Label Text="{Binding Source, Mode=OneWay}" />
             </ScrollView>
         </DataTemplate>
+        <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
+            <VerticalStackLayout Spacing="16">
+                <Grid HorizontalOptions="Center">
+                    <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50}" OnPlatforms="Android" />
+                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50}" OnPlatforms="iOS" />
+                </Grid>
+
+                <VerticalStackLayout>
+                    <Label
+                        FontSize="20"
+                        HorizontalOptions="Center"
+                        Text="{Binding Source, Mode=OneWay}" />
+                    <Label
+                        HorizontalOptions="Center"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=NoPreviewAvailable}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </DataTemplate>
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
         <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:PreviewerTemplateSelector
+                    FallbackTemplate="{StaticResource FallbackTemplate}"
                     ImageTemplate="{StaticResource ImageTemplate}"
                     TextTemplate="{StaticResource TextTemplate}"
                     VideoTemplate="{StaticResource VideoTemplate}" />

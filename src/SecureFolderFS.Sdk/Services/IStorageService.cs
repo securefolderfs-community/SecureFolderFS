@@ -12,8 +12,8 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the application folder.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is application-specific <see cref="IFolder"/> instance.</returns>
         Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default);
 
         /// <summary>

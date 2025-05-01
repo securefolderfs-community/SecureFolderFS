@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         {
             var iosStream = accessMode switch
             {
-                FileAccess.ReadWrite or FileAccess.Write => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.Write),
+                FileAccess.ReadWrite or FileAccess.Write => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.ReadWrite),
                 _ => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.Read)
             };
 

@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             AssertCanPick();
             using var documentPicker = new UIDocumentPickerViewController([
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(FilterOptions? filter, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             AssertCanPick();
             using var documentPicker = new UIDocumentPickerViewController([UTTypes.Folder], false);

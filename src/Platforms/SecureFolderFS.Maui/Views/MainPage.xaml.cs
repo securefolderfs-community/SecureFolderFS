@@ -28,25 +28,41 @@ namespace SecureFolderFS.Maui.Views
             InitializeComponent();
         }
 
+        private async Task ItemTappedAsync(View? view, VaultListItemViewModel itemViewModel)
+        {
+            if (view is not null)
+                view.IsEnabled = false;
+            
+            try
+            {
+                ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
+                var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
+                if (target is null)
+                {
+                    var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
+                    _ = vaultLoginViewModel.InitAsync();
+                    target = vaultLoginViewModel;
+                }
+
+                // Navigate
+                await ViewModel.NavigationService.NavigateAsync(target);
+            }
+            finally
+            {
+                if (view is not null)
+                    view.IsEnabled = true;
+            }
+        }
+        
         private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
-            ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
-            if (e.Item is not VaultListItemViewModel itemViewModel)
+            if (sender is not View view)
                 return;
 
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
-            if (target is null)
-            {
-                var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
-                _ = vaultLoginViewModel.InitAsync();
-                target = vaultLoginViewModel;
-            }
-
-            // Navigate
-            await ViewModel.NavigationService.NavigateAsync(target);
+            await ItemTappedAsync(view, (VaultListItemViewModel)e.Item);
         }
 
-        private async void MainPage_Loaded(object? sender, EventArgs e)
+        private void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)

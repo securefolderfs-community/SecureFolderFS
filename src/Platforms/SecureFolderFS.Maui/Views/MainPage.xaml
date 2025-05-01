@@ -29,6 +29,27 @@
 
         <!--  TODO: Implement SearchBar  -->
 
+        <VerticalStackLayout
+            Grid.Row="1"
+            Margin="0,0,0,64"
+            Padding="12,0"
+            InputTransparent="True"
+            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <Image HeightRequest="100" Source="{AppThemeBinding Light='vault_light.svg', Dark='vault_dark.svg'}" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                HorizontalOptions="Center"
+                Text="{l:ResourceString Rid=Welcome}" />
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="{l:ResourceString Rid=NoVaultsMessage}" />
+        </VerticalStackLayout>
+
         <ListView
             Grid.Row="1"
             ItemTapped="ListView_ItemTapped"
@@ -45,10 +66,7 @@
                                 Text="{l:ResourceString Rid=RemoveFromList}" />
                         </ViewCell.ContextActions>
 
-                        <HorizontalStackLayout
-                            Padding="8,2"
-                            Spacing="8"
-                            VerticalOptions="Center">
+                        <HorizontalStackLayout Padding="8,2" Spacing="8">
                             <Grid VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
@@ -67,26 +85,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <VerticalStackLayout
-            Grid.Row="1"
-            Margin="0,0,0,64"
-            Padding="12,0"
-            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-            Spacing="16"
-            VerticalOptions="Center">
-            <Image HeightRequest="100" Source="{AppThemeBinding Light='vault_light.svg', Dark='vault_dark.svg'}" />
-            <Label
-                FontAttributes="Bold"
-                FontSize="24"
-                HorizontalOptions="Center"
-                Text="{l:ResourceString Rid=Welcome}" />
-            <Label
-                FontSize="16"
-                HorizontalOptions="Center"
-                HorizontalTextAlignment="Center"
-                Text="{l:ResourceString Rid=NoVaultsMessage}" />
-        </VerticalStackLayout>
 
         <Grid Grid.Row="0" Grid.RowSpan="2">
             <OnPlatform x:TypeArguments="View">

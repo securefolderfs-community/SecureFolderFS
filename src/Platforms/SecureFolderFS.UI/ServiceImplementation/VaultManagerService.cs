@@ -54,7 +54,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             var recoveryRoutine = routines.RecoverVault();
-            var keySplit = encodedRecoveryKey.Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
+            var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
             var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
             if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))

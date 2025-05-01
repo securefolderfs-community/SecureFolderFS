@@ -210,8 +210,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
 
-                var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
+                var existingItem = await renamableFolder.TryGetFirstByNameAsync(formattedName, cancellationToken);
+                if (existingItem is not null)
+                {
+                    // TODO: Report that the item already exists
+                    return;
+                }
 
+                var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
                 Title = formattedName;
                 UpdateStorable(renamedStorable);
                 _ = InitAsync(cancellationToken);

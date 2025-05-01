@@ -28,13 +28,13 @@ namespace SecureFolderFS.Shared.Extensions
             return enumerable.FirstOrDefault(x => x is TDestination) as TDestination;
         }
 
-        public static TDestination GetOrAdd<TSource, TDestination>(this ICollection<TSource> collection, Func<TDestination> create)
+        public static TDestination GetOrAdd<TSource, TDestination>(this ICollection<TSource> collection, Func<TDestination> creator)
             where TDestination : class, TSource
         {
             var item = collection.FirstOrDefaultType<TSource, TDestination>();
             if (item is null)
             {
-                item = create.Invoke();
+                item = creator.Invoke();
                 collection.Add(item);
             }
 

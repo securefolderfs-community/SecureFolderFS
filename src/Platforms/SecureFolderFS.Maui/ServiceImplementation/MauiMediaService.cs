@@ -11,6 +11,11 @@ using Stream = System.IO.Stream;
 
 #if ANDROID
 using Android.Media;
+#elif IOS
+using AVFoundation;
+using CoreMedia;
+using Foundation;
+using UIKit;
 #endif
 
 namespace SecureFolderFS.Maui.ServiceImplementation
@@ -43,7 +48,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                     await using var sourceStream = await file.OpenReadAsync(cancellationToken);
                     return Android_ExtractFrame(sourceStream, TimeSpan.FromSeconds(0));
 #elif IOS
-                    IOS_ExtractFrame();
+                    //IOS_ExtractFrame(); // TODO: iOS extract video frame
 #endif
 
                     break;
@@ -89,18 +94,18 @@ namespace SecureFolderFS.Maui.ServiceImplementation
 #if IOS || MACCATALYST
     private static void IOS_ExtractFrame(string videoPath, string outputPath, TimeSpan captureTime)
     {
-        var asset = new AVAsset(NSUrl.FromFilename(videoPath));
-        var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
-        var time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
-
-        NSError error;
-        var imageRef = generator.CopyCGImageAtTime(time, out error);
-        if (imageRef != null)
-        {
-            using var image = new UIImage(imageRef);
-            using var data = image.AsJPEG(0.8f);
-            File.WriteAllBytes(outputPath, data.ToArray());
-        }
+        // var asset = new AVAsset();
+        // var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
+        // var time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
+        //
+        // NSError error;
+        // var imageRef = generator.CopyCGImageAtTime(time, out error);
+        // if (imageRef != null)
+        // {
+        //     using var image = new UIImage(imageRef);
+        //     using var data = image.AsJPEG(0.8f);
+        //     File.WriteAllBytes(outputPath, data.ToArray());
+        // }
     }
 #endif
 

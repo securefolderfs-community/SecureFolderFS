@@ -79,9 +79,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                     await _recycleBin.DeleteAsync(innerChild, cancellationToken);
                     OverlayViewModel.Items.Remove(item);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    continue;
+                    _ = ex;
                 }
             }
 

@@ -23,7 +23,7 @@
                 HorizontalOptions="Start"
                 Text="Select a location of your vault" />
 
-            <VerticalStackLayout SizeChanged="ButtonStack_SizeChanged" Spacing="8">
+            <VerticalStackLayout Spacing="8">
                 <OnPlatform x:TypeArguments="View">
                     <On Platform="Android">
                         <Button
@@ -32,6 +32,7 @@
                             Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
                             ContentLayout="{Binding BrowseButtonContentLayout, Mode=OneWay}"
                             FontSize="14"
+                            SizeChanged="ButtonStack_SizeChanged"
                             Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
                     </On>
                     <On Platform="iOS">
@@ -41,6 +42,7 @@
                             Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
                             ContentLayout="Right, 164"
                             FontSize="14"
+                            SizeChanged="ButtonStack_SizeChanged"
                             Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
                     </On>
                 </OnPlatform>
@@ -57,6 +59,7 @@
                 x:Name="InvisibleSelectedLocation"
                 HorizontalOptions="Start"
                 Opacity="0"
+                SizeChanged="ButtonStack_SizeChanged"
                 Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>

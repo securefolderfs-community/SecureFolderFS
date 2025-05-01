@@ -3,6 +3,7 @@ using Microsoft.Maui.Controls.PlatformConfiguration;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
@@ -18,11 +19,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
+        private readonly FirstTimeHelper _firstTime;
 
         public RecycleBinModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
+            _firstTime = new();
             BindingContext = this;
 
             _ = new MauiIcon(); // Workaround for XFC0000
@@ -68,6 +71,32 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
         }
+        
+        private async void Switch_Toggled(object? sender, ToggledEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+            
+            if (ViewModel.IsRecycleBinEnabled && _firstTime.IsFirstTime())
+                return;
+            
+            if (sender is not Switch toggleSwitch)
+                return;
+            
+            await ViewModel.UpdateRecycleBinCommand.ExecuteAsync(e.Value);
+            toggleSwitch.IsToggled = ViewModel.IsRecycleBinEnabled;
+        }
+
+        private async void Picker_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (_firstTime.IsFirstTime())
+                return;
+
+            await ViewModel.UpdateRecycleBinCommand.ExecuteAsync(ViewModel.IsRecycleBinEnabled);
+        }
 
         public RecycleBinOverlayViewModel? ViewModel
         {
@@ -75,6 +104,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(RecycleBinOverlayViewModel), typeof(RecycleBinModalPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(RecycleBinOverlayViewModel), typeof(RecycleBinModalPage));
     }
 }

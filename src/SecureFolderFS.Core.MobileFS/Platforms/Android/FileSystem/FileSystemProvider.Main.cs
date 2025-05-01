@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Database;
 using Android.OS;
-using Android.OS.Storage;
 using Android.Provider;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
@@ -120,7 +119,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     "r" => ParcelFileMode.ReadOnly,
                     "w" => ParcelFileMode.WriteOnly,
                     "rw" => ParcelFileMode.ReadWrite,
-                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}.")
                 };
             }
 
@@ -131,7 +130,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     "r" => FileAccess.Read,
                     "w" => FileAccess.Write,
                     "rw" => FileAccess.ReadWrite,
-                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}.")
                 };
             }
         }
@@ -277,8 +276,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
-            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> uriWrapper })
-                return uriWrapper.Inner.ToString();
+            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> fileUriWrapper })
+                return fileUriWrapper.Inner.ToString();
+
+            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<global::Android.Net.Uri> folderUriWrapper })
+                return folderUriWrapper.Inner.ToString();
 
             throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
         }

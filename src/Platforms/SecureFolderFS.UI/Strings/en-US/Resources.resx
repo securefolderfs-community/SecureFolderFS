@@ -788,4 +788,16 @@
   <data name="Export" xml:space="preserve">
       <value>Export</value>
   </data>
+  <data name="MaximumSize" xml:space="preserve">
+      <value>Maximum size</value>
+  </data>
+  <data name="EnableRecycleBin" xml:space="preserve">
+      <value>Enable recycle bin</value>
+  </data>
+  <data name="NoSizeLimit" xml:space="preserve">
+      <value>No size limit</value>
+  </data>
+  <data name="NoPreviewAvailable" xml:space="preserve">
+      <value>No preview available</value>
+  </data>
 </root>

@@ -19,18 +19,36 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <Label
+                x:Name="TextSlotLabel"
+                Grid.Row="0"
                 Grid.Column="0"
                 FontSize="15"
+                IsVisible="{Binding Text, Mode=OneWay, Source={x:Reference TextSlotLabel}, Converter={StaticResource NullToBoolConverter}}"
                 LineBreakMode="TailTruncation"
                 Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
                 VerticalOptions="Center" />
+
             <ContentView
+                Grid.Row="0"
                 Grid.Column="1"
                 Content="{Binding Slot, Mode=OneWay, Source={x:Reference ThisControl}}"
                 HorizontalOptions="End"
                 VerticalOptions="Center" />
+
+            <ContentView
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Content="{Binding SlotBelow, Mode=OneWay, Source={x:Reference ThisControl}}"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding SlotBelow, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+                VerticalOptions="Fill" />
         </Grid>
 
         <BoxView

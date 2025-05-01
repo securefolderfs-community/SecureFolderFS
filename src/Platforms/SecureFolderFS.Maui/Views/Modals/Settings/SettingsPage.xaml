@@ -55,7 +55,7 @@
             <uco:OptionsContainer Title="{l:ResourceString Rid=Data}">
                 <uco:OptionsContainer.InnerContent>
                     <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}">
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}" IsSeparatorVisible="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>

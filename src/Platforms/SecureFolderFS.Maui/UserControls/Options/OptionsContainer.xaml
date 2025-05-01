@@ -2,15 +2,21 @@
     x:Class="SecureFolderFS.Maui.UserControls.Options.OptionsContainer"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </ContentView.Resources>
 
     <VerticalStackLayout Spacing="8">
         <Label
             FontAttributes="Bold"
             FontSize="17"
+            IsVisible="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
             Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
 
-        <Border Background="{OnPlatform Android={StaticResource ThemeElevatedFillPrimaryColorBrush}}">
+        <Border Background="{OnPlatform Android={StaticResource ThemeElevatedFillPrimaryColorBrush}}" StrokeThickness="0">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>

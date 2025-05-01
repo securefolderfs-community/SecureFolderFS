@@ -51,30 +51,26 @@
             </CollectionView>
 
             <!--  Top buttons  -->
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <Grid
-                        Grid.Row="1"
-                        Padding="16,16"
-                        ColumnSpacing="16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+            <Grid
+                Grid.Row="1"
+                Padding="16,16"
+                ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-                        <Button
-                            Grid.Column="0"
-                            Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
-                            HeightRequest="48"
-                            Text="{l:ResourceString Rid=ViewInFiles}" />
-                        <Button
-                            Grid.Column="1"
-                            Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
-                            HeightRequest="48"
-                            Text="{l:ResourceString Rid=LockVault}" />
-                    </Grid>
-                </On>
-            </OnPlatform>
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
+                    HeightRequest="48"
+                    Text="{l:ResourceString Rid=ViewInFiles}" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
+                    HeightRequest="48"
+                    Text="{l:ResourceString Rid=LockVault}" />
+            </Grid>
 
             <!--  Options list  -->
             <VerticalStackLayout
@@ -85,27 +81,13 @@
                 <!--  Quick Actions  -->
                 <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}">
                     <uco:OptionsContainer.InnerContent>
-                        <OnPlatform x:TypeArguments="View">
-                            <On Platform="iOS">
-                                <VerticalStackLayout>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=ViewInFiles}" Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" />
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=LockVault}" Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" />
-                                    <uco:OptionsControl
-                                        Title="{l:ResourceString Rid=RecycleBin}"
-                                        Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
-                                        IsSeparatorVisible="False" />
-                                </VerticalStackLayout>
-                            </On>
-                            <On Platform="Android">
-                                <VerticalStackLayout>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
-                                    <uco:OptionsControl
-                                        Title="{l:ResourceString Rid=RecycleBin}"
-                                        Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
-                                        IsSeparatorVisible="False" />
-                                </VerticalStackLayout>
-                            </On>
-                        </OnPlatform>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=RecycleBin}"
+                                Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
+                                IsSeparatorVisible="False" />
+                        </VerticalStackLayout>
                     </uco:OptionsContainer.InnerContent>
                 </uco:OptionsContainer>
 

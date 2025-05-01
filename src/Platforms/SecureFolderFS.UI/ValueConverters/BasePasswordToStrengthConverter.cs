@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Helpers;
 
@@ -13,7 +14,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 return 0d;
 
             var normalization = 1d;
-            if (parameter is string strParam && double.TryParse(strParam, out var dParam))
+            if (parameter is string strParam && double.TryParse(strParam, CultureInfo.InvariantCulture, out var dParam))
                 normalization = dParam;
 
             return ValidationHelpers.ValidatePassword(password) switch

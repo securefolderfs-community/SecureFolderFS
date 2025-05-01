@@ -9,12 +9,15 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? VideoTemplate { get; set; }
 
         public DataTemplate? TextTemplate { get; set; }
+        
+        public DataTemplate? FallbackTemplate { get; set; }
 
         /// <inheritdoc/>
         protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
             return item switch
             {
+                FallbackPreviewerViewModel => FallbackTemplate,
                 ImagePreviewerViewModel => ImageTemplate,
                 VideoPreviewerViewModel => VideoTemplate,
                 TextPreviewerViewModel => TextTemplate,

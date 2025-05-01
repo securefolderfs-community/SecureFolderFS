@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 TypeHint.Image => new ImagePreviewerViewModel(file),
                 TypeHint.Media => new VideoPreviewerViewModel(file),
                 TypeHint.PlainText => new TextPreviewerViewModel(file),
-                _ => null
+                _ => new FallbackPreviewerViewModel(file)
             });
 
             if (previewer is null)
