@@ -73,12 +73,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             // Make sure to also dispose the data within the current view model whether the navigation is successful or not
             using (RegisterViewModel.CurrentViewModel)
             {
+                // We don't need to set the Version property since the creator will always initialize with the latest one
                 var vaultOptions = new VaultOptions()
                 {
+                    AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
                     NameEncodingId = EncodingOption.Id,
-                    AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
+                    RecycleBinSize = 0L,
                     VaultId = _vaultId
                 };
 

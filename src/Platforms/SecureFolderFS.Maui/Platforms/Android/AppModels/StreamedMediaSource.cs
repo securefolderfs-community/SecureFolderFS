@@ -3,6 +3,7 @@ using Stream = System.IO.Stream;
 
 namespace SecureFolderFS.Maui.AppModels
 {
+    /// <inheritdoc cref="MediaDataSource"/>
     internal sealed class StreamedMediaSource : MediaDataSource
     {
         private readonly Stream _sourceStream;

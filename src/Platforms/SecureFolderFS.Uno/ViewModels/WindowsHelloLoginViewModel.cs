@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.ViewModels
                 }
 
                 // Generate key signature based on the user credentials
-                var key = await CreateSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
+                var key = await MakeSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
 
                 // Compile new challenge in preparation
                 // TODO: Important When doing the signing operation, check payload MAC

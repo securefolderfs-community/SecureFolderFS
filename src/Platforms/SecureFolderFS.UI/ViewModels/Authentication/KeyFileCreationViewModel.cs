@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {
@@ -30,7 +31,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             }
             catch (Exception ex)
             {
-                _ = ex;
+                Report(Result.Failure(ex));
             }
         }
     }

@@ -1,7 +1,3 @@
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
@@ -9,18 +5,16 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {
-    /// <inheritdoc cref="WindowsHelloViewModel"/>
-    [Bindable(true)]
-    public sealed class WindowsHelloCreationViewModel(IFolder vaultFolder, string vaultId) : WindowsHelloViewModel(vaultFolder, vaultId)
+    internal sealed class AndroidBiometricCreationViewModel(IFolder vaultFolder, string vaultId) : AndroidBiometricViewModel(vaultFolder, vaultId)
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-
+        
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
-
+        
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
@@ -41,7 +35,6 @@ namespace SecureFolderFS.Uno.ViewModels
             }
             catch (Exception ex)
             {
-                // Thrown when authentication is canceled
                 Report(Result.Failure(ex));
             }
         }

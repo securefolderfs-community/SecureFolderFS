@@ -54,6 +54,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
                 NameEncodingId = config.FileNameEncodingId,
+                RecycleBinSize = config.RecycleBinSize,
                 VaultId = config.Uid,
                 Version = config.Version
             };

@@ -800,4 +800,7 @@
   <data name="NoPreviewAvailable" xml:space="preserve">
       <value>No preview available</value>
   </data>
+  <data name="AndroidBiometrics" xml:space="preserve">
+      <value>Android Biometrics</value>
+  </data>
 </root>

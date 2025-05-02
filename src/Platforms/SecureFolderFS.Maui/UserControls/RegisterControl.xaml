@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.UserControls.RegisterControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:android_vm2="clr-namespace:SecureFolderFS.Maui.Platforms.Android.ViewModels"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -49,6 +50,40 @@
         </DataTemplate>
 
         <!--  Key File Template  -->
+        <DataTemplate x:Key="AndroidBiometricsTemplate" x:DataType="android_vm2:AndroidBiometricCreationViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="16">
+                        <!--  Icon  -->
+                        <Grid>
+                            <mi:MauiIcon
+                                Icon="{mi_material:Material Fingerprint}"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Icon="{mi_cupertino:Cupertino FaceSmiling}"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <!--  Authenticate  -->
+                    <Button
+                        Command="{Binding ProvideCredentialsCommand}"
+                        HorizontalOptions="Fill"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=Setup}" />
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+
+        <!--  Key File Template  -->
         <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileCreationViewModel">
             <ContentView>
                 <VerticalStackLayout Spacing="16">
@@ -86,7 +121,10 @@
     <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
         <uc:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
-                <ts:RegistrationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+                <ts:RegistrationTemplateSelector
+                    AndroidBiometricsTemplate="{StaticResource AndroidBiometricsTemplate}"
+                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
+                    PasswordTemplate="{StaticResource PasswordTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
     </Grid>

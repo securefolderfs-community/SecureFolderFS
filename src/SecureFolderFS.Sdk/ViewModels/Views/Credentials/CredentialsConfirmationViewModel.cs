@@ -93,19 +93,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private async Task ChangeCredentialsAsync(IKey key, VaultOptions configuredOptions, string[] authenticationMethod, CancellationToken cancellationToken)
         {
-            var newOptions = new VaultOptions()
+            var newOptions = configuredOptions with
             {
-                AuthenticationMethod = authenticationMethod,
-                ContentCipherId = configuredOptions.ContentCipherId,
-                FileNameCipherId = configuredOptions.FileNameCipherId,
-                NameEncodingId = configuredOptions.NameEncodingId,
-                VaultId = configuredOptions.VaultId,
-                Version = configuredOptions.Version
+                AuthenticationMethod = authenticationMethod
             };
 
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
             if (ConfiguredViewModel is not null)
-                await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
+                await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

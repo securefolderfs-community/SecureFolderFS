@@ -68,6 +68,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string>() ?? CipherId.AES_SIV,
                 FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string>() ?? CipherId.ENCODING_BASE64URL,
                 AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string>() ?? throw new InvalidOperationException($"Cannot create vault without specifying {Associations.ASSOC_AUTHENTICATION}."),
+                RecycleBinSize = options.Get(Associations.ASSOC_RECYCLE_SIZE).TryCast<long?>() ?? 0L,
                 Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string>() ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };

@@ -153,8 +153,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             if (overwrite && existingFile is not null)
                 existingFile.Delete();
-
-            if (existingFile is not null)
+            else if (existingFile is not null)
                 return Task.FromResult<IChildFile>(new AndroidFile(existingFile.Uri, activity, this, permissionRoot));
 
             var newFile = Document?.CreateFile(mimeType, name);

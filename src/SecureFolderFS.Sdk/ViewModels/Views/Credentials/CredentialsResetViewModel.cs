@@ -62,14 +62,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
             var key = await _credentialsTcs.Task;
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-            var newOptions = new VaultOptions()
+            var newOptions = configuredOptions with
             {
-                AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
-                ContentCipherId = configuredOptions.ContentCipherId,
-                FileNameCipherId = configuredOptions.FileNameCipherId,
-                NameEncodingId = configuredOptions.NameEncodingId,
-                VaultId = configuredOptions.VaultId,
-                Version = configuredOptions.Version
+                AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ]
             };
 
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);

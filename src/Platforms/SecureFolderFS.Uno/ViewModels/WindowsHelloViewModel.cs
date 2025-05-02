@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -20,8 +18,6 @@ namespace SecureFolderFS.Uno.ViewModels
     [Bindable(true)]
     public abstract class WindowsHelloViewModel : AuthenticationViewModel
     {
-        protected const int KEY_PART_LENGTH = 128;
-
         /// <summary>
         /// Gets the unique ID of the vault.
         /// </summary>
@@ -65,7 +61,7 @@ namespace SecureFolderFS.Uno.ViewModels
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to create the credential.");
 
-            return await CreateSignatureAsync(result.Credential, data, cancellationToken);
+            return await MakeSignatureAsync(result.Credential, data, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -77,30 +73,10 @@ namespace SecureFolderFS.Uno.ViewModels
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to open the credential.");
 
-            return await CreateSignatureAsync(result.Credential, data, cancellationToken);
+            return await MakeSignatureAsync(result.Credential, data, cancellationToken);
         }
 
-        protected static SecretKey GenerateChallenge(string vaultId)
-        {
-            var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
-            using var challenge = new SecureKey(KEY_PART_LENGTH + encodedVaultIdLength);
-            using var secureRandom = RandomNumberGenerator.Create();
-
-            // Fill the first KEY_PART_LENGTH bytes with secure random data
-            secureRandom.GetNonZeroBytes(challenge.Key.AsSpan(0, KEY_PART_LENGTH));
-
-            // Fill the remaining bytes with the ID
-            // By using ASCII encoding we get 1:1 byte to char ratio which allows us
-            // to use the length of the string ID as part of the SecretKey length above
-            var written = Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_PART_LENGTH));
-            if (written != encodedVaultIdLength)
-                throw new FormatException("The allocated buffer and vault ID written bytes amount were different.");
-
-            // Return a copy of the challenge since the original version is being disposed of
-            return challenge.CreateCopy();
-        }
-
-        protected static async Task<SecretKey> CreateSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
+        protected static async Task<SecretKey> MakeSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
         {
             var buffer = data.AsBuffer();
             var signed = await credential.RequestSignAsync(buffer).AsTask(cancellationToken);

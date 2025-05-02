@@ -17,8 +17,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public class VaultManagerService : IVaultManagerService
     {
         /// <inheritdoc/>
-        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);

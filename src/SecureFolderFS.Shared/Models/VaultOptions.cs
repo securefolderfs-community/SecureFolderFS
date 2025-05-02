@@ -3,17 +3,12 @@
     /// <summary>
     /// Contains details about a vault.
     /// </summary>
-    public sealed class VaultOptions
+    public sealed record class VaultOptions
     {
         /// <summary>
         /// Gets the information about the authentication method used for this vault.
         /// </summary>
         public required string[] AuthenticationMethod { get; init; }
-
-        /// <summary>
-        /// Gets or sets whether to use recycle bin for the vault.
-        /// </summary>
-        public bool IsRecycleBinEnabled { get; init; }
 
         /// <summary>
         /// Gets the ID of the cipher that is used for content encryption.
@@ -29,6 +24,16 @@
         /// Gets the ID of the encoding method to use during filename encryption and decryption.
         /// </summary>
         public string? NameEncodingId { get; init; }
+
+        /// <summary>
+        /// Gets the size of the recycle bin.
+        /// </summary>
+        /// <remarks>
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
+        /// </remarks>
+        public long RecycleBinSize { get; init; }
 
         /// <summary>
         /// Gets the unique identifier of the vault.

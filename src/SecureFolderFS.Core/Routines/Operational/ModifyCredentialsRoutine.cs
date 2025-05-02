@@ -52,6 +52,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_CIPHER_ID)),
                 FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_ENCODING_ID)),
                 AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_AUTHENTICATION)),
+                RecycleBinSize = options.Get(Associations.ASSOC_RECYCLE_SIZE).TryCast<long?>() ?? throw GetException(nameof(Associations.ASSOC_RECYCLE_SIZE)),
                 Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_VAULT_ID)),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
@@ -91,7 +92,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // Key copies need to be created because the original ones are disposed of here
-            return new SecurityWrapper(KeyPair.ImportKeys(_keyPair.DekKey, _keyPair.MacKey), _configDataModel);
+            using (_keyPair)
+                return new SecurityWrapper(KeyPair.ImportKeys(_keyPair.DekKey, _keyPair.MacKey), _configDataModel);
         }
 
         /// <inheritdoc/>

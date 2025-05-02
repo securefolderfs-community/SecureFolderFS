@@ -77,7 +77,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
         {
             using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
-
             await previewRecoveryOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(previewRecoveryOverlay);
         }

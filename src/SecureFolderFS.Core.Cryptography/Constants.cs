@@ -4,11 +4,12 @@
     {
         public static class KeyTraits
         {
-            public const int ARGON2_KEK_LENGTH = 32;
+            public const string KEY_TEXT_SEPARATOR = "@@@";
+            public const int SALT_LENGTH = 16;
             public const int ENCKEY_LENGTH = 32;
             public const int MACKEY_LENGTH = 32;
-            public const int SALT_LENGTH = 16;
-            public const string KEY_TEXT_SEPARATOR = "@@@";
+            public const int ARGON2_KEK_LENGTH = 32;
+            public const int CHALLENGE_KEY_PART_LENGTH = 128;
         }
 
         public static class CipherId
