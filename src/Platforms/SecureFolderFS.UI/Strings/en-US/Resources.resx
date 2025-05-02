@@ -803,4 +803,7 @@
   <data name="AndroidBiometrics" xml:space="preserve">
       <value>Android Biometrics</value>
   </data>
+  <data name="TransferDone" xml:space="preserve">
+      <value>Completed</value>
+  </data>
 </root>

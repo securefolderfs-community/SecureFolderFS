@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
     public class InputOutputStream : Stream
     {
         private readonly InputStream _inputStream;
-        private readonly OutputStream _outputStream;
+        private readonly OutputStream? _outputStream;
         private bool _disposed;
         private long _position;
         private long _length;
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             }
         }
 
-        public InputOutputStream(InputStream inputStream, OutputStream outputStream, long length)
+        public InputOutputStream(InputStream inputStream, OutputStream? outputStream, long length)
         {
             _inputStream = inputStream;
             _outputStream = outputStream;
@@ -92,6 +92,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
+            if (_outputStream is null || !CanWrite)
+                throw new NotSupportedException("The stream does not support writing.");
+
             if (offset != 0)
             {
                 // Create a temporary buffer if offset is not 0
@@ -119,6 +122,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override void Flush()
         {
+            if (_outputStream is null || !CanWrite)
+                throw new NotSupportedException("The stream does not support writing.");
+
             _outputStream.Flush();
         }
 
@@ -140,8 +146,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
-            throw new NotSupportedException("Cannot modify file length on this stream");
-        }        
+            throw new NotSupportedException("Cannot modify length on this stream.");
+        }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
@@ -151,7 +157,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 if (disposing)
                 {
                     _inputStream.Close();
-                    _outputStream.Close();
+                    _outputStream?.Close();
                 }
 
                 _disposed = true;

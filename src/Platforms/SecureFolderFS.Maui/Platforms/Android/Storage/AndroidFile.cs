@@ -40,19 +40,21 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 return Task.FromResult(stream);
             }
 
+            var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
+            if (inputStream is null)
+                return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
+            
             if (accessMode == FileAccess.Read)
             {
-                stream = activity.ContentResolver?.OpenInputStream(Inner);
+                stream = new InputOutputStream(inputStream, null, GetFileSize(activity.ContentResolver, Inner));
             }
             else
             {
-                var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
                 var outputStream = (activity.ContentResolver?.OpenOutputStream(Inner) as OutputStreamInvoker)?.BaseOutputStream;
-                if (inputStream is null || outputStream is null)
+                if (outputStream is null)
                     return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
-                var combinedInputStream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
-                stream = combinedInputStream;
+                stream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
             }
 
             if (stream is null)

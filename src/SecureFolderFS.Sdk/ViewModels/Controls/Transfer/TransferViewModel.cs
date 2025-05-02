@@ -35,9 +35,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         /// <inheritdoc/>
         public void Report(TotalProgress value)
         {
-            if (value.Achieved >= value.Total)
+            if (value.Achieved >= value.Total && value.Total > 0)
             {
-                Title = "Done";
+                Title = "TransferDone".ToLocalized();
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 return totalProgress switch
                 {
                     { Achieved: < 0 } => totalProgress.Total.ToString(),
-                    { Total: < 0 } => totalProgress.Achieved.ToString(),
+                    { Total: <= 0 } => totalProgress.Achieved.ToString(),
                     _ => $"{totalProgress.Achieved}/{totalProgress.Total}"
                 };
             }
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         private async Task CancelAsync()
         {
             if (_tcs is not null)
-            { 
+            {
                 _tcs.TrySetCanceled(CancellationToken.None);
                 IsVisible = false;
             }

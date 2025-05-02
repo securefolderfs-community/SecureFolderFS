@@ -236,13 +236,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 case IChildFile file:
                 {
-                    var movedFile = destinationFolder.MoveFromAsync(file, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var movedFile = destinationFolder.MoveFromAsync(file, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
                     return Path.Combine(targetParentDocumentId, movedFile.Name);
                 }
 
                 case IChildFolder folder:
                 {
-                    var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
                     return Path.Combine(targetParentDocumentId, movedFolder.Name);
                 }
 

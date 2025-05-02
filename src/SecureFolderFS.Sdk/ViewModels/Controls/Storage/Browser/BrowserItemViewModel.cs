@@ -74,12 +74,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder is null)
                 return;
 
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
+                return;
+
             var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
-
-            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel || ParentFolder.Folder is not IModifiableFolder modifiableParent)
-                return;
 
             try
             {
@@ -100,13 +100,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
-                await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (storable, token) =>
+                await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
                     // Move
-                    var movedItem = await destinationFolder.MoveStorableFromAsync(storable, modifiableParent, false, token);
+                    var movedItem = await destinationFolder.MoveStorableFromAsync(item, modifiableParent, false, reporter, token);
 
                     // Remove existing from folder
-                    ParentFolder.Items.RemoveMatch(x => x.Inner.Id == storable.Id)?.Dispose();
+                    ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
 
                     // Add to destination
                     destinationViewModel.Items.Insert(movedItem switch
@@ -135,12 +135,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder is null)
                 return;
 
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+
             var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
-
-            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
-                return;
 
             try
             {
@@ -161,10 +161,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
-                await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (storable, token) =>
+                await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
                 {
                     // Copy
-                    var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(storable, false, token);
+                    var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, reporter, token);
 
                     // Add to destination
                     destinationViewModel.Items.Insert(copiedItem switch
@@ -283,7 +283,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         {
                             var item = items[i];
                             await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], true, cancellationToken);
-                            ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                            ParentFolder.Items.RemoveAndGet(item)?.Dispose();
                         }
                     }
                     else
@@ -292,7 +292,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         {
                             var item = items[i];
                             await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
-                            ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                            ParentFolder.Items.RemoveAndGet(item)?.Dispose();
                         }
                     }
                 }
@@ -307,7 +307,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 foreach (var item in items)
                 {
                     await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
-                    ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                    ParentFolder.Items.RemoveAndGet(item)?.Dispose();
                 }
             }
         }
@@ -318,15 +318,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder?.Folder is not IModifiableFolder parentModifiableFolder)
                 return;
 
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+
+            var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
+            if (items.IsEmpty())
+                items = [ this ];
+
             var destination = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
             if (destination is not IModifiableFolder destinationFolder)
                 return;
 
-            // Copy and delete
-            await destinationFolder.CreateCopyOfStorableAsync(Inner, false, cancellationToken);
-            await parentModifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
+            transferViewModel.TransferType = TransferType.Move;
+            using var cts = transferViewModel.GetCancellation();
+            await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
+            {
+                // Copy and delete
+                await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, cancellationToken);
+                await parentModifiableFolder.DeleteAsync((IStorableChild)item, cancellationToken);
 
-            ParentFolder.Items.RemoveAndGet(this)?.Dispose();
+                ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
+            }, cts.Token);
         }
 
         [RelayCommand]

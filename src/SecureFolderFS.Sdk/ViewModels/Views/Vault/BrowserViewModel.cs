@@ -71,7 +71,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 if (TransferViewModel.IsVisible && !TransferViewModel.IsProgressing)
                     TransferViewModel?.CancelCommand.Execute(null);
             }
-            
+
             CurrentFolder?.Dispose();
             base.OnDisappearing();
         }
@@ -194,6 +194,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
+            if (TransferViewModel is null)
+                return;
+
             if (itemType is not ("Folder" or "File"))
             {
                 var storableTypeViewModel = new StorableTypeOverlayViewModel();
@@ -212,26 +215,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     if (file is null)
                         return;
 
-                    var copiedFile = await modifiableFolder.CreateCopyOfAsync(file, false, cancellationToken);
-                    CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), ViewOptions.GetSorter());
+                    TransferViewModel.TransferType = TransferType.Copy;
+                    using var cts = TransferViewModel.GetCancellation();
+                    await TransferViewModel.TransferAsync([ file ], async (item, token) =>
+                    {
+                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, token);
+                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), ViewOptions.GetSorter());
+                    }, cts.Token);
 
                     break;
                 }
 
                 case "Folder":
                 {
-                    if (TransferViewModel is null)
-                        return;
-
                     var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
                     if (folder is null)
                         return;
 
-                    await TransferViewModel.TransferAsync(folder, async (item, token) =>
+                    TransferViewModel.TransferType = TransferType.Copy;
+                    using var cts = TransferViewModel.GetCancellation();
+                    await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
                     {
-                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, token);
+                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, reporter, token);
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), ViewOptions.GetSorter());
-                    }, cancellationToken);
+                    }, cts.Token);
 
                     break;
                 }
