@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             argon2id.Salt = salt.ToArray();
             argon2id.DegreeOfParallelism = Constants.Crypto.Argon2.DEGREE_OF_PARALLELISM;
             argon2id.Iterations = Constants.Crypto.Argon2.ITERATIONS;
-            argon2id.MemorySize = Constants.Crypto.Argon2.MEMORY_SIZE_KB;
+            argon2id.MemorySize = Constants.Crypto.Argon2.MEMORY_SIZE_KIBIBYTES;
 
             argon2id.GetBytes(Constants.KeyTraits.ARGON2_KEK_LENGTH).CopyTo(result);
         }

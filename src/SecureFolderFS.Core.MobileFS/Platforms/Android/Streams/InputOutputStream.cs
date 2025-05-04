@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         public override bool CanSeek => true;
 
         /// <inheritdoc/>
-        public override bool CanWrite => true;
+        public override bool CanWrite => _outputStream is not null;
 
         /// <inheritdoc/>
         public override long Length => _length;
@@ -31,9 +31,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 // if (value < 0 || (value > 0 && _length != -1 && value > _length))
                 //     throw new ArgumentOutOfRangeException(nameof(value));
 
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
                 if (value == _position)
                     return;
 
@@ -45,7 +43,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 while (skipAmount > 0)
                 {
                     var skipped = _inputStream.Skip(skipAmount);
-                    if (skipped <= 0) break;
+                    if (skipped <= 0)
+                        break;
+
                     skipAmount -= skipped;
                 }
 
