@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -28,14 +29,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             ServiceProvider = DI.Default;
             File = file;
-            Title = file.Name;
+            Title = !SettingsService.UserSettings.AreFileExtensionsEnabled
+                ? Path.GetFileNameWithoutExtension(file.Name)
+                : file.Name;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             Thumbnail?.Dispose();
-            
+
             if (SettingsService.UserSettings.AreThumbnailsEnabled)
                 Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
         }
@@ -51,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             if (BrowserViewModel.TransferViewModel?.IsPickingItems() ?? false)
                 return;
-            
+
             using var viewModel = new PreviewerOverlayViewModel();
             await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
             await OverlayService.ShowAsync(viewModel);

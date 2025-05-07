@@ -1,15 +1,22 @@
 using System.Windows.Input;
-using APES.UI.XF;
+using OwlCore.Storage;
+using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
-using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Maui.UserControls
 {
     public partial class BrowserControl : ContentView
     {
+        private readonly DeferredInitialization<IFolder> _deferredInitialization;
+        private readonly ISettingsService _settingsService;
+        
         public BrowserControl()
         {
+            _deferredInitialization = new ();
+            _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
 
@@ -39,13 +46,17 @@ namespace SecureFolderFS.Maui.UserControls
 
         private void ItemContainer_Loaded(object? sender, EventArgs e)
         {
+            if (!_settingsService.UserSettings.AreThumbnailsEnabled)
+                return;
+            
             if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
                 return;
 
             if (fileViewModel.Thumbnail is not null)
                 return;
 
-            _ = Task.Run(async () => await fileViewModel.InitAsync());
+            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
+            _deferredInitialization.Enqueue(fileViewModel);
         }
 
         public object? EmptyView

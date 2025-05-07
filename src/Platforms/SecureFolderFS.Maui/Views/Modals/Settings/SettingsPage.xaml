@@ -14,7 +14,6 @@
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout Padding="16,0" Spacing="16">
-
             <!--  General  -->
             <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsGeneral}">
                 <uco:OptionsContainer.InnerContent>
@@ -55,6 +54,11 @@
             <uco:OptionsContainer Title="{l:ResourceString Rid=Data}">
                 <uco:OptionsContainer.InnerContent>
                     <VerticalStackLayout>
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}" IsSeparatorVisible="False">
+                            <uco:OptionsControl.Slot>
+                                <Switch IsToggled="{Binding PreferencesViewModel.AreFileExtensionsEnabled, Mode=TwoWay}" />
+                            </uco:OptionsControl.Slot>
+                        </uco:OptionsControl>
                         <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}" IsSeparatorVisible="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />

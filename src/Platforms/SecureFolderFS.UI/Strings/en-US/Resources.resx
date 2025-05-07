@@ -806,4 +806,7 @@
   <data name="TransferDone" xml:space="preserve">
       <value>Completed</value>
   </data>
+  <data name="EnableFileExtensions" xml:space="preserve">
+      <value>Show file extensions</value>
+  </data>
 </root>

@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 case TypeHint.Image:
                 {
                     await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-                    return ResizeImage(sourceStream, Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE);
+                    return ResizeImage(sourceStream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE);
                 }
 
                 case TypeHint.Media:
@@ -84,29 +84,29 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 return null;
 
             using var frameStream = new MemoryStream();
-            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg!, Constants.Application.VIDEO_THUMBNAIL_QUALITY, frameStream);
+            frameBitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg!, Constants.Browser.VIDEO_THUMBNAIL_QUALITY, frameStream);
             frameStream.Position = 0L;
 
-            return ResizeImage(frameStream, Constants.Application.IMAGE_THUMBNAIL_MAX_SIZE);
+            return ResizeImage(frameStream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE);
         }
 #endif
 
 #if IOS || MACCATALYST
-    private static void IOS_ExtractFrame(string videoPath, string outputPath, TimeSpan captureTime)
-    {
-        // var asset = new AVAsset();
-        // var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
-        // var time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
-        //
-        // NSError error;
-        // var imageRef = generator.CopyCGImageAtTime(time, out error);
-        // if (imageRef != null)
-        // {
-        //     using var image = new UIImage(imageRef);
-        //     using var data = image.AsJPEG(0.8f);
-        //     File.WriteAllBytes(outputPath, data.ToArray());
-        // }
-    }
+        private static void IOS_ExtractFrame(string videoPath, string outputPath, TimeSpan captureTime)
+        {
+            // var asset = new AVAsset();
+            // var generator = new AVAssetImageGenerator(asset) { AppliesPreferredTrackTransform = true };
+            // var time = CMTime.FromSeconds(captureTime.TotalSeconds, 1);
+            //
+            // NSError error;
+            // var imageRef = generator.CopyCGImageAtTime(time, out error);
+            // if (imageRef != null)
+            // {
+            //     using var image = new UIImage(imageRef);
+            //     using var data = image.AsJPEG(0.8f);
+            //     File.WriteAllBytes(outputPath, data.ToArray());
+            // }
+        }
 #endif
 
         private static ImageStream ResizeImage(Stream sourceStream, uint maxSize)
@@ -125,7 +125,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 throw new Exception("Failed to resize image.");
 
             using var image = SKImage.FromBitmap(resized);
-            using var encoded = image.Encode(SKEncodedImageFormat.Png, UI.Constants.Application.IMAGE_THUMBNAIL_QUALITY);
+            using var encoded = image.Encode(SKEncodedImageFormat.Png, Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
             var destinationStream = new OnDemandDisposableStream();
             encoded.SaveTo(destinationStream);
 

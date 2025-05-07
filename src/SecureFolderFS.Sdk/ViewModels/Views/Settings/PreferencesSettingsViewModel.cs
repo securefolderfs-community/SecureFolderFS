@@ -47,6 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             set => UserSettings.AreThumbnailsEnabled = value;
         }
 
+        public bool AreFileExtensionsEnabled
+        {
+            get => UserSettings.AreFileExtensionsEnabled;
+            set => UserSettings.AreFileExtensionsEnabled = value;
+        }
+
         public bool IsContentCacheEnabled
         {
             get => UserSettings.IsContentCacheEnabled;

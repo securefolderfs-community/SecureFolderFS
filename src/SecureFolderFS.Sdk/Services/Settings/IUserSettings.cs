@@ -45,6 +45,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool AreThumbnailsEnabled { get; set; }
 
         /// <summary>
+        /// Gets or set the value that determines whether to show file extensions in the file browser.
+        /// </summary>
+        bool AreFileExtensionsEnabled { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to enable the file content cache.
         /// </summary>
         bool IsContentCacheEnabled { get; set; }
