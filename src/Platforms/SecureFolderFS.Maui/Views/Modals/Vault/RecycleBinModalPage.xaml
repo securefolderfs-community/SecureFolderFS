@@ -20,10 +20,12 @@
 
     <md:BaseModalPage.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
         <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
+        <vc:DoubleFloatingNormalizationConverter x:Key="DoubleFloatingNormalizationConverter" />
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ToolbarItems>
@@ -72,9 +74,9 @@
                 </uco:OptionsContainer>
 
                 <!--  Size Bar  -->
-                <VerticalStackLayout>
-                    <Label FontSize="12" Text="Taken 1GB out of 2GB" />
-                    <ProgressBar Progress="0.5" />
+                <VerticalStackLayout IsVisible="{Binding ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                    <Label FontSize="12" Text="{Binding ViewModel.SpaceTakenText, Mode=OneWay}" />
+                    <ProgressBar Progress="{Binding ViewModel.PercentageTaken, Mode=OneWay, Converter={StaticResource DoubleFloatingNormalizationConverter}, ConverterParameter='0.01'}" />
                 </VerticalStackLayout>
             </VerticalStackLayout>
 

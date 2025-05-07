@@ -136,10 +136,7 @@ namespace SecureFolderFS.UI.AppModels
         {
             await foreach (var item in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
-                if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                
-                if (PathHelpers.IsCoreName(item.Name))
+                if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || PathHelpers.IsCoreName(item.Name))
                     continue;
 
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);

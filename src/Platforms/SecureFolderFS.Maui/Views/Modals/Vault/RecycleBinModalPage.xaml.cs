@@ -1,6 +1,6 @@
 using MauiIcons.Core;
-using Microsoft.Maui.Controls.PlatformConfiguration;
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -17,6 +17,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 {
     public partial class RecycleBinModalPage : BaseModalPage, IOverlayControl
     {
+        private PickerOptionViewModel? _previousOption;
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
         private readonly FirstTimeHelper _firstTime;
@@ -82,8 +83,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             
             if (sender is not Switch toggleSwitch)
                 return;
-            
-            await ViewModel.UpdateRecycleBinCommand.ExecuteAsync(e.Value);
+
+            await ViewModel.ToggleRecycleBinAsync(e.Value);
             toggleSwitch.IsToggled = ViewModel.IsRecycleBinEnabled;
         }
 
@@ -95,7 +96,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (_firstTime.IsFirstTime())
                 return;
 
-            await ViewModel.UpdateRecycleBinCommand.ExecuteAsync(ViewModel.IsRecycleBinEnabled);
+            await ViewModel.ToggleRecycleBinAsync(ViewModel.IsRecycleBinEnabled);
+            await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
+            _previousOption = ViewModel.CurrentSizeOption;
         }
 
         public RecycleBinOverlayViewModel? ViewModel

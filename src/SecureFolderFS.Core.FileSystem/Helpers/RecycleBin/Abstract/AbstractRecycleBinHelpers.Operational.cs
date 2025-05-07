@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
-            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
+            var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is null)
                 throw new DirectoryNotFoundException("Could not find recycle bin folder.");
 
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             // Get recycle bin
-            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
+            var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IRenamableFolder renamableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not renamable.");
 

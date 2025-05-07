@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.FileSystem.DataModels
 {
     [Serializable]
-    public sealed class RecycleBinItemDataModel
+    public sealed record class RecycleBinItemDataModel
     {
         /// <summary>
         /// Gets the original ciphertext name of the item before it was deleted.

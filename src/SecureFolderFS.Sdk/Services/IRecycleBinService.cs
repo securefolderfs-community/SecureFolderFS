@@ -19,6 +19,14 @@ namespace SecureFolderFS.Sdk.Services
         Task ConfigureRecycleBinAsync(IVFSRoot vfsRoot, long maxSize, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Recalculates missing sizes and updates the configuration file.
+        /// </summary>
+        /// <param name="vfsRoot">The root of the virtual file system.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task RecalculateSizesAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Retrieves the recycle bin folder for a specific unlocked vault.
         /// </summary>
         /// <param name="vfsRoot">The root of the virtual file system.</param>

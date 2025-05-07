@@ -1,23 +1,23 @@
-using System;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
-using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -25,10 +25,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IRecycleBinService>, Inject<ISystemService>]
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
     {
+        private long _occupiedSize;
         private IRecycleBinFolder? _recycleBin;
 
         [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private bool _IsRecycleBinEnabled;
+        [ObservableProperty] private string? _SpaceTakenText;
+        [ObservableProperty] private double _PercentageTaken;
         [ObservableProperty] private PickerOptionViewModel? _CurrentSizeOption;
         [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
@@ -64,11 +67,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 ?? SizeOptions.ElementAtOrDefault(1)
                 ?? SizeOptions.FirstOrDefault();
 
-            // TODO: Is the following logic correct?
+            // TODO: Is the following logic (order) correct?
             // Try and retrieve recycle bin for later use
             _recycleBin ??= await RecycleBinService.TryGetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
             if (_recycleBin is null)
                 return;
+
+            // Get occupied state
+            if (CurrentSizeOption is not null && CurrentSizeOption.Id != "-1")
+            {
+                _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken);
+                UpdateSizeBar(CurrentSizeOption);
+            }
 
             // We can only determine that the recycle bin is enabled if it exists
             IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled();
@@ -81,10 +91,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             }
         }
 
-        [RelayCommand]
-        private async Task UpdateRecycleBinAsync(bool? value, CancellationToken cancellationToken)
+        /// <summary>
+        /// Toggles the recycle bin on or off updating the configuration file.
+        /// </summary>
+        /// <param name="value">The value that determines whether to enable or disable the recycle bin.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        public async Task ToggleRecycleBinAsync(bool value, CancellationToken cancellationToken = default)
         {
-            if (value is not { } bValue)
+            if (value == IsRecycleBinEnabled)
                 return;
 
             if (!long.TryParse(CurrentSizeOption?.Id, out var size))
@@ -92,26 +106,60 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             await RecycleBinService.ConfigureRecycleBinAsync(
                 UnlockedVaultViewModel.StorageRoot,
-                bValue ? size : 0L,
+                value ? size : 0L,
                 cancellationToken);
 
-            IsRecycleBinEnabled = bValue;
+            IsRecycleBinEnabled = value;
             if (IsRecycleBinEnabled)
                 _recycleBin ??= await RecycleBinService.TryGetOrCreateRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
         }
 
+        /// <summary>
+        /// Updates the size bar occupied size and forces a recalculation, if necessary.
+        /// </summary>
+        /// <param name="forceRecalculation">Determines whether to recalculate item sizes in the recycle bin.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        public async Task UpdateSizesAsync(bool forceRecalculation, CancellationToken cancellationToken = default)
+        {
+            _recycleBin ??= await RecycleBinService.TryGetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
+            if (_recycleBin is null)
+                return;
+
+            if (forceRecalculation)
+                await RecycleBinService.TryRecalculateSizesAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
+
+            _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken);
+            if (CurrentSizeOption is not null)
+                UpdateSizeBar(CurrentSizeOption);
+        }
+
+        partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)
+        {
+            if (value is null || value.Id == "-1")
+                SpaceTakenText = null;
+            else
+                UpdateSizeBar(value);
+        }
+
         [RelayCommand]
-        public void ToggleSelection(bool? value = null)
+        private void ToggleSelection(bool? value = null)
         {
             IsSelecting = value ?? !IsSelecting;
             Items.UnselectAll();
         }
 
         [RelayCommand]
-        public void SelectAll()
+        private void SelectAll()
         {
             IsSelecting = true;
             Items.SelectAll();
+        }
+
+        private void UpdateSizeBar(PickerOptionViewModel value)
+        {
+            var totalSize = long.Parse(value.Id);
+            PercentageTaken = (double)_occupiedSize / totalSize * 100d;
+            SpaceTakenText = $"Taken {ByteSize.FromBytes(_occupiedSize).ToBinaryString()} out of {ByteSize.FromBytes(totalSize).ToBinaryString()}";
         }
     }
 }

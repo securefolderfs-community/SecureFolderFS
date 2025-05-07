@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
@@ -30,8 +31,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
         public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
+            // Get the configuration file
+            var configurationFile = !item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                ? await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken)
+                : (IFile)item;
+
             // Read configuration file
-            var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
             await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
 
             // Deserialize configuration
@@ -42,7 +47,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             return deserialized;
         }
 
-        public static async Task<IFolder?> GetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        public static async Task<IFolder?> TryGetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -56,12 +61,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
         public static async Task<IFolder> GetOrCreateRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
-            var recycleBin = await GetRecycleBinAsync(specifics, cancellationToken);
+            var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not null)
                 return recycleBin;
 
-            if (specifics.ContentFolder is not IModifiableFolder modifiableFolder)
-                throw new UnauthorizedAccessException("The content folder is not modifiable.");
+            if (specifics.ContentFolder is not IModifiableFolder modifiableFolder || specifics.Options.IsReadOnly)
+                throw FileSystemExceptions.FileSystemReadOnly;
 
             return await modifiableFolder.CreateFolderAsync(Constants.Names.RECYCLE_BIN_NAME, false, cancellationToken);
         }

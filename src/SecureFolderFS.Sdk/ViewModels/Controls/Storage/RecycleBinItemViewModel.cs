@@ -59,7 +59,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 foreach (var item in items)
                     OverlayViewModel.Items.Remove(item);
             }
-            OverlayViewModel.ToggleSelection(false);
+
+            OverlayViewModel.ToggleSelectionCommand.Execute(false);
         }
 
         [RelayCommand]
@@ -85,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 }
             }
 
-            OverlayViewModel.ToggleSelection(false);
+            OverlayViewModel.ToggleSelectionCommand.Execute(false);
         }
     }
 }
