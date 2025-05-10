@@ -7,7 +7,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Bindable(true)]
-    public abstract class BaseWizardViewModel : OverlayViewModel // TODO: Use IOverlayControls
+    public abstract class BaseWizardViewModel : OverlayViewModel
     {
         // TODO: Needs docs
         public abstract Task<IResult> TryContinueAsync(CancellationToken cancellationToken);

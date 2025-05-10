@@ -107,10 +107,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     if (sourceIconFile is null)
                         return;
 
+                    // TODO: Configured icon causes a crash when debugger is not attached
                     // Update vault icon
-                    var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
-                    await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
-                    await UpdateIconAsync(cancellationToken);
+                    //var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
+                    //await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
+                    //await UpdateIconAsync(cancellationToken);
 
                     // Update folder icon
                     await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);

@@ -240,6 +240,7 @@
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
     <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
+    <None Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
@@ -432,6 +433,9 @@
     <Page Update="Views\Vault\VaultDashboardPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="Views\Vault\VaultHealthPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\Vault\VaultLoginPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
@@ -477,6 +481,7 @@
     <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
@@ -499,14 +504,9 @@
     <UpToDateCheckInput Remove="Views\VaultWizard\RecoveryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultDashboardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultHealthPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultHealthPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 </Project>

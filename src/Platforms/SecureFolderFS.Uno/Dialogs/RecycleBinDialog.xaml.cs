@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -16,6 +16,8 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class RecycleBinDialog : ContentDialog, IOverlayControl
     {
+        private PickerOptionViewModel? _previousOption;
+
         public RecycleBinOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<RecycleBinOverlayViewModel>();
@@ -45,7 +47,9 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            await ViewModel.ToggleRecycleBinCommand.ExecuteAsync(null);
+            await ViewModel.ToggleRecycleBinAsync(ViewModel.IsRecycleBinEnabled);
+            await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
+            _previousOption = ViewModel.CurrentSizeOption;
         }
     }
 }

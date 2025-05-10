@@ -134,7 +134,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);
-            await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
+            await using var keystoreStream = await keystoreFile.OpenReadWriteAsync(cancellationToken);
 
             // Create backup
             if (VaultFolder is IModifiableFolder modifiableFolder)

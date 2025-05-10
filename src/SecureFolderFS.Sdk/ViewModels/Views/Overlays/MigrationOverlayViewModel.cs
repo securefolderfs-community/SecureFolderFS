@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            _vaultMigrator = await VaultService.GetMigratorAsync(MigrationViewModel.VaultFolder, cancellationToken);
+            _vaultMigrator = await VaultService.GetMigratorAsync(MigrationViewModel.VaultModel.Folder, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -64,10 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task AuthenticateMigrationAsync(object? credentials, CancellationToken cancellationToken)
         {
-            if (credentials is null)
-                return;
-
-            if (_vaultMigrator is null)
+            if (credentials is null || _vaultMigrator is null)
                 return;
 
             try
@@ -75,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 _unlockContract?.Dispose();
                 _unlockContract = await _vaultMigrator.UnlockAsync(credentials, cancellationToken);
 
-                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
+                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultModel.Folder, false));
                 Title = "Migrate".ToLocalized();
                 PrimaryText = null;
             }

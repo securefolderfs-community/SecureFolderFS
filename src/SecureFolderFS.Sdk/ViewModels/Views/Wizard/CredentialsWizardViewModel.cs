@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
+        [ObservableProperty] private bool _IsNameCipherEnabled;
         [ObservableProperty] private PickerOptionViewModel? _ContentCipher;
         [ObservableProperty] private PickerOptionViewModel? _FileNameCipher;
         [ObservableProperty] private PickerOptionViewModel? _EncodingOption;
@@ -141,6 +142,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             RegisterViewModel.CredentialsProvided -= RegisterViewModel_CredentialsProvided;
             AuthenticationOptions.DisposeElements();
             RegisterViewModel.Dispose();
+        }
+
+        partial void OnFileNameCipherChanged(PickerOptionViewModel? value)
+        {
+            IsNameCipherEnabled = !string.IsNullOrEmpty(value?.Id);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

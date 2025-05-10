@@ -37,9 +37,18 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Move(int oldIndex, int newIndex)
         {
+            if (VaultConfigurations.SavedVaults is null)
+                return;
+
             var item = base[oldIndex];
             base.RemoveItem(oldIndex);
             base.InsertItem(newIndex, item);
+
+            // Also update the backing store
+            // Note, that we don't need to update the order fo VaultWidgets
+            var itemConfiguration = VaultConfigurations.SavedVaults[oldIndex];
+            VaultConfigurations.SavedVaults.RemoveAt(oldIndex);
+            VaultConfigurations.SavedVaults.Insert(newIndex, itemConfiguration);
 
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Move, item, oldIndex, newIndex));
         }
