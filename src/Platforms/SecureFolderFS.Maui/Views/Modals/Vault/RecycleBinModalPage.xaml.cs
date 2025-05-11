@@ -93,6 +93,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (ViewModel is null)
                 return;
 
+            _previousOption ??= ViewModel.CurrentSizeOption;
             if (_firstTime.IsFirstTime())
                 return;
 

@@ -58,22 +58,36 @@ namespace SecureFolderFS.Uno.Dialogs
             }
 
             if (_firstTime.IsFirstTime() && ViewModel.IsRecycleBinEnabled)
+            {
+                RecycleBinActionBlock.IsExpanded = ViewModel.IsRecycleBinEnabled;
                 return;
+            }
 
             if (sender is not ToggleSwitch toggleSwitch)
                 return;
 
             await ViewModel.ToggleRecycleBinAsync(toggleSwitch.IsOn);
+            RecycleBinActionBlock.IsExpanded = ViewModel.IsRecycleBinEnabled;
+
             if (ViewModel.IsRecycleBinEnabled != toggleSwitch.IsOn)
             {
                 _surpressToggle = true;
                 toggleSwitch.IsOn = ViewModel.IsRecycleBinEnabled;
             }
+        }
 
+        private async void SizeOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
 
-            // TODO: Move to combobox item changed
-            //await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
-            //_previousOption = ViewModel.CurrentSizeOption;
+            _previousOption ??= ViewModel.CurrentSizeOption;
+            if (_firstTime.IsFirstTime())
+                return;
+
+            await ViewModel.ToggleRecycleBinAsync(ViewModel.IsRecycleBinEnabled);
+            await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
+            _previousOption = ViewModel.CurrentSizeOption;
         }
     }
 }

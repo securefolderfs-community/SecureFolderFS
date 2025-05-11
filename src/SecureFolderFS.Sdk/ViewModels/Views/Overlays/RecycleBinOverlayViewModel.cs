@@ -98,9 +98,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public async Task ToggleRecycleBinAsync(bool value, CancellationToken cancellationToken = default)
         {
-            if (value == IsRecycleBinEnabled)
-                return;
-
             if (!long.TryParse(CurrentSizeOption?.Id, out var size))
                 return;
 
@@ -138,10 +135,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)
         {
-            if (value is null || value.Id == "-1")
-                SpaceTakenText = null;
-            else
-                UpdateSizeBar(value);
+            UpdateSizeBar(value);
         }
 
         [RelayCommand]
@@ -158,11 +152,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             Items.SelectAll();
         }
 
-        private void UpdateSizeBar(PickerOptionViewModel value)
+        private void UpdateSizeBar(PickerOptionViewModel? value)
         {
-            var totalSize = long.Parse(value.Id);
-            PercentageTaken = (double)_occupiedSize / totalSize * 100d;
-            SpaceTakenText = $"Taken {ByteSize.FromBytes(_occupiedSize).ToBinaryString()} out of {ByteSize.FromBytes(totalSize).ToBinaryString()}";
+            if (value is not null && value.Id != "-1")
+            {
+                var totalSize = long.Parse(value.Id);
+                PercentageTaken = (double)_occupiedSize / totalSize * 100d;
+                SpaceTakenText = $"Taken {ByteSize.FromBytes(_occupiedSize).ToBinaryString()} out of {ByteSize.FromBytes(totalSize).ToBinaryString()}";
+            }
+            else
+                SpaceTakenText = null;
         }
     }
 }

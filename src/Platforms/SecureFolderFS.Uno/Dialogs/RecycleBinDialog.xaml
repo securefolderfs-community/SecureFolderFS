@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Storage"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Storage"
     Title="{l:ResourceString Rid=RecycleBin}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonText="{l:ResourceString Rid=Close}"
@@ -18,42 +19,113 @@
     <ContentDialog.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
         <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <x:Double x:Key="ContentDialogMinWidth">600</x:Double>
     </ContentDialog.Resources>
 
-    <Grid Width="450">
+    <Grid RowSpacing="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ToggleSwitch
-            Grid.Row="0"
-            IsOn="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
-            Toggled="ToggleSwitch_Toggled" />
 
-        <ListView
+        <ucab:ActionBlockControl
+            x:Name="RecycleBinActionBlock"
+            Title="{l:ResourceString Rid=EnableRecycleBin}"
+            Grid.Row="0"
+            BlockMode="Expandable">
+            <ucab:ActionBlockControl.ActionElement>
+                <ToggleSwitch
+                    MinWidth="0"
+                    IsOn="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
+                    Toggled="ToggleSwitch_Toggled" />
+            </ucab:ActionBlockControl.ActionElement>
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE74D;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid Margin="0,-8" Padding="54,0,32,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Text="{l:ResourceString Rid=MaximumSize}" />
+                    <ComboBox
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        IsEnabled="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.SizeOptions, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.CurrentSizeOption, Mode=TwoWay}"
+                        SelectionChanged="SizeOptions_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PickerOptionViewModel">
+                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+
+        <Grid
+            x:Name="RecycleBinContentsView"
             Grid.Row="1"
-            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-            SelectionMode="Multiple">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:RecycleBinItemViewModel">
-                    <ucab:ActionBlockControl
-                        Title="{x:Bind Title, Mode=OneWay}"
-                        BlockMode="Default"
-                        Description="{x:Bind OriginalPath, Mode=OneWay}">
-                        <ucab:ActionBlockControl.ActionElement>
-                            <Button>
-                                <FontIcon Glyph="&#xE712;" />
-                                <Button.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Command="{x:Bind RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
-                                        <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand}" Text="{l:ResourceString Rid=DeleteImmediately}" />
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                        </ucab:ActionBlockControl.ActionElement>
-                    </ucab:ActionBlockControl>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            x:Load="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+            <Grid
+                x:Name="EmptyView"
+                Padding="0,8,0,16"
+                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
+            </Grid>
+
+            <StackPanel
+                x:Name="ItemsView"
+                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                Spacing="8">
+                <TextBlock
+                    FontSize="14"
+                    FontWeight="Semibold"
+                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
+                <ListView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" SelectionMode="Multiple">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm2:RecycleBinItemViewModel">
+                            <ucab:ActionBlockControl
+                                Title="{x:Bind Title, Mode=OneWay}"
+                                BlockMode="Default"
+                                Description="{x:Bind OriginalPath, Mode=OneWay}">
+                                <ucab:ActionBlockControl.ActionElement>
+                                    <Button>
+                                        <FontIcon Glyph="&#xE712;" />
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Command="{x:Bind RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
+                                                <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand}" Text="{l:ResourceString Rid=DeleteImmediately}" />
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </ucab:ActionBlockControl.ActionElement>
+                            </ucab:ActionBlockControl>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <StackPanel x:Name="SizeBarPanel" x:Load="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                    <TextBlock
+                        FontSize="12"
+                        Opacity="0.8"
+                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}" />
+                    <ProgressBar Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </ContentDialog>

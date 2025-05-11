@@ -84,7 +84,7 @@
                         <VerticalStackLayout>
                             <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
                             <uco:OptionsControl
-                                Title="{l:ResourceString Rid=RecycleBin}"
+                                Title="{l:ResourceString Rid=OpenRecycleBin}"
                                 Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"
                                 IsSeparatorVisible="False" />
                         </VerticalStackLayout>

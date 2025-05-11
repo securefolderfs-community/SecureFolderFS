@@ -812,4 +812,13 @@
   <data name="NameEncoding" xml:space="preserve">
     <value>Name encoding</value>
   </data>
+  <data name="OpenRecycleBin" xml:space="preserve">
+    <value>Open recycle bin</value>
+  </data>
+  <data name="OpenRecycleBinDescription" xml:space="preserve">
+    <value>View deleted files and folders</value>
+  </data>
+  <data name="RecentlyDeleted" xml:space="preserve">
+    <value>Recently deleted</value>
+  </data>
 </root>

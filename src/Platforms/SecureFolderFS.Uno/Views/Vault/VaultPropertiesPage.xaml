@@ -97,6 +97,14 @@
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
-        <Button Command="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}" Content="recycle" />
+        <ucab:ActionBlockControl
+            Title="{l:ResourceString Rid=OpenRecycleBin}"
+            BlockMode="Clickable"
+            ClickCommand="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}"
+            Description="{l:ResourceString Rid=OpenRecycleBinDescription}">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE74D;" />
+            </ucab:ActionBlockControl.Icon>
+        </ucab:ActionBlockControl>
     </StackPanel>
 </Page>
