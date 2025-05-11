@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Storage.VirtualFileSystem;
+﻿using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,11 +13,11 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Configures the recycle bin for a specific unlocked vault.
         /// </summary>
-        /// <param name="vfsRoot">The root of the virtual file system.</param>
+        /// <param name="unlockedViewModel">The unlocked vault view model.</param>
         /// <param name="maxSize">The maximum size of the recycle bin in bytes.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task ConfigureRecycleBinAsync(IVFSRoot vfsRoot, long maxSize, CancellationToken cancellationToken = default);
+        Task ConfigureRecycleBinAsync(UnlockedVaultViewModel unlockedViewModel, long maxSize, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Recalculates missing sizes and updates the configuration file.

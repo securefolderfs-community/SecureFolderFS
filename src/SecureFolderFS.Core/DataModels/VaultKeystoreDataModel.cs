@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public sealed class VaultKeystoreDataModel
+    public sealed record class VaultKeystoreDataModel
     {
         /// <summary>
         /// Gets the wrapped version of the DEK key.

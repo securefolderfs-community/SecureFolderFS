@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.AppModels
             base.InsertItem(newIndex, item);
 
             // Also update the backing store
-            // Note, that we don't need to update the order fo VaultWidgets
+            // Note, that we don't need to update the order for VaultWidgets
             var itemConfiguration = VaultConfigurations.SavedVaults[oldIndex];
             VaultConfigurations.SavedVaults.RemoveAt(oldIndex);
             VaultConfigurations.SavedVaults.Insert(newIndex, itemConfiguration);

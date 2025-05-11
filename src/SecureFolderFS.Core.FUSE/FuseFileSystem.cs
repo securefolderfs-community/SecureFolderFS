@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FUSE
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fuseOptions = FuseOptions.ToOptions(options);
+            var fuseOptions = FuseOptions.ToOptions(options.AppendContract(unlockContract));
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
 

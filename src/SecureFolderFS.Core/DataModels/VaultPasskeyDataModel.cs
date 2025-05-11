@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public class VaultPasskeyDataModel
+    public record class VaultPasskeyDataModel
     {
         /// <summary>
         /// Gets the capability of the authentication method.

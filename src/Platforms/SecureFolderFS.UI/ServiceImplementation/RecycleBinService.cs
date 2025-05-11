@@ -1,10 +1,13 @@
 using System;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -18,30 +21,46 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public class RecycleBinService : IRecycleBinService
     {
         /// <inheritdoc/>
-        public async Task ConfigureRecycleBinAsync(IVFSRoot vfsRoot, long maxSize, CancellationToken cancellationToken = default)
+        public async Task ConfigureRecycleBinAsync(UnlockedVaultViewModel unlockedViewModel, long maxSize, CancellationToken cancellationToken = default)
         {
-            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+            if (unlockedViewModel.StorageRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
             
-            if (specificsWrapper.Inner.Options.IsReadOnly)
+            if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            // TODO: Update configuration data model with appropriate IsRecycleBinEnabled value
-            vfsRoot.Options.DangerousSetRecycleBin(maxSize);
+            var keyPair = specifics.Security.KeyPair;
+            var vaultReader = new VaultReader(unlockedViewModel.VaultViewModel.VaultModel.Folder, StreamSerializer.Instance);
+            var vaultWriter = new VaultWriter(unlockedViewModel.VaultViewModel.VaultModel.Folder, StreamSerializer.Instance);
 
-            await Task.CompletedTask;
+            // Read configuration
+            var configDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            var newConfigDataModel = configDataModel with
+            {
+                RecycleBinSize = maxSize,
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
+
+            // First we need to fill in the PayloadMac of the content
+            VaultParser.CalculateConfigMac(newConfigDataModel, keyPair.MacKey, newConfigDataModel.PayloadMac);
+
+            // Update the new configuration
+            await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
+
+            // Make sure to also update the file system options
+            specifics.Options.DangerousSetRecycleBin(maxSize);
         }
         
         /// <inheritdoc/>
         public async Task RecalculateSizesAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
         {
-            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
 
-            if (specificsWrapper.Inner.Options.IsReadOnly)
+            if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
             
-            var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specificsWrapper.Inner, cancellationToken);
+            var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 return;
 
@@ -93,27 +112,27 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IRecycleBinFolder> GetRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
         {
-            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
 
-            var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specificsWrapper.Inner, cancellationToken);
+            var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specificsWrapper.Inner, StreamSerializer.Instance);
+            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
         public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
         {
-            if (vfsRoot is not IWrapper<FileSystemSpecifics> specificsWrapper)
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
 
-            var recycleBin = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specificsWrapper.Inner, cancellationToken);
+            var recycleBin = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specificsWrapper.Inner, StreamSerializer.Instance);
+            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
     }
 }

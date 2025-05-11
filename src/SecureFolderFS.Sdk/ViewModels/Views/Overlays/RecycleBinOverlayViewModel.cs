@@ -104,10 +104,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (!long.TryParse(CurrentSizeOption?.Id, out var size))
                 return;
 
-            await RecycleBinService.ConfigureRecycleBinAsync(
-                UnlockedVaultViewModel.StorageRoot,
+            var result = await RecycleBinService.TryConfigureRecycleBinAsync(
+                UnlockedVaultViewModel,
                 value ? size : 0L,
                 cancellationToken);
+
+            if (!result)
+                return;
 
             IsRecycleBinEnabled = value;
             if (IsRecycleBinEnabled)

@@ -78,7 +78,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (ViewModel is null)
                 return;
             
-            if (ViewModel.IsRecycleBinEnabled && _firstTime.IsFirstTime())
+            if (_firstTime.IsFirstTime() && ViewModel.IsRecycleBinEnabled)
                 return;
             
             if (sender is not Switch toggleSwitch)

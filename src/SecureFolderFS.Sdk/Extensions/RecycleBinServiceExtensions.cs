@@ -1,13 +1,28 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
     public static class RecycleBinServiceExtensions
     {
+        /// <inheritdoc cref="IRecycleBinService.ConfigureRecycleBinAsync"/>
+        public static async Task<bool> TryConfigureRecycleBinAsync(this IRecycleBinService recycleBinService, UnlockedVaultViewModel unlockedViewModel, long maxSize, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await recycleBinService.ConfigureRecycleBinAsync(unlockedViewModel, maxSize, cancellationToken);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         /// <inheritdoc cref="IRecycleBinService.GetRecycleBinAsync"/>
         public static async Task<IRecycleBinFolder?> TryGetRecycleBinAsync(this IRecycleBinService recycleBinService, IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
         {

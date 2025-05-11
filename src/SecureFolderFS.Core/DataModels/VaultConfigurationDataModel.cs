@@ -6,7 +6,7 @@ using static SecureFolderFS.Core.Constants.Vault;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public sealed class VaultConfigurationDataModel : VersionDataModel
+    public sealed record class VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
         /// Gets the ID for content encryption.

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Core.Dokany
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var dokanyOptions = DokanyOptions.ToOptions(options);
+            var dokanyOptions = DokanyOptions.ToOptions(options.AppendContract(unlockContract));
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, dokanyOptions);
             dokanyOptions.SetupValidators(specifics);
 

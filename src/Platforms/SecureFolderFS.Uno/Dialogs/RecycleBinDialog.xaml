@@ -28,7 +28,7 @@
         <ToggleSwitch
             Grid.Row="0"
             IsOn="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
-            Tapped="RecycleBinSwitch_Tapped" />
+            Toggled="ToggleSwitch_Toggled" />
 
         <ListView
             Grid.Row="1"
