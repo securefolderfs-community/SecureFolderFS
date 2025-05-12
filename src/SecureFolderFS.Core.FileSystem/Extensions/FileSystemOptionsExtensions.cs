@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
                 return options;
 
             foreach (var item in enumerable)
-                options.Add(item);
+                options.TryAdd(item.Key, item.Value);
 
             return options;
         }

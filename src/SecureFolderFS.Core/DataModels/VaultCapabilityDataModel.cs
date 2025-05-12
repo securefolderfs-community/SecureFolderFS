@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public record class VaultPasskeyDataModel
+    public abstract record class VaultCapabilityDataModel
     {
         /// <summary>
         /// Gets the capability of the authentication method.
@@ -17,11 +17,5 @@ namespace SecureFolderFS.Core.DataModels
         [JsonPropertyName("capability")] // supportsVersion|supports..
         [DefaultValue("")]
         public string Capability { get; init; } = string.Empty;
-
-        /// <summary>
-        /// Gets the challenge used to authenticate the user.
-        /// </summary>
-        [JsonPropertyName("challenge")]
-        public byte[]? Challenge { get; set; }
     }
 }
