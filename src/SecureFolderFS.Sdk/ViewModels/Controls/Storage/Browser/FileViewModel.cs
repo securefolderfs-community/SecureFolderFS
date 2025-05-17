@@ -52,11 +52,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         protected override async Task OpenAsync(CancellationToken cancellationToken)
         {
+            if (ParentFolder is null)
+                return;
+
             if (BrowserViewModel.TransferViewModel?.IsPickingItems() ?? false)
                 return;
 
-            using var viewModel = new PreviewerOverlayViewModel();
-            await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
+            using var viewModel = new PreviewerOverlayViewModel(this, ParentFolder);
+            await viewModel.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(viewModel);
         }
     }

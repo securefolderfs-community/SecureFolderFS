@@ -77,6 +77,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override int Read(Span<byte> buffer)
         {
+            if (!CanSeek)
+                return 0;
+
             var ciphertextStreamLength = Inner.Length;
             if (ciphertextStreamLength == 0L)
                 return FileSystem.Constants.FILE_EOF;

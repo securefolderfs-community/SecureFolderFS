@@ -7,36 +7,44 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IDisposable
+    public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
+        private readonly BrowserItemViewModel _itemViewModel;
+        private readonly FolderViewModel _folderViewModel;
+
         [ObservableProperty] private IViewable? _PreviewerViewModel;
 
-        public async Task LoadFromStorableAsync(IStorable storable, CancellationToken cancellationToken = default)
+        public PreviewerOverlayViewModel(BrowserItemViewModel itemViewModel, FolderViewModel folderViewModel)
         {
-            // Only handle files for now
-            if (storable is not IFile file)
-                return;
+            _itemViewModel = itemViewModel;
+            _folderViewModel = folderViewModel;
+        }
 
-            var classification = FileTypeHelper.GetClassification(storable);
-            var previewer = (IAsyncInitialize?)(classification.TypeHint switch
+        /// <inheritdoc/>
+        public Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            if (_itemViewModel.Inner is not IFile file)
+                return Task.CompletedTask;
+
+            var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
+            var previewer = (IViewable)(classification.TypeHint switch
             {
-                TypeHint.Image => new ImagePreviewerViewModel(file),
-                TypeHint.Media => new VideoPreviewerViewModel(file),
-                TypeHint.PlainText => new TextPreviewerViewModel(file),
-                _ => new FallbackPreviewerViewModel(file)
+                TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
+                TypeHint.PlainText => new TextPreviewerViewModel(file).WithInitAsync(),
+                _ => new FallbackPreviewerViewModel(file).WithInitAsync()
             });
 
-            if (previewer is null)
-                return;
-
-            await previewer.InitAsync(cancellationToken);
             (PreviewerViewModel as IDisposable)?.Dispose();
-            PreviewerViewModel = previewer as IViewable;
+            PreviewerViewModel = previewer;
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

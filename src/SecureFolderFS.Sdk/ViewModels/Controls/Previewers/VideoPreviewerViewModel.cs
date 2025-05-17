@@ -12,20 +12,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class VideoPreviewerViewModel : BasePreviewerViewModel<IDisposable>, IDisposable
+    public sealed partial class VideoPreviewerViewModel : FilePreviewerViewModel<IDisposable>, IDisposable
     {
-        private readonly IFile _file;
-
         public VideoPreviewerViewModel(IFile file)
+            : base(file)
         {
-            _file = file;
             ServiceProvider = DI.Default;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var streamedVideo = await MediaService.StreamVideoAsync(_file, cancellationToken);
+            var streamedVideo = await MediaService.StreamVideoAsync(Inner, cancellationToken);
             if (streamedVideo is IAsyncInitialize asyncInitialize)
                 await asyncInitialize.InitAsync(cancellationToken);
 

@@ -1,5 +1,7 @@
 using CommunityToolkit.Maui.Views;
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.UserControls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -80,6 +82,22 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         }
         public static readonly BindableProperty ViewModelProperty =
             BindableProperty.Create(nameof(ViewModel), typeof(PreviewerOverlayViewModel), typeof(FilePreviewModalPage), null);
+
+        private void Presentation_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not ContentPresentation presentation)
+                return;
+
+            _ = presentation;
+        }
+
+        private void CarouselView_PositionChanged(object? sender, PositionChangedEventArgs e)
+        {
+            if (sender is not BindableObject { BindingContext: CarouselPreviewerViewModel previewerViewModel })
+                return;
+            
+            previewerViewModel.CurrentIndex = e.CurrentPosition;
+        }
     }
 }
 
