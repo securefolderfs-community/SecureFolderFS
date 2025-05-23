@@ -3,10 +3,8 @@ namespace SecureFolderFS.Sdk.Enums
     public enum TypeHint
     {
         Unclassified,
-        PlainText,
+        Plaintext,
         Document,
-        UriLink,
-        Storage,
         Image,
         Media,
         Audio

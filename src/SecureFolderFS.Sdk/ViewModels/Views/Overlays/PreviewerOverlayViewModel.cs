@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var previewer = (IViewable)(classification.TypeHint switch
             {
                 TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
-                TypeHint.PlainText => new TextPreviewerViewModel(file).WithInitAsync(),
+                TypeHint.Plaintext => new TextPreviewerViewModel(file).WithInitAsync(),
                 _ => new FallbackPreviewerViewModel(file).WithInitAsync()
             });
 

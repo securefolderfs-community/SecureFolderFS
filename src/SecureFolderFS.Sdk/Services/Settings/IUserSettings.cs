@@ -50,6 +50,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool AreFileExtensionsEnabled { get; set; }
 
         /// <summary>
+        /// Gets or sets the value that determines whether to automatically choose the best layout in the file browser.
+        /// </summary>
+        bool IsAdaptiveLayoutEnabled { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to enable the file content cache.
         /// </summary>
         bool IsContentCacheEnabled { get; set; }

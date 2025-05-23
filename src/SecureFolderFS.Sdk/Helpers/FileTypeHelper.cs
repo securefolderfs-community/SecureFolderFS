@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.Helpers
                     && !mimeType.Equals("text/csv")
                     //|| mimeType.StartsWith("")
 
-                    ? TypeHint.PlainText : null;
+                    ? TypeHint.Plaintext : null;
             }
 
             TypeHint? Image()
@@ -83,11 +83,11 @@ namespace SecureFolderFS.Sdk.Helpers
 
             // PlainText (code)
             if (CodeExtensions.Contains(extension))
-                return TypeHint.PlainText;
+                return TypeHint.Plaintext;
 
             // PlainText (text)
             if (TextExtensions.Contains(extension))
-                return TypeHint.PlainText;
+                return TypeHint.Plaintext;
 
             // Document
             if (DocumentExtensions.Contains(extension))

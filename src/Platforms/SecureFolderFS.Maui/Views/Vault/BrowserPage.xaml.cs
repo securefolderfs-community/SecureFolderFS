@@ -44,7 +44,7 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             // Add navigated-to folder to Breadcrumb
             ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
-
+            
 #if ANDROID
             // On Android: Navigate by changing current folder (i.e. ViewModel source)
             if (ViewModel is not null)
@@ -127,8 +127,9 @@ namespace SecureFolderFS.Maui.Views.Vault
         protected override void OnAppearing()
         {
             if (ViewModel is not null)
-                ViewModel.ViewOptions.PropertyChanged += ViewOptions_PropertyChanged;
+                ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
 
+            // OnAppearing is called elsewhere in navigation logic.
             base.OnAppearing();
         }
 
@@ -136,7 +137,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         protected override void OnDisappearing()
         {
             if (ViewModel is not null)
-                ViewModel.ViewOptions.PropertyChanged -= ViewOptions_PropertyChanged;
+                ViewModel.Layouts.PropertyChanged -= Layouts_PropertyChanged;
 
             ViewModel?.OnDisappearing();
             base.OnDisappearing();
@@ -152,9 +153,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             await Browser.FadeTo(1.0d, 125u);
         }
 
-        private async void ViewOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void Layouts_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(ViewOptionsViewModel.BrowserViewType))
+            if (e.PropertyName != nameof(LayoutsViewModel.BrowserViewType))
                 return;
 
             Browser.ItemsSource = null;

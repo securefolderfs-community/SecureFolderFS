@@ -51,12 +51,17 @@
             </uco:OptionsContainer>
 
             <!--  File Browser  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=Data}">
+            <uco:OptionsContainer Title="{l:ResourceString Rid=FileBrowser}">
                 <uco:OptionsContainer.InnerContent>
                     <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}" IsSeparatorVisible="False">
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.AreFileExtensionsEnabled, Mode=TwoWay}" />
+                            </uco:OptionsControl.Slot>
+                        </uco:OptionsControl>
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableAdaptiveLayout}">
+                            <uco:OptionsControl.Slot>
+                                <Switch IsToggled="{Binding PreferencesViewModel.IsAdaptiveLayoutEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>
                         <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}" IsSeparatorVisible="False">

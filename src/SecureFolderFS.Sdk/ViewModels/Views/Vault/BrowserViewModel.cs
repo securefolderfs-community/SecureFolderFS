@@ -19,6 +19,7 @@ using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,11 +38,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         public IFolder BaseFolder { get; }
 
+        public LayoutsViewModel Layouts { get; }
+
         public INavigator InnerNavigator { get; }
 
         public INavigator? OuterNavigator { get; }
-
-        public ViewOptionsViewModel ViewOptions { get; }
 
         public required IVFSRoot StorageRoot { get; init; }
 
@@ -49,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             ServiceProvider = DI.Default;
             _rootView = rootView;
-            ViewOptions = new();
+            Layouts = new();
             InnerNavigator = innerNavigator;
             OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;
@@ -109,7 +110,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         protected virtual async Task NavigateBreadcrumbAsync(BreadcrumbItemViewModel? itemViewModel, CancellationToken cancellationToken)
         {
-            if (itemViewModel is null)
+            if (itemViewModel is null || itemViewModel == Breadcrumbs.LastOrDefault())
                 return;
 
             var lastIndex = Breadcrumbs.Count - 1;
@@ -141,11 +142,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (CurrentFolder is null)
                 return;
 
-            var originalSortOption = ViewOptions.CurrentSortOption;
-            await OverlayService.ShowAsync(ViewOptions);
+            var originalSortOption = Layouts.CurrentSortOption;
+            await OverlayService.ShowAsync(Layouts);
 
-            if (originalSortOption != ViewOptions.CurrentSortOption)
-                ViewOptions.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            if (originalSortOption != Layouts.CurrentSortOption)
+                Layouts.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
         }
 
         [RelayCommand]
@@ -175,14 +176,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 case "File":
                 {
                     var file = await modifiableFolder.CreateFileAsync(newItemViewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder), ViewOptions.GetSorter());
+                    CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder), Layouts.GetSorter());
                     break;
                 }
 
                 case "Folder":
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(newItemViewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder), ViewOptions.GetSorter());
+                    CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder), Layouts.GetSorter());
                     break;
                 }
             }
@@ -220,7 +221,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     await TransferViewModel.TransferAsync([ file ], async (item, token) =>
                     {
                         var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, token);
-                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), ViewOptions.GetSorter());
+                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 
                     break;
@@ -237,7 +238,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
                     {
                         var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, reporter, token);
-                        CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), ViewOptions.GetSorter());
+                        CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 
                     break;

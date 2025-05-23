@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.Sheets
     internal sealed class ViewOptionsSheetFragment : IOverlayControl
     {
         private readonly TaskCompletionSource<IResult> _tcs;
-        private ViewOptionsViewModel? _viewModel;
+        private LayoutsViewModel? _viewModel;
 
         public ViewOptionsSheetFragment()
         {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Sheets
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            _viewModel = (ViewOptionsViewModel)viewable;
+            _viewModel = (LayoutsViewModel)viewable;
         }
 
         /// <inheritdoc/>
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Maui.Sheets
         /// <inheritdoc/>
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ViewModel = query.ToViewModel<ViewOptionsViewModel>();
+            ViewModel = query.ToViewModel<LayoutsViewModel>();
             _tcs = query.Get("TaskCompletion") as TaskCompletionSource<IResult>;
         }
 
@@ -72,13 +72,13 @@ namespace SecureFolderFS.Maui.Sheets
             _tcs?.TrySetResult(Result.Success);
         }
 
-        public ViewOptionsViewModel? ViewModel
+        public LayoutsViewModel? ViewModel
         {
-            get => (ViewOptionsViewModel?)GetValue(ViewModelProperty);
+            get => (LayoutsViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(ViewOptionsViewModel), typeof(ViewOptionsSheet), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(LayoutsViewModel), typeof(ViewOptionsSheet), null);
     }
 }
 

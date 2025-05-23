@@ -114,7 +114,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         IFile file => new FileViewModel(file, BrowserViewModel, destinationViewModel),
                         IFolder folder => new FolderViewModel(folder, ParentFolder.BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(movedItem))
-                    }, BrowserViewModel.ViewOptions.GetSorter());
+                    }, BrowserViewModel.Layouts.GetSorter());
                 }, cts.Token);
             }
             catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
@@ -172,7 +172,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         IFile file => new FileViewModel(file, BrowserViewModel, destinationViewModel),
                         IFolder folder => new FolderViewModel(folder, BrowserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(copiedItem))
-                    }, BrowserViewModel.ViewOptions.GetSorter());
+                    }, BrowserViewModel.Layouts.GetSorter());
                 }, cts.Token);
             }
             catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)

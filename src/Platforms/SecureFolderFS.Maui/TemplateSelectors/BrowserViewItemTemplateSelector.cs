@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
             if (item is not BrowserItemViewModel browserItem)
                 return null;
 
-            return browserItem.BrowserViewModel.ViewOptions.BrowserViewType switch
+            return browserItem.BrowserViewModel.Layouts.BrowserViewType switch
             {
                 BrowserViewType.ListView or BrowserViewType.ColumnView => ListItemTemplate,
                 BrowserViewType.SmallGridView or BrowserViewType.MediumGridView or BrowserViewType.LargeGridView => GridItemTemplate,

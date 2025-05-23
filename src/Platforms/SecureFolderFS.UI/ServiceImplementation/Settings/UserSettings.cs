@@ -79,6 +79,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
+        public bool IsAdaptiveLayoutEnabled
+        {
+            get => GetSetting(static () => true);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public bool IsContentCacheEnabled
         {
             get => GetSetting(static () => true);

@@ -22,8 +22,8 @@ namespace SecureFolderFS.Maui.ValueConverters
 #if ANDROID
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new MauiIcon() { Icon = MauiIcons.Material.MaterialIcons.Folder, IconAutoScaling = true },
-                    _ => new MauiIcon() { Icon = MauiIcons.Material.MaterialIcons.Description, IconAutoScaling = true }
+                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Folder, IconAutoScaling = true },
+                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Description, IconAutoScaling = true }
                 }
 #else
                 _ => storableWrapper switch

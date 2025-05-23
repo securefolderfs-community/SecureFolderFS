@@ -53,6 +53,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             set => UserSettings.AreFileExtensionsEnabled = value;
         }
 
+        public bool IsAdaptiveLayoutEnabled
+        {
+            get => UserSettings.IsAdaptiveLayoutEnabled;
+            set => UserSettings.IsAdaptiveLayoutEnabled = value;
+        }
+
         public bool IsContentCacheEnabled
         {
             get => UserSettings.IsContentCacheEnabled;

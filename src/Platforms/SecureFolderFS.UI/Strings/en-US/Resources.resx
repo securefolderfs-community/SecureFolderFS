@@ -755,9 +755,6 @@
   <data name="NoItems" xml:space="preserve">
     <value>No items</value>
   </data>
-  <data name="Data" xml:space="preserve">
-    <value>Data</value>
-  </data>
   <data name="EnableFileThumbnails" xml:space="preserve">
     <value>Enable file thumbnails</value>
   </data>
@@ -820,5 +817,11 @@
   </data>
   <data name="RecentlyDeleted" xml:space="preserve">
     <value>Recently deleted</value>
+  </data>
+  <data name="FileBrowser" xml:space="preserve">
+      <value>File browser</value>
+  </data>
+  <data name="EnableAdaptiveLayout" xml:space="preserve">
+      <value>Enable adaptive layout</value>
   </data>
 </root>

@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 {
     [Bindable(true)]
-    public sealed partial class ViewOptionsViewModel : ObservableObject, IViewable
+    public sealed partial class LayoutsViewModel : ObservableObject, IViewable
     {
         [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _SortOptions;
         [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _SizeOptions;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [ObservableProperty] private bool _IsAscending;
         [ObservableProperty] private string? _Title;
 
-        public ViewOptionsViewModel()
+        public LayoutsViewModel()
         {
             SortOptions = new([
                 new(nameof(NameSorter), "Name".ToLocalized()),
