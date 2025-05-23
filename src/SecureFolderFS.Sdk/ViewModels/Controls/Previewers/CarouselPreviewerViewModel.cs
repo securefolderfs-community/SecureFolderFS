@@ -31,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 
         partial void OnCurrentIndexChanged(int oldValue, int newValue)
         {
+            return;
             if (Slides.IsEmpty())
                 return;
 
@@ -49,6 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 {
                     // Don't add duplicate previewers, only initialize the next view
                     _ = (viewable as IAsyncInitialize)?.InitAsync();
+                    return;
                 }
 
                 var previewer = GetPreviewer(newNextItem.Inner);
@@ -72,6 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 {
                     // Don't add duplicate previewers, only initialize the next view
                     _ = (viewable as IAsyncInitialize)?.InitAsync();
+                    return;
                 }
 
                 var previewer = GetPreviewer(newPreviousItem.Inner);
@@ -92,9 +95,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             // opens an item at the very end) or separate the two indexes so that the collection view follows a different
             // index from the internal index in file list
 
+            // TODO: MOST IMPORTANT!!! (IGNORE OTHER TODOs)
+            // Actually, write an in-house carousel control based on gesture recognizers
+            // The MAUI's CarouselView does not work well with pinch and pan class and also fixing
+            // the item loading issue (index issue) is not worth the effort.
+            // I imagine the user control would either:
+            //
+            // 1. Take a collection of items and have current item (the previous and next items would be managed
+            //      by the control itself) be displayed and animated when the user swipes (less ideal)
+            //
+            // 2. Take previous, current, and next item as separate properties, animate the view change on swipe, and somehow
+            //      notify the view model to swap out the new items (more ideal)
+            //
+
+
             // TODO: For now, load all items up until that index.
             // Indexes are synchronized (+ 2 to account for count -- not index, and next item):
-            var itemsToLoad = _dataSource.Items.Take(CurrentIndex + 2);
+            var itemsToLoad = _dataSource.Items;//.Take(CurrentIndex + 2);
 
             // // Get 2 previous items and 2 next items (4 in total)
             // var startIndex = Math.Max(0, _dataSource.Items.IndexOf(_currentItem) - 2);

@@ -18,12 +18,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             : base(file)
         {
             ServiceProvider = DI.Default;
-            // We do not want to set the Title property for an image
+            Title = file.Name;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            Source?.Dispose();
             Source = await MediaService.ReadImageFileAsync(Inner, cancellationToken);
         }
 

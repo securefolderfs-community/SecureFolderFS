@@ -1,6 +1,10 @@
 // Some parts of the following code were used from MauiPanPinchContainer on the MIT License basis.
 // See the associated license file for more information.
 
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Maui.AppModels;
+
 namespace SecureFolderFS.Maui.UserControls.Common
 {
     /// <summary>
@@ -11,22 +15,25 @@ namespace SecureFolderFS.Maui.UserControls.Common
     {
         private readonly TapGestureRecognizer _doubleTapGestureRecognizer;
         private readonly PinchGestureRecognizer _pinchGestureRecognizer;
-        private readonly PanGestureRecognizer _panGestureRecognizer;
+        private readonly CorrectedPanGestureRecognizer _panGestureRecognizer;
         private bool _isPanEnabled = true;
-        private double _currentScale = 1;
         private double _startScale = 1;
         private double _panX;
         private double _panY;
-
+        
+        public double CurrentScale { get; private set; } = 1;
+        
+        public ICommand? PanUpdatedCommand { get; set; }
+        
         public PanPinchContainer()
         {
-            _panGestureRecognizer = new PanGestureRecognizer();
+            _panGestureRecognizer = new CorrectedPanGestureRecognizer();
             _pinchGestureRecognizer = new PinchGestureRecognizer();
             _doubleTapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
 
-            _panGestureRecognizer.PanUpdated += OnPanUpdatedAsync;
-            _pinchGestureRecognizer.PinchUpdated += OnPinchUpdatedAsync;
-            _doubleTapGestureRecognizer.Tapped += DoubleTappedAsync;
+            _panGestureRecognizer.PanUpdated += GestureRecognizer_PanUpdated;
+            _pinchGestureRecognizer.PinchUpdated += GestureRecognizer_PinchUpdated;
+            _doubleTapGestureRecognizer.Tapped += Recognizer_DoubleTapped;
 
             GestureRecognizers.Add(_panGestureRecognizer);
             GestureRecognizers.Add(_pinchGestureRecognizer);
@@ -48,8 +55,8 @@ namespace SecureFolderFS.Maui.UserControls.Common
             Content.AnchorX = 0;
             Content.AnchorY = 0;
 
-            var contentWidth = Content.Width * _currentScale;
-            var contentHeight = Content.Height * _currentScale;
+            var contentWidth = Content.Width * CurrentScale;
+            var contentHeight = Content.Height * CurrentScale;
 
             if (contentWidth <= Width)
             {
@@ -97,47 +104,53 @@ namespace SecureFolderFS.Maui.UserControls.Common
             originY = (originY - deltaY) * deltaHeight;
 
             // Calculate the transformed element pixel coordinates.
-            double targetX = _panX - (originX * Content.Width * (_currentScale - _startScale));
-            double targetY = _panY - (originY * Content.Height * (_currentScale - _startScale));
+            double targetX = _panX - (originX * Content.Width * (CurrentScale - _startScale));
+            double targetY = _panY - (originY * Content.Height * (CurrentScale - _startScale));
 
             // Apply translation based on the change in origin.
-            if (_currentScale > 1)
+            if (CurrentScale > 1)
             {
-                targetX = Math.Clamp(targetX, -Content.Width * (_currentScale - 1), 0);
-                targetY = Math.Clamp(targetY, -Content.Height * (_currentScale - 1), 0);
+                targetX = Math.Clamp(targetX, -Content.Width * (CurrentScale - 1), 0);
+                targetY = Math.Clamp(targetY, -Content.Height * (CurrentScale - 1), 0);
             }
             else
             {
-                targetX = (Width - (Content.Width * _currentScale)) / 2;
-                targetY = Content.Height * (1 - _currentScale) / 2;
+                targetX = (Width - (Content.Width * CurrentScale)) / 2;
+                targetY = Content.Height * (1 - CurrentScale) / 2;
             }
 
             await ClampTranslationAsync(targetX, targetY, animate);
         }
 
-        private async void DoubleTappedAsync(object? sender, TappedEventArgs e)
+        private async void Recognizer_DoubleTapped(object? sender, TappedEventArgs e)
         {
             _startScale = Content.Scale;
-            _currentScale = _startScale;
+            CurrentScale = _startScale;
             _panX = Content.TranslationX;
             _panY = Content.TranslationY;
-            _currentScale = _currentScale < 2 ? 2 : 1;
+            CurrentScale = CurrentScale < 2 ? 2 : 1;
 
             var point = e.GetPosition(sender as View);
             var translateTask = Task.CompletedTask;
             if (point is not null)
                 translateTask = ClampTranslationFromScaleOriginAsync(point.Value.X / Width, point.Value.Y / Height, true);
 
-            var scaleTask = ScaleToAsync(_currentScale);
+            var scaleTask = ScaleToAsync(CurrentScale);
             await Task.WhenAll(translateTask, scaleTask);
             _panX = Content.TranslationX;
             _panY = Content.TranslationY;
         }
 
-        private async void OnPanUpdatedAsync(object? sender, PanUpdatedEventArgs e)
+        private async void GestureRecognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             if (!_isPanEnabled)
                 return;
+
+            if (CurrentScale < 1.1d)
+            {
+                PanUpdatedCommand?.Execute(e);
+                return;
+            }
 
             if (Content.Scale <= 1)
                 return;
@@ -168,7 +181,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             }
         }
 
-        private async void OnPinchUpdatedAsync(object? sender, PinchGestureUpdatedEventArgs e)
+        private async void GestureRecognizer_PinchUpdated(object? sender, PinchGestureUpdatedEventArgs e)
         {
             if (e.Status == GestureStatus.Started)
             {
@@ -188,18 +201,18 @@ namespace SecureFolderFS.Maui.UserControls.Common
             if (e.Status == GestureStatus.Running)
             {
                 // Calculate the scale factor to be applied.
-                _currentScale += (e.Scale - 1) * _startScale;
-                _currentScale = Math.Clamp(_currentScale, 0.5, 10);
+                CurrentScale += (e.Scale - 1) * _startScale;
+                CurrentScale = Math.Clamp(CurrentScale, 0.5, 10);
 
                 await ClampTranslationFromScaleOriginAsync(e.ScaleOrigin.X, e.ScaleOrigin.Y);
 
                 // Apply scale factor
-                Content.Scale = _currentScale;
+                Content.Scale = CurrentScale;
             }
 
             if (e.Status == GestureStatus.Completed)
             {
-                if (_currentScale < 1)
+                if (CurrentScale < 1)
                 {
                     var translateTask = TranslateToAsync(0, 0);
                     var scaleTask = ScaleToAsync(1);
@@ -226,7 +239,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
         private async Task ScaleToAsync(double scale)
         {
             await Content.ScaleTo(scale, 250, Easing.Linear);
-            _currentScale = scale;
+            CurrentScale = scale;
         }
 
         private async Task TranslateToAsync(double x, double y)

@@ -23,6 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            Source?.Dispose();
+
             var streamedVideo = await MediaService.StreamVideoAsync(Inner, cancellationToken);
             if (streamedVideo is IAsyncInitialize asyncInitialize)
                 await asyncInitialize.InitAsync(cancellationToken);

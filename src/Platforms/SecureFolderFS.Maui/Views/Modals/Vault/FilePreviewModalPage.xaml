@@ -24,27 +24,9 @@
         <vc:MediaToSourceConverter x:Key="MediaToSourceConverter" />
 
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
-            <CarouselView
-                IsSwipeEnabled="True"
-                ItemsSource="{Binding Slides, Mode=OneWay}"
-                PositionChanged="CarouselView_PositionChanged">
-                <CarouselView.ItemTemplate>
-                    <DataTemplate x:DataType="cm:IViewable">
-                        <uc:ContentPresentation
-                            x:Name="Presentation"
-                            Loaded="Presentation_Loaded"
-                            Presentation="{Binding}">
-                            <uc:ContentPresentation.TemplateSelector>
-                                <ts:PreviewerTemplateSelector
-                                    FallbackTemplate="{StaticResource FallbackTemplate}"
-                                    ImageTemplate="{StaticResource ImageTemplate}"
-                                    TextTemplate="{StaticResource TextTemplate}"
-                                    VideoTemplate="{StaticResource VideoTemplate}" />
-                            </uc:ContentPresentation.TemplateSelector>
-                        </uc:ContentPresentation>
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
+            <Grid HeightRequest="300" WidthRequest="400">
+                <ucc:GalleryView SizeChanged="Gallery_Loaded" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
@@ -54,9 +36,9 @@
                 Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
-            <ucc:PanPinchContainer>
-                <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
-            </ucc:PanPinchContainer>
+            <!-- <ucc:PanPinchContainer> -->
+            <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+            <!-- </ucc:PanPinchContainer> -->
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <ScrollView
