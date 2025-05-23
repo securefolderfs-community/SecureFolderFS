@@ -112,16 +112,15 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task SwipeToPreviousAsync()
         {
-            await _container.TranslateTo(Width, 0, 250U, Easing.CubicOut);
+            await _container.TranslateTo(Width, 0, 225U, Easing.CubicOut);
 
             // Shift views
-            var current = _currentView;
+            var oldCurrent = _currentView;
             _currentView = _previousView;
             
-            (_previousView as IDisposable)?.Dispose();
             (_nextView as IDisposable)?.Dispose();
             
-            _nextView = current;
+            _nextView = oldCurrent;
             _previousView = null;
 
             PreviousRequested?.Invoke(this, EventArgs.Empty);
@@ -130,16 +129,15 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task SwipeToNextAsync()
         {
-            await _container.TranslateTo(-Width, 0, 250U, Easing.CubicOut);
+            await _container.TranslateTo(-Width, 0, 225U, Easing.CubicOut);
 
             // Shift views
-            var current = _currentView;
+            var oldCurrent = _currentView;
             _currentView = _nextView;
 
             (_previousView as IDisposable)?.Dispose();
-            (_nextView as IDisposable)?.Dispose();
             
-            _previousView = current;
+            _previousView = oldCurrent;
             _nextView = null;
 
             NextRequested?.Invoke(this, EventArgs.Empty);
@@ -148,7 +146,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task ResetPositionAsync()
         {
-            await _container.TranslateTo(0, 0, 200, Easing.CubicOut);
+            await _container.TranslateTo(0, 0, 225U, Easing.CubicOut);
         }
 
         /// <inheritdoc/>
@@ -156,7 +154,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
         {
             base.OnSizeAllocated(width, height);
             _container.WidthRequest = width * 3;
-            _container.TranslationX = -width;
+            _container.TranslationX = 0;
         }
 
         /// <inheritdoc/>

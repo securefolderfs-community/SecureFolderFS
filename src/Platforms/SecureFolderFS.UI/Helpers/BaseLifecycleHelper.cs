@@ -35,7 +35,7 @@ namespace SecureFolderFS.UI.Helpers
 
             // Please check the Application Output for exception details
             // On Microsoft Visual Studio, go to View -> Output Window
-            // On JetBrains Rider, go to View -> Tool Options -> Debug -> Debug Output
+            // On JetBrains Rider, go to View -> Tool Windows -> Debug -> Debug Output
             Debugger.Break();
 #if !DEBUG
             LogExceptionToFile(ex);

@@ -11,6 +11,7 @@ namespace SecureFolderFS.Maui.AppModels
         private readonly int[] startingLocation = new int[2];
         private readonly int[] currentLocation = new int[2];
 #endif
+        public new event EventHandler<PanUpdatedEventArgs>? PanUpdated;
 
         void IPanGestureController.SendPan(Element sender, double totalX, double totalY, int gestureId)
         {
@@ -44,8 +45,5 @@ namespace SecureFolderFS.Maui.AppModels
 #endif
             PanUpdated?.Invoke(sender, new PanUpdatedEventArgs(GestureStatus.Started, gestureId));
         }
-
-        public new event EventHandler<PanUpdatedEventArgs>? PanUpdated;
     }
-
 }

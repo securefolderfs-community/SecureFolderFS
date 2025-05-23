@@ -2,7 +2,6 @@
 // See the associated license file for more information.
 
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Maui.AppModels;
 
 namespace SecureFolderFS.Maui.UserControls.Common
@@ -22,8 +21,6 @@ namespace SecureFolderFS.Maui.UserControls.Common
         private double _panY;
         
         public double CurrentScale { get; private set; } = 1;
-        
-        public ICommand? PanUpdatedCommand { get; set; }
         
         public PanPinchContainer()
         {
@@ -238,15 +235,23 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task ScaleToAsync(double scale)
         {
-            await Content.ScaleTo(scale, 250, Easing.Linear);
+            await Content.ScaleTo(scale, 300U, Easing.CubicOut);
             CurrentScale = scale;
         }
 
         private async Task TranslateToAsync(double x, double y)
         {
-            await Content.TranslateTo(x, y, 250, Easing.Linear);
+            await Content.TranslateTo(x, y, 300U, Easing.CubicOut);
             _panX = x;
             _panY = y;
         }
+
+        public ICommand? PanUpdatedCommand
+        {
+            get => (ICommand?)GetValue(PanUpdatedCommandProperty);
+            set => SetValue(PanUpdatedCommandProperty, value);
+        }
+        public static readonly BindableProperty PanUpdatedCommandProperty =
+            BindableProperty.Create(nameof(PanUpdatedCommand), typeof(ICommand), typeof(PanPinchContainer));
     }
 }

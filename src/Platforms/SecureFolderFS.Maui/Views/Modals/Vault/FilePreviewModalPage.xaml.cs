@@ -23,7 +23,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        private GalleryView? _galleryView;
+        
+        public GalleryView? GalleryView { get; private set; }
 
         public FilePreviewModalPage(INavigation sourceNavigation)
         {
@@ -72,22 +73,25 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         {
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
-            if ((Presentation.Content as ContentView)?.Content is not MediaElement mediaElement)
-                return;
-
-            mediaElement.Stop();
-            mediaElement.Handler?.DisconnectHandler();
-            mediaElement.Dispose();
-            mediaElement.Source = null;
+            if (GalleryView is not null)
+            {
+                GalleryView.PreviousRequested -= Gallery_PreviousRequested;
+                GalleryView.NextRequested -= Gallery_NextRequested;
+                GalleryView.Dispose();
+                
+                (GalleryView.Previous as IDisposable)?.Dispose();
+                (GalleryView.Current as IDisposable)?.Dispose();
+                (GalleryView.Next as IDisposable)?.Dispose();
+            }
+            
+            if ((Presentation.Content as ContentView)?.Content is MediaElement mediaElement)
+            {
+                mediaElement.Stop();
+                mediaElement.Handler?.DisconnectHandler();
+                mediaElement.Dispose();
+                mediaElement.Source = null;
+            }
         }
-
-        public PreviewerOverlayViewModel? ViewModel
-        {
-            get => (PreviewerOverlayViewModel?)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
-        public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(PreviewerOverlayViewModel), typeof(FilePreviewModalPage), null);
 
         private void Presentation_Loaded(object? sender, EventArgs e)
         {
@@ -99,20 +103,20 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         
         private void Gallery_Loaded(object? sender, EventArgs e)
         {
-            if (_galleryView is not null)
+            if (GalleryView is not null)
                 return;
 
             if (sender is not GalleryView { BindingContext: CarouselPreviewerViewModel carouselViewModel } galleryView)
                 return;
 
-            _galleryView = galleryView;
+            GalleryView = galleryView;
             
-            // var parent = galleryView.Parent as ContentView;
-            // var height = parent?.Height ?? 300d;
-            // var width = parent?.Width ?? 400d;
-            //
-            // galleryView.WidthRequest = width;
-            // galleryView.HeightRequest = height;
+            var parent = galleryView.Parent as ContentView;
+            var height = parent?.Height ?? 300d;
+            var width = parent?.Width ?? 400d;
+            
+            galleryView.WidthRequest = width;
+            galleryView.HeightRequest = height;
             
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
@@ -132,16 +136,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (carouselViewModel.CurrentIndex <= 0)
                 return;
 
-            carouselViewModel.CurrentIndex--;
-            
             var oldIndex = carouselViewModel.CurrentIndex;
-            var oldPrevious = carouselViewModel.Slides.ElementAtOrDefault(oldIndex - 1);
-            var oldCurrent = carouselViewModel.Slides.ElementAtOrDefault(oldIndex);
             var oldNext = carouselViewModel.Slides.ElementAtOrDefault(oldIndex + 1);
-            
             (oldNext as IDisposable)?.Dispose();
-            (oldCurrent as IDisposable)?.Dispose();
-            (oldPrevious as IAsyncInitialize)?.InitAsync();
+            
+            carouselViewModel.CurrentIndex--;
+            var newIndex = carouselViewModel.CurrentIndex;
+            var newPrevious = carouselViewModel.Slides.ElementAtOrDefault(newIndex - 1);
+            (newPrevious as IAsyncInitialize)?.InitAsync();
             
             galleryView.Previous = carouselViewModel.CurrentIndex > 0 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex - 1) : null;
             galleryView.RefreshLayout();
@@ -154,17 +156,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             if (carouselViewModel.CurrentIndex >= carouselViewModel.Slides.Count - 1)
                 return;
-		
-            carouselViewModel.CurrentIndex++;
             
             var oldIndex = carouselViewModel.CurrentIndex;
             var oldPrevious = carouselViewModel.Slides.ElementAtOrDefault(oldIndex - 1);
-            var oldCurrent = carouselViewModel.Slides.ElementAtOrDefault(oldIndex);
-            var oldNext = carouselViewModel.Slides.ElementAtOrDefault(oldIndex + 1);
-            
             (oldPrevious as IDisposable)?.Dispose();
-            (oldCurrent as IDisposable)?.Dispose();
-            (oldNext as IAsyncInitialize)?.InitAsync();
+            
+            carouselViewModel.CurrentIndex++;
+            var newIndex = carouselViewModel.CurrentIndex;
+            var newNext = carouselViewModel.Slides.ElementAtOrDefault(newIndex + 1);
+            (newNext as IAsyncInitialize)?.InitAsync();
             
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
@@ -172,53 +172,24 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
         private View CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
         {
-            if (_galleryView is null)
-                throw new NullReferenceException(nameof(_galleryView));
-
-            switch (carouselViewModel.Slides[index])
+            return new ContentPresentation()
             {
-                case ImagePreviewerViewModel imageViewModel:
+                Presentation = carouselViewModel.Slides[index],
+                TemplateSelector = new PreviewerTemplateSelector()
                 {
-                    var converter = (Resources["ImageToSourceConverter"] as ImageToSourceConverter)!;
-                    var source = converter.Convert(imageViewModel.Source, typeof(ImageSource), null, CultureInfo.CurrentCulture) as ImageSource;
-                    return new PanPinchContainer()
-                    {
-                        PanUpdatedCommand = _galleryView.PanUpdatedCommand,
-                        Content = new Image()
-                        {
-                            Source = source
-                        }
-                    };
+                    ImageTemplate = Resources["ImageTemplate"] as DataTemplate,
+                    VideoTemplate = Resources["VideoTemplate"] as DataTemplate
                 }
-
-                case VideoPreviewerViewModel videoViewModel:
-                {
-                    var converter = (Resources["MediaToSourceConverter"] as MediaToSourceConverter)!;
-                    var source = converter.Convert(videoViewModel.Source, typeof(MediaSource), null, CultureInfo.CurrentCulture) as MediaSource;
-                    return new MediaElement()
-                    {
-                        InputTransparent = true,
-                        ShouldAutoPlay = true,
-                        ShouldLoopPlayback = true,
-                        Source = source
-                    };
-                }
-                
-                default:
-                    return new ContentView();
-            }
-            
-            // TODO: This does not work -- It seems that dispose is called at wrong times
-            // return new ContentPresentation()
-            // {
-            //     Presentation = carouselViewModel.Slides[index],
-            //     TemplateSelector = new PreviewerTemplateSelector()
-            //     {
-            //         ImageTemplate = Resources["ImageTemplate"] as DataTemplate,
-            //         VideoTemplate = Resources["VideoTemplate"] as DataTemplate
-            //     }
-            // };
+            };
         }
+        
+        public PreviewerOverlayViewModel? ViewModel
+        {
+            get => (PreviewerOverlayViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly BindableProperty ViewModelProperty =
+            BindableProperty.Create(nameof(ViewModel), typeof(PreviewerOverlayViewModel), typeof(FilePreviewModalPage));
     }
 }
 

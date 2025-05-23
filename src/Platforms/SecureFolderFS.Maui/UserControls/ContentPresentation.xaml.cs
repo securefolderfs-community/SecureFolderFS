@@ -1,10 +1,20 @@
 namespace SecureFolderFS.Maui.UserControls
 {
-    public partial class ContentPresentation : ContentView
+    public partial class ContentPresentation : ContentView, IDisposable
     {
         public ContentPresentation()
         {
             InitializeComponent();
+        }
+        
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            (MainContent.Content as IDisposable)?.Dispose();
+            if (MainContent.Content is not null)
+                MainContent.Content.BindingContext = null;
+            
+            MainContent.Content = null;
         }
 
         public object? Presentation
