@@ -37,35 +37,34 @@ namespace SecureFolderFS.Maui.AppModels
 
             async Task BeginListeningAsync()
             {
-                while (!_disposed && _httpListener.IsListening && await _httpListener.GetContextAsync() is var context)
+                try
                 {
-                    try
+                    while (!_disposed && _httpListener.IsListening && await _httpListener.GetContextAsync() is var context)
                     {
-                        var response = context.Response;
-                        if (context.Request.RawUrl != "/video")
-                        {
-                            response.StatusCode = (int)HttpStatusCode.NotFound;
-                            response.Close();   
-                            continue;
-                        }
+                            var response = context.Response;
+                            if (context.Request.RawUrl != "/video")
+                            {
+                                response.StatusCode = (int)HttpStatusCode.NotFound;
+                                response.Close();   
+                                continue;
+                            }
 
-                        response.ContentType = _mimeType;
-                        response.ContentLength64 = _videoStream.Length;
-                        response.Headers["Accept-Ranges"] = "bytes";
+                            response.ContentType = _mimeType;
+                            response.ContentLength64 = _videoStream.Length;
+                            response.Headers["Accept-Ranges"] = "bytes";
 
-                        await _videoStream.CopyToAsync(response.OutputStream, 64 * 1024, cancellationToken);
-                        await _videoStream.FlushAsync(cancellationToken);
-                        _videoStream.Position = 0L;
+                            await _videoStream.CopyToAsync(response.OutputStream, 64 * 1024, cancellationToken);
+                            await _videoStream.FlushAsync(cancellationToken);
+                            _videoStream.Position = 0L;
 
-                        response.StatusCode = (int)HttpStatusCode.OK;
-                        response.StatusDescription = "OK";
-                        response.Close();
+                            response.StatusCode = (int)HttpStatusCode.OK;
+                            response.StatusDescription = "OK";
+                            response.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        _ = ex;
-                        break;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = ex;
                 }
             }
         }

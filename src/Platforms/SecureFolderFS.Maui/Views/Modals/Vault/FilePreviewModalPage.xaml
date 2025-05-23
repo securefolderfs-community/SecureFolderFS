@@ -31,10 +31,14 @@
         </DataTemplate>
 
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
-            <mt:MediaElement
-                ShouldAutoPlay="True"
-                ShouldLoopPlayback="True"
-                Source="{Binding Source, Mode=OneTime, Converter={StaticResource MediaToSourceConverter}}" />
+            <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
+                <uc:PanRouter.RouterContent>
+                    <mt:MediaElement
+                        ShouldAutoPlay="True"
+                        ShouldLoopPlayback="True"
+                        Source="{Binding Source, Mode=OneTime, Converter={StaticResource MediaToSourceConverter}}" />
+                </uc:PanRouter.RouterContent>
+            </uc:PanRouter>
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
@@ -72,10 +76,7 @@
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
-        <uc:ContentPresentation
-            x:Name="Presentation"
-            Loaded="Presentation_Loaded"
-            Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
+        <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:PreviewerTemplateSelector
                     CarouselTemplate="{StaticResource CarouselTemplate}"

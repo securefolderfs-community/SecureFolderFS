@@ -1,11 +1,8 @@
-using System.Diagnostics;
-using System.Globalization;
 using CommunityToolkit.Maui.Views;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.TemplateSelectors;
 using SecureFolderFS.Maui.UserControls;
 using SecureFolderFS.Maui.UserControls.Common;
-using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -93,14 +90,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             }
         }
 
-        private void Presentation_Loaded(object? sender, EventArgs e)
-        {
-            if (sender is not ContentPresentation presentation)
-                return;
-
-            _ = presentation;
-        }
-        
         private void Gallery_Loaded(object? sender, EventArgs e)
         {
             if (GalleryView is not null)
