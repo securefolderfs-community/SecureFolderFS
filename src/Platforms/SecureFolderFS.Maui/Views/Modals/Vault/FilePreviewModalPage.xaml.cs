@@ -1,4 +1,7 @@
 using CommunityToolkit.Maui.Views;
+using Java.Util;
+using LibVLCSharp.MAUI;
+using LibVLCSharp.Shared;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.TemplateSelectors;
 using SecureFolderFS.Maui.UserControls;
@@ -89,6 +92,32 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 mediaElement.Source = null;
             }
         }
+        
+        private void MediaPlayerElement_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not MediaPlayerElement { BindingContext: VideoPreviewerViewModel videoViewModel } mediaPlayerElement)
+                return;
+            
+            if (videoViewModel.Source is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
+                return;
+
+            var libVlc = new LibVLC();
+            var mediaInput = new StreamMediaInput(stream);
+            var media = new Media(libVlc, mediaInput);
+            var mediaPlayer = new MediaPlayer(libVlc)
+            {
+                Media = media,
+                
+            };
+            
+            disposables.Add(libVlc);
+            disposables.Add(mediaInput);
+            disposables.Add(media);
+            disposables.Add(mediaPlayer);
+
+            mediaPlayerElement.MediaPlayer = mediaPlayer;
+            mediaPlayer.Play();
+        }
 
         private void Gallery_Loaded(object? sender, EventArgs e)
         {
@@ -110,16 +139,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
             
-            var collection = carouselViewModel.Slides;
-            galleryView.Previous = carouselViewModel.CurrentIndex > 0 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex - 1) : null;
-            galleryView.Current = CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex);
-            galleryView.Next = carouselViewModel.CurrentIndex < collection.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
-            galleryView.RefreshLayout();
-
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex - 1) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex + 1) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IViewDesignation)?.OnAppearing();
+            
+            galleryView.Previous = carouselViewModel.CurrentIndex > 0 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex - 1) : null;
+            galleryView.Current = CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex);
+            galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
+            galleryView.RefreshLayout();
             
             carouselViewModel.Title = carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex)?.Title;
         }

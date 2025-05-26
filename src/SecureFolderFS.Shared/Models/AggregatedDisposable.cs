@@ -1,22 +1,21 @@
-﻿using SecureFolderFS.Shared.Extensions;
-using System;
+﻿using System;
+using System.Collections.ObjectModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Shared.Models
 {
     /// <inheritdoc cref="IDisposable"/>
-    public sealed class AggregatedDisposable : IDisposable
+    public sealed class AggregatedDisposable : Collection<IDisposable>, IDisposable
     {
-        private readonly IDisposable[] _disposables;
-
         public AggregatedDisposable(IDisposable[] disposables)
         {
-            _disposables = disposables;
+            this.AddMultiple(disposables);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _disposables.DisposeElements();
+            this.DisposeElements();
         }
     }
 }

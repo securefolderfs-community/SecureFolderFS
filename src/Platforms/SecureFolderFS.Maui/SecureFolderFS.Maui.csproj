@@ -45,12 +45,22 @@
         <!-- App Icon -->
         <MauiIcon ForegroundScale="0.6" Resize="True" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
       </ItemGroup>
+
+      <ItemGroup>
+        <!-- Packages -->
+        <PackageReference Include="VideoLAN.LibVLC.Android" />
+      </ItemGroup>
     </When>
 
     <When Condition="'$(TargetFramework)'=='net9.0-ios'">
       <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
+      </ItemGroup>
+      
+      <ItemGroup>
+        <!-- Packages -->
+        <PackageReference Include="VideoLAN.LibVLC.iOS" />
       </ItemGroup>
     </When>
   </Choose>
@@ -81,6 +91,7 @@
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
     <PackageReference Include="IconPacks.Material" />
+    <PackageReference Include="LibVLCSharp.MAUI" />
     <PackageReference Include="Microsoft.Maui.Controls" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
     <PackageReference Include="Microsoft.Maui.Core" />

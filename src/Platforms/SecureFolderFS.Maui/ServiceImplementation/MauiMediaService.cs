@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI;
 using SkiaSharp;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
@@ -61,10 +62,8 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
         {
-            var classification = FileTypeHelper.GetClassification(file);
             var stream = await file.OpenReadAsync(cancellationToken);
-
-            return new VideoStreamServer(stream, classification.MimeType);
+            return new AggregatedDisposable([stream]);
         }
 
         /// <inheritdoc/>

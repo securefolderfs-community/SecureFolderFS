@@ -1,5 +1,6 @@
 using APES.UI.XF;
 using CommunityToolkit.Maui;
+using LibVLCSharp.MAUI;
 using Plugin.Maui.BottomSheet.Hosting;
 #if ANDROID
 using MauiIcons.Material;
@@ -27,6 +28,7 @@ namespace SecureFolderFS.Maui
                 .UseMauiCommunityToolkit()              // https://github.com/CommunityToolkit/Maui
                 .UseBottomSheet()                       // https://github.com/lucacivale/Maui.BottomSheet
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
+                .UseLibVLCSharp()                       // https://github.com/videolan/libvlcsharp
 
 #if ANDROID
                 .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons

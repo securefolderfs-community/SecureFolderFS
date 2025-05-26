@@ -13,6 +13,7 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vlc="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
     x:DataType="local:FilePreviewModalPage"
@@ -32,10 +33,11 @@
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
             <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <uc:PanRouter.RouterContent>
-                    <mt:MediaElement
-                        ShouldAutoPlay="True"
-                        ShouldLoopPlayback="True"
-                        Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
+                    <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded" />
+                    <!--  <mt:MediaElement  -->
+                    <!--  ShouldAutoPlay="True"  -->
+                    <!--  ShouldLoopPlayback="True"  -->
+                    <!--  Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />  -->
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
