@@ -21,7 +21,6 @@
 
     <md:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
-        <vc:MediaToSourceConverter x:Key="MediaToSourceConverter" />
 
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView

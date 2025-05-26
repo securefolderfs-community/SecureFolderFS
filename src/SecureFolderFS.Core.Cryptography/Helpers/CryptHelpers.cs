@@ -26,6 +26,7 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
                 AES_CTR_HMAC => 1u,
                 AES_GCM => 2u,
                 XCHACHA20_POLY1305 => 4u,
+                NONE => 256u,
                 _ => 0u
             };
         }
