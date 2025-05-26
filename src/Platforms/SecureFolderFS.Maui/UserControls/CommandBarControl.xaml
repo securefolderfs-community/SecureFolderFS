@@ -1,0 +1,71 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.CommandBarControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    x:Name="ThisControl">
+
+    <Grid>
+        <Border
+            x:Name="TopBorder"
+            HeightRequest="100"
+            StrokeThickness="0"
+            VerticalOptions="Start"
+            ZIndex="5">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.3" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Grid
+                Padding="16,0"
+                ColumnSpacing="16"
+                HeightRequest="75"
+                VerticalOptions="Start">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <OnPlatform x:TypeArguments="View">
+                        <On Platform="Android">
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_material:Material Close,
+                                                                         IconSize=20}"
+                                Clicked="Close_Clicked"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                        </On>
+                        <On Platform="iOS">
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Xmark,
+                                                                           IconSize=20}"
+                                Clicked="Close_Clicked"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                        </On>
+                    </OnPlatform>
+                </Grid>
+
+                <Label
+                    Grid.Column="1"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    HorizontalOptions="Start"
+                    Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                    VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <ContentView
+            Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill" />
+    </Grid>
+</ContentView>

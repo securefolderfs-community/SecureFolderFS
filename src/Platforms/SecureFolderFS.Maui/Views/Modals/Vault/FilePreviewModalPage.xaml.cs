@@ -1,5 +1,4 @@
 using CommunityToolkit.Maui.Views;
-using Java.Util;
 using LibVLCSharp.MAUI;
 using LibVLCSharp.Shared;
 using SecureFolderFS.Maui.Extensions;
@@ -93,6 +92,24 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             }
         }
         
+        private View CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
+        {
+            return new ContentPresentation()
+            {
+                Presentation = carouselViewModel.Slides[index],
+                TemplateSelector = new PreviewerTemplateSelector()
+                {
+                    ImageTemplate = Resources["ImageTemplate"] as DataTemplate,
+                    VideoTemplate = Resources["VideoTemplate"] as DataTemplate
+                }
+            };
+        }
+        
+        private async void Closed_Clicked(object? sender, EventArgs e)
+        {
+            await HideAsync();
+        }
+        
         private void MediaPlayerElement_Loaded(object? sender, EventArgs e)
         {
             if (sender is not MediaPlayerElement { BindingContext: VideoPreviewerViewModel videoViewModel } mediaPlayerElement)
@@ -101,13 +118,12 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (videoViewModel.Source is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
                 return;
 
-            var libVlc = new LibVLC();
+            var libVlc = new LibVLC("--input-repeat=2");
             var mediaInput = new StreamMediaInput(stream);
             var media = new Media(libVlc, mediaInput);
             var mediaPlayer = new MediaPlayer(libVlc)
             {
-                Media = media,
-                
+                Media = media
             };
             
             disposables.Add(libVlc);
@@ -200,19 +216,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
-        }
-
-        private View CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
-        {
-            return new ContentPresentation()
-            {
-                Presentation = carouselViewModel.Slides[index],
-                TemplateSelector = new PreviewerTemplateSelector()
-                {
-                    ImageTemplate = Resources["ImageTemplate"] as DataTemplate,
-                    VideoTemplate = Resources["VideoTemplate"] as DataTemplate
-                }
-            };
         }
         
         public PreviewerOverlayViewModel? ViewModel

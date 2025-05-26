@@ -15,6 +15,7 @@
             WidthRequest="90"
             ZIndex="2">
             <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="GestureRecognizer_Tapped" />
                 <am:CorrectedPanGestureRecognizer PanUpdated="GestureRecognizer_PanUpdated" />
             </Grid.GestureRecognizers>
         </Grid>
@@ -26,6 +27,7 @@
             WidthRequest="90"
             ZIndex="2">
             <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="GestureRecognizer_Tapped" />
                 <am:CorrectedPanGestureRecognizer PanUpdated="GestureRecognizer_PanUpdated" />
             </Grid.GestureRecognizers>
         </Grid>

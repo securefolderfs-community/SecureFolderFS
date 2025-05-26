@@ -50,18 +50,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await LoginViewModel.InitAsync(cancellationToken);
 
             // Test for quick unlock on mobile
-            if (VaultViewModel.Title != "Vault V3")
+            var recoveryKey = VaultViewModel.Title switch
+            {
+                "Vault V3" => "TjpPwjoNOB7Zx1xhqm9H79M8ngr+ZR31pqSjWOccBrY=@@@cU/ajAu5WmAryrtT6I3ouBcXQE0FmE4hFU7bkYD1EQE=",
+                "Plaintext Vault" => "lZbz5sWmeYDyyebm3LgPmvApNPsiyphj6zW4YZ2NuG8=@@@mEp3pOlUSXr0Yr47B+Se4M3ZXN8wPU/BlgFkLSpULiQ=",
+                _ => null
+            };
+
+            if (recoveryKey is null)
                 return;
 
-            // var contentFolder = await VaultViewModel.VaultModel.Folder.GetFolderByNameAsync("content");
-            // var item = await contentFolder.GetItemsAsync().FirstOrDefaultAsync();
-            // if (contentFolder is IModifiableFolder modifiableFolder && item is not null)
-            //     await modifiableFolder.DeleteAsync(item);
-
-            var recoveryKey = "TjpPwjoNOB7Zx1xhqm9H79M8ngr+ZR31pqSjWOccBrY=@@@cU/ajAu5WmAryrtT6I3ouBcXQE0FmE4hFU7bkYD1EQE=";
             var unlockContract = await VaultManagerService.RecoverAsync(VaultViewModel.VaultModel.Folder, recoveryKey, cancellationToken);
-
-            await Task.Delay(300);
+            await Task.Delay(200);
             await UnlockAsync(unlockContract);
         }
 

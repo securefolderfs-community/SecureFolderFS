@@ -15,7 +15,7 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Bindable(true)]
-    public sealed partial class CarouselPreviewerViewModel : BasePreviewerViewModel<ObservableCollection<IViewable>>
+    public sealed partial class CarouselPreviewerViewModel : BasePreviewerViewModel<ObservableCollection<IViewable>>, IDisposable
     {
         private readonly FolderViewModel _dataSource;
 
@@ -144,6 +144,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 TypeHint.Media => new VideoPreviewerViewModel(file, true),
                 _ => null
             };
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Slides.DisposeElements();
+            Slides.Clear();
         }
     }
 }

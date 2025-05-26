@@ -12,6 +12,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
     /// </summary>
     public class PanPinchContainer : ContentView
     {
+        private readonly TapGestureRecognizer _singleTapGestureRecognizer;
         private readonly TapGestureRecognizer _doubleTapGestureRecognizer;
         private readonly PinchGestureRecognizer _pinchGestureRecognizer;
         private readonly CorrectedPanGestureRecognizer _panGestureRecognizer;
@@ -24,16 +25,19 @@ namespace SecureFolderFS.Maui.UserControls.Common
         
         public PanPinchContainer()
         {
-            _panGestureRecognizer = new CorrectedPanGestureRecognizer();
-            _pinchGestureRecognizer = new PinchGestureRecognizer();
-            _doubleTapGestureRecognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
+            _panGestureRecognizer = new();
+            _pinchGestureRecognizer = new();
+            _singleTapGestureRecognizer = new();
+            _doubleTapGestureRecognizer = new() { NumberOfTapsRequired = 2 };
 
             _panGestureRecognizer.PanUpdated += GestureRecognizer_PanUpdated;
             _pinchGestureRecognizer.PinchUpdated += GestureRecognizer_PinchUpdated;
             _doubleTapGestureRecognizer.Tapped += Recognizer_DoubleTapped;
+            _singleTapGestureRecognizer.Tapped += Recognizer_SingleTapped;
 
             GestureRecognizers.Add(_panGestureRecognizer);
             GestureRecognizers.Add(_pinchGestureRecognizer);
+            GestureRecognizers.Add(_singleTapGestureRecognizer);
             GestureRecognizers.Add(_doubleTapGestureRecognizer);
         }
 
@@ -117,6 +121,11 @@ namespace SecureFolderFS.Maui.UserControls.Common
             }
 
             await ClampTranslationAsync(targetX, targetY, animate);
+        }
+
+        private void Recognizer_SingleTapped(object? sender, TappedEventArgs e)
+        {
+            TappedCommand?.Execute(e);
         }
 
         private async void Recognizer_DoubleTapped(object? sender, TappedEventArgs e)
@@ -245,6 +254,14 @@ namespace SecureFolderFS.Maui.UserControls.Common
             _panX = x;
             _panY = y;
         }
+        
+        public ICommand? TappedCommand
+        {
+            get => (ICommand?)GetValue(TappedCommandProperty);
+            set => SetValue(TappedCommandProperty, value);
+        }
+        public static readonly BindableProperty TappedCommandProperty =
+            BindableProperty.Create(nameof(TappedCommand), typeof(ICommand), typeof(PanPinchContainer));
 
         public ICommand? PanUpdatedCommand
         {

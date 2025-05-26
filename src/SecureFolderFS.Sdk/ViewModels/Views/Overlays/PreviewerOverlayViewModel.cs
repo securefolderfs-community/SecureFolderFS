@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Helpers;
@@ -19,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly BrowserItemViewModel _itemViewModel;
         private readonly FolderViewModel _folderViewModel;
 
+        [ObservableProperty] private bool _IsImmersed;
         [ObservableProperty] private IViewable? _PreviewerViewModel;
 
         public PreviewerOverlayViewModel(BrowserItemViewModel itemViewModel, FolderViewModel folderViewModel)
@@ -45,6 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             PreviewerViewModel = previewer;
 
             return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private void ToggleImmersion()
+        {
+            IsImmersed = !IsImmersed;
         }
 
         /// <inheritdoc/>

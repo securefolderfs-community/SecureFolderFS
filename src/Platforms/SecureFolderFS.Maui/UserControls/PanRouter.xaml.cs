@@ -9,6 +9,11 @@ namespace SecureFolderFS.Maui.UserControls
             InitializeComponent();
         }
         
+        private void GestureRecognizer_Tapped(object? sender, TappedEventArgs e)
+        {
+            TappedCommand?.Execute(e);
+        }
+        
         private void GestureRecognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             PanUpdatedCommand?.Execute(e);
@@ -27,6 +32,14 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty RouterContentProperty =
             BindableProperty.Create(nameof(RouterContent), typeof(object), typeof(PanRouter));
+        
+        public ICommand? TappedCommand
+        {
+            get => (ICommand?)GetValue(TappedCommandProperty);
+            set => SetValue(TappedCommandProperty, value);
+        }
+        public static readonly BindableProperty TappedCommandProperty =
+            BindableProperty.Create(nameof(TappedCommand), typeof(ICommand), typeof(PanRouter));
         
         public ICommand? PanUpdatedCommand
         {

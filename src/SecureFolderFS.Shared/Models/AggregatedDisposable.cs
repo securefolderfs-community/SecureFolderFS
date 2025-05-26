@@ -16,6 +16,7 @@ namespace SecureFolderFS.Shared.Models
         public void Dispose()
         {
             this.DisposeElements();
+            this.ClearItems();
         }
     }
 }
