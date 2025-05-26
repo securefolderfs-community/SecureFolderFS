@@ -115,6 +115,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.Current = CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex);
             galleryView.Next = carouselViewModel.CurrentIndex < collection.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
+
+            (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex - 1) as IAsyncInitialize)?.InitAsync();
+            (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IAsyncInitialize)?.InitAsync();
+            (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex + 1) as IAsyncInitialize)?.InitAsync();
+            (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IViewDesignation)?.OnAppearing();
+            
+            carouselViewModel.Title = carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex)?.Title;
         }
         
         private void Gallery_PreviousRequested(object? sender, EventArgs e)
@@ -127,12 +134,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             var oldIndex = carouselViewModel.CurrentIndex;
             var oldNext = carouselViewModel.Slides.ElementAtOrDefault(oldIndex + 1);
+            var oldCurrent = carouselViewModel.Slides.ElementAtOrDefault(oldIndex);
             (oldNext as IDisposable)?.Dispose();
+            (oldCurrent as IViewDesignation)?.OnDisappearing();
             
             carouselViewModel.CurrentIndex--;
             var newIndex = carouselViewModel.CurrentIndex;
             var newPrevious = carouselViewModel.Slides.ElementAtOrDefault(newIndex - 1);
+            var newCurrent = carouselViewModel.Slides.ElementAtOrDefault(newIndex);
             (newPrevious as IAsyncInitialize)?.InitAsync();
+            (newCurrent as IViewDesignation)?.OnAppearing();
             
             galleryView.Previous = carouselViewModel.CurrentIndex > 0 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex - 1) : null;
             galleryView.RefreshLayout();
@@ -148,12 +159,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             
             var oldIndex = carouselViewModel.CurrentIndex;
             var oldPrevious = carouselViewModel.Slides.ElementAtOrDefault(oldIndex - 1);
+            var oldCurrent = carouselViewModel.Slides.ElementAtOrDefault(oldIndex);
             (oldPrevious as IDisposable)?.Dispose();
+            (oldCurrent as IViewDesignation)?.OnDisappearing();
             
             carouselViewModel.CurrentIndex++;
             var newIndex = carouselViewModel.CurrentIndex;
             var newNext = carouselViewModel.Slides.ElementAtOrDefault(newIndex + 1);
+            var newCurrent = carouselViewModel.Slides.ElementAtOrDefault(newIndex);
             (newNext as IAsyncInitialize)?.InitAsync();
+            (newCurrent as IViewDesignation)?.OnAppearing();
             
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();

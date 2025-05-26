@@ -34,6 +34,10 @@
     <!--  Border Colors  -->
     <Color x:Key="BorderLightColor">#CECECE</Color>
 
+    <!--  Icon Plate Colors  -->
+    <Color x:Key="PlaybackIconColor">#EEEEEE</Color>
+    <Color x:Key="PlaybackIconPlateColor">#BB191919</Color>
+
     <!--  Other Colors  -->
     <Color x:Key="LightTransparentColor">#00FFFFFF</Color>
     <Color x:Key="DarkTransparentColor">#00000000</Color>

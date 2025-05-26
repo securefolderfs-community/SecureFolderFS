@@ -14,14 +14,42 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     [Bindable(true)]
     public sealed partial class VideoPreviewerViewModel : FilePreviewerViewModel<IDisposable>, IDisposable
     {
-        public VideoPreviewerViewModel(IFile file)
+        private bool _isLateInitialized;
+
+        public VideoPreviewerViewModel(IFile file, bool isLateInitialized)
             : base(file)
         {
             ServiceProvider = DI.Default;
+            Title = file.Name;
+            _isLateInitialized = isLateInitialized;
+        }
+
+        /// <inheritdoc/>
+        public override async void OnAppearing()
+        {
+            if (_isLateInitialized)
+                await CreateSourceAsync(CancellationToken.None);
+
+            base.OnAppearing();
+        }
+
+        /// <inheritdoc/>
+        public override void OnDisappearing()
+        {
+            if (_isLateInitialized)
+                Source?.Dispose();
+
+            base.OnDisappearing();
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            if (!_isLateInitialized)
+                await CreateSourceAsync(cancellationToken);
+        }
+
+        private async Task CreateSourceAsync(CancellationToken cancellationToken)
         {
             Source?.Dispose();
 

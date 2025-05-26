@@ -5,6 +5,9 @@
     xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;assembly=SecureFolderFS.Sdk"
@@ -13,6 +16,7 @@
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
+        <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
         <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
@@ -149,6 +153,32 @@
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
                             WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='59,82,137'}" />
+
+                        <!--  Video Icon Grid  -->
+                        <Border
+                            Margin="0,0,8,8"
+                            Padding="0,-2"
+                            BackgroundColor="{StaticResource PlaybackIconPlateColor}"
+                            HorizontalOptions="End"
+                            IsVisible="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Media'}"
+                            VerticalOptions="End">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material PlayArrow}"
+                                    IconColor="{StaticResource PlaybackIconColor}"
+                                    IconSize="16"
+                                    OnPlatforms="Android" />
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino Play}"
+                                    IconColor="{StaticResource PlaybackIconColor}"
+                                    IconSize="16"
+                                    OnPlatforms="iOS" />
+                            </Grid>
+                        </Border>
+
                         <CheckBox
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"

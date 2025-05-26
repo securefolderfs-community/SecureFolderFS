@@ -31,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 
         partial void OnCurrentIndexChanged(int oldValue, int newValue)
         {
+            Title = Slides.ElementAtOrDefault(newValue)?.Title;
             return;
             if (Slides.IsEmpty())
                 return;
@@ -125,7 +126,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 if (previewer is null)
                     continue;
 
-                _ = (previewer as IAsyncInitialize)?.InitAsync();
                 Slides.Add(previewer);
             }
 
@@ -141,7 +141,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             return classification.TypeHint switch
             {
                 TypeHint.Image => new ImagePreviewerViewModel(file),
-                TypeHint.Media => new VideoPreviewerViewModel(file),
+                TypeHint.Media => new VideoPreviewerViewModel(file, true),
                 _ => null
             };
         }

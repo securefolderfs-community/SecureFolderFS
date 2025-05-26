@@ -15,7 +15,6 @@
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
-    Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
     x:DataType="local:FilePreviewModalPage"
     IsImmersive="True">
 
@@ -36,13 +35,13 @@
                     <mt:MediaElement
                         ShouldAutoPlay="True"
                         ShouldLoopPlayback="True"
-                        Source="{Binding Source, Mode=OneTime, Converter={StaticResource MediaToSourceConverter}}" />
+                        Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
-                <Image Source="{Binding Source, Mode=OneTime, Converter={StaticResource ImageToSourceConverter}}" />
+                <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
             </ucc:PanPinchContainer>
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
@@ -76,15 +75,55 @@
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
-        <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
-            <uc:ContentPresentation.TemplateSelector>
-                <ts:PreviewerTemplateSelector
-                    CarouselTemplate="{StaticResource CarouselTemplate}"
-                    FallbackTemplate="{StaticResource FallbackTemplate}"
-                    ImageTemplate="{StaticResource ImageTemplate}"
-                    TextTemplate="{StaticResource TextTemplate}"
-                    VideoTemplate="{StaticResource VideoTemplate}" />
-            </uc:ContentPresentation.TemplateSelector>
-        </uc:ContentPresentation>
+        <Grid>
+            <Border
+                HeightRequest="100"
+                StrokeThickness="0"
+                VerticalOptions="Start"
+                ZIndex="5">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.3" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+                        <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid
+                    Padding="16,0"
+                    HeightRequest="75"
+                    VerticalOptions="Start">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Start"
+                        Text="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="Test"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <uc:ContentPresentation
+                x:Name="Presentation"
+                Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}"
+                ZIndex="1">
+                <uc:ContentPresentation.TemplateSelector>
+                    <ts:PreviewerTemplateSelector
+                        CarouselTemplate="{StaticResource CarouselTemplate}"
+                        FallbackTemplate="{StaticResource FallbackTemplate}"
+                        ImageTemplate="{StaticResource ImageTemplate}"
+                        TextTemplate="{StaticResource TextTemplate}"
+                        VideoTemplate="{StaticResource VideoTemplate}" />
+                </uc:ContentPresentation.TemplateSelector>
+            </uc:ContentPresentation>
+        </Grid>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>
