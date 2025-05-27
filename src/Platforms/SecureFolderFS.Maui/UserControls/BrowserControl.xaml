@@ -19,7 +19,6 @@
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
-        <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
 
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
@@ -38,18 +37,15 @@
                     <Grid
                         x:Name="SourceGrid"
                         Padding="13,4"
-                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
-                        ColumnSpacing="13">
+                        ColumnSpacing="13"
+                        Style="{StaticResource SelectableItemGridStyle}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                            <CheckBox
-                                Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}, ConverterParameter='|ThemeBackgroundFillColorBrush'}"
-                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <ContentView
                                 Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                                 HeightRequest="32"
@@ -90,9 +86,9 @@
                 <apesui:ContextMenuContainer.Content>
                     <Grid
                         x:Name="SourceGrid"
-                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
                         HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
-                        RowSpacing="8">
+                        RowSpacing="8"
+                        Style="{StaticResource SelectableItemGridStyle}">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition Height="Auto" />
@@ -116,7 +112,6 @@
                             Grid.Row="0"
                             Grid.RowSpan="2"
                             Margin="0,0,-8,-8"
-                            Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}, ConverterParameter='|ThemeBackgroundFillColorBrush'}"
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
                             IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
@@ -145,8 +140,8 @@
                 <apesui:ContextMenuContainer.Content>
                     <Grid
                         x:Name="SourceGrid"
-                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
-                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}">
+                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                        Style="{StaticResource SelectableItemGridStyle}">
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                             HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='57,82,137'}"

@@ -24,7 +24,6 @@
         <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
-        <vc:BoolToSelectionBackgroundConverter x:Key="BoolToSelectionBackgroundConverter" />
         <vc:DoubleFloatingNormalizationConverter x:Key="DoubleFloatingNormalizationConverter" />
     </md:BaseModalPage.Resources>
 
@@ -131,8 +130,8 @@
                                     <Grid
                                         x:Name="SourceGrid"
                                         Padding="13,4"
-                                        Background="{Binding IsSelected, Mode=OneWay, Converter={StaticResource BoolToSelectionBackgroundConverter}}"
-                                        ColumnSpacing="13">
+                                        ColumnSpacing="13"
+                                        Style="{StaticResource SelectableItemGridStyle}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />

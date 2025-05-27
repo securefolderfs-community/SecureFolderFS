@@ -32,11 +32,11 @@ namespace SecureFolderFS.Maui.UserControls
                     if (bValue)
                     {
                         commandBar.TopBorder.IsVisible = true;
-                        await commandBar.TopBorder.TranslateTo(0, 0, 300U, Easing.CubicOut);
+                        await commandBar.TopBorder.TranslateTo(0, 0, 350U, Easing.CubicInOut);
                     }
                     else
                     {
-                        await commandBar.TopBorder.TranslateTo(0, -100, 300U, Easing.CubicIn);
+                        await commandBar.TopBorder.TranslateTo(0, -150, 350U, Easing.CubicInOut);
                         commandBar.TopBorder.IsVisible = false;
                     }
                 });

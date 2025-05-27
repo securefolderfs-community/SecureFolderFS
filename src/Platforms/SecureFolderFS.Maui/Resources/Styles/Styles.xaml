@@ -7,4 +7,16 @@
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
         <Setter Property="Shell.BackgroundColor" Value="{StaticResource PrimaryLightColor}" />
     </Style>
+
+    <Style x:Key="SelectableItemGridStyle" TargetType="Grid">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Style.Triggers>
+            <DataTrigger
+                Binding="{Binding IsSelected}"
+                TargetType="Grid"
+                Value="True">
+                <Setter Property="Background" Value="{StaticResource SecondaryBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

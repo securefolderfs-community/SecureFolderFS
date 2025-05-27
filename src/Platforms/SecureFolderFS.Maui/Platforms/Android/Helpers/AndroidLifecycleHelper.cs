@@ -37,12 +37,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                    //.AddSingleton<IPrinterService, WindowsPrinterService>()
                     .AddSingleton<IApplicationService, AndroidApplicationService>()
                     .AddSingleton<ISystemService, AndroidSystemService>()
                     .AddSingleton<IVaultCredentialsService, AndroidVaultCredentialsService>()
                     .AddSingleton<IVaultFileSystemService, AndroidVaultFileSystemService>()
                     .AddSingleton<IStorageService, AndroidStorageService>()
+                    .AddSingleton<IMediaService, AndroidMediaService>()
                     .AddSingleton<IFileExplorerService, AndroidFileExplorerService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()
                     .AddSingleton<IIapService, DebugIapService>()
