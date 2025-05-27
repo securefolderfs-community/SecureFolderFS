@@ -85,7 +85,7 @@
             CanCancel="{Binding ViewModel.TransferViewModel.CanCancel, Mode=OneWay}"
             CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
             IsProgressing="{Binding ViewModel.TransferViewModel.IsProgressing, Mode=OneWay}"
-            IsVisible="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
+            IsShown="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
             PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
             PrimaryCommand="{Binding ViewModel.TransferViewModel.ConfirmCommand, Mode=OneWay}"
             VerticalOptions="End" />

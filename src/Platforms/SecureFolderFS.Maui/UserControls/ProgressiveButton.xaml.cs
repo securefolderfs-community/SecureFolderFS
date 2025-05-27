@@ -70,7 +70,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ProgressProperty =
             BindableProperty.Create(nameof(Progress), typeof(double), typeof(ProgressiveButton), 0d, propertyChanged:
-                static (bindable, value, newValue) =>
+                static (bindable, _, _) =>
                 {
                     if (bindable is not ProgressiveButton progressiveButton)
                         return;

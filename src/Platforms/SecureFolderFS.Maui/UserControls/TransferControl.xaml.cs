@@ -8,6 +8,33 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
+        
+        public bool IsShown
+        {
+            get => (bool)GetValue(IsShownProperty);
+            set => SetValue(IsShownProperty, value);
+        }
+        public static readonly BindableProperty IsShownProperty =
+            BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(TransferControl), false, propertyChanged:
+                static async (bindable, _, newValue) =>
+                {
+                    if (newValue is not bool bValue)
+                        return;
+
+                    if (bindable is not TransferControl transferControl)
+                        return;
+
+                    if (bValue)
+                    {
+                        transferControl.RootBorder.IsVisible = true;
+                        await transferControl.RootBorder.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+                    }
+                    else
+                    {
+                        await transferControl.RootBorder.TranslateTo(0, 200, 350U, Easing.CubicInOut);
+                        transferControl.RootBorder.IsVisible = false;
+                    }
+                });
 
         public bool CanCancel
         {
@@ -15,7 +42,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CanCancelProperty, value);
         }
         public static readonly BindableProperty CanCancelProperty =
-            BindableProperty.Create(nameof(CanCancel), typeof(bool), typeof(TransferControl), defaultValue: true);
+            BindableProperty.Create(nameof(CanCancel), typeof(bool), typeof(TransferControl), true);
 
         public bool IsProgressing
         {
@@ -23,7 +50,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsProgressingProperty, value);
         }
         public static readonly BindableProperty IsProgressingProperty =
-            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(TransferControl), defaultValue: false);
+            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(TransferControl), false);
 
         public string? Title
         {
@@ -31,7 +58,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(TitleProperty, value);
         }
         public static readonly BindableProperty TitleProperty =
-            BindableProperty.Create(nameof(Title), typeof(string), typeof(TransferControl), defaultValue: null);
+            BindableProperty.Create(nameof(Title), typeof(string), typeof(TransferControl));
 
         public string? PrimaryButtonText
         {
@@ -39,7 +66,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(PrimaryButtonTextProperty, value);
         }
         public static readonly BindableProperty PrimaryButtonTextProperty =
-            BindableProperty.Create(nameof(PrimaryButtonText), typeof(string), typeof(TransferControl), defaultValue: null);
+            BindableProperty.Create(nameof(PrimaryButtonText), typeof(string), typeof(TransferControl));
 
         public ICommand? CancelCommand
         {
@@ -47,7 +74,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CancelCommandProperty, value);
         }
         public static readonly BindableProperty CancelCommandProperty =
-            BindableProperty.Create(nameof(CancelCommand), typeof(ICommand), typeof(TransferControl), defaultValue: null);
+            BindableProperty.Create(nameof(CancelCommand), typeof(ICommand), typeof(TransferControl));
 
         public ICommand? PrimaryCommand
         {
@@ -55,6 +82,6 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(PrimaryCommandProperty, value);
         }
         public static readonly BindableProperty PrimaryCommandProperty =
-            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(TransferControl), defaultValue: null);
+            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(TransferControl));
     }
 }

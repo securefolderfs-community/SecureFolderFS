@@ -12,6 +12,7 @@
     <Grid BindingContext="{x:Reference Name=ThisControl}">
         <Button
             x:Name="ActionButton"
+            Padding="0"
             Command="{Binding Command, Mode=OneWay}"
             FontAttributes="{Binding FontAttributes, Mode=OneWay}"
             IsEnabled="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
