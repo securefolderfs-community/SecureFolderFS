@@ -3,6 +3,9 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPopup"
@@ -12,6 +15,7 @@
 
     <tv:Popup.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:FileIconConverter x:Key="FileIconConverter" />
     </tv:Popup.Resources>
 
     <Border
@@ -23,34 +27,107 @@
         </Border.StrokeShape>
 
         <VerticalStackLayout Spacing="16">
-            <Label
-                FontAttributes="Bold"
-                FontSize="22"
-                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                <Border Grid.Column="0" StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                    <ContentView
+                        x:Name="ImageView"
+                        BindingContext="{Binding ViewModel}"
+                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
+                        HeightRequest="64"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="64" />
+                </Border>
 
-            <VerticalStackLayout>
                 <Label
+                    Grid.Column="1"
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    Text="{Binding ViewModel.Title, Mode=OneWay}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <!--  Item Type  -->
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
                     FontAttributes="Bold"
                     FontSize="17"
                     Text="{l:ResourceString Rid=ItemType}" />
-                <Label Text="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
-            </VerticalStackLayout>
-
-            <VerticalStackLayout>
                 <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+
+                <ImageButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
+                                                             IconSize=20,
+                                                             IconColor={StaticResource QuarternaryLightColor}}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="ItemType"
+                    HorizontalOptions="End" />
+            </Grid>
+
+
+            <!--  Date Modified  -->
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
                     FontAttributes="Bold"
                     FontSize="17"
                     Text="{l:ResourceString Rid=DateModified}" />
-                <Label Text="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
-            </VerticalStackLayout>
-
-            <VerticalStackLayout IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
                 <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+
+                <ImageButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
+                                                             IconSize=20,
+                                                             IconColor={StaticResource QuarternaryLightColor}}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="DateModified"
+                    HorizontalOptions="End" />
+            </Grid>
+
+            <!--  Size  -->
+            <Grid
+                ColumnDefinitions="*,Auto"
+                IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                RowDefinitions="Auto,Auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
                     FontAttributes="Bold"
                     FontSize="17"
                     Text="{l:ResourceString Rid=Size}" />
-                <Label Text="{Binding ViewModel.SizeText, Mode=OneWay}" />
-            </VerticalStackLayout>
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding ViewModel.SizeText, Mode=OneWay}" />
+
+                <ImageButton
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
+                                                             IconSize=20,
+                                                             IconColor={StaticResource QuarternaryLightColor}}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="Size"
+                    HorizontalOptions="End" />
+            </Grid>
         </VerticalStackLayout>
     </Border>
 </tv:Popup>

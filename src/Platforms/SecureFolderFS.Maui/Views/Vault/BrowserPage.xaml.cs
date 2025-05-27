@@ -70,9 +70,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (navigationService.Views[Math.Max(--index, 0)] is not FolderViewModel folderViewModel)
                 return false;
 
-            // Animate navigation
-            await AnimateViewChangeAsync(folderViewModel);
-
             // Remove last navigated-to breadcrumb
             var last = ViewModel?.Breadcrumbs?.LastOrDefault();
             if (last is not null)
@@ -82,6 +79,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             last = ViewModel?.Breadcrumbs?.LastOrDefault();
             if (last is not null)
                 last.IsLeading = true;
+            
+            // Animate navigation
+            await AnimateViewChangeAsync(folderViewModel);
 
             return true;
         }
@@ -148,9 +148,10 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is null)
                 return;
 
-            await Browser.FadeTo(0.0d, 125u);
+            await Browser.FadeTo(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
-            await Browser.FadeTo(1.0d, 125u);
+            await Task.Delay(10);
+            await Browser.FadeTo(1.0d, 150U);
         }
 
         private async void Layouts_PropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -17,6 +17,7 @@
         <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
+        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 
@@ -190,19 +191,37 @@
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
-            <CollectionView
-                EmptyView="{Binding EmptyView, Mode=OneWay}"
-                ItemSizingStrategy="MeasureFirstItem"
-                ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
-                ItemsSource="{Binding ItemsSource, Mode=OneWay}"
-                SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
-                <CollectionView.ItemTemplate>
-                    <ts:BrowserViewItemTemplateSelector
-                        GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
-                        GridItemTemplate="{StaticResource GridItemTemplate}"
-                        ListItemTemplate="{StaticResource ListItemTemplate}" />
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <Grid>
+                <ContentView
+                    Content="{Binding EmptyView, Mode=OneWay}"
+                    HorizontalOptions="Fill"
+                    IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                    VerticalOptions="Fill" />
+
+                <CollectionView
+                    IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
+                    ItemsSource="{Binding ItemsSource, Mode=OneWay}"
+                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+                    <CollectionView.ItemTemplate>
+                        <ts:BrowserViewItemTemplateSelector
+                            GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
+                            GridItemTemplate="{StaticResource GridItemTemplate}"
+                            ListItemTemplate="{StaticResource ListItemTemplate}" />
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Grid Background="{StaticResource ThemeBackgroundFillColorBrush}">
+                            <ActivityIndicator
+                                Margin="0,0,0,64"
+                                HorizontalOptions="Center"
+                                IsRunning="True"
+                                VerticalOptions="Center"
+                                ZIndex="10" />
+                        </Grid>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </Grid>
         </RefreshView>
     </Grid>
 </ContentView>

@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
@@ -15,29 +17,35 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<ILocalizationService>]
-    public sealed partial class PropertiesOverlayViewModel : OverlayViewModel, IAsyncInitialize
+    [Inject<ILocalizationService>, Inject<IClipboardService>, Inject<IMediaService>]
+    public sealed partial class PropertiesOverlayViewModel : OverlayViewModel, IWrapper<IStorable>, IAsyncInitialize, IDisposable
     {
-        private readonly IStorable _storable;
         private readonly IBasicProperties _properties;
 
         [ObservableProperty] private string? _SizeText;
         [ObservableProperty] private string? _FileTypeText;
         [ObservableProperty] private string? _DateModifiedText;
+        [ObservableProperty] private IImage? _Thumbnail;
+
+        /// <inheritdoc/>
+        public IStorable Inner { get; }
 
         public PropertiesOverlayViewModel(IStorable storable, IBasicProperties properties)
         {
             ServiceProvider = DI.Default;
-            _storable = storable;
+            Inner = storable;
             _properties = properties;
-            Title = _storable.Name;
+            Title = storable.Name;
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var typeClassification = FileTypeHelper.GetClassification(_storable);
-            FileTypeText = _storable is IFolder ? "inode/directory" : typeClassification.MimeType;
+            if (Inner is IFile file)
+                Thumbnail = await MediaService.GenerateThumbnailAsync(file, cancellationToken);
+
+            var typeClassification = FileTypeHelper.GetClassification(Inner);
+            FileTypeText = Inner is IFolder ? "inode/directory" : typeClassification.MimeType;
 
             if (_properties is ISizeProperties sizeProperties)
             {
@@ -51,6 +59,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 var dateModifiedProperty = await dateProperties.GetDateModifiedAsync(cancellationToken);
                 DateModifiedText = LocalizationService.LocalizeDate(dateModifiedProperty.Value);
             }
+        }
+
+        [RelayCommand]
+        private async Task CopyPropertyAsync(string? propertyName, CancellationToken cancellationToken)
+        {
+            var propertyValue = propertyName switch
+            {
+                "ItemType" => FileTypeText,
+                "DateModified" => DateModifiedText,
+                "Size" => SizeText,
+                _ => null
+            };
+
+            if (propertyValue is not null && await ClipboardService.IsSupportedAsync())
+                await ClipboardService.SetTextAsync(propertyValue, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Thumbnail?.Dispose();
+            Thumbnail = null;
         }
     }
 }
