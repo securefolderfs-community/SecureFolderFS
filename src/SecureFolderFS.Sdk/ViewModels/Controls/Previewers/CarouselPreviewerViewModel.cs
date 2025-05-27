@@ -112,7 +112,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 
             // TODO: For now, load all items up until that index.
             // Indexes are synchronized (+ 2 to account for count -- not index, and next item):
-            var itemsToLoad = _dataSource.Items;//.Take(CurrentIndex + 2);
+            //.Take(CurrentIndex + 2);
+            var itemsToLoad = _dataSource.Items
+                .Where(x =>
+                {
+                    var classification = FileTypeHelper.GetClassification(x.Inner);
+                    return classification.TypeHint is TypeHint.Image or TypeHint.Media;
+                });
 
             // // Get 2 previous items and 2 next items (4 in total)
             // var startIndex = Math.Max(0, _dataSource.Items.IndexOf(_currentItem) - 2);

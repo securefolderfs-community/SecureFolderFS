@@ -104,9 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             oldValue?.Items.UnselectAll();
             IsSelecting = false;
-            Title = newValue?.Title;
-            if (string.IsNullOrEmpty(Title))
-                Title = _rootView?.Title;
+            Title = newValue?.Title ?? _rootView?.Title;
         }
 
         [RelayCommand]
