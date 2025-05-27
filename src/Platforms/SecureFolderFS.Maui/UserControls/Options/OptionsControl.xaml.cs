@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(OptionsControl));
-        
+
         public object? SlotBelow
         {
             get => (object?)GetValue(SlotBelowProperty);

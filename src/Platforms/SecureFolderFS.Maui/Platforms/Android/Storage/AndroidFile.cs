@@ -42,7 +42,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             if (activity.ContentResolver?.OpenInputStream(Inner) is not InputStreamInvoker inputStream)
                 return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
-            
+
             if (accessMode == FileAccess.Read)
             {
                 stream = inputStream;

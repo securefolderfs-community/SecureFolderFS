@@ -824,4 +824,7 @@
   <data name="EnableAdaptiveLayout" xml:space="preserve">
       <value>Enable adaptive layout</value>
   </data>
+  <data name="FoundIssues" xml:space="preserve">
+      <value>Found issues</value>
+  </data>
 </root>

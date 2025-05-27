@@ -20,9 +20,9 @@ namespace SecureFolderFS.Maui.UserControls.Common
         private double _startScale = 1;
         private double _panX;
         private double _panY;
-        
+
         public double CurrentScale { get; private set; } = 1;
-        
+
         public PanPinchContainer()
         {
             _panGestureRecognizer = new();
@@ -254,7 +254,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             _panX = x;
             _panY = y;
         }
-        
+
         public ICommand? TappedCommand
         {
             get => (ICommand?)GetValue(TappedCommandProperty);

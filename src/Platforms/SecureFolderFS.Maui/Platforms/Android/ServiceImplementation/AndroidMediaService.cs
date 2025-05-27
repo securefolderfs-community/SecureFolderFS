@@ -94,7 +94,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 {
                     result = new SKBitmap(width, height);
                     using var canvas = new SKCanvas(result);
-                    
+
                     canvas.Scale(-1, 1);
                     canvas.Translate(-width, 0);
                     canvas.DrawBitmap(bitmap, 0, 0);
@@ -135,13 +135,13 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     canvas.DrawBitmap(bitmap, 0, 0);
                     break;
                 }
-                
+
                 // 6
                 case (int)Orientation.Rotate90:
                 {
                     result = new SKBitmap(height, width);
                     using var canvas = new SKCanvas(result);
-                    
+
                     canvas.Translate(height, 0);
                     canvas.RotateDegrees(90);
                     canvas.DrawBitmap(bitmap, 0, 0);
@@ -160,7 +160,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     canvas.DrawBitmap(bitmap, 0, 0);
                     break;
                 }
-                
+
                 // 8
                 case (int)Orientation.Rotate270:
                 {
@@ -179,7 +179,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             return result;
         }
 #endif
-        
+
         private static ImageStream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
         {
             using var retriever = new MediaMetadataRetriever();

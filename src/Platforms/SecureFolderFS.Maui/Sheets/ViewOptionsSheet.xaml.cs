@@ -49,7 +49,7 @@ namespace SecureFolderFS.Maui.Sheets
             await sheetNavigationService.ClearBottomSheetStackAsync();
         }
     }
-    
+
     public partial class ViewOptionsSheet : BottomSheet, IQueryAttributable
     {
         private TaskCompletionSource<IResult>? _tcs;

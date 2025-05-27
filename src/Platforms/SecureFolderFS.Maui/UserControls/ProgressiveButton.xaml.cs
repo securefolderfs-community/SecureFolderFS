@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             Clicked?.Invoke(this, EventArgs.Empty);
         }
-        
+
         public Enum? DefaultIcon
         {
             get => (Enum?)GetValue(DefaultIconProperty);
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty DefaultIconProperty =
             BindableProperty.Create(nameof(DefaultIcon), typeof(Enum), typeof(ProgressiveButton), MaterialIcons.Search);
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(ProgressiveButton));
-        
+
         public string? Subtitle
         {
             get => (string?)GetValue(SubtitleProperty);
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(ProgressiveButton));
-        
+
         public bool IsProgressing
         {
             get => (bool)GetValue(IsProgressingProperty);
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IsProgressingProperty =
             BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(ProgressiveButton), false);
-        
+
         public double Progress
         {
             get => (double)GetValue(ProgressProperty);

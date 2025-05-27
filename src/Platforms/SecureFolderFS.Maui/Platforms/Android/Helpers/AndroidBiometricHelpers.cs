@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             var keyPairGenerator = KeyPairGenerator.GetInstance(KeyProperties.KeyAlgorithmRsa, keyStoreProvider);
             if (keyPairGenerator is null)
                 return null;
-            
+
             var builder = new KeyGenParameterSpec.Builder(
                     keyName,
                     KeyStorePurpose.Sign)
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             keyPairGenerator.Initialize(builder.Build());
             return keyPairGenerator;
         }
-        
+
         public static byte[]? SignData(Signature signature, byte[] data)
         {
             signature.Update(data);

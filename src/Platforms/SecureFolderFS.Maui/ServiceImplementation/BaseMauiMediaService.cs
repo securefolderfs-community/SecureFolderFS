@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             var stream = await file.OpenReadAsync(cancellationToken);
             return new ImageStream(stream);
         }
-        
+
         /// <inheritdoc/>
         public virtual async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
         {

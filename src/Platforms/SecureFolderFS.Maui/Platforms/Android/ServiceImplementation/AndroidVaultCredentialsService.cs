@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             // - https://nsec.rocks/docs/install#supported-platforms
 
             yield return Constants.CipherId.AES_GCM;
-            
+
 #if DEBUG
             yield return Constants.CipherId.NONE;
 #endif
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         {
             // Password
             yield return new PasswordCreationViewModel();
-            
+
             // Android Biometric
             yield return new AndroidBiometricCreationViewModel(vaultFolder, vaultId);
 

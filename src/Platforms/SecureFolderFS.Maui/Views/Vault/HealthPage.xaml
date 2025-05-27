@@ -96,7 +96,7 @@
         </apesui:ContextMenuContainer>
 
         <!--  Issues list  -->
-        <uco:OptionsContainer Title="Found Issues" Grid.Row="1">
+        <uco:OptionsContainer Title="{l:ResourceString Rid=FoundIssues}" Grid.Row="1">
             <uco:OptionsContainer.InnerContent>
                 <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
                     <CollectionView.ItemTemplate>

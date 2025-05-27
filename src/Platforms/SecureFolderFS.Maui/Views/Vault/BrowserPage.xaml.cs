@@ -44,7 +44,7 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             // Add navigated-to folder to Breadcrumb
             ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
-            
+
 #if ANDROID
             // On Android: Navigate by changing current folder (i.e. ViewModel source)
             if (ViewModel is not null)
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             last = ViewModel?.Breadcrumbs?.LastOrDefault();
             if (last is not null)
                 last.IsLeading = true;
-            
+
             // Animate navigation
             await AnimateViewChangeAsync(folderViewModel);
 

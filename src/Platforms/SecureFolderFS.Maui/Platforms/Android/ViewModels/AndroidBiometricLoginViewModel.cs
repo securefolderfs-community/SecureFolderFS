@@ -9,10 +9,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
-        
+
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {

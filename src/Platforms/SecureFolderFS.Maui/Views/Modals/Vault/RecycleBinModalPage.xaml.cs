@@ -72,15 +72,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
         }
-        
+
         private async void Switch_Toggled(object? sender, ToggledEventArgs e)
         {
             if (ViewModel is null)
                 return;
-            
+
             if (_firstTime.IsFirstTime() && ViewModel.IsRecycleBinEnabled)
                 return;
-            
+
             if (sender is not Switch toggleSwitch)
                 return;
 

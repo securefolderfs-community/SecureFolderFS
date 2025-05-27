@@ -18,20 +18,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
     {
         private const string KEY_ALIAS_PREFIX = "securefolderfs_biometric_";
         private const string KEYSTORE_PROVIDER = "AndroidKeyStore";
-        
+
         /// <summary>
         /// Gets the unique ID of the vault.
         /// </summary>
         protected string VaultId { get; }
-        
+
         /// <summary>
         /// Gets the associated folder of the vault.
         /// </summary>
         protected IFolder VaultFolder { get; }
-        
+
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
-        
+
         public AndroidBiometricViewModel(IFolder vaultFolder, string vaultId)
             : base(Constants.Vault.Authentication.AUTH_ANDROID_BIOMETRIC)
         {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }
-        
+
         /// <inheritdoc/>
         public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
@@ -62,10 +62,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
             if (keyStore is null)
                 throw new CryptographicException("Android KeyStore could not be loaded.");
-            
+
             // Load the KeyStore with default parameters
             keyStore.Load(null);
-            
+
             IPrivateKey privateKey;
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             if (!keyStore.ContainsAlias(alias))
@@ -79,10 +79,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                 var privateKeyEntry = keyStore.GetEntry(alias, null) as KeyStore.PrivateKeyEntry;
                 privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
             }
-                
+
             return await MakeSignatureAsync(privateKey, data);
         }
-        
+
         /// <inheritdoc/>
         public override async Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
@@ -90,26 +90,26 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
             if (keyStore is null)
                 throw new CryptographicException("Android KeyStore could not be loaded.");
-            
+
             // Load the KeyStore with default parameters
             keyStore.Load(null);
-            
+
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             var privateKeyEntry = keyStore.GetEntry(alias, null) as KeyStore.PrivateKeyEntry;
             var privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
-            
+
             return await MakeSignatureAsync(privateKey, data);
         }
-        
+
         private static async Task<IKey> MakeSignatureAsync(IPrivateKey privateKey, byte[] data)
         {
             var signature = Signature.GetInstance("SHA256withRSA");
             if (signature is null)
                 throw new CryptographicException("Signature could not be loaded.");
-            
+
             // Init signature
             signature.InitSign(privateKey);
-            
+
             var tcs = new TaskCompletionSource<IKey>();
             var executor = ContextCompat.GetMainExecutor(MainActivity.Instance!);
             var promptInfo = new BiometricPrompt.Builder(MainActivity.Instance!)

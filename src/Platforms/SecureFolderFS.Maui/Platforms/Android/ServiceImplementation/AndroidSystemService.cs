@@ -31,7 +31,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 #endif
 
             return Task.FromResult(availableBytes);
-            
+
             static string? TryGetRealPath(AndroidFolder androidFolder)
             {
                 if (androidFolder.Inner is not { Scheme: "content", Authority: "com.android.externalstorage.documents" })

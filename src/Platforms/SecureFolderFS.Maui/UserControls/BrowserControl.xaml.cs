@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.UserControls
     {
         private readonly DeferredInitialization<IFolder> _deferredInitialization;
         private readonly ISettingsService _settingsService;
-        
+
         public BrowserControl()
         {
             _deferredInitialization = new();
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
-            
+
             if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
                 return;
 

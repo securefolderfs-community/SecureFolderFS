@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.Views
         {
             if (view is not null)
                 view.IsEnabled = false;
-            
+
             try
             {
                 ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Maui.Views
                     view.IsEnabled = true;
             }
         }
-        
+
         private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
             if (sender is not View view)

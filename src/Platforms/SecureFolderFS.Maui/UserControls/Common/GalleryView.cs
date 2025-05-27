@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             get => _nextView;
             set => _nextView = value;
         }
-        
+
         public ICommand? PanUpdatedCommand { get; private set; }
 
         public GalleryView()
@@ -117,9 +117,9 @@ namespace SecureFolderFS.Maui.UserControls.Common
             // Shift views
             var oldCurrent = _currentView;
             _currentView = _previousView;
-            
+
             (_nextView as IDisposable)?.Dispose();
-            
+
             _nextView = oldCurrent;
             _previousView = null;
 
@@ -136,7 +136,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             _currentView = _nextView;
 
             (_previousView as IDisposable)?.Dispose();
-            
+
             _previousView = oldCurrent;
             _nextView = null;
 

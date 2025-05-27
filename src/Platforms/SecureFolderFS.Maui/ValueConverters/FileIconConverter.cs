@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.ValueConverters
             return value switch
             {
                 IImage image => ToImage(image),
-                
+
 #if ANDROID
                 _ => storableWrapper switch
                 {

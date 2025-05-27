@@ -6,14 +6,14 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {
             (MainContent.Content as IDisposable)?.Dispose();
             if (MainContent.Content is not null)
                 MainContent.Content.BindingContext = null;
-            
+
             MainContent.Content = null;
         }
 

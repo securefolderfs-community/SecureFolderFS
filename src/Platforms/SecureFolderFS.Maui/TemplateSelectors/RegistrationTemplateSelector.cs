@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? PasswordTemplate { get; set; }
 
         public DataTemplate? KeyFileTemplate { get; set; }
-        
+
         public DataTemplate? AndroidBiometricsTemplate { get; set; }
 
         /// <inheritdoc/>

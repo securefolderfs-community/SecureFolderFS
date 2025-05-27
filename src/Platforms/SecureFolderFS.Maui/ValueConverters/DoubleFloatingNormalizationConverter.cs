@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             if (value is not double dValue)
                 return 0d;
-            
+
             var normalization = 1d;
             if (parameter is string strParam && double.TryParse(strParam, CultureInfo.InvariantCulture, out var dParam))
                 normalization = dParam;

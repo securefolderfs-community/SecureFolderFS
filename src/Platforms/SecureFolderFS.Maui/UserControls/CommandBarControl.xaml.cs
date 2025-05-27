@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             Closed?.Invoke(this, e);
         }
-        
+
         public bool IsImmersed
         {
             get => (bool)GetValue(IsImmersedProperty);
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.UserControls
                 {
                     if (newValue is not bool bValue)
                         return;
-                    
+
                     if (bindable is not CommandBarControl commandBar)
                         return;
 
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.UserControls
                         commandBar.TopBorder.IsVisible = false;
                     }
                 });
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(CommandBarControl));
-        
+
         public object? InnerContent
         {
             get => (object?)GetValue(InnerContentProperty);
