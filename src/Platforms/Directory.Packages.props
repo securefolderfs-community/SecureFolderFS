@@ -21,7 +21,7 @@
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageVersion Include="Octokit" Version="14.0.0" />
-    <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.6" />
+    <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
     <PackageVersion Include="SkiaSharp" Version="3.116.1" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
