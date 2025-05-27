@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -206,7 +207,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (string.IsNullOrWhiteSpace(viewModel.NewName))
                     return;
 
-                var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
+                var formattedName = CollisionHelpers.GetAvailableName(
+                    FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item"),
+                    ParentFolder.Items.Select(x => x.Inner));
+
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
 

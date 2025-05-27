@@ -100,4 +100,3 @@ namespace SecureFolderFS.Maui.UserControls
             BindableProperty.Create(nameof(ViewType), typeof(BrowserViewType), typeof(BrowserControl), defaultValue: BrowserViewType.ListView);
     }
 }
-

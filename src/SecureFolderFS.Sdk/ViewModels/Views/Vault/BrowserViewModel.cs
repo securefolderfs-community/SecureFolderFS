@@ -22,6 +22,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -171,18 +173,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (result.Aborted() || newItemViewModel.ItemName is null)
                 return;
 
+            var formattedName = CollisionHelpers.GetAvailableName(
+                    FormattingHelpers.SanitizeItemName(newItemViewModel.ItemName, "New item"),
+                    CurrentFolder.Items.Select(x => x.Inner));
             switch (itemType)
             {
                 case "File":
                 {
-                    var file = await modifiableFolder.CreateFileAsync(newItemViewModel.ItemName, false, cancellationToken);
+                    var file = await modifiableFolder.CreateFileAsync(formattedName, false, cancellationToken);
                     CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder), Layouts.GetSorter());
                     break;
                 }
 
                 case "Folder":
                 {
-                    var folder = await modifiableFolder.CreateFolderAsync(newItemViewModel.ItemName, false, cancellationToken);
+                    var folder = await modifiableFolder.CreateFolderAsync(formattedName, false, cancellationToken);
                     CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder), Layouts.GetSorter());
                     break;
                 }
