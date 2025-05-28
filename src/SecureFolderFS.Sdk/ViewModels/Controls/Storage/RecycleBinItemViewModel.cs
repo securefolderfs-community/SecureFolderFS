@@ -52,7 +52,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 
             IFolderPicker folderPicker = ApplicationService.IsDesktop
                 ? DI.Service<IFileExplorerService>()
-                : BrowserHelpers.CreateBrowser(OverlayViewModel.UnlockedVaultViewModel, outerNavigator: OverlayViewModel.OuterNavigator);
+                : BrowserHelpers.CreateBrowser(
+                    OverlayViewModel.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot,
+                    OverlayViewModel.UnlockedVaultViewModel.Options,
+                    OverlayViewModel.UnlockedVaultViewModel,
+                    outerNavigator: OverlayViewModel.OuterNavigator);
 
             if (await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken))
             {

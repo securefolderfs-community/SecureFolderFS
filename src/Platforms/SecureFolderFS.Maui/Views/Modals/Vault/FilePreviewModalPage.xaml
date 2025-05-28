@@ -20,6 +20,7 @@
 
     <md:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
+        <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
 
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
@@ -50,9 +51,9 @@
             <ScrollView
                 Padding="8"
                 HorizontalScrollBarVisibility="Always"
-                Orientation="Both"
+                Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
                 VerticalScrollBarVisibility="Always">
-                <Label Text="{Binding Text, Mode=OneWay}" />
+                <Editor IsReadOnly="{Binding IsReadOnly, Mode=OneWay}" Text="{Binding Text, Mode=OneWay}" />
             </ScrollView>
         </DataTemplate>
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">

@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize
-            await Task.WhenAll(SettingsService.TryLoadAsync(cancellationToken), VaultCollectionModel.TryLoadAsync(cancellationToken));
+            await Task.WhenAll(SettingsService.TryInitAsync(cancellationToken), VaultCollectionModel.TryInitAsync(cancellationToken));
 
             // Disable telemetry, if the user opted-out
             if (!SettingsService.UserSettings.IsTelemetryEnabled)

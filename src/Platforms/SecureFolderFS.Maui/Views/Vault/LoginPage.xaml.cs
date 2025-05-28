@@ -52,7 +52,11 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Initialize DashboardViewModel and use the same navigation for dashboard
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
-            var browserViewModel = BrowserHelpers.CreateBrowser(args.UnlockedVaultViewModel, outerNavigator: ViewModel.VaultNavigation);
+            var browserViewModel = BrowserHelpers.CreateBrowser(
+                args.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot,
+                args.UnlockedVaultViewModel.StorageRoot.Options,
+                args.UnlockedVaultViewModel,
+                outerNavigator: ViewModel.VaultNavigation);
 
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache

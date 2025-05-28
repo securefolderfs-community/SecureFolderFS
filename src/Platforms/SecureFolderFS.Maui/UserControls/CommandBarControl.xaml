@@ -75,6 +75,7 @@
         <ContentView
             x:Name="MainContent"
             Grid.Row="0"
+            Grid.RowSpan="2"
             Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
             HorizontalOptions="Fill"
             Loaded="MainContent_Loaded"

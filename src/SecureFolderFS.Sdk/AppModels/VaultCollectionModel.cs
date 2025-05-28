@@ -54,9 +54,9 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task LoadAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
+            await Task.WhenAll(VaultConfigurations.InitAsync(cancellationToken), VaultWidgets.InitAsync(cancellationToken));
 
             // Clear previous vaults
             Items.Clear();

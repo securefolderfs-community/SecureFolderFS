@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
@@ -46,9 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         public INavigator? OuterNavigator { get; }
 
+        [Obsolete("Use FileSystemOptions instead.")]
         public required IVFSRoot StorageRoot { get; init; }
 
-        public BrowserViewModel(IFolder baseFolder, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
+        public FileSystemOptions Options { get; }
+
+        public BrowserViewModel(IFolder baseFolder, FileSystemOptions options, INavigator innerNavigator, INavigator? outerNavigator, IViewable? rootView)
         {
             ServiceProvider = DI.Default;
             _rootView = rootView;
@@ -56,6 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             InnerNavigator = innerNavigator;
             OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;
+            Options = options;
             Breadcrumbs = [ new(rootView?.Title, NavigateBreadcrumbCommand) ];
         }
 

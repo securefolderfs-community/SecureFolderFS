@@ -23,9 +23,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task LoadAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return Task.WhenAll(VaultWidgets.LoadAsync(cancellationToken), VaultConfigurations.LoadAsync(cancellationToken));
+            return Task.WhenAll(VaultWidgets.InitAsync(cancellationToken), VaultConfigurations.InitAsync(cancellationToken));
         }
 
         /// <inheritdoc/>

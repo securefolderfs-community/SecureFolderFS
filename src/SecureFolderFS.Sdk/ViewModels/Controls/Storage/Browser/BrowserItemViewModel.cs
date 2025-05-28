@@ -247,7 +247,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Disable selection, if called with selected items
             BrowserViewModel.IsSelecting = false;
 
-            if (BrowserViewModel.StorageRoot.Options.IsRecycleBinEnabled())
+            if (BrowserViewModel.Options.IsRecycleBinEnabled())
             {
                 if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
                     return;
@@ -267,7 +267,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     });
                 }
 
-                if (BrowserViewModel.StorageRoot.Options.IsRecycleBinUnlimited())
+                if (BrowserViewModel.Options.IsRecycleBinUnlimited())
                 {
                     for (var i = 0; i < items.Length; i++)
                     {
@@ -279,7 +279,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 else
                 {
                     var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
-                    var availableSize = BrowserViewModel.StorageRoot.Options.RecycleBinSize - occupiedSize;
+                    var availableSize = BrowserViewModel.Options.RecycleBinSize - occupiedSize;
                     if (availableSize < sizes.Sum())
                     {
                         // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently
