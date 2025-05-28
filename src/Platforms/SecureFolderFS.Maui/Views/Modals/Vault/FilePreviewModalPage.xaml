@@ -53,7 +53,12 @@
                 HorizontalScrollBarVisibility="Always"
                 Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
                 VerticalScrollBarVisibility="Always">
-                <Editor IsReadOnly="{Binding IsReadOnly, Mode=OneWay}" Text="{Binding Text, Mode=OneWay}" />
+                <Editor
+                    AutoSize="TextChanges"
+                    HorizontalOptions="Fill"
+                    IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
+                    Placeholder="{l:ResourceString Rid=WriteHere}"
+                    Text="{Binding Text, Mode=TwoWay}" />
             </ScrollView>
         </DataTemplate>
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">

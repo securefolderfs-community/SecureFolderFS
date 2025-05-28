@@ -2,11 +2,15 @@ using CommunityToolkit.Maui.Views;
 using LibVLCSharp.MAUI;
 using LibVLCSharp.Shared;
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.TemplateSelectors;
 using SecureFolderFS.Maui.UserControls;
 using SecureFolderFS.Maui.UserControls.Common;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
@@ -68,7 +72,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         }
 
         /// <inheritdoc/>
-        protected override void OnDisappearing()
+        protected override async void OnDisappearing()
         {
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
@@ -89,6 +93,22 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 mediaElement.Handler?.DisconnectHandler();
                 mediaElement.Dispose();
                 mediaElement.Source = null;
+            }
+
+            if (ViewModel?.PreviewerViewModel is TextPreviewerViewModel { WasModified: true } textViewModel)
+            {
+                var overlayService = DI.Service<IOverlayService>();
+                var messageOverlay = new MessageOverlayViewModel()
+                {
+                    Title = "UnsavedChanges".ToLocalized(),
+                    Message = "UnsavedChangesDescription".ToLocalized(),
+                    PrimaryText = "Save".ToLocalized(),
+                    SecondaryText = "Cancel".ToLocalized()
+                };
+
+                var result = await overlayService.ShowAsync(messageOverlay);
+                if (result.Positive())
+                    await textViewModel.SaveAsync();
             }
         }
 

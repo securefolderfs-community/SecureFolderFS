@@ -22,7 +22,6 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             // TODO: Check if it's better to use Shell.Current.TryCast<AppShell>().CurrentPage
             var navigation = MainPage.Instance!.Navigation;
-
             return viewable switch
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
@@ -33,6 +32,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
+                MessageOverlayViewModel => new MessagePrompt(),
                 PropertiesOverlayViewModel => new PropertiesPopup(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),

@@ -129,7 +129,10 @@
         </DataTemplate>
 
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                Padding="1,0"
+                Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />

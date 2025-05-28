@@ -12,8 +12,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     [Bindable(true)]
     public sealed partial class TextPreviewerViewModel : FilePreviewerViewModel, IPersistable
     {
+        private string? _persistedText;
+
         [ObservableProperty] private string? _Text;
         [ObservableProperty] private bool _IsReadOnly;
+        [ObservableProperty] private bool _WasModified;
         [ObservableProperty] private bool _IsWrappingText;
 
         public TextPreviewerViewModel(IFile file, bool isReadOnly)
@@ -22,12 +25,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             Title = file.Name;
             IsReadOnly = isReadOnly;
             IsToolbarOnTop = true;
+            IsWrappingText = true;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            Text = await Inner.ReadAllTextAsync(Encoding.UTF8, cancellationToken);
+            _persistedText = await Inner.ReadAllTextAsync(Encoding.UTF8, cancellationToken);
+            Text = _persistedText;
         }
 
         /// <inheritdoc/>
@@ -36,8 +41,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             if (IsReadOnly)
                 return;
 
-            if (Text is not null)
-                await Inner.WriteAllTextAsync(Text, null, cancellationToken);
+            if (Text is  null)
+                return;
+
+            await Inner.WriteAllTextAsync(Text, null, cancellationToken);
+            _persistedText = Text;
+            WasModified = false;
+        }
+
+        partial void OnTextChanged(string? value)
+        {
+            WasModified = value != _persistedText;
         }
     }
 }

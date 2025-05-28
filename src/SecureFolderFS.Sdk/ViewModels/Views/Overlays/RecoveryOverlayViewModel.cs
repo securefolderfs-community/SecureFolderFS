@@ -14,11 +14,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultManagerService>, Inject<IClipboardService>]
     [Bindable(true)]
-    public sealed partial class RecoveryOverlayViewModel : OverlayViewModel, IDisposable
+    public sealed partial class RecoveryOverlayViewModel : MessageOverlayViewModel, IDisposable
     {
         private readonly IFolder _vaultFolder;
 
-        [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _RecoveryKey;
         [ObservableProperty] private string? _ErrorMessage;
 

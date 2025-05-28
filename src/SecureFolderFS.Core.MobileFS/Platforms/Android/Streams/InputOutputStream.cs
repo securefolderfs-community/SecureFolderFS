@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         public override bool CanRead => true;
 
         /// <inheritdoc/>
-        public override bool CanSeek => true;
+        public override bool CanSeek { get; }
 
         /// <inheritdoc/>
         public override bool CanWrite => _outputStream is not null;
@@ -28,15 +28,15 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             get => _position;
             set
             {
-                // if (value < 0 || (value > 0 && _length != -1 && value > _length))
-                //     throw new ArgumentOutOfRangeException(nameof(value));
-
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
                 if (value == _position)
                     return;
 
-                // Reset input stream and skip to the desired position
-                _inputStream.Reset(); // Resets to the beginning of the stream
+                if (!_inputStream.MarkSupported())
+                    throw new NotSupportedException("The input stream does not support seeking.");
+
+                // Reset to the beginning of the stream
+                _inputStream.Reset();
 
                 // Skip to the desired position
                 var skipAmount = value;
@@ -59,6 +59,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             _outputStream = outputStream;
             _length = length;
             _position = 0;
+
+            var isMarkSupported = _inputStream.MarkSupported();
+            if (isMarkSupported)
+                _inputStream.Mark(int.MaxValue);
+
+            CanSeek = isMarkSupported;
         }
 
         /// <inheritdoc/>
