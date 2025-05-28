@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Shared.ComponentModel;
-using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views
 {

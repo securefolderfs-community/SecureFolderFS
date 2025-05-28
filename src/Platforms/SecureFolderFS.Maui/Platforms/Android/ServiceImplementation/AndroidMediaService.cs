@@ -8,7 +8,6 @@ using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI;
-using SkiaSharp;
 using ExifInterface = AndroidX.ExifInterface.Media.ExifInterface;
 using Stream = System.IO.Stream;
 
@@ -18,182 +17,139 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidMediaService : BaseMauiMediaService
     {
         /// <inheritdoc/>
-        public override async Task<IImageStream?> GenerateThumbnailAsync(IFile file,
-            CancellationToken cancellationToken = default)
+        public override async Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
         {
             var typeHint = FileTypeHelper.GetType(file);
             switch (typeHint)
             {
                 case TypeHint.Image:
                 {
-                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-                    return ResizeImage(sourceStream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE);
+                    await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+                    return await GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE).ConfigureAwait(false);
                 }
 
                 case TypeHint.Media:
                 {
-                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
-                    return Android_ExtractFrame(sourceStream, TimeSpan.FromSeconds(0));
+                    await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
+                    return await GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
                 }
+                
+                default: return null;
             }
-
-            return null;
         }
-
-        private static ImageStream ResizeImage(Stream sourceStream, uint maxSize)
+        
+        private static async Task<IImageStream> GenerateImageThumbnailAsync(Stream stream, uint maxSize)
         {
-#if ANDROID
-            // Read EXIF orientation
-            var exif = new ExifInterface(sourceStream);
-            var orientation = exif.GetAttributeInt(ExifInterface.TagOrientation, (int)Orientation.Undefined);
-            sourceStream.Position = 0; // Reset stream
-#endif
+            // Read EXIF
+            var exif = new ExifInterface(stream);
+            stream.Position = 0;
 
-            using var original = SKBitmap.Decode(sourceStream);
-            if (original is null)
-                throw new BadImageFormatException("Failed to load image.");
+            // Get bounds
+            var boundsOptions = new BitmapFactory.Options { InJustDecodeBounds = true };
+            await BitmapFactory.DecodeStreamAsync(stream, null, boundsOptions).ConfigureAwait(false);
+            stream.Position = 0;
 
-#if ANDROID
-            using var rotated = ApplyExifOrientation(original, orientation);
-#else
-            using var rotated = original;
-#endif
+            var (width, height) = (boundsOptions.OutWidth, boundsOptions.OutHeight);
+            var scale = Math.Min((float)maxSize / width, (float)maxSize / height);
+            var inSampleSize = CalculateInSampleSize(width, height, (int)(width * scale), (int)(height * scale));
 
-            // Resize with aspect ratio
-            var scale = Math.Min((float)maxSize / rotated.Width, (float)maxSize / rotated.Height);
-            var newWidth = (int)(rotated.Width * scale);
-            var newHeight = (int)(rotated.Height * scale);
-
-            using var resized = rotated.Resize(new SKImageInfo(newWidth, newHeight), new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear));
-            if (resized is null)
-                throw new Exception("Failed to resize image.");
-
-            using var image = SKImage.FromBitmap(resized);
-            using var encoded = image.Encode(SKEncodedImageFormat.Png, Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
-            var destinationStream = new OnDemandDisposableStream();
-            encoded.SaveTo(destinationStream);
-
-            destinationStream.Position = 0L;
-            return new ImageStream(destinationStream);
-        }
-
-#if ANDROID
-        private static SKBitmap ApplyExifOrientation(SKBitmap bitmap, int orientation)
-        {
-            var width = bitmap.Width;
-            var height = bitmap.Height;
-
-            SKBitmap result;
-            switch (orientation)
+            var options = new BitmapFactory.Options
             {
-                // 1
-                case (int)Orientation.Normal: return bitmap;
+                InJustDecodeBounds = false,
+                InSampleSize = inSampleSize
+            };
 
-                // 2
-                case (int)Orientation.FlipHorizontal:
-                {
-                    result = new SKBitmap(width, height);
-                    using var canvas = new SKCanvas(result);
-
-                    canvas.Scale(-1, 1);
-                    canvas.Translate(-width, 0);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 3
-                case (int)Orientation.Rotate180:
-                {
-                    result = new SKBitmap(width, height);
-                    using var canvas = new SKCanvas(result);
-                 
-                    canvas.RotateDegrees(180, width / 2f, height / 2f);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 4
-                case (int)Orientation.FlipVertical:
-                {
-                    result = new SKBitmap(width, height);
-                    using var canvas = new SKCanvas(result);
-                 
-                    canvas.Scale(1, -1);
-                    canvas.Translate(0, -height);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 5
-                case (int)Orientation.Transpose:
-                {
-                    result = new SKBitmap(height, width);
-                    using var canvas = new SKCanvas(result);
-                 
-                    canvas.RotateDegrees(90);
-                    canvas.Scale(1, -1);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 6
-                case (int)Orientation.Rotate90:
-                {
-                    result = new SKBitmap(height, width);
-                    using var canvas = new SKCanvas(result);
-
-                    canvas.Translate(height, 0);
-                    canvas.RotateDegrees(90);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 7
-                case (int)Orientation.Transverse:
-                {
-                    result = new SKBitmap(height, width);
-                    using var canvas = new SKCanvas(result);
-                 
-                    canvas.Translate(0, width);
-                    canvas.RotateDegrees(270);
-                    canvas.Scale(1, -1);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                // 8
-                case (int)Orientation.Rotate270:
-                {
-                    result = new SKBitmap(height, width);
-                    using var canvas = new SKCanvas(result);
-                 
-                    canvas.Translate(0, width);
-                    canvas.RotateDegrees(270);
-                    canvas.DrawBitmap(bitmap, 0, 0);
-                    break;
-                }
-
-                default: return bitmap;
-            }
-
-            return result;
+            using var bitmap = await BitmapFactory.DecodeStreamAsync(stream, null, options).ConfigureAwait(false) ?? throw new Exception("Failed to decode image.");
+            using var rotated = ApplyExifOrientation(bitmap, exif);
+            
+            return await CompressBitmapAsync(rotated).ConfigureAwait(false);
         }
-#endif
 
-        private static ImageStream? Android_ExtractFrame(Stream stream, TimeSpan captureTime)
+        private static async Task<IImageStream?> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
         {
             using var retriever = new MediaMetadataRetriever();
-            retriever.SetDataSource(new StreamedMediaSource(stream));
+            await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
 
-            var frameBitmap = retriever.GetFrameAtTime(captureTime.Ticks, Option.Closest);
-            if (frameBitmap is null)
+            // Use scaled frame for efficiency
+            using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, 320, 240);
+            if (bitmap is null)
                 return null;
 
-            using var frameStream = new MemoryStream();
-            frameBitmap.Compress(Bitmap.CompressFormat.Jpeg!, Constants.Browser.VIDEO_THUMBNAIL_QUALITY, frameStream);
-            frameStream.Position = 0L;
+            return await CompressBitmapAsync(bitmap).ConfigureAwait(false);
+        }
 
-            return ResizeImage(frameStream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE);
+        private static int CalculateInSampleSize(int width, int height, int reqWidth, int reqHeight)
+        {
+            var inSampleSize = 1;
+            if (height <= reqHeight && width <= reqWidth)
+                return inSampleSize;
+
+            var halfHeight = height / 2;
+            var halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth)
+                inSampleSize *= 2;
+
+            return inSampleSize;
+        }
+
+        private static Bitmap ApplyExifOrientation(Bitmap bitmap, ExifInterface exif)
+        {
+            var orientation = (Orientation)exif.GetAttributeInt(ExifInterface.TagOrientation, (int)Orientation.Normal);
+            var matrix = new Matrix();
+
+            switch (orientation)
+            {
+                case Orientation.Normal:
+                    return bitmap;
+
+                case Orientation.FlipHorizontal:
+                    matrix.SetScale(-1, 1);
+                    break;
+
+                case Orientation.Rotate180:
+                    matrix.SetRotate(180);
+                    break;
+
+                case Orientation.FlipVertical:
+                    matrix.SetScale(1, -1);
+                    break;
+
+                case Orientation.Transpose:
+                    matrix.SetRotate(-90);
+                    matrix.PostScale(1, -1);
+                    break;
+
+                case Orientation.Rotate90:
+                    matrix.SetRotate(90);
+                    break;
+
+                case Orientation.Transverse:
+                    matrix.SetRotate(90);
+                    matrix.PostScale(-1, 1);
+                    break;
+
+                case Orientation.Rotate270:
+                    matrix.SetRotate(-90);
+                    break;
+
+                default:
+                    return bitmap;
+            }
+
+            var rotated = Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
+            bitmap.Recycle();
+            bitmap.Dispose();
+            return rotated;
+        }
+
+        private static async Task<IImageStream> CompressBitmapAsync(Bitmap bitmap)
+        {
+            var ms = new OnDemandDisposableStream();
+            await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg, Constants.Browser.IMAGE_THUMBNAIL_QUALITY, ms).ConfigureAwait(false);
+            ms.Position = 0;
+            bitmap.Recycle();
+            return new ImageStream(ms);
         }
     }
 }

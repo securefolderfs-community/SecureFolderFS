@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 switch (image)
                 {
-                    case ImageStream imageStream:
+                    case ImageStream { Stream.CanRead: true } imageStream:
                     {
                         imageStream.Stream.Position = 0L;
                         return new Image() { Source = imageStream.Source, Aspect = Aspect.AspectFill };
