@@ -13,6 +13,29 @@ namespace SecureFolderFS.Maui.UserControls
         {
             Closed?.Invoke(this, e);
         }
+        
+        private void MainContent_Loaded(object? sender, EventArgs e)
+        {
+            UpdateToolbarOnTop(IsToolbarOnTop);
+        }
+
+        private void UpdateToolbarOnTop(bool value)
+        {
+            if (value)
+            {
+                TopBorder.Background = Colors.Transparent;
+                Grid.SetRowSpan(TopBorder, 1);
+                Grid.SetRowSpan(MainContent, 1);
+                Grid.SetRow(MainContent, 1);
+            }
+            else
+            {
+                TopBorder.Background = Resources["BarGradient"] as Brush;
+                Grid.SetRowSpan(TopBorder, 2);
+                Grid.SetRow(MainContent, 0);
+                Grid.SetRowSpan(MainContent, 2);
+            }
+        }
 
         public bool IsImmersed
         {
@@ -39,6 +62,24 @@ namespace SecureFolderFS.Maui.UserControls
                         await commandBar.TopBorder.TranslateTo(0, -150, 350U, Easing.CubicInOut);
                         commandBar.TopBorder.IsVisible = false;
                     }
+                });
+        
+        public bool IsToolbarOnTop
+        {
+            get => (bool)GetValue(IsToolbarOnTopProperty);
+            set => SetValue(IsToolbarOnTopProperty, value);
+        }
+        public static readonly BindableProperty IsToolbarOnTopProperty =
+            BindableProperty.Create(nameof(IsToolbarOnTop), typeof(bool), typeof(CommandBarControl), propertyChanged:
+                static (bindable, _, newValue) =>
+                {
+                    if (newValue is not bool bValue)
+                        return;
+
+                    if (bindable is not CommandBarControl commandBar)
+                        return;
+
+                    commandBar.UpdateToolbarOnTop(bValue);
                 });
 
         public string? Title

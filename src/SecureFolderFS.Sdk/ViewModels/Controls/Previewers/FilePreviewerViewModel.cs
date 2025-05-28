@@ -3,9 +3,8 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
-    /// <inheritdoc cref="BasePreviewerViewModel{TSource}"/>
-    public abstract class FilePreviewerViewModel<TSource> : BasePreviewerViewModel<TSource>, IWrapper<IFile>
-        where TSource : class
+    /// <inheritdoc cref="BasePreviewerViewModel"/>
+    public abstract class FilePreviewerViewModel : BasePreviewerViewModel, IWrapper<IFile>
     {
         /// <inheritdoc/>
         public IFile Inner { get; }

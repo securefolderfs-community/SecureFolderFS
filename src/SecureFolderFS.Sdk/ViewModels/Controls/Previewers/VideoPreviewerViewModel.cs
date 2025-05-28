@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -12,9 +13,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class VideoPreviewerViewModel : FilePreviewerViewModel<IDisposable>, IDisposable
+    public sealed partial class VideoPreviewerViewModel : FilePreviewerViewModel, IDisposable
     {
         private bool _isLateInitialized;
+
+        [ObservableProperty] private IDisposable? _VideoSource;
 
         public VideoPreviewerViewModel(IFile file, bool isLateInitialized)
             : base(file)
@@ -37,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         public override void OnDisappearing()
         {
             if (_isLateInitialized)
-                Source?.Dispose();
+                VideoSource?.Dispose();
 
             base.OnDisappearing();
         }
@@ -51,19 +54,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 
         private async Task CreateSourceAsync(CancellationToken cancellationToken)
         {
-            Source?.Dispose();
+            VideoSource?.Dispose();
 
             var streamedVideo = await MediaService.StreamVideoAsync(Inner, cancellationToken);
             if (streamedVideo is IAsyncInitialize asyncInitialize)
                 await asyncInitialize.InitAsync(cancellationToken);
 
-            Source = streamedVideo;
+            VideoSource = streamedVideo;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Source?.Dispose();
+            VideoSource?.Dispose();
         }
     }
 }

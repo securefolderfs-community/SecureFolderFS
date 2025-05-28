@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly FolderViewModel _folderViewModel;
 
         [ObservableProperty] private bool _IsImmersed;
-        [ObservableProperty] private IViewable? _PreviewerViewModel;
+        [ObservableProperty] private BasePreviewerViewModel? _PreviewerViewModel;
 
         public PreviewerOverlayViewModel(BrowserItemViewModel itemViewModel, FolderViewModel folderViewModel)
         {
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 return Task.CompletedTask;
 
             var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
-            var previewer = (IViewable)(classification.TypeHint switch
+            var previewer = (BasePreviewerViewModel)(classification.TypeHint switch
             {
                 TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
                 TypeHint.Plaintext => new TextPreviewerViewModel(file).WithInitAsync(),

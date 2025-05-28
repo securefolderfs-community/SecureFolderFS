@@ -43,7 +43,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
-                <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+                <Image Source="{Binding Image, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
             </ucc:PanPinchContainer>
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
@@ -52,7 +52,7 @@
                 HorizontalScrollBarVisibility="Always"
                 Orientation="Both"
                 VerticalScrollBarVisibility="Always">
-                <Label Text="{Binding Source, Mode=OneWay}" />
+                <Label Text="{Binding Text, Mode=OneWay}" />
             </ScrollView>
         </DataTemplate>
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
@@ -66,7 +66,7 @@
                     <Label
                         FontSize="20"
                         HorizontalOptions="Center"
-                        Text="{Binding Source, Mode=OneWay}" />
+                        Text="{Binding Title, Mode=OneWay}" />
                     <Label
                         HorizontalOptions="Center"
                         Opacity="0.8"
@@ -80,7 +80,8 @@
         <uc:CommandBarControl
             Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
             Closed="Closed_Clicked"
-            IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}">
+            IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
+            IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}">
             <uc:CommandBarControl.InnerContent>
                 <uc:ContentPresentation
                     x:Name="Presentation"

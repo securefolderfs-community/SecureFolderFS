@@ -15,11 +15,11 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Bindable(true)]
-    public sealed partial class CarouselPreviewerViewModel : BasePreviewerViewModel<ObservableCollection<IViewable>>, IDisposable
+    public sealed partial class CarouselPreviewerViewModel : BasePreviewerViewModel, IDisposable
     {
         private readonly FolderViewModel _dataSource;
 
-        [ObservableProperty] private ObservableCollection<IViewable> _Slides;
+        [ObservableProperty] private ObservableCollection<BasePreviewerViewModel> _Slides;
         [ObservableProperty] private int _CurrentIndex;
 
         public CarouselPreviewerViewModel(FolderViewModel dataSource, BrowserItemViewModel? itemViewModel = null)
@@ -138,7 +138,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             return Task.CompletedTask;
         }
 
-        private static IViewable? GetPreviewer(IStorable storable)
+        private static BasePreviewerViewModel? GetPreviewer(IStorable storable)
         {
             if (storable is not IFile file)
                 return null;

@@ -7,19 +7,27 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     x:Name="ThisControl">
 
-    <Grid>
+    <ContentView.Resources>
+        <LinearGradientBrush x:Key="BarGradient" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+            <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+        </LinearGradientBrush>
+    </ContentView.Resources>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
         <Border
             x:Name="TopBorder"
+            Grid.Row="0"
+            Background="{StaticResource BarGradient}"
             HeightRequest="150"
             StrokeThickness="0"
             VerticalOptions="Start"
             ZIndex="5">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
-                </LinearGradientBrush>
-            </Border.Background>
 
             <Grid
                 Padding="16,0"
@@ -65,8 +73,11 @@
         </Border>
 
         <ContentView
+            x:Name="MainContent"
+            Grid.Row="0"
             Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
             HorizontalOptions="Fill"
+            Loaded="MainContent_Loaded"
             VerticalOptions="Fill" />
     </Grid>
 </ContentView>

@@ -6,13 +6,12 @@ using OwlCore.Storage;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Bindable(true)]
-    public sealed class FallbackPreviewerViewModel : FilePreviewerViewModel<string>
+    public sealed class FallbackPreviewerViewModel : FilePreviewerViewModel
     {
         public FallbackPreviewerViewModel(IFile file)
             : base(file)
         {
             Title = file.Name;
-            Source = file.Name;
         }
 
         /// <inheritdoc/>

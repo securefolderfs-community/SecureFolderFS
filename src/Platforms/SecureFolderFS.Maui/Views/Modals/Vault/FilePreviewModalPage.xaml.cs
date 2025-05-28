@@ -115,7 +115,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (sender is not MediaPlayerElement { BindingContext: VideoPreviewerViewModel videoViewModel } mediaPlayerElement)
                 return;
 
-            if (videoViewModel.Source is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
+            if (videoViewModel.VideoSource is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
                 return;
 
             var libVlc = new LibVLC("--input-repeat=2");

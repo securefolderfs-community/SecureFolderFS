@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -12,8 +13,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class ImagePreviewerViewModel : FilePreviewerViewModel<IImage>, IDisposable
+    public sealed partial class ImagePreviewerViewModel : FilePreviewerViewModel, IDisposable
     {
+        [ObservableProperty] private IImage? _Image;
+
         public ImagePreviewerViewModel(IFile file)
             : base(file)
         {
@@ -24,14 +27,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            Source?.Dispose();
-            Source = await MediaService.ReadImageFileAsync(Inner, cancellationToken);
+            Image?.Dispose();
+            Image = await MediaService.ReadImageFileAsync(Inner, cancellationToken);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Source?.Dispose();
+            Image?.Dispose();
         }
     }
 }
