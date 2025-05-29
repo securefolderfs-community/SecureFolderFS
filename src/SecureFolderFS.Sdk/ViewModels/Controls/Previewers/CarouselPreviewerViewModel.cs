@@ -116,8 +116,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             var itemsToLoad = _dataSource.Items
                 .Where(x =>
                 {
-                    var classification = FileTypeHelper.GetClassification(x.Inner);
-                    return classification.TypeHint is TypeHint.Image or TypeHint.Media;
+                    var typeHint = FileTypeHelper.GetTypeHint(x.Inner);
+                    return typeHint is TypeHint.Image or TypeHint.Media;
                 });
 
             // // Get 2 previous items and 2 next items (4 in total)
@@ -143,8 +143,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             if (storable is not IFile file)
                 return null;
 
-            var classification = FileTypeHelper.GetClassification(storable);
-            return classification.TypeHint switch
+            return FileTypeHelper.GetTypeHint(storable) switch
             {
                 TypeHint.Image => new ImagePreviewerViewModel(file),
                 TypeHint.Media => new VideoPreviewerViewModel(file, true),

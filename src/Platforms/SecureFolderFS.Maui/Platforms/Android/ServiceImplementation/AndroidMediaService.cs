@@ -17,9 +17,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidMediaService : BaseMauiMediaService
     {
         /// <inheritdoc/>
-        public override async Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
+        public override async Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
         {
-            var typeHint = FileTypeHelper.GetType(file);
+            if (typeHint == default)
+                typeHint = FileTypeHelper.GetTypeHint(file);
+            
             switch (typeHint)
             {
                 case TypeHint.Image:
@@ -34,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     return await GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
                 }
                 
-                default: return null;
+                default: throw new InvalidOperationException("The provided file type is invalid.");
             }
         }
         
@@ -59,13 +61,15 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 InSampleSize = inSampleSize
             };
 
-            using var bitmap = await BitmapFactory.DecodeStreamAsync(stream, null, options).ConfigureAwait(false) ?? throw new Exception("Failed to decode image.");
-            using var rotated = ApplyExifOrientation(bitmap, exif);
+            using var bitmap = await BitmapFactory.DecodeStreamAsync(stream, null, options);
+            if (bitmap is null)
+                throw new Exception("Failed to decode image.");
             
+            using var rotated = ApplyExifOrientation(bitmap, exif);
             return await CompressBitmapAsync(rotated).ConfigureAwait(false);
         }
 
-        private static async Task<IImageStream?> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
+        private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
         {
             using var retriever = new MediaMetadataRetriever();
             await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
@@ -73,7 +77,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             // Use scaled frame for efficiency
             using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, 320, 240);
             if (bitmap is null)
-                return null;
+                throw new NotSupportedException("Could not retrieve scaled frame.");
 
             return await CompressBitmapAsync(bitmap).ConfigureAwait(false);
         }

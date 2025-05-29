@@ -13,15 +13,18 @@ using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 {
     [Bindable(true)]
-    [Inject<IRecycleBinService>, Inject<IApplicationService>]
-    public sealed partial class RecycleBinItemViewModel : StorageItemViewModel
+    [Inject<IRecycleBinService>, Inject<IApplicationService>, Inject<IMediaService>]
+    public sealed partial class RecycleBinItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
         private readonly IRecycleBinFolder _recycleBin;
 
@@ -41,6 +44,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             OriginalPath = recycleBinItem.Id;
             DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;
+        }
+
+        /// <inheritdoc/>
+        public async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            if (Inner is not IFile file)
+                return;
+
+            var extension = Path.GetExtension(Title);
+            if (extension is null)
+                return;
+
+            var typeHint = FileTypeHelper.GetTypeHintFromExtension(extension);
+            if (typeHint is TypeHint.Image or TypeHint.Media)
+                Thumbnail = await MediaService.TryGenerateThumbnailAsync(file, typeHint, cancellationToken);
         }
 
         [RelayCommand]

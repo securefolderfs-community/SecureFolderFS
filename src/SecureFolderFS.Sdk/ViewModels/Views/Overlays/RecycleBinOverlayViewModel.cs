@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 if (item is not IRecycleBinItem recycleBinItem)
                     continue;
 
-                Items.Add(new(this, recycleBinItem, _recycleBin));
+                Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync(cancellationToken));
             }
         }
 

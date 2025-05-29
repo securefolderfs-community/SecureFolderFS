@@ -15,8 +15,8 @@ namespace SecureFolderFS.Maui.ValueConverters
             if (parameter is not string strParam)
                 return false;
 
-            var classification = FileTypeHelper.GetClassification(itemViewModel.Inner);
-            return strParam.Equals(classification.TypeHint.ToString(), StringComparison.OrdinalIgnoreCase);
+            var typeHint = FileTypeHelper.GetTypeHint(itemViewModel.Inner);
+            return strParam.Equals(typeHint.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc/>

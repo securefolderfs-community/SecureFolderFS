@@ -112,11 +112,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             }
         }
 
-        private View CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
+        private View? CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
         {
+            var viewModel = carouselViewModel.Slides.ElementAtOrDefault(index);
+            if (viewModel is null)
+                return null;
+            
             return new ContentPresentation()
             {
-                Presentation = carouselViewModel.Slides[index],
+                Presentation = viewModel,
                 TemplateSelector = new PreviewerTemplateSelector()
                 {
                     ImageTemplate = Resources["ImageTemplate"] as DataTemplate,

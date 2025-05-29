@@ -14,17 +14,17 @@ namespace SecureFolderFS.Sdk.Helpers
             var mimeType = MimeTypeMap.GetMimeType(storable.Id);
             var extension = Path.GetExtension(storable.Id);
             var typeHint = GetTypeFromMime(mimeType);
-            typeHint = typeHint == TypeHint.Unclassified ? GetTypeFromExtension(Path.GetExtension(storable.Id)) : typeHint;
+            typeHint = typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(Path.GetExtension(storable.Id)) : typeHint;
 
             return new(mimeType, typeHint, extension);
         }
 
-        public static TypeHint GetType(IStorable storable)
+        public static TypeHint GetTypeHint(IStorable storable)
         {
             var mimeType = MimeTypeMap.GetMimeType(storable.Id);
             var typeHint = GetTypeFromMime(mimeType);
 
-            return typeHint == TypeHint.Unclassified ? GetTypeFromExtension(Path.GetExtension(storable.Id)) : typeHint;
+            return typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(Path.GetExtension(storable.Id)) : typeHint;
         }
 
         public static TypeHint GetTypeFromMime(string mimeType)
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.Helpers
             }
         }
 
-        public static TypeHint GetTypeFromExtension(string extension)
+        public static TypeHint GetTypeHintFromExtension(string extension)
         {
             if (!extension.StartsWith('.'))
                 extension = $".{extension}";

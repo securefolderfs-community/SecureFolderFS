@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Sdk.Services
 
         Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
 
-        Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
+        Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default);
 
         Task<bool> TrySetFolderIconAsync(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default);
     }

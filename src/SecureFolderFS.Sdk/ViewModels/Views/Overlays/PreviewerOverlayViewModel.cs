@@ -35,8 +35,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (_itemViewModel.Inner is not IFile file)
                 return Task.CompletedTask;
 
-            var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
-            var previewer = (BasePreviewerViewModel)(classification.TypeHint switch
+            var typeHint = FileTypeHelper.GetTypeHint(_itemViewModel.Inner);
+            var previewer = (BasePreviewerViewModel)(typeHint switch
             {
                 TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
                 TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(),

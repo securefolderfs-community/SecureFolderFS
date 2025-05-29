@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             if (Inner is IFile file)
-                Thumbnail = await MediaService.GenerateThumbnailAsync(file, cancellationToken);
+                Thumbnail = await MediaService.TryGenerateThumbnailAsync(file, cancellationToken: cancellationToken);
 
             var typeClassification = FileTypeHelper.GetClassification(Inner);
             FileTypeText = Inner is IFolder ? "inode/directory" : typeClassification.MimeType;

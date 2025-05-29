@@ -143,13 +143,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 => item.Inner is IFolder;
 
             static bool IsImage(BrowserItemViewModel item)
-                => FileTypeHelper.GetClassification(item.Inner) is { TypeHint: TypeHint.Image };
+                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Image;
 
             static bool IsMedia(BrowserItemViewModel item)
-                => FileTypeHelper.GetClassification(item.Inner) is { TypeHint: TypeHint.Media };
+                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Media;
 
             static bool IsDocument(BrowserItemViewModel item)
-                => FileTypeHelper.GetClassification(item.Inner) is { TypeHint: TypeHint.Document or TypeHint.Plaintext };
+                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Document or TypeHint.Plaintext;
         }
     }
 }

@@ -1,5 +1,6 @@
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public abstract Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default);
+        public abstract Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default);
 
         // TODO: Move to iOS folder
 #if IOS || MACCATALYST

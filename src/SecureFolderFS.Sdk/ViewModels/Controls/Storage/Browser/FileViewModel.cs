@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -39,8 +41,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             Thumbnail?.Dispose();
 
-            if (SettingsService.UserSettings.AreThumbnailsEnabled)
-                Thumbnail = await MediaService.GenerateThumbnailAsync(File, cancellationToken);
+            if (!SettingsService.UserSettings.AreThumbnailsEnabled)
+                return;
+
+            var typeHint = FileTypeHelper.GetTypeHint(File);
+            if (typeHint is TypeHint.Image or TypeHint.Media)
+                Thumbnail = await MediaService.TryGenerateThumbnailAsync(File, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
