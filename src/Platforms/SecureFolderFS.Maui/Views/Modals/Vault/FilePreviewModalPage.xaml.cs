@@ -145,7 +145,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             var libVlc = new LibVLC("--input-repeat=2");
             var mediaInput = new StreamMediaInput(stream);
             var media = new Media(libVlc, mediaInput);
-            var mediaPlayer = new MediaPlayer(libVlc)
+            var mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(libVlc)
             {
                 Media = media
             };

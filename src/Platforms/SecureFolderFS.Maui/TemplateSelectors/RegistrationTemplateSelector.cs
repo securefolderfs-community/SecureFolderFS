@@ -1,5 +1,8 @@
-using SecureFolderFS.Maui.Platforms.Android.ViewModels;
 using SecureFolderFS.UI.ViewModels.Authentication;
+
+#if ANDROID
+using SecureFolderFS.Maui.Platforms.Android.ViewModels;
+#endif
 
 namespace SecureFolderFS.Maui.TemplateSelectors
 {

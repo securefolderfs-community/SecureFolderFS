@@ -1,0 +1,78 @@
+﻿<ResourceDictionary
+    x:Class="SecureFolderFS.Maui.Platforms.Android.Templates.AndroidDataTemplates"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:android_vm="clr-namespace:SecureFolderFS.Maui.Platforms.Android.ViewModels"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material">
+
+    <!--  Android Biometrics Login Template  -->
+    <DataTemplate x:Key="AndroidBiometricsLoginTemplate" x:DataType="android_vm:AndroidBiometricLoginViewModel">
+        <ContentView>
+            <VerticalStackLayout Spacing="24">
+                <!--  Logo  -->
+                <Grid>
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_material:Material Fingerprint}"
+                        IconSize="60"
+                        OnPlatforms="Android" />
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_cupertino:Cupertino FaceSmiling}"
+                        IconSize="60"
+                        OnPlatforms="iOS" />
+                </Grid>
+
+                <!--  Title  -->
+                <Label
+                    HorizontalOptions="Center"
+                    Opacity="0.6"
+                    Text="{Binding Title, Mode=OneWay}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Command="{Binding ProvideCredentialsCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Authenticate}" />
+            </VerticalStackLayout>
+        </ContentView>
+    </DataTemplate>
+
+    <!--  Android Biometrics Register Template  -->
+    <DataTemplate x:Key="AndroidBiometricsRegisterTemplate" x:DataType="android_vm:AndroidBiometricCreationViewModel">
+        <ContentView>
+            <VerticalStackLayout Spacing="16">
+                <HorizontalStackLayout Spacing="16">
+                    <!--  Icon  -->
+                    <Grid>
+                        <mi:MauiIcon
+                            Icon="{mi_material:Material Fingerprint}"
+                            OnPlatforms="Android"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Icon="{mi_cupertino:Cupertino FaceSmiling}"
+                            OnPlatforms="iOS"
+                            VerticalOptions="Center" />
+                    </Grid>
+
+                    <!--  Title  -->
+                    <Label
+                        FontSize="20"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!--  Authenticate  -->
+                <Button
+                    Command="{Binding ProvideCredentialsCommand}"
+                    HorizontalOptions="Fill"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Setup}" />
+            </VerticalStackLayout>
+        </ContentView>
+    </DataTemplate>
+</ResourceDictionary>
+

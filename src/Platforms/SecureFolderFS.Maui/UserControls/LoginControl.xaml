@@ -2,7 +2,6 @@
     x:Class="SecureFolderFS.Maui.UserControls.LoginControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:android_vm3="clr-namespace:SecureFolderFS.Maui.Platforms.Android.ViewModels"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -28,39 +27,6 @@
                         IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
                         Style="{StaticResource AccentButtonStyle}"
                         Text="{l:ResourceString Rid=Continue}" />
-                </VerticalStackLayout>
-            </ContentView>
-        </DataTemplate>
-
-        <!--  Android Biometrics Template  -->
-        <DataTemplate x:Key="AndroidBiometricsTemplate" x:DataType="android_vm3:AndroidBiometricLoginViewModel">
-            <ContentView>
-                <VerticalStackLayout Spacing="24">
-                    <!--  Logo  -->
-                    <Grid>
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_material:Material Fingerprint}"
-                            IconSize="60"
-                            OnPlatforms="Android" />
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_cupertino:Cupertino FaceSmiling}"
-                            IconSize="60"
-                            OnPlatforms="iOS" />
-                    </Grid>
-
-                    <!--  Title  -->
-                    <Label
-                        HorizontalOptions="Center"
-                        Opacity="0.6"
-                        Text="{Binding Title, Mode=OneWay}" />
-
-                    <!--  Authenticate  -->
-                    <Button
-                        Command="{Binding ProvideCredentialsCommand}"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Text="{l:ResourceString Rid=Authenticate}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
@@ -121,7 +87,7 @@
         <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
-                    AndroidBiometricsTemplate="{StaticResource AndroidBiometricsTemplate}"
+                    AndroidBiometricsTemplate="{StaticResource AndroidBiometricsLoginTemplate}"
                     ErrorTemplate="{StaticResource ErrorTemplate}"
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     PasswordTemplate="{StaticResource PasswordTemplate}" />
