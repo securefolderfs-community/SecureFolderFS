@@ -77,7 +77,7 @@
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
                         Opacity="0.6"
-                        Text="{Binding Message, Mode=OneWay}" />
+                        Text="{Binding ErrorMessage, Mode=OneWay}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
@@ -87,7 +87,6 @@
         <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
-                    AndroidBiometricsTemplate="{StaticResource AndroidBiometricsLoginTemplate}"
                     ErrorTemplate="{StaticResource ErrorTemplate}"
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     PasswordTemplate="{StaticResource PasswordTemplate}" />

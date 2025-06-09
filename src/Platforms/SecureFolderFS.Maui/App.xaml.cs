@@ -1,7 +1,6 @@
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
-using SecureFolderFS.Maui.Platforms.Android.Templates;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -31,7 +30,7 @@ namespace SecureFolderFS.Maui
             
 #if ANDROID
             // Load Android-specific resource dictionaries
-            Resources.MergedDictionaries.Add(new AndroidDataTemplates());
+            Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
 #endif
 
             // Configure mappers

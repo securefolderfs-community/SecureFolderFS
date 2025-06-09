@@ -47,6 +47,12 @@
       </ItemGroup>
 
       <ItemGroup>
+        <!-- Exclude platform spcific code -->
+        <MauiXaml Remove="Platforms\iOS\*\*" />
+        <Compile Remove="Platforms\iOS\*\*" />
+      </ItemGroup>
+
+      <ItemGroup>
         <!-- Packages -->
         <PackageReference Include="VideoLAN.LibVLC.Android" />
       </ItemGroup>
@@ -57,7 +63,13 @@
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
       </ItemGroup>
-      
+
+      <ItemGroup>
+        <!-- Exclude platform spcific code -->
+        <MauiXaml Remove="Platforms\Android\*\*" />
+        <Compile Remove="Platforms\Android\*\*" />
+      </ItemGroup>
+
       <ItemGroup>
         <!-- Packages -->
         <PackageReference Include="VideoLAN.LibVLC.iOS" />

@@ -86,7 +86,10 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Grid Grid.Row="0" Grid.RowSpan="2">
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            VerticalOptions="End">
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
                     <Button

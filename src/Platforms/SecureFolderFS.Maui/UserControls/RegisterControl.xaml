@@ -86,10 +86,7 @@
     <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
         <uc:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
-                <ts:RegistrationTemplateSelector
-                    AndroidBiometricsTemplate="{StaticResource AndroidBiometricsRegisterTemplate}"
-                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
-                    PasswordTemplate="{StaticResource PasswordTemplate}" />
+                <ts:RegistrationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
     </Grid>

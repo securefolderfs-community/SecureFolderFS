@@ -41,6 +41,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
                     .AddSingleton<IVaultCredentialsService, IOSVaultCredentialsService>()
                     .AddSingleton<IVaultFileSystemService, IOSVaultFileSystemService>()
                     .AddSingleton<IStorageService, IOSStorageService>()
+                    .AddSingleton<IMediaService, IOSMediaService>()
                     .AddSingleton<IFileExplorerService, IOSFileExplorerService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()
                     .AddSingleton<IIapService, DebugIapService>()

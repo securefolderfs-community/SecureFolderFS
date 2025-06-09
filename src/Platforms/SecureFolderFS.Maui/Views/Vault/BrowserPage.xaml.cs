@@ -45,18 +45,17 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Add navigated-to folder to Breadcrumb
             ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
 
-#if ANDROID
-            // On Android: Navigate by changing current folder (i.e. ViewModel source)
+            // Navigate by changing current folder (i.e. ViewModel source)
             if (ViewModel is not null)
             {
                 // Animate navigation
                 await AnimateViewChangeAsync(folderViewModel);
                 return true;
             }
-#elif IOS
+
             // On iOS: Navigate whole page using shell
             // TODO: Set folder source in BrowserViewModel (to reuse the BrowserViewModel) and navigate the whole page instead of only the source
-#endif
+
             return false;
         }
 

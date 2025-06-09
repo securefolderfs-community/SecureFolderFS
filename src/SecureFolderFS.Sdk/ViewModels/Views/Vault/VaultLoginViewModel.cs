@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Test for quick unlock on mobile
             var recoveryKey = VaultViewModel.Title switch
             {
-                "Vault V3" => "TjpPwjoNOB7Zx1xhqm9H79M8ngr+ZR31pqSjWOccBrY=@@@cU/ajAu5WmAryrtT6I3ouBcXQE0FmE4hFU7bkYD1EQE=",
+                "Vault V3" => "IYa1rowvtzxhOqcJ0pRmRgNYlUworSsEHTYd068tnc0=@@@6fe9dUfQ2GezBj5zKfhATYzfqlxTUAWAE3l6Igvp3+U=",
                 "Plaintext Vault" => "lZbz5sWmeYDyyebm3LgPmvApNPsiyphj6zW4YZ2NuG8=@@@mEp3pOlUSXr0Yr47B+Se4M3ZXN8wPU/BlgFkLSpULiQ=",
                 _ => null
             };

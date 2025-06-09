@@ -3,6 +3,7 @@ using SecureFolderFS.UI.ViewModels.Authentication;
 
 #if ANDROID
 using SecureFolderFS.Maui.Platforms.Android.ViewModels;
+using SecureFolderFS.Shared.Extensions;
 #endif
 
 namespace SecureFolderFS.Maui.TemplateSelectors
@@ -20,6 +21,10 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         /// <inheritdoc/>
         protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
+#if ANDROID
+            AndroidBiometricsTemplate ??= App.Instance.Resources.Get("AndroidBiometricsLoginTemplate") as DataTemplate;
+#endif
+
             return item switch
             {
                 PasswordLoginViewModel => PasswordTemplate,

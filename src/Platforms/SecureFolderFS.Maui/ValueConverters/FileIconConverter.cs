@@ -28,8 +28,8 @@ namespace SecureFolderFS.Maui.ValueConverters
 #else
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new MauiIcon() { Icon = MauiIcons.Cupertino.CupertinoIcons.Folder },
-                    _ => new MauiIcon() { Icon = MauiIcons.Cupertino.CupertinoIcons.Doc }
+                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Folder, IconAutoScaling = true },
+                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Doc, IconAutoScaling = true }
                 }
 #endif
             };
