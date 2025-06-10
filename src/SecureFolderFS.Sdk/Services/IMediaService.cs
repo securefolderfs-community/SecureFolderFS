@@ -1,10 +1,10 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 
 namespace SecureFolderFS.Sdk.Services
 {

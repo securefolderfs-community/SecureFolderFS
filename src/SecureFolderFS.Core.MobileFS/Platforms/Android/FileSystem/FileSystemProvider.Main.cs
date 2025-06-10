@@ -1,13 +1,21 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Android.Runtime;
+using Android.Util;
+using Java.IO;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
+using Point = Android.Graphics.Point;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -320,6 +328,59 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 }
 
                 default: return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override AssetFileDescriptor? OpenDocumentThumbnail(string? documentId, Point? sizeHint, CancellationSignal? signal)
+        {
+            documentId = documentId == "null" ? null : documentId;
+            if (documentId is null)
+                return null;
+
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is not IFile file)
+                return null;
+
+            var typeHint = FileTypeHelper.GetTypeHint(file);
+            if (typeHint is not (TypeHint.Image or TypeHint.Media))
+                return null;
+
+            try
+            {
+                using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                using var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, 300U).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                // Need to copy thumbnail stream to a pipe (ParcelFileDescriptor with input/output stream)
+                var twoWayPipe = ParcelFileDescriptor.CreatePipe();
+                if (twoWayPipe is null)
+                    return null;
+
+                var output = new ParcelFileDescriptor.AutoCloseOutputStream(twoWayPipe[1]);
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        int bytesRead;
+                        var buffer = new byte[8192];
+                        while ((bytesRead = thumbnailStream.Read(buffer, 0, buffer.Length)) > 0)
+                            output.Write(buffer, 0, bytesRead);
+
+                        output.Flush();
+                        output.Close();
+                    }
+                    catch
+                    {
+                        // Handle if needed
+                    }
+                });
+
+                return new AssetFileDescriptor(twoWayPipe[0], 0, AssetFileDescriptor.UnknownLength);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(nameof(FileSystemProvider), $"Failed to read file. {ex}");
+                return null;
             }
         }
     }

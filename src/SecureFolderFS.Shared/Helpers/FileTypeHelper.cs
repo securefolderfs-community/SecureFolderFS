@@ -2,12 +2,12 @@ using System.IO;
 using System.Linq;
 using MimeTypes;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Models;
 
-namespace SecureFolderFS.Sdk.Helpers
+namespace SecureFolderFS.Shared.Helpers
 {
-    public static class FileTypeHelper
+        public static class FileTypeHelper
     {
         public static TypeClassification GetClassification(IStorable storable)
         {
@@ -174,4 +174,5 @@ namespace SecureFolderFS.Sdk.Helpers
             ".ogg", ".wav"
         };
     }
+
 }

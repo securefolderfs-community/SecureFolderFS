@@ -2,6 +2,7 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
@@ -74,6 +75,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.SupportsWrite;
 
+                    baseFlags |= DocumentContractFlags.SupportsThumbnail;
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
                 else

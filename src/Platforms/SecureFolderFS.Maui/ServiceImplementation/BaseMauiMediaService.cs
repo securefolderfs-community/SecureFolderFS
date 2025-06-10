@@ -1,8 +1,8 @@
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Models;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 using Stream = System.IO.Stream;

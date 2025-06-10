@@ -10,14 +10,14 @@ namespace SecureFolderFS.Maui.ValueConverters
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is not TransferType transferType)
-                return "Transfer";
+                return "Transfer".ToLocalized();
 
             return transferType switch
             {
                 TransferType.Copy => "Copy".ToLocalized(),
                 TransferType.Move => "Move".ToLocalized(),
                 TransferType.Select => "Select".ToLocalized(),
-                _ => "Transfer"
+                _ => "Transfer".ToLocalized()
             };
         }
 

@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {

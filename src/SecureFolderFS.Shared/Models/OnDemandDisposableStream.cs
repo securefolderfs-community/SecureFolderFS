@@ -1,6 +1,8 @@
-namespace SecureFolderFS.Maui.AppModels
+using System.IO;
+
+namespace SecureFolderFS.Shared.Models
 {
-    internal sealed class OnDemandDisposableStream : MemoryStream
+    public sealed class OnDemandDisposableStream : MemoryStream
     {
         public void ForceClose()
         {

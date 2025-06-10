@@ -1,6 +1,6 @@
-using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Shared.Enums;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Shared.Models
 {
     public struct TypeClassification
     {

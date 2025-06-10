@@ -10,7 +10,9 @@ using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {

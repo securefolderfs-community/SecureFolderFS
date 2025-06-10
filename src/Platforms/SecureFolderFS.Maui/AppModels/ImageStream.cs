@@ -1,4 +1,5 @@
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.AppModels

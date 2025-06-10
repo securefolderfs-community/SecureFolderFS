@@ -8,10 +8,10 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays

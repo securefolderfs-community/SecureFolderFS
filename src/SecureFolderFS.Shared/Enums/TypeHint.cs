@@ -1,4 +1,4 @@
-namespace SecureFolderFS.Sdk.Enums
+namespace SecureFolderFS.Shared.Enums
 {
     public enum TypeHint
     {

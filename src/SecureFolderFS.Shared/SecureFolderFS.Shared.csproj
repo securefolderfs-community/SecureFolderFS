@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="OwlCore.Storage" Version="0.12.2" />
+    <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
   </ItemGroup>
 
 </Project>

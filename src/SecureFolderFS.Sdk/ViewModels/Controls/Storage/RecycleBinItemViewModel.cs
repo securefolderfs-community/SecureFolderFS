@@ -1,3 +1,9 @@
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -7,18 +13,13 @@ using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 {
