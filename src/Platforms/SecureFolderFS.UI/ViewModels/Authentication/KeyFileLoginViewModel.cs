@@ -26,7 +26,9 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             if (!key.Successful || key.Value is null)
                 return;
 
-            CredentialsProvided?.Invoke(this, new(key.Value));
+            var tcs = new TaskCompletionSource();
+            CredentialsProvided?.Invoke(this, new(key.Value, tcs));
+            await tcs.Task;
         }
     }
 }

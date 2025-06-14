@@ -174,5 +174,4 @@ namespace SecureFolderFS.Shared.Helpers
             ".ogg", ".wav"
         };
     }
-
 }

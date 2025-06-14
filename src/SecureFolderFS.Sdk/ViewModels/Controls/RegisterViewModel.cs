@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private void ConfirmCredentials()
+        private async Task ConfirmCredentialsAsync()
         {
             // In case the authentication was not reported, try to extract it manually, if possible
             if (!_credentialsAdded && CurrentViewModel is IWrapper<IKey> keyWrapper)
@@ -72,7 +72,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (Credentials.Count == 0)
                 return;
 
-            CredentialsProvided?.Invoke(this, new(Credentials));
+            var tcs = new TaskCompletionSource();
+            CredentialsProvided?.Invoke(this, new(Credentials, tcs));
+
+            await tcs.Task;
         }
 
         async partial void OnCurrentViewModelChanged(AuthenticationViewModel? oldValue, AuthenticationViewModel? newValue)

@@ -206,18 +206,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private async void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            // Add authentication
-            _keySequence.Add(e.Authentication);
-
-            var result = ProceedAuthentication();
-            if (!result.Successful && CurrentViewModel is not ErrorViewModel)
+            try
             {
-                // Reached the end in which case we should try to unlock the vault
-                if (!await TryUnlockAsync())
+                // Add authentication
+                _keySequence.Add(e.Authentication);
+
+                var result = ProceedAuthentication();
+                if (!result.Successful && CurrentViewModel is not ErrorViewModel)
                 {
-                    // If login failed, restart the process
-                    RestartLoginProcess();
+                    // Reached the end in which case we should try to unlock the vault
+                    if (!await TryUnlockAsync())
+                    {
+                        // If login failed, restart the process
+                        RestartLoginProcess();
+                    }
                 }
+            }
+            finally
+            {
+                e.TaskCompletion?.TrySetResult();
             }
         }
 

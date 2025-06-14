@@ -21,11 +21,13 @@
                         HorizontalOptions="Fill"
                         ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
                         UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
-                    <Button
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
                         Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
                         HorizontalOptions="Fill"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
                         IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                        Style="{StaticResource AccentButtonStyle}"
                         Text="{l:ResourceString Rid=Continue}" />
                 </VerticalStackLayout>
             </ContentView>
@@ -67,18 +69,7 @@
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <ContentView>
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontSize="17"
-                        HorizontalOptions="Center"
-                        Text="{l:ResourceString Rid=VaultLoadError}" />
-                    <Label
-                        FontSize="12"
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        Opacity="0.6"
-                        Text="{Binding ErrorMessage, Mode=OneWay}" />
-                </VerticalStackLayout>
+                <local:ErrorControl ExceptionMessage="{Binding ExceptionMessage, Mode=OneWay}" />
             </ContentView>
         </DataTemplate>
     </ContentView.Resources>
