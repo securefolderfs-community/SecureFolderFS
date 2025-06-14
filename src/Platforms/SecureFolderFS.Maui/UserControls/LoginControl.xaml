@@ -58,9 +58,11 @@
                         Text="{l:ResourceString Rid=LoginKeyFile}" />
 
                     <!--  Authenticate  -->
-                    <Button
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
                         Command="{Binding ProvideCredentialsCommand}"
-                        Style="{StaticResource AccentButtonStyle}"
+                        FontAttributes="Bold"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
                         Text="{l:ResourceString Rid=Authenticate}" />
                 </VerticalStackLayout>
             </ContentView>

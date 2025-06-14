@@ -11,7 +11,14 @@
     <Color x:Key="TertiaryLightColor">#7EA9C1</Color>
     <Color x:Key="QuarternaryLightColor">#1E4F7A</Color>
 
+    <Color x:Key="PrimaryDarkColor">#106bbf</Color>
+    <Color x:Key="SecondaryDarkColor">#333f4d</Color>
+    <Color x:Key="TertiaryDarkColor">#1E4F7A</Color>
+    <Color x:Key="QuarternaryDarkColor">#7EA9C1</Color>
+
+
     <Color x:Key="PrimaryDisabledLightColor">#81C1FA</Color>
+    <Color x:Key="PrimaryDisabledDarkColor">#3c5c7a</Color>
 
 
     <!--  Contrasting Colors  -->
@@ -29,10 +36,13 @@
     <Color x:Key="ShimFillPrimaryColor">#DDE7E7E9</Color>
 
     <Color x:Key="ElevatedFillPrimaryLightColor">#F7F7F9</Color>
+    <Color x:Key="ElevatedFillSecondaryLightColor">#D3D3D3</Color>
     <Color x:Key="ElevatedFillPrimaryDarkColor">#2E3236</Color>
+    <Color x:Key="ElevatedFillSecondaryDarkColor">#464A4F</Color>
 
     <!--  Border Colors  -->
     <Color x:Key="BorderLightColor">#CECECE</Color>
+    <Color x:Key="BorderDarkColor">#737373</Color>
 
     <!--  Icon Plate Colors  -->
     <Color x:Key="PlaybackIconColor">#EEEEEE</Color>
@@ -46,12 +56,12 @@
 
 
     <!--  Application Theme Brushes  -->
-    <SolidColorBrush x:Key="ThemePrimaryColorBrush" Color="{StaticResource PrimaryLightColor}" />
-    <SolidColorBrush x:Key="ThemeSecondaryColorBrush" Color="{StaticResource SecondaryLightColor}" />
-    <SolidColorBrush x:Key="ThemeTertiaryColorBrush" Color="{StaticResource TertiaryLightColor}" />
-    <SolidColorBrush x:Key="ThemeQuarternaryColorBrush" Color="{StaticResource QuarternaryLightColor}" />
+    <SolidColorBrush x:Key="ThemePrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource SecondaryLightColor}, Dark={StaticResource SecondaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeTertiaryColorBrush" Color="{AppThemeBinding Light={StaticResource TertiaryLightColor}, Dark={StaticResource TertiaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeQuarternaryColorBrush" Color="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
 
-    <SolidColorBrush x:Key="ThemePrimaryDisabledColorBrush" Color="{StaticResource PrimaryDisabledLightColor}" />
+    <SolidColorBrush x:Key="ThemePrimaryDisabledColorBrush" Color="{AppThemeBinding Light={StaticResource PrimaryDisabledLightColor}, Dark={StaticResource PrimaryDisabledDarkColor}}" />
 
 
     <!--  Background Theme Brushes  -->
@@ -60,6 +70,7 @@
     <SolidColorBrush x:Key="ThemeCardFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource CardFillPrimaryLightColor}, Dark={StaticResource CardFillPrimaryDarkColor}}" />
 
     <SolidColorBrush x:Key="ThemeElevatedFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeElevatedFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillSecondaryLightColor}, Dark={StaticResource ElevatedFillSecondaryDarkColor}}" />
 
 
 

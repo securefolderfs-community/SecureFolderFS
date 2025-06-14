@@ -31,7 +31,7 @@
 
             <Grid
                 Padding="16,0"
-                Background="{StaticResource ElevatedFillPrimaryLightColor}"
+                Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                 ColumnSpacing="16"
                 HeightRequest="75"
                 VerticalOptions="Start">
@@ -67,6 +67,7 @@
                     FontAttributes="Bold"
                     FontSize="16"
                     HorizontalOptions="Start"
+                    LineBreakMode="TailTruncation"
                     Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
                     VerticalOptions="Center" />
             </Grid>

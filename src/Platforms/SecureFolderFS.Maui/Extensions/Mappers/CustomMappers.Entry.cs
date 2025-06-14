@@ -1,7 +1,8 @@
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Maui.UserControls.Common;
-
+using SecureFolderFS.UI.Enums;
 #if ANDROID
 using Android.Graphics.Drawables.Shapes;
 using Paint = Android.Graphics.Paint;
@@ -19,17 +20,26 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 if (view is not ModernEntry)
                     return;
 #if ANDROID
-                var outerRadii = Enumerable.Range(1, 8).Select(_ => 24f).ToArray();
+                const float R = 24f;
+                var outerRadii = new[] { R, R, R, R, R, R, R, R };
                 var roundRectShape = new RoundRectShape(outerRadii, null, null);
                 var shape = new ShapeDrawable(roundRectShape);
 
-                shape.Paint!.Color = (App.Instance.Resources["BorderLightColor"] as Color)!.ToPlatform();
+                shape.Paint!.Color = (App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                {
+                    ThemeType.Dark => "BorderDarkColor",
+                    _ => "BorderLightColor"
+                }] as Color)!.ToPlatform();
                 shape.Paint.StrokeWidth = 4;
                 shape.Paint.SetStyle(Paint.Style.Stroke);
                 handler.PlatformView.Background = shape;
                 handler.PlatformView.SetPadding(40, 32,40, 32);
 #elif IOS
-                handler.PlatformView.Layer.BorderColor = (App.Current.Resources["BorderLightColor"] as Color).ToPlatform().CGColor;
+                handler.PlatformView.Layer.BorderColor = (App.Current.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                {
+                    ThemeType.Dark => "BorderDarkColor",
+                    _ => "BorderLightColor"
+                }] as Color).ToPlatform().CGColor;
                 handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.RoundedRect;
 #endif
             });

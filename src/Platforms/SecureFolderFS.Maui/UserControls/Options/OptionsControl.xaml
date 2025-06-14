@@ -53,7 +53,7 @@
 
         <BoxView
             Margin="16,0"
-            BackgroundColor="LightGray"
+            Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
             HeightRequest="1"
             IsVisible="{Binding IsSeparatorVisible, Mode=OneWay, Source={x:Reference ThisControl}}" />
 

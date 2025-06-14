@@ -11,7 +11,7 @@
         BasedOn="{StaticResource BaseButtonStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
-        <Setter Property="TextColor" Value="{StaticResource QuarternaryLightColor}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
         <Setter Property="FontAttributes" Value="None" />
     </Style>
 
@@ -43,7 +43,7 @@
         BasedOn="{StaticResource BaseButtonStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{SolidColorBrush Color=Transparent}" />
-        <Setter Property="TextColor" Value="{StaticResource TertiaryLightColor}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
 
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -52,7 +52,7 @@
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
                             <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
-                            <Setter Property="TextColor" Value="{StaticResource QuarternaryLightColor}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled" />

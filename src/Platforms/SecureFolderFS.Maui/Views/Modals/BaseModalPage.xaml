@@ -64,7 +64,7 @@
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
-                BackgroundColor="White"
+                Background="{StaticResource ThemeBackgroundFillColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"
                 StrokeThickness="0">
