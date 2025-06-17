@@ -839,4 +839,7 @@
   <data name="WriteHere" xml:space="preserve">
       <value>Write here...</value>
   </data>
+  <data name="NoIssuesFound" xml:space="preserve">
+      <value>No issues found</value>
+  </data>
 </root>

@@ -17,6 +17,7 @@ namespace SecureFolderFS.Maui.Prompts
                 return Result.Failure(null);
 
             var page = Shell.Current.CurrentPage;
+            var originalName = ViewModel.NewName;
             ViewModel.NewName = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
@@ -24,6 +25,7 @@ namespace SecureFolderFS.Maui.Prompts
                 "Cancel".ToLocalized(),
                 initialValue: ViewModel.NewName);
 
+            ViewModel.NewName ??= originalName;
             if (string.IsNullOrWhiteSpace(ViewModel.NewName))
                 return Result.Failure(null);
 

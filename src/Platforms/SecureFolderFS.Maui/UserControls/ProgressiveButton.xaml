@@ -24,7 +24,7 @@
 
         <Grid>
             <Grid
-                BackgroundColor="{StaticResource ShimFillPrimaryColor}"
+                Background="{StaticResource ThemeShimFillPrimaryColorBrush}"
                 HorizontalOptions="Fill"
                 Opacity="0.5" />
 
@@ -68,7 +68,8 @@
                         DefaultBackgroundColor="{AppThemeBinding Light={StaticResource LightTransparentColor},
                                                                  Dark={StaticResource DarkTransparentColor}}"
                         PressedAnimationDuration="150"
-                        PressedBackgroundColor="#AAFFFFFF"
+                        PressedBackgroundColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                                 Dark={StaticResource ShimFillSecondaryDarkColor}}"
                         TouchGestureCompleted="TouchBehavior_TouchGestureCompleted" />
                 </Grid.Behaviors>
             </Grid>

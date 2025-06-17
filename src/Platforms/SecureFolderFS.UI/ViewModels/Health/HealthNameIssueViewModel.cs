@@ -51,7 +51,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
             
             // Show rename overlay
             var newName = ItemName == OriginalName ? null : ItemName;
-            var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized()) { Message = "ChooseNewName".ToLocalized(), NewName = newName};
+            var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized()) { Message = "ChooseNewName".ToLocalized(), NewName = newName };
             await OverlayService.ShowAsync(overlayViewModel);
             
             // Update the item name and confirm the changes by switching IsEditing to false

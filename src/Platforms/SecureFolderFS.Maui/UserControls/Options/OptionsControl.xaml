@@ -66,7 +66,8 @@
                                                          Dark={StaticResource DarkTransparentColor}}"
                 IsEnabled="{Binding Command, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}, FallbackValue=True}"
                 PressedAnimationDuration="150"
-                PressedBackgroundColor="{StaticResource ShimFillPrimaryColor}" />
+                PressedBackgroundColor="{AppThemeBinding Light={StaticResource ShimFillPrimaryLightColor},
+                                                         Dark={StaticResource ShimFillSecondaryDarkColor}}" />
         </VerticalStackLayout.Behaviors>
     </VerticalStackLayout>
 </ContentView>

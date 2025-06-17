@@ -20,6 +20,7 @@
 
     <ContentPage.Resources>
         <vc:ExpandedStateToIconConverter x:Key="ExpandedStateToIconConverter" />
+        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
 
         <!--  Directory Issue  -->
         <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
@@ -96,18 +97,25 @@
         </apesui:ContextMenuContainer>
 
         <!--  Issues list  -->
-        <uco:OptionsContainer Title="{l:ResourceString Rid=FoundIssues}" Grid.Row="1">
-            <uco:OptionsContainer.InnerContent>
-                <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
-                    <CollectionView.ItemTemplate>
-                        <ts:HealthIssueTemplateSelector
-                            DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
-                            IssueTemplate="{StaticResource IssueTemplate}"
-                            NameIssueTemplate="{StaticResource NameIssueTemplate}" />
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </uco:OptionsContainer.InnerContent>
-        </uco:OptionsContainer>
+        <Grid Grid.Row="1">
+            <uco:OptionsContainer Title="{l:ResourceString Rid=FoundIssues}" IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}">
+                <uco:OptionsContainer.InnerContent>
+                    <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
+                        <CollectionView.ItemTemplate>
+                            <ts:HealthIssueTemplateSelector
+                                DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                                IssueTemplate="{StaticResource IssueTemplate}"
+                                NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </uco:OptionsContainer.InnerContent>
+            </uco:OptionsContainer>
+            <Label
+                FontSize="18"
+                HorizontalOptions="Center"
+                IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                Text="{l:ResourceString Rid=NoIssuesFound}" />
+        </Grid>
 
         <VerticalStackLayout
             Grid.Row="2"

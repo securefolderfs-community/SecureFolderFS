@@ -1,10 +1,11 @@
 using Java.IO;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
 {
-    public class InputOutputStream : Stream
+    public class InputOutputStream2 : Stream
     {
-        private readonly InputStream _inputStream;
+        private readonly BufferedInputStream _inputStream;
         private readonly OutputStream? _outputStream;
         private bool _disposed;
         private long _position;
@@ -14,7 +15,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         public override bool CanRead => true;
 
         /// <inheritdoc/>
-        public override bool CanSeek => true;
+        public override bool CanSeek { get; }
 
         /// <inheritdoc/>
         public override bool CanWrite => _outputStream is not null;
@@ -53,12 +54,16 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             }
         }
 
-        public InputOutputStream(InputStream inputStream, OutputStream? outputStream, long length)
+        public InputOutputStream2(BufferedInputStream inputStream, OutputStream? outputStream, long length)
         {
             _inputStream = inputStream;
             _outputStream = outputStream;
             _length = length;
             _position = 0;
+
+            var canSeek = CanSeek = inputStream.MarkSupported();
+            if (canSeek)
+                inputStream.Mark(int.MaxValue);
         }
 
         /// <inheritdoc/>
@@ -146,7 +151,19 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
-            throw new NotSupportedException("Cannot modify length on this stream.");
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            if (value == _length)
+                return;
+
+            // Simulate truncation or extension
+            _length = value;
+
+            // If the current position is beyond the new length, clamp it
+            if (_position > _length)
+                _position = _length;
         }
 
         /// <inheritdoc/>
