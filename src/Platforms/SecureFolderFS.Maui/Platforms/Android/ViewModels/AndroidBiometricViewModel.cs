@@ -129,11 +129,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                         {
                             if (result?.CryptoObject?.Signature is null)
                                 return;
-                            
+
                             var signedBytes = AndroidBiometricHelpers.SignData(result.CryptoObject.Signature, data);
                             if (signedBytes is null)
                                 throw new CryptographicException("Could not sign the data.");
-                                
+
                             tcs.TrySetResult(SecureKey.TakeOwnership(signedBytes));
                         }
                         catch (Exception ex)

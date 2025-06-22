@@ -35,10 +35,10 @@ namespace SecureFolderFS.Maui
 
             // Enable edge to edge
             EdgeToEdge.Enable(this);
-            
+
             // Configure StatusBar color
             ApplyStatusBarColor(MauiThemeHelper.Instance.CurrentTheme);
-            
+
             // Always listen for theme changes
             MauiThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
         }
@@ -49,12 +49,12 @@ namespace SecureFolderFS.Maui
             base.OnActivityResult(requestCode, resultCode, data);
             ActivityResult?.Invoke(requestCode, resultCode, data);
         }
-        
+
         private void ThemeHelper_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(MauiThemeHelper.CurrentTheme))
                 return;
-            
+
             ApplyStatusBarColor(MauiThemeHelper.Instance.CurrentTheme);
         }
 

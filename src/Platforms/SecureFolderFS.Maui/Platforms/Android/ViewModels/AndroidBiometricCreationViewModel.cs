@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                 var key = await CreateAsync(VaultId, challenge.Key, cancellationToken);
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
-                
+
                 await tcs.Task;
             }
             catch (Exception ex)

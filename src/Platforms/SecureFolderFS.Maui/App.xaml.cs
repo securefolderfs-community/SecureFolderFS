@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui
         public App()
         {
             InitializeComponent();
-            
+
 #if ANDROID
             // Load Android-specific resource dictionaries
             Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());

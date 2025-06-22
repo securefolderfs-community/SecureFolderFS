@@ -36,7 +36,7 @@ namespace SecureFolderFS.UI.Helpers
 
             return secretKey;
         }
-        
+
         public static SecretKey GenerateChallenge(string vaultId)
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);

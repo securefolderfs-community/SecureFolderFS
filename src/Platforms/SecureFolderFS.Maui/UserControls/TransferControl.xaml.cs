@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public bool IsShown
         {
             get => (bool)GetValue(IsShownProperty);

@@ -7,7 +7,7 @@ namespace SecureFolderFS.Storage.Pickers
     /// Represents an abstract class used for specifying picker-specific filtering options.
     /// </summary>
     public abstract record PickerOptions;
-    
+
     /// <summary>
     /// Represents a name filter.
     /// </summary>

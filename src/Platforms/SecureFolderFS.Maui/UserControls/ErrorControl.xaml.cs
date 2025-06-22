@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public string? ExceptionMessage
         {
             get => (string?)GetValue(ExceptionMessageProperty);

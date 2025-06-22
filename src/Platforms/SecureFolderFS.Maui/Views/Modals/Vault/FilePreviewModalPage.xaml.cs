@@ -117,7 +117,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             var viewModel = carouselViewModel.Slides.ElementAtOrDefault(index);
             if (viewModel is null)
                 return null;
-            
+
             return new ContentPresentation()
             {
                 Presentation = viewModel,

@@ -125,7 +125,7 @@ namespace SecureFolderFS.UI.AppModels
 
                 if (deepestImplementation is not IStorableChild plaintextChild)
                     return null;
-                
+
                 // Return the equivalent ciphertext implementation
                 return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _specifics, cancellationToken) as IModifiableFolder;
             }

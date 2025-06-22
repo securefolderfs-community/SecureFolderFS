@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         {
             if (typeHint == default)
                 typeHint = FileTypeHelper.GetTypeHint(file);
-            
+
             switch (typeHint)
             {
                 case TypeHint.Image:
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
                     return await GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
                 }
-                
+
                 default: throw new InvalidOperationException("The provided file type is invalid.");
             }
         }

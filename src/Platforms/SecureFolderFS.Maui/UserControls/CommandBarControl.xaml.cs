@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             Closed?.Invoke(this, e);
         }
-        
+
         private void MainContent_Loaded(object? sender, EventArgs e)
         {
             UpdateToolbarOnTop(IsToolbarOnTop);
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Maui.UserControls
                         commandBar.TopBorder.IsVisible = false;
                     }
                 });
-        
+
         public bool IsToolbarOnTop
         {
             get => (bool)GetValue(IsToolbarOnTopProperty);

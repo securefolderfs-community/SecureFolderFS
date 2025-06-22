@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.Prompts
         {
             if (ViewModel?.PrimaryText is null || ViewModel?.SecondaryText is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
             var option = await page.DisplayAlert(
                 ViewModel.Title,

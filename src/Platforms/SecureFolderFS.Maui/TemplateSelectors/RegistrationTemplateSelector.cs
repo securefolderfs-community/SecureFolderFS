@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 #if ANDROID
             AndroidBiometricsTemplate ??= App.Instance.Resources.Get("AndroidBiometricsRegisterTemplate") as DataTemplate;
 #endif
-            
+
             return item switch
             {
                 PasswordCreationViewModel => PasswordTemplate,

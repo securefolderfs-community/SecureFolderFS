@@ -29,7 +29,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 var key = await CreateAsync(_vaultId, null, cancellationToken);
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
-                
+
                 await tcs.Task;
             }
             catch (Exception ex)

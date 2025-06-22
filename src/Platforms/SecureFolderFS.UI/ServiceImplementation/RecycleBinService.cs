@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             if (unlockedViewModel.StorageRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
                 throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
-            
+
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
@@ -50,7 +50,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             // Make sure to also update the file system options
             specifics.Options.DangerousSetRecycleBin(maxSize);
         }
-        
+
         /// <inheritdoc/>
         public async Task RecalculateSizesAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
         {
@@ -59,7 +59,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
-            
+
             var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 return;
@@ -69,20 +69,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
             {
                 if (item.Name.EndsWith(".json"))
                     continue;
-                
+
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBin, StreamSerializer.Instance, cancellationToken);
                 if (dataModel.Size is { } size and >= 0L)
                 {
                     totalSize += size;
                     continue;
                 }
-                
+
                 // Get the configuration file
                 var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
 
                 // Read configuration file
                 await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
-                
+
                 // Calculate new size
                 var sizeHint = item switch
                 {
@@ -91,13 +91,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     _ => 0L
                 };
                 totalSize += sizeHint;
-                
+
                 // Create new configuration with updated size
                 var newConfigurationDataModel = dataModel with
                 {
                     Size = sizeHint
                 };
-                
+
                 // Serialize configuration data model
                 await using var serializedStream = await StreamSerializer.Instance.SerializeAsync(newConfigurationDataModel, cancellationToken);
 
@@ -105,7 +105,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 await serializedStream.CopyToAsync(configurationStream, cancellationToken);
                 await configurationStream.FlushAsync(cancellationToken);
             }
-            
+
             await AbstractRecycleBinHelpers.SetOccupiedSizeAsync(modifiableRecycleBin, totalSize, cancellationToken);
         }
 

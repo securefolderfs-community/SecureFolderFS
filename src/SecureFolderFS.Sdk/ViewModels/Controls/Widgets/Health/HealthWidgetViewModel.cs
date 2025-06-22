@@ -62,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         {
             await _dashboardNavigator.NavigateAsync(HealthReportViewModel);
         }
-        
+
         private async void HealthViewModel_StateChanged(object? sender, EventArgs e)
         {
             if (e is not ScanningFinishedEventArgs)

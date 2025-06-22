@@ -33,13 +33,13 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             var stream = await file.OpenReadAsync(cancellationToken);
             return new AggregatedDisposable([stream]);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IDisposable> StreamPdfSourceAsync(IFile file, CancellationToken cancellationToken = default)
         {
             var classification = FileTypeHelper.GetClassification(file);
             var stream = await file.OpenReadAsync(cancellationToken);
-            
+
             return new PdfStreamServer(stream, classification.MimeType);
         }
 

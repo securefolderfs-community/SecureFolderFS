@@ -20,10 +20,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IDisposable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        
+
         [ObservableProperty] private bool _CanResolve;
         [ObservableProperty] private VaultHealthViewModel _HealthViewModel;
-        
+
         public VaultHealthReportViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultHealthViewModel healthViewModel)
         {
             ServiceProvider = DI.Default;
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (result.Successful)
                 HealthViewModel.FoundIssues.RemoveMatch(x => x.Inner.Id == issueViewModel.Inner.Id);
         }
-        
+
         private void HealthViewModel_StateChanged(object? sender, EventArgs e)
         {
             CanResolve = e switch
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 _ => CanResolve
             };
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {

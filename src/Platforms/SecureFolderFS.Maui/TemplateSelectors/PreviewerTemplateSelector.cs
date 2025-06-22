@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? TextTemplate { get; set; }
 
         public DataTemplate? PdfTemplate { get; set; }
-        
+
         public DataTemplate? CarouselTemplate { get; set; }
 
         public DataTemplate? FallbackTemplate { get; set; }

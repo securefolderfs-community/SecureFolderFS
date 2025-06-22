@@ -38,13 +38,13 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
                 return Task.FromResult(stream);
             }
-            
+
             if (accessMode == FileAccess.Read)
             {
                 var inStream = activity.ContentResolver?.OpenInputStream(Inner);
                 if (inStream is null)
                     return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open input stream."));
-                
+
                 return Task.FromResult(inStream);
             }
             else

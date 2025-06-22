@@ -36,7 +36,7 @@ namespace SecureFolderFS.UI
             public const string EXCEPTION_LOG_FILENAME = "securefolderfs_exceptionlog.log";
             public const string DEFAULT_CULTURE_STRING = "en-US";
         }
-        
+
         public static class Browser
         {
             public const int THUMBNAIL_MAX_PARALLELISATION = 4;

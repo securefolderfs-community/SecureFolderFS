@@ -43,7 +43,7 @@ namespace SecureFolderFS.Storage.Scanners
                 {
                     if (!_predicate?.Invoke(folder) ?? false)
                         continue;
-                    
+
                     yield return folder;
                     await foreach (var subFolder in RecursiveScanAsync(folder, cancellationToken).ConfigureAwait(false))
                         yield return subFolder;
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Storage.Scanners
                 {
                     if (!_predicate?.Invoke(item) ?? false)
                         continue;
-                    
+
                     yield return item;
 
                     if (item is not IFolder folder)

@@ -78,7 +78,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             {
                 // Notify that navigation has occurred
                 NavigationChanged?.Invoke(this, CurrentView);
-                
+
                 // Notify the navigated-to view
                 CurrentView?.OnAppearing();
             }
@@ -100,7 +100,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             {
                 // Notify that navigation has occurred
                 NavigationChanged?.Invoke(this, CurrentView);
-                
+
                 // Notify the navigated-to view
                 CurrentView?.OnAppearing();
             }

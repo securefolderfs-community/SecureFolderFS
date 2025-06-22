@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             return bValue ? ScrollOrientation.Vertical : ScrollOrientation.Both;
         }
-        
+
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
