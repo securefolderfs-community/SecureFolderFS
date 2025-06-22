@@ -15,7 +15,7 @@
                 Binding="{Binding IsSelected}"
                 TargetType="Grid"
                 Value="True">
-                <Setter Property="Background" Value="{StaticResource SecondaryBrush}" />
+                <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

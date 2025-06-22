@@ -21,6 +21,7 @@
     <md:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
         <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
+        <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
 
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
@@ -61,6 +62,12 @@
                     Text="{Binding Text, Mode=TwoWay}" />
             </ScrollView>
         </DataTemplate>
+        <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
+            <WebView
+                HorizontalOptions="Fill"
+                Source="{Binding PdfSource, Mode=OneWay, Converter={StaticResource FileServerWebViewSourceConverter}}"
+                VerticalOptions="Fill" />
+        </DataTemplate>
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
             <VerticalStackLayout Spacing="16" VerticalOptions="Center">
                 <Grid HorizontalOptions="Center">
@@ -98,6 +105,7 @@
                             CarouselTemplate="{StaticResource CarouselTemplate}"
                             FallbackTemplate="{StaticResource FallbackTemplate}"
                             ImageTemplate="{StaticResource ImageTemplate}"
+                            PdfTemplate="{StaticResource PdfTemplate}"
                             TextTemplate="{StaticResource TextTemplate}"
                             VideoTemplate="{StaticResource VideoTemplate}" />
                     </uc:ContentPresentation.TemplateSelector>

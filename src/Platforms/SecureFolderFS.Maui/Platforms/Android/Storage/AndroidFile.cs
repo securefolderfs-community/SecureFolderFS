@@ -30,10 +30,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            Stream? stream;
             if (IsVirtualFile(activity, Inner))
             {
-                stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
+                var stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
                 if (stream is null)
                     return Task.FromException<Stream>(new ArgumentException("No stream types available for '*/*' mime type."));
 

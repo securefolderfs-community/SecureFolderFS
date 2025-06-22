@@ -131,25 +131,16 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Avalonia LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\Avalonia LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <None Remove="Assets\Licenses\SvgSkia LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\SvgSkia LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\AvaloniaBehaviors LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\AvaloniaBehaviors LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <None Remove="Assets\Licenses\TextCopy LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\TextCopy LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\AvaloniaNameGenerator LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
         <EmbeddedResource Include="Assets\AppAssets\Shields\error_shield.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

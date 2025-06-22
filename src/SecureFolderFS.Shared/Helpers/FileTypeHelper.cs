@@ -7,11 +7,11 @@ using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Shared.Helpers
 {
-        public static class FileTypeHelper
+    public static class FileTypeHelper
     {
         public static TypeClassification GetClassification(IStorable storable)
         {
-            var mimeType = MimeTypeMap.GetMimeType(storable.Id);
+            var mimeType = GetMimeType(storable.Id);
             var extension = Path.GetExtension(storable.Id);
             var typeHint = GetTypeFromMime(mimeType);
             typeHint = typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(Path.GetExtension(storable.Id)) : typeHint;
@@ -21,10 +21,20 @@ namespace SecureFolderFS.Shared.Helpers
 
         public static TypeHint GetTypeHint(IStorable storable)
         {
-            var mimeType = MimeTypeMap.GetMimeType(storable.Id);
+            var mimeType = GetMimeType(storable.Id);
             var typeHint = GetTypeFromMime(mimeType);
 
             return typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(Path.GetExtension(storable.Id)) : typeHint;
+        }
+
+        public static string GetMimeType(string name)
+        {
+            var extension = Path.GetExtension(name).ToLowerInvariant();
+            return extension switch
+            {
+                ".mjs" => "text/javascript",
+                _ => MimeTypeMap.GetMimeType(extension)
+            };
         }
 
         public static TypeHint GetTypeFromMime(string mimeType)

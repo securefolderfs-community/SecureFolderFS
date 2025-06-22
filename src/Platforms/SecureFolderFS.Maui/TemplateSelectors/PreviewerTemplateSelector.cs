@@ -1,3 +1,4 @@
+using Android.Graphics.Pdf.Content;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
@@ -10,6 +11,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? TextTemplate { get; set; }
 
+        public DataTemplate? PdfTemplate { get; set; }
+        
         public DataTemplate? CarouselTemplate { get; set; }
 
         public DataTemplate? FallbackTemplate { get; set; }
@@ -24,6 +27,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
                 ImagePreviewerViewModel => ImageTemplate,
                 VideoPreviewerViewModel => VideoTemplate,
                 TextPreviewerViewModel => TextTemplate,
+                PdfPreviewerViewModel => PdfTemplate,
                 _ => null
             };
         }

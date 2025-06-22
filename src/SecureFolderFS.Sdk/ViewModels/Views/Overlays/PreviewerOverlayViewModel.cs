@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
@@ -37,11 +35,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (_itemViewModel.Inner is not IFile file)
                 return Task.CompletedTask;
 
-            var typeHint = FileTypeHelper.GetTypeHint(_itemViewModel.Inner);
-            var previewer = (BasePreviewerViewModel)(typeHint switch
+            var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
+            var previewer = (BasePreviewerViewModel)(classification.TypeHint switch
             {
                 TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
                 TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(),
+                TypeHint.Document when classification is { MimeType: "application/pdf" } => new PdfPreviewerViewModel(file).WithInitAsync(),
                 _ => new FallbackPreviewerViewModel(file).WithInitAsync()
             });
 

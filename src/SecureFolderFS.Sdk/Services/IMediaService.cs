@@ -22,6 +22,8 @@ namespace SecureFolderFS.Sdk.Services
 
         Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default);
 
+        Task<IDisposable> StreamPdfSourceAsync(IFile file, CancellationToken cancellationToken = default);
+
         Task<bool> TrySetFolderIconAsync(IModifiableFolder folder, Stream imageStream, CancellationToken cancellationToken = default);
     }
 }
