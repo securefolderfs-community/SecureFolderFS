@@ -6,9 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Imaging;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
 
@@ -39,13 +40,19 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IImageStream?> GenerateThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
+        public Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IImageStream?>(null);
+            return Task.FromException<IDisposable>(new NotSupportedException());
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
+        public Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
+        {
+            return Task.FromException<IImageStream>(new NotSupportedException());
+        }
+
+        /// <inheritdoc/>
+        public Task<IDisposable> StreamPdfSourceAsync(IFile file, CancellationToken cancellationToken = default)
         {
             return Task.FromException<IDisposable>(new NotSupportedException());
         }

@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     [Bindable(true)]
-    public abstract partial class AuthenticationViewModel(string id)
-        : ReportableViewModel, IAuthenticator, IDisposable
+    public abstract partial class AuthenticationViewModel(string id) : ReportableViewModel, IAuthenticator, IDisposable
     {
         [ObservableProperty] private string? _Description;
         [ObservableProperty] private string? _Icon; // TODO: Change to IImage
@@ -21,6 +20,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// Gets the unique ID of this authentication method.
         /// </summary>
         public string Id { get; } = id;
+
+        /// <summary>
+        /// Gets the value that indicates whether complementation is available for this authentication method.
+        /// </summary>
+        public abstract bool CanComplement { get; }
 
         /// <summary>
         /// Gets the stage (step) availability of the given authentication type.

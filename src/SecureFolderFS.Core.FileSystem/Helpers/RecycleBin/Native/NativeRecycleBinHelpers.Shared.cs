@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             try
             {
                 // Sum file sizes in the current directory
-                var files = Directory.GetFiles(path);
+                var files = Directory.EnumerateFiles(path);
                 Parallel.ForEach(files, () => 0L, (file, _, localTotal) =>
                 {
                     try
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 localTotal => Interlocked.Add(ref totalSize, localTotal));
 
                 // Recurse into subdirectories in parallel
-                var subDirs = Directory.GetDirectories(path);
+                var subDirs = Directory.EnumerateDirectories(path);
                 Parallel.ForEach(subDirs, dir =>
                 {
                     var subDirSize = GetFolderSizeRecursive(dir);

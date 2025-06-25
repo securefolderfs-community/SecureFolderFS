@@ -43,10 +43,10 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         [SkipLocalsInit]
-        public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
+        public static (SecretKey dekKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
         {
-            var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
-            var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
@@ -54,24 +54,24 @@ namespace SecureFolderFS.Core.VaultAccess
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
-            rfc3394.UnwrapKey(keystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            rfc3394.UnwrapKey(keystoreDataModel.WrappedDekKey, kek, dekKey.Key);
             rfc3394.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
-            return (encKey, macKey);
+            return (dekKey, macKey);
         }
 
         /// <summary>
         /// Encrypts cryptographic keys and creates a new instance of <see cref="VaultKeystoreDataModel"/>.
         /// </summary>
         /// <param name="passkey">The passkey credential that combines password and 'magic'.</param>
-        /// <param name="encKey">The DEK key.</param>
+        /// <param name="dekKey">The DEK key.</param>
         /// <param name="macKey">The MAC key.</param>
         /// <param name="salt">The salt used during KEK derivation.</param>
         /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys.</returns>
         [SkipLocalsInit]
         public static VaultKeystoreDataModel EncryptKeystore(
             SecretKey passkey,
-            SecretKey encKey,
+            SecretKey dekKey,
             SecretKey macKey,
             byte[] salt)
         {
@@ -81,13 +81,13 @@ namespace SecureFolderFS.Core.VaultAccess
 
             // Wrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
-            var wrappedEncKey = rfc3394.WrapKey(encKey, kek);
+            var wrappedDekKey = rfc3394.WrapKey(dekKey, kek);
             var wrappedMacKey = rfc3394.WrapKey(macKey, kek);
 
             // Generate keystore
             return new()
             {
-                WrappedEncKey = wrappedEncKey,
+                WrappedDekKey = wrappedDekKey,
                 WrappedMacKey = wrappedMacKey,
                 Salt = salt
             };

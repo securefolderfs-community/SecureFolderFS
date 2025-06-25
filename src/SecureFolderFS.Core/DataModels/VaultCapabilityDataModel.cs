@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.DataModels
         /// The capability informs how the properties of the authentication data model
         /// should be interpreted and to what capacity this attestation can be used.
         /// </remarks>
-        [JsonPropertyName("capability")] // supportsVersion|supports..
+        [JsonPropertyName("capability")] // supportsVersion|supportsChallenge|supports..
         [DefaultValue("")]
         public string Capability { get; init; } = string.Empty;
     }

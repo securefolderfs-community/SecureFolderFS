@@ -27,8 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
         [ObservableProperty] private bool _IsRemoving;
-        [ObservableProperty] private bool _CanComplement;
         [ObservableProperty] private bool _IsComplementing;
+        [ObservableProperty] private bool _IsComplementationAvailable;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
 

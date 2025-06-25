@@ -29,6 +29,9 @@ namespace SecureFolderFS.Uno.ViewModels
         protected IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
+        public sealed override bool CanComplement { get; } = true;
+
+        /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         protected WindowsHelloViewModel(IFolder vaultFolder, string vaultId)

@@ -57,18 +57,18 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
 
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            using var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
             Argon2id.Old_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
-            rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedDekKey, kek, dekKey.Key);
             rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             // Create copies of keys for later use
-            return KeyPair.ImportKeys(encKey, macKey);
+            return KeyPair.ImportKeys(dekKey, macKey);
         }
 
         /// <inheritdoc/>
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Vault Configuration ------------------------------------
             //
-            var encKey = keyPair.DekKey;
+            var dekKey = keyPair.DekKey;
             var macKey = keyPair.MacKey;
             var v3ConfigDataModel = new VaultConfigurationDataModel()
             {
@@ -121,13 +121,13 @@ namespace SecureFolderFS.Core.Migration.AppModels
             Argon2id.V3_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
             using var rfc3394 = new Rfc3394KeyWrap();
-            var newWrappedEncKek = rfc3394.WrapKey(encKey, kek);
+            var newWrappedDekKek = rfc3394.WrapKey(dekKey, kek);
             var newWrappedMacKek = rfc3394.WrapKey(macKey, kek);
 
             var v3KeystoreDataModel = new VaultKeystoreDataModel()
             {
                 Salt = _v2KeystoreDataModel.Salt,
-                WrappedEncKey = newWrappedEncKek,
+                WrappedDekKey = newWrappedDekKek,
                 WrappedMacKey = newWrappedMacKek
             };
 

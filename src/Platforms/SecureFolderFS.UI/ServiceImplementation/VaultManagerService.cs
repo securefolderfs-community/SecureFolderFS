@@ -54,16 +54,17 @@ namespace SecureFolderFS.UI.ServiceImplementation
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             var recoveryRoutine = routines.RecoverVault();
             var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
-            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
-            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))
+            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (1) was not in correct format.");
 
-            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))
+            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (2) was not in correct format.");
 
             await recoveryRoutine.InitAsync(cancellationToken);
             recoveryRoutine.SetCredentials(recoveryKey);
+
             return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
 

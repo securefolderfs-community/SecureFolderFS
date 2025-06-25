@@ -40,22 +40,22 @@ namespace SecureFolderFS.Core.Routines.Operational
         public void SetCredentials(SecretKey passkey)
         {
             // Allocate shallow keys which will be later disposed of
-            using var encKey = new SecureKey(KeyTraits.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(KeyTraits.MACKEY_LENGTH);
+            using var dekKey = new SecureKey(KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new SecureKey(KeyTraits.MAC_KEY_LENGTH);
             var salt = new byte[KeyTraits.SALT_LENGTH];
 
             // Fill keys
             using var secureRandom = RandomNumberGenerator.Create();
-            secureRandom.GetNonZeroBytes(encKey.Key);
+            secureRandom.GetNonZeroBytes(dekKey.Key);
             secureRandom.GetNonZeroBytes(macKey.Key);
             secureRandom.GetNonZeroBytes(salt);
 
             // Generate keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, dekKey, macKey, salt);
 
             // Create key copies for later use
             _macKey = macKey.CreateCopy();
-            _dekKey = encKey.CreateCopy();
+            _dekKey = dekKey.CreateCopy();
         }
 
         /// <inheritdoc/>

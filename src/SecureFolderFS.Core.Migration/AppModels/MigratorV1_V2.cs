@@ -53,18 +53,18 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
 
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            using var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
             Argon2id.Old_DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
-            rfc3394.UnwrapKey(_v1KeystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            rfc3394.UnwrapKey(_v1KeystoreDataModel.WrappedDekKey, kek, dekKey.Key);
             rfc3394.UnwrapKey(_v1KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             // Create copies of keys for later use
-            return new EncAndMacKey(encKey.CreateCopy(), macKey.CreateCopy());
+            return KeyPair.ImportKeys(dekKey, macKey);
         }
 
         /// <inheritdoc/>
@@ -73,15 +73,15 @@ namespace SecureFolderFS.Core.Migration.AppModels
             if (_v1ConfigDataModel is null)
                 throw new InvalidOperationException($"{nameof(_v1ConfigDataModel)} is null.");
 
-            if (unlockContract is not EncAndMacKey encAndMacKey)
-                throw new ArgumentException($"{nameof(unlockContract)} is not of correct type.");
+            if (unlockContract is not KeyPair keyPair)
+                throw new ArgumentException($"{nameof(unlockContract)} is not of type {nameof(KeyPair)}.");
 
             // Begin progress report
             progress.PercentageProgress?.Report(0d);
 
             // Vault Configuration ------------------------------------
             //
-            var macKey = encAndMacKey.MacKey;
+            var macKey = keyPair.MacKey;
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new V2VaultConfigurationDataModel()
             {
@@ -152,20 +152,6 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 2 => Cryptography.Constants.CipherId.AES_SIV,
                 _ => throw new ArgumentOutOfRangeException(nameof(v1FileNameCipherScheme))
             };
-        }
-
-        private sealed class EncAndMacKey(SecretKey encKey, SecretKey macKey) : IDisposable
-        {
-            public SecretKey EncKey { get; } = encKey;
-
-            public SecretKey MacKey { get; } = macKey;
-
-            /// <inheritdoc/>
-            public void Dispose()
-            {
-                EncKey.Dispose();
-                MacKey.Dispose();
-            }
         }
 
         /// <inheritdoc/>

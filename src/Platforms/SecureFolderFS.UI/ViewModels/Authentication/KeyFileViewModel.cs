@@ -27,10 +27,13 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         private IFileExplorerService FileExplorerService { get; } = DI.Service<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
+        public override event EventHandler<EventArgs>? StateChanged;
 
         /// <inheritdoc/>
-        public override event EventHandler<EventArgs>? StateChanged;
+        public sealed override bool CanComplement { get; } = false;
+
+        /// <inheritdoc/>
+        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         protected KeyFileViewModel()
             : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)

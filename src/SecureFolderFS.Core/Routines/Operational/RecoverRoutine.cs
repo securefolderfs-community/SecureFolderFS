@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         public RecoverRoutine(VaultReader vaultReader)
         {
             _vaultReader = vaultReader;
-            _dekKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
-            _macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            _dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            _macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
         }
 
         /// <inheritdoc/>
@@ -34,10 +34,10 @@ namespace SecureFolderFS.Core.Routines.Operational
         public void SetCredentials(SecretKey passkey)
         {
             // Copy the first part (DEK) of the master key
-            passkey.Key.AsSpan(0, Cryptography.Constants.KeyTraits.ENCKEY_LENGTH).CopyTo(_dekKey.Key);
+            passkey.Key.AsSpan(0, Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH).CopyTo(_dekKey.Key);
 
             // Copy the second part (MAC) of the master key
-            passkey.Key.AsSpan(Cryptography.Constants.KeyTraits.MACKEY_LENGTH).CopyTo(_macKey.Key);
+            passkey.Key.AsSpan(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH).CopyTo(_macKey.Key);
         }
 
         /// <inheritdoc/>

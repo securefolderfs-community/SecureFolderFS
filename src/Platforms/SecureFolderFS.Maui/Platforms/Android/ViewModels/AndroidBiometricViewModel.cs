@@ -30,6 +30,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         protected IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
+        public sealed override bool CanComplement { get; } = true;
+
+        /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         public AndroidBiometricViewModel(IFolder vaultFolder, string vaultId)

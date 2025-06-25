@@ -37,8 +37,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             // Derive keystore
-            var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
-            _dekKey = encKey;
+            var (dekKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
+            _dekKey = dekKey;
             _macKey = macKey;
         }
 

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.DataModels
         /// Gets the wrapped version of the DEK key.
         /// </summary>
         [JsonPropertyName("c_encryptionKey")]
-        public byte[]? WrappedEncKey { get; init; }
+        public byte[]? WrappedDekKey { get; init; }
 
         /// <summary>
         /// Gets the wrapped version of the MAC key.
