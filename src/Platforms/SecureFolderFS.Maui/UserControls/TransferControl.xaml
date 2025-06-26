@@ -7,65 +7,83 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="RootControl">
 
-    <Border
-        x:Name="RootBorder"
-        Margin="16"
-        Padding="16,12"
-        x:DataType="local:TransferControl"
-        Background="{StaticResource SecondaryBrush}"
-        BindingContext="{x:Reference RootControl}"
-        HeightRequest="72"
-        IsVisible="False"
-        TranslationY="200">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="12" />
-        </Border.StrokeShape>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <ContentView.Resources>
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+    </ContentView.Resources>
 
-            <Label
-                Grid.Column="0"
-                FontSize="18"
-                Text="{Binding Title, Mode=OneWay}"
-                VerticalOptions="Center" />
+    <Grid x:Name="RootPanel" IsVisible="False">
+        <Grid.Shadow>
+            <Shadow
+                Brush="{StaticResource CardFillPrimaryDarkColor}"
+                Opacity="0.4"
+                Radius="5" />
+        </Grid.Shadow>
 
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <HorizontalStackLayout Grid.Column="1" Spacing="8">
-                        <Button
-                            mi:MauiIcon.Value="{mi_material:Material Icon=Close}"
-                            Command="{Binding CancelCommand, Mode=OneWay}"
-                            IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                            Style="{StaticResource TransparentButtonStyle}" />
-                        <uc:ActivityButton
-                            ButtonStyle="{StaticResource AccentButtonStyle}"
-                            Command="{Binding PrimaryCommand, Mode=OneWay}"
-                            IsProgressing="{Binding IsProgressing, Mode=OneWay}"
-                            Text="{Binding PrimaryButtonText, Mode=OneWay}" />
-                    </HorizontalStackLayout>
-                </On>
-                <On Platform="iOS">
-                    <HorizontalStackLayout Grid.Column="1" Spacing="8">
-                        <Button
-                            Padding="8"
-                            mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=Xmark}"
-                            Command="{Binding CancelCommand, Mode=OneWay}"
-                            IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                            Style="{StaticResource TransparentButtonStyle}" />
-                        <uc:ActivityButton
-                            Padding="8"
-                            ButtonStyle="{StaticResource AccentButtonStyle}"
-                            Command="{Binding PrimaryCommand, Mode=OneWay}"
-                            IsProgressing="{Binding IsProgressing, Mode=OneWay}"
-                            Text="{Binding PrimaryButtonText, Mode=OneWay}" />
-                    </HorizontalStackLayout>
-                </On>
-            </OnPlatform>
-        </Grid>
-    </Border>
+        <Border
+            Margin="16"
+            Padding="16,12"
+            x:DataType="local:TransferControl"
+            Background="{StaticResource SecondaryBrush}"
+            BindingContext="{x:Reference RootControl}"
+            HeightRequest="72">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                    <ActivityIndicator
+                        HeightRequest="32"
+                        IsRunning="True"
+                        IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                        WidthRequest="32" />
+                    <Label
+                        FontSize="18"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button
+                                mi:MauiIcon.Value="{mi_material:Material Icon=Close}"
+                                Command="{Binding CancelCommand, Mode=OneWay}"
+                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                            <Button
+                                Command="{Binding PrimaryCommand, Mode=OneWay}"
+                                IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                        </HorizontalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button
+                                Padding="8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=Xmark}"
+                                Command="{Binding CancelCommand, Mode=OneWay}"
+                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                            <uc:ActivityButton
+                                Padding="8"
+                                ButtonStyle="{StaticResource AccentButtonStyle}"
+                                Command="{Binding PrimaryCommand, Mode=OneWay}"
+                                IsProgressing="{Binding IsProgressing, Mode=OneWay}"
+                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                        </HorizontalStackLayout>
+                    </On>
+                </OnPlatform>
+            </Grid>
+        </Border>
+    </Grid>
 </ContentView>

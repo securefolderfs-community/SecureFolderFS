@@ -18,7 +18,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
+            Command="{Binding ViewModel.ToggleSelectionCommand}"
             Order="Secondary"
             Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem

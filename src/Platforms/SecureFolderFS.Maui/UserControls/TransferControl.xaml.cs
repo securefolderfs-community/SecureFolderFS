@@ -26,13 +26,15 @@ namespace SecureFolderFS.Maui.UserControls
 
                     if (bValue)
                     {
-                        transferControl.RootBorder.IsVisible = true;
-                        await transferControl.RootBorder.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+                        transferControl.RootPanel.TranslationY = 200d;
+                        transferControl.RootPanel.IsVisible = true;
+                        await transferControl.RootPanel.TranslateTo(0, 0, 350U, Easing.CubicInOut);
                     }
                     else
                     {
-                        await transferControl.RootBorder.TranslateTo(0, 200, 350U, Easing.CubicInOut);
-                        transferControl.RootBorder.IsVisible = false;
+                        transferControl.RootPanel.TranslationY = 0d;
+                        await transferControl.RootPanel.TranslateTo(0, 200, 350U, Easing.CubicInOut);
+                        transferControl.RootPanel.IsVisible = false;
                     }
                 });
 

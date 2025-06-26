@@ -84,6 +84,7 @@ namespace SecureFolderFS.Maui.AppModels
                                 // Copy to temporary MemoryStream
                                 await using var memoryStream = new MemoryStream();
                                 await assetStream.CopyToAsync(memoryStream, cancellationToken);
+                                await memoryStream.FlushAsync(cancellationToken);
                                 memoryStream.Position = 0L;
 
                                 // Set the ContentLength tag
@@ -91,6 +92,7 @@ namespace SecureFolderFS.Maui.AppModels
 
                                 // Copy back to the OutputStream
                                 await memoryStream.CopyToAsync(response.OutputStream, cancellationToken);
+                                await response.OutputStream.FlushAsync(cancellationToken);
                                 response.StatusCode = (int)HttpStatusCode.OK;
                                 response.StatusDescription = "OK";
                             }
