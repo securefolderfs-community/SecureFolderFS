@@ -27,8 +27,6 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <!--  TODO: Implement SearchBar  -->
-
         <VerticalStackLayout
             Grid.Row="1"
             Margin="0,0,0,64"

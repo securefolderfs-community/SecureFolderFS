@@ -1,3 +1,5 @@
+using System.Windows.Input;
+
 namespace SecureFolderFS.Maui.UserControls
 {
     public partial class CommandBarControl : ContentView
@@ -81,6 +83,22 @@ namespace SecureFolderFS.Maui.UserControls
 
                     commandBar.UpdateToolbarOnTop(bValue);
                 });
+        
+        public ICommand? PropertiesCommand
+        {
+            get => (ICommand?)GetValue(PropertiesCommandProperty);
+            set => SetValue(PropertiesCommandProperty, value);
+        }
+        public static readonly BindableProperty PropertiesCommandProperty =
+            BindableProperty.Create(nameof(PropertiesCommand), typeof(ICommand), typeof(CommandBarControl));
+        
+        public ICommand? ShareCommand
+        {
+            get => (ICommand?)GetValue(ShareCommandProperty);
+            set => SetValue(ShareCommandProperty, value);
+        }
+        public static readonly BindableProperty ShareCommandProperty =
+            BindableProperty.Create(nameof(ShareCommand), typeof(ICommand), typeof(CommandBarControl));
 
         public string? Title
         {

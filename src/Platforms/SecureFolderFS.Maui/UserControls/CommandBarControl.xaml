@@ -5,9 +5,12 @@
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
 
     <ContentView.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+
         <LinearGradientBrush x:Key="BarGradient" StartPoint="0.5,0" EndPoint="0.5,1">
             <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
             <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
@@ -38,6 +41,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
@@ -70,6 +74,47 @@
                     LineBreakMode="TailTruncation"
                     Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
                     VerticalOptions="Center" />
+
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <HorizontalStackLayout Grid.Column="2">
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_material:Material Share,
+                                                                         IconSize=20}"
+                                Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_material:Material InfoOutline,
+                                                                         IconSize=20}"
+                                Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <HorizontalStackLayout Grid.Column="2">
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
+                                                                           IconSize=20}"
+                                Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                            <Button
+                                Padding="12,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
+                                                                           IconSize=20}"
+                                Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                        </HorizontalStackLayout>
+                    </On>
+                </OnPlatform>
             </Grid>
         </Border>
 

@@ -5,16 +5,21 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
+    [Inject<IOverlayService>]
     public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly BrowserItemViewModel _itemViewModel;
@@ -25,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public PreviewerOverlayViewModel(BrowserItemViewModel itemViewModel, FolderViewModel folderViewModel)
         {
+            ServiceProvider = DI.Default;
             _itemViewModel = itemViewModel;
             _folderViewModel = folderViewModel;
         }
@@ -54,6 +60,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private void ToggleImmersion()
         {
             IsImmersed = !IsImmersed;
+        }
+
+        [RelayCommand]
+        private async Task OpenPropertiesAsync(CancellationToken cancellationToken)
+        {
+            if (PreviewerViewModel is not FilePreviewerViewModel { Inner:  IStorableProperties storableProperties } filePreviewer)
+                return;
+
+            var properties = await storableProperties.GetPropertiesAsync();
+            var propertiesOverlay = new PropertiesOverlayViewModel(filePreviewer.Inner, properties);
+            _ = propertiesOverlay.InitAsync(cancellationToken);
+
+            await OverlayService.ShowAsync(propertiesOverlay);
         }
 
         /// <inheritdoc/>
