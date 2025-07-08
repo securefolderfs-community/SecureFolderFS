@@ -11,100 +11,105 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </Page.Resources>
 
-    <StackPanel Spacing="4">
-        <!--  Vault read-only InfoBar  -->
-        <InfoBar
-            x:Name="ReadOnlyInfoBar"
-            x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
-            IsClosable="False"
-            IsOpen="True"
-            Message="{l:ResourceString Rid=VaultReadOnlyMode}"
-            Severity="Informational" />
+    <ScrollViewer>
+        <StackPanel Spacing="4">
+            <!--  Vault read-only InfoBar  -->
+            <InfoBar
+                x:Name="ReadOnlyInfoBar"
+                x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
+                IsClosable="False"
+                IsOpen="True"
+                Message="{l:ResourceString Rid=VaultReadOnlyMode}"
+                Severity="Informational" />
 
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Rid=VaultInformation}"
-            BlockMode="Expandable"
-            IsExpanded="True">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xE946;" />
-            </ucab:ActionBlockControl.Icon>
-            <ucab:ActionBlockControl.ExpanderContent>
-                <Grid Padding="54,0,32,0" ColumnSpacing="48">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=VaultInformation}"
+                BlockMode="Expandable"
+                IsExpanded="True">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE946;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <Grid Padding="54,0,32,0" ColumnSpacing="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Spacing="4">
-                        <TextBlock Text="{l:ResourceString Rid=Security}" />
-                        <TextBlock Text="{l:ResourceString Rid=DataEncryption}" />
-                        <TextBlock Text="{l:ResourceString Rid=NameEncryption}" />
-                        <TextBlock Text="{l:ResourceString Rid=ActiveFileSystem}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Spacing="4">
-                        <TextBlock
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.6"
-                            Text="{x:Bind ViewModel.SecurityText, Mode=OneWay}" />
-                        <TextBlock
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.6"
-                            Text="{x:Bind ViewModel.ContentCipherText, Mode=OneWay}" />
-                        <TextBlock
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.6"
-                            Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
-                        <TextBlock
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.6"
-                            Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}"
-                            ToolTipService.ToolTip="{x:Bind ViewModel.FileSystemDescriptionText, Mode=OneWay}" />
-                    </StackPanel>
-                </Grid>
-            </ucab:ActionBlockControl.ExpanderContent>
-        </ucab:ActionBlockControl>
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="{l:ResourceString Rid=Security}" />
+                            <TextBlock Text="{l:ResourceString Rid=DataEncryption}" />
+                            <TextBlock Text="{l:ResourceString Rid=NameEncryption}" />
+                            <TextBlock Text="{l:ResourceString Rid=ActiveFileSystem}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="4">
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Opacity="0.6"
+                                Text="{x:Bind ViewModel.SecurityText, Mode=OneWay}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Opacity="0.6"
+                                Text="{x:Bind ViewModel.ContentCipherText, Mode=OneWay}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Opacity="0.6"
+                                Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Opacity="0.6"
+                                Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.FileSystemDescriptionText, Mode=OneWay}" />
+                        </StackPanel>
+                    </Grid>
+                </ucab:ActionBlockControl.ExpanderContent>
+            </ucab:ActionBlockControl>
 
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Rid=ChangeCredentials}"
-            BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
-            Description="{l:ResourceString Rid=ChangeCredentialsDescription}">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xE8D7;" />
-            </ucab:ActionBlockControl.Icon>
-        </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=ChangeCredentials}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
+                Description="{l:ResourceString Rid=ChangeCredentialsDescription}"
+                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE8D7;" />
+                </ucab:ActionBlockControl.Icon>
+            </ucab:ActionBlockControl>
 
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Rid=TwoFactor}"
-            BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
-            Description="{l:ResourceString Rid=TwoFactorDescription}">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xEC19;" />
-            </ucab:ActionBlockControl.Icon>
-        </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=TwoFactor}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
+                Description="{l:ResourceString Rid=TwoFactorDescription}"
+                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xEC19;" />
+                </ucab:ActionBlockControl.Icon>
+            </ucab:ActionBlockControl>
 
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Rid=RecoveryCodes}"
-            BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
-            Description="{l:ResourceString Rid=RecoveryCodesDescription}">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xE777;" />
-            </ucab:ActionBlockControl.Icon>
-        </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=RecoveryCodes}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
+                Description="{l:ResourceString Rid=RecoveryCodesDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE777;" />
+                </ucab:ActionBlockControl.Icon>
+            </ucab:ActionBlockControl>
 
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Rid=OpenRecycleBin}"
-            BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}"
-            Description="{l:ResourceString Rid=OpenRecycleBinDescription}">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xE74D;" />
-            </ucab:ActionBlockControl.Icon>
-        </ucab:ActionBlockControl>
-    </StackPanel>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=OpenRecycleBin}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}"
+                Description="{l:ResourceString Rid=OpenRecycleBinDescription}"
+                Visibility="Collapsed">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE74D;" />
+                </ucab:ActionBlockControl.Icon>
+            </ucab:ActionBlockControl>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

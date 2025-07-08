@@ -21,11 +21,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
-            var options = VaultHelpers.ParseOptions(vaultOptions);
 
             await creationRoutine.InitAsync(cancellationToken);
             creationRoutine.SetCredentials(passkeySecret);
-            creationRoutine.SetOptions(options);
+            creationRoutine.SetOptions(vaultOptions);
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
@@ -73,11 +72,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
             using var newPasskeySecret = VaultHelpers.ParsePasskeySecret(newPasskey);
-            var options = VaultHelpers.ParseOptions(vaultOptions);
 
             await credentialsRoutine.InitAsync(cancellationToken);
             credentialsRoutine.SetUnlockContract(unlockContract);
-            credentialsRoutine.SetOptions(options);
+            credentialsRoutine.SetOptions(vaultOptions);
             credentialsRoutine.SetCredentials(newPasskeySecret);
 
             using var result = await credentialsRoutine.FinalizeAsync(cancellationToken);

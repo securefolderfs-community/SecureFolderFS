@@ -34,9 +34,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
+            var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
-            foreach (var item in authenticationMethods)
+            foreach (var item in authenticationMethod.Methods)
             {
                 yield return item switch
                 {

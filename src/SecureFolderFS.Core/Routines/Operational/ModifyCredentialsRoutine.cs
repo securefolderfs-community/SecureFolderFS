@@ -1,16 +1,14 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Shared.ComponentModel;
-using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.Routines.Operational
 {
@@ -43,25 +41,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetOptions(IDictionary<string, object?> options)
+        public void SetOptions(VaultOptions vaultOptions)
         {
-            _configDataModel = new()
-            {
-                Version = options.Get(Associations.ASSOC_VERSION).TryCast<int?>() ?? throw GetException(nameof(Associations.ASSOC_VERSION)),
-                ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_CONTENT_CIPHER_ID)),
-                FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_CIPHER_ID)),
-                FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_ENCODING_ID)),
-                AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_AUTHENTICATION)),
-                RecycleBinSize = options.Get(Associations.ASSOC_RECYCLE_SIZE).TryCast<long?>() ?? throw GetException(nameof(Associations.ASSOC_RECYCLE_SIZE)),
-                Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_VAULT_ID)),
-                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-            };
-            return;
-
-            static Exception GetException(string argumentName)
-            {
-                return new InvalidOperationException($"Cannot modify vault without specifying {argumentName}.");
-            }
+            _configDataModel = VaultConfigurationDataModel.FromVaultOptions(vaultOptions);
         }
 
         /// <inheritdoc/>

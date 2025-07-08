@@ -93,12 +93,10 @@ namespace SecureFolderFS.Shared.Extensions
             list.Add(item);
         }
 
-        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+        public static T[] SetAndGet<T>(this T[] array, int index, T element)
         {
-            foreach (var item in enumerable)
-            {
-                action(item);
-            }
+            array[index] = element;
+            return array;
         }
     }
 }

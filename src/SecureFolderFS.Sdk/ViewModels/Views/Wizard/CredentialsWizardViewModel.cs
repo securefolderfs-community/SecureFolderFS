@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 // We don't need to set the Version property since the creator will always initialize with the latest one
                 var vaultOptions = new VaultOptions()
                 {
-                    AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
+                    UnlockProcedure = new AuthenticationMethod([ RegisterViewModel.CurrentViewModel.Id ], null),
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
                     NameEncodingId = EncodingOption.Id,
@@ -106,9 +106,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override async void OnAppearing()
         {
             // Get options
-            EnumerateOptions(VaultService.GetEncodingOptions(), EncodingOptions);
             EnumerateOptions(VaultCredentialsService.GetContentCiphers(), ContentCiphers);
             EnumerateOptions(VaultCredentialsService.GetFileNameCiphers(), FileNameCiphers);
+            EnumerateOptions(VaultCredentialsService.GetEncodingOptions(), EncodingOptions);
 
             // Set default cipher options
             ContentCipher = ContentCiphers.FirstOrDefault();

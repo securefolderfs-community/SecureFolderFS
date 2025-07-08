@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Models;
+using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Core.Constants.Vault;
 using static SecureFolderFS.Core.Cryptography.Constants;
 
@@ -59,19 +60,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetOptions(IDictionary<string, object?> options)
+        public void SetOptions(VaultOptions vaultOptions)
         {
-            _configDataModel = new()
-            {
-                Version = Versions.LATEST_VERSION,
-                ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID).TryCast<string>() ?? CipherId.XCHACHA20_POLY1305,
-                FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string>() ?? CipherId.AES_SIV,
-                FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string>() ?? CipherId.ENCODING_BASE64URL,
-                AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string>() ?? throw new InvalidOperationException($"Cannot create vault without specifying {Associations.ASSOC_AUTHENTICATION}."),
-                RecycleBinSize = options.Get(Associations.ASSOC_RECYCLE_SIZE).TryCast<long?>() ?? 0L,
-                Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string>() ?? Guid.NewGuid().ToString(),
-                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-            };
+            _configDataModel = VaultConfigurationDataModel.FromVaultOptions(vaultOptions);
         }
 
         /// <inheritdoc/>

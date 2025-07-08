@@ -50,7 +50,7 @@ namespace SecureFolderFS.Shared
             if (_serviceProvider is null)
                 return null;
 
-            return (T?)GetService(typeof(T));
+            return GetService<T>();
         }
 
         /// <summary>

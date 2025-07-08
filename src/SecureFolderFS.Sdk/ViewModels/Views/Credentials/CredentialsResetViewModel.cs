@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             var newOptions = configuredOptions with
             {
-                AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ]
+                UnlockProcedure = new AuthenticationMethod([ RegisterViewModel.CurrentViewModel.Id ], null)
             };
 
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);

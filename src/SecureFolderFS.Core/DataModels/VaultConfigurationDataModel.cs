@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Models;
+using System;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using static SecureFolderFS.Core.Constants.Vault;
 
@@ -67,5 +69,20 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
         public byte[]? PayloadMac { get; set; }
+
+        public static VaultConfigurationDataModel FromVaultOptions(VaultOptions vaultOptions)
+        {
+            return new()
+            {
+                Version = vaultOptions.Version < 1 ? Versions.LATEST_VERSION : vaultOptions.Version,
+                ContentCipherId = vaultOptions.ContentCipherId ?? Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
+                FileNameCipherId = vaultOptions.FileNameCipherId ?? Cryptography.Constants.CipherId.AES_SIV,
+                FileNameEncodingId = vaultOptions.NameEncodingId ?? Cryptography.Constants.CipherId.ENCODING_BASE64URL,
+                AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
+                RecycleBinSize = vaultOptions.RecycleBinSize,
+                Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
+        }
     }
 }

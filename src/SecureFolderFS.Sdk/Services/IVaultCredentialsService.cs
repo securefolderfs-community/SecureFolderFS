@@ -8,6 +8,12 @@ namespace SecureFolderFS.Sdk.Services
     public interface IVaultCredentialsService
     {
         /// <summary>
+        /// Gets all encoding options that are supported by SecureFolderFS.
+        /// </summary>
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of encodings.</returns>
+        IEnumerable<string> GetEncodingOptions();
+
+        /// <summary>
         /// Gets all content ciphers that are supported by SecureFolderFS.
         /// </summary>
         /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of content ciphers.</returns>

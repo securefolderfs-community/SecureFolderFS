@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await foreach (var item in VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
             {
                 // Don't add authentication methods to list which are already in use
-                if (vaultOptions.AuthenticationMethod.Contains(item.Id))
+                if (vaultOptions.UnlockProcedure.Methods.Contains(item.Id) || vaultOptions.UnlockProcedure.Complementation == item.Id)
                     continue;
 
                 // Don't add authentication methods which are not allowed in the Authentication Stage

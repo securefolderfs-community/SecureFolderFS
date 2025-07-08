@@ -16,7 +16,6 @@ namespace SecureFolderFS.Core
 
             public static class Authentication
             {
-                public const char SEPARATOR = ';';
                 public const string AUTH_NONE = "none";
                 public const string AUTH_PASSWORD = "password";
                 public const string AUTH_KEYFILE = "key_file";

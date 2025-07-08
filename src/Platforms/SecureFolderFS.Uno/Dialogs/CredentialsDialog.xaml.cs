@@ -128,6 +128,9 @@ namespace SecureFolderFS.Uno.Dialogs
             if (confirmationViewModel.RegisterViewModel.CurrentViewModel is not null)
                 await confirmationViewModel.RegisterViewModel.RevokeCredentialsAsync(default);
 
+            // Dispose the confirmation view model
+            confirmationViewModel.Dispose();
+
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();
