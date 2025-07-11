@@ -4,3 +4,6 @@
 [submodule "lib/Tmds.Fuse"]
 	path = lib/Tmds.Fuse
 	url = https://github.com/securefolderfs-community/Tmds.Fuse
+[submodule "src/Platforms/SecureFolderFS.Dashboard"]
+	path = src/Platforms/SecureFolderFS.Dashboard
+	url = git@github.com:securefolderfs-community/SecureFolderFS.Dashboard.git
