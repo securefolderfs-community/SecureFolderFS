@@ -49,12 +49,10 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 RestartLoginProcess();
         }
 
-        private async void MigratorV2_V3_Loaded(object sender, RoutedEventArgs e)
+        private async Task BeginAuthenticationAsync(IVaultModel vaultModel)
         {
-            ArgumentNullException.ThrowIfNull(VaultModel);
-
             var vaultCredentialsService = DI.Service<IVaultCredentialsService>();
-            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(VaultModel.Folder).ToArrayAsync());
+            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultModel.Folder).ToArrayAsync());
 
             // Set up the first authentication method
             var result = ProceedAuthentication();
@@ -148,7 +146,17 @@ namespace SecureFolderFS.Uno.UserControls.Migration
             set => SetValue(VaultModelProperty, value);
         }
         public static readonly DependencyProperty VaultModelProperty =
-            DependencyProperty.Register(nameof(VaultModel), typeof(IVaultModel), typeof(MigratorV2_V3), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(VaultModel), typeof(IVaultModel), typeof(MigratorV2_V3), new PropertyMetadata(
+                async (s, e) =>
+                {
+                    if (s is not MigratorV2_V3 migratorV2V3)
+                        return;
+                    
+                    if (e.NewValue is not IVaultModel vaultModel)
+                        return;
+
+                    await migratorV2V3.BeginAuthenticationAsync(vaultModel);
+                }));
 
         public bool ProvideContinuationButton
         {

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Helpers
             {
                 return $"{sep}{sep}{domain}@{port}{sep}{name}{sep}";
             }
-            else if (OperatingSystem.IsMacCatalyst())
+            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
                 return $"{protocol}:{sep}{sep}{domain}:{port}{sep}{name}";
             }
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.Helpers
                     driveRemotePathBuilder.Clear();
                 }
             }
-            else if (OperatingSystem.IsMacCatalyst())
+            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
                 var process = new Process()
                 {
@@ -110,7 +110,7 @@ namespace SecureFolderFS.Uno.Helpers
                     _ = error;
                 }, cancellationToken);
             }
-            else if (OperatingSystem.IsMacCatalyst())
+            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
                 var args = $"mount_webdav {remotePath} {mountPath}";
                 var process = new Process()

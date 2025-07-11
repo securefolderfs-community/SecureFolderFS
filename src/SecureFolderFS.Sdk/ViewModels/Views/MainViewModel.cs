@@ -19,11 +19,12 @@ namespace SecureFolderFS.Sdk.ViewModels
     [Bindable(true)]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
-        public IVaultCollectionModel VaultCollectionModel { get; } = new VaultCollectionModel();
+        public IVaultCollectionModel VaultCollectionModel { get; }
 
-        public MainViewModel()
+        public MainViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
+            VaultCollectionModel = vaultCollectionModel;
         }
 
         /// <inheritdoc/>

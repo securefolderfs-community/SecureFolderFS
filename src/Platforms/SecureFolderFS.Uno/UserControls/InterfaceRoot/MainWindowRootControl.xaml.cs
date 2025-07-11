@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
@@ -47,7 +48,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         {
             InitializeComponent();
             Context = SynchronizationContext.Current;
-            ViewModel = new();
+            ViewModel = new(new VaultCollectionModel());
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)

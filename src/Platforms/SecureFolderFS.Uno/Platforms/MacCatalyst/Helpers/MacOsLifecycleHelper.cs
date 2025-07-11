@@ -11,6 +11,8 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation;
 using Windows.Storage;
+using SecureFolderFS.Shared.Extensions;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
 {
@@ -50,18 +52,18 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                .AddSingleton<ISystemService, MacOsSystemService>()
-                .AddSingleton<IApplicationService, MacOsApplicationService>()
-                .AddSingleton<IVaultFileSystemService, MacOsVaultFileSystemService>()
-                .AddSingleton<IVaultCredentialsService, MacOsVaultCredentialsService>()
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                .AddSingleton<IIapService, DebugIapService>()
-                .AddSingleton<IUpdateService, DebugUpdateService>()
-                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                .Override<ISystemService, MacOsSystemService>(AddService.AddSingleton)
+                .Override<IIapService, DebugIapService>(AddService.AddSingleton)
+                .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
+                .Override<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
+                .Override<IApplicationService, MacOsApplicationService>(AddService.AddSingleton)
+                .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
+                .Override<IVaultFileSystemService, MacOsVaultFileSystemService>(AddService.AddSingleton)
+                .Override<IVaultCredentialsService, MacOsVaultCredentialsService>(AddService.AddSingleton)
 
                 .WithUnoServices(settingsFolder)
-
-                ;
+                
+                ; // Finish service initialization
         }
     }
 }

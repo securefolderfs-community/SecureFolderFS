@@ -8,7 +8,9 @@ using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.UI.Helpers
 {
@@ -50,12 +52,13 @@ namespace SecureFolderFS.UI.Helpers
             return ServiceCollection
 
                 // Singleton services
-                    .AddSingleton<IVaultService, VaultService>()
-                    .AddSingleton<IVaultHealthService, VaultHealthService>()
-                    .AddSingleton<IVaultManagerService, VaultManagerService>()
-                    .AddSingleton<IRecycleBinService, RecycleBinService>()
-                    .AddSingleton<IChangelogService, GitHubChangelogService>()
-                    .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
+                    .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
+                    .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
+                    .Foundation<IVaultHealthService, VaultHealthService>(AddService.AddSingleton)
+                    .Foundation<IVaultManagerService, VaultManagerService>(AddService.AddSingleton)
+                    .Foundation<IRecycleBinService, RecycleBinService>(AddService.AddSingleton)
+                    .Foundation<IChangelogService, GitHubChangelogService>(AddService.AddSingleton)
+                    .Foundation<IVaultPersistenceService, VaultPersistenceService>(AddService.AddSingleton, _ => new VaultPersistenceService(settingsFolder))
 
                 ; // Finish service initialization
         }

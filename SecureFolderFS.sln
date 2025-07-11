@@ -64,6 +64,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{724C2A9B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Tests", "tests\SecureFolderFS.Tests\SecureFolderFS.Tests.csproj", "{67ED86B1-D287-4F36-A8BE-189F68502B4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Dashboard", "src\Platforms\SecureFolderFS.Dashboard\SecureFolderFS.Dashboard.csproj", "{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -396,6 +398,22 @@ Global
 		{67ED86B1-D287-4F36-A8BE-189F68502B4C}.Release|x64.Build.0 = Release|Any CPU
 		{67ED86B1-D287-4F36-A8BE-189F68502B4C}.Release|x86.ActiveCfg = Release|Any CPU
 		{67ED86B1-D287-4F36-A8BE-189F68502B4C}.Release|x86.Build.0 = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|arm64.Build.0 = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|x64.Build.0 = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Debug|x86.Build.0 = Debug|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|arm64.ActiveCfg = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|arm64.Build.0 = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|x64.ActiveCfg = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|x64.Build.0 = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|x86.ActiveCfg = Release|Any CPU
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -425,6 +443,7 @@ Global
 		{2EAA63F7-399A-4079-9F70-E9D318812ADC} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
 		{F6C5CDF6-D86A-4C78-8649-F5AF983DA3A8} = {F2ACE2B7-1599-4769-8FF4-41FA03B25D26}
 		{67ED86B1-D287-4F36-A8BE-189F68502B4C} = {724C2A9B-20B9-4FBA-B0F7-F2BFDB10B52C}
+		{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1906FD8-BB54-4688-BC0F-9ED7532D2CB0}
