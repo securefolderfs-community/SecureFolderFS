@@ -157,7 +157,7 @@ namespace SecureFolderFS.Uno
 #endif
 
             var settingsService = DI.Service<ISettingsService>();
-            var shouldForceClose = (!App.Instance?.UseForceClose) ?? false;
+            var shouldForceClose = (App.Instance?.UseForceClose) ?? false;
             shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
 
             if (shouldForceClose)
@@ -194,8 +194,6 @@ namespace SecureFolderFS.Uno
             {
 #if __WASM__
                 builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__ || __MACCATALYST__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
                 builder.AddConsole();
 #endif

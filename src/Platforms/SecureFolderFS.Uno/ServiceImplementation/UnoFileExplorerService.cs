@@ -75,7 +75,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 return Task.CompletedTask;
             }
 
-#if __MACOS__ || __MACCATALYST__
+#if __MACOS__ || __MACCATALYST__ || __UNO_SKIA_MACOS__
             Process.Start("sh", [ "-c", $"open {folder.Id}" ]);
             return Task.CompletedTask;
 #elif WINDOWS

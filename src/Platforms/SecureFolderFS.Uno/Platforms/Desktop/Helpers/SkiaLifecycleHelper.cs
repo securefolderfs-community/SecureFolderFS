@@ -6,10 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 {
@@ -22,7 +25,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -48,18 +51,16 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                .AddSingleton<ISystemService, SkiaSystemService>()
-                .AddSingleton<IVaultService, SkiaVaultService>()
-                .AddSingleton<IApplicationService, SkiaApplicationService>()
-                .AddSingleton<IVaultManagerService, SkiaVaultManagerService>()
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                .AddSingleton<IIapService, DebugIapService>()
-                .AddSingleton<IUpdateService, DebugUpdateService>()
-                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                    .Override<IIapService, DebugIapService>(AddService.AddSingleton)
+                    .Override<ISystemService, SkiaSystemService>(AddService.AddSingleton)
+                    .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
+                    .Override<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
+                    .Override<IApplicationService, SkiaApplicationService>(AddService.AddSingleton)
+                    .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
+                    .Override<IVaultFileSystemService, SkiaVaultFileSystemService>(AddService.AddSingleton)
+                    .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
                 
-                .WithUnoServices(settingsFolder)
-                
+                    .WithUnoServices(settingsFolder)
                 ;
         }
     }
