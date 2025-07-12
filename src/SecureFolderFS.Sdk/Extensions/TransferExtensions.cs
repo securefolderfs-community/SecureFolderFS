@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.Extensions
             IEnumerable<TStorable> items,
             Func<TStorable, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
-        where TStorable : IStorable
+            where TStorable : IStorable
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;

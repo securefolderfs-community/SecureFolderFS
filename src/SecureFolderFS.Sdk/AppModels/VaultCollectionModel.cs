@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.AppModels
             // Clear previous vaults
             Items.Clear();
 
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel_Old>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {
                 if (item.PersistableId is null)
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Sdk.AppModels
         protected override void InsertItem(int index, IVaultModel item)
         {
             // Update saved vaults
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel_Old>();
             VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate));
 
             // Add default widgets for vault

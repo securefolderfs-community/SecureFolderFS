@@ -12,6 +12,6 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
         /// <summary>
         /// Gets or sets the list of saved vaults.
         /// </summary>
-        IList<VaultDataModel>? SavedVaults { get; set; }
+        IList<VaultDataModel_Old>? SavedVaults { get; set; }
     }
 }

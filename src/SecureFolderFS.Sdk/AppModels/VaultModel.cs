@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.AppModels
             return result;
         }
 
-        private async Task<bool> UpdateConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
+        private async Task<bool> UpdateConfigurationAsync(Action<VaultDataModel_Old> updateAction, CancellationToken cancellationToken)
         {
             var item = VaultConfigurations.SavedVaults?.FirstOrDefault(x => x.PersistableId == Folder.GetPersistableId());
             if (item is null)
