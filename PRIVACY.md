@@ -1,6 +1,6 @@
 # Privacy Policy
 
-###### Effective date: February 25th, 2024
+###### Effective date: July 12th, 2025
 
 This Privacy Policy ("Policy") for SecureFolderFS ("we", "us", or "our") describes how and why we collect, store, use, and disclose information about users ("you", "your") when you use our services ("Services") which include our desktop and mobile applications (the "Application", "SecureFolderFS"). By using our Services, you acknowledge and consent to the practices described in this Policy.
 
@@ -14,7 +14,11 @@ This Privacy Policy ("Policy") for SecureFolderFS ("we", "us", or "our") describ
 
 **Diagnostic Information.** Our Application collects non-personably identifiable diagnostic data such as fault analysis and performance logs. This information may include technical details about your device, such as its make, model, operating system, and Application version. In addition, SecureFolderFS may store log files containing diagnostic information on the user's device. These files are not shared with us by default.
 
-**Usage Information.** We collect non-identifiable information about your use of our Services, including but not limited to interactions within the Application, enabled user preferences (Application settings), and usage patterns. Furthermore, our Application uses certain Microsoft services including Microsoft AppCenter, and Microsoft Partner Center to collect usage data. To learn more about how data is collected, used, and disclosed by Microsoft and its subsidiaries, please review the Microsoft Privacy Policy Statement available here: https://privacy.microsoft.com/en-us/privacystatement
+**Usage Information.** We collect non-identifiable information about your use of our Services, including but not limited to interactions within the Application, enabled user preferences (Application settings), and usage patterns. Furthermore, our Application uses certain services provided by and Microsoft, and Functional Software, Inc. which include Sentry, and Microsoft Partner Center to collect usage data. To learn more about how data is collected, used, and disclosed by Functional Software Inc., Microsoft and its subsidiaries, please review their respective privacy policy statements:
+
+- Microsoft Privacy Policy Statement: https://privacy.microsoft.com/en-us/privacystatement
+- Sentry Privacy Policy Statement: https://sentry.io/privacy
+
 
 Please note that any information we collect is non-identifiable and does not include any personal data. We do not share collected information with any third parties.
 
