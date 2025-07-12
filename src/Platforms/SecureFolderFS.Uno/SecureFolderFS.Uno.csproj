@@ -33,8 +33,6 @@
     <PackageReference Include="CommunityToolkit.WinUI.Animations" />
     <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>

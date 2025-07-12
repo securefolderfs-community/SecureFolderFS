@@ -11,8 +11,6 @@
     <PackageVersion Include="IconPacks.Material" Version="1.0.8940.2-build" />
     <PackageVersion Include="LibVLCSharp.MAUI" Version="3.9.3" />
     <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc5.3" />
-    <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
-    <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.50" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.50" />
     <PackageVersion Include="Microsoft.Maui.Core" Version="9.0.50" />
@@ -22,6 +20,7 @@
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
+    <PackageVersion Include="Sentry" Version="5.11.2" />
     <PackageVersion Include="SkiaSharp" Version="3.116.1" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />

@@ -136,7 +136,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             };
 
             if (eventName is not null)
-                TelemetryService.TrackEvent(eventName);
+                TelemetryService.TrackMessage(eventName);
         }
     }
 }

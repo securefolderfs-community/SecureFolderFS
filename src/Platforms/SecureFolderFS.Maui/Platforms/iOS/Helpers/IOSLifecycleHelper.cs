@@ -1,10 +1,12 @@
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
 {
@@ -35,18 +37,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                    //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                    .AddSingleton<IApplicationService, IOSApplicationService>()
-                    .AddSingleton<ISystemService, IOSSystemService>()
-                    .AddSingleton<IVaultCredentialsService, IOSVaultCredentialsService>()
-                    .AddSingleton<IVaultFileSystemService, IOSVaultFileSystemService>()
-                    .AddSingleton<IStorageService, IOSStorageService>()
-                    .AddSingleton<IMediaService, IOSMediaService>()
-                    .AddSingleton<IFileExplorerService, IOSFileExplorerService>()
-                    .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                    .AddSingleton<IIapService, DebugIapService>()
-                    .AddSingleton<IUpdateService, DebugUpdateService>()
-                    .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                    //.Override<IIapService, IOSIapService>(AddService.AddSingleton)
+                    .Override<IIapService, DebugIapService>(AddService.AddSingleton)
+                    .Override<IMediaService, IOSMediaService>(AddService.AddSingleton)
+                    .Override<ISystemService, IOSSystemService>(AddService.AddSingleton)
+                    .Override<IStorageService, IOSStorageService>(AddService.AddSingleton)
+                    .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
+                    .Override<IApplicationService, IOSApplicationService>(AddService.AddSingleton)
+                    .Override<IFileExplorerService, IOSFileExplorerService>(AddService.AddSingleton)
+                    .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
+                    .Override<IVaultFileSystemService, IOSVaultFileSystemService>(AddService.AddSingleton)
+                    .Override<IVaultCredentialsService, IOSVaultCredentialsService>(AddService.AddSingleton)
 
                     .WithMauiServices(settingsFolder)
                 ;

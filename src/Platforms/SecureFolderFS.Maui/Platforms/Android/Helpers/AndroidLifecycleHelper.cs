@@ -1,12 +1,13 @@
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.Android.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Helpers
 {
@@ -14,13 +15,13 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
     internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory;
+        protected override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize settings
-            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -37,58 +38,19 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                    .AddSingleton<IApplicationService, AndroidApplicationService>()
-                    .AddSingleton<ISystemService, AndroidSystemService>()
-                    .AddSingleton<IVaultCredentialsService, AndroidVaultCredentialsService>()
-                    .AddSingleton<IVaultFileSystemService, AndroidVaultFileSystemService>()
-                    .AddSingleton<IStorageService, AndroidStorageService>()
-                    .AddSingleton<IMediaService, AndroidMediaService>()
-                    .AddSingleton<IFileExplorerService, AndroidFileExplorerService>()
-                    .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                    .AddSingleton<IIapService, DebugIapService>()
-                    .AddSingleton<IUpdateService, DebugUpdateService>()
-                    .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                    //.Override<IIapService, AndroidIapService>(AddService.AddSingleton)
+                    .Override<IMediaService, AndroidMediaService>(AddService.AddSingleton)
+                    .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
+                    .Override<ISystemService, AndroidSystemService>(AddService.AddSingleton)
+                    .Override<IStorageService, AndroidStorageService>(AddService.AddSingleton)
+                    .Override<IApplicationService, AndroidApplicationService>(AddService.AddSingleton)
+                    .Override<IFileExplorerService, AndroidFileExplorerService>(AddService.AddSingleton)
+                    .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
+                    .Override<IVaultFileSystemService, AndroidVaultFileSystemService>(AddService.AddSingleton)
+                    .Override<IVaultCredentialsService, AndroidVaultCredentialsService>(AddService.AddSingleton)
 
                     .WithMauiServices(settingsFolder)
                 ;
-        }
-
-        private async Task RequestPermissionsAsync<TPermission>()
-            where TPermission : Permissions.BasePermission, new()
-        {
-            var permissionStatus = await Permissions.CheckStatusAsync<TPermission>();
-            switch (permissionStatus)
-            {
-                case PermissionStatus.Denied:
-                    if (Permissions.ShouldShowRationale<TPermission>())
-                    {
-                        await Shell.Current.DisplayAlert("Action required",
-                            "For SecureFolderFS to function correctly, you'll need to grant the storage permission.",
-                            "Ok");
-                    }
-
-                    if (await Permissions.RequestAsync<TPermission>() != PermissionStatus.Granted)
-                    {
-                        await Toast.Make("Storage permissions are required for SecureFolderFS", ToastDuration.Long).Show();
-                        Application.Current?.Quit();
-                    }
-
-                    return;
-
-                case PermissionStatus.Disabled:
-                case PermissionStatus.Restricted:
-                    await Toast.Make("Storage permissions are required for SecureFolderFS", ToastDuration.Long).Show();
-                    Application.Current?.Quit();
-                    return;
-
-                case PermissionStatus.Granted:
-                    return;
-
-                default:
-                case PermissionStatus.Limited:
-                case PermissionStatus.Unknown:
-                    return;
-            }
         }
     }
 }

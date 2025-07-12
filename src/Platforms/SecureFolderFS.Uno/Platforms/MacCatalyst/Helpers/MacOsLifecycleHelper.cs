@@ -51,11 +51,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                //.AddSingleton<IPrinterService, WindowsPrinterService>()
                 .Override<ISystemService, MacOsSystemService>(AddService.AddSingleton)
                 .Override<IIapService, DebugIapService>(AddService.AddSingleton)
                 .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
-                .Override<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
                 .Override<IApplicationService, MacOsApplicationService>(AddService.AddSingleton)
                 .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
                 .Override<IVaultFileSystemService, MacOsVaultFileSystemService>(AddService.AddSingleton)

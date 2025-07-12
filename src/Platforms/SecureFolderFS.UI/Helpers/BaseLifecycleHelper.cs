@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -39,7 +40,11 @@ namespace SecureFolderFS.UI.Helpers
             // On Microsoft Visual Studio, go to View -> Output Window
             // On JetBrains Rider, go to View -> Tool Windows -> Debug -> Debug Output
             Debugger.Break();
+
 #if !DEBUG
+            if (ex is not null && DI.OptionalService<ITelemetryService>() is { } telemetryService)
+                telemetryService.TrackException(ex);
+
             LogExceptionToFile(ex);
 #else
             if (!Debugger.IsAttached)
@@ -54,11 +59,18 @@ namespace SecureFolderFS.UI.Helpers
                 // Singleton services
                     .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
                     .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
+                    .Foundation<IIapService, DebugIapService>(AddService.AddSingleton)
+                    .Foundation<IRecycleBinService, RecycleBinService>(AddService.AddSingleton)
                     .Foundation<IVaultHealthService, VaultHealthService>(AddService.AddSingleton)
                     .Foundation<IVaultManagerService, VaultManagerService>(AddService.AddSingleton)
-                    .Foundation<IRecycleBinService, RecycleBinService>(AddService.AddSingleton)
                     .Foundation<IChangelogService, GitHubChangelogService>(AddService.AddSingleton)
                     .Foundation<IVaultPersistenceService, VaultPersistenceService>(AddService.AddSingleton, _ => new VaultPersistenceService(settingsFolder))
+                
+#if DEBUG
+                    .Foundation<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
+#else
+                    .Foundation<ITelemetryService, SentryTelemetryService>(AddService.AddSingleton)
+#endif
 
                 ; // Finish service initialization
         }

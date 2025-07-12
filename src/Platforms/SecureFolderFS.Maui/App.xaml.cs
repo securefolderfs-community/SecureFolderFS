@@ -1,6 +1,7 @@
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -61,6 +62,10 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
+            
+            // Initialize Telemetry
+            var telemetryService = DI.Service<ITelemetryService>();
+            await telemetryService.EnableTelemetryAsync();
 
             // Create and initialize AppShell
             var appShell = new AppShell();
