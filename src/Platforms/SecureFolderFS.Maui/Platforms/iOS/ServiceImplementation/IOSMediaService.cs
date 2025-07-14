@@ -5,10 +5,11 @@ using Foundation;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI;
 using UIKit;
 

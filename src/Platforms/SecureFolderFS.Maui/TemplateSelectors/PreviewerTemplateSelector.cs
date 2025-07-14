@@ -1,4 +1,3 @@
-using Android.Graphics.Pdf.Content;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 
 namespace SecureFolderFS.Maui.TemplateSelectors

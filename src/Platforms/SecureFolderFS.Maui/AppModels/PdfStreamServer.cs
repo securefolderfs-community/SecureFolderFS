@@ -1,9 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Android.Content.Res;
 using SecureFolderFS.Shared.ComponentModel;
+
+#if ANDROID
+using Android.Content.Res;
 using SecureFolderFS.Shared.Helpers;
+#endif
 
 namespace SecureFolderFS.Maui.AppModels
 {
@@ -67,6 +70,7 @@ namespace SecureFolderFS.Maui.AppModels
                             }
                             else if (absolutePath.StartsWith("/pdfjs53"))
                             {
+#if ANDROID
                                 var relativePath = absolutePath.TrimStart('/');
                                 var contentType = FileTypeHelper.GetMimeType(relativePath);
                                 response.ContentType = contentType;
@@ -95,6 +99,8 @@ namespace SecureFolderFS.Maui.AppModels
                                 await response.OutputStream.FlushAsync(cancellationToken);
                                 response.StatusCode = (int)HttpStatusCode.OK;
                                 response.StatusDescription = "OK";
+
+#endif
                             }
                         }
                         catch (Exception ex)
