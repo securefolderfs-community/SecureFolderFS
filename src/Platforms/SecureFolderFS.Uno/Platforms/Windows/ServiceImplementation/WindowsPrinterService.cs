@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
@@ -58,7 +57,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             _printDocument.Paginate += PrintDocument_Paginate;               // Creates page previews for documents
             _printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;   // Creates a specific page preview
             _printDocument.AddPages += PrintDocument_AddPages;               // Provides all pages to be printed
-            
+
             _printManager = PrintManagerInterop.GetForWindow(App.Instance!.MainWindow!.GetWindowHandle());
             _printManager.PrintTaskRequested += PrintManager_PrintTaskRequested;
         }
@@ -73,7 +72,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         private void PrintManager_PrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
         {
             PrintTask printTask;
-            _dispatcherQueue.EnqueueAsync(() =>
+            _dispatcherQueue.TryEnqueue(() =>
             {
                 printTask = args.Request.CreatePrintTask("Print", e =>
                 {
@@ -83,7 +82,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
                 // Handle PrintTask.Completed to catch failed print jobs
                 printTask.Completed += PrintTask_Completed;
-            }).Wait();
+            });
+            return;
 
             void PrintTask_Completed(PrintTask s, PrintTaskCompletedEventArgs e)
             {

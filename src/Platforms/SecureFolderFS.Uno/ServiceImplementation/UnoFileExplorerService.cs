@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.SystemStorageEx;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -16,6 +17,56 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        {
+            var filePicker = new FileOpenPicker();
+            WinRT_InitializeObject(filePicker);
+
+            if (options is NameFilter nameFilter)
+            {
+                foreach (var item in nameFilter.Names)
+                    filePicker.FileTypeFilter.Add(item);
+            }
+            else
+                filePicker.FileTypeFilter.Add("*");
+
+            var file = await filePicker.PickSingleFileAsync().AsTask(cancellationToken);
+            if (file is null)
+                return null;
+
+            //return new WindowsStorageFile(file);
+            return new SystemFileEx(file.Path);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        {
+            var folderPicker = new FolderPicker();
+            WinRT_InitializeObject(folderPicker);
+
+            if (options is NameFilter nameFilter)
+            {
+                foreach (var item in nameFilter.Names)
+                    folderPicker.FileTypeFilter.Add(item);
+            }
+            else
+                folderPicker.FileTypeFilter.Add("*");
+
+            if (options is StartingFolderOptions startingFolderOptions)
+            {
+                if (Enum.TryParse(startingFolderOptions.Location, true, out PickerLocationId pickerLocationId))
+                    folderPicker.SuggestedStartLocation = pickerLocationId;
+            }
+
+            var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
+            if (folder is null)
+                return null;
+
+            //return new WindowsStorageFolder(folder);
+            return new SystemFolderEx(folder.Path);
+        }
+
+        /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
             if (OperatingSystem.IsLinux())
@@ -23,9 +74,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 Process.Start("xdg-open", folder.Id);
                 return Task.CompletedTask;
             }
-        
-#if __MACOS__ || __MACCATALYST__
-            Process.Start("sh", ["-c", $"open {folder.Id}"]);
+
+#if __MACOS__ || __MACCATALYST__ || __UNO_SKIA_MACOS__
+            Process.Start("sh", [ "-c", $"open {folder.Id}" ]);
             return Task.CompletedTask;
 #elif WINDOWS
             return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
@@ -44,10 +95,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (filter is not null)
             {
                 foreach (var item in filter)
-                    filePicker.FileTypeChoices.Add(item.Key, new[] { item.Value == "*" ? "." : item.Value });
+                    filePicker.FileTypeChoices.Add(item.Key, [ item.Value == "*" ? "." : item.Value ]);
             }
             else
-                filePicker.FileTypeChoices.Add("All Files", new[] { "." });
+                filePicker.FileTypeChoices.Add("All Files", [ "." ]);
 
             var file = await filePicker.PickSaveFileAsync().AsTask(cancellationToken);
             if (file is null)
@@ -60,49 +111,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             return true;
         }
 
-        /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
-        {
-            var filePicker = new FileOpenPicker();
-            WinRT_InitializeObject(filePicker);
-
-            if (filter is not null)
-            {
-                foreach (var item in filter)
-                    filePicker.FileTypeFilter.Add(item);
-            }
-            else
-                filePicker.FileTypeFilter.Add("*");
-
-            var file = await filePicker.PickSingleFileAsync().AsTask(cancellationToken);
-            if (file is null)
-                return null;
-
-            //return new WindowsStorageFile(file);
-            return new SystemFileEx(file.Path);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
-        {
-            var folderPicker = new FolderPicker();
-            WinRT_InitializeObject(folderPicker);
-
-            folderPicker.FileTypeFilter.Add("*");
-            var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
-            if (folder is null)
-                return null;
-
-            //return new WindowsStorageFolder(folder);
-            return new SystemFolderEx(folder.Path);
-        }
-
         private static void WinRT_InitializeObject(object obj)
         {
-            _ = obj;
 #if WINDOWS
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Instance?.MainWindow);
             WinRT.Interop.InitializeWithWindow.Initialize(obj, hwnd);
+#else
+            _ = obj;
 #endif
         }
     }

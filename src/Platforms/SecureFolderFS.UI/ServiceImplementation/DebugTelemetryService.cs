@@ -26,7 +26,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public void TrackEvent(string eventName)
+        public void TrackMessage(string eventName)
         {
             _ = eventName;
         }

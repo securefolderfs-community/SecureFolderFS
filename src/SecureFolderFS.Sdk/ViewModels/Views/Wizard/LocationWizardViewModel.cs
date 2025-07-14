@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
-        [ObservableProperty] private SeverityType _Severity;
+        [ObservableProperty] private Severity _Severity;
 
         public NewVaultCreationType CreationType { get; }
 
@@ -40,18 +40,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CreationType = creationType;
             CanCancel = true;
             CanContinue = false;
-            CancelText = "Cancel".ToLocalized();
-            ContinueText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
             Title = creationType == NewVaultCreationType.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             if (SelectedFolder is null)
-                return Task.FromResult<IResult>(Result.Failure(null));
+                return Result.Failure(null);
 
-            return Task.FromResult<IResult>(Result.Success);
+            // Confirm bookmark
+            if (SelectedFolder is IBookmark bookmark)
+                await bookmark.AddBookmarkAsync(cancellationToken);
+
+            return Result.Success;
         }
 
         /// <inheritdoc/>
@@ -69,11 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
-            // Remove previous bookmark
-            if (SelectedFolder is IBookmark bookmark)
-                await bookmark.RemoveBookmarkAsync(cancellationToken);
-            
-            SelectedFolder = await FileExplorerService.PickFolderAsync(true, cancellationToken);
+            SelectedFolder = await FileExplorerService.PickFolderAsync(null, true, cancellationToken);
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }
 
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 // No folder selected
                 if (SelectedFolder is null)
                 {
-                    Severity = SeverityType.Default;
+                    Severity = Severity.Default;
                     Message = "SelectFolderToContinue".ToLocalized();
                     return false;
                 }
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == SelectedFolder.Id);
                 if (isDuplicate)
                 {
-                    Severity = SeverityType.Warning;
+                    Severity = Severity.Warning;
                     Message = "VaultAlreadyExists".ToLocalized();
                     return false;
                 }

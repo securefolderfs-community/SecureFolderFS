@@ -1,5 +1,4 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
@@ -8,32 +7,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
     [Bindable(true)]
-    [Obsolete("Use BaseDesignationViewModel and IOverlayControls.")]
-    public abstract partial class OverlayViewModel : BaseDesignationViewModel
+    public abstract partial class OverlayViewModel : BaseDesignationViewModel, IOverlayControls
     {
-        /// <summary>
-        /// Gets or sets whether the primary button should be enabled or not.
-        /// </summary>
-        [ObservableProperty] private bool _PrimaryButtonEnabled;
+        /// <inheritdoc cref="IOverlayControls.CanContinue"/>
+        [ObservableProperty] private bool _CanContinue;
 
-        /// <summary>
-        /// Gets or sets whether the secondary button should be enabled or not.
-        /// </summary>
-        [ObservableProperty] private bool _SecondaryButtonEnabled;
+        /// <inheritdoc cref="IOverlayControls.CanCancel"/>
+        [ObservableProperty] private bool _CanCancel;
 
-        /// <summary>
-        /// Gets or sets the text of primary button. If value is null, the button is hidden.
-        /// </summary>
-        [ObservableProperty] private string? _PrimaryButtonText;
+        /// <inheritdoc cref="IOverlayControls.PrimaryText"/>
+        [ObservableProperty] private string? _PrimaryText;
 
-        /// <summary>
-        /// Gets or sets the text of secondary button. If value is null, the button is hidden.
-        /// </summary>
-        [ObservableProperty] private string? _SecondaryButtonText;
-
-        /// <summary>
-        /// Gets or sets the text of close button. If value is null, the button is hidden.
-        /// </summary>
-        [ObservableProperty] private string? _CloseButtonText;
+        /// <inheritdoc cref="IOverlayControls.SecondaryText"/>
+        [ObservableProperty] private string? _SecondaryText;
     }
 }

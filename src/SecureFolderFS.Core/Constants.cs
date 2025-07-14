@@ -4,8 +4,6 @@ namespace SecureFolderFS.Core
 {
     public static class Constants
     {
-        public const string KEY_TEXT_SEPARATOR = "@@@";
-
         public static class Vault
         {
             public static class Names
@@ -18,7 +16,6 @@ namespace SecureFolderFS.Core
 
             public static class Authentication
             {
-                public const char SEPARATOR = ';';
                 public const string AUTH_NONE = "none";
                 public const string AUTH_PASSWORD = "password";
                 public const string AUTH_KEYFILE = "key_file";
@@ -26,7 +23,7 @@ namespace SecureFolderFS.Core
                 public const string AUTH_HARDWARE_KEY = "hardware_key";
                 public const string AUTH_APPLE_FACEID = "apple_faceid";
                 public const string AUTH_APPLE_TOUCHID = "apple_touchid";
-                public const string AUTH_ANDROID_BIOMETRIC = "android_biometric";
+                public const string AUTH_ANDROID_BIOMETRIC = "android_biometrics";
 
                 public const string AUTH_DEVICE_PING = "device_ping";
             }
@@ -46,6 +43,7 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_CONTENT_CIPHER_ID = "contentCipherScheme";
                 public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
                 public const string ASSOC_FILENAME_ENCODING_ID = "filenameEncoding";
+                public const string ASSOC_RECYCLE_SIZE = "recycleBinSize";
                 public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
@@ -57,7 +55,7 @@ namespace SecureFolderFS.Core
                 public const int V1 = 1;
                 public const int V2 = 2;
                 public const int V3 = 3;
-                public const int LATEST_VERSION = V2; // TODO: (v3) Update version
+                public const int LATEST_VERSION = V3;
             }
         }
 

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
 using Windows.Security.Credentials;
@@ -44,7 +43,8 @@ namespace SecureFolderFS.Uno.ViewModels
                 }
 
                 // Generate key signature based on the user credentials
-                var key = await CreateSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
+                var key = await MakeSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
+                var tcs = new TaskCompletionSource();
 
                 // Compile new challenge in preparation
                 // TODO: Important When doing the signing operation, check payload MAC
@@ -53,7 +53,8 @@ namespace SecureFolderFS.Uno.ViewModels
                 //using var newSignedChallenge = await CreateSignatureAsync(result.Credential, newChallenge.Key, cancellationToken);
 
                 // Report that credentials were provided and new provision needs to be applied
-                CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key));
+                CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));
+                await tcs.Task;
 
                 // TODO: Provision is currently disabled since it opens the Windows Hello dialog for the second time
                 //StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));

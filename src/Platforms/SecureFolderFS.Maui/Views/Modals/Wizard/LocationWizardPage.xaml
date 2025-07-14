@@ -4,40 +4,63 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LocationWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
-    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout Spacing="24" VerticalOptions="Center">
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <Label
                 FontSize="20"
-                HorizontalOptions="Center"
-                Text="Choose vault folder"
-                VerticalOptions="Center" />
+                HorizontalOptions="Start"
+                Text="Select a location of your vault" />
 
-            <VerticalStackLayout>
+            <VerticalStackLayout Spacing="8">
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <Button
+                            x:Name="AndroidBrowseButton"
+                            mi:MauiIcon.Value="{mi_material:Material Folder}"
+                            Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
+                            ContentLayout="{Binding BrowseButtonContentLayout, Mode=OneWay}"
+                            FontSize="14"
+                            SizeChanged="ButtonStack_SizeChanged"
+                            Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    </On>
+                    <On Platform="iOS">
+                        <Button
+                            x:Name="IOSBrowseButton"
+                            mi:MauiIcon.Value="{mi_cupertino:Cupertino Folder}"
+                            Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
+                            ContentLayout="Right, 164"
+                            FontSize="14"
+                            SizeChanged="ButtonStack_SizeChanged"
+                            Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    </On>
+                </OnPlatform>
+
+                <!--  Message  -->
                 <Label
-                    FontAttributes="Bold"
                     HorizontalOptions="Center"
-                    Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
-                <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
 
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <mdc:Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
-                </On>
-                <On Platform="iOS">
-                    <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
-                </On>
-            </OnPlatform>
+            <!--  The purpose of this label is to supersede the width measurement of text in the button  -->
+            <Label
+                x:Name="InvisibleSelectedLocation"
+                HorizontalOptions="Start"
+                Opacity="0"
+                SizeChanged="ButtonStack_SizeChanged"
+                Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

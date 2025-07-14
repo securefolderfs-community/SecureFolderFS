@@ -35,12 +35,6 @@ namespace SecureFolderFS.Sdk.Services
         bool IsNameReserved(string? name);
 
         /// <summary>
-        /// Gets all encoding options that are supported by SecureFolderFS.
-        /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of encodings.</returns>
-        IEnumerable<string> GetEncodingOptions();
-
-        /// <summary>
         /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.
         /// </summary>
         /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>

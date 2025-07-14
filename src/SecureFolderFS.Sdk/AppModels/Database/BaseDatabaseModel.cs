@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         public abstract bool SetValue<TValue>(string key, TValue? value);
 
         /// <inheritdoc/>
-        public abstract Task LoadAsync(CancellationToken cancellationToken = default);
+        public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
         public abstract Task SaveAsync(CancellationToken cancellationToken = default);

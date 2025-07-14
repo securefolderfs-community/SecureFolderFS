@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class RegisterViewModel : ObservableObject, IDisposable
     {
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
         private bool _credentialsAdded;
 
         [ObservableProperty] private bool _CanContinue;
@@ -30,9 +30,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <summary>
         /// Gets the user credentials.
         /// </summary>
-        public KeyChain Credentials { get; }
+        public KeySequence Credentials { get; }
 
-        public RegisterViewModel(AuthenticationType authenticationStage, KeyChain? credentials = null)
+        public RegisterViewModel(AuthenticationStage authenticationStage, KeySequence? credentials = null)
         {
             _authenticationStage = authenticationStage;
             Credentials = credentials ?? new();
@@ -47,9 +47,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 if (CurrentViewModel is null)
                     return;
-                
+
                 await CurrentViewModel.RevokeAsync(null, cancellationToken);
-                Credentials.RemoveAt(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1);
+                Credentials.RemoveAt(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1);
                 CanContinue = false;
                 _credentialsAdded = false;
             }
@@ -60,19 +60,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private void ConfirmCredentials()
+        private async Task ConfirmCredentialsAsync()
         {
             // In case the authentication was not reported, try to extract it manually, if possible
             if (!_credentialsAdded && CurrentViewModel is IWrapper<IKey> keyWrapper)
             {
-                Credentials.SetOrAdd(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1, keyWrapper.Inner);
+                Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, keyWrapper.Inner);
                 _credentialsAdded = true;
             }
 
             if (Credentials.Count == 0)
                 return;
 
-            CredentialsProvided?.Invoke(this, new(Credentials));
+            var tcs = new TaskCompletionSource();
+            CredentialsProvided?.Invoke(this, new(Credentials, tcs));
+
+            await tcs.Task;
         }
 
         async partial void OnCurrentViewModelChanged(AuthenticationViewModel? oldValue, AuthenticationViewModel? newValue)
@@ -102,7 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
             _credentialsAdded = true;
-            Credentials.SetOrAdd(_authenticationStage == AuthenticationType.FirstStageOnly ? 0 : 1, e.Authentication);
+            Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
             CanContinue = true;
         }
 

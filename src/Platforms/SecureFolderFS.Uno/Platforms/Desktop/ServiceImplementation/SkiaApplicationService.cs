@@ -11,9 +11,14 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
     {
         /// <inheritdoc/>
         public override bool IsDesktop { get; } = true;
-        
+
         /// <inheritdoc/>
-        public override string Platform { get; } = "Skia X11 - Uno";
+        public override string Platform { get; } =
+#if __UNO_SKIA_MACOS__
+            "Skia MacOS - Uno";
+#else
+            "Skia X11 - Uno";
+#endif
 
         /// <inheritdoc/>
         public override string GetSystemVersion()

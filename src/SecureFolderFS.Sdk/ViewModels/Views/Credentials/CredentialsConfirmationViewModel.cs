@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
@@ -23,18 +24,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsConfirmationViewModel : ObservableObject, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
         [ObservableProperty] private bool _IsRemoving;
-        [ObservableProperty] private bool _CanComplement;
         [ObservableProperty] private bool _IsComplementing;
+        [ObservableProperty] private bool _IsComplementationAvailable;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
-        
+
         public required IDisposable UnlockContract { private get; init; }
 
-        public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationType authenticationStage)
+        public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
@@ -53,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             else
                 await ModifyAsync(cancellationToken);
         }
-        
+
         private async Task ModifyAsync(CancellationToken cancellationToken)
         {
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
@@ -64,48 +65,48 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
             return;
 
-            string[] GetAuthenticationMethod()
+            AuthenticationMethod GetAuthenticationMethod()
             {
                 ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
-                return _authenticationStage switch
-                {
-                    AuthenticationType.ProceedingStageOnly => [ configuredOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
-                    AuthenticationType.FirstStageOnly => configuredOptions.AuthenticationMethod.Length > 1
-                        ? [ RegisterViewModel.CurrentViewModel.Id, configuredOptions.AuthenticationMethod[1] ]
-                        : [ RegisterViewModel.CurrentViewModel.Id ],
-
-                    _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
-                };
+                return IsComplementing
+                    ? _authenticationStage switch
+                    {
+                        AuthenticationStage.ProceedingStageOnly => new AuthenticationMethod([configuredOptions.UnlockProcedure.Methods[0]], RegisterViewModel.CurrentViewModel.Id),
+                        AuthenticationStage.FirstStageOnly => throw new InvalidOperationException(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+                    }
+                    : _authenticationStage switch
+                    {
+                        AuthenticationStage.ProceedingStageOnly => new AuthenticationMethod([configuredOptions.UnlockProcedure.Methods[0], RegisterViewModel.CurrentViewModel.Id], null),
+                        AuthenticationStage.FirstStageOnly => configuredOptions.UnlockProcedure with { Methods = configuredOptions.UnlockProcedure.Methods.SetAndGet(0, RegisterViewModel.CurrentViewModel.Id) },
+                        _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+                    };
             }
         }
 
         private async Task RemoveAsync(CancellationToken cancellationToken)
         {
-            if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
+            if (_authenticationStage != AuthenticationStage.ProceedingStageOnly)
                 return;
 
             var key = RegisterViewModel.Credentials.Keys.First();
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-            var authenticationMethod = new[] { configuredOptions.AuthenticationMethod[0] };
+            var authenticationMethod = new AuthenticationMethod([configuredOptions.UnlockProcedure.Methods[0]], null);
 
             await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
         }
 
-        private async Task ChangeCredentialsAsync(IKey key, VaultOptions configuredOptions, string[] authenticationMethod, CancellationToken cancellationToken)
+        private async Task ChangeCredentialsAsync(IKey key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
         {
-            var newOptions = new VaultOptions()
+            // Modify the current unlock procedure
+            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, configuredOptions with
             {
-                AuthenticationMethod = authenticationMethod,
-                ContentCipherId = configuredOptions.ContentCipherId,
-                FileNameCipherId = configuredOptions.FileNameCipherId,
-                NameEncodingId = configuredOptions.NameEncodingId,
-                VaultId = configuredOptions.VaultId,
-                Version = configuredOptions.Version
-            };
+                UnlockProcedure = unlockProcedure
+            }, cancellationToken);
 
-            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
+            // Revoke (invalidate) old configured credentials
             if (ConfiguredViewModel is not null)
-                await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
+                await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

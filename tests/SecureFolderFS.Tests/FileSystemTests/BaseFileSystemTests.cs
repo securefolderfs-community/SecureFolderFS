@@ -8,7 +8,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 {
     public abstract class BaseFileSystemTests
     {
-        protected async Task<IVFSRoot> MountVault(IFileSystem fileSystem)
+        protected async Task<IVFSRoot> MountVault(IFileSystem fileSystem, params (string, object)[] additionalOptions)
         {
             var (vaultFolder, recoveryKey) = await MockVaultHelpers.CreateVaultLatestAsync();
 
@@ -21,6 +21,14 @@ namespace SecureFolderFS.Tests.FileSystemTests
             {
                 { nameof(FileSystemOptions.VolumeName), Guid.NewGuid().ToString() }
             };
+
+            foreach (var item in additionalOptions)
+            {
+                if (item.Item1 == nameof(FileSystemOptions.VolumeName))
+                    options.Remove(nameof(FileSystemOptions.VolumeName));
+
+                options.Add(item.Item1, item.Item2);
+            }
 
             // Create the storage layer
             var contentFolder = await vaultFolder.GetFolderByNameAsync(vaultService.ContentFolderName);

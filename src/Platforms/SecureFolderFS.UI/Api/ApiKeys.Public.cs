@@ -2,14 +2,17 @@
 {
     public static partial class ApiKeys
     {
-        public static string? GetAppCenterKey()
+        public static string? SentryDsnKey
         {
-            string? key = null;
-            AppCenterKey(ref key);
+            get
+            {
+                string? key = null;
+                RetrieveSentryDsnKey(ref key);
 
-            return key;
+                return key;
+            }
         }
 
-        static partial void AppCenterKey(ref string? key);
+        static partial void RetrieveSentryDsnKey(ref string? key);
     }
 }

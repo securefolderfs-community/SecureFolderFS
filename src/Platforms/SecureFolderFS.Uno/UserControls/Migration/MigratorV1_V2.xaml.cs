@@ -1,16 +1,17 @@
-using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.UserControls.Migration
 {
-    public sealed partial class MigratorV1_V2 : UserControl, IWrapper<object?>, IProgress<IResult?>
+    public sealed partial class MigratorV1_V2 : UserControl, IMigratorControl
     {
         public MigratorV1_V2()
         {
@@ -18,7 +19,15 @@ namespace SecureFolderFS.Uno.UserControls.Migration
         }
 
         /// <inheritdoc/>
-        public object? Inner => Password.GetPassword();
+        public Task ContinueAsync()
+        {
+            var password = Password.GetPassword();
+            if (password is null)
+                return Task.CompletedTask;
+
+            MigrateCommand?.Execute(password);
+            return Task.CompletedTask;
+        }
 
         /// <inheritdoc/>
         public void Report(IResult? value)
@@ -27,12 +36,14 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 Password.ShowInvalidPasswordMessage = true;
         }
 
-        private void Password_PasswordSubmitted(object sender, RoutedEventArgs e)
+        private async void Password_PasswordSubmitted(object sender, RoutedEventArgs e)
         {
-            if (Inner is not { } password)
-                return;
+            await ContinueAsync();
+        }
 
-            MigrateCommand?.Execute(password);
+        /// <inheritdoc/>
+        public void Dispose()
+        {
         }
 
         public ICommand? MigrateCommand

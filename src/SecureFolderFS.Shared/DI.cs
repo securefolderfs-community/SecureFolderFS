@@ -48,9 +48,9 @@ namespace SecureFolderFS.Shared
             where T : class
         {
             if (_serviceProvider is null)
-                return default;
-            
-            return (T?)GetService(typeof(T));
+                return null;
+
+            return GetService<T>();
         }
 
         /// <summary>

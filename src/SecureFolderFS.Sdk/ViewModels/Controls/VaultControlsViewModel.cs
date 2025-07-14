@@ -9,7 +9,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -55,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot.Inner, cancellationToken);
+            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot.VirtualizedRoot, cancellationToken);
         }
 
         [RelayCommand]
@@ -85,7 +84,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             if (_propertiesViewModel is null)
             {
-                _propertiesViewModel = new(_unlockedVaultViewModel);
+                _propertiesViewModel = new(_unlockedVaultViewModel, _dashboardNavigator, _vaultNavigation);
                 await _propertiesViewModel.InitAsync(cancellationToken);
             }
 

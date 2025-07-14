@@ -10,12 +10,12 @@ namespace SecureFolderFS.UI.ValueConverters
             if (value is not bool boolVal)
                 return false;
 
-            if (parameter is string strParam && strParam.ToLower() == "invert")
+            if (parameter is string strParam && strParam.Equals("invert", StringComparison.OrdinalIgnoreCase))
                 return boolVal;
 
             return !boolVal;
         }
-        
+
         /// <inheritdoc/>
         protected override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {

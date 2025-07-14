@@ -19,18 +19,19 @@ namespace SecureFolderFS.Sdk.ViewModels
     [Bindable(true)]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
-        public IVaultCollectionModel VaultCollectionModel { get; } = new VaultCollectionModel();
+        public IVaultCollectionModel VaultCollectionModel { get; }
 
-        public MainViewModel()
+        public MainViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
+            VaultCollectionModel = vaultCollectionModel;
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize
-            await Task.WhenAll(SettingsService.TryLoadAsync(cancellationToken), VaultCollectionModel.TryLoadAsync(cancellationToken));
+            await Task.WhenAll(SettingsService.TryInitAsync(cancellationToken), VaultCollectionModel.TryInitAsync(cancellationToken));
 
             // Disable telemetry, if the user opted-out
             if (!SettingsService.UserSettings.IsTelemetryEnabled)

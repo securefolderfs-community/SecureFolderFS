@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.Handlers
         {
             if (ThisPage is null)
                 return;
-            
+
             if (viewHandler.ViewController?.NavigationController?.NavigationBar is { } navigationBar)
                 UpdateTitleMode(ThisPage, navigationBar);
 
@@ -34,14 +34,14 @@ namespace SecureFolderFS.Maui.Handlers
                 return;
 
             var rightBarItems = new List<UIBarButtonItem>();
-            
+
             // Get primary items
             foreach (var item in contentPage.ToolbarItems)
             {
                 if (item.Order != ToolbarItemOrder.Secondary)
                     rightBarItems.Add(item.ToUIBarButtonItem());
             }
-            
+
             // Get secondary items
             var secondaryItems = contentPage.ToolbarItems
                 .Where(x => x.Order == ToolbarItemOrder.Secondary)
@@ -52,17 +52,17 @@ namespace SecureFolderFS.Maui.Handlers
             {
                 // Create a popup UIMenu
                 var menu = UIMenu.Create(string.Empty, null, UIMenuIdentifier.Edit, UIMenuOptions.DisplayInline, secondaryItems);
-                
+
                 // Set ellipsis icon image (can also use UIImage.ActionsImage for a filled ellipsis)
                 var menuButton = new UIBarButtonItem(UIImage.FromBundle("cupertino_ellipsis.png"), menu);
 
                 // Add to final bar items
                 rightBarItems.Add(menuButton);
             }
-            
+
             // Assign the navigation bar buttons
             navigationItem.RightBarButtonItems = rightBarItems.ToArray();
-            
+
             static UIMenuElement CreateUIMenuElement(ToolbarItem item)
             {
                 // Create a UIAction for each ToolbarItem

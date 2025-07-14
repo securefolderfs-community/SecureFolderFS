@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 case "fontattributes":
                     if (value is not bool bValue)
                         return FontAttributes.None;
-                    
+
                     return bValue ? FontAttributes.Bold : FontAttributes.None;
             }
 

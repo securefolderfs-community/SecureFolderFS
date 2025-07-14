@@ -1,7 +1,9 @@
 using MauiIcons.Core;
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -26,25 +28,41 @@ namespace SecureFolderFS.Maui.Views
             InitializeComponent();
         }
 
-        private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
+        private async Task ItemTappedAsync(View? view, VaultListItemViewModel itemViewModel)
         {
-            ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
-            if (e.Item is not VaultListItemViewModel itemViewModel)
-                return;
+            if (view is not null)
+                view.IsEnabled = false;
 
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
-            if (target is null)
+            try
             {
-                var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
-                _ = vaultLoginViewModel.InitAsync();
-                target = vaultLoginViewModel;
-            }
+                ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
+                var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
+                if (target is null)
+                {
+                    var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
+                    _ = vaultLoginViewModel.InitAsync();
+                    target = vaultLoginViewModel;
+                }
 
-            // Navigate
-            await ViewModel.NavigationService.NavigateAsync(target);
+                // Navigate
+                await ViewModel.NavigationService.NavigateAsync(target);
+            }
+            finally
+            {
+                if (view is not null)
+                    view.IsEnabled = true;
+            }
         }
 
-        private async void MainPage_Loaded(object? sender, EventArgs e)
+        private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
+        {
+            if (sender is not View view)
+                return;
+
+            await ItemTappedAsync(view, (VaultListItemViewModel)e.Item);
+        }
+
+        private void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
@@ -53,7 +71,7 @@ namespace SecureFolderFS.Maui.Views
 #if IOS
             if (!ExToolbarItems.IsEmpty())
                 return;
-            
+
             ExToolbarItems.Add(new ExMenuItem()
             {
                 Text = "NewVault".ToLocalized(),
@@ -61,6 +79,16 @@ namespace SecureFolderFS.Maui.Views
                 Order = ToolbarItemOrder.Secondary
             });
             ExToolbarItems.Add(new ExMenuItem()
+            {
+                Text = "Settings".ToLocalized(),
+                Command = ViewModel.OpenSettingsCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+#elif ANDROID
+            if (!ToolbarItems.IsEmpty())
+                return;
+
+            ToolbarItems.Add(new()
             {
                 Text = "Settings".ToLocalized(),
                 Command = ViewModel.OpenSettingsCommand,

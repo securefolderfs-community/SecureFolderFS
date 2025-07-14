@@ -15,13 +15,13 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             InitializeComponent();
         }
 
-        public SeverityType Severity
+        public Severity Severity
         {
-            get => (SeverityType)GetValue(SeverityProperty);
+            get => (Severity)GetValue(SeverityProperty);
             set => SetValue(SeverityProperty, value);
         }
         public static readonly DependencyProperty SeverityProperty =
-            DependencyProperty.Register(nameof(Severity), typeof(SeverityType), typeof(HealthWidget), new PropertyMetadata(SeverityType.Default));
+            DependencyProperty.Register(nameof(Severity), typeof(Severity), typeof(HealthWidget), new PropertyMetadata(Severity.Default));
 
         public string? StatusTitle
         {

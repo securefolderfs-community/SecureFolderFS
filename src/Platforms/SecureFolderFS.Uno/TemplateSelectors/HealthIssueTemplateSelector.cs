@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 HealthNameIssueViewModel => NameIssueTemplate,
                 HealthFileDataIssueViewModel => FileDataIssueTemplate,
                 HealthDirectoryIssueViewModel => DirectoryIssueTemplate,
-                { } => IssueTemplate,
+                not null => IssueTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

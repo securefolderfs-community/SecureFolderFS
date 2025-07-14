@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation.Settings
         /// <inheritdoc/>
         public override bool ShouldShowVaultTutorial
         {
-            get => false; // Don't show vault tutorial on Maui
+            get => false; // Don't show vault tutorial on MAUI
             set { }
         }
     }

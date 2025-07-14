@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public sealed class VaultKeystoreDataModel
+    public sealed record class VaultKeystoreDataModel
     {
         /// <summary>
         /// Gets the wrapped version of the DEK key.
         /// </summary>
         [JsonPropertyName("c_encryptionKey")]
-        public byte[]? WrappedEncKey { get; init; }
+        public byte[]? WrappedDekKey { get; init; }
 
         /// <summary>
         /// Gets the wrapped version of the MAC key.

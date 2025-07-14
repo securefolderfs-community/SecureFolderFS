@@ -70,6 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         {
             var changelogOverlay = new ChangelogOverlayViewModel(ApplicationService.AppVersion);
             _ = changelogOverlay.InitAsync();
+
             await OverlayService.ShowAsync(changelogOverlay);
         }
 

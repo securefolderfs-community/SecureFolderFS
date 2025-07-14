@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
@@ -8,21 +12,18 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
     [Inject<IVaultService>]
     [Inject<IVaultFileSystemService>]
     [Bindable(true)]
-    public sealed partial class VaultViewModel : ObservableObject
+    public sealed partial class VaultViewModel : ObservableObject, IViewable
     {
-        [ObservableProperty] private string _VaultName;
+        [ObservableProperty] private string? _Title;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
         public IVaultModel VaultModel { get; }
@@ -30,8 +31,8 @@ namespace SecureFolderFS.Sdk.ViewModels
         public VaultViewModel(IVaultModel vaultModel)
         {
             ServiceProvider = DI.Default;
+            Title = vaultModel.VaultName;
             VaultModel = vaultModel;
-            VaultName = vaultModel.VaultName;
             LastAccessDate = vaultModel.LastAccessDate;
         }
 

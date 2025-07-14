@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override async Task LoadAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try
             {

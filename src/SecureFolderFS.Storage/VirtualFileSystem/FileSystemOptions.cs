@@ -37,14 +37,24 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
+        /// Gets or sets whether to enable caching for Directory IDs.
+        /// </summary>
+        public bool IsCachingDirectoryIds { get; protected set => SetField(ref field, value); } = true;
+
+        /// <summary>
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
         /// </summary>
         public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
-        
+
         /// <summary>
-        /// Gets or sets whether to use recycle bin for the vault.
+        /// Gets or sets the maximum size in bytes of the recycle bin.
         /// </summary>
-        public bool IsRecycleBinEnabled { get; protected set => SetField(ref field, value); }
+        /// <remarks>
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
+        /// </remarks>
+        public long RecycleBinSize { get; protected set => SetField(ref field, value); }
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -56,6 +66,15 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public void DangerousSetReadOnly(bool value)
         {
             IsReadOnly = value;
+        }
+
+        /// <summary>
+        /// Sets the maximum size of the recycle bin.
+        /// </summary>
+        /// <param name="value">The size in bytes.</param>
+        public void DangerousSetRecycleBin(long value)
+        {
+            RecycleBinSize = value;
         }
 
         /// <summary>
@@ -87,6 +106,8 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 IsReadOnly = GetOption<bool?>(options, nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
+                IsCachingDirectoryIds = GetOption<bool?>(options, nameof(IsCachingDirectoryIds)) ?? true,
+                RecycleBinSize = GetOption<long?>(options, nameof(RecycleBinSize)) ?? 0L
             };
         }
 

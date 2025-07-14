@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
             ServiceProvider = DI.Default;
-            Title = vaultViewModel.VaultName;
+            Title = vaultViewModel.Title;
             VaultNavigation = vaultNavigation;
             VaultViewModel = vaultViewModel;
             _LoginViewModel = new(vaultViewModel.VaultModel, LoginViewType.Full);
@@ -48,6 +48,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             await LoginViewModel.InitAsync(cancellationToken);
+
+            // Test for quick unlock on mobile
+            var recoveryKey = VaultViewModel.Title switch
+            {
+                "Vault V3" => "nn9oKIELbkAl3XevD/dhVhnBQcfkDA5wfLnY+aAUoK8=@@@w3jNIbmsDwThbNkuGqpVdCvCiU7RQHQtkEqGfBPqDRc=",
+                "Plaintext Vault" => "lZbz5sWmeYDyyebm3LgPmvApNPsiyphj6zW4YZ2NuG8=@@@mEp3pOlUSXr0Yr47B+Se4M3ZXN8wPU/BlgFkLSpULiQ=",
+                _ => null
+            };
+
+            if (recoveryKey is null)
+                return;
+
+            var unlockContract = await VaultManagerService.RecoverAsync(VaultViewModel.VaultModel.Folder, recoveryKey, cancellationToken);
+            await Task.Delay(200);
+            await UnlockAsync(unlockContract);
         }
 
         [RelayCommand]

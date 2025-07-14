@@ -18,8 +18,9 @@ namespace SecureFolderFS.Shared.Extensions
                 stream.SetLength(length);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _ = ex;
                 return false;
             }
         }

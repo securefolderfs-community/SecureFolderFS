@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.Handlers
             base.ConnectHandler(platformView);
             if (ThisPage is null)
                 return;
-            
+
             ThisPage.Loaded += ContentPage_Loaded;
             ThisPage.Appearing += ContentPage_Appearing;
             App.Instance.AppResumed += App_Resumed;
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Maui.Handlers
         {
             if (this is not IPlatformViewHandler viewHandler)
                 return;
-            
+
             ApplyHandler(viewHandler);
         }
         
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.Handlers
         {
             ThisPage!.NavigatedTo += ContentPage_NavigatedTo;
             ThisPage!.Unloaded += ContentPage_Unloaded;
-            
+
             // Await a small delay for the UI to load
             await Task.Delay(10);
             ApplyHandler();

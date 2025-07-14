@@ -33,6 +33,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
                 RecoveryOverlayViewModel => new RecoveryDialog(),
                 MigrationOverlayViewModel => new MigrationDialog(),
+                RecycleBinOverlayViewModel => new RecycleBinDialog(),
 
                 // Unused
                 PaymentOverlayViewModel => new PaymentDialog(),

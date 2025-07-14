@@ -9,7 +9,7 @@
     <Grid
         x:DataType="local:AggregatedDataWidget"
         BindingContext="{x:Reference RootControl}"
-        ColumnSpacing="24">
+        ColumnSpacing="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />

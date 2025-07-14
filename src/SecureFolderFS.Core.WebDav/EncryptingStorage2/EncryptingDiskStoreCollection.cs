@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
@@ -226,7 +227,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 if (File.Exists(fullPath))
                 {
                     // Delete the file
-                    File.Delete(fullPath);
+                    NativeRecycleBinHelpers.DeleteOrRecycle(fullPath, _specifics, StorableType.File);
                     return;
                 }
 
@@ -234,7 +235,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 if (Directory.Exists(fullPath))
                 {
                     // Delete the directory
-                    Directory.Delete(fullPath, true);
+                    NativeRecycleBinHelpers.DeleteOrRecycle(fullPath, _specifics, StorableType.Folder);
                     return;
                 }
 

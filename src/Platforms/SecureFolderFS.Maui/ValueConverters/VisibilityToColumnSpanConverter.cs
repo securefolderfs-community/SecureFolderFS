@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             if (parameter is string strParam && strParam.Equals("column", StringComparison.OrdinalIgnoreCase))
                 return bValue ? 1 : 0;
-            
+
             return bValue ? 1 : 2;
         }
 

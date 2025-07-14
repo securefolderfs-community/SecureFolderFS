@@ -41,6 +41,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             set => UserSettings.OpenFolderOnUnlock = value;
         }
 
+        public bool AreThumbnailsEnabled
+        {
+            get => UserSettings.AreThumbnailsEnabled;
+            set => UserSettings.AreThumbnailsEnabled = value;
+        }
+
+        public bool AreFileExtensionsEnabled
+        {
+            get => UserSettings.AreFileExtensionsEnabled;
+            set => UserSettings.AreFileExtensionsEnabled = value;
+        }
+
+        public bool IsAdaptiveLayoutEnabled
+        {
+            get => UserSettings.IsAdaptiveLayoutEnabled;
+            set => UserSettings.IsAdaptiveLayoutEnabled = value;
+        }
+
+        public bool IsContentCacheEnabled
+        {
+            get => UserSettings.IsContentCacheEnabled;
+            set => UserSettings.IsContentCacheEnabled = value;
+        }
+
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {

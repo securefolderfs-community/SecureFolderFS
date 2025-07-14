@@ -13,7 +13,7 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (value is not DateTime dateTime)
                 return string.Empty;
-            
+
             var localizationService = DI.Service<ILocalizationService>();
             var dateString = localizationService.LocalizeDate(dateTime);
             if (parameter is string formatString)

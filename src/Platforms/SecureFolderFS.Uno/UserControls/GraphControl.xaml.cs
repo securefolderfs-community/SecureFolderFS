@@ -52,7 +52,7 @@ namespace SecureFolderFS.Uno.UserControls
             [
                 new LineSeries<double>()
                 {
-                    Values = Data,
+                    Values = (IReadOnlyCollection<double>?)Data,
                     Fill = new LinearGradientPaint([
                             new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
                             new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A)

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
@@ -29,9 +28,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public int FormatVersion { get; }
 
         /// <summary>
-        /// Gets the <see cref="IFolder"/> instance associated with the vault for migration.
+        /// Gets the <see cref="IVaultModel"/> instance associated with the vault for migration.
         /// </summary>
-        public IFolder VaultFolder { get; }
+        public IVaultModel VaultModel { get; }
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -39,10 +38,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public MigrationViewModel(IVaultModel vaultModel, int currentVersion)
         {
             ServiceProvider = DI.Default;
-            _CurrentVersion = $"Version {currentVersion}";
-            _NewVersion = $"Version {VaultService.LatestVaultVersion}";
-            _VaultName = vaultModel.VaultName;
-            VaultFolder = vaultModel.Folder;
+            CurrentVersion = $"Version {currentVersion}";
+            NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            VaultModel = vaultModel;
+            VaultName = vaultModel.VaultName;
             FormatVersion = currentVersion;
         }
 

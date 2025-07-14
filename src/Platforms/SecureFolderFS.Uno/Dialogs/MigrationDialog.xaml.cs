@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 {
                     MigrationView.Visibility = Visibility.Collapsed;
                     ErrorView.Visibility = Visibility.Visible;
-                    ErrorView.ExceptionMessage = args.Result.GetMessage();
+                    ErrorView.ExceptionMessage = args.Result.GetExceptionMessage();
                 }
             }
         }
@@ -81,10 +81,10 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            if (AuthenticationView.ContentTemplateRoot is not IWrapper<object?> wrapper)
+            if (AuthenticationView.ContentTemplateRoot is not IMigratorControl migratorControl)
                 return;
 
-            await ViewModel.AuthenticateMigrationCommand.ExecuteAsync(wrapper.Inner);
+            await migratorControl.ContinueAsync();
         }
 
         private void MigrationDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
@@ -97,6 +97,9 @@ namespace SecureFolderFS.Uno.Dialogs
 
             if (ViewModel is not null)
                 ViewModel.StateChanged += ViewModel_StateChanged;
+
+            if (AuthenticationView.ContentTemplateRoot is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 }

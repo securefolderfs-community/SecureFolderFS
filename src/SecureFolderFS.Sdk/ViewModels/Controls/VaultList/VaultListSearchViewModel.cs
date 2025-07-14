@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             await foreach (var item in SearchModel.SearchAsync(query, cancellationToken))
             {
                 if (item is VaultListItemViewModel sidebarItem)
-                    SearchItems.Add(sidebarItem.VaultViewModel.VaultName);
+                    SearchItems.Add(sidebarItem.VaultViewModel.Title);
             }
         }
     }
