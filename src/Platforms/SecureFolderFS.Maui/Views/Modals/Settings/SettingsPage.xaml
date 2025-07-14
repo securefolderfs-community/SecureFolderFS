@@ -33,6 +33,7 @@
                                 <ucc:ModernPicker
                                     x:Name="ThemePicker"
                                     IsTransparent="True"
+                                    MinimumWidthRequest="80"
                                     SelectedIndexChanged="ThemePicker_SelectedIndexChanged" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>

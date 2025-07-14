@@ -9,10 +9,11 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IPrinterService>, Inject<IThreadingService>, Inject<IClipboardService>, Inject<IShareService>]
+    [Inject<IPrinterService>, Inject<IClipboardService>, Inject<IShareService>]
     [Bindable(true)]
     public sealed partial class RecoveryPreviewControlViewModel : ObservableObject, IViewable
     {
@@ -35,10 +36,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             {
                 case "print":
                 {
-                    await ThreadingService.ChangeThreadAsync();
-                    if (await PrinterService.IsSupportedAsync())
-                        await PrinterService.PrintRecoveryKeyAsync(Title, VaultId, RecoveryKey);
-
+                    SynchronizationContext.Current.PostOrExecute(async _ =>
+                    {
+                        if (await PrinterService.IsSupportedAsync())
+                            await PrinterService.PrintRecoveryKeyAsync(Title, VaultId, RecoveryKey);
+                    });
                     break;
                 }
 

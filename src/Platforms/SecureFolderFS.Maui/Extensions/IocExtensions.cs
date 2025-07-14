@@ -21,6 +21,7 @@ namespace SecureFolderFS.Maui.Extensions
                     .Foundation<IShareService, MauiShareService>(AddService.AddSingleton)
                     .Foundation<IOverlayService, MauiOverlayService>(AddService.AddSingleton)
                     .Foundation<IClipboardService, MauiClipboardService>(AddService.AddSingleton)
+                    .Foundation<IThreadingService, MauiThreadingService>(AddService.AddSingleton)
                     .Foundation<IBottomSheetNavigationService, BottomSheetNavigationService>(AddService.AddSingleton)
                     .Foundation<INavigationService, MauiNavigationService>(AddService.AddTransient)
                     

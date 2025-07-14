@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Utils;
@@ -21,6 +22,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
+        private readonly FirstTimeHelper _firstTime = new();
 
         public SettingsOverlayViewModel? OverlayViewModel { get; private set; }
 
@@ -103,6 +105,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
 
         private async void ThemePicker_SelectedIndexChanged(object? sender, EventArgs e)
         {
+            if (_firstTime.IsFirstTime())
+                return;
+
             await MauiThemeHelper.Instance.SetThemeAsync((ThemeType)ThemePicker.SelectedIndex);
         }
     }

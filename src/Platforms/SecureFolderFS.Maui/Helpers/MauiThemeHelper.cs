@@ -13,7 +13,10 @@ namespace SecureFolderFS.Maui.Helpers
         /// <inheritdoc/>
         protected override void UpdateTheme()
         {
-            App.Instance.UserAppTheme = (AppTheme)(int)CurrentTheme;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                App.Instance.UserAppTheme = (AppTheme)(int)CurrentTheme;
+            });
         }
     }
 }
