@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -17,16 +19,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     [Bindable(true)]
     public sealed partial class CarouselPreviewerViewModel : BasePreviewerViewModel, IDisposable
     {
-        private readonly FolderViewModel _dataSource;
+        private readonly ImmutableList<FileViewModel> _dataSource;
 
-        [ObservableProperty] private ObservableCollection<BasePreviewerViewModel> _Slides;
         [ObservableProperty] private int _CurrentIndex;
+        [ObservableProperty] private ObservableCollection<BasePreviewerViewModel> _Slides;
 
-        public CarouselPreviewerViewModel(FolderViewModel dataSource, BrowserItemViewModel? itemViewModel = null)
+        public CarouselPreviewerViewModel(IEnumerable<FileViewModel> dataSource, FileViewModel? fileViewModel = null)
         {
-            _dataSource = dataSource;
+            _dataSource = dataSource.ToImmutableList();
             Slides = new();
-            CurrentIndex = dataSource.Items.IndexOf(itemViewModel ?? dataSource.Items.First());
+            CurrentIndex = _dataSource.IndexOf(fileViewModel ?? _dataSource.First());
         }
 
         partial void OnCurrentIndexChanged(int oldValue, int newValue)
@@ -44,8 +46,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 (Slides.ElementAtOrDefault(oldPreviousIndex) as IDisposable)?.Dispose();
 
                 // Prepare and initialize new next item
-                var newNextIndex = Math.Min(newValue + 1, _dataSource.Items.Count - 1);
-                var newNextItem = _dataSource.Items[newNextIndex];
+                var newNextIndex = Math.Min(newValue + 1, _dataSource.Count - 1);
+                var newNextItem = _dataSource[newNextIndex];
 
                 if (Slides.FirstOrDefault(x => (x as IWrapper<IFile>)?.Inner.Id == newNextItem.Inner.Id) is { } viewable)
                 {
@@ -64,12 +66,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             else
             {
                 // Dispose next item
-                var oldNextIndex = Math.Min(oldValue + 1, _dataSource.Items.Count - 1);
+                var oldNextIndex = Math.Min(oldValue + 1, _dataSource.Count - 1);
                 (Slides.ElementAtOrDefault(oldNextIndex) as IDisposable)?.Dispose();
 
                 // Prepare and initialize new previous item
                 var newPreviousIndex = Math.Max(newValue - 1, 0);
-                var newPreviousItem = _dataSource.Items[newPreviousIndex];
+                var newPreviousItem = _dataSource[newPreviousIndex];
 
                 if (Slides.FirstOrDefault(x => (x as IWrapper<IFile>)?.Inner.Id == newPreviousItem.Inner.Id) is { } viewable)
                 {
@@ -113,12 +115,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             // TODO: For now, load all items up until that index.
             // Indexes are synchronized (+ 2 to account for count -- not index, and next item):
             //.Take(CurrentIndex + 2);
-            var itemsToLoad = _dataSource.Items
-                .Where(x =>
-                {
-                    var typeHint = FileTypeHelper.GetTypeHint(x.Inner);
-                    return typeHint is TypeHint.Image or TypeHint.Media;
-                });
+            // var itemsToLoad = _dataSource
+            //     .Where(x =>
+            //     {
+            //         var typeHint = FileTypeHelper.GetTypeHint(x.Inner);
+            //         return typeHint is TypeHint.Image or TypeHint.Media;
+            //     });
 
             // // Get 2 previous items and 2 next items (4 in total)
             // var startIndex = Math.Max(0, _dataSource.Items.IndexOf(_currentItem) - 2);
@@ -126,7 +128,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             //
             // // Take items between start and end indexes
             // var itemsToLoad = _dataSource.Items.Take(new Range(startIndex, endIndex)).ToArray();
-            foreach (var item in itemsToLoad)
+            foreach (var item in _dataSource)
             {
                 var previewer = GetPreviewer(item.Inner);
                 if (previewer is null)

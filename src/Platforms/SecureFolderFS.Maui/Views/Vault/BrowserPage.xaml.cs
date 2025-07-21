@@ -169,7 +169,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(BrowserViewModel), typeof(BrowserPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(BrowserViewModel), typeof(BrowserPage));
     }
 }
 

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -44,10 +45,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
             var previewer = (BasePreviewerViewModel)(classification.TypeHint switch
             {
-                TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(_folderViewModel, _itemViewModel).WithInitAsync(),
-                TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(),
-                TypeHint.Document when classification is { MimeType: "application/pdf" } => new PdfPreviewerViewModel(file).WithInitAsync(),
-                _ => new FallbackPreviewerViewModel(file).WithInitAsync()
+                TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(cancellationToken),
+                TypeHint.Document when classification is { MimeType: "application/pdf" } => new PdfPreviewerViewModel(file).WithInitAsync(cancellationToken),
+                TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(
+                    _folderViewModel.Items
+                        .Where(x => x is FileViewModel && FileTypeHelper.GetTypeHint(x.Inner) is TypeHint.Image or TypeHint.Media)
+                        .Select(x => (FileViewModel)x),
+                    (FileViewModel)_itemViewModel).WithInitAsync(cancellationToken),
+                _ => new FallbackPreviewerViewModel(file).WithInitAsync(cancellationToken)
             });
 
             (PreviewerViewModel as IDisposable)?.Dispose();
