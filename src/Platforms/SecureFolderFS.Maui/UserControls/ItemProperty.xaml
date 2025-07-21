@@ -31,14 +31,14 @@
                         mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
                                                                  IconSize=20,
                                                                  IconColor={StaticResource QuarternaryLightColor}}"
-                        Command="{Binding CopyCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
                         CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
                 </On>
                 <On Platform="iOS">
                     <ImageButton
                         mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=DoconClipboard,
                                                                    IconSize=20}"
-                        Command="{Binding CopyCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
                         CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
                 </On>
             </OnPlatform>

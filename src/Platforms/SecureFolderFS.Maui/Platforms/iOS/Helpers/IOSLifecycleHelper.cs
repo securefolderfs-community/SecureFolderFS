@@ -1,9 +1,10 @@
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
@@ -14,13 +15,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
     internal sealed class IOSLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory;
+        public override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize settings
-            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -30,7 +31,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            _ = ex;
+            var formattedException = ExceptionHelpers.FormatException(ex);
+            if (formattedException is null)
+                return;
+            
+            ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
+            ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }
 
         /// <inheritdoc/>

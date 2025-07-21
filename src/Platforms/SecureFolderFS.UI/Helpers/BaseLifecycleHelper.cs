@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -19,7 +18,7 @@ namespace SecureFolderFS.UI.Helpers
     {
         public IServiceCollection ServiceCollection { get; } = new ServiceCollection();
 
-        protected abstract string AppDirectory { get; }
+        public abstract string AppDirectory { get; }
 
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
@@ -33,6 +32,18 @@ namespace SecureFolderFS.UI.Helpers
 
         public virtual void LogException(Exception? ex)
         {
+#if !DEBUG
+            if (ex is not null && Shared.DI.OptionalService<ITelemetryService>() is { } telemetryService)
+                telemetryService.TrackException(ex);
+
+            LogExceptionToFile(ex);
+#else
+            if (!Debugger.IsAttached)
+            {
+                LogExceptionToFile(ex);
+                return;
+            }
+
             var formattedException = ExceptionHelpers.FormatException(ex);
             Debug.WriteLine(formattedException);
 
@@ -40,15 +51,6 @@ namespace SecureFolderFS.UI.Helpers
             // On Microsoft Visual Studio, go to View -> Output Window
             // On JetBrains Rider, go to View -> Tool Windows -> Debug -> Debug Output
             Debugger.Break();
-
-#if !DEBUG
-            if (ex is not null && DI.OptionalService<ITelemetryService>() is { } telemetryService)
-                telemetryService.TrackException(ex);
-
-            LogExceptionToFile(ex);
-#else
-            if (!Debugger.IsAttached)
-                LogExceptionToFile(ex);
 #endif
         }
 

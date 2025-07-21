@@ -5,6 +5,7 @@
     xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     Title="SecureFolderFS"
     FlyoutBehavior="Disabled"
+    Loaded="AppShell_Loaded"
     Shell.NavBarIsVisible="True">
 
     <Shell.ForegroundColor>

@@ -13,16 +13,24 @@ namespace SecureFolderFS.Maui.Prompts
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
-            if (ViewModel?.PrimaryText is null || ViewModel?.SecondaryText is null)
+            if (ViewModel?.PrimaryText is null && ViewModel?.SecondaryText is null)
                 return Result.Failure(null);
 
             var page = Shell.Current.CurrentPage;
+            if (ViewModel.SecondaryText is null)
+            {
+                await page.DisplayAlert(
+                    ViewModel.Title,
+                    ViewModel.Message,
+                    ViewModel.PrimaryText);
+                return Result<DialogOption>.Success(DialogOption.Primary);
+            }
+            
             var option = await page.DisplayAlert(
                 ViewModel.Title,
                 ViewModel.Message,
                 ViewModel.PrimaryText,
                 ViewModel.SecondaryText);
-
             return Result<DialogOption>.Success(option ? DialogOption.Primary : DialogOption.Cancel);
         }
 
