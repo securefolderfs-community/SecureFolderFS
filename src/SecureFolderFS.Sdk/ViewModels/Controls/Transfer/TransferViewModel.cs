@@ -99,14 +99,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             if (_tcs is not null)
             {
                 _tcs.TrySetCanceled(CancellationToken.None);
-                IsVisible = false;
+                await this.HideAsync();
             }
             else if (_cts is not null)
             {
                 CanCancel = false;
                 Title = "Cancelling".ToLocalized();
                 await _cts.CancelAsync();
-                IsVisible = false;
+                await this.HideAsync();
             }
         }
     }

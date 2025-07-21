@@ -13,6 +13,11 @@
             <On Platform="iOS">#007bff</On>
         </OnPlatform>
     </Shell.ForegroundColor>
+    <Shell.TitleColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="iOS">#f0f0f0</On>
+        </OnPlatform>
+    </Shell.TitleColor>
 
     <ShellContent ContentTemplate="{DataTemplate vw:MainPage}" Route="MainPage" />
 </Shell>

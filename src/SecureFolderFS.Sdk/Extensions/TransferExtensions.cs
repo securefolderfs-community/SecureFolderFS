@@ -7,7 +7,6 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
@@ -16,6 +15,13 @@ namespace SecureFolderFS.Sdk.Extensions
         public static bool IsPickingItems(this TransferViewModel transferViewModel)
         {
             return transferViewModel is { IsVisible: true, TransferType: TransferType.Select };
+        }
+
+        public static async Task HideAsync(this TransferViewModel transferViewModel)
+        {
+            transferViewModel.IsVisible = false;
+            await Task.Delay(400);
+            transferViewModel.IsProgressing = false;
         }
 
         public static async Task TransferAsync<TStorable>(
@@ -45,8 +51,7 @@ namespace SecureFolderFS.Sdk.Extensions
 
             transferViewModel.Title = "TransferDone".ToLocalized();
             await Task.Delay(1000, CancellationToken.None);
-            transferViewModel.IsProgressing = false;
-            transferViewModel.IsVisible = false;
+            await transferViewModel.HideAsync();
         }
 
         public static async Task TransferAsync<TStorable>(
@@ -71,8 +76,7 @@ namespace SecureFolderFS.Sdk.Extensions
             }
 
             await Task.Delay(1000, CancellationToken.None);
-            transferViewModel.IsProgressing = false;
-            transferViewModel.IsVisible = false;
+            await transferViewModel.HideAsync();
         }
     }
 }

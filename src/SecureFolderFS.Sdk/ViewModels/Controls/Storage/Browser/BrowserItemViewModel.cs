@@ -1,4 +1,11 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -11,18 +18,11 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.StorageProperties;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -125,8 +125,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             }
             finally
             {
-                transferViewModel.IsVisible = false;
-                transferViewModel.IsProgressing = false;
+                await transferViewModel.HideAsync();
             }
         }
 
@@ -183,8 +182,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             }
             finally
             {
-                transferViewModel.IsVisible = false;
-                transferViewModel.IsProgressing = false;
+                await transferViewModel.HideAsync();
             }
         }
 
