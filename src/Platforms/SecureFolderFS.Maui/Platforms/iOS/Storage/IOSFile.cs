@@ -1,5 +1,7 @@
 using Foundation;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
@@ -21,6 +23,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             };
 
             return Task.FromResult<Stream>(iosStream);
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new IOSFileProperties(Inner);
+            return Task.FromResult(properties);
         }
     }
 }

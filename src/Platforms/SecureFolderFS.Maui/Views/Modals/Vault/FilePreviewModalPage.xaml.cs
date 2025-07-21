@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 #elif IOS
             var navigationPage = new NavigationPage(this);
             NavigationPage.SetIconColor(navigationPage, Color.FromArgb("#007bff"));
-            navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+            navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.OverFullScreen);
             await _sourceNavigation.PushModalAsync(navigationPage);
 #endif
 
@@ -105,7 +105,10 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     PrimaryText = "Save".ToLocalized(),
                     SecondaryText = "Cancel".ToLocalized()
                 };
-
+                    
+#if IOS
+                await Task.Delay(800);
+#endif
                 var result = await overlayService.ShowAsync(messageOverlay);
                 if (result.Positive())
                     await textViewModel.SaveAsync();

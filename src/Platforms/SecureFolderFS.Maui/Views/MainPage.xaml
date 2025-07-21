@@ -35,7 +35,7 @@
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Spacing="16"
             VerticalOptions="Center">
-            <Image HeightRequest="100" Source="{AppThemeBinding Light='vault_light.svg', Dark='vault_dark.svg'}" />
+            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='vault_light.svg', iOS='vault_light.png'}, Dark={OnPlatform Android='vault_dark.svg', iOS='vault_dark.png'}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="24"
@@ -50,6 +50,8 @@
 
         <ListView
             Grid.Row="1"
+            BackgroundColor="Transparent"
+            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay}"
             ItemTapped="ListView_ItemTapped"
             ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
             RowHeight="64"
@@ -60,8 +62,10 @@
                         <ViewCell.ContextActions>
                             <MenuFlyoutItem
                                 Command="{Binding RemoveVaultCommand}"
+                                IsDestructive="True"
                                 IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                                Text="{l:ResourceString Rid=RemoveFromList}" />
+                                Text="{OnPlatform Android={l:ResourceString Rid=RemoveFromList},
+                                                  iOS={l:ResourceString Rid=Remove}}" />
                         </ViewCell.ContextActions>
 
                         <HorizontalStackLayout Padding="8,2" Spacing="8">

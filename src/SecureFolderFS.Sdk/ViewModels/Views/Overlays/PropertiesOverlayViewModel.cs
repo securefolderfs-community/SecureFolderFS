@@ -24,6 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         [ObservableProperty] private string? _SizeText;
         [ObservableProperty] private string? _FileTypeText;
+        [ObservableProperty] private string? _DateCreatedText;
         [ObservableProperty] private string? _DateModifiedText;
         [ObservableProperty] private IImage? _Thumbnail;
 
@@ -58,6 +59,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 var dateModifiedProperty = await dateProperties.GetDateModifiedAsync(cancellationToken);
                 DateModifiedText = LocalizationService.LocalizeDate(dateModifiedProperty.Value);
+
+                var dateCreatedProperty = await dateProperties.GetDateCreatedAsync(cancellationToken);
+                DateCreatedText = LocalizationService.LocalizeDate(dateCreatedProperty.Value);
             }
         }
 

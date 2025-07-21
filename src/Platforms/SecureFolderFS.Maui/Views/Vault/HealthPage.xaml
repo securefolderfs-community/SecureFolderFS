@@ -54,10 +54,15 @@
 
         <!--  Name Issue  -->
         <DataTemplate x:Key="NameIssueTemplate" x:DataType="vm2:HealthNameIssueViewModel">
-            <uco:OptionsControl
-                Title="{Binding Title, Mode=OneWay}"
-                Command="{Binding EditCommand}"
-                SlotText="{Binding ItemName, Mode=OneWay}" />
+            <uco:OptionsControl Title="{Binding Title, Mode=OneWay}" Command="{Binding EditCommand}">
+                <uco:OptionsControl.Slot>
+                    <Label
+                        FontSize="15"
+                        LineBreakMode="TailTruncation"
+                        MaximumWidthRequest="150"
+                        Text="{Binding ItemName, Mode=OneWay}" />
+                </uco:OptionsControl.Slot>
+            </uco:OptionsControl>
         </DataTemplate>
 
         <!--  Base Issue  -->
@@ -66,59 +71,74 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid Padding="16" RowSpacing="32">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  Scan button  -->
-        <apesui:ContextMenuContainer x:Name="ItemContainer" Grid.Row="0">
-            <apesui:ContextMenuContainer.MenuItems>
-                <apesui:ContextMenuItem
-                    Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
-                    CommandParameter="include_file_contents"
-                    IsEnabled="False"
-                    Text="Include file contents (slower)" />
-            </apesui:ContextMenuContainer.MenuItems>
-            <apesui:ContextMenuContainer.Content>
-                <uc:ProgressiveButton
-                    x:Name="ProgressiveButton"
-                    Title="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
-                    Clicked="ProgressiveButton_Clicked"
-                    DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
-                                             iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
-                    HorizontalOptions="Fill"
-                    IsProgressing="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
-                    Progress="{Binding ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}"
-                    Subtitle="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}" />
-            </apesui:ContextMenuContainer.Content>
-        </apesui:ContextMenuContainer>
+        <Grid Padding="16" RowSpacing="32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <!--  Issues list  -->
-        <Grid Grid.Row="1">
-            <uco:OptionsContainer Title="{l:ResourceString Rid=FoundIssues}" IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}">
-                <uco:OptionsContainer.InnerContent>
-                    <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}" VerticalOptions="Start">
-                        <CollectionView.ItemTemplate>
-                            <ts:HealthIssueTemplateSelector
-                                DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
-                                IssueTemplate="{StaticResource IssueTemplate}"
-                                NameIssueTemplate="{StaticResource NameIssueTemplate}" />
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
-            <Label
-                FontSize="18"
-                HorizontalOptions="Center"
-                IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
-                Text="{l:ResourceString Rid=NoIssuesFound}" />
+            <!--  Scan button  -->
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                Grid.Row="0"
+                Margin="0,4,0,0">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem
+                        Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
+                        CommandParameter="include_file_contents"
+                        IsEnabled="False"
+                        Text="Include file contents (slower)" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <uc:ProgressiveButton
+                        x:Name="ProgressiveButton"
+                        Title="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
+                        Clicked="ProgressiveButton_Clicked"
+                        DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
+                                                 iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
+                        HorizontalOptions="Fill"
+                        IsProgressing="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
+                        Progress="{Binding ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}"
+                        Subtitle="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}" />
+                </apesui:ContextMenuContainer.Content>
+            </apesui:ContextMenuContainer>
+
+            <!--  Issues list  -->
+            <Grid Grid.Row="1">
+                <uco:OptionsContainer
+                    Title="{l:ResourceString Rid=FoundIssues}"
+                    IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                    VerticalOptions="Fill">
+                    <uco:OptionsContainer.InnerContent>
+                        <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}">
+                            <CollectionView.ItemTemplate>
+                                <ts:HealthIssueTemplateSelector
+                                    DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                                    IssueTemplate="{StaticResource IssueTemplate}"
+                                    NameIssueTemplate="{StaticResource NameIssueTemplate}" />
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+                <Label
+                    FontSize="18"
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                    Text="{l:ResourceString Rid=NoIssuesFound}" />
+            </Grid>
         </Grid>
 
         <VerticalStackLayout
-            Grid.Row="2"
+            Grid.Row="1"
+            Margin="0,0,0,-36"
+            Padding="16,16,16,48"
+            Background="{StaticResource ThemeBackgroundFillColorBrush}"
             IsVisible="{Binding ViewModel.CanResolve, Mode=OneWay}"
             Spacing="8">
             <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=Repair}" />

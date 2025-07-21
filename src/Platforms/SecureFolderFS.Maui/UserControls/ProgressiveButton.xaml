@@ -48,6 +48,8 @@
                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
                 <ActivityIndicator
                     Grid.Column="0"
+                    Margin="{OnPlatform Android='0',
+                                        iOS='0,13'}"
                     IsRunning="{Binding IsProgressing, Mode=OneWay}"
                     IsVisible="{Binding IsProgressing, Mode=OneWay}" />
 

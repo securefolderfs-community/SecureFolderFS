@@ -1,7 +1,9 @@
 using System.Runtime.CompilerServices;
 using Foundation;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
@@ -82,7 +84,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             {
                 permissionRoot.StartAccessingSecurityScopedResource();
 
-                var path = System.IO.Path.Combine(Id, name);
+                var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
                 if (NSFileManager.DefaultManager.CreateDirectory(path, false, attributes, out var error))
@@ -108,7 +110,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 if (!permissionRoot.StartAccessingSecurityScopedResource())
                     throw new UnauthorizedAccessException("Could not create iOS file.");
 
-                var path = System.IO.Path.Combine(Id, name);
+                var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
                 if (NSFileManager.DefaultManager.CreateFile(path, new NSData(), attributes))
@@ -121,6 +123,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 permissionRoot.StopAccessingSecurityScopedResource();
                 await Task.CompletedTask;
             }
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new IOSFolderProperties(Inner);
+            return Task.FromResult(properties);
         }
     }
 }

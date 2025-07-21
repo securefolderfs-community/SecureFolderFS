@@ -15,7 +15,10 @@
     Shell.PresentationMode="ModalAnimated">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout Padding="16,0" Spacing="16">
+        <VerticalStackLayout
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            Spacing="16">
             <Label
                 FontSize="20"
                 HorizontalOptions="Start"

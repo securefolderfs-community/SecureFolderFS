@@ -1,0 +1,48 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.ItemProperty"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    x:Name="ThisControl">
+
+    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            FontAttributes="Bold"
+            FontSize="17"
+            Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            HorizontalOptions="End">
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <ImageButton
+                        mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
+                                                                 IconSize=20,
+                                                                 IconColor={StaticResource QuarternaryLightColor}}"
+                        Command="{Binding CopyCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
+                </On>
+                <On Platform="iOS">
+                    <ImageButton
+                        mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=DoconClipboard,
+                                                                   IconSize=20}"
+                        Command="{Binding CopyCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
+                </On>
+            </OnPlatform>
+        </Grid>
+    </Grid>
+
+</ContentView>

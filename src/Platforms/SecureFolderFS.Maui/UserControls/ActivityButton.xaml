@@ -16,6 +16,6 @@
             FontAttributes="{Binding FontAttributes, Mode=OneWay}"
             IsEnabled="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Style="{Binding ButtonStyle, Mode=OneWay}" />
-        <ActivityIndicator Margin="8,10" IsRunning="{Binding IsProgressing, Mode=OneWay}" />
+        <ActivityIndicator Margin="{OnPlatform Android='8,0', iOS='8,11'}" IsRunning="{Binding IsProgressing, Mode=OneWay}" />
     </Grid>
 </ContentView>

@@ -16,7 +16,8 @@
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
     x:DataType="local:FilePreviewModalPage"
-    IsImmersive="True">
+    IsImmersive="True"
+    NavigationPage.HasNavigationBar="False">
 
     <md:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
@@ -56,10 +57,13 @@
                 VerticalScrollBarVisibility="Always">
                 <Editor
                     AutoSize="TextChanges"
+                    Background="{StaticResource ThemeBackgroundFillColorBrush}"
                     HorizontalOptions="Fill"
                     IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                     Placeholder="{l:ResourceString Rid=WriteHere}"
-                    Text="{Binding Text, Mode=TwoWay}" />
+                    Text="{Binding Text, Mode=TwoWay}"
+                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
             </ScrollView>
         </DataTemplate>
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">

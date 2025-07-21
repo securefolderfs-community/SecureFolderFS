@@ -3,10 +3,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
-    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
-    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
@@ -51,83 +49,37 @@
             </Grid>
 
             <!--  Item Type  -->
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    FontAttributes="Bold"
-                    FontSize="17"
-                    Text="{l:ResourceString Rid=ItemType}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Text="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=ItemType}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="ItemType"
+                Subtitle="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
 
-                <ImageButton
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="1"
-                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
-                                                             IconSize=20,
-                                                             IconColor={StaticResource QuarternaryLightColor}}"
-                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                    CommandParameter="ItemType"
-                    HorizontalOptions="End" />
-            </Grid>
-
+            <!--  Date Created  -->
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="iOS">
+                    <uc:ItemProperty
+                        Title="{l:ResourceString Rid=DateCreated}"
+                        Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                        CommandParameter="DateCreated"
+                        Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
+                </On>
+            </OnPlatform>
 
             <!--  Date Modified  -->
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    FontAttributes="Bold"
-                    FontSize="17"
-                    Text="{l:ResourceString Rid=DateModified}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Text="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
-
-                <ImageButton
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="1"
-                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
-                                                             IconSize=20,
-                                                             IconColor={StaticResource QuarternaryLightColor}}"
-                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                    CommandParameter="DateModified"
-                    HorizontalOptions="End" />
-            </Grid>
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=DateModified}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="DateModified"
+                Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
 
             <!--  Size  -->
-            <Grid
-                ColumnDefinitions="*,Auto"
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=Size}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="Size"
                 IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                RowDefinitions="Auto,Auto">
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    FontAttributes="Bold"
-                    FontSize="17"
-                    Text="{l:ResourceString Rid=Size}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Text="{Binding ViewModel.SizeText, Mode=OneWay}" />
-
-                <ImageButton
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="1"
-                    mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
-                                                             IconSize=20,
-                                                             IconColor={StaticResource QuarternaryLightColor}}"
-                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                    CommandParameter="Size"
-                    HorizontalOptions="End" />
-            </Grid>
+                Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
         </VerticalStackLayout>
     </Border>
 </tv:Popup>

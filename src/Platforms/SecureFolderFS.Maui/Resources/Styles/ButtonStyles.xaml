@@ -20,7 +20,7 @@
         BasedOn="{StaticResource BaseButtonStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{StaticResource ThemePrimaryColorBrush}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor}, Dark={StaticResource PrimaryContrastingLightColor}}" />
+        <Setter Property="TextColor" Value="{StaticResource PrimaryContrastingDarkColor}" />
 
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -55,7 +55,35 @@
                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="Disabled" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="Gray" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver" />
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="NoBackgroundButtonStyle"
+        BasedOn="{StaticResource TransparentButtonStyle}"
+        TargetType="Button">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="Gray" />
+                        </VisualState.Setters>
+                    </VisualState>
                     <VisualState x:Name="PointerOver" />
                 </VisualStateGroup>
             </VisualStateGroupList>

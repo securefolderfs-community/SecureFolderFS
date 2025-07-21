@@ -8,7 +8,6 @@
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
-    CanBeDismissedByTappingOutsideOfPopup="True"
     Color="Transparent">
 
     <tv:Popup.Resources>
@@ -45,7 +44,6 @@
 
             <uc:ContentPresentation
                 Grid.Row="1"
-                HorizontalOptions="Fill"
                 Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
                 VerticalOptions="Center">
                 <uc:ContentPresentation.TemplateSelector>

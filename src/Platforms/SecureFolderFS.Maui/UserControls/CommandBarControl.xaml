@@ -48,7 +48,7 @@
                     <OnPlatform x:TypeArguments="View">
                         <On Platform="Android">
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_material:Material Close,
                                                                          IconSize=20}"
                                 Clicked="Close_Clicked"
@@ -57,11 +57,12 @@
                         </On>
                         <On Platform="iOS">
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino Xmark,
                                                                            IconSize=20}"
                                 Clicked="Close_Clicked"
-                                Style="{StaticResource TransparentButtonStyle}" />
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
                         </On>
                     </OnPlatform>
                 </Grid>
@@ -73,13 +74,15 @@
                     HorizontalOptions="Start"
                     LineBreakMode="TailTruncation"
                     Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
                     VerticalOptions="Center" />
 
                 <OnPlatform x:TypeArguments="View">
                     <On Platform="Android">
                         <HorizontalStackLayout Grid.Column="2">
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_material:Material Share,
                                                                          IconSize=20}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
@@ -87,7 +90,7 @@
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_material:Material InfoOutline,
                                                                          IconSize=20}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
@@ -99,19 +102,21 @@
                     <On Platform="iOS">
                         <HorizontalStackLayout Grid.Column="2">
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
                                                                            IconSize=20}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
-                                Style="{StaticResource TransparentButtonStyle}" />
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
                             <Button
-                                Padding="12,8"
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
                                                                            IconSize=20}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
-                                Style="{StaticResource TransparentButtonStyle}" />
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </On>
                 </OnPlatform>

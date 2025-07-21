@@ -38,6 +38,10 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 }] as Color)!.ToPlatform());
                 handler.PlatformView.Background = shape;
                 handler.PlatformView.SetPadding(32, 24, 32, 24);
+#else
+                modernPicker.BackgroundColor = modernPicker.IsTransparent
+                    ? Colors.Transparent
+                    : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color;
 #endif
             });
         }

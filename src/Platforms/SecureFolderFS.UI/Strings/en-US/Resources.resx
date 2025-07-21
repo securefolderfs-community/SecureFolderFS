@@ -842,4 +842,13 @@
   <data name="NoIssuesFound" xml:space="preserve">
       <value>No issues found</value>
   </data>
+  <data name="Remove" xml:space="preserve">
+      <value>Remove</value>
+  </data>
+  <data name="GoToVaults" xml:space="preserve">
+      <value>Go to vault list</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+      <value>Date created</value>
+  </data>
 </root>

@@ -12,6 +12,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
         public LocationWizardPage(LocationWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
+            BrowseButtonContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Right, 164d);
             ViewModel = viewModel;
             OverlayViewModel = overlayViewModel;
             BindingContext = this;

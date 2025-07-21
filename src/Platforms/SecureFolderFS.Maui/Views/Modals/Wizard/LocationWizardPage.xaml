@@ -17,7 +17,10 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout Padding="16,0" Spacing="16">
+        <VerticalStackLayout
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            Spacing="16">
             <Label
                 FontSize="20"
                 HorizontalOptions="Start"
@@ -40,7 +43,7 @@
                             x:Name="IOSBrowseButton"
                             mi:MauiIcon.Value="{mi_cupertino:Cupertino Folder}"
                             Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}"
-                            ContentLayout="Right, 164"
+                            ContentLayout="{Binding BrowseButtonContentLayout, Mode=OneWay}"
                             FontSize="14"
                             SizeChanged="ButtonStack_SizeChanged"
                             Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />

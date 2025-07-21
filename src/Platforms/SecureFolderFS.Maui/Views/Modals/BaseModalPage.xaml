@@ -45,13 +45,15 @@
 
                     <Button
                         x:Name="SheetPrimaryButton"
+                        Margin="0,0,-12,0"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
-                        FontSize="18"
+                        FontSize="17"
                         HorizontalOptions="End"
                         IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                         IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter_BaseModalPage}}"
                         SizeChanged="SheetPrimaryButton_SizeChanged"
+                        Style="{StaticResource NoBackgroundButtonStyle}"
                         Text="{Binding PrimaryText, Mode=OneWay}"
                         TextColor="#007bff"
                         VerticalOptions="Center" />

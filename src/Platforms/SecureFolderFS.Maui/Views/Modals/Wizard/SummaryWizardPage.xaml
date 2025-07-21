@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.SummaryWizardPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -17,7 +18,7 @@
         <VerticalStackLayout
             Margin="0,0,0,96"
             HorizontalOptions="Center"
-            Spacing="16"
+            Spacing="32"
             VerticalOptions="Center">
 
             <Grid>
@@ -36,14 +37,27 @@
             <VerticalStackLayout Spacing="4">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="20"
+                    FontSize="32"
                     HorizontalOptions="Center"
                     Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
                 <Label
-                    FontSize="16"
+                    FontSize="14"
                     HorizontalOptions="Center"
+                    Opacity="0.8"
                     Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="iOS">
+                    <Button
+                        Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+                        FontAttributes="None"
+                        Style="{StaticResource NoBackgroundButtonStyle}"
+                        Text="{l:ResourceString Rid=GoToVaults}"
+                        TextColor="#007bff"
+                        VerticalOptions="End" />
+                </On>
+            </OnPlatform>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

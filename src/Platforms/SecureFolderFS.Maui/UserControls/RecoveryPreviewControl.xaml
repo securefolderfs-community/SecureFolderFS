@@ -14,18 +14,19 @@
         VerticalOptions="Center">
         <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="24">
             <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
-            <VerticalStackLayout Spacing="4">
+            <VerticalStackLayout Spacing="8">
                 <Border Background="{StaticResource ThemeCardFillPrimaryColorBrush}" StrokeThickness="0">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
-                    <VerticalStackLayout Padding="16,8" Spacing="8">
+                    <VerticalStackLayout Padding="16,8,16,12" Spacing="8">
                         <Label
                             Padding="0,4"
                             FontAttributes="Bold"
                             Opacity="0.6"
                             Text="{l:ResourceString Rid=RecoveryKey}"
-                            TextColor="{StaticResource QuarternaryLightColor}" />
+                            TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                        Dark={StaticResource QuarternaryDarkColor}}" />
                         <Label
                             FontFamily="{OnPlatform Android='monospace',
                                                     iOS='Menlo'}"
@@ -36,39 +37,49 @@
 
                 <OnPlatform x:TypeArguments="View">
                     <On Platform="Android">
-                        <HorizontalStackLayout HorizontalOptions="End" Spacing="4">
-                            <ImageButton
-                                Padding="8"
-                                mi:MauiIcon.Value="{mi_material:Material Icon=Share,
-                                                                         IconSize=20,
-                                                                         IconColor={StaticResource QuarternaryLightColor}}"
-                                Command="{Binding ExportCommand, Mode=OneWay}"
-                                CommandParameter="Share"
-                                HorizontalOptions="End"
-                                ToolTipProperties.Text="{l:ResourceString Rid=Share}" />
-                            <ImageButton
-                                Padding="8"
+                        <HorizontalStackLayout Spacing="4">
+                            <Button
+                                Padding="16,8"
                                 mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
-                                                                         IconSize=20,
-                                                                         IconColor={StaticResource QuarternaryLightColor}}"
+                                                                         IconSize=20}"
                                 Command="{Binding ExportCommand, Mode=OneWay}"
                                 CommandParameter="Copy"
-                                HorizontalOptions="Fill"
-                                ToolTipProperties.Text="{l:ResourceString Rid=Copy}" />
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Copy}" />
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_material:Material Icon=Share,
+                                                                         IconSize=20}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Share"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Export}"
+                                ToolTipProperties.Text="{l:ResourceString Rid=Share}" />
                         </HorizontalStackLayout>
                     </On>
                     <On Platform="iOS">
                         <HorizontalStackLayout Spacing="4">
-                            <ImageButton
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp}"
-                                Command="{Binding ExportCommand, Mode=OneWay}"
-                                CommandParameter="Share"
-                                HorizontalOptions="End" />
-                            <ImageButton
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino DoconClipboard}"
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino DoconClipboard,
+                                                                           IconSize=16}"
                                 Command="{Binding ExportCommand, Mode=OneWay}"
                                 CommandParameter="Copy"
-                                HorizontalOptions="Fill" />
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Copy}" />
+
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
+                                                                           IconSize=16}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Share"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Export}" />
                         </HorizontalStackLayout>
                     </On>
                 </OnPlatform>
