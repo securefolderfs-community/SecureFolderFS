@@ -116,7 +116,7 @@
                     IsVisible="{Binding ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
                     VerticalOptions="Fill">
                     <uco:OptionsContainer.InnerContent>
-                        <CollectionView ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}">
+                        <CollectionView ItemSizingStrategy="MeasureFirstItem" ItemsSource="{Binding ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}">
                             <CollectionView.ItemTemplate>
                                 <ts:HealthIssueTemplateSelector
                                     DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
