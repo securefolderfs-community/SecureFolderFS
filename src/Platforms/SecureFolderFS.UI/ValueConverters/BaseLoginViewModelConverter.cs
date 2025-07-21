@@ -23,7 +23,7 @@ namespace SecureFolderFS.UI.ValueConverters
 
             return invert ? !result : result;
         }
-        
+
         /// <inheritdoc/>
         protected sealed override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {

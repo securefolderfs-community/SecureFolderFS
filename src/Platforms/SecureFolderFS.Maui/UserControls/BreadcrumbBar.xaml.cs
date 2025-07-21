@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public IList<BreadcrumbItemViewModel>? ItemsSource
         {
             get => (IList<BreadcrumbItemViewModel>?)GetValue(ItemsSourceProperty);

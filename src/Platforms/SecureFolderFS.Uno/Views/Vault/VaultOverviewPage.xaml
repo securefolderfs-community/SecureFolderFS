@@ -18,14 +18,14 @@
         <!--  Vault Health  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm2:HealthWidgetViewModel">
             <ucw:HealthWidget
-                CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
-                CurrentProgress="{x:Bind HealthReportViewModel.CurrentProgress, Mode=OneWay}"
-                IsProgressing="{x:Bind HealthReportViewModel.IsProgressing, Mode=OneWay}"
+                CancelCommand="{x:Bind HealthViewModel.CancelScanningCommand, Mode=OneWay}"
+                CurrentProgress="{x:Bind HealthReportViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}"
+                IsProgressing="{x:Bind HealthReportViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                Severity="{x:Bind HealthReportViewModel.Severity, Mode=OneWay}"
-                StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
-                StatusTitle="{x:Bind Title, Mode=OneWay}" />
+                Severity="{x:Bind HealthReportViewModel.HealthViewModel.Severity, Mode=OneWay}"
+                StartScanningCommand="{x:Bind HealthViewModel.StartScanningCommand, Mode=OneWay}"
+                StatusTitle="{x:Bind HealthViewModel.Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Resource Graphs  -->

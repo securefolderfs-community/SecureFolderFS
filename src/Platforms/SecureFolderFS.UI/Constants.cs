@@ -34,7 +34,27 @@ namespace SecureFolderFS.UI
         {
             public const string EXCEPTION_BLOCK_DATE_FORMAT = "dd.MM.yyyy HH_mm_ss";
             public const string EXCEPTION_LOG_FILENAME = "securefolderfs_exceptionlog.log";
+            public const string SESSION_EXCEPTION_FILENAME = "securefolderfs_sessionexception.log";
             public const string DEFAULT_CULTURE_STRING = "en-US";
+        }
+
+        public static class Browser
+        {
+            public const int THUMBNAIL_MAX_PARALLELISATION = 4;
+            public const int IMAGE_THUMBNAIL_MAX_SIZE = 300;
+            public const int IMAGE_THUMBNAIL_QUALITY = 80;
+            public const int VIDEO_THUMBNAIL_QUALITY = 80;
+        }
+
+        public static class FileData
+        {
+            public const string DESKTOP_INI_ICON_CONFIGURATION = """
+                                                                 [.ShellClassInfo]
+                                                                 IconResource={0},0
+                                                                 InfoTip={1}
+                                                                 [ViewState]
+                                                                 FolderType = Generic
+                                                                 """;
         }
     }
 }

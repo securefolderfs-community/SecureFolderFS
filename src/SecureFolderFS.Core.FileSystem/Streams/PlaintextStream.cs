@@ -1,12 +1,13 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         private readonly ChunkAccess _chunkAccess;
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
-        private readonly object _writeLock = new();
+        private readonly Lock _writeLock = new();
 
         private long _Length;
         private long _Position;
@@ -56,7 +57,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             _chunkAccess = chunkAccess;
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
-            
+
             if (CanSeek)
                 _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
@@ -76,6 +77,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override int Read(Span<byte> buffer)
         {
+            if (!CanSeek)
+                return 0;
+
             var ciphertextStreamLength = Inner.Length;
             if (ciphertextStreamLength == 0L)
                 return FileSystem.Constants.FILE_EOF;
@@ -215,7 +219,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         {
             if (!CanSeek)
                 throw FileSystemExceptions.StreamNotSeekable;
-            
+
             var seekPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
@@ -336,7 +340,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // Check if there is data already written only when we can seek
                     if (CanSeek && Inner.Length > 0L)
                         return false;
-                    
+
                     // Make sure we save the header state
                     _headerBuffer.IsHeaderReady = true;
 

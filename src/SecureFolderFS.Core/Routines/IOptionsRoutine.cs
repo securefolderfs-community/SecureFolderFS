@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Core.Routines
 {
-    public interface IOptionsRoutine
+    public interface IOptionsRoutine : IFinalizationRoutine
     {
-        void SetOptions(IDictionary<string, object?> options);
+        void SetOptions(VaultOptions vaultOptions);
     }
 }

@@ -8,10 +8,7 @@ namespace SecureFolderFS.Shared.Extensions
         public static TValue? Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
             where TValue : class?
         {
-            if (dictionary.TryGetValue(key, out var value))
-                return value;
-
-            return null;
+            return dictionary.TryGetValue(key, out var value) ? value : null;
         }
 
         public static TKV? GetByKeyOrValue<TKV>(this IDictionary<TKV, TKV> dictionary, TKV tkv)

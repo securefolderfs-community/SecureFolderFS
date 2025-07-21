@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,8 +18,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await SetupNavigationAsync();
             if (ViewModel is null)
                 return;
-            
+
             // Find existing target or create new
             var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
@@ -126,7 +126,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
 
             textBox.Focus(FocusState.Programmatic);
-            textBox.Text = itemViewModel.VaultViewModel.VaultName;
+            textBox.Text = itemViewModel.VaultViewModel.Title;
             textBox.SelectAll();
         }
 
@@ -154,7 +154,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
@@ -288,5 +288,15 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                     if (s is MainAppHostControl sender)
                         _ = sender.SetupNavigationAsync();
                 }));
+
+        private void NavigationItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+#if HAS_UNO
+            if (sender is not NavigationViewItem navigationViewItem)
+                return;
+
+            navigationViewItem.ContextFlyout.ShowAt(navigationViewItem);
+#endif
+        }
     }
 }

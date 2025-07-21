@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem
         {
             this.cache = capacity < 0 ? new() : new(capacity);
             this.cacheStatistics = cacheStatistics;
-            IsAvailable = capacity > 0;
+            IsAvailable = capacity < 0 || capacity > 0;
         }
 
         /// <summary>

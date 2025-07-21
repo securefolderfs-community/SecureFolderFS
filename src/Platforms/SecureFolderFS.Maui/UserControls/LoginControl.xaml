@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -17,25 +16,19 @@
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <ContentView HorizontalOptions="Fill">
-                <VerticalStackLayout HorizontalOptions="Fill" Spacing="24">
+                <VerticalStackLayout HorizontalOptions="Fill" Spacing="16">
                     <local:PasswordControl
                         HorizontalOptions="Fill"
                         ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
                         UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <mdc:Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Rid=Continue}" />
-                        </On>
-                        <On Platform="iOS">
-                            <Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Rid=Continue}" />
-                        </On>
-                    </OnPlatform>
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
+                        Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
+                        Text="{l:ResourceString Rid=Continue}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
@@ -49,10 +42,12 @@
                         <mi:MauiIcon
                             HorizontalOptions="Center"
                             Icon="{mi_material:Material Key}"
+                            IconSize="60"
                             OnPlatforms="Android" />
                         <mi:MauiIcon
                             HorizontalOptions="Center"
                             Icon="{mi_cupertino:Cupertino Doc}"
+                            IconSize="60"
                             OnPlatforms="iOS" />
                     </Grid>
 
@@ -60,23 +55,15 @@
                     <Label
                         HorizontalOptions="Center"
                         Opacity="0.6"
-                        Text="Authenticate using a Key File" />
+                        Text="{l:ResourceString Rid=LoginKeyFile}" />
 
                     <!--  Authenticate  -->
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <mdc:Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                HorizontalOptions="Center"
-                                Text="Authenticate" />
-                        </On>
-                        <On Platform="iOS">
-                            <Button
-                                Command="{Binding ProvideCredentialsCommand}"
-                                HorizontalOptions="Center"
-                                Text="Authenticate" />
-                        </On>
-                    </OnPlatform>
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
+                        Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Authenticate}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
@@ -84,18 +71,7 @@
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <ContentView>
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontSize="17"
-                        HorizontalOptions="Center"
-                        Text="{l:ResourceString Rid=VaultLoadError}" />
-                    <Label
-                        FontSize="12"
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        Opacity="0.6"
-                        Text="{Binding Message, Mode=OneWay}" />
-                </VerticalStackLayout>
+                <local:ErrorControl ExceptionMessage="{Binding ExceptionMessage, Mode=OneWay}" />
             </ContentView>
         </DataTemplate>
     </ContentView.Resources>

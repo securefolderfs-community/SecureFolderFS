@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             Title = "SettingsGeneral".ToLocalized();
             BannerViewModel = new();
             Languages = new();
-            
+
             _currentCulture = LocalizationService.CurrentCulture;
         }
 

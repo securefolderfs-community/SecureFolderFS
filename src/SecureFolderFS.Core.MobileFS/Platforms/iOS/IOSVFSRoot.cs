@@ -12,8 +12,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.IOS.FileSystem.FS_NAME;
 
-        public IOSVFSRoot(IFolder storageRoot, FileSystemOptions options)
-            : base(storageRoot, options)
+        public IOSVFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
         }
 
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
             if (!_disposed)
             {
                 _disposed = true;
-                FileSystemManager.Instance.RemoveRoot(this);
+                FileSystemManager.Instance.FileSystems.Remove(this);
             }
 
             return ValueTask.CompletedTask;

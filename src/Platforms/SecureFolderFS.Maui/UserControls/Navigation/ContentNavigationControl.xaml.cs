@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             InitializeComponent();
             RootGrid.BindingContext = this;
         }
-        
+
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
         {
             return Task.FromResult(false);
         }
-        
+
         protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget>(TTarget? target);
 
         /// <inheritdoc/>

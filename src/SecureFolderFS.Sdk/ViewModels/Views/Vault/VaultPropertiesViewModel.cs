@@ -19,6 +19,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize
     {
+        private readonly INavigator _innerNavigator;
+        private readonly INavigator _outerNavigator;
+
         [ObservableProperty] private string? _SecurityText;
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;
@@ -31,11 +34,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
 
-        public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
+        public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator innerNavigator, INavigator outerNavigator)
         {
             ServiceProvider = DI.Default;
             UnlockedVaultViewModel = unlockedVaultViewModel;
             Title = "VaultProperties".ToLocalized();
+            _innerNavigator = innerNavigator;
+            _outerNavigator = outerNavigator;
         }
 
         /// <inheritdoc/>
@@ -53,7 +58,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeFirstAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.FirstStageOnly);
+            if (UnlockedVaultViewModel.Options.IsReadOnly)
+                return;
+
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.FirstStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -62,7 +70,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeSecondAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.ProceedingStageOnly);
+            if (UnlockedVaultViewModel.Options.IsReadOnly)
+                return;
+
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.ProceedingStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -72,9 +83,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
         {
             using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
-
             await previewRecoveryOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(previewRecoveryOverlay);
+        }
+
+        [RelayCommand]
+        private async Task ViewRecycleBinAsync(CancellationToken cancellationToken)
+        {
+            var recycleOverlay = new RecycleBinOverlayViewModel(UnlockedVaultViewModel, _outerNavigator);
+            _ = recycleOverlay.InitAsync(cancellationToken);
+
+            await OverlayService.ShowAsync(recycleOverlay);
         }
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)

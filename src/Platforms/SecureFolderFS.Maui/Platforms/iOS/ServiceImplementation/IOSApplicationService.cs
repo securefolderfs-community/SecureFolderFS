@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {
-            return DeviceInfo.VersionString;
+            return $"iOS {DeviceInfo.VersionString}";
         }
 
         /// <inheritdoc/>

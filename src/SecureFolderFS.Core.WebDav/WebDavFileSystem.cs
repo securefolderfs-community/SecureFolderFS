@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.WebDav
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var webDavOptions = WebDavOptions.ToOptions(options);
+            var webDavOptions = WebDavOptions.ToOptions(options.AppendContract(unlockContract));
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, webDavOptions);
             webDavOptions.SetupValidators(specifics);
 

@@ -6,15 +6,13 @@ namespace SecureFolderFS.Shared.Extensions
     {
         public static bool IsAllZeros(this ReadOnlySpan<byte> span)
         {
-            var all = true;
-            for (var i = 0; i < span.Length; i++)
+            foreach (var b in span)
             {
-                all &= span[i] == 0;
-                if (!all)
-                    break;
+                if (b != 0)
+                    return false;
             }
 
-            return all;
+            return true;
         }
     }
 }

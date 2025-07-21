@@ -8,7 +8,7 @@
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
-    CanBeDismissedByTappingOutsideOfPopup="True">
+    Color="Transparent">
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
@@ -18,37 +18,38 @@
                 ProvideContinuationButton="True" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
-            <Grid Padding="{OnPlatform Android='12,0'}">
-                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" RecoveryKey="{Binding RecoveryKey, Mode=OneWay}" />
-            </Grid>
+            <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" RecoveryKey="{Binding RecoveryKey, Mode=OneWay}" />
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <Grid
-        x:Name="RootGrid"
-        Margin="16,0"
+    <Border
         Padding="16"
-        RowSpacing="24"
+        Background="{StaticResource ThemeBackgroundFillColorBrush}"
         WidthRequest="392">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
 
-        <Label
-            Grid.Row="0"
-            FontAttributes="Bold"
-            FontSize="24"
-            Text="{Binding ViewModel.Title, Mode=OneWay}" />
+        <Grid RowSpacing="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <uc:ContentPresentation
-            Grid.Row="1"
-            HorizontalOptions="Fill"
-            Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
-            VerticalOptions="Center">
-            <uc:ContentPresentation.TemplateSelector>
-                <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
-            </uc:ContentPresentation.TemplateSelector>
-        </uc:ContentPresentation>
-    </Grid>
+            <Label
+                Grid.Row="0"
+                FontAttributes="Bold"
+                FontSize="24"
+                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+
+            <uc:ContentPresentation
+                Grid.Row="1"
+                Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
+                VerticalOptions="Center">
+                <uc:ContentPresentation.TemplateSelector>
+                    <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
+                </uc:ContentPresentation.TemplateSelector>
+            </uc:ContentPresentation>
+        </Grid>
+    </Border>
 </tv:Popup>

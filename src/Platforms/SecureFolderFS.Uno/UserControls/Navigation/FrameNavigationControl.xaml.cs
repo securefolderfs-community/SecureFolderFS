@@ -47,7 +47,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         {
             if (!ContentFrame.CanGoBack)
                 return Task.FromResult(false);
-                
+
             ContentFrame.GoBack();
             return Task.FromResult(true);
         }
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         {
             if (!ContentFrame.CanGoForward)
                 return Task.FromResult(false);
-                
+
             ContentFrame.GoForward();
             return Task.FromResult(true);
         }

@@ -5,20 +5,20 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
     public class InputOutputStream : Stream
     {
         private readonly InputStream _inputStream;
-        private readonly OutputStream _outputStream;
+        private readonly OutputStream? _outputStream;
         private bool _disposed;
         private long _position;
         private long _length;
-        
+
         /// <inheritdoc/>
         public override bool CanRead => true;
-        
+
         /// <inheritdoc/>
         public override bool CanSeek => true;
-        
+
         /// <inheritdoc/>
-        public override bool CanWrite => true;
-        
+        public override bool CanWrite => _outputStream is not null;
+
         /// <inheritdoc/>
         public override long Length => _length;
 
@@ -31,29 +31,29 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 // if (value < 0 || (value > 0 && _length != -1 && value > _length))
                 //     throw new ArgumentOutOfRangeException(nameof(value));
 
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                
-                if (value != _position)
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+                if (value == _position)
+                    return;
+
+                // Reset input stream and skip to the desired position
+                _inputStream.Reset(); // Resets to the beginning of the stream
+
+                // Skip to the desired position
+                var skipAmount = value;
+                while (skipAmount > 0)
                 {
-                    // Reset input stream and skip to the desired position
-                    _inputStream.Reset(); // Resets to the beginning of the stream
+                    var skipped = _inputStream.Skip(skipAmount);
+                    if (skipped <= 0)
+                        break;
 
-                    // Skip to the desired position
-                    var skipAmount = value;
-                    while (skipAmount > 0)
-                    {
-                        var skipped = _inputStream.Skip(skipAmount);
-                        if (skipped <= 0) break;
-                        skipAmount -= skipped;
-                    }
-
-                    _position = value;
+                    skipAmount -= skipped;
                 }
+
+                _position = value;
             }
         }
 
-        public InputOutputStream(InputStream inputStream, OutputStream outputStream, long length)
+        public InputOutputStream(InputStream inputStream, OutputStream? outputStream, long length)
         {
             _inputStream = inputStream;
             _outputStream = outputStream;
@@ -66,11 +66,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         {
             // Adjust count if it would read past the end of the stream
             if (_length != -1)
-            {
                 count = (int)Math.Min(count, _length - _position);
-            }
 
-            if (count <= 0) return 0;
+            if (count <= 0)
+                return 0;
 
             int bytesRead;
             if (offset != 0)
@@ -79,19 +78,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 var tempBuffer = new byte[count];
                 bytesRead = _inputStream.Read(tempBuffer);
                 if (bytesRead > 0)
-                {
                     Array.Copy(tempBuffer, 0, buffer, offset, bytesRead);
-                }
             }
             else
-            {
-                bytesRead = _inputStream.Read(buffer);
-            }
+                bytesRead = _inputStream.Read(buffer, 0, count);
 
             if (bytesRead > 0)
-            {
                 _position += bytesRead;
-            }
 
             return bytesRead;
         }
@@ -99,6 +92,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
+            if (_outputStream is null || !CanWrite)
+                throw new NotSupportedException("The stream does not support writing.");
+
             if (offset != 0)
             {
                 // Create a temporary buffer if offset is not 0
@@ -107,9 +103,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 _outputStream.Write(tempBuffer, 0, count);
             }
             else
-            {
                 _outputStream.Write(buffer, 0, count);
-            }
 
             // Update position after writing
             _position += count;
@@ -124,17 +118,20 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                     _length = _position;
             }
         }
-        
+
         /// <inheritdoc/>
         public override void Flush()
         {
+            if (_outputStream is null || !CanWrite)
+                throw new NotSupportedException("The stream does not support writing.");
+
             _outputStream.Flush();
         }
-        
+
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            long newPosition = origin switch
+            var newPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
                 SeekOrigin.Current => _position + offset,
@@ -145,12 +142,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             Position = newPosition;
             return _position;
         }
-        
+
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
-            throw new NotSupportedException("Cannot modify file length on this stream");
-        }        
+            throw new NotSupportedException("Cannot modify length on this stream.");
+        }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
@@ -160,7 +157,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
                 if (disposing)
                 {
                     _inputStream.Close();
-                    _outputStream.Close();
+                    _outputStream?.Close();
                 }
 
                 _disposed = true;

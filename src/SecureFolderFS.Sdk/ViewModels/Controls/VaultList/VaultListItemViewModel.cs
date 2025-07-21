@@ -27,17 +27,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         [ObservableProperty] private bool _IsRenaming;
-        [ObservableProperty] private bool _CanMove;
-        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private bool _CanMoveDown;
-        [ObservableProperty] private bool _CanRemoveVault;
+        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _CanMove;
         [ObservableProperty] private IImage? _CustomIcon;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
 
         public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
-            CanRemoveVault = true;
+            IsUnlocked = false;
             VaultViewModel = vaultViewModel;
             _vaultCollectionModel = vaultCollectionModel;
 
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
             {
                 // Prevent from removing vault if it is unlocked
-                CanRemoveVault = false;
+                IsUnlocked = true;
             }
         }
 
@@ -66,7 +66,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         public void Receive(VaultLockedMessage message)
         {
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-                CanRemoveVault = true;
+                IsUnlocked = false;
+        }
+
+        [RelayCommand]
+        private void RequestLock()
+        {
+            WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]
@@ -101,11 +107,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     if (sourceIconFile is null)
                         return;
 
-                    // TODO: Resize icon (don't load large icons)
-                    // TODO: Add .ico file with desktop.ini
-                    var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
-                    await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken);
-                    await UpdateIconAsync(cancellationToken);
+                    // TODO: Configured icon causes a crash when debugger is not attached
+                    // Update vault icon
+                    //var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
+                    //await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
+                    //await UpdateIconAsync(cancellationToken);
+
+                    // Update folder icon
+                    await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
+                    await MediaService.TrySetFolderIconAsync(modifiableFolder, iconStream, cancellationToken);
 
                     break;
                 }
@@ -132,7 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             IsRenaming = false;
             if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))
-                VaultViewModel.VaultName = newName;
+                VaultViewModel.Title = newName;
         }
 
         [RelayCommand]

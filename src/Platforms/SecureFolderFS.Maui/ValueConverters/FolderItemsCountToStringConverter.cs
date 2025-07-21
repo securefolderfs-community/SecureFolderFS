@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             if (value is not int intValue)
                 return null;
-            
+
             // TODO: Localize text (use different strings for singular and plural forms)
             return $"{intValue} elements"; 
         }

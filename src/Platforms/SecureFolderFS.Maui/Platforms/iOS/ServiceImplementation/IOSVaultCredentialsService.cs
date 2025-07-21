@@ -1,11 +1,12 @@
 using System.Runtime.CompilerServices;
 using OwlCore.Storage;
+using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 {
@@ -17,14 +18,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
+            var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
-            foreach (var item in authenticationMethods)
+            foreach (var item in authenticationMethod.Methods)
             {
                 yield return item switch
                 {
-                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
-                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

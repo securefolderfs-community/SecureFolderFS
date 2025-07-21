@@ -4,6 +4,7 @@ using SecureFolderFS.Storage.Renamable;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,6 +52,9 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         {
             await foreach (var item in base.GetItemsAsync(type, cancellationToken))
             {
+                if (SpecialNames.IllegalNames.Contains(item.Name, StringComparer.OrdinalIgnoreCase))
+                    continue;
+
                 yield return item switch
                 {
                     IFile file => new SystemFileEx(file.Id),

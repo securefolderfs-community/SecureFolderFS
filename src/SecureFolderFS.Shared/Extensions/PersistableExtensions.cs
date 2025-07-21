@@ -11,31 +11,12 @@ namespace SecureFolderFS.Shared.Extensions
     public static class PersistableExtensions
     {
         /// <summary>
-        /// Tries to asynchronously load persisted data into memory.
-        /// </summary>
-        /// <param name="persistable">The <see cref="IPersistable"/> instance to use.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
-        public static async Task<bool> TryLoadAsync(this IPersistable persistable, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                await persistable.LoadAsync(cancellationToken);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Tries to asynchronously save data stored in memory.
         /// </summary>
         /// <param name="persistable">The <see cref="IPersistable"/> instance to use.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
-        public static async Task<bool> TrySaveAsync(this IPersistable persistable, CancellationToken cancellationToken = default)
+        public static async Task<bool> TrySaveAsync(this ISavePersistence persistable, CancellationToken cancellationToken = default)
         {
             try
             {

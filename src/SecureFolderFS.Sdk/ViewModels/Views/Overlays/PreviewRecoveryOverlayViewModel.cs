@@ -31,10 +31,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _vaultModel = vaultModel;
             _loginViewModel = new(_vaultModel, LoginViewType.Basic);
             _recoveryViewModel = new();
-            
+
             CurrentViewModel = _loginViewModel;
             Title = "Authenticate".ToLocalized();
-            PrimaryButtonText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
 
             _loginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
@@ -52,14 +52,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 // Prepare the recovery view
                 _recoveryViewModel.VaultId = vaultOptions.VaultId;
-                _recoveryViewModel.VaultName = _vaultModel.VaultName;
+                _recoveryViewModel.Title = _vaultModel.VaultName;
                 _recoveryViewModel.RecoveryKey = e.UnlockContract.ToString();
 
                 // Change view to recovery
                 CurrentViewModel = _recoveryViewModel;
 
                 // Adjust the overlay
-                PrimaryButtonText = null;
+                PrimaryText = null;
                 Title = "VaultRecovery".ToLocalized();
             }
         }

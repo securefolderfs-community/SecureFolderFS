@@ -1,10 +1,20 @@
 namespace SecureFolderFS.Maui.UserControls
 {
-    public partial class ContentPresentation : ContentView
+    public partial class ContentPresentation : ContentView, IDisposable
     {
         public ContentPresentation()
         {
             InitializeComponent();
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            (MainContent.Content as IDisposable)?.Dispose();
+            if (MainContent.Content is not null)
+                MainContent.Content.BindingContext = null;
+
+            MainContent.Content = null;
         }
 
         public object? Presentation
@@ -13,8 +23,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(PresentationProperty, value);
         }
         public static readonly BindableProperty PresentationProperty =
-            BindableProperty.Create(nameof(Presentation), typeof(object), typeof(ContentPresentation), null, propertyChanged:
-                (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
+            BindableProperty.Create(nameof(Presentation), typeof(object), typeof(ContentPresentation), propertyChanged:
+                static (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
 
         public DataTemplateSelector? TemplateSelector
         {
@@ -22,8 +32,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(TemplateSelectorProperty, value);
         }
         public static readonly BindableProperty TemplateSelectorProperty =
-            BindableProperty.Create(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentPresentation), null, propertyChanged:
-                (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.Presentation));
+            BindableProperty.Create(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentPresentation), propertyChanged:
+                static (bindable, _, _) => ApplyTemplate(bindable, (bindable as ContentPresentation)?.Presentation));
 
         private static void ApplyTemplate(BindableObject bindable, object? newValue)
         {

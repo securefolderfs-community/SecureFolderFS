@@ -2,15 +2,17 @@ using Foundation;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
+using SecureFolderFS.Storage.StorageProperties;
 using UIKit;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IStorableChild"/>
-    internal abstract class IOSStorable : IStorableChild, IBookmark, IWrapper<NSUrl>
+    internal abstract class IOSStorable : IStorableChild, IStorableProperties, IBookmark, IWrapper<NSUrl>
     {
         protected readonly IOSFolder? parent;
         protected readonly NSUrl permissionRoot;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public NSUrl Inner { get; }
@@ -71,6 +73,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             BookmarkId = null;
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected static void GetImmediateProperties(NSUrl url, out string? id, out string? name)
         {

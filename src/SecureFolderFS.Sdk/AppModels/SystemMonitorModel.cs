@@ -36,9 +36,9 @@ namespace SecureFolderFS.Sdk.AppModels
         private void AttachEvents()
         {
             if (SettingsService.UserSettings.LockOnSystemLock)
-                SystemService.DesktopLocked += SystemService_DesktopLocked;
+                SystemService.DeviceLocked += SystemService_DesktopLocked;
             else
-                SystemService.DesktopLocked -= SystemService_DesktopLocked;
+                SystemService.DeviceLocked -= SystemService_DesktopLocked;
         }
 
         private void SystemService_DesktopLocked(object? sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
-            SystemService.DesktopLocked -= SystemService_DesktopLocked;
+            SystemService.DeviceLocked -= SystemService_DesktopLocked;
             SettingsService.UserSettings.PropertyChanged -= UserSettings_PropertyChanged;
         }
     }

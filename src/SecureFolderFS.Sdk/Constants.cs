@@ -17,10 +17,9 @@
 
             public static class Health
             {
-                public static bool ARE_UPDATES_OPTIMIZED = true;
-                public static bool IS_SCANNING_PARALLELIZED = false;
-                public static bool IS_DISCOVERY_ASSUMED_FAST = true;
-                public static double INTERVAL_MULTIPLIER = 0.2d;
+                public const bool ARE_UPDATES_OPTIMIZED = true;
+                public const bool IS_SCANNING_PARALLELIZED = false;
+                public const double INTERVAL_MULTIPLIER = 0.2d;
             }
         }
 
@@ -31,8 +30,9 @@
 
         public static class Vault
         {
-            public const string VAULT_ICON_FILENAME = "vault.icon";
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
+            public const string VAULT_ICON_FILENAME = "vault_icon";
+            public const string VAULT_ICON_FILENAME_ICO = "vault_icon.ico";
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
             public const string VAULT_README_MESSAGE = """
                                                               PLEASE READ BEFORE USING THIS VAULT
@@ -44,6 +44,13 @@
                 To access and securely store your files, first unlock the vault in SecureFolderFS, and then click the 'View vault' button.
                 This will open a virtual storage directory where the files you add will be automatically encrypted on the hard drive.
                 """;
+        }
+
+        public static class Sizes
+        {
+            public const long KILOBYTE = 1024;
+            public const long MEGABYTE = KILOBYTE * 1024;
+            public const long GIGABYTE = MEGABYTE * 1024;
         }
 
         public static class IntegrationPermissions

@@ -39,12 +39,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 if (loadLatest)
                 {
-                    var changelog = await ChangelogService.GetLatestAsync(appVersion, ApplicationService.Platform, cancellationToken);
+                    var changelog = await ChangelogService.GetLatestAsync(appVersion, cancellationToken);
                     BuildChangelog(changelog, changelogBuilder);
                 }
                 else
                 {
-                    await foreach (var item in ChangelogService.GetSinceAsync(_changelogSince, ApplicationService.Platform, cancellationToken))
+                    await foreach (var item in ChangelogService.GetSinceAsync(_changelogSince, cancellationToken))
                     {
                         BuildChangelog(item, changelogBuilder);
                     }

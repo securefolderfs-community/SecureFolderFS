@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -36,22 +37,31 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Move(int oldIndex, int newIndex)
         {
+            if (VaultConfigurations.SavedVaults is null)
+                return;
+
             var item = base[oldIndex];
             base.RemoveItem(oldIndex);
             base.InsertItem(newIndex, item);
+
+            // Also update the backing store
+            // Note, that we don't need to update the order for VaultWidgets
+            var itemConfiguration = VaultConfigurations.SavedVaults[oldIndex];
+            VaultConfigurations.SavedVaults.RemoveAt(oldIndex);
+            VaultConfigurations.SavedVaults.Insert(newIndex, itemConfiguration);
 
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Move, item, oldIndex, newIndex));
         }
 
         /// <inheritdoc/>
-        public async Task LoadAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
+            await Task.WhenAll(VaultConfigurations.InitAsync(cancellationToken), VaultWidgets.InitAsync(cancellationToken));
 
             // Clear previous vaults
             Items.Clear();
 
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel_Old>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {
                 if (item.PersistableId is null)
@@ -95,7 +105,7 @@ namespace SecureFolderFS.Sdk.AppModels
         protected override void InsertItem(int index, IVaultModel item)
         {
             // Update saved vaults
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel_Old>();
             VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate));
 
             // Add default widgets for vault
@@ -114,16 +124,19 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        protected override void RemoveItem(int index)
+        protected override async void RemoveItem(int index)
         {
             var removedItem = this[index];
 
             // Remove persisted
-            if (VaultConfigurations.SavedVaults is not null)
-                VaultConfigurations.SavedVaults.RemoveAt(index);
+            VaultConfigurations.SavedVaults?.RemoveAt(index);
 
             // Remove widget data for that vault
             VaultWidgets.SetForVault(removedItem.Folder.Id, null);
+
+            // Remove bookmark
+            if (removedItem.Folder is IBookmark bookmark)
+                await bookmark.RemoveBookmarkAsync();
 
             // Remove from cache
             base.RemoveItem(index);

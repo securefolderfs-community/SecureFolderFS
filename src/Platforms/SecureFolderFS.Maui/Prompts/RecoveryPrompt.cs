@@ -10,20 +10,20 @@ namespace SecureFolderFS.Maui.Prompts
     internal sealed class RecoveryPrompt : IOverlayControl
     {
         public RecoveryOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
             ViewModel.RecoveryKey = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
                 "Cancel".ToLocalized());
-            
+
             var result = await ViewModel.RecoverAsync(default);
             if (!result)
                 return Result.Failure(new CryptographicException(ViewModel.ErrorMessage));

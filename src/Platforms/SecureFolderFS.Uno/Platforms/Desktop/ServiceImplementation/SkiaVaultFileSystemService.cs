@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.WebDav.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -19,7 +16,10 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         {
             await Task.CompletedTask;
             yield return new SkiaWebDavFileSystem();
+            
+#if !__UNO_SKIA_MACOS__
             yield return new FuseFileSystem();
+#endif
         }
     }
 }

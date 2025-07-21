@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.Services
         /// Gets the value that determines whether the app is operating on a desktop platform.
         /// </summary>
         bool IsDesktop { get; }
-        
+
         /// <summary>
         /// Gets the name that uniquely identifies a platform.
         /// </summary>

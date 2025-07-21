@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.ValueConverters
 
             if (progress == 0d)
                 return !invert;
-            
+
             return invert;
         }
 

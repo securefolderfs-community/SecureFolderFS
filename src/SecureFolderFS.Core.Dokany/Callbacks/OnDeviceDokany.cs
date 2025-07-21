@@ -4,12 +4,12 @@ using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +19,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -243,11 +245,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     {
                         var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                         Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
-                        Directory.Delete(ciphertextPath, true);
+                        NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, Specifics, StorableType.Folder);
                     }
                     else
                     {
-                        File.Delete(ciphertextPath);
+                        NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, Specifics, StorableType.File);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -271,7 +273,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 FileSystemInfo fsInfo = new FileInfo(ciphertextPath);
                 if (!fsInfo.Exists)
                     fsInfo = new DirectoryInfo(ciphertextPath);
-                
+
                 fileInfo = new FileInformation()
                 {
                     FileName = fsInfo.Name,
@@ -580,7 +582,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     // File
                     File.Delete(newCiphertextPath);
                     File.Move(oldCiphertextPath, newCiphertextPath);
-                    
+
                     return Trace(DokanResult.Success, fileNameCombined, info);
                 }
                 else
@@ -646,7 +648,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     fileHandle.Lock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);
                 }
-                
+
                 return Trace(DokanResult.InvalidHandle, fileName, info);
             }
             catch (IOException)

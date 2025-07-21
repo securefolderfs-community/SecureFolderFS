@@ -1,0 +1,43 @@
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.StorageProperties;
+
+namespace SecureFolderFS.Sdk.AppModels.Sorters
+{
+    public sealed class SizeSorter : BaseFolderSorter
+    {
+        private readonly bool _isAscending;
+
+        public static IItemSorter<BrowserItemViewModel> Ascending { get; } = new SizeSorter(true);
+
+        public static IItemSorter<BrowserItemViewModel> Descending { get; } = new SizeSorter(false);
+
+        private SizeSorter(bool isAscending)
+        {
+            _isAscending = isAscending;
+        }
+
+        /// <inheritdoc/>
+        public override int Compare(BrowserItemViewModel? x, BrowserItemViewModel? y)
+        {
+            if (x is null || y is null)
+                return 0;
+
+            var size1 = GetSizeAsync(x).ConfigureAwait(false).GetAwaiter().GetResult();
+            var size2 = GetSizeAsync(y).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            var result = size1.CompareTo(size2);
+            return _isAscending ? result : -result;
+        }
+
+        private static async Task<long> GetSizeAsync(BrowserItemViewModel browserItemViewModel)
+        {
+            if (browserItemViewModel is not FileViewModel fileViewModel)
+                return -1L;
+
+            return await fileViewModel.File.GetSizeAsync().ConfigureAwait(false);
+        }
+    }
+}

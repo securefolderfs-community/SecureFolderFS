@@ -1,16 +1,25 @@
 using System.Windows.Input;
-using AndroidX.Lifecycle;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
+using OwlCore.Storage;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Maui.UserControls
 {
     public partial class BrowserControl : ContentView
     {
+        private readonly DeferredInitialization<IFolder> _deferredInitialization;
+        private readonly ISettingsService _settingsService;
+
         public BrowserControl()
         {
+            _deferredInitialization = new();
+            _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
-        
+
         private void RefreshView_Refreshing(object? sender, EventArgs e)
         {
             if (sender is not RefreshView refreshView)
@@ -19,18 +28,45 @@ namespace SecureFolderFS.Maui.UserControls
             RefreshCommand?.Execute(null);
             refreshView.IsRefreshing = false;
         }
-        
-        private void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
+
+        private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
-            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
+            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel } view)
                 return;
 
             if (IsSelecting)
                 itemViewModel.IsSelected = !itemViewModel.IsSelected;
             else
-                itemViewModel.OpenCommand.Execute(null);
+            {
+                view.IsEnabled = false;
+                await itemViewModel.OpenCommand.ExecuteAsync(null);
+                view.IsEnabled = true;
+            }
         }
-        
+
+        private void ItemContainer_Loaded(object? sender, EventArgs e)
+        {
+            if (!_settingsService.UserSettings.AreThumbnailsEnabled)
+                return;
+
+            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
+                return;
+
+            if (fileViewModel.Thumbnail is not null)
+                return;
+
+            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
+            _deferredInitialization.Enqueue(fileViewModel);
+        }
+
+        public object? EmptyView
+        {
+            get => (object?)GetValue(EmptyViewProperty);
+            set => SetValue(EmptyViewProperty, value);
+        }
+        public static readonly BindableProperty EmptyViewProperty =
+            BindableProperty.Create(nameof(EmptyView), typeof(object), typeof(BrowserControl), defaultValue: null);
+
         public bool IsSelecting
         {
             get => (bool)GetValue(IsSelectingProperty);
@@ -38,7 +74,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IsSelectingProperty =
             BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false);
-        
+
         public ICommand? RefreshCommand
         {
             get => (ICommand?)GetValue(RefreshCommandProperty);
@@ -46,7 +82,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty RefreshCommandProperty =
             BindableProperty.Create(nameof(RefreshCommand), typeof(ICommand), typeof(BrowserControl), defaultValue: null);
-        
+
         public IList<BrowserItemViewModel>? ItemsSource
         {
             get => (IList<BrowserItemViewModel>?)GetValue(ItemsSourceProperty);
@@ -54,6 +90,13 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IList<BrowserItemViewModel>), typeof(BrowserControl), defaultValue: null);
+
+        public BrowserViewType ViewType
+        {
+            get => (BrowserViewType)GetValue(ViewTypeProperty);
+            set => SetValue(ViewTypeProperty, value);
+        }
+        public static readonly BindableProperty ViewTypeProperty =
+            BindableProperty.Create(nameof(ViewType), typeof(BrowserViewType), typeof(BrowserControl), defaultValue: BrowserViewType.ListView);
     }
 }
-
