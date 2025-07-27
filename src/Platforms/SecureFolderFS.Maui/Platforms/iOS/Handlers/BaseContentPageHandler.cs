@@ -5,7 +5,7 @@ namespace SecureFolderFS.Maui.Handlers
 {
     public abstract class BaseContentPageHandler : PageHandler
     {
-        protected ContentView? PlatformView { get; private set; }
+        protected new ContentView? PlatformView { get; private set; }
 
         protected ContentPage? ThisPage => VirtualView as ContentPage;
         

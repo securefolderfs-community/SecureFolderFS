@@ -81,7 +81,6 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             // Animate navigation
             await AnimateViewChangeAsync(folderViewModel);
-
             return true;
         }
 
@@ -149,8 +148,11 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             await Browser.FadeTo(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
-            await Task.Delay(10);
-            await Browser.FadeTo(1.0d, 150U);
+            
+            _ = Task.Delay(40).ContinueWith(async _ =>
+            {
+                await Browser.FadeTo(1.0d, 150U);
+            }).Unwrap();
         }
 
         private async void Layouts_PropertyChanged(object? sender, PropertyChangedEventArgs e)

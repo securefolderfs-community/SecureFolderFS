@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.Cryptography
                 CipherId.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(keyPair),
                 CipherId.AES_GCM => new AesGcmHeaderCrypt(keyPair),
                 CipherId.XCHACHA20_POLY1305 => new XChaChaHeaderCrypt(keyPair),
-                CipherId.NONE => new EmptyHeaderCrypt(keyPair),
+                CipherId.NONE => new NoHeaderCrypt(keyPair),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
             IContentCrypt contentCrypt = contentCipherId switch
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.Cryptography
                 CipherId.AES_CTR_HMAC => new AesCtrHmacContentCrypt(keyPair.MacKey),
                 CipherId.AES_GCM => new AesGcmContentCrypt(),
                 CipherId.XCHACHA20_POLY1305 => new XChaChaContentCrypt(),
-                CipherId.NONE => new EmptyContentCrypt(),
+                CipherId.NONE => new NoContentCrypt(),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
             INameCrypt? nameCrypt = fileNameCipherId switch

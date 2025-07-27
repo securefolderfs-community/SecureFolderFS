@@ -84,8 +84,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (sender is not Switch toggleSwitch)
                 return;
 
-            await ViewModel.ToggleRecycleBinAsync(e.Value);
-            toggleSwitch.IsToggled = ViewModel.IsRecycleBinEnabled;
+            try
+            {
+                toggleSwitch.IsEnabled = false;
+                await ViewModel.ToggleRecycleBinAsync(e.Value);
+                toggleSwitch.IsToggled = ViewModel.IsRecycleBinEnabled;
+            }
+            finally
+            {
+                toggleSwitch.IsEnabled = true;
+            }
         }
 
         private async void Picker_SelectedIndexChanged(object? sender, EventArgs e)

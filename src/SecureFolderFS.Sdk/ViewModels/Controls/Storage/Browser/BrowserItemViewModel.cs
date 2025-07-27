@@ -336,8 +336,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
             {
                 // Copy and delete
-                await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, cancellationToken);
-                await parentModifiableFolder.DeleteAsync((IStorableChild)item, cancellationToken);
+                await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, token);
+                await parentModifiableFolder.DeleteAsync((IStorableChild)item, token);
 
                 ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
             }, cts.Token);

@@ -5,7 +5,7 @@ using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.Empty;
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    internal sealed class EmptyHeaderCrypt : BaseHeaderCrypt
+    internal sealed class NoHeaderCrypt : BaseHeaderCrypt
     {
         /// <inheritdoc/>
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderPlaintextSize { get; } = HEADER_SIZE;
 
-        public EmptyHeaderCrypt(KeyPair keyPair)
+        public NoHeaderCrypt(KeyPair keyPair)
             : base(keyPair)
         {
         }

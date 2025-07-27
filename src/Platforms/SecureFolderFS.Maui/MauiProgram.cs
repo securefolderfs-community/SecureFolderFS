@@ -40,6 +40,7 @@ namespace SecureFolderFS.Maui
                 .ConfigureMauiHandlers(handlers =>
                 {
 #if IOS
+                    //handlers.AddHandler<ContentPage, Handlers.ContentPageHandler>();
                     handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
 #endif
                 })

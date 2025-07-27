@@ -1,4 +1,4 @@
-﻿<vw:ContentPageExtended
+﻿<ContentPage
     x:Class="SecureFolderFS.Maui.Views.Vault.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -9,13 +9,12 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
-    xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
-    <vw:ContentPageExtended.Resources>
+    <ContentPage.Resources>
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
-    </vw:ContentPageExtended.Resources>
+    </ContentPage.Resources>
 
     <VerticalStackLayout
         Margin="0,0,0,96"
@@ -57,4 +56,4 @@
                 Text="{l:ResourceString Rid=RecoverAccess}" />
         </VerticalStackLayout>
     </VerticalStackLayout>
-</vw:ContentPageExtended>
+</ContentPage>

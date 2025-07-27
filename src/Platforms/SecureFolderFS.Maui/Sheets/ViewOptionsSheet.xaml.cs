@@ -13,23 +13,27 @@ namespace SecureFolderFS.Maui.Sheets
     internal sealed class ViewOptionsSheetFragment : IOverlayControl
     {
         private readonly TaskCompletionSource<IResult> _tcs;
-        private LayoutsViewModel? _viewModel;
+        
+        public LayoutsViewModel? ViewModel { get; private set; }
+        
+        public static ViewOptionsSheetFragment? ImmediateInstance { get; set; }
 
         public ViewOptionsSheetFragment()
         {
             _tcs = new();
+            ImmediateInstance = this;
         }
 
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
-            if (_viewModel is null)
+            if (ViewModel is null)
                 return Result.Failure(null);
 
             var sheetNavigationService = DI.Service<IBottomSheetNavigationService>();
             await sheetNavigationService.NavigateToAsync(nameof(ViewOptionsSheet), new BottomSheetNavigationParameters()
             {
-                { "ViewModel", _viewModel },
+                { "ViewModel", ViewModel },
                 { "TaskCompletion", _tcs }
             });
 
@@ -39,7 +43,7 @@ namespace SecureFolderFS.Maui.Sheets
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            _viewModel = (LayoutsViewModel)viewable;
+            ViewModel = (LayoutsViewModel)viewable;
         }
 
         /// <inheritdoc/>
@@ -56,8 +60,10 @@ namespace SecureFolderFS.Maui.Sheets
 
         public ViewOptionsSheet()
         {
-            InitializeComponent();
+            ViewModel ??= ViewOptionsSheetFragment.ImmediateInstance?.ViewModel;
             Closed += Sheet_Closed;
+            
+            InitializeComponent();
         }
 
         /// <inheritdoc/>
@@ -70,6 +76,7 @@ namespace SecureFolderFS.Maui.Sheets
         private void Sheet_Closed(object? sender, EventArgs e)
         {
             _tcs?.TrySetResult(Result.Success);
+            ViewOptionsSheetFragment.ImmediateInstance = null;
         }
 
         public LayoutsViewModel? ViewModel
@@ -78,7 +85,7 @@ namespace SecureFolderFS.Maui.Sheets
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(LayoutsViewModel), typeof(ViewOptionsSheet), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(LayoutsViewModel), typeof(ViewOptionsSheet));
     }
 }
 

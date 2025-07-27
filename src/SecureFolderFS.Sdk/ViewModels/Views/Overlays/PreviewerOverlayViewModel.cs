@@ -70,7 +70,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task OpenPropertiesAsync(CancellationToken cancellationToken)
         {
-            if (PreviewerViewModel is not FilePreviewerViewModel { Inner:  IStorableProperties storableProperties } filePreviewer)
+            BasePreviewerViewModel? previewer = PreviewerViewModel as FilePreviewerViewModel;
+            if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
+                previewer = carouselPreviewer.Slides[carouselPreviewer.CurrentIndex];
+
+            if (previewer is not FilePreviewerViewModel { Inner: IStorableProperties storableProperties } filePreviewer)
                 return;
 
             var properties = await storableProperties.GetPropertiesAsync();

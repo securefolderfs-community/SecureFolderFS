@@ -11,13 +11,14 @@
     x:Name="ThisControl">
 
     <ContentView.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
         <vc:BreadcrumbConverter x:Key="BreadcrumbConverter" />
     </ContentView.Resources>
 
     <CollectionView
         x:DataType="local:BreadcrumbBar"
         BindingContext="{x:Reference ThisControl}"
+        ItemSizingStrategy="MeasureAllItems"
         ItemsSource="{Binding ItemsSource, Mode=OneWay}"
         SelectionMode="None"
         VerticalOptions="Center">
@@ -30,22 +31,24 @@
                         Text="{Binding Title, Mode=OneWay}"
                         VerticalOptions="Center" />
 
-                    <Grid>
-                        <mi:MauiIcon
-                            Margin="8,0"
-                            Icon="{mi_cupertino:Cupertino ChevronRight}"
-                            IconSize="15"
-                            IsVisible="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                            OnPlatforms="iOS"
-                            VerticalOptions="Center" />
-                        <mi:MauiIcon
-                            Margin="12,0"
-                            Icon="{mi_material:Material ChevronRight}"
-                            IconSize="15"
-                            IsVisible="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                            OnPlatforms="Android"
-                            VerticalOptions="Center" />
-                    </Grid>
+                    <OnPlatform x:TypeArguments="View">
+                        <On Platform="Android">
+                            <mi:MauiIcon
+                                Margin="12,0"
+                                Icon="{mi_material:Material ChevronRight}"
+                                IconSize="15"
+                                Opacity="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}, ConverterParameter='invert'}"
+                                VerticalOptions="Center" />
+                        </On>
+                        <On Platform="iOS">
+                            <mi:MauiIcon
+                                Margin="12,0,10,0"
+                                Icon="{mi_cupertino:Cupertino ChevronRight}"
+                                IconSize="15"
+                                Opacity="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}, ConverterParameter='invert'}"
+                                VerticalOptions="Center" />
+                        </On>
+                    </OnPlatform>
 
                     <HorizontalStackLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Command, Mode=OneWay}" CommandParameter="{Binding}" />

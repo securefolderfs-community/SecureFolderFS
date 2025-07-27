@@ -47,7 +47,7 @@
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
                             <CheckBox
-                                Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                 IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <ContentView
@@ -115,7 +115,7 @@
                         <CheckBox
                             Grid.Row="0"
                             Grid.RowSpan="2"
-                            Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
                             IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
@@ -182,7 +182,7 @@
                         </Border>
 
                         <CheckBox
-                            Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
                             HorizontalOptions="End"
                             IsChecked="{Binding IsSelected, Mode=TwoWay}"
                             IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"

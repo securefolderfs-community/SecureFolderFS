@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.EventArguments;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
-    public partial class LoginPage : ContentPageExtended, IQueryAttributable
+    public partial class LoginPage : ContentPage, IQueryAttributable
     {
         public LoginPage()
         {

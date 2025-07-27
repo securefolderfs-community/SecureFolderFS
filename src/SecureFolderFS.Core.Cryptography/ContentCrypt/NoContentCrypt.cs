@@ -4,7 +4,7 @@ using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.Empty;
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    internal sealed class EmptyContentCrypt : BaseContentCrypt
+    internal sealed class NoContentCrypt : BaseContentCrypt
     {
         /// <inheritdoc/>
         public override int ChunkPlaintextSize { get; } = CHUNK_PLAINTEXT_SIZE;

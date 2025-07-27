@@ -10,7 +10,7 @@
 
     <Shell.ForegroundColor>
         <OnPlatform x:TypeArguments="Color">
-            <On Platform="iOS">#007bff</On>
+            <On Platform="iOS">#ffffff</On>
         </OnPlatform>
     </Shell.ForegroundColor>
     <Shell.TitleColor>

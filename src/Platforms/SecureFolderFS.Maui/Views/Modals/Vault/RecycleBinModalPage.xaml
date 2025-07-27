@@ -30,8 +30,15 @@
     <md:BaseModalPage.ToolbarItems>
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
-            Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
+            IsEnabled="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}">
+            <ToolbarItem.Order>
+                <OnPlatform x:TypeArguments="ToolbarItemOrder">
+                    <On Platform="iOS" Value="Primary" />
+                    <On Platform="Android" Value="Secondary" />
+                </OnPlatform>
+            </ToolbarItem.Order>
+        </ToolbarItem>
     </md:BaseModalPage.ToolbarItems>
 
     <md:BaseModalPage.ModalContent>
@@ -49,7 +56,7 @@
                 <uco:OptionsContainer>
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
-                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="False">
+                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
                                 <uco:OptionsControl.Slot>
                                     <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
                                 </uco:OptionsControl.Slot>
@@ -61,9 +68,11 @@
                                 <uco:OptionsControl.Slot>
                                     <ucc:ModernPicker
                                         ios:Picker.UpdateMode="WhenFinished"
+                                        HorizontalTextAlignment="Center"
                                         IsTransparent="True"
                                         ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
                                         ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                        MinimumWidthRequest="100"
                                         SelectedIndexChanged="Picker_SelectedIndexChanged"
                                         SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
                                 </uco:OptionsControl.Slot>
@@ -165,7 +174,7 @@
                     HorizontalOptions="Fill"
                     Style="{StaticResource TransparentButtonStyle}"
                     Text="Select all"
-                    VerticalOptions="Center" />
+                    VerticalOptions="End" />
             </Grid>
         </Grid>
     </md:BaseModalPage.ModalContent>

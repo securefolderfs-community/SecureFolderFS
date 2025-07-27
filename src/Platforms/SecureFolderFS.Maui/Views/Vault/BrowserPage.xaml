@@ -20,7 +20,7 @@
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand}"
             Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|SelectItems:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.ChangeViewOptionsCommand}"
             Order="Secondary"

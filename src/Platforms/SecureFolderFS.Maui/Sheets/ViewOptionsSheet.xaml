@@ -26,32 +26,38 @@
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
+                                                HorizontalTextAlignment="Center"
                                                 IsTransparent="True"
                                                 ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
                                                 ItemsSource="{Binding ViewModel.SortOptions, Mode=OneWay}"
+                                                MinimumWidthRequest="120"
                                                 SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay}">
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
+                                                HorizontalTextAlignment="Center"
                                                 IsTransparent="True"
                                                 ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
                                                 ItemsSource="{Binding ViewModel.ViewOptions, Mode=OneWay}"
+                                                MinimumWidthRequest="120"
                                                 SelectedItem="{Binding ViewModel.CurrentViewOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
                                     <uco:OptionsControl
                                         Title="{l:ResourceString Rid=ItemSize}"
                                         IsSeparatorVisible="False"
-                                        IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay}">
+                                        IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
+                                                HorizontalTextAlignment="Center"
                                                 IsTransparent="True"
                                                 ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
                                                 ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                                MinimumWidthRequest="120"
                                                 SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>

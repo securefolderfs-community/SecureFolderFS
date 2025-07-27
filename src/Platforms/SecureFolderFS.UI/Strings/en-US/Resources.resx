@@ -854,4 +854,7 @@
   <data name="ClosedUnexpectedly" xml:space="preserve">
       <value>{0} has closed unexpectedly</value>
   </data>
+  <data name="SelectItems" xml:space="preserve">
+      <value>Select</value>
+  </data>
 </root>
