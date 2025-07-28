@@ -51,8 +51,6 @@ namespace SecureFolderFS.UI.Helpers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                Debugger.Break();
-
                 return null;
             }
         }

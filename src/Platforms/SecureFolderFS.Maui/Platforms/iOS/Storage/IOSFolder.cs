@@ -161,7 +161,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public override Task<IBasicProperties> GetPropertiesAsync()
         {
-            properties ??= new IOSFolderProperties(Inner);
+            properties ??= new IOSFolderProperties(Inner, permissionRoot);
             return Task.FromResult(properties);
         }
     }

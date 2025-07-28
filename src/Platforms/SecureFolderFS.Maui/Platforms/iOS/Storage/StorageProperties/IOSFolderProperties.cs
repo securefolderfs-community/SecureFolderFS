@@ -11,46 +11,68 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties
     internal sealed class IOSFolderProperties : IDateProperties, IBasicProperties
     {
         private readonly NSUrl _url;
+        private readonly NSUrl _permissionRoot;
 
-        public IOSFolderProperties(NSUrl url)
+        public IOSFolderProperties(NSUrl url, NSUrl permissionRoot)
         {
             _url = url;
+            _permissionRoot = permissionRoot;
         }
 
         /// <inheritdoc/>
         public Task<IStorageProperty<DateTime>> GetDateCreatedAsync(CancellationToken cancellationToken = default)
         {
-            using var document = new UIDocument(_url);
-            var path = document.FileUrl.Path;
-            if (path is null)
-                return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));;
-            
-            var attributes = NSFileManager.DefaultManager.GetAttributes(path, out _);
-            if (attributes?.CreationDate is null)
-                return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));;
+            try
+            {
+                _permissionRoot.StartAccessingSecurityScopedResource();
+                
+                using var document = new UIDocument(_url);
+                var path = document.FileUrl.Path;
+                if (path is null)
+                    return Task.FromResult<IStorageProperty<DateTime>>(
+                        new GenericProperty<DateTime>(DateTime.MinValue));
 
-            var dateCreated = attributes.CreationDate.ToDateTime();
-            var dateProperty = new GenericProperty<DateTime>(dateCreated);
+                var attributes = NSFileManager.DefaultManager.GetAttributes(path, out _);
+                if (attributes?.CreationDate is null)
+                    return Task.FromResult<IStorageProperty<DateTime>>(
+                        new GenericProperty<DateTime>(DateTime.MinValue));
 
-            return Task.FromResult<IStorageProperty<DateTime>>(dateProperty);
+                var dateCreated = attributes.CreationDate.ToDateTime();
+                var dateProperty = new GenericProperty<DateTime>(dateCreated);
+
+                return Task.FromResult<IStorageProperty<DateTime>>(dateProperty);
+            }
+            finally
+            {
+                _permissionRoot.StopAccessingSecurityScopedResource();
+            }
         }
 
         /// <inheritdoc/>
         public Task<IStorageProperty<DateTime>> GetDateModifiedAsync(CancellationToken cancellationToken = default)
         {
-            using var document = new UIDocument(_url);
-            var path = document.FileUrl.Path;
-            if (path is null)
-                return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));;
-            
-            var attributes = NSFileManager.DefaultManager.GetAttributes(path, out _);
-            if (attributes?.CreationDate is null)
-                return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));;
+            try
+            {
+                _permissionRoot.StartAccessingSecurityScopedResource();
+                
+                using var document = new UIDocument(_url);
+                var path = document.FileUrl.Path;
+                if (path is null)
+                    return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));
 
-            var dateModified = (attributes.ModificationDate ?? attributes.CreationDate).ToDateTime();
-            var dateProperty = new GenericProperty<DateTime>(dateModified);
+                var attributes = NSFileManager.DefaultManager.GetAttributes(path, out _);
+                if (attributes?.CreationDate is null)
+                    return Task.FromResult<IStorageProperty<DateTime>>(new GenericProperty<DateTime>(DateTime.MinValue));
 
-            return Task.FromResult<IStorageProperty<DateTime>>(dateProperty);
+                var dateModified = (attributes.ModificationDate ?? attributes.CreationDate).ToDateTime();
+                var dateProperty = new GenericProperty<DateTime>(dateModified);
+
+                return Task.FromResult<IStorageProperty<DateTime>>(dateProperty);
+            }
+            finally
+            {
+                _permissionRoot.StopAccessingSecurityScopedResource();
+            }
         }
 
         /// <inheritdoc/>
