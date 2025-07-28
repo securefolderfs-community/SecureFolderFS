@@ -9,6 +9,11 @@ namespace SecureFolderFS.Sdk.Services
     public interface IOverlayService
     {
         /// <summary>
+        /// Gets the currently shown overlay.
+        /// </summary>
+        IViewable? CurrentView { get; }
+
+        /// <summary>
         /// Shows the provided <paramref name="viewable"/> as an overlay.
         /// If an overlay is already shown, a new one will be presented on top of the existing one.
         /// </summary>

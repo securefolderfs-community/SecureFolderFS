@@ -67,7 +67,6 @@ namespace SecureFolderFS.UI.Helpers
                     .Foundation<IVaultManagerService, VaultManagerService>(AddService.AddSingleton)
                     .Foundation<IChangelogService, GitHubChangelogService>(AddService.AddSingleton)
                     .Foundation<IVaultPersistenceService, VaultPersistenceService>(AddService.AddSingleton, _ => new VaultPersistenceService(settingsFolder))
-                
 #if DEBUG
                     .Foundation<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
 #else

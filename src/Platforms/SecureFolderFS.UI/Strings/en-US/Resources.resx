@@ -696,7 +696,7 @@
     <value>Item layout</value>
   </data>
   <data name="ViewOptions" xml:space="preserve">
-    <value>View Options</value>
+    <value>View options</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -856,5 +856,8 @@
   </data>
   <data name="SelectItems" xml:space="preserve">
       <value>Select</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+      <value>Done</value>
   </data>
 </root>

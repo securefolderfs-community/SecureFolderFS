@@ -36,9 +36,20 @@
                     <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
                         <vlc:MediaPlayerElement.PlaybackControls>
                             <vlc:PlaybackControls
-                                BackgroundColor="#00FFFFFF"
+                                AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"
+                                BackgroundColor="Transparent"
+                                ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"
+                                Foreground="#ffffff"
                                 IsTracksButtonVisible="False"
-                                MainColor="{StaticResource PrimaryLightColor}" />
+                                LockButtonStyle="{StaticResource VideoLockButtonStyle}"
+                                MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
+                                RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"
+                                RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
+                                SeekBarStyle="{StaticResource VideoSeekBarStyle}"
+                                SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
+                                UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
                         </vlc:MediaPlayerElement.PlaybackControls>
                     </vlc:MediaPlayerElement>
                 </uc:PanRouter.RouterContent>
@@ -75,19 +86,23 @@
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
             <VerticalStackLayout Spacing="16" VerticalOptions="Center">
                 <Grid HorizontalOptions="Center">
-                    <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50}" OnPlatforms="Android" />
-                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50}" OnPlatforms="iOS" />
+                    <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="Android" />
+                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="iOS" />
                 </Grid>
 
                 <VerticalStackLayout>
                     <Label
                         FontSize="20"
                         HorizontalOptions="Center"
-                        Text="{Binding Title, Mode=OneWay}" />
+                        Text="{Binding Title, Mode=OneWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
                     <Label
                         HorizontalOptions="Center"
                         Opacity="0.8"
-                        Text="{l:ResourceString Rid=NoPreviewAvailable}" />
+                        Text="{l:ResourceString Rid=NoPreviewAvailable}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </DataTemplate>

@@ -6,6 +6,7 @@ using Plugin.Maui.BottomSheet.Hosting;
 using MauiIcons.Material;
 #elif IOS
 using MauiIcons.Cupertino;
+using SecureFolderFS.Maui.Handlers;
 using SecureFolderFS.Maui.Views;
 #endif
 
@@ -41,7 +42,8 @@ namespace SecureFolderFS.Maui
                 {
 #if IOS
                     //handlers.AddHandler<ContentPage, Handlers.ContentPageHandler>();
-                    handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
+                    handlers.AddHandler<Slider, CustomSliderHandler>();
+                    handlers.AddHandler<ContentPageExtended, ContentPageExHandler>();
 #endif
                 })
 

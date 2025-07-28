@@ -9,13 +9,26 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseOverlayService : IOverlayService
     {
         /// <inheritdoc/>
+        public IViewable? CurrentView { get; protected set; }
+
+        /// <inheritdoc/>
         public virtual async Task<IResult> ShowAsync(IViewable viewable)
         {
-            var overlay = GetOverlay(viewable);
-            overlay.SetView(viewable);
+            var previousView = CurrentView;
 
-            // Show overlay
-            return await overlay.ShowAsync();
+            try
+            {
+                var overlay = GetOverlay(viewable);
+                overlay.SetView(viewable);
+                CurrentView = viewable;
+
+                // Show overlay
+                return await overlay.ShowAsync();
+            }
+            finally
+            {
+                CurrentView = previousView;
+            }
         }
 
         protected abstract IOverlayControl GetOverlay(IViewable viewable);

@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.UserControls.CommandBarControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -26,60 +27,50 @@
         <Border
             x:Name="TopBorder"
             Grid.Row="0"
-            Background="{StaticResource BarGradient}"
-            HeightRequest="150"
+            Background="{OnPlatform Android={StaticResource BarGradient}}"
+            HeightRequest="{OnPlatform Android=150,
+                                       iOS=48}"
             StrokeThickness="0"
             VerticalOptions="Start"
             ZIndex="5">
 
-            <Grid
-                Padding="16,0"
-                Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
-                ColumnSpacing="16"
-                HeightRequest="75"
-                VerticalOptions="Start">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <Grid
+                        Padding="16,0"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        ColumnSpacing="16"
+                        HeightRequest="75"
+                        VerticalOptions="Start">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <Button
-                                Padding="12"
-                                mi:MauiIcon.Value="{mi_material:Material Close,
-                                                                         IconSize=20}"
-                                Clicked="Close_Clicked"
-                                Style="{StaticResource TransparentButtonStyle}"
-                                VerticalOptions="Center" />
-                        </On>
-                        <On Platform="iOS">
-                            <Button
-                                Padding="12"
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Xmark,
-                                                                           IconSize=20}"
-                                Clicked="Close_Clicked"
-                                Style="{StaticResource TransparentButtonStyle}"
-                                VerticalOptions="Center" />
-                        </On>
-                    </OnPlatform>
-                </Grid>
+                        <!--  Close Button  -->
+                        <Button
+                            Grid.Column="0"
+                            Padding="12"
+                            mi:MauiIcon.Value="{mi_material:Material Close,
+                                                                     IconSize=20}"
+                            Clicked="Close_Clicked"
+                            Style="{StaticResource TransparentButtonStyle}"
+                            VerticalOptions="Center" />
 
-                <Label
-                    Grid.Column="1"
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    HorizontalOptions="Start"
-                    LineBreakMode="TailTruncation"
-                    Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
-                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
-                    VerticalOptions="Center" />
+                        <!--  Title  -->
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="Start"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
 
-                <OnPlatform x:TypeArguments="View">
-                    <On Platform="Android">
+                        <!--  Quick Options  -->
                         <HorizontalStackLayout Grid.Column="2">
                             <Button
                                 Padding="12"
@@ -98,29 +89,67 @@
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                    </On>
-                    <On Platform="iOS">
-                        <HorizontalStackLayout Grid.Column="2">
+                    </Grid>
+                </On>
+                <On Platform="iOS">
+                    <Grid
+                        Padding="8,0"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        HeightRequest="48"
+                        VerticalOptions="Start">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Quick Options  -->
+                        <HorizontalStackLayout Grid.Column="1">
                             <Button
                                 Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
-                                                                           IconSize=20}"
+                                                                           IconSize=22,
+                                                                           IconColor='#007bff'}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
-                                Style="{StaticResource TransparentButtonStyle}"
+                                Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
                                 Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
-                                                                           IconSize=20}"
+                                                                           IconSize=22,
+                                                                           IconColor='#007bff'}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
-                                Style="{StaticResource TransparentButtonStyle}"
+                                Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
-                    </On>
-                </OnPlatform>
-            </Grid>
+
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            HorizontalOptions="Center"
+                            LineBreakMode="TailTruncation"
+                            MaximumWidthRequest="180"
+                            Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
+
+                        <Button
+                            Grid.Column="1"
+                            Clicked="Close_Clicked"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="End"
+                            Style="{StaticResource NoBackgroundButtonStyle}"
+                            Text="{l:ResourceString Rid=Done}"
+                            TextColor="#007bff"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </On>
+            </OnPlatform>
         </Border>
 
         <ContentView

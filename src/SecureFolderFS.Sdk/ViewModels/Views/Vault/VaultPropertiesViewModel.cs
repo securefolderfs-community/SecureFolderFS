@@ -61,6 +61,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (UnlockedVaultViewModel.Options.IsReadOnly)
                 return;
 
+            if (OverlayService.CurrentView is not null)
+                return;
+
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.FirstStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
@@ -73,6 +76,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (UnlockedVaultViewModel.Options.IsReadOnly)
                 return;
 
+            if (OverlayService.CurrentView is not null)
+                return;
+
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.ProceedingStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
@@ -82,6 +88,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
         {
+            if (OverlayService.CurrentView is not null)
+                return;
+
             using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
             await previewRecoveryOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(previewRecoveryOverlay);

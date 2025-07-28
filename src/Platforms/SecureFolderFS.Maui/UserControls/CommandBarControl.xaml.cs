@@ -57,11 +57,19 @@ namespace SecureFolderFS.Maui.UserControls
                     if (bValue)
                     {
                         commandBar.TopBorder.IsVisible = true;
+#if ANDROID
                         await commandBar.TopBorder.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+#elif IOS
+                        await commandBar.TopBorder.FadeTo(1d, 350U, Easing.CubicInOut);
+#endif
                     }
                     else
                     {
+#if ANDROID
                         await commandBar.TopBorder.TranslateTo(0, -150, 350U, Easing.CubicInOut);
+#elif IOS
+                        await commandBar.TopBorder.FadeTo(0d, 350U, Easing.CubicInOut);
+#endif
                         commandBar.TopBorder.IsVisible = false;
                     }
                 });
@@ -117,4 +125,3 @@ namespace SecureFolderFS.Maui.UserControls
             BindableProperty.Create(nameof(InnerContent), typeof(object), typeof(CommandBarControl));
     }
 }
-
