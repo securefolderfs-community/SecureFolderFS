@@ -93,7 +93,7 @@
                 </On>
                 <On Platform="iOS">
                     <Grid
-                        Padding="8,0"
+                        Padding="4,0"
                         Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         HeightRequest="48"
                         VerticalOptions="Start">
@@ -108,7 +108,7 @@
                             <Button
                                 Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
-                                                                           IconSize=22,
+                                                                           IconSize=24,
                                                                            IconColor='#007bff'}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
@@ -117,7 +117,7 @@
                             <Button
                                 Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
-                                                                           IconSize=22,
+                                                                           IconSize=24,
                                                                            IconColor='#007bff'}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
@@ -128,7 +128,7 @@
                         <Label
                             Grid.Column="1"
                             FontAttributes="Bold"
-                            FontSize="15"
+                            FontSize="16"
                             HorizontalOptions="Center"
                             LineBreakMode="TailTruncation"
                             MaximumWidthRequest="180"
@@ -141,11 +141,10 @@
                             Grid.Column="1"
                             Clicked="Close_Clicked"
                             FontAttributes="Bold"
-                            FontSize="16"
+                            FontSize="17"
                             HorizontalOptions="End"
                             Style="{StaticResource NoBackgroundButtonStyle}"
                             Text="{l:ResourceString Rid=Done}"
-                            TextColor="#007bff"
                             VerticalOptions="Center" />
                     </Grid>
                 </On>

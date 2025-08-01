@@ -9,7 +9,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder
+    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName
     {
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
@@ -45,6 +45,28 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 var items = await tcs.Task;
                 foreach (var item in items)
                     yield return item;
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                permissionRoot.StartAccessingSecurityScopedResource();
+                
+                var isDirectory = false;
+                var itemPath = Path.Combine(Id, name);
+
+                if (!NSFileManager.DefaultManager.FileExists(itemPath, ref isDirectory))
+                    throw new FileNotFoundException($"Item '{name}' not found in folder '{Id}'.");
+
+                return NewStorage(new NSUrl(itemPath, isDirectory), this, permissionRoot);
             }
             finally
             {

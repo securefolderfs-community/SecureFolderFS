@@ -51,10 +51,8 @@
                 <On Platform="iOS">
                     <Button
                         Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
-                        FontAttributes="None"
                         Style="{StaticResource NoBackgroundButtonStyle}"
                         Text="{l:ResourceString Rid=GoToVaults}"
-                        TextColor="#007bff"
                         VerticalOptions="End" />
                 </On>
             </OnPlatform>

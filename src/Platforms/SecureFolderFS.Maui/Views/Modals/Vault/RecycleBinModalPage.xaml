@@ -42,7 +42,7 @@
     </md:BaseModalPage.ToolbarItems>
 
     <md:BaseModalPage.ModalContent>
-        <Grid>
+        <Grid RowSpacing="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
@@ -116,15 +116,27 @@
             </VerticalStackLayout>
 
             <!--  Items View  -->
-            <Grid Grid.Row="1" IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}">
+            <Grid
+                Grid.Row="1"
+                Padding="16,0"
+                IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                RowSpacing="8">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <CollectionView
+
+                <Label
                     Grid.Row="0"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
+
+                <CollectionView
+                    Grid.Row="1"
                     ItemsSource="{Binding ViewModel.Items, Mode=OneWay}"
-                    SelectionMode="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+                    SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="vm:RecycleBinItemViewModel">
                             <apesui:ContextMenuContainer x:Name="ItemContainer">
@@ -158,23 +170,41 @@
                                         <Label
                                             Grid.Column="1"
                                             FontSize="15"
+                                            LineBreakMode="TailTruncation"
                                             Text="{Binding Title, Mode=OneWay}"
                                             VerticalOptions="Center" />
                                     </Grid>
                                 </apesui:ContextMenuContainer.Content>
+                                <apesui:ContextMenuContainer.GestureRecognizers>
+                                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                                </apesui:ContextMenuContainer.GestureRecognizers>
                             </apesui:ContextMenuContainer>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Button
-                    Grid.Row="1"
-                    Margin="8"
-                    Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
-                    HorizontalOptions="Fill"
-                    Style="{StaticResource TransparentButtonStyle}"
-                    Text="Select all"
-                    VerticalOptions="End" />
+                <Grid Grid.Row="2" VerticalOptions="End">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="Select all" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding ViewModel.ClearSelectionCommand, Mode=OneWay}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="Clear selection" />
+                </Grid>
             </Grid>
         </Grid>
     </md:BaseModalPage.ModalContent>

@@ -55,7 +55,6 @@
                         SizeChanged="SheetPrimaryButton_SizeChanged"
                         Style="{StaticResource NoBackgroundButtonStyle}"
                         Text="{Binding PrimaryText, Mode=OneWay}"
-                        TextColor="#007bff"
                         VerticalOptions="Center" />
                 </Grid>
             </On>

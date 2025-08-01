@@ -152,6 +152,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             Items.SelectAll();
         }
 
+        [RelayCommand]
+        private void ClearSelection()
+        {
+            IsSelecting = true;
+            Items.UnselectAll();
+        }
+
         private void UpdateSizeBar(PickerOptionViewModel? value)
         {
             if (value is not null && value.Id != "-1")

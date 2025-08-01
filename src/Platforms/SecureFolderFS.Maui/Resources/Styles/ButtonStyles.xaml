@@ -70,6 +70,9 @@
         x:Key="NoBackgroundButtonStyle"
         BasedOn="{StaticResource TransparentButtonStyle}"
         TargetType="Button">
+        <Setter Property="TextColor" Value="#007bff" />
+        <Setter Property="FontAttributes" Value="None" />
+
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">

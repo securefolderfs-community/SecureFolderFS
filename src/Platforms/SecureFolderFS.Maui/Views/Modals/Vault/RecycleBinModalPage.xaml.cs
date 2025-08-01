@@ -109,6 +109,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
             _previousOption = ViewModel.CurrentSizeOption;
         }
+        
+        private void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
+        {
+            if (e.Parameter is not View { BindingContext: SelectableItemViewModel itemViewModel } )
+                return;
+
+            if (ViewModel?.IsSelecting ?? false)
+                itemViewModel.IsSelected = !itemViewModel.IsSelected;
+        }
 
         public RecycleBinOverlayViewModel? ViewModel
         {
