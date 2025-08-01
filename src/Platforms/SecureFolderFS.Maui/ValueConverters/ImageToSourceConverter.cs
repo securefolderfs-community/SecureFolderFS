@@ -1,5 +1,8 @@
+using System.ComponentModel;
 using System.Globalization;
 using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
@@ -11,6 +14,16 @@ namespace SecureFolderFS.Maui.ValueConverters
             return value switch
             {
                 ImageStream imageStream => imageStream.Source,
+                IconImage iconImage => new FontImageSource()
+                {
+                    Glyph = GetDescription(iconImage.MauiIcon.Icon),
+                    Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                    {
+                        ThemeType.Light => "QuarternaryLightColor",
+                        _ => "QuarternaryDarkColor"
+                    }] as Color)!,
+                    FontFamily = iconImage.MauiIcon.Icon?.GetType().Name,
+                },
                 _ => null
             };
         }
@@ -19,6 +32,16 @@ namespace SecureFolderFS.Maui.ValueConverters
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+        
+        private static string GetDescription(Enum? value)
+        {
+            var fieldInfo = value?.GetType().GetField(value.ToString());
+            if (fieldInfo is null)
+                return string.Empty;
+
+            var attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+            return attributes.Length > 0 ? ((DescriptionAttribute)attributes[0]).Description : string.Empty;
         }
     }
 }

@@ -1,19 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Bindable(true)]
-    public sealed partial class SummaryWizardViewModel : BaseWizardViewModel
+    public sealed partial class SummaryWizardViewModel : OverlayViewModel, IStagingView
     {
         private readonly IFolder _folder;
         private readonly IVaultCollectionModel _vaultCollectionModel;
@@ -34,13 +35,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }

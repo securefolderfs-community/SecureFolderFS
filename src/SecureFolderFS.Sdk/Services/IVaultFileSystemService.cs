@@ -1,7 +1,10 @@
-﻿using SecureFolderFS.Storage.VirtualFileSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -18,11 +21,13 @@ namespace SecureFolderFS.Sdk.Services
         /// Gets all file systems that are supported by the app.
         /// </summary>
         /// <remarks>
-        /// Returned file systems that are available, may not be supported on this device. 
+        /// Returned file systems that are available, may not be supported on this device.
         /// Use <see cref="IFileSystem.GetStatusAsync"/> to check if a given file system is supported.
         /// </remarks>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>An <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
         IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
+
+        IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(IVaultCollectionModel vaultCollectionModel, NewVaultMode mode, CancellationToken cancellationToken = default);
     }
 }

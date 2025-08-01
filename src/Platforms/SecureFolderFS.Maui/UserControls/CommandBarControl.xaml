@@ -107,7 +107,7 @@
                         <HorizontalStackLayout Grid.Column="1">
                             <Button
                                 Padding="12"
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino SquareArrowUp,
                                                                            IconSize=24,
                                                                            IconColor='#007bff'}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"

@@ -1,9 +1,8 @@
-﻿using OwlCore.Storage;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {

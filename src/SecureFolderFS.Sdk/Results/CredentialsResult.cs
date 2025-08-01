@@ -3,7 +3,7 @@ using System;
 
 namespace SecureFolderFS.Sdk.Results
 {
-    public sealed class CredentialsResult : IResult<IDisposable>
+    public class CredentialsResult : IResult<IDisposable>
     {
         /// <inheritdoc/>
         public bool Successful { get; }

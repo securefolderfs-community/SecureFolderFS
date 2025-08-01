@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
@@ -7,55 +11,45 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Storage;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
-    [Inject<IFileExplorerService>, Inject<IVaultService>]
+    [Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class LocationWizardViewModel : BaseWizardViewModel
+    public sealed partial class PickerSourceWizardViewModel : BaseDataSourceWizardViewModel
     {
-        private readonly IVaultCollectionModel _vaultCollectionModel;
+        private readonly IFolderPicker _folderPicker;
+        private IFolder? _selectedFolder;
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
         [ObservableProperty] private Severity _Severity;
 
-        public NewVaultCreationType CreationType { get; }
+        /// <inheritdoc/>
+        public override string DataSourceName { get; } = "SourceLocalStorage".ToLocalized();
 
-        public IFolder? SelectedFolder { get; private set; }
-
-        public LocationWizardViewModel(IVaultCollectionModel vaultCollectionModel, NewVaultCreationType creationType)
+        public PickerSourceWizardViewModel(IFolderPicker folderPicker, NewVaultMode creationType, IVaultCollectionModel vaultCollectionModel)
+            : base(creationType, vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
-            _vaultCollectionModel = vaultCollectionModel;
-            CreationType = creationType;
+            _folderPicker = folderPicker;
             CanCancel = true;
             CanContinue = false;
             PrimaryText = "Continue".ToLocalized();
             SecondaryText = "Cancel".ToLocalized();
-            Title = creationType == NewVaultCreationType.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
+            Title = creationType == NewVaultMode.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 
         /// <inheritdoc/>
-        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public override Task<IFolder?> GetFolderAsync()
         {
-            if (SelectedFolder is null)
-                return Result.Failure(null);
-
-            // Confirm bookmark
-            if (SelectedFolder is IBookmark bookmark)
-                await bookmark.AddBookmarkAsync(cancellationToken);
-
-            return Result.Success;
+            return Task.FromResult(_selectedFolder);
         }
 
         /// <inheritdoc/>
@@ -73,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
-            SelectedFolder = await FileExplorerService.PickFolderAsync(null, true, cancellationToken);
+            _selectedFolder = await _folderPicker.PickFolderAsync(null, true, cancellationToken);
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }
 
@@ -82,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             try
             {
                 // No folder selected
-                if (SelectedFolder is null)
+                if (_selectedFolder is null)
                 {
                     Severity = Severity.Default;
                     Message = "SelectFolderToContinue".ToLocalized();
@@ -90,7 +84,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 }
 
                 // Check for duplicates
-                var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == SelectedFolder.Id);
+                var isDuplicate = VaultCollectionModel.Any(x => x.Folder.Id == _selectedFolder.Id);
                 if (isDuplicate)
                 {
                     Severity = Severity.Warning;
@@ -99,9 +93,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 }
 
                 // Validate vault
-                var result = CreationType == NewVaultCreationType.AddExisting
-                    ? await ValidationHelpers.ValidateExistingVault(SelectedFolder, cancellationToken)
-                    : await ValidationHelpers.ValidateNewVault(SelectedFolder, cancellationToken);
+                var result = Mode == NewVaultMode.AddExisting
+                    ? await ValidationHelpers.ValidateExistingVault(_selectedFolder, cancellationToken)
+                    : await ValidationHelpers.ValidateNewVault(_selectedFolder, cancellationToken);
 
                 Severity = result.Value;
                 Message = result.GetMessage();
@@ -110,7 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             }
             finally
             {
-                SelectedLocation = SelectedFolder is null ? "SelectedNone".ToLocalized() : SelectedFolder.Name;
+                SelectedLocation = _selectedFolder is null ? "SelectedNone".ToLocalized() : _selectedFolder.Name;
             }
         }
     }

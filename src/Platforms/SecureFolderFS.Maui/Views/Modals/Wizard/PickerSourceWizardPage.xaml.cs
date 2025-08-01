@@ -4,16 +4,16 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 namespace SecureFolderFS.Maui.Views.Modals.Wizard
 {
-    public partial class LocationWizardPage : BaseModalPage
+    public partial class PickerSourceWizardPage : BaseModalPage
     {
-        public LocationWizardViewModel ViewModel { get; }
+        public PickerSourceWizardViewModel WizardViewModel { get; }
 
         public WizardOverlayViewModel OverlayViewModel { get; }
 
-        public LocationWizardPage(LocationWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
+        public PickerSourceWizardPage(PickerSourceWizardViewModel wizardViewModel, WizardOverlayViewModel overlayViewModel)
         {
             BrowseButtonContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Right, 164d);
-            ViewModel = viewModel;
+            WizardViewModel = wizardViewModel;
             OverlayViewModel = overlayViewModel;
             BindingContext = this;
 
@@ -23,15 +23,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
-            OverlayViewModel.CurrentViewModel = ViewModel;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            OverlayViewModel.CurrentViewModel = WizardViewModel;
+            WizardViewModel.PropertyChanged += WizardViewModelPropertyChanged;
             base.OnAppearing();
         }
 
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
-            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            WizardViewModel.PropertyChanged -= WizardViewModelPropertyChanged;
             base.OnDisappearing();
         }
 
@@ -57,9 +57,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             BrowseButtonContentLayout = new(Button.ButtonContentLayout.ImagePosition.Right, gap);
         }
 
-        private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void WizardViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(ViewModel.SelectedLocation))
+            if (e.PropertyName != nameof(WizardViewModel.SelectedLocation))
                 return;
 
             // Wait for the UI to update
@@ -78,6 +78,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             set => SetValue(BrowseButtonContentLayoutProperty, value);
         }
         public static readonly BindableProperty BrowseButtonContentLayoutProperty =
-            BindableProperty.Create(nameof(BrowseButtonContentLayout), typeof(Button.ButtonContentLayout), typeof(LocationWizardPage), defaultValue: null);
+            BindableProperty.Create(nameof(BrowseButtonContentLayout), typeof(Button.ButtonContentLayout), typeof(PickerSourceWizardPage), defaultValue: null);
     }
 }

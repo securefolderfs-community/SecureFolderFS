@@ -1,5 +1,8 @@
-using MauiIcons.Core;
-using SecureFolderFS.Maui.AppModels;
+#if ANDROID
+using CustomToolbarItem = Microsoft.Maui.Controls.ToolbarItem;
+#elif IOS
+using CustomToolbarItem = SecureFolderFS.Maui.AppModels.ExMenuItem;
+#endif
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
@@ -9,12 +12,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
-
-#if ANDROID
-using CustomToolbarItem = Microsoft.Maui.Controls.ToolbarItem;
-#elif IOS
-using CustomToolbarItem = SecureFolderFS.Maui.AppModels.ExMenuItem;
-#endif
 
 namespace SecureFolderFS.Maui.Views
 {
@@ -29,7 +26,6 @@ namespace SecureFolderFS.Maui.Views
             Instance = this;
             BindingContext = this;
             _ = ViewModel.InitAsync();
-            _ = new MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
         }

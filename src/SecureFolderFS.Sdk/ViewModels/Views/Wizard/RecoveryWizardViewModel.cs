@@ -12,21 +12,21 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IPrinterService>, Inject<IThreadingService>]
     [Bindable(true)]
-    public sealed partial class RecoveryWizardViewModel : BaseWizardViewModel
+    public sealed partial class RecoveryWizardViewModel : OverlayViewModel, IStagingView
     {
-        private readonly string? _vaultId;
         private readonly IDisposable? _unlockContract;
 
         [ObservableProperty] private RecoveryPreviewControlViewModel _RecoveryViewModel;
 
         public IFolder Folder { get; }
 
-        public RecoveryWizardViewModel(IFolder folder, IResult? additionalData)
+        public RecoveryWizardViewModel(IFolder folder, CredentialsResult result)
         {
             ServiceProvider = DI.Default;
             Title = "VaultRecovery".ToLocalized();
@@ -35,29 +35,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CanContinue = true;
             CanCancel = false;
             Folder = folder;
-
-            if (additionalData is CredentialsResult result)
-            {
-                _unlockContract = result.Value;
-                _vaultId = result.VaultId;
-            }
+            _unlockContract = result.Value;
 
             RecoveryViewModel = new()
             {
-                VaultId = _vaultId,
+                VaultId = result.VaultId,
                 Title = Folder.Name,
                 RecoveryKey = _unlockContract?.ToString()
             };
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Failure(null));
         }

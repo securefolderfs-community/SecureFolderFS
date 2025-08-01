@@ -2,12 +2,14 @@ using OwlCore.Storage;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
-
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -57,8 +59,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
+            ViewModel = new();
             OverlayViewModel = (WizardOverlayViewModel)viewable;
-            ViewModel = new(OverlayViewModel.VaultCollectionModel);
             OverlayViewModel.NavigationRequested += ViewModel_NavigationRequested;
             OverlayViewModel.CurrentViewModel = ViewModel;
             Shell.Current.Navigated += Shell_Navigated;
@@ -96,37 +98,73 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                 : Result.Failure(null));
         }
 
-        private async void ViewModel_NavigationRequested(object? sender, Shared.EventArguments.NavigationRequestedEventArgs e)
+        private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
             if (OverlayViewModel is null)
                 return;
 
-            if (e is CloseNavigationRequestedEventArgs)
+            if (e is DismissNavigationRequestedEventArgs)
             {
                 await HideAsync();
                 return;
             }
 
-            BaseWizardViewModel? nextViewModel = e.Origin switch
+            IStagingView? nextViewModel = null;
+            switch (e.Origin)
             {
-                // Main -> Location
-                MainWizardViewModel viewModel => new LocationWizardViewModel(OverlayViewModel.VaultCollectionModel, viewModel.CreationType),
+                // Main -> Source Selection
+                case MainWizardViewModel viewModel:
+                {
+                    nextViewModel = new SourceSelectionWizardViewModel(viewModel.Mode, OverlayViewModel, OverlayViewModel.VaultCollectionModel);;
+                    break;
+                }
+                
+                // Source Selection -> Data Source
+                case SourceSelectionWizardViewModel viewModel:
+                {
+                    nextViewModel = viewModel.SelectedSource;
+                    break;
+                }
+                
+                // Data Source -> Summary
+                case BaseDataSourceWizardViewModel { Mode: NewVaultMode.AddExisting } viewModel:
+                {
+                    var folder = await viewModel.GetFolderAsync();
+                    if (folder is null)
+                        break;
+                    
+                    nextViewModel = new SummaryWizardViewModel(folder, OverlayViewModel.VaultCollectionModel);
+                    break;
+                }
+                
+                // Data Source -> Credentials Selection
+                case BaseDataSourceWizardViewModel { Mode: NewVaultMode.CreateNew } viewModel:
+                {
+                    var folder = await viewModel.GetFolderAsync();
+                    if (folder is not IModifiableFolder modifiableFolder)
+                        break;
 
-                // Location -> Credentials
-                LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),
-
-                // Credentials -> Recovery
-                CredentialsWizardViewModel credentials => new RecoveryWizardViewModel(credentials.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
+                    nextViewModel = new CredentialsWizardViewModel(modifiableFolder);
+                    break;
+                }
+                
+                // Credentials Selection -> Recovery
+                case CredentialsWizardViewModel viewModel:
+                {
+                    if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
+                        break;
+                    
+                    nextViewModel = new RecoveryWizardViewModel(viewModel.Folder, credentialsResult);
+                    break;
+                }
 
                 // Recovery -> Summary
-                RecoveryWizardViewModel recovery => new SummaryWizardViewModel(recovery.Folder, OverlayViewModel.VaultCollectionModel),
-
-                // Location -> Summary
-                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting, SelectedFolder: { } folder } => new SummaryWizardViewModel(folder, OverlayViewModel.VaultCollectionModel),
-
-                // Close
-                _ => null
-            };
+                case RecoveryWizardViewModel viewModel:
+                {
+                    nextViewModel = new SummaryWizardViewModel(viewModel.Folder, OverlayViewModel.VaultCollectionModel);
+                    break;
+                }
+            }
 
             if (nextViewModel is null)
             {
@@ -137,14 +175,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
             var page = (BaseModalPage?)(nextViewModel switch
             {
-                MainWizardViewModel _ => new MainWizardPage(_sourceNavigation),
-                LocationWizardViewModel viewModel => new LocationWizardPage(viewModel, OverlayViewModel),
+                MainWizardViewModel => new MainWizardPage(_sourceNavigation),
+                SourceSelectionWizardViewModel viewModel => new SourceSelectionWizardPage(viewModel, OverlayViewModel),
+                PickerSourceWizardViewModel viewModel => new PickerSourceWizardPage(viewModel, OverlayViewModel),
                 CredentialsWizardViewModel viewModel => new CredentialsWizardPage(viewModel, OverlayViewModel),
                 RecoveryWizardViewModel viewModel => new RecoveryWizardPage(viewModel, OverlayViewModel),
                 SummaryWizardViewModel viewModel => new SummaryWizardPage(viewModel, OverlayViewModel),
                 _ => null
             });
 
+            OverlayViewModel.CurrentViewModel = nextViewModel;
             await Navigation.PushAsync(page, true);
         }
 
@@ -153,7 +193,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             if (ViewModel is null || OverlayViewModel is null)
                 return;
 
-            ViewModel.CreationType = NewVaultCreationType.AddExisting;
+            ViewModel.Mode = NewVaultMode.AddExisting;
             await OverlayViewModel.ContinuationCommand.ExecuteAsync(null);
         }
 
@@ -162,7 +202,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             if (ViewModel is null || OverlayViewModel is null)
                 return;
 
-            ViewModel.CreationType = NewVaultCreationType.CreateNew;
+            ViewModel.Mode = NewVaultMode.CreateNew;
             await OverlayViewModel.ContinuationCommand.ExecuteAsync(null);
         }
     }

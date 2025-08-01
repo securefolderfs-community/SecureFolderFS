@@ -54,6 +54,15 @@ namespace SecureFolderFS.Shared.Extensions
             return collection.Remove(item) ? item : default;
         }
 
+        public static T? RemoveAtAndGet<T>(this ICollection<T> collection, int index)
+        {
+            var item = collection.ElementAtOrDefault(index);
+            if (item is null)
+                return default;
+
+            return collection.Remove(item) ? item : default;
+        }
+
         public static T? RemoveMatch<T>(this ICollection<T> list, Func<T, bool> predicate)
         {
             foreach (var item in list)

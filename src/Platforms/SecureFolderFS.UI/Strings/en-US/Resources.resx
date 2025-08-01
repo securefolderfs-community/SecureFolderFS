@@ -860,4 +860,10 @@
   <data name="Done" xml:space="preserve">
       <value>Done</value>
   </data>
+  <data name="ChooseDataSource" xml:space="preserve">
+      <value>Choose data source</value>
+  </data>
+  <data name="SourceLocalStorage" xml:space="preserve">
+      <value>Device storage</value>
+  </data>
 </root>

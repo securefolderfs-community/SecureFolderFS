@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.AppModels
         {
             Stream = stream;
             Source = new();
-            Source.Stream = (ct) => Task.FromResult(stream);
+            Source.Stream = _ => Task.FromResult(stream);
         }
 
         /// <inheritdoc/>

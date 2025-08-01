@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
-    public enum NewVaultCreationType
+    public enum NewVaultMode
     {
         CreateNew = 0,
         AddExisting = 1

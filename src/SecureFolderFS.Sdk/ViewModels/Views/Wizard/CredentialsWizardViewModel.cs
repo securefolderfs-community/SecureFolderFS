@@ -19,12 +19,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IVaultCredentialsService>, Inject<IVaultManagerService>, Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
+    public sealed partial class CredentialsWizardViewModel : OverlayViewModel, IStagingView
     {
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
@@ -60,7 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
@@ -97,7 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }

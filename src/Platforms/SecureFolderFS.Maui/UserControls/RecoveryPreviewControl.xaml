@@ -73,7 +73,7 @@
 
                             <Button
                                 Padding="16,8"
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino TrayArrowUp,
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino SquareArrowUp,
                                                                            IconSize=16}"
                                 Command="{Binding ExportCommand, Mode=OneWay}"
                                 CommandParameter="Share"
