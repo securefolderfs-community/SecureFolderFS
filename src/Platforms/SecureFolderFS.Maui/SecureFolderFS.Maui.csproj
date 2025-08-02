@@ -138,7 +138,7 @@
     <Compile Update="Views\Modals\Wizard\SummaryWizardPage.xaml.cs">
       <DependentUpon>SummaryWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Modals\Wizard\LocationWizardPage.xaml.cs">
+    <Compile Update="Views\Modals\Wizard\PickerSourceWizardPage.xaml.cs">
       <DependentUpon>LocationWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Vault\OverviewPage.xaml.cs">
@@ -189,7 +189,7 @@
     <MauiXaml Update="Views\Modals\Wizard\SummaryWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\Modals\Wizard\LocationWizardPage.xaml">
+    <MauiXaml Update="Views\Modals\Wizard\PickerSourceWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\Modals\Wizard\MainWizardPage.xaml">

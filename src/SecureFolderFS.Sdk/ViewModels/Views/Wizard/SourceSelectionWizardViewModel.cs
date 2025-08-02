@@ -58,10 +58,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             // Retrieve available data sources
             var sources = await VaultFileSystemService.GetSourcesAsync(_vaultCollectionModel, _mode).ToArrayAsync();
-            Sources = new(sources);
+            Sources = new(sources.Skip(1));
 
             // Set the primary source. In this case we use the first returned data source
-            PrimarySource = Sources.RemoveAtAndGet(0);
+            PrimarySource = sources.FirstOrDefault();
         }
 
         [RelayCommand]

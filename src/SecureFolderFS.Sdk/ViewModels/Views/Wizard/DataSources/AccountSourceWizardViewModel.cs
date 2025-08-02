@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -11,19 +10,21 @@ using SecureFolderFS.Shared.Models;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
 {
     [Bindable(true)]
-    public sealed partial class FtpSourceWizardViewModel : BaseDataSourceWizardViewModel
+    public partial class AccountSourceWizardViewModel : BaseDataSourceWizardViewModel
     {
         /// <inheritdoc/>
-        public override string DataSourceName { get; } = "FTP";
+        public override string DataSourceName { get; }
 
-        public FtpSourceWizardViewModel(NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
+        public AccountSourceWizardViewModel(string dataSourceName, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
             : base(mode, vaultCollectionModel)
         {
+            DataSourceName = dataSourceName;
         }
 
         /// <inheritdoc/>
         public override Task<IFolder?> GetFolderAsync()
         {
+            return Task.FromResult<IFolder?>(null);
         }
 
         /// <inheritdoc/>

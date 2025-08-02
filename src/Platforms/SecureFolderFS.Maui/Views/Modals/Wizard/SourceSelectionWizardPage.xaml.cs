@@ -1,5 +1,6 @@
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 
 namespace SecureFolderFS.Maui.Views.Modals.Wizard
 {
@@ -23,6 +24,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             OverlayViewModel.CurrentViewModel = ViewModel;
             base.OnAppearing();
+        }
+
+        private async void CollectionView_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.CurrentSelection.FirstOrDefault() is not BaseDataSourceWizardViewModel dataSourceViewModel)
+                return;
+
+            await ViewModel.SelectSourceCommand.ExecuteAsync(dataSourceViewModel);
         }
     }
 }

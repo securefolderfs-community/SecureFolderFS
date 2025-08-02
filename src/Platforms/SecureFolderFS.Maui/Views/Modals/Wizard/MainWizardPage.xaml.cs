@@ -177,12 +177,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             {
                 MainWizardViewModel => new MainWizardPage(_sourceNavigation),
                 SourceSelectionWizardViewModel viewModel => new SourceSelectionWizardPage(viewModel, OverlayViewModel),
+                AccountSourceWizardViewModel viewModel => new AccountListSourceWizardPage(viewModel, OverlayViewModel),
                 PickerSourceWizardViewModel viewModel => new PickerSourceWizardPage(viewModel, OverlayViewModel),
                 CredentialsWizardViewModel viewModel => new CredentialsWizardPage(viewModel, OverlayViewModel),
                 RecoveryWizardViewModel viewModel => new RecoveryWizardPage(viewModel, OverlayViewModel),
                 SummaryWizardViewModel viewModel => new SummaryWizardPage(viewModel, OverlayViewModel),
                 _ => null
             });
+            
+            if (page is null)
+                return;
 
             OverlayViewModel.CurrentViewModel = nextViewModel;
             await Navigation.PushAsync(page, true);

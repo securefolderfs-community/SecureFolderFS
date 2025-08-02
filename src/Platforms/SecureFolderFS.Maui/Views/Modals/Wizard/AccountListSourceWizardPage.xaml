@@ -1,0 +1,15 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.AccountListSourceWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:AccountListSourceWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
+
+    <Label Text="TODO: List of added accounts" />
+
+</md:BaseModalPage>

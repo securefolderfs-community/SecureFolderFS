@@ -4,14 +4,14 @@ using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 namespace SecureFolderFS.Maui.AppModels
 {
     /// <inheritdoc cref="IImage"/>
-    internal sealed class IconImage : IImage
+    internal sealed class ImageIcon : IImage
     {
         /// <summary>
         /// Gets the icon of type <see cref="MauiIcon"/> to retrieve the Maui icon representation.
         /// </summary>
         public MauiIcon MauiIcon { get; }
 
-        public IconImage(MauiIcon mauiIcon)
+        public ImageIcon(MauiIcon mauiIcon)
         {
             MauiIcon = mauiIcon;
         }

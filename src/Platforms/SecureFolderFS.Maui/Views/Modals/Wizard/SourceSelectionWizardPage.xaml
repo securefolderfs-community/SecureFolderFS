@@ -44,14 +44,36 @@
                 HeightRequest="1" />
         </VerticalStackLayout>
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}">
+        <CollectionView
+            Grid.Row="1"
+            ItemSizingStrategy="MeasureFirstItem"
+            ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
+            SelectionChanged="CollectionView_SelectionChanged"
+            SelectionMode="Single">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
-                    <Grid>
-                        <Label Text="{Binding Title, Mode=OneWay}" />
-                    </Grid>
+                    <Border Padding="16" Background="{StaticResource ThemeSecondaryColorBrush}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="16">
+                            <Image HeightRequest="48" Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+                            <Label
+                                FontSize="17"
+                                HorizontalOptions="Center"
+                                Text="{Binding DataSourceName, Mode=OneWay}" />
+                        </VerticalStackLayout>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout
+                    HorizontalItemSpacing="8"
+                    Orientation="Vertical"
+                    Span="2"
+                    VerticalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
         </CollectionView>
     </Grid>
 </md:BaseModalPage>

@@ -866,4 +866,10 @@
   <data name="SourceLocalStorage" xml:space="preserve">
       <value>Device storage</value>
   </data>
+  <data name="FTP" xml:space="preserve">
+      <value>FTP</value>
+  </data>
+  <data name="GoogleDrive" xml:space="preserve">
+      <value>Google Drive</value>
+  </data>
 </root>

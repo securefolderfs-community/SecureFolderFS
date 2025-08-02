@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.ValueConverters
             return value switch
             {
                 ImageStream imageStream => imageStream.Source,
-                IconImage iconImage => new FontImageSource()
+                ImageIcon iconImage => new FontImageSource()
                 {
                     Glyph = GetDescription(iconImage.MauiIcon.Icon),
                     Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
@@ -24,6 +24,9 @@ namespace SecureFolderFS.Maui.ValueConverters
                     }] as Color)!,
                     FontFamily = iconImage.MauiIcon.Icon?.GetType().Name,
                 },
+                ImageResourceFile resourceFileImage => resourceFileImage.IsResource
+                    ? ImageSource.FromResource(resourceFileImage.Name)
+                    : ImageSource.FromFile(resourceFileImage.Name),
                 _ => null
             };
         }
