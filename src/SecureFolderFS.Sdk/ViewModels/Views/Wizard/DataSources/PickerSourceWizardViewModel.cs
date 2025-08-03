@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,8 +35,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override string DataSourceName { get; } = "SourceLocalStorage".ToLocalized();
 
-        public PickerSourceWizardViewModel(IFolderPicker folderPicker, NewVaultMode creationType, IVaultCollectionModel vaultCollectionModel)
-            : base(creationType, vaultCollectionModel)
+        public PickerSourceWizardViewModel(string sourceId, IFolderPicker folderPicker, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
+            : base(sourceId, mode, vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             _folderPicker = folderPicker;
@@ -43,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CanContinue = false;
             PrimaryText = "Continue".ToLocalized();
             SecondaryText = "Cancel".ToLocalized();
-            Title = creationType == NewVaultMode.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
+            Title = mode == NewVaultMode.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 
         /// <inheritdoc/>
@@ -73,39 +74,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken = default)
         {
-            try
-            {
-                // No folder selected
-                if (_selectedFolder is null)
-                {
-                    Severity = Severity.Default;
-                    Message = "SelectFolderToContinue".ToLocalized();
-                    return false;
-                }
+            var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel, cancellationToken);
 
-                // Check for duplicates
-                var isDuplicate = VaultCollectionModel.Any(x => x.Folder.Id == _selectedFolder.Id);
-                if (isDuplicate)
-                {
-                    Severity = Severity.Warning;
-                    Message = "VaultAlreadyExists".ToLocalized();
-                    return false;
-                }
+            Message = result.Message;
+            Severity = result.Severity;
+            SelectedLocation = result.SelectedLocation;
 
-                // Validate vault
-                var result = Mode == NewVaultMode.AddExisting
-                    ? await ValidationHelpers.ValidateExistingVault(_selectedFolder, cancellationToken)
-                    : await ValidationHelpers.ValidateNewVault(_selectedFolder, cancellationToken);
+            return result.CanContinue;
+        }
 
-                Severity = result.Value;
-                Message = result.GetMessage();
-
-                return result.Successful;
-            }
-            finally
-            {
-                SelectedLocation = _selectedFolder is null ? "SelectedNone".ToLocalized() : _selectedFolder.Name;
-            }
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            (_folderPicker as IDisposable)?.Dispose();
         }
     }
 }

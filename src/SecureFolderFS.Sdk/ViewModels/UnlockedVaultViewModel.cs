@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         /// <summary>
         /// Gets the options of the unlocked vault.
         /// </summary>
-        public FileSystemOptions Options { get; }
+        public VirtualFileSystemOptions Options { get; }
 
         /// <summary>
         /// Gets the vault view model associated with the vault.

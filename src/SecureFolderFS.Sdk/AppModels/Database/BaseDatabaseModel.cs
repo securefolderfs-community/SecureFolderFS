@@ -25,10 +25,13 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public abstract TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null);
+        public abstract Task<TValue?> GetValueAsync<TValue>(string key, Func<TValue?>? defaultValue = null, CancellationToken cancellation = default);
 
         /// <inheritdoc/>
-        public abstract bool SetValue<TValue>(string key, TValue? value);
+        public abstract Task<bool> SetValueAsync<TValue>(string key, TValue? value, CancellationToken cancellation = default);
+
+        /// <inheritdoc/>
+        public abstract Task<bool> RemoveAsync(string key, CancellationToken cancellation = default);
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);

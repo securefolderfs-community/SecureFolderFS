@@ -19,13 +19,13 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Configure options
             var options = new Dictionary<string, object>()
             {
-                { nameof(FileSystemOptions.VolumeName), Guid.NewGuid().ToString() }
+                { nameof(VirtualFileSystemOptions.VolumeName), Guid.NewGuid().ToString() }
             };
 
             foreach (var item in additionalOptions)
             {
-                if (item.Item1 == nameof(FileSystemOptions.VolumeName))
-                    options.Remove(nameof(FileSystemOptions.VolumeName));
+                if (item.Item1 == nameof(VirtualFileSystemOptions.VolumeName))
+                    options.Remove(nameof(VirtualFileSystemOptions.VolumeName));
 
                 options.Add(item.Item1, item.Item2);
             }

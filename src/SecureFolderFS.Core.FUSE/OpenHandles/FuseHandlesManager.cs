@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class FuseHandlesManager : BaseHandlesManager
     {
-        public FuseHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+        public FuseHandlesManager(StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
             : base(streamsAccess, fileSystemOptions)
         {
         }

@@ -64,6 +64,15 @@
     </When>
 
     <When Condition="'$(TargetFramework)'=='net9.0-ios'">
+      <!-- Entitlements -->
+      <PropertyGroup>
+        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+      </PropertyGroup>
+      <ItemGroup>
+        <None Include="Platforms/iOS/Info.plist" />
+        <None Include="Platforms/iOS/Entitlements.plist" />
+      </ItemGroup>
+      
       <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
@@ -118,6 +127,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>

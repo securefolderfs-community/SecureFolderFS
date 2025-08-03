@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SecureFolderFS.Shared.ComponentModel;
 
@@ -74,7 +75,7 @@ namespace SecureFolderFS.Shared.Extensions
             return default;
         }
 
-        public static bool IsEmpty<T>(this IEnumerable<T>? enumerable)
+        public static bool IsEmpty<T>([NotNullWhen(false)] this IEnumerable<T>? enumerable)
         {
             if (enumerable is null)
                 return true;
@@ -85,7 +86,7 @@ namespace SecureFolderFS.Shared.Extensions
             return !enumerable.Any();
         }
 
-        public static void DisposeElements<T>(this IEnumerable<T?> enumerable)
+        public static void DisposeAll<T>(this IEnumerable<T?> enumerable)
         {
             foreach (var item in enumerable)
             {

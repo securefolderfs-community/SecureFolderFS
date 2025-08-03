@@ -15,7 +15,7 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public void Dispose()
         {
-            this.DisposeElements();
+            this.DisposeAll();
             this.ClearItems();
         }
     }

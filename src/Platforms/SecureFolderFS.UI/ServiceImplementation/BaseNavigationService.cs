@@ -128,7 +128,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             CurrentView = null;
             (Navigator as IDisposable)?.Dispose();
 
-            Views.DisposeElements();
+            Views.DisposeAll();
             Views.Clear();
         }
     }

@@ -6,16 +6,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 {
     public partial class PickerSourceWizardPage : BaseModalPage
     {
-        public PickerSourceWizardViewModel WizardViewModel { get; }
+        public PickerSourceWizardViewModel ViewModel { get; }
 
         public WizardOverlayViewModel OverlayViewModel { get; }
 
-        public PickerSourceWizardPage(PickerSourceWizardViewModel wizardViewModel, WizardOverlayViewModel overlayViewModel)
+        public PickerSourceWizardPage(PickerSourceWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
-            BrowseButtonContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Right, 164d);
-            WizardViewModel = wizardViewModel;
+            ViewModel = viewModel;
             OverlayViewModel = overlayViewModel;
             BindingContext = this;
+            BrowseButtonContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Right, 164d);
 
             InitializeComponent();
         }
@@ -23,15 +23,15 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
-            OverlayViewModel.CurrentViewModel = WizardViewModel;
-            WizardViewModel.PropertyChanged += WizardViewModelPropertyChanged;
+            OverlayViewModel.CurrentViewModel = ViewModel;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             base.OnAppearing();
         }
 
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
-            WizardViewModel.PropertyChanged -= WizardViewModelPropertyChanged;
+            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             base.OnDisappearing();
         }
 
@@ -57,9 +57,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             BrowseButtonContentLayout = new(Button.ButtonContentLayout.ImagePosition.Right, gap);
         }
 
-        private async void WizardViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(WizardViewModel.SelectedLocation))
+            if (e.PropertyName != nameof(ViewModel.SelectedLocation))
                 return;
 
             // Wait for the UI to update

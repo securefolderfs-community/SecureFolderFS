@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.UserControls
 
         public BrowserControl()
         {
-            _deferredInitialization = new();
+            _deferredInitialization = new(UI.Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }

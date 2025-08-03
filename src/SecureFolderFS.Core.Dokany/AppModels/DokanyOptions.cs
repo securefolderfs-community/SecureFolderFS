@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.Dokany.AppModels
 {
-    /// <inheritdoc cref="FileSystemOptions"/>
-    public sealed class DokanyOptions : FileSystemOptions
+    /// <inheritdoc cref="VirtualFileSystemOptions"/>
+    public sealed class DokanyOptions : VirtualFileSystemOptions
     {
         private string? _mountPoint;
 

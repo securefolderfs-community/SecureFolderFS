@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    NavigationService.Views.DisposeElements();
+                    NavigationService.Views.DisposeAll();
                     NavigationService.Views.Clear();
                     break;
             }

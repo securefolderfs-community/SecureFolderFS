@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
             if (unlockContract is not IWrapper<Cryptography.Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fileSystemOptions = FileSystemOptions.ToOptions(options.AppendContract(unlockContract), () => new HealthStatistics(), static () => new FileSystemStatistics());
+            var fileSystemOptions = VirtualFileSystemOptions.ToOptions(options.AppendContract(unlockContract), () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
             fileSystemOptions.SetupValidators(specifics);
 

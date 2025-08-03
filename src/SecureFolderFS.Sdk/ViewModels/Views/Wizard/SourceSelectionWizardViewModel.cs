@@ -56,9 +56,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override async void OnAppearing()
         {
-            // Retrieve available data sources
+            if (!Sources.IsEmpty())
+                return;
+
             var sources = await VaultFileSystemService.GetSourcesAsync(_vaultCollectionModel, _mode).ToArrayAsync();
-            Sources = new(sources.Skip(1));
+            Sources.DisposeAll();
+            Sources.Clear();
+            Sources.AddMultiple(sources.Skip(1));
 
             // Set the primary source. In this case we use the first returned data source
             PrimarySource = sources.FirstOrDefault();

@@ -7,7 +7,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
 {
     public static class FileSystemOptionsExtensions
     {
-        public static void SetupValidators(this FileSystemOptions fileSystemOptions, FileSystemSpecifics specifics)
+        public static void SetupValidators(this VirtualFileSystemOptions fileSystemOptions, FileSystemSpecifics specifics)
         {
             fileSystemOptions.HealthStatistics.FileValidator ??= new FileValidator(specifics);
             fileSystemOptions.HealthStatistics.FolderValidator ??= new FolderValidator(specifics);

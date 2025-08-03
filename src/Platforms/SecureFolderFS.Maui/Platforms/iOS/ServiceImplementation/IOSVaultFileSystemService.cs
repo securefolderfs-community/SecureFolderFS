@@ -12,6 +12,8 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.ServiceImplementation;
 using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
+using static SecureFolderFS.Sdk.Constants.DataSources;
+using static SecureFolderFS.Sdk.Ftp.Constants;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 {
@@ -29,17 +31,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         public override async IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(IVaultCollectionModel vaultCollectionModel, NewVaultMode mode, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var fileExplorerService = DI.Service<IFileExplorerService>();
-            yield return new PickerSourceWizardViewModel(fileExplorerService, mode, vaultCollectionModel)
+            yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel)
             {
                 Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2 })
             };
 
-            yield return new AccountSourceWizardViewModel("FTP".ToLocalized(), mode, vaultCollectionModel)
+            yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
                 Icon = new ImageResourceFile("network_drive_macos.png", false) 
             };
             
-            yield return new AccountSourceWizardViewModel("GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
+            yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {
                 Icon = new ImageResourceFile("gdrive_icon.png", false) 
             };

@@ -20,8 +20,10 @@ namespace SecureFolderFS.Maui.Extensions
                     .Foundation<ISettingsService, SettingsService>(AddService.AddSingleton, _ => new(new MauiAppSettings(settingsFolder), new UserSettings(settingsFolder)))
                     .Foundation<IShareService, MauiShareService>(AddService.AddSingleton)
                     .Foundation<IOverlayService, MauiOverlayService>(AddService.AddSingleton)
+                    .Foundation<IAccountService, MauiAccountService>(AddService.AddSingleton)
                     .Foundation<IClipboardService, MauiClipboardService>(AddService.AddSingleton)
                     .Foundation<IThreadingService, MauiThreadingService>(AddService.AddSingleton)
+                    .Foundation<IPropertyStoreService, MauiPropertyStoreService>(AddService.AddSingleton)
                     .Foundation<IBottomSheetNavigationService, BottomSheetNavigationService>(AddService.AddSingleton)
                     .Foundation<INavigationService, MauiNavigationService>(AddService.AddTransient)
                     

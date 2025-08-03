@@ -1,3 +1,5 @@
+using System;
+
 namespace SecureFolderFS.Sdk.Ftp
 {
     public static class FtpExceptions

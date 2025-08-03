@@ -141,7 +141,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             RegisterViewModel.PropertyChanged -= RegisterViewModel_PropertyChanged;
             RegisterViewModel.CredentialsProvided -= RegisterViewModel_CredentialsProvided;
-            AuthenticationOptions.DisposeElements();
+            AuthenticationOptions.DisposeAll();
             RegisterViewModel.Dispose();
         }
 

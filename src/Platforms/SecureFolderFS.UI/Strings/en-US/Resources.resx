@@ -872,4 +872,25 @@
   <data name="GoogleDrive" xml:space="preserve">
       <value>Google Drive</value>
   </data>
+  <data name="Address" xml:space="preserve">
+      <value>Address</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+      <value>Username</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+      <value>Add account</value>
+  </data>
+  <data name="User1" xml:space="preserve">
+      <value>User1</value>
+  </data>
+  <data name="ChooseAccount" xml:space="preserve">
+      <value>Choose account</value>
+  </data>
+  <data name="SelectedLocation" xml:space="preserve">
+      <value>Selected location</value>
+  </data>
+  <data name="AccountList" xml:space="preserve">
+      <value>Account list</value>
+  </data>
 </root>

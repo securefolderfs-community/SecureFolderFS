@@ -245,7 +245,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Disable selection, if called with selected items
             BrowserViewModel.IsSelecting = false;
 
-            if (BrowserViewModel.Options.IsRecycleBinEnabled())
+            if (BrowserViewModel.Options.IsRecycleBinEnabled() && BrowserViewModel.StorageRoot is not null)
             {
                 if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
                     return;

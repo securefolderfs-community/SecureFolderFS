@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FileSystem
         /// <summary>
         /// Gets the file system options.
         /// </summary>
-        public required FileSystemOptions Options { get; init; }
+        public required VirtualFileSystemOptions Options { get; init; }
 
         /// <summary>
         /// Gets the cache for Directory IDs.
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Core.FileSystem
         /// <param name="contentFolder">The root content folder that holds encrypted files.</param>
         /// <param name="options">The file system options.</param>
         /// <returns>A new instance of <see cref="FileSystemSpecifics"/>.</returns>
-        public static FileSystemSpecifics CreateNew(Security security, IFolder contentFolder, FileSystemOptions options)
+        public static FileSystemSpecifics CreateNew(Security security, IFolder contentFolder, VirtualFileSystemOptions options)
         {
             return new()
             {

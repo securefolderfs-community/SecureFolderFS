@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using SecureFolderFS.Storage;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
 {
     [Bindable(true)]
-    public abstract partial class BaseDataSourceWizardViewModel : OverlayViewModel, IStagingView
+    public abstract partial class BaseDataSourceWizardViewModel : OverlayViewModel, IStagingView, IDisposable
     {
         [ObservableProperty] private IImage? _Icon;
 
@@ -21,10 +22,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
 
         public NewVaultMode Mode { get; }
 
+        public string SourceId { get; }
+
         public abstract string DataSourceName { get; }
 
-        protected BaseDataSourceWizardViewModel(NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
+        protected BaseDataSourceWizardViewModel(string sourceId, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
         {
+            SourceId = sourceId;
             Mode = mode;
             VaultCollectionModel = vaultCollectionModel;
         }
@@ -53,5 +57,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         public abstract Task<IResult> TryCancelAsync(CancellationToken cancellationToken);
 
         public abstract Task<IFolder?> GetFolderAsync();
+
+        /// <inheritdoc/>
+        public abstract void Dispose();
     }
 }

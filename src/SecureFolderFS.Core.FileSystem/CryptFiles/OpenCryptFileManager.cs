@@ -87,7 +87,7 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         {
             lock (_openCryptFiles)
             {
-                _openCryptFiles.Values.DisposeElements();
+                _openCryptFiles.Values.DisposeAll();
                 _openCryptFiles.Clear();
             }
         }

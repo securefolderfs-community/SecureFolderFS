@@ -62,7 +62,7 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public void Dispose()
         {
-            _keys.DisposeElements();
+            _keys.DisposeAll();
             _keys.Clear();
         }
     }

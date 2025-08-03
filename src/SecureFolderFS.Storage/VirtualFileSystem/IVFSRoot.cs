@@ -19,8 +19,8 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         string FileSystemName { get; }
 
         /// <summary>
-        /// Gets the <see cref="FileSystemOptions"/> instance for this file system.
+        /// Gets the <see cref="VirtualFileSystemOptions"/> instance for this file system.
         /// </summary>
-        FileSystemOptions Options { get; }
+        VirtualFileSystemOptions Options { get; }
     }
 }

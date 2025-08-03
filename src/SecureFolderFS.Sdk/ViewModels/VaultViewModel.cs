@@ -47,8 +47,8 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Configure options
             var options = new Dictionary<string, object>()
             {
-                { nameof(FileSystemOptions.IsReadOnly), isReadOnly },
-                { nameof(FileSystemOptions.VolumeName), volumeName }
+                { nameof(VirtualFileSystemOptions.IsReadOnly), isReadOnly },
+                { nameof(VirtualFileSystemOptions.VolumeName), volumeName }
             };
 
             var contentFolder = await GetOrCreateContentFolder();

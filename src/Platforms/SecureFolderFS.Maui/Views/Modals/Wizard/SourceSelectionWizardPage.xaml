@@ -17,63 +17,65 @@
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     </md:BaseModalPage.Resources>
 
-    <Grid
-        Margin="{OnPlatform iOS='0,16,0,0'}"
-        Padding="16,0"
-        RowSpacing="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <md:BaseModalPage.ModalContent>
+        <Grid
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <VerticalStackLayout
-            Grid.Row="0"
-            IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-            Spacing="16">
+            <VerticalStackLayout
+                Grid.Row="0"
+                IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Spacing="16">
 
-            <Button
-                Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}"
-                CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}"
-                FontSize="17"
-                HeightRequest="64"
-                ImageSource="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
-                Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}" />
-            <BoxView
-                Margin="16,0"
-                Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
-                HeightRequest="1" />
-        </VerticalStackLayout>
+                <Button
+                    Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}"
+                    CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}"
+                    FontSize="17"
+                    HeightRequest="64"
+                    ImageSource="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                    Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}" />
+                <BoxView
+                    Margin="16,0"
+                    Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                    HeightRequest="1" />
+            </VerticalStackLayout>
 
-        <CollectionView
-            Grid.Row="1"
-            ItemSizingStrategy="MeasureFirstItem"
-            ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
-            SelectionChanged="CollectionView_SelectionChanged"
-            SelectionMode="Single">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
-                    <Border Padding="16" Background="{StaticResource ThemeSecondaryColorBrush}">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12" />
-                        </Border.StrokeShape>
-                        <VerticalStackLayout Spacing="16">
-                            <Image HeightRequest="48" Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
-                            <Label
-                                FontSize="17"
-                                HorizontalOptions="Center"
-                                Text="{Binding DataSourceName, Mode=OneWay}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+            <CollectionView
+                Grid.Row="1"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
+                SelectionChanged="CollectionView_SelectionChanged"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
+                        <Border Padding="16" Background="{StaticResource ThemeSecondaryColorBrush}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="16">
+                                <Image HeightRequest="48" Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+                                <Label
+                                    FontSize="17"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding DataSourceName, Mode=OneWay}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
 
-            <CollectionView.ItemsLayout>
-                <GridItemsLayout
-                    HorizontalItemSpacing="8"
-                    Orientation="Vertical"
-                    Span="2"
-                    VerticalItemSpacing="8" />
-            </CollectionView.ItemsLayout>
-        </CollectionView>
-    </Grid>
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout
+                        HorizontalItemSpacing="8"
+                        Orientation="Vertical"
+                        Span="2"
+                        VerticalItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

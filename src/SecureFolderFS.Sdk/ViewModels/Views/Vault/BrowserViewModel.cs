@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigator? OuterNavigator { get; }
 
         [Obsolete("Use FileSystemOptions instead.")]
-        public required IVFSRoot StorageRoot { get; init; }
+        public IVFSRoot? StorageRoot { get; init; }
 
         public FileSystemOptions Options { get; }
 
@@ -98,10 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
             finally
             {
-                if (OuterNavigator is INavigationService { CurrentView: BrowserViewModel })
-                    await OuterNavigator.GoBackAsync();
-
-                _ = 0;
+                await OuterNavigator.GoBackAsync();
             }
         }
 

@@ -24,15 +24,23 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Label
-                x:Name="TextSlotLabel"
+            <HorizontalStackLayout
                 Grid.Row="0"
                 Grid.Column="0"
-                FontSize="15"
-                IsVisible="{Binding Text, Mode=OneWay, Source={x:Reference TextSlotLabel}, Converter={StaticResource NullToBoolConverter}}"
-                LineBreakMode="TailTruncation"
-                Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
-                VerticalOptions="Center" />
+                VerticalOptions="Center">
+                <ContentView
+                    Content="{Binding LeftSlot, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center" />
+
+                <Label
+                    x:Name="TextSlotLabel"
+                    FontSize="15"
+                    IsVisible="{Binding Text, Mode=OneWay, Source={x:Reference TextSlotLabel}, Converter={StaticResource NullToBoolConverter}}"
+                    LineBreakMode="TailTruncation"
+                    Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
 
             <ContentView
                 Grid.Row="0"

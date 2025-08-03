@@ -12,8 +12,9 @@ namespace SecureFolderFS.Maui.Views.Vault
 {
     public partial class BrowserPage : ContentPage, IQueryAttributable, INavigator
     {
-        public BrowserPage()
+        public BrowserPage(BrowserViewModel? viewModel = null)
         {
+            ConfigureViewModel(viewModel);
             InitializeComponent();
             BindingContext = this;
         }
@@ -21,15 +22,8 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ViewModel = query.ToViewModel<BrowserViewModel>();
-            if (ViewModel?.CurrentFolder is not null && ViewModel.InnerNavigator is MauiNavigationService navigationService)
-            {
-                navigationService.SetupNavigation(this);
-                navigationService.Views.Add(ViewModel.CurrentFolder);
-                navigationService.SetCurrentViewInternal(ViewModel.CurrentFolder);
-            }
-
-            OnPropertyChanged(nameof(ViewModel));
+            var viewModel = query.ToViewModel<BrowserViewModel>();
+            ConfigureViewModel(viewModel);
         }
 
         /// <inheritdoc/>
@@ -139,6 +133,19 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             ViewModel?.OnDisappearing();
             base.OnDisappearing();
+        }
+
+        private void ConfigureViewModel(BrowserViewModel? viewModel)
+        {
+            ViewModel = viewModel;
+            if (ViewModel?.CurrentFolder is not null && ViewModel.InnerNavigator is MauiNavigationService navigationService)
+            {
+                navigationService.SetupNavigation(this);
+                navigationService.Views.Add(ViewModel.CurrentFolder);
+                navigationService.SetCurrentViewInternal(ViewModel.CurrentFolder);
+            }
+            
+            OnPropertyChanged(nameof(ViewModel));
         }
 
         private async Task AnimateViewChangeAsync(FolderViewModel? folder)

@@ -1,20 +1,68 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Helpers
 {
     public static class ValidationHelpers
     {
+        public static async Task<(Severity Severity, string? Message, string? SelectedLocation, bool CanContinue)> ValidateAddedVault(
+            IFolder? selectedFolder,
+            NewVaultMode mode,
+            IEnumerable<IVaultModel> existingVaults,
+            CancellationToken cancellationToken)
+        {
+            Severity severity;
+            string? message;
+            string? selectedLocation;
+
+            // No folder selected
+            if (selectedFolder is null)
+            {
+                severity = Severity.Default;
+                message = "SelectFolderToContinue".ToLocalized();
+                selectedLocation = GetSelectedLocation();
+                return (severity, message, selectedLocation, false);
+            }
+
+            // Check for duplicates
+            var isDuplicate = existingVaults.Any(x => x.Folder.Id == selectedFolder.Id);
+            if (isDuplicate)
+            {
+                severity = Severity.Warning;
+                message = "VaultAlreadyExists".ToLocalized();
+                selectedLocation = GetSelectedLocation();
+                return (severity, message, selectedLocation, false);
+            }
+
+            // Validate vault
+            var result = mode == NewVaultMode.AddExisting
+                ? await ValidateExistingVault(selectedFolder, cancellationToken)
+                : await ValidateNewVault(selectedFolder, cancellationToken);
+
+            severity = result.Value;
+            message = result.GetMessage();
+            selectedLocation = GetSelectedLocation();
+
+            return (severity, message, selectedLocation, result.Successful);
+
+            string GetSelectedLocation()
+            {
+                return selectedFolder is null ? "SelectedNone".ToLocalized() : selectedFolder.Name;
+            }
+        }
+
         public static async Task<IResultWithMessage<Severity>> ValidateExistingVault(IFolder vaultFolder, CancellationToken cancellationToken)
         {
             var vaultService = DI.Service<IVaultService>();

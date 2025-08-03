@@ -1,3 +1,4 @@
+using System;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
@@ -12,6 +13,7 @@ namespace SecureFolderFS.Sdk.Helpers
 {
     public static class BrowserHelpers
     {
+        [Obsolete]
         public static BrowserViewModel CreateBrowser(IFolder rootFolder, FileSystemOptions options, UnlockedVaultViewModel unlockedVaultViewModel, INavigator? innerNavigator = null, INavigator? outerNavigator = null)
         {
             innerNavigator ??= DI.Service<INavigationService>();
@@ -19,6 +21,19 @@ namespace SecureFolderFS.Sdk.Helpers
             {
                 StorageRoot = unlockedVaultViewModel.StorageRoot
             };
+            var transferViewModel = new TransferViewModel(browserViewModel);
+            var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
+
+            browserViewModel.TransferViewModel = transferViewModel;
+            browserViewModel.CurrentFolder = folderViewModel;
+
+            return browserViewModel;
+        }
+
+        public static BrowserViewModel CreateBrowser(IFolder rootFolder, FileSystemOptions options, IViewable? rootView, INavigator? innerNavigator = null, INavigator? outerNavigator = null)
+        {
+            innerNavigator ??= DI.Service<INavigationService>();
+            var browserViewModel = new BrowserViewModel(rootFolder, options, innerNavigator, outerNavigator, rootView);
             var transferViewModel = new TransferViewModel(browserViewModel);
             var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
 

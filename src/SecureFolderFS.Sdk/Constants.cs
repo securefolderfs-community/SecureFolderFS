@@ -61,5 +61,10 @@
             public const string RESCAP_FILESYSTEM_PROVIDER = "filesystem_provider"; // Ability to provide custom file systems
             public const string RESCAP_AUTHENTICATION_PROVIDER = "authentication_provider"; // Ability to provide custom authentication for vaults
         }
+
+        public static class DataSources
+        {
+            public const string DATA_SOURCE_PICKER = $"{nameof(SecureFolderFS)}.Picker";
+        }
     }
 }

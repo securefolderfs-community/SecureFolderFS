@@ -4,8 +4,8 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE.AppModels
 {
-    /// <inheritdoc cref="FileSystemOptions"/>
-    public sealed class FuseOptions : FileSystemOptions
+    /// <inheritdoc cref="VirtualFileSystemOptions"/>
+    public sealed class FuseOptions : VirtualFileSystemOptions
     {
         /// <summary>
         /// Gets the path where the file system should be mounted. If a null value is given, default mount point will be used.

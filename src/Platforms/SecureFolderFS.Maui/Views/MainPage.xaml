@@ -69,9 +69,13 @@
                         </ViewCell.ContextActions>
 
                         <HorizontalStackLayout Padding="8,2" Spacing="8">
-                            <Grid VerticalOptions="Center">
+                            <Grid IsVisible="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
+                            </Grid>
+                            <Grid IsVisible="{Binding IsUnlocked, Mode=OneWay}" VerticalOptions="Center">
+                                <mi:MauiIcon Icon="{mi_material:Material LockOpen}" OnPlatforms="Android" />
+                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino LockOpen}" OnPlatforms="iOS" />
                             </Grid>
 
                             <VerticalStackLayout VerticalOptions="Center">

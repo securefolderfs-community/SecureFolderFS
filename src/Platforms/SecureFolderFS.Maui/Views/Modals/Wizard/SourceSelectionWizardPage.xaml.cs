@@ -30,7 +30,11 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             if (e.CurrentSelection.FirstOrDefault() is not BaseDataSourceWizardViewModel dataSourceViewModel)
                 return;
+            
+            if (sender is not CollectionView collectionView)
+                return;
 
+            collectionView.SelectedItem = null;
             await ViewModel.SelectSourceCommand.ExecuteAsync(dataSourceViewModel);
         }
     }

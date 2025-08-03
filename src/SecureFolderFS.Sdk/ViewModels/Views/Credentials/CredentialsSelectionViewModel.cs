@@ -117,7 +117,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested = null;
             RegisterViewModel?.Dispose();
             ConfiguredViewModel?.Dispose();
-            AuthenticationOptions.DisposeElements();
+            AuthenticationOptions.DisposeAll();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.ComponentModel;
@@ -7,6 +8,63 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class SerializationExtensions
     {
+        public static async Task<string?> TrySerializeToStringAsync<TData>(
+            this IAsyncSerializer<Stream> serializer,
+            TData? data,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await SerializeToStringAsync(serializer, data, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                return null;
+            }
+        }
+
+        public static async Task<TData?> TryDeserializeFromStringAsync<TData>(
+            this IAsyncSerializer<Stream> serializer,
+            string serialized,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await DeserializeFromStringAsync<TData>(serializer, serialized, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                return default;
+            }
+        }
+
+        public static async Task<string> SerializeToStringAsync<TData>(
+            this IAsyncSerializer<Stream> serializer,
+            TData? data,
+            CancellationToken cancellationToken = default)
+        {
+            await using var stream = await serializer.SerializeAsync(data, cancellationToken);
+            using var streamReader = new StreamReader(stream);
+
+            return await streamReader.ReadToEndAsync(cancellationToken);
+        }
+
+        public static async Task<TData?> DeserializeFromStringAsync<TData>(
+            this IAsyncSerializer<Stream> serializer,
+            string serialized,
+            CancellationToken cancellationToken = default)
+        {
+            await using var stream = new MemoryStream(serialized.Length);
+            await using var streamWriter = new StreamWriter(stream);
+
+            await streamWriter.WriteAsync(serialized);
+            await streamWriter.FlushAsync(cancellationToken);
+
+            return await serializer.DeserializeAsync<Stream, TData?>(stream, cancellationToken);
+        }
+
         public static async Task<TSerialized> SerializeAsync<TSerialized, TData>(
             this IAsyncSerializer<TSerialized> serializer,
             TData? data,

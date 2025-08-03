@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sdk\SecureFolderFS.Sdk.Accounts\SecureFolderFS.Sdk.Accounts.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />

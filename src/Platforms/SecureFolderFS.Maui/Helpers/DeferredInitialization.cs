@@ -7,8 +7,14 @@ namespace SecureFolderFS.Maui.Helpers
     {
         private T? _context;
         private bool _isProcessing;
+        private readonly int _maxParallelization;
         private readonly List<IAsyncInitialize> _initializations = new();
         private readonly SemaphoreSlim _semaphore = new(1, 1);
+
+        public DeferredInitialization(int maxParallelization)
+        {
+            _maxParallelization = maxParallelization;
+        }
 
         public void SetContext(T context)
         {
@@ -57,7 +63,7 @@ namespace SecureFolderFS.Maui.Helpers
                         if (_initializations.Count == 0)
                             break;
 
-                        batch = _initializations.Take(UI.Constants.Browser.THUMBNAIL_MAX_PARALLELISATION).ToArray();
+                        batch = _initializations.Take(_maxParallelization).ToArray();
                         _initializations.RemoveRange(0, batch.Length);
                     }
 

@@ -156,7 +156,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// <inheritdoc/>
         public void Dispose()
         {
-            Slides.DisposeElements();
+            Slides.DisposeAll();
             Slides.Clear();
         }
     }

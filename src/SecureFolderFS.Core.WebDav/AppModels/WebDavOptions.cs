@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.WebDav.AppModels
 {
-    /// <inheritdoc cref="FileSystemOptions"/>
-    public sealed class WebDavOptions : FileSystemOptions
+    /// <inheritdoc cref="VirtualFileSystemOptions"/>
+    public sealed class WebDavOptions : VirtualFileSystemOptions
     {
         private int _port = 4949;
 

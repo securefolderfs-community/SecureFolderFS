@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.FileSystem
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
-        public FileSystemOptions Options { get; }
+        public VirtualFileSystemOptions Options { get; }
 
         protected VFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
         {
