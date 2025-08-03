@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -15,7 +17,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(CancellationToken cancellationToken = default)
+        public override IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(IVaultCollectionModel vaultCollectionModel, NewVaultMode mode, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

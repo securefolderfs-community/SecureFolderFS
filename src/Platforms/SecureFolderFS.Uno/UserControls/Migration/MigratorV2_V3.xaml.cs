@@ -146,7 +146,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
             set => SetValue(VaultModelProperty, value);
         }
         public static readonly DependencyProperty VaultModelProperty =
-            DependencyProperty.Register(nameof(VaultModel), typeof(IVaultModel), typeof(MigratorV2_V3), new PropertyMetadata(
+            DependencyProperty.Register(nameof(VaultModel), typeof(IVaultModel), typeof(MigratorV2_V3), new PropertyMetadata(null,
                 async (s, e) =>
                 {
                     if (s is not MigratorV2_V3 migratorV2V3)

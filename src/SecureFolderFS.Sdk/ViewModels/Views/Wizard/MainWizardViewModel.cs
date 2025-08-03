@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -15,13 +16,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     {
         [ObservableProperty] private NewVaultMode _Mode;
 
-        public MainWizardViewModel()
+        public IVaultCollectionModel VaultCollectionModel { get; }
+
+        public MainWizardViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             CanCancel = true;
             CanContinue = true;
             Title = "AddNewVault".ToLocalized();
             PrimaryText = "Continue".ToLocalized();
             SecondaryText = "Cancel".ToLocalized();
+            VaultCollectionModel = vaultCollectionModel;
         }
 
         /// <inheritdoc/>

@@ -14,7 +14,7 @@
 
     <Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-        <DataTemplate x:Key="VaultTemplate" x:DataType="vm:LocationWizardViewModel">
+        <DataTemplate x:Key="PickerSourceTemplate" x:DataType="vm:PickerSourceWizardViewModel">
             <StackPanel Spacing="4">
                 <InfoBar
                     IsClosable="False"
@@ -58,7 +58,7 @@
         <ContentControl
             HorizontalContentAlignment="Stretch"
             Content="{x:Bind CurrentViewModel, Mode=OneWay}"
-            ContentTemplate="{StaticResource VaultTemplate}">
+            ContentTemplate="{StaticResource PickerSourceTemplate}">
             <ContentControl.ContentTransitions>
                 <TransitionCollection>
                     <PopupThemeTransition />

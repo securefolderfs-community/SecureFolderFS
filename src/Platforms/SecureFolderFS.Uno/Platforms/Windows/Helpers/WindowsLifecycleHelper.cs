@@ -25,7 +25,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     internal sealed class WindowsLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = ApplicationData.Current.LocalFolder.Path;
+        public override string AppDirectory { get; } = ApplicationData.Current.LocalFolder.Path;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
@@ -57,7 +57,12 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            ExceptionHelpers.TryWriteToFile(AppDirectory, ex);
+            var formattedException = ExceptionHelpers.FormatException(ex);
+            if (formattedException is null)
+                return;
+
+            ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
+            ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }
 
         /// <inheritdoc/>
