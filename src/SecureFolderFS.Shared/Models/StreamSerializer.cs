@@ -12,16 +12,16 @@ namespace SecureFolderFS.Shared.Models
     /// </summary>
     public class StreamSerializer : IAsyncSerializer<Stream>
     {
-        private JsonSerializerOptions DefaultSerializerOptions { get; }
+        protected JsonSerializerOptions SerializerOptions { get; }
 
         /// <summary>
         /// A single instance of <see cref="StreamSerializer"/>.
         /// </summary>
         public static StreamSerializer Instance { get; } = new();
 
-        protected StreamSerializer()
+        protected StreamSerializer(JsonSerializerOptions? options = null)
         {
-            DefaultSerializerOptions = new()
+            SerializerOptions = options ?? new()
             {
                 WriteIndented = true
             };
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Shared.Models
             var outputStream = new MemoryStream();
 
             // Serialize data to stream
-            await JsonSerializer.SerializeAsync(outputStream, data, dataType, DefaultSerializerOptions, cancellationToken);
+            await JsonSerializer.SerializeAsync(outputStream, data, dataType, SerializerOptions, cancellationToken);
             outputStream.Position = 0;
 
             return outputStream;
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Shared.Models
             if (serialized.CanSeek)
                 serialized.Position = 0L;
 
-            return await JsonSerializer.DeserializeAsync(serialized, dataType, DefaultSerializerOptions, cancellationToken);
+            return await JsonSerializer.DeserializeAsync(serialized, dataType, SerializerOptions, cancellationToken);
         }
     }
 }

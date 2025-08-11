@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
+using static SecureFolderFS.Sdk.Constants.DataSources;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         public override async IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(IVaultCollectionModel vaultCollectionModel, NewVaultMode mode, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var fileExplorerService = DI.Service<IFileExplorerService>();
-            yield return new PickerSourceWizardViewModel(fileExplorerService, mode, vaultCollectionModel);
+            yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel);
 
             await Task.CompletedTask;
         }

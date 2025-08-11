@@ -46,8 +46,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
 
                 ViewModel = viewModel;
                 ViewModel.Mode = NewVaultMode.CreateNew; // Default value for the view
-                _createNewViewModel = new(fileExplorerService, NewVaultMode.CreateNew, viewModel.VaultCollectionModel);
-                _addExistingViewModel = new(fileExplorerService, NewVaultMode.AddExisting, viewModel.VaultCollectionModel);
+                _createNewViewModel = new(Sdk.Constants.DataSources.DATA_SOURCE_PICKER, fileExplorerService, NewVaultMode.CreateNew, viewModel.VaultCollectionModel);
+                _addExistingViewModel = new(Sdk.Constants.DataSources.DATA_SOURCE_PICKER, fileExplorerService, NewVaultMode.AddExisting, viewModel.VaultCollectionModel);
                 CurrentViewModel = _createNewViewModel;
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
             }
