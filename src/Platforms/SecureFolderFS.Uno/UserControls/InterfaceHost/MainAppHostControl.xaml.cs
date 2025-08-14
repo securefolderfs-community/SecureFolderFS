@@ -24,7 +24,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
     {
         private bool _isInitialized;
         private bool _isCompactMode; // WINDOWS only
@@ -37,14 +37,14 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         }
 
         /// <inheritdoc/>
-        public void Receive(RemoveVaultMessage message)
+        public void Receive(VaultRemovedMessage message)
         {
             if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
         }
 
         /// <inheritdoc/>
-        public void Receive(AddVaultMessage message)
+        public void Receive(VaultAddedMessage message)
         {
 #if WINDOWS
             if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
@@ -140,8 +140,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
-            WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
 
             await SetupNavigationAsync();
         }

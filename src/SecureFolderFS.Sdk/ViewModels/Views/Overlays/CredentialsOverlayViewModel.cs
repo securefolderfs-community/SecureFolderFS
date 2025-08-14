@@ -1,9 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
@@ -11,11 +16,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -23,8 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IVaultService>, Inject<IVaultCredentialsService>]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
+        private readonly IFolder _vaultFolder;
         private readonly KeySequence _keySequence;
-        private readonly IVaultModel _vaultModel;
         private readonly AuthenticationStage _authenticationStage;
 
         [ObservableProperty] private LoginViewModel _LoginViewModel;
@@ -32,16 +32,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
-        public CredentialsOverlayViewModel(IVaultModel vaultModel, AuthenticationStage authenticationStage)
+        public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _keySequence = new();
-            _vaultModel = vaultModel;
+            _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
 
             RegisterViewModel = new(authenticationStage, _keySequence);
-            LoginViewModel = new(vaultModel, LoginViewType.Basic, _keySequence);
-            SelectionViewModel = new(vaultModel.Folder, authenticationStage);
+            LoginViewModel = new(vaultFolder, LoginViewType.Basic, _keySequence) { Title = vaultName };
+            SelectionViewModel = new(vaultFolder, authenticationStage);
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
             PrimaryText = "Continue".ToLocalized();
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken);
+            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken);
             SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
             {
                 AuthenticationStage.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
                 // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
                 _keySequence.Dispose();
-                SelectedViewModel = new CredentialsResetViewModel(_vaultModel.Folder, e.UnlockContract, RegisterViewModel).WithInitAsync();
+                SelectedViewModel = new CredentialsResetViewModel(_vaultFolder, e.UnlockContract, RegisterViewModel).WithInitAsync();
             }
             else
             {

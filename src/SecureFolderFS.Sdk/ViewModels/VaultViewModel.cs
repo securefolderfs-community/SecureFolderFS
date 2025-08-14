@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
@@ -13,12 +17,13 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
-    [Inject<IVaultService>, Inject<IVaultFileSystemService>]
+    [Inject<IVaultService>, Inject<IVaultFileSystemService>, Inject<IVaultPersistenceService>]
     [Bindable(true)]
     public sealed partial class VaultViewModel : ObservableObject, IViewable
     {
@@ -33,6 +38,25 @@ namespace SecureFolderFS.Sdk.ViewModels
             Title = vaultModel.VaultName;
             VaultModel = vaultModel;
             LastAccessDate = vaultModel.LastAccessDate;
+        }
+
+        [RelayCommand]
+        public async Task SetNameAsync(string? newName, CancellationToken cancellationToken)
+        {
+            if (newName is null)
+                return;
+
+            var dataModel = VaultPersistenceService.VaultConfigurations.PersistedVaults?.FirstOrDefault(x => x.PersistableId == VaultModel.Folder.Id);
+            if (dataModel is null)
+                return;
+
+            if (string.IsNullOrEmpty(newName))
+                newName = Path.GetFileName(VaultModel.Folder.Id);
+
+            dataModel.DisplayName = newName;
+            Title = newName;
+
+            await VaultPersistenceService.VaultConfigurations.TrySaveAsync(cancellationToken);
         }
 
         public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract, bool isReadOnly)

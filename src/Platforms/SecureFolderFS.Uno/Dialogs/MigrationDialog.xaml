@@ -28,15 +28,15 @@
             <uc2:MigratorV1_V2
                 MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"
                 ProvideContinuationButton="False"
-                VaultFolder="{x:Bind VaultModel.Folder, Mode=OneWay}"
-                VaultName="{x:Bind VaultName, Mode=OneWay}" />
+                VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
+                VaultName="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
         <DataTemplate x:Key="MigratorV2_V3" x:DataType="vm:MigrationViewModel">
             <uc2:MigratorV2_V3
                 MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"
                 ProvideContinuationButton="False"
-                VaultModel="{x:Bind VaultModel, Mode=OneWay}"
-                VaultName="{x:Bind VaultName, Mode=OneWay}" />
+                VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
+                VaultName="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
     </ContentDialog.Resources>
 

@@ -53,16 +53,6 @@ namespace SecureFolderFS.Sdk.AppModels
             return result;
         }
 
-        /// <inheritdoc/>
-        public async Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default)
-        {
-            var result = await UpdateConfigurationAsync(x => x.DisplayName = value, cancellationToken);
-            if (result)
-                VaultName = value;
-
-            return result;
-        }
-
         private async Task<bool> UpdateConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
         {
             var item = VaultConfigurations.PersistedVaults?.FirstOrDefault(x => x.PersistableId == Folder.GetPersistableId());

@@ -8,7 +8,7 @@
     x:Name="ThisControl">
 
     <Grid>
-        <VerticalStackLayout Spacing="16">
+        <VerticalStackLayout IsVisible="{Binding IsConnected, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}" Spacing="16">
             <VerticalStackLayout Spacing="8">
                 <Grid HorizontalOptions="Center">
                     <mi:MauiIcon Icon="{mi_cupertino:Cupertino Wifi}" OnPlatforms="iOS" />
@@ -37,6 +37,10 @@
             </Grid>
         </VerticalStackLayout>
 
-        <ContentView Content="{Binding LoginView, Mode=OneWay, Source={x:Reference ThisControl}}" IsVisible="False" />
+        <ContentView
+            Content="{Binding LoginView, Mode=OneWay, Source={x:Reference ThisControl}}"
+            HorizontalOptions="Fill"
+            IsVisible="{Binding IsConnected, Mode=OneWay, Source={x:Reference ThisControl}}"
+            VerticalOptions="Fill" />
     </Grid>
 </ContentView>

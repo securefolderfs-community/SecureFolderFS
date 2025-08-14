@@ -17,6 +17,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
@@ -141,8 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 newName = VaultViewModel.VaultModel.Folder.Name;
 
             IsRenaming = false;
-            if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))
-                VaultViewModel.Title = newName;
+            await VaultViewModel.SetNameAsync(newName, cancellationToken);
         }
 
         [RelayCommand]
@@ -150,6 +150,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             CustomIcon?.Dispose();
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
+            if (VaultViewModel.VaultModel.Folder is IBookmark bookmark)
+                await bookmark.RemoveBookmarkAsync(cancellationToken);
+
             await _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 

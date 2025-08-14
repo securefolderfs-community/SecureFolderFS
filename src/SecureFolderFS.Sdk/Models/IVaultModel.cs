@@ -25,15 +25,6 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         DateTime? LastAccessDate { get; }
 
-        ///// <summary>
-        ///// Asynchronously gets the folder associated with this vault.
-        ///// </summary>
-        ///// <remarks>
-        ///// This method may perform additional checks or initialization before returning the folder.
-        ///// </remarks>
-        ///// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains the <see cref="IFolder"/> representing the vault's folder.</returns>
-        //Task<IFolder> GetFolderAsync();
-
         /// <summary>
         /// Sets the <see cref="LastAccessDate"/> for this vault.
         /// </summary>
@@ -41,13 +32,5 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
         Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Sets the <see cref="VaultName"/> for this vault.
-        /// </summary>
-        /// <param name="value">The value to set.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
-        Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default);
     }
 }

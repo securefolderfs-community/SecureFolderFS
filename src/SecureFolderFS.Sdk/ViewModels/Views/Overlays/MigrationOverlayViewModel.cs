@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            _vaultMigrator = await VaultService.GetMigratorAsync(MigrationViewModel.VaultModel.Folder, cancellationToken);
+            _vaultMigrator = await VaultService.GetMigratorAsync(MigrationViewModel.VaultFolder, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -72,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 _unlockContract?.Dispose();
                 _unlockContract = await _vaultMigrator.UnlockAsync(credentials, cancellationToken);
 
-                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultModel.Folder, false));
+                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
                 Title = "Migrate".ToLocalized();
                 PrimaryText = null;
             }

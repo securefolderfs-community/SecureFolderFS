@@ -118,7 +118,7 @@ namespace SecureFolderFS.Sdk.AppModels
             // Add to cache
             base.InsertItem(index, item);
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item, index));
-            WeakReferenceMessenger.Default.Send(new AddVaultMessage(item));
+            WeakReferenceMessenger.Default.Send(new VaultAddedMessage(item));
         }
 
         /// <inheritdoc/>
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Sdk.AppModels
             // Remove from cache
             base.RemoveItem(index);
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, removedItem, index));
-            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(removedItem));
+            WeakReferenceMessenger.Default.Send(new VaultRemovedMessage(removedItem));
         }
 
         /// <inheritdoc/>

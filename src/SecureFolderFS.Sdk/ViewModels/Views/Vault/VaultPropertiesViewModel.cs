@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (OverlayService.CurrentView is not null)
                 return;
 
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.FirstStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(VaultViewModel.VaultModel.Folder, VaultViewModel.Title, AuthenticationStage.FirstStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (OverlayService.CurrentView is not null)
                 return;
 
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationStage.ProceedingStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(VaultViewModel.VaultModel.Folder, VaultViewModel.Title, AuthenticationStage.ProceedingStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (OverlayService.CurrentView is not null)
                 return;
 
-            using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
+            using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(VaultViewModel.VaultModel.Folder, VaultViewModel.Title);
             await previewRecoveryOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(previewRecoveryOverlay);
         }

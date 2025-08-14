@@ -9,9 +9,17 @@ namespace SecureFolderFS.Maui.UserControls
             InitializeComponent();
         }
         
-        public bool? IsRunning
+        public bool IsConnected
         {
-            get => (bool?)GetValue(IsRunningProperty);
+            get => (bool)GetValue(IsConnectedProperty);
+            set => SetValue(IsConnectedProperty, value);
+        }
+        public static readonly BindableProperty IsConnectedProperty =
+            BindableProperty.Create(nameof(IsConnected), typeof(bool), typeof(VaultLocatorControl));
+        
+        public bool IsRunning
+        {
+            get => (bool)GetValue(IsRunningProperty);
             set => SetValue(IsRunningProperty, value);
         }
         public static readonly BindableProperty IsRunningProperty =

@@ -3,12 +3,12 @@
 namespace SecureFolderFS.Sdk.Messages
 {
     /// <summary>
-    /// A message to remove a vault.
+    /// A message notifying a vault was added.
     /// </summary>
-    public sealed class RemoveVaultMessage(IVaultModel vaultModel)
+    public sealed class VaultAddedMessage(IVaultModel vaultModel)
     {
         /// <summary>
-        /// The vault to remove.
+        /// The vault that was added.
         /// </summary>
         public IVaultModel VaultModel { get; } = vaultModel;
     }

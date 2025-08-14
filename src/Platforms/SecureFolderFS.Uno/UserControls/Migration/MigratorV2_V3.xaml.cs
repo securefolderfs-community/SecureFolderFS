@@ -5,6 +5,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -49,10 +50,10 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 RestartLoginProcess();
         }
 
-        private async Task BeginAuthenticationAsync(IVaultModel vaultModel)
+        private async Task BeginAuthenticationAsync(IFolder vaultFolder)
         {
             var vaultCredentialsService = DI.Service<IVaultCredentialsService>();
-            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultModel.Folder).ToArrayAsync());
+            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultFolder).ToArrayAsync());
 
             // Set up the first authentication method
             var result = ProceedAuthentication();
@@ -140,22 +141,22 @@ namespace SecureFolderFS.Uno.UserControls.Migration
         public static readonly DependencyProperty VaultNameProperty =
             DependencyProperty.Register(nameof(VaultName), typeof(string), typeof(MigratorV2_V3), new PropertyMetadata(null));
 
-        public IVaultModel? VaultModel
+        public IFolder? VaultFolder
         {
-            get => (IVaultModel?)GetValue(VaultModelProperty);
-            set => SetValue(VaultModelProperty, value);
+            get => (IFolder?)GetValue(VaultFolderProperty);
+            set => SetValue(VaultFolderProperty, value);
         }
-        public static readonly DependencyProperty VaultModelProperty =
-            DependencyProperty.Register(nameof(VaultModel), typeof(IVaultModel), typeof(MigratorV2_V3), new PropertyMetadata(null,
+        public static readonly DependencyProperty VaultFolderProperty =
+            DependencyProperty.Register(nameof(VaultFolder), typeof(IFolder), typeof(MigratorV2_V3), new PropertyMetadata(null,
                 async (s, e) =>
                 {
                     if (s is not MigratorV2_V3 migratorV2V3)
                         return;
                     
-                    if (e.NewValue is not IVaultModel vaultModel)
+                    if (e.NewValue is not IFolder vaultFolder)
                         return;
 
-                    await migratorV2V3.BeginAuthenticationAsync(vaultModel);
+                    await migratorV2V3.BeginAuthenticationAsync(vaultFolder);
                 }));
 
         public bool ProvideContinuationButton

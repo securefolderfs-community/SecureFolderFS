@@ -16,6 +16,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -23,8 +24,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseDesignationViewModel, IVaultViewContext, INavigatable, IAsyncInitialize, IDisposable
     {
+        private readonly IRemoteResource<IFolder>? _remoteVault;
+        private IFolder? _vaultFolder;
+
         [ObservableProperty] private bool _IsReadOnly;
-        [ObservableProperty] private LoginViewModel _LoginViewModel;
+        [ObservableProperty] private LoginViewModel? _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
 
@@ -34,22 +38,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
+        public VaultLoginViewModel(IFolder vaultFolder, VaultViewModel vaultViewModel, INavigationService vaultNavigation)
+        {
+            ServiceProvider = DI.Default;
+            _vaultFolder = vaultFolder;
+            Title = vaultViewModel.Title;
+            VaultNavigation = vaultNavigation;
+            VaultViewModel = vaultViewModel;
+            LoginViewModel = new(_vaultFolder, LoginViewType.Full) { Title = vaultViewModel.Title };
+            LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+        }
+
+        public VaultLoginViewModel(IRemoteResource<IFolder> remoteVault, VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
             ServiceProvider = DI.Default;
             Title = vaultViewModel.Title;
             VaultNavigation = vaultNavigation;
             VaultViewModel = vaultViewModel;
-            _LoginViewModel = new(vaultViewModel.VaultModel, LoginViewType.Full);
-            _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+            _remoteVault = remoteVault;
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(LoginViewModel);
             await LoginViewModel.InitAsync(cancellationToken);
 
-            // Test for quick unlock on mobile
+            #region Test for quick unlock on mobile
+
+            if (_vaultFolder is null)
+                return;
+
             var recoveryKey = VaultViewModel.Title switch
             {
                 "Vault V3" => "nn9oKIELbkAl3XevD/dhVhnBQcfkDA5wfLnY+aAUoK8=@@@w3jNIbmsDwThbNkuGqpVdCvCiU7RQHQtkEqGfBPqDRc=",
@@ -61,15 +80,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (recoveryKey is null)
                 return;
 
-            var unlockContract = await VaultManagerService.RecoverAsync(VaultViewModel.VaultModel.Folder, recoveryKey, cancellationToken);
+            var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, recoveryKey, cancellationToken);
             await Task.Delay(200);
             await UnlockAsync(unlockContract);
+
+            #endregion
+        }
+
+        [RelayCommand]
+        private async Task ConnectToVaultAsync(CancellationToken cancellationToken)
+        {
+            if (_remoteVault is null)
+                return;
+
+            LoginViewModel?.Dispose();
+            _vaultFolder = await _remoteVault.ConnectAsync(cancellationToken);
+            LoginViewModel = new(_vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
+            await LoginViewModel.InitAsync(cancellationToken);
         }
 
         [RelayCommand]
         private async Task BeginRecoveryAsync(CancellationToken cancellationToken)
         {
-            var recoveryOverlay = new RecoveryOverlayViewModel(VaultViewModel.VaultModel.Folder);
+            ArgumentNullException.ThrowIfNull(_vaultFolder);
+
+            var recoveryOverlay = new RecoveryOverlayViewModel(_vaultFolder);
             var result = await OverlayService.ShowAsync(recoveryOverlay);
             if (!result.Positive() || recoveryOverlay.UnlockContract is null)
             {
@@ -114,8 +149,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
-            LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
-            LoginViewModel.Dispose();
+            LoginViewModel?.Dispose();
         }
     }
 }

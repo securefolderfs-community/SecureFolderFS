@@ -41,7 +41,7 @@ namespace SecureFolderFS.Maui.Views
                 var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
                 if (target is null)
                 {
-                    var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
+                    var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel.VaultModel.Folder, itemViewModel.VaultViewModel, ViewModel.NavigationService);
                     _ = vaultLoginViewModel.InitAsync();
                     target = vaultLoginViewModel;
                 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
@@ -24,14 +25,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>, Inject<IOverlayService>]
     [Bindable(true)]
-    public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public sealed partial class LoginViewModel : ObservableObject, IViewable, IAsyncInitialize, IDisposable
     {
+        private readonly IFolder _vaultFolder;
         private readonly KeySequence _keySequence;
-        private readonly IVaultModel _vaultModel;
         private readonly LoginViewType _loginViewMode;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private Iterator<AuthenticationViewModel>? _loginSequence;
 
+        [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanRecover;
         [ObservableProperty] private bool _IsLoginSequence;
         [ObservableProperty] private ICommand? _ProvideCredentialsCommand;
@@ -39,13 +41,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode, KeySequence? keySequence = null)
+        public LoginViewModel(IFolder vaultFolder, LoginViewType loginViewMode, KeySequence? keySequence = null)
         {
             ServiceProvider = DI.Default;
+            _vaultFolder = vaultFolder;
             _loginViewMode = loginViewMode;
-            _vaultModel = vaultModel;
             _keySequence = keySequence ?? new();
-            _vaultWatcherModel = new VaultWatcherModel(vaultModel.Folder);
+            _vaultWatcherModel = new VaultWatcherModel(_vaultFolder);
             _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
 
@@ -66,11 +68,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _keySequence.Dispose();
             _loginSequence?.Dispose();
 
-            var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
+            var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
             if (validationResult.Successful)
             {
                 // Get the authentication method enumerator for this vault
-                _loginSequence = new(await VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
+                _loginSequence = new(await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsync(cancellationToken));
                 IsLoginSequence = _loginSequence.Count > 1;
 
                 // Set up the first authentication method
@@ -86,7 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     CanRecover = false;
                     CurrentViewModel = _loginViewMode switch
                     {
-                        LoginViewType.Full => new MigrationViewModel(_vaultModel, currentVersion),
+                        LoginViewType.Full => new MigrationViewModel(_vaultFolder, currentVersion) { Title = Title },
                         _ => new ErrorViewModel("You'll need to migrate this vault before it can be used.") // TODO: Localize
                     };
                 }
@@ -102,7 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             if (recoveryKey is null)
             {
-                var recoveryOverlay = new RecoveryOverlayViewModel(_vaultModel.Folder);
+                var recoveryOverlay = new RecoveryOverlayViewModel(_vaultFolder);
                 var result = await OverlayService.ShowAsync(recoveryOverlay);
                 if (!result.Positive() || recoveryOverlay.UnlockContract is null)
                 {
@@ -110,14 +112,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     return;
                 }
 
-                VaultUnlocked?.Invoke(this, new(recoveryOverlay.UnlockContract, _vaultModel.Folder, true));
+                VaultUnlocked?.Invoke(this, new(recoveryOverlay.UnlockContract, _vaultFolder, true));
             }
             else
             {
                 try
                 {
-                    var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, recoveryKey, cancellationToken);
-                    VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, true));
+                    var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, recoveryKey, cancellationToken);
+                    VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, true));
                 }
                 catch (Exception ex)
                 {
@@ -147,8 +149,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keySequence, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, false));
+                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, false));
                 return true;
             }
             catch (Exception ex)
@@ -182,7 +184,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             if (e is VaultChangedEventArgs { ContentsChanged: true })
             {
-                var result = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder);
+                var result = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder);
                 if (result.Successful)
                     return;
 
