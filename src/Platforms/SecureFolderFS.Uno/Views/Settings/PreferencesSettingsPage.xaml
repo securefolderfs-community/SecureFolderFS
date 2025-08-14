@@ -8,14 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </Page.Resources>
 
     <Grid Loaded="Root_Loaded" RowSpacing="12">
         <Grid.RowDefinitions>

@@ -24,8 +24,6 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <DataTemplate x:Key="MigratorV1_V2" x:DataType="vm:MigrationViewModel">
             <uc2:MigratorV1_V2
                 MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"

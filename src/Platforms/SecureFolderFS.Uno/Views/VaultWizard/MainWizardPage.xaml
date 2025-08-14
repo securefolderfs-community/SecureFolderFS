@@ -13,7 +13,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
         <DataTemplate x:Key="PickerSourceTemplate" x:DataType="vm:PickerSourceWizardViewModel">
             <StackPanel Spacing="4">
                 <InfoBar

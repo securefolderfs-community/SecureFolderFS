@@ -5,16 +5,10 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
     CanBeDismissedByTappingOutsideOfPopup="True"
     Color="Transparent">
-
-    <tv:Popup.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:FileIconConverter x:Key="FileIconConverter" />
-    </tv:Popup.Resources>
 
     <Border
         Padding="16"

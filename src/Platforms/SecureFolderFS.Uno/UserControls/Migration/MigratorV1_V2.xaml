@@ -6,12 +6,7 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </UserControl.Resources>
 
     <StackPanel Spacing="8">
         <uc:PasswordControl x:Name="Password" PasswordSubmitted="Password_PasswordSubmitted" />

@@ -6,12 +6,9 @@
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
 
     <ContentView.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-
         <LinearGradientBrush x:Key="BarGradient" StartPoint="0.5,0" EndPoint="0.5,1">
             <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
             <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />

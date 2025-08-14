@@ -13,8 +13,6 @@
     mc:Ignorable="d not_win">
 
     <UserControl.Resources>
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
 
         <DataTemplate x:Key="DetailedHealthTemplate" x:DataType="local:HealthWidget">

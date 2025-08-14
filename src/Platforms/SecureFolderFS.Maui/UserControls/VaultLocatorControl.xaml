@@ -5,12 +5,7 @@
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
-
-    <ContentView.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-    </ContentView.Resources>
 
     <Grid>
         <VerticalStackLayout Spacing="16">

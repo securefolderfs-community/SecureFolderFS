@@ -12,7 +12,6 @@
     Background="{StaticResource ThemeBackgroundFillColorBrush}">
 
     <ContentPage.Resources>
-        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
         <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>

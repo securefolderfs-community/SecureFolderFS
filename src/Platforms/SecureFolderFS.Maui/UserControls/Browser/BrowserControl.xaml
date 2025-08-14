@@ -14,10 +14,8 @@
     x:Name="RootControl">
 
     <ContentView.Resources>
-        <vc:FileIconConverter x:Key="FileIconConverter" />
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
-        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
         <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
         <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 

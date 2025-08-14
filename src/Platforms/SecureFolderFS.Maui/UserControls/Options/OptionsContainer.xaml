@@ -2,12 +2,7 @@
     x:Class="SecureFolderFS.Maui.UserControls.Options.OptionsContainer"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
-
-    <ContentView.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-    </ContentView.Resources>
 
     <Grid RowSpacing="8">
         <Grid.RowDefinitions>

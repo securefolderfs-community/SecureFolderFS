@@ -6,7 +6,6 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Accounts.ViewModels;assembly=SecureFolderFS.Sdk.Accounts"
     x:Name="ThisPage"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
@@ -17,11 +16,6 @@
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryEnabled="{Binding OverlayViewModel.CanContinue, Mode=OneWay}"
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
-
-    <md:BaseModalPage.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-    </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
         <Grid

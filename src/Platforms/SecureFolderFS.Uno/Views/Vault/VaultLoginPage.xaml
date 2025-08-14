@@ -13,7 +13,6 @@
     <Page.Resources>
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
         <vc:LoginViewModelVisibilityConverter x:Key="LoginViewModelVisibilityConverter" />
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <ScrollViewer>

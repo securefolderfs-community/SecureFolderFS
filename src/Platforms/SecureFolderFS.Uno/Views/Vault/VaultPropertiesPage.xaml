@@ -6,13 +6,8 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-    </Page.Resources>
 
     <ScrollViewer>
         <StackPanel Spacing="4">

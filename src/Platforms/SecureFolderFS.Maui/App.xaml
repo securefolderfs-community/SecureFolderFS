@@ -9,7 +9,8 @@
                 <ResourceDictionary Source="Resources/Styles/ColorStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/ButtonStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/VideoPlayerStyles.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/CommonStyles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Converters.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

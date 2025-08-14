@@ -11,15 +11,12 @@
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.InterfaceHost"
     xmlns:uc3="using:SecureFolderFS.Uno.UserControls.Navigation"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Loaded="MainWindowRootControl_Loaded"
     mc:Ignorable="d not_win">
 
     <UserControl.Resources>
-        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
-
         <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainHostViewModel">
             <uc2:MainAppHostControl ViewModel="{x:Bind}" />
         </DataTemplate>

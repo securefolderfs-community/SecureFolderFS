@@ -14,7 +14,6 @@
 
     <Page.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     </Page.Resources>
 
     <Grid Loaded="Root_Loaded" RowSpacing="12">

@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.UI.ViewModels.Authentication"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
     xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
@@ -16,9 +15,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <StackPanel Spacing="24">

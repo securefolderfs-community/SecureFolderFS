@@ -20,7 +20,6 @@
     NavigationPage.HasNavigationBar="False">
 
     <md:BaseModalPage.Resources>
-        <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
         <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
         <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
 

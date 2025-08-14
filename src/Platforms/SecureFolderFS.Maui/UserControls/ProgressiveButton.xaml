@@ -4,13 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisControl">
-
-    <ContentView.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-    </ContentView.Resources>
 
     <Border
         x:Name="ProgressContainer"

@@ -19,11 +19,6 @@
     x:DataType="local:RecycleBinModalPage">
 
     <md:BaseModalPage.Resources>
-        <vc:FileIconConverter x:Key="FileIconConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
-        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:DoubleFloatingNormalizationConverter x:Key="DoubleFloatingNormalizationConverter" />
     </md:BaseModalPage.Resources>
 

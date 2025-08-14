@@ -20,7 +20,6 @@
 
     <ContentPage.Resources>
         <vc:ExpandedStateToIconConverter x:Key="ExpandedStateToIconConverter" />
-        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
 
         <!--  Directory Issue  -->
         <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">

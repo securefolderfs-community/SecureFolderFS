@@ -4,18 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SourceSelectionWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
     CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
-
-    <md:BaseModalPage.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
-    </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
         <Grid

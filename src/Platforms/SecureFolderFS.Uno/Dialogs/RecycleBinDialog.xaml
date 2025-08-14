@@ -7,7 +7,6 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Storage"
     Title="{l:ResourceString Rid=RecycleBin}"
@@ -17,11 +16,6 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-        <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
         <x:Double x:Key="ContentDialogMinWidth">600</x:Double>
     </ContentDialog.Resources>
 

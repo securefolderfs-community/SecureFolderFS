@@ -8,7 +8,6 @@
     x:DataType="local:BaseModalPage">
 
     <ContentPage.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter_BaseModalPage" />
         <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
     </ContentPage.Resources>
 
@@ -51,7 +50,7 @@
                         FontSize="17"
                         HorizontalOptions="End"
                         IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter_BaseModalPage}}"
+                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         SizeChanged="SheetPrimaryButton_SizeChanged"
                         Style="{StaticResource NoBackgroundButtonStyle}"
                         Text="{Binding PrimaryText, Mode=OneWay}"
@@ -85,7 +84,7 @@
                         Padding="16"
                         FontAttributes="Bold"
                         FontSize="22"
-                        IsVisible="{Binding Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter_BaseModalPage}}"
+                        IsVisible="{Binding Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         Text="{Binding Title, Mode=OneWay}" />
 
                     <ContentView
@@ -115,7 +114,7 @@
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
-                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter_BaseModalPage}}"
+                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Style="{StaticResource TransparentButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
@@ -126,7 +125,7 @@
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter_BaseModalPage}}"
+                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Style="{StaticResource AccentButtonStyle}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>

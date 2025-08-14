@@ -13,10 +13,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
         <vc:CountToStringConverter x:Key="CountToStringConverter" />
-        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <!--  Directory Issue  -->
         <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
