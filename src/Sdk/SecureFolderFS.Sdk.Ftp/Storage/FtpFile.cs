@@ -16,14 +16,17 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            if (!_ftpClient.IsConnected)
+            if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
-            return accessMode switch
+            var size = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
+            var stream = accessMode switch
             {
-                FileAccess.Read => await _ftpClient.OpenRead(Id, token: cancellationToken),
-                _ => await _ftpClient.OpenWrite(Id, token: cancellationToken)
+                FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
+                _ => await ftpClient.OpenWrite(Id, token: cancellationToken)
             };
+
+            return new SeekableFtpStream(stream, size);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace SecureFolderFS.Maui.UserControls
+namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class TransferControl : ContentView
     {

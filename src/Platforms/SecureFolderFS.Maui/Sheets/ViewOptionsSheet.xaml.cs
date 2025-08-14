@@ -16,12 +16,12 @@ namespace SecureFolderFS.Maui.Sheets
         
         public LayoutsViewModel? ViewModel { get; private set; }
         
-        public static ViewOptionsSheetFragment? ImmediateInstance { get; set; }
+        public static ViewOptionsSheetFragment? EarlyInstance { get; set; }
 
         public ViewOptionsSheetFragment()
         {
             _tcs = new();
-            ImmediateInstance = this;
+            EarlyInstance = this;
         }
 
         /// <inheritdoc/>
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Maui.Sheets
 
         public ViewOptionsSheet()
         {
-            ViewModel ??= ViewOptionsSheetFragment.ImmediateInstance?.ViewModel;
+            ViewModel ??= ViewOptionsSheetFragment.EarlyInstance?.ViewModel;
             Closed += Sheet_Closed;
             
             InitializeComponent();
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Maui.Sheets
         private void Sheet_Closed(object? sender, EventArgs e)
         {
             _tcs?.TrySetResult(Result.Success);
-            ViewOptionsSheetFragment.ImmediateInstance = null;
+            ViewOptionsSheetFragment.EarlyInstance = null;
         }
 
         public LayoutsViewModel? ViewModel

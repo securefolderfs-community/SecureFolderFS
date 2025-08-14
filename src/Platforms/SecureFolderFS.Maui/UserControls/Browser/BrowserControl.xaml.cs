@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared;
 
-namespace SecureFolderFS.Maui.UserControls
+namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl : ContentView
     {

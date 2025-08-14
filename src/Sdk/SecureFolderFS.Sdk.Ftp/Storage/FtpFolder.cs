@@ -19,10 +19,10 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (!_ftpClient.IsConnected)
+            if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
-            await foreach (var item in _ftpClient.GetListingEnumerable(Id, cancellationToken, cancellationToken))
+            await foreach (var item in ftpClient.GetListingEnumerable(Id, cancellationToken, cancellationToken))
             {
                 var id = CombinePath(Id, item.Name);
                 if (item.Name is "." or "..")
@@ -30,8 +30,8 @@ namespace SecureFolderFS.Sdk.Ftp
 
                 yield return item.Type switch
                 {
-                    FtpObjectType.File => new FtpFile(_ftpClient, id, item.Name, this),
-                    FtpObjectType.Directory => new FtpFolder(_ftpClient, id, item.Name, this)
+                    FtpObjectType.File => new FtpFile(ftpClient, id, item.Name, this),
+                    FtpObjectType.Directory => new FtpFolder(ftpClient, id, item.Name, this)
                 };
             }
         }
@@ -45,18 +45,18 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
-            if (!_ftpClient.IsConnected)
+            if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, item.Name);
             switch (item)
             {
                 case IFile:
-                    await _ftpClient.DeleteFile(id, cancellationToken);
+                    await ftpClient.DeleteFile(id, cancellationToken);
                     break;
 
                 case IFolder:
-                    await _ftpClient.DeleteDirectory(id, cancellationToken);
+                    await ftpClient.DeleteDirectory(id, cancellationToken);
                     break;
 
                 default:
@@ -67,27 +67,27 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            if (!_ftpClient.IsConnected)
+            if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, name);
-            if (!await _ftpClient.CreateDirectory(id, cancellationToken))
+            if (!await ftpClient.CreateDirectory(id, cancellationToken))
                 throw new UnauthorizedAccessException("Cannot create folder.");
 
-            return new FtpFolder(_ftpClient, id, name, this);
+            return new FtpFolder(ftpClient, id, name, this);
         }
 
         /// <inheritdoc/>
         public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            if (!_ftpClient.IsConnected)
+            if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, name);
             await using var stream = new MemoryStream();
-            await _ftpClient.UploadStream(stream, id, token: cancellationToken);
+            await ftpClient.UploadStream(stream, id, token: cancellationToken);
 
-            return new FtpFile(_ftpClient, id, name, this);
+            return new FtpFile(ftpClient, id, name, this);
         }
     }
 }

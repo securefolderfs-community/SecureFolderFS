@@ -1,0 +1,47 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.VaultLocatorControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+    </ContentView.Resources>
+
+    <Grid>
+        <VerticalStackLayout Spacing="16">
+            <VerticalStackLayout Spacing="8">
+                <Grid HorizontalOptions="Center">
+                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Wifi}" OnPlatforms="iOS" />
+                    <mi:MauiIcon Icon="{mi_material:Material Wifi}" OnPlatforms="Android" />
+                </Grid>
+
+                <Label
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    Text="Before logging in, establish a connection to the remote vault." />
+            </VerticalStackLayout>
+
+            <Grid>
+                <ActivityIndicator
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}" />
+                <Button
+                    HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                   iOS={LayoutOptions Alignment=Center}}"
+                    IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}"
+                    Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                       iOS={StaticResource NoBackgroundButtonStyle}}"
+                    Text="Connect" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <ContentView Content="{Binding LoginView, Mode=OneWay, Source={x:Reference ThisControl}}" IsVisible="False" />
+    </Grid>
+</ContentView>

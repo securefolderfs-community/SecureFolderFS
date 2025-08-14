@@ -57,11 +57,11 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             if (string.IsNullOrEmpty(accountDataModel.AccountId))
                 throw new ArgumentException("AccountId cannot be empty.");
 
-            var rawData = await propertyStore.GetValueAsync<string>(accountDataModel.AccountId, null, cancellationToken);
+            var rawData = await propertyStore.GetValueAsync<string?>(accountDataModel.AccountId, null, cancellationToken);
             if (string.IsNullOrEmpty(rawData))
                 throw new ArgumentException("Data cannot be empty.");
 
-            var ftpAccountDataModel = await StreamSerializer.Instance.DeserializeFromStringAsync<FtpAccountDataModel>(rawData, cancellationToken);
+            var ftpAccountDataModel = await StreamSerializer.Instance.DeserializeFromStringAsync<FtpAccountDataModel?>(rawData, cancellationToken);
             if (ftpAccountDataModel is null)
                 throw new ArgumentException("Data cannot be deserialized.");
 
@@ -144,11 +144,13 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
 
         partial void OnAddressChanged(string? value)
         {
+            _ = value;
             UpdateInputValidation();
         }
 
         partial void OnUsernameChanged(string? value)
         {
+            _ = value;
             UpdateInputValidation();
         }
     }

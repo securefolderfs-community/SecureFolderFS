@@ -6,7 +6,9 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class ServiceExtensions
     {
-        public static IServiceCollection Override<TService, TImplementation>(this IServiceCollection services, Func<IServiceCollection, Type, Type, IServiceCollection> add)
+        public static IServiceCollection Override<TService, TImplementation>(
+            this IServiceCollection services,
+            Func<IServiceCollection, Type, Type, IServiceCollection> add)
             where TImplementation : class, TService
         {
             var serviceType = typeof(TService);

@@ -5,6 +5,7 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:uc2="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPage"
     x:DataType="local:BrowserPage"
@@ -62,23 +63,23 @@
             HeightRequest="32"
             ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
 
-        <uc:BrowserControl
+        <uc2:BrowserControl
             x:Name="Browser"
             Grid.Row="1"
             IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
             RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
             ViewType="{Binding ViewModel.Layouts.BrowserViewType, Mode=OneWay}">
-            <uc:BrowserControl.EmptyView>
+            <uc2:BrowserControl.EmptyView>
                 <Label
                     FontSize="18"
                     HorizontalOptions="Center"
                     Text="{l:ResourceString Rid=NoItems}"
                     VerticalOptions="Center" />
-            </uc:BrowserControl.EmptyView>
-        </uc:BrowserControl>
+            </uc2:BrowserControl.EmptyView>
+        </uc2:BrowserControl>
 
-        <uc:TransferControl
+        <uc2:TransferControl
             Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"
             Grid.Row="0"
             Grid.RowSpan="2"

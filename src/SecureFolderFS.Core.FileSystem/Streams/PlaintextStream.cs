@@ -19,29 +19,28 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
         private readonly Lock _writeLock = new();
-
-        private long _Length;
-        private long _Position;
+        private long _length;
+        private long _position;
 
         /// <inheritdoc/>
         public Stream Inner { get; }
 
         /// <inheritdoc/>
-        public override long Length => _Length;
-
-        /// <inheritdoc/>
         public override bool CanRead => Inner.CanRead;
-
-        /// <inheritdoc/>
-        public override bool CanSeek => Inner.CanSeek;
 
         /// <inheritdoc/>
         public override bool CanWrite => Inner.CanWrite;
 
         /// <inheritdoc/>
+        public override bool CanSeek => Inner.CanSeek;
+
+        /// <inheritdoc/>
+        public override long Length => _length;
+
+        /// <inheritdoc/>
         public override long Position
         {
-            get => _Position;
+            get => _position;
             set => Seek(value, SeekOrigin.Begin);
         }
 
@@ -59,7 +58,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             _notifyStreamClosed = notifyStreamClosed;
 
             if (CanSeek)
-                _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
+                _length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
 
         /// <inheritdoc/>
@@ -87,7 +86,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
                 return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
 
-            var lengthToEof = Length - _Position;
+            var lengthToEof = Length - _position;
             if (lengthToEof <= 0L)
                 return FileSystem.Constants.FILE_EOF;
 
@@ -102,7 +101,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
-                var readPosition = _Position + read;
+                var readPosition = _position + read;
                 var chunkNumber = readPosition / plaintextChunkSize;
                 var offsetInChunk = (int)(readPosition % plaintextChunkSize);
                 var length = Math.Min(adjustedBuffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
@@ -115,7 +114,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 read += length;
             }
 
-            _Position += read;
+            _position += read;
             return read;
         }
 
@@ -181,7 +180,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 }
 
                 // Update position to fit within new length
-                _Position = Math.Min(value, _Position);
+                _position = Math.Min(value, _position);
             }
             else if (value > Length)
             {
@@ -207,7 +206,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             Inner.SetLength(ciphertextFileSize);
 
             // Update plaintext length
-            _Length = value;
+            _length = value;
 
             // Update last write time, if possible
             if (Inner is FileStream fileStream)
@@ -230,7 +229,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             var ciphertextPosition = Math.Max(0L, AlignToChunkStartPosition(seekPosition));
             Inner.Position = ciphertextPosition;
-            _Position = seekPosition;
+            _position = seekPosition;
 
             return Position;
         }
@@ -292,10 +291,10 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (CanSeek)
             {
                 // Update length after writing
-                _Length = Math.Max(position + written, Length);
+                _length = Math.Max(position + written, Length);
 
                 // Update position after writing
-                _Position += written;
+                _position += written;
             }
 
             // Update last write time

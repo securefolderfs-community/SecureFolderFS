@@ -18,8 +18,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
-    [Inject<IVaultService>]
-    [Inject<IVaultFileSystemService>]
+    [Inject<IVaultService>, Inject<IVaultFileSystemService>]
     [Bindable(true)]
     public sealed partial class VaultViewModel : ObservableObject, IViewable
     {

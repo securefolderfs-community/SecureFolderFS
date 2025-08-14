@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.Popups
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(PropertiesOverlayViewModel), typeof(PropertiesPopup), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(PropertiesOverlayViewModel), typeof(PropertiesPopup));
     }
 }
 

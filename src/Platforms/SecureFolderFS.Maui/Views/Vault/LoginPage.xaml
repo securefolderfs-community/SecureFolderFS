@@ -46,14 +46,20 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <VerticalStackLayout Spacing="4">
-            <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
-            <Button
-                Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
-                HorizontalOptions="Fill"
-                IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                Style="{StaticResource TransparentButtonStyle}"
-                Text="{l:ResourceString Rid=RecoverAccess}" />
-        </VerticalStackLayout>
+        <uc:VaultLocatorControl>
+            <uc:VaultLocatorControl.LoginView>
+                <VerticalStackLayout Spacing="4">
+                    <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                    <Button
+                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
+                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                       iOS={LayoutOptions Alignment=Center}}"
+                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="{l:ResourceString Rid=RecoverAccess}" />
+                </VerticalStackLayout>
+            </uc:VaultLocatorControl.LoginView>
+        </uc:VaultLocatorControl>
     </VerticalStackLayout>
 </ContentPage>

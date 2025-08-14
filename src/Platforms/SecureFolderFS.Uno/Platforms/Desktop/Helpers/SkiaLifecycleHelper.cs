@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
     internal sealed class SkiaLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = Directory.GetCurrentDirectory();
+        public override string AppDirectory { get; } = Directory.GetCurrentDirectory();
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
@@ -35,7 +35,12 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            ExceptionHelpers.TryWriteToFile(AppDirectory, ex);
+            var formattedException = ExceptionHelpers.FormatException(ex);
+            if (formattedException is null)
+                return;
+            
+            ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
+            ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }
 
         /// <inheritdoc/>

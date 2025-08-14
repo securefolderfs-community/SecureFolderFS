@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.ServiceImplementation;
-using SecureFolderFS.Maui.UserControls;
+using SecureFolderFS.Maui.UserControls.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -169,7 +169,7 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             Browser.ItemsSource = null;
             await Task.Delay(100);
-            Browser.SetBinding(BrowserControl.ItemsSourceProperty, "ViewModel.CurrentFolder.Items");
+            Browser.SetBinding(BrowserControl.ItemsSourceProperty, $"{nameof(ViewModel)}.{nameof(BrowserViewModel.CurrentFolder)}.{nameof(FolderViewModel.Items)}");
         }
 
         public BrowserViewModel? ViewModel

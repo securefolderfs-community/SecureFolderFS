@@ -2,13 +2,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Ftp.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Ftp
 {
-    public abstract class FtpStorable : IStorableChild
+    public abstract class FtpStorable : IStorableChild, IStorableProperties
     {
-        protected readonly AsyncFtpClient _ftpClient;
-        protected readonly IFolder? _parentFolder;
+        protected readonly AsyncFtpClient ftpClient;
+        protected readonly IFolder? parentFolder;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public string Id { get; }
@@ -18,8 +21,8 @@ namespace SecureFolderFS.Sdk.Ftp
 
         protected FtpStorable(AsyncFtpClient ftpClient, string id, string name, IFolder? parentFolder = null)
         {
-            _ftpClient = ftpClient;
-            _parentFolder = parentFolder;
+            this.ftpClient = ftpClient;
+            this.parentFolder = parentFolder;
             Id = id;
             Name = name;
         }
@@ -27,7 +30,14 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_parentFolder);
+            return Task.FromResult(parentFolder);
+        }
+
+        /// <inheritdoc/>
+        public Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new FtpItemProperties(Id, ftpClient);
+            return Task.FromResult(properties);
         }
 
         protected static string CombinePath(string path1, string path2)

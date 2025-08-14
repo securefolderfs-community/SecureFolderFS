@@ -13,7 +13,7 @@ using SecureFolderFS.Shared.Models;
 namespace SecureFolderFS.Sdk.Accounts.ViewModels
 {
     [Bindable(true)]
-    public abstract partial class AccountViewModel : ObservableObject, IViewable, ISavePersistence, IAsyncDisposable, IDisposable
+    public abstract partial class AccountViewModel : ObservableObject, IViewable, IRemoteResource<IFolder>, ISavePersistence
     {
         protected readonly AccountDataModel? accountDataModel;
         protected readonly IPropertyStore<string>? propertyStore;
@@ -24,8 +24,14 @@ namespace SecureFolderFS.Sdk.Accounts.ViewModels
         [ObservableProperty] private bool _IsInputFilled;
         [ObservableProperty] private bool _IsProgressing;
 
+        /// <summary>
+        /// Gets the unique identifier for the account associated with this view model.
+        /// </summary>
         public string AccountId { get; }
 
+        /// <summary>
+        /// Gets the type (unique identifier) of the data source associated with the account.
+        /// </summary>
         public abstract string DataSourceType { get; }
 
         protected AccountViewModel(AccountDataModel accountDataModel, IPropertyStore<string> propertyStore)
@@ -41,6 +47,7 @@ namespace SecureFolderFS.Sdk.Accounts.ViewModels
             this.propertyStore = propertyStore;
         }
 
+        /// <inheritdoc/>
         public async Task<IFolder> ConnectAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -84,6 +91,11 @@ namespace SecureFolderFS.Sdk.Accounts.ViewModels
                 await savePersistence.SaveAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Asynchronously checks if the account is currently connected and accessible.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result contains a boolean value indicating whether the account is connected.</returns>
         public virtual async Task<bool> IsConnectedAsync(CancellationToken cancellationToken)
         {
             try

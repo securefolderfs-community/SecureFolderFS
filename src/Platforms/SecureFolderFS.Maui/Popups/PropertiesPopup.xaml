@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
-    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
