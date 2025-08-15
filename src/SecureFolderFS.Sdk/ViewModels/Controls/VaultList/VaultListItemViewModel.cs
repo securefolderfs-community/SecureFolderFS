@@ -26,6 +26,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
+        private readonly IRemoteResource<IFolder>? _remoteVault;
+        private IFolder? _vaultFolder;
 
         [ObservableProperty] private bool _IsRenaming;
         [ObservableProperty] private bool _IsUnlocked;
@@ -35,10 +37,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [ObservableProperty] private IImage? _CustomIcon;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
 
-        public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
+        public VaultListItemViewModel(IRemoteResource<IFolder> remoteVault, VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
+            : this(vaultViewModel, vaultCollectionModel)
+        {
+            _remoteVault = remoteVault;
+        }
+
+        public VaultListItemViewModel(IFolder vaultFolder, VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
+            : this(vaultViewModel, vaultCollectionModel)
+        {
+            _vaultFolder = vaultFolder;
+        }
+
+        private VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
-            IsUnlocked = false;
             VaultViewModel = vaultViewModel;
             _vaultCollectionModel = vaultCollectionModel;
 
@@ -101,7 +114,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             {
                 case "icon":
                 {
-                    if (VaultViewModel.VaultModel.Folder is not IModifiableFolder modifiableFolder)
+                    if (_vaultFolder is not IModifiableFolder modifiableFolder)
                         return;
 
                     var sourceIconFile = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
@@ -139,7 +152,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private async Task RenameAsync(string? newName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(newName))
-                newName = VaultViewModel.VaultModel.Folder.Name;
+                newName = _vaultFolder?.Name;
+
+            if (newName is null)
+                return;
 
             IsRenaming = false;
             await VaultViewModel.SetNameAsync(newName, cancellationToken);
@@ -159,12 +175,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.TryOpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
+            if (_vaultFolder is not null)
+                await FileExplorerService.TryOpenInFileExplorerAsync(_vaultFolder, cancellationToken);
         }
 
         private async Task UpdateIconAsync(CancellationToken cancellationToken)
         {
-            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await VaultViewModel.VaultModel.Folder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
+            if (_vaultFolder is null)
+                return;
+
+            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await _vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
             if (imageFile is null)
                 return;
 

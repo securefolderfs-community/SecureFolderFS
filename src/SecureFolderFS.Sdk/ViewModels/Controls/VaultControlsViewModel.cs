@@ -71,7 +71,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             await _unlockedVaultViewModel.DisposeAsync();
 
             // Prepare login page
-            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultViewModel.VaultModel.Folder, _unlockedVaultViewModel.VaultViewModel, _vaultNavigation);
+            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultFolder, _unlockedVaultViewModel.VaultViewModel, _vaultNavigation);
             _ = loginPageViewModel.InitAsync();
 
             // Navigate away

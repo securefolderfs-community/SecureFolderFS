@@ -12,7 +12,6 @@ namespace SecureFolderFS.Sdk.Extensions
     {
         public static async Task<IFileSystem> GetBestFileSystemAsync(this IVaultFileSystemService vaultFileSystemService, CancellationToken cancellationToken = default)
         {
-            var vaultService = DI.Service<IVaultService>();
             var settingsService = DI.Service<ISettingsService>();
 
             IFileSystem? lastBest = null;

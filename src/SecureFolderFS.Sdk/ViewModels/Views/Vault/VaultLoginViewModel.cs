@@ -117,10 +117,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UnlockAsync(IDisposable unlockContract)
         {
+            if (_vaultFolder is null)
+                return;
+
             try
             {
                 // Navigate away
-                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
+                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(_vaultFolder, unlockContract, IsReadOnly);
                 NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
                 // Show vault tutorial

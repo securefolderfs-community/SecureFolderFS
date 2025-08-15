@@ -124,6 +124,7 @@
 
                 <Label
                     Grid.Row="0"
+                    Margin="0,8,0,0"
                     FontAttributes="Bold"
                     FontSize="17"
                     Text="{l:ResourceString Rid=RecentlyDeleted}" />

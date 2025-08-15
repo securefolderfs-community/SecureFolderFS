@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get storage root folder
-            var rootFolder = UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder;
+            var rootFolder = UnlockedVaultViewModel.VaultFolder;
             if (rootFolder is IChildFolder childFolder)
                 rootFolder = await childFolder.GetRootAsync(cancellationToken) ?? childFolder;
 

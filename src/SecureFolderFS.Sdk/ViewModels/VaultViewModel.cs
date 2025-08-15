@@ -18,7 +18,6 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels
@@ -30,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
+        [Obsolete]
         public IVaultModel VaultModel { get; }
 
         public VaultViewModel(IVaultModel vaultModel)
@@ -59,13 +59,13 @@ namespace SecureFolderFS.Sdk.ViewModels
             await VaultPersistenceService.VaultConfigurations.TrySaveAsync(cancellationToken);
         }
 
-        public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract, bool isReadOnly)
+        public async Task<UnlockedVaultViewModel> UnlockAsync(IFolder vaultFolder, IDisposable unlockContract, bool isReadOnly)
         {
             // Get the file system
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
 
             // Format volume name
-            var volumeName = FormattingHelpers.SanitizeVolumeName(VaultModel.VaultName, VaultModel.Folder.Name);
+            var volumeName = FormattingHelpers.SanitizeVolumeName(Title ?? vaultFolder.Name, vaultFolder.Name);
 
             // Configure options
             var options = new Dictionary<string, object>()
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels
                 { nameof(VirtualFileSystemOptions.VolumeName), volumeName }
             };
 
-            var contentFolder = await GetOrCreateContentFolder();
+            var contentFolder = await VaultHelpers.GetOrCreateContentFolderAsync(vaultFolder, CancellationToken.None);
             _ = contentFolder ?? throw new InvalidOperationException("Could not retrieve the content folder.");
 
             // Create the storage layer
@@ -87,16 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Notify that the vault has been unlocked
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
-            return new(storageRoot, this);
-        }
-
-        private async Task<IFolder?> GetOrCreateContentFolder()
-        {
-            var contentFolder = await SafetyHelpers.NoThrowAsync(async () => await VaultModel.GetContentFolderAsync());
-            if (VaultModel.Folder is not IModifiableFolder modifiableFolder)
-                return contentFolder;
-
-            return contentFolder ?? await modifiableFolder.CreateFolderAsync(VaultService.ContentFolderName);
+            return new(vaultFolder, storageRoot, this);
         }
     }
 }

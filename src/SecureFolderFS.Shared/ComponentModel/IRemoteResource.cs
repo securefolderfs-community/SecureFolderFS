@@ -13,6 +13,7 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <summary>
         /// Establishes an asynchronous connection and retrieves the remote resource of type <typeparamref name="T"/>.
         /// </summary>
+        /// <remarks>If the remote resource is already connected to; retrieves the existing instance.</remarks>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The task result is the remote resource of type <typeparamref name="T"/>.</returns>
         Task<T> ConnectAsync(CancellationToken cancellationToken = default);

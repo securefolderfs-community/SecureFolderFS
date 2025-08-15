@@ -48,8 +48,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
-                    AddVault(vaultModel);
+                {
+                    AddVault(new(vaultModel), vaultModel.Folder);
                     break;
+                }
 
                 case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
                     RemoveVault(vaultModel);
@@ -74,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             Items.Clear();
             foreach (var item in _vaultCollectionModel)
-                AddVault(item);
+                AddVault(new(item), item.Folder);
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
                 SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
@@ -120,12 +122,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
         }
 
-        private void AddVault(IVaultModel vaultModel)
+        private void AddVault(VaultViewModel vaultViewModel, IFolder vaultFolder)
         {
-            var listItem = new VaultListItemViewModel(new(vaultModel), _vaultCollectionModel);
-            _ = listItem.InitAsync();
+            AddVault(new VaultListItemViewModel(vaultFolder, vaultViewModel, _vaultCollectionModel));
+        }
 
-            Items.Add(listItem);
+        private void AddVault(VaultViewModel vaultViewModel, IRemoteResource<IFolder> remoteVault)
+        {
+            AddVault(new VaultListItemViewModel(remoteVault, vaultViewModel, _vaultCollectionModel));
+        }
+
+        private void AddVault(VaultListItemViewModel listItemViewModel)
+        {
+            _ = listItemViewModel.InitAsync();
+            Items.Add(listItemViewModel);
             HasVaults = true;
         }
 

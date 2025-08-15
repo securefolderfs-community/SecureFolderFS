@@ -30,8 +30,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             var keyPair = specifics.Security.KeyPair;
-            var vaultReader = new VaultReader(unlockedViewModel.VaultViewModel.VaultModel.Folder, StreamSerializer.Instance);
-            var vaultWriter = new VaultWriter(unlockedViewModel.VaultViewModel.VaultModel.Folder, StreamSerializer.Instance);
+            var vaultReader = new VaultReader(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
+            var vaultWriter = new VaultWriter(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
 
             // Read configuration
             var configDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
