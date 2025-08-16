@@ -893,4 +893,7 @@
   <data name="AccountList" xml:space="preserve">
       <value>Account list</value>
   </data>
+  <data name="Disconnect" xml:space="preserve">
+      <value>Disconnect</value>
+  </data>
 </root>

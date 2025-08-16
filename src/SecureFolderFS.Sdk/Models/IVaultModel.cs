@@ -11,6 +11,11 @@ namespace SecureFolderFS.Sdk.Models
     public interface IVaultModel : IRemoteResource<IFolder>, IEquatable<IVaultModel>, IEquatable<VaultDataModel>, ISavePersistence
     {
         /// <summary>
+        /// Gets a value indicating whether the vault is remotely stored.
+        /// </summary>
+        bool IsRemote { get; }
+
+        /// <summary>
         /// Gets the folder of the vault.
         /// </summary>
         IFolder? VaultFolder { get; }

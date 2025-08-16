@@ -26,6 +26,19 @@ namespace SecureFolderFS.Maui.Views.Vault
             {
                 ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
                 ViewModel.NavigationRequested += ViewModel_NavigationRequested;
+
+                if (ViewModel.VaultViewModel.VaultModel.IsRemote)
+                {
+                    var toolbarItem = new ToolbarItem()
+                    {
+                        Command = ViewModel.DisconnectFromVaultCommand,
+                        Text = "Disconnect".ToLocalized(),
+                        Order = ToolbarItemOrder.Secondary
+                    };
+
+                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, $"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", BindingMode.OneWay);
+                    ToolbarItems.Add(toolbarItem);
+                }
             }
 
             OnPropertyChanged(nameof(ViewModel));

@@ -84,8 +84,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             LoginViewModel?.Dispose();
             var vaultFolder = await VaultViewModel.VaultModel.ConnectAsync(cancellationToken);
 
+            IsConnected = true;
             LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
             await InitAsync(cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task DisconnectFromVaultAsync(CancellationToken cancellationToken)
+        {
+            await VaultViewModel.VaultModel.DisposeAsync();
+            LoginViewModel?.Dispose();
+            LoginViewModel = null;
+            IsConnected = false;
         }
 
         [RelayCommand]
@@ -139,6 +149,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
+            IsConnected = false;
             LoginViewModel?.Dispose();
         }
     }

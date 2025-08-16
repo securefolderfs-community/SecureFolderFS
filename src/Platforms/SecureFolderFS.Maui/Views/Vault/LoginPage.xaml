@@ -16,13 +16,6 @@
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
     </ContentPage.Resources>
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem
-            IsEnabled="False"
-            Order="Secondary"
-            Text="{l:ResourceString Rid=Disconnect}" />
-    </ContentPage.ToolbarItems>
-
     <VerticalStackLayout
         Margin="0,0,0,96"
         Padding="16,0"

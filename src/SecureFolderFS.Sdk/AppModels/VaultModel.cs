@@ -19,6 +19,9 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly IRemoteResource<IFolder>? _remoteVault;
 
         /// <inheritdoc/>
+        public bool IsRemote { get; }
+
+        /// <inheritdoc/>
         public IFolder? VaultFolder { get; private set; }
 
         /// <inheritdoc/>
@@ -29,11 +32,13 @@ namespace SecureFolderFS.Sdk.AppModels
             ServiceProvider = DI.Default;
             VaultFolder = folder;
             DataModel = dataModel;
+            IsRemote = false;
         }
 
         public VaultModel(IRemoteResource<IFolder> remoteVault, VaultDataModel dataModel, IFolder? folder = null)
         {
             ServiceProvider = DI.Default;
+            IsRemote = true;
             VaultFolder = folder;
             _remoteVault = remoteVault;
             DataModel = dataModel;
@@ -78,12 +83,18 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
+            if (IsRemote)
+                VaultFolder = null;
+
             _remoteVault?.Dispose();
         }
 
         /// <inheritdoc/>
         public async ValueTask DisposeAsync()
         {
+            if (IsRemote)
+                VaultFolder = null;
+
             if (_remoteVault is not null)
                 await _remoteVault.DisposeAsync();
         }
