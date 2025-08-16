@@ -1,16 +1,14 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -18,49 +16,76 @@ namespace SecureFolderFS.Sdk.AppModels
     [Inject<IVaultPersistenceService>]
     public sealed partial class VaultModel : IVaultModel
     {
-        private IVaultConfigurations VaultConfigurations => VaultPersistenceService.VaultConfigurations;
+        private readonly IRemoteResource<IFolder>? _remoteVault;
 
         /// <inheritdoc/>
-        public IFolder Folder { get; }
+        public IFolder? VaultFolder { get; private set; }
 
         /// <inheritdoc/>
-        public string VaultName { get; private set; }
+        public VaultDataModel DataModel { get; }
 
-        /// <inheritdoc/>
-        public DateTime? LastAccessDate { get; private set; }
-
-        public VaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
+        public VaultModel(IFolder folder, VaultDataModel dataModel)
         {
             ServiceProvider = DI.Default;
-            Folder = folder;
-            VaultName = vaultName ?? folder.Name;
-            LastAccessDate = lastAccessDate;
+            VaultFolder = folder;
+            DataModel = dataModel;
+        }
+
+        public VaultModel(IRemoteResource<IFolder> remoteVault, VaultDataModel dataModel, IFolder? folder = null)
+        {
+            ServiceProvider = DI.Default;
+            VaultFolder = folder;
+            _remoteVault = remoteVault;
+            DataModel = dataModel;
+        }
+
+        /// <inheritdoc/>
+        public async Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            await VaultPersistenceService.VaultConfigurations.SaveAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder> ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            if (VaultFolder is not null)
+                return VaultFolder;
+
+            ArgumentNullException.ThrowIfNull(_remoteVault);
+            ArgumentNullException.ThrowIfNull(DataModel.PersistableId);
+
+            var rootFolder = await _remoteVault.ConnectAsync(cancellationToken);
+            VaultFolder = await rootFolder.GetItemByRelativePathOrSelfAsync(DataModel.PersistableId, cancellationToken) as IFolder;
+            if (VaultFolder is null)
+                throw new InvalidOperationException("Could not find the vault folder.");
+
+            return VaultFolder;
         }
 
         /// <inheritdoc/>
         public bool Equals(IVaultModel? other)
         {
-            return Folder.Id == other?.Folder.Id;
+            return Equals(other?.DataModel);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default)
+        public bool Equals(VaultDataModel? other)
         {
-            var result = await UpdateConfigurationAsync(x => x.LastAccessDate = value, cancellationToken);
-            if (result)
-                LastAccessDate = value;
-
-            return result;
+            return (other?.PersistableId?.Equals(DataModel.PersistableId) ?? false)
+                   && (other.StorageSource?.StorageType?.Equals(DataModel.StorageSource?.StorageType) ?? false);
         }
 
-        private async Task<bool> UpdateConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public void Dispose()
         {
-            var item = VaultConfigurations.PersistedVaults?.FirstOrDefault(x => x.PersistableId == Folder.GetPersistableId());
-            if (item is null)
-                return false;
+            _remoteVault?.Dispose();
+        }
 
-            updateAction.Invoke(item);
-            return await VaultConfigurations.TrySaveAsync(cancellationToken);
+        /// <inheritdoc/>
+        public async ValueTask DisposeAsync()
+        {
+            if (_remoteVault is not null)
+                await _remoteVault.DisposeAsync();
         }
     }
 }

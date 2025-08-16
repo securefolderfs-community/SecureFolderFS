@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
@@ -40,12 +41,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions = new();
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
 
-        public IModifiableFolder Folder { get; }
+        public IVaultModel VaultModel { get; }
 
-        public CredentialsWizardViewModel(IModifiableFolder folder)
+        public CredentialsWizardViewModel(IVaultModel vaultModel)
         {
             ServiceProvider = DI.Default;
-            Folder = folder;
+            VaultModel = vaultModel;
             _credentialsTcs = new();
             _RegisterViewModel = new(AuthenticationStage.FirstStageOnly);
             _vaultId = Guid.NewGuid().ToString();
@@ -68,6 +69,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             ArgumentNullException.ThrowIfNull(EncodingOption);
             ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
 
+            if (VaultModel.VaultFolder is not IModifiableFolder modifiableFolder)
+                return Result.Failure(null);
+
             // Await the credentials
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var credentials = await _credentialsTcs.Task;
@@ -88,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
                 // Create the vault
                 var unlockContract = await VaultManagerService.CreateAsync(
-                    Folder,
+                    modifiableFolder,
                     credentials,
                     vaultOptions,
                     cancellationToken);
@@ -118,7 +122,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             // Get authentication options
             AuthenticationOptions.Clear();
-            await foreach (var item in VaultCredentialsService.GetCreationAsync(Folder, _vaultId))
+            await foreach (var item in VaultCredentialsService.GetCreationAsync(VaultModel.VaultFolder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

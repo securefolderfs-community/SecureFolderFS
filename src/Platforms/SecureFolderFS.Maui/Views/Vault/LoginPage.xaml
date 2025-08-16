@@ -9,12 +9,19 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
-    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    Title="{Binding ViewModel.VaultViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
     <ContentPage.Resources>
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
     </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            IsEnabled="False"
+            Order="Secondary"
+            Text="{l:ResourceString Rid=Disconnect}" />
+    </ContentPage.ToolbarItems>
 
     <VerticalStackLayout
         Margin="0,0,0,96"

@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Accounts.ViewModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -32,6 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
+        [ObservableProperty] private AccountViewModel? _SelectedAccount;
         [ObservableProperty] private ObservableCollection<AccountViewModel> _Accounts;
 
         /// <inheritdoc/>
@@ -40,8 +42,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public AccountSourceWizardViewModel(string sourceId, string dataSourceName, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
-            : base(sourceId, mode, vaultCollectionModel)
+        public AccountSourceWizardViewModel(string dataSourceType, string dataSourceName, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
+            : base(dataSourceType, mode, vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             Accounts = new();
@@ -56,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
             if (!Accounts.IsEmpty())
                 return;
 
-            var accounts = await AccountService.GetAccountsAsync(SourceId, PropertyStoreService.SecurePropertyStore).ToArrayAsync();
+            var accounts = await AccountService.GetAccountsAsync(DataSourceType, PropertyStoreService.SecurePropertyStore).ToArrayAsync();
             Accounts.DisposeAll();
             Accounts.Clear();
             Accounts.AddMultiple(accounts);
@@ -72,6 +74,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
+        }
+
+        /// <inheritdoc/>
+        public override VaultStorageSourceDataModel? ToStorageSource()
+        {
+            if (SelectedAccount is null)
+                return null;
+
+            return new AccountSourceDataModel(SelectedAccount.AccountId, DataSourceType);
         }
 
         /// <inheritdoc/>
@@ -97,7 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         [RelayCommand]
         private async Task AddAccountAsync(CancellationToken cancellationToken)
         {
-            var accountViewModel = await AccountService.GetAccountCreatorAsync(SourceId, PropertyStoreService.SecurePropertyStore, cancellationToken);
+            var accountViewModel = await AccountService.GetAccountCreatorAsync(DataSourceType, PropertyStoreService.SecurePropertyStore, cancellationToken);
             NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(new AccountCreationWizardViewModel(accountViewModel), this));
         }
 
@@ -142,7 +153,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                 var isConnected = await accountViewModel.IsConnectedAsync(cancellationToken);
                 if (!isConnected)
                 {
+                    // Disconnect other accounts
+                    SelectedAccount = null;
+                    foreach (var account in Accounts)
+                        await account.DisposeAsync();
+
+                    // Try to connect to the account
                     await accountViewModel.ConnectAsync(cancellationToken);
+                    SelectedAccount = accountViewModel;
                     return;
                 }
 
@@ -156,11 +174,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                     _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
 
                     // Update CanContinue
-                    var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel, cancellationToken);
+                    var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
                     Message = result.Message;
                     CanContinue = result.CanContinue;
                     SelectedLocation = result.SelectedLocation;
-
                 }
                 finally
                 {

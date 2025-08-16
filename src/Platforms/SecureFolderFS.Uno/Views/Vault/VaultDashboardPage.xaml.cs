@@ -81,7 +81,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
                         new(ViewModel.VaultNavigation, ViewModel.DashboardNavigation, ViewModel.UnlockedVaultViewModel),
-                        new(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigation, new WidgetsCollectionModel(ViewModel.VaultViewModel.VaultModel.Folder)));
+                        new(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigation, new WidgetsCollectionModel(ViewModel.UnlockedVaultViewModel.VaultFolder)));
 
                     _ = vaultOverviewViewModel.InitAsync();
                     return vaultOverviewViewModel;

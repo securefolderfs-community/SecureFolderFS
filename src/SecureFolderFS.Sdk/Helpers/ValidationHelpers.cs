@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -12,6 +13,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.Helpers
 {
@@ -20,7 +22,7 @@ namespace SecureFolderFS.Sdk.Helpers
         public static async Task<(Severity Severity, string? Message, string? SelectedLocation, bool CanContinue)> ValidateAddedVault(
             IFolder? selectedFolder,
             NewVaultMode mode,
-            IEnumerable<IVaultModel> existingVaults,
+            IEnumerable<VaultDataModel> existingVaults,
             CancellationToken cancellationToken)
         {
             Severity severity;
@@ -37,7 +39,7 @@ namespace SecureFolderFS.Sdk.Helpers
             }
 
             // Check for duplicates
-            var isDuplicate = existingVaults.Any(x => x.Folder.Id == selectedFolder.Id);
+            var isDuplicate = existingVaults.Any(x => x.PersistableId == selectedFolder.GetPersistableId());
             if (isDuplicate)
             {
                 severity = Severity.Warning;

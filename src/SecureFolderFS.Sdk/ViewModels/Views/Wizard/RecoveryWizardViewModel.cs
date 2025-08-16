@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
@@ -24,9 +25,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         [ObservableProperty] private RecoveryPreviewControlViewModel _RecoveryViewModel;
 
-        public IFolder Folder { get; }
+        public IVaultModel VaultModel { get; }
 
-        public RecoveryWizardViewModel(IFolder folder, CredentialsResult result)
+        public RecoveryWizardViewModel(IVaultModel vaultModel, CredentialsResult result)
         {
             ServiceProvider = DI.Default;
             Title = "VaultRecovery".ToLocalized();
@@ -34,13 +35,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             SecondaryText = "Cancel".ToLocalized();
             CanContinue = true;
             CanCancel = false;
-            Folder = folder;
+            VaultModel = vaultModel;
             _unlockContract = result.Value;
 
             RecoveryViewModel = new()
             {
                 VaultId = result.VaultId,
-                Title = Folder.Name,
+                Title = VaultModel.DataModel.DisplayName,
                 RecoveryKey = _unlockContract?.ToString()
             };
         }

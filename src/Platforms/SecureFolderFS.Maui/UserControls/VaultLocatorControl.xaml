@@ -28,6 +28,7 @@
                     IsRunning="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}"
                     IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}" />
                 <Button
+                    Command="{Binding ConnectCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
                     HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
                                                    iOS={LayoutOptions Alignment=Center}}"
                     IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}"

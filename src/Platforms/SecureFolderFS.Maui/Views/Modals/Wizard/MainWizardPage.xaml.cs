@@ -2,8 +2,11 @@ using System.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Views.Vault;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -13,6 +16,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Utils;
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
@@ -99,6 +103,25 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             base.OnAppearing();
         }
 
+        private async Task<IVaultModel?> FromDataSourceAsync(BaseDataSourceWizardViewModel dataSource)
+        {
+            var folder = await dataSource.GetFolderAsync();
+            if (folder is null)
+                return null;
+                            
+            var storageSource = dataSource.ToStorageSource();
+            if (storageSource is null)
+                return null;
+                            
+            var dataModel = new VaultDataModel(folder.GetPersistableId(), folder.Name, null, storageSource);
+            return dataSource switch
+            {
+                PickerSourceWizardViewModel => new VaultModel(folder, dataModel),
+                AccountSourceWizardViewModel { SelectedAccount: { } accountViewModel } => new VaultModel(accountViewModel, dataModel, folder),
+                _ => null
+            };
+        }
+
         private void Shell_Navigated(object? sender, ShellNavigatedEventArgs e)
         {
             if (e.Current.Location.OriginalString.Contains("NavigationPage"))
@@ -176,22 +199,22 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                         // Data Source -> Summary
                         case BaseDataSourceWizardViewModel { Mode: NewVaultMode.AddExisting } viewModel:
                         {
-                            var folder = await viewModel.GetFolderAsync();
-                            if (folder is null)
+                            var vaultModel = await FromDataSourceAsync(viewModel);
+                            if (vaultModel is null)
                                 break;
-
-                            nextViewModel = new SummaryWizardViewModel(folder, OverlayViewModel.VaultCollectionModel);
+                            
+                            nextViewModel = new SummaryWizardViewModel(vaultModel, OverlayViewModel.VaultCollectionModel);
                             break;
                         }
 
                         // Data Source -> Credentials Selection
                         case BaseDataSourceWizardViewModel { Mode: NewVaultMode.CreateNew } viewModel:
                         {
-                            var folder = await viewModel.GetFolderAsync();
-                            if (folder is not IModifiableFolder modifiableFolder)
+                            var vaultModel = await FromDataSourceAsync(viewModel);
+                            if (vaultModel is null)
                                 break;
 
-                            nextViewModel = new CredentialsWizardViewModel(modifiableFolder);
+                            nextViewModel = new CredentialsWizardViewModel(vaultModel);
                             break;
                         }
 
@@ -201,14 +224,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                             if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
                                 break;
 
-                            nextViewModel = new RecoveryWizardViewModel(viewModel.Folder, credentialsResult);
+                            nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
                             break;
                         }
 
                         // Recovery -> Summary
                         case RecoveryWizardViewModel viewModel:
                         {
-                            nextViewModel = new SummaryWizardViewModel(viewModel.Folder, OverlayViewModel.VaultCollectionModel);
+                            nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, OverlayViewModel.VaultCollectionModel);
                             break;
                         }
 

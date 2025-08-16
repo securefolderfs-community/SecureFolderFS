@@ -6,5 +6,5 @@ namespace SecureFolderFS.Sdk.DataModels
     public sealed record LocalStorageSourceDataModel() : VaultStorageSourceDataModel("LocalStorage");
 
     [Serializable]
-    public sealed record AccountSourceDataModel(string? AccountId) : VaultStorageSourceDataModel("RemoteAccountStorage");
+    public sealed record AccountSourceDataModel(string? AccountId, string? DataSourceType) : VaultStorageSourceDataModel("RemoteAccountStorage");
 }

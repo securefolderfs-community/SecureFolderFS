@@ -1,4 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
@@ -7,19 +13,11 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Storage.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    [Inject<IVaultPersistenceService>, Inject<IStorageService>, Inject<IApplicationService>]
+    [Inject<IVaultPersistenceService>, Inject<IStorageService>, Inject<IApplicationService>, Inject<IAccountService>, Inject<IPropertyStoreService>]
     public sealed partial class VaultCollectionModel : Collection<IVaultModel>, IVaultCollectionModel
     {
         private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
@@ -69,8 +67,33 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 try
                 {
-                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
-                    var vaultModel = new VaultModel(folder, item.DisplayName, item.LastAccessDate);
+                    IVaultModel? vaultModel = null;
+                    switch (item.StorageSource)
+                    {
+                        case LocalStorageSourceDataModel:
+                        {
+                            var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
+                            vaultModel = new VaultModel(folder, item);
+
+                            break;
+                        }
+
+                        case AccountSourceDataModel { DataSourceType: { } dataSource, AccountId: { } accountId }:
+                        {
+                            await foreach (var account in AccountService.GetAccountsAsync(dataSource, PropertyStoreService.SecurePropertyStore, cancellationToken))
+                            {
+                                if (account.AccountId != accountId)
+                                    continue;
+
+                                vaultModel = new VaultModel(account, item);
+                                break;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (vaultModel is null)
+                        continue;
 
                     Items.Add(vaultModel);
                     CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
@@ -102,12 +125,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         protected override void InsertItem(int index, IVaultModel item)
         {
+            ArgumentNullException.ThrowIfNull(item.DataModel.PersistableId);
+
             // Update saved vaults
             VaultConfigurations.PersistedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.PersistedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate, new LocalStorageSourceDataModel()));
+            VaultConfigurations.PersistedVaults.Insert(index, item.DataModel);
 
             // Add default widgets for vault
-            VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
+            VaultWidgets.SetForVault(item.DataModel.PersistableId, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
                 ApplicationService.IsDesktop
@@ -122,19 +147,16 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        protected override async void RemoveItem(int index)
+        protected override void RemoveItem(int index)
         {
             var removedItem = this[index];
+            ArgumentNullException.ThrowIfNull(removedItem.DataModel.PersistableId);
 
             // Remove persisted
             VaultConfigurations.PersistedVaults?.RemoveAt(index);
 
             // Remove widget data for that vault
-            VaultWidgets.SetForVault(removedItem.Folder.Id, null);
-
-            // Remove bookmark
-            if (removedItem.Folder is IBookmark bookmark)
-                await bookmark.RemoveBookmarkAsync();
+            VaultWidgets.SetForVault(removedItem.DataModel.PersistableId, null);
 
             // Remove from cache
             base.RemoveItem(index);
@@ -148,7 +170,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.PersistedVaults is null)
                 return;
 
-            VaultConfigurations.PersistedVaults[index] = new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate, new LocalStorageSourceDataModel());
+            VaultConfigurations.PersistedVaults[index] = item.DataModel;
 
             var oldItem = this[index];
             base.SetItem(index, item);

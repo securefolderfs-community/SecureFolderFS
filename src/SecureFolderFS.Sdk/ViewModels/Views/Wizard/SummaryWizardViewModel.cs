@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -16,22 +14,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     [Bindable(true)]
     public sealed partial class SummaryWizardViewModel : OverlayViewModel, IStagingView
     {
-        private readonly IFolder _folder;
         private readonly IVaultCollectionModel _vaultCollectionModel;
+        private readonly IVaultModel _vaultModel;
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _VaultName;
 
-        public SummaryWizardViewModel(IFolder folder, IVaultCollectionModel vaultCollectionModel)
+        public SummaryWizardViewModel(IVaultModel vaultModel, IVaultCollectionModel vaultCollectionModel)
         {
             Title = "Summary".ToLocalized();
             SecondaryText = "Close".ToLocalized();
             PrimaryText = null;
             CanContinue = true;
             CanCancel = true;
-            VaultName = folder.Name;
-            _folder = folder;
+            VaultName = vaultModel.DataModel.DisplayName;
             _vaultCollectionModel = vaultCollectionModel;
+            _vaultModel = vaultModel;
         }
 
         /// <inheritdoc/>
@@ -50,8 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override async void OnAppearing()
         {
             // Add the newly created vault
-            var vaultModel = new VaultModel(_folder);
-            _vaultCollectionModel.Add(vaultModel);
+            _vaultCollectionModel.Add(_vaultModel);
 
             // Try to save the new vault
             var result = await _vaultCollectionModel.TrySaveAsync();

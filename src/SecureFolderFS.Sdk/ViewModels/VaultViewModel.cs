@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -29,15 +28,17 @@ namespace SecureFolderFS.Sdk.ViewModels
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
-        [Obsolete]
+        /// <summary>
+        /// Gets the model representing the current vault.
+        /// </summary>
         public IVaultModel VaultModel { get; }
 
         public VaultViewModel(IVaultModel vaultModel)
         {
             ServiceProvider = DI.Default;
-            Title = vaultModel.VaultName;
+            Title = vaultModel.DataModel.DisplayName ?? vaultModel.VaultFolder?.Name;
             VaultModel = vaultModel;
-            LastAccessDate = vaultModel.LastAccessDate;
+            LastAccessDate = vaultModel.DataModel.LastAccessDate;
         }
 
         [RelayCommand]
@@ -46,21 +47,35 @@ namespace SecureFolderFS.Sdk.ViewModels
             if (newName is null)
                 return;
 
-            var dataModel = VaultPersistenceService.VaultConfigurations.PersistedVaults?.FirstOrDefault(x => x.PersistableId == VaultModel.Folder.Id);
-            if (dataModel is null)
+            if (string.IsNullOrEmpty(newName))
+                newName = Path.GetFileName(VaultModel.VaultFolder?.Id);
+
+            if (newName is null)
                 return;
 
-            if (string.IsNullOrEmpty(newName))
-                newName = Path.GetFileName(VaultModel.Folder.Id);
-
-            dataModel.DisplayName = newName;
+            VaultModel.DataModel.DisplayName = newName;
             Title = newName;
 
-            await VaultPersistenceService.VaultConfigurations.TrySaveAsync(cancellationToken);
+            await VaultModel.TrySaveAsync(cancellationToken);
         }
 
-        public async Task<UnlockedVaultViewModel> UnlockAsync(IFolder vaultFolder, IDisposable unlockContract, bool isReadOnly)
+        [RelayCommand]
+        public async Task SetLastAccessDateAsync(DateTime? newDate, CancellationToken cancellationToken)
         {
+            if (newDate is null)
+                return;
+
+            VaultModel.DataModel.LastAccessDate = newDate;
+            LastAccessDate = newDate;
+
+            await VaultModel.TrySaveAsync(cancellationToken);
+        }
+
+        public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract, bool isReadOnly)
+        {
+            if (VaultModel.VaultFolder is not { } vaultFolder)
+                throw new InvalidOperationException("The vault folder is not set.");
+
             // Get the file system
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
 
@@ -81,8 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             var storageRoot = await fileSystem.MountAsync(contentFolder, unlockContract, options);
 
             // Update last access date
-            await VaultModel.SetLastAccessDateAsync(DateTime.Now);
-            LastAccessDate = VaultModel.LastAccessDate;
+            await SetLastAccessDateAsync(DateTime.Now, CancellationToken.None);
 
             // Notify that the vault has been unlocked
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));

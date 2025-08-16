@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
@@ -12,11 +16,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -24,10 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseDesignationViewModel, IVaultViewContext, INavigatable, IAsyncInitialize, IDisposable
     {
-        private readonly IRemoteResource<IFolder>? _remoteVault;
-        private IFolder? _vaultFolder;
-
         [ObservableProperty] private bool _IsReadOnly;
+        [ObservableProperty] private bool _IsConnected;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
@@ -38,35 +35,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public VaultLoginViewModel(IFolder vaultFolder, VaultViewModel vaultViewModel, INavigationService vaultNavigation)
+        public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
             ServiceProvider = DI.Default;
-            _vaultFolder = vaultFolder;
             Title = vaultViewModel.Title;
             VaultNavigation = vaultNavigation;
             VaultViewModel = vaultViewModel;
-            LoginViewModel = new(_vaultFolder, LoginViewType.Full) { Title = vaultViewModel.Title };
-            LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
-        }
 
-        public VaultLoginViewModel(IRemoteResource<IFolder> remoteVault, VaultViewModel vaultViewModel, INavigationService vaultNavigation)
-        {
-            ServiceProvider = DI.Default;
-            Title = vaultViewModel.Title;
-            VaultNavigation = vaultNavigation;
-            VaultViewModel = vaultViewModel;
-            _remoteVault = remoteVault;
+            if (VaultViewModel.VaultModel.VaultFolder is { } vaultFolder)
+                LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = vaultViewModel.Title };
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(LoginViewModel);
+            if (LoginViewModel is null)
+                return;
+
+            LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             await LoginViewModel.InitAsync(cancellationToken);
 
             #region Test for quick unlock on mobile
 
-            if (_vaultFolder is null)
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
 
             var recoveryKey = VaultViewModel.Title switch
@@ -80,7 +71,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (recoveryKey is null)
                 return;
 
-            var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, recoveryKey, cancellationToken);
+            var unlockContract = await VaultManagerService.RecoverAsync(vaultFolder, recoveryKey, cancellationToken);
             await Task.Delay(200);
             await UnlockAsync(unlockContract);
 
@@ -90,21 +81,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ConnectToVaultAsync(CancellationToken cancellationToken)
         {
-            if (_remoteVault is null)
-                return;
-
             LoginViewModel?.Dispose();
-            _vaultFolder = await _remoteVault.ConnectAsync(cancellationToken);
-            LoginViewModel = new(_vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
-            await LoginViewModel.InitAsync(cancellationToken);
+            var vaultFolder = await VaultViewModel.VaultModel.ConnectAsync(cancellationToken);
+
+            LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
+            await InitAsync(cancellationToken);
         }
 
         [RelayCommand]
         private async Task BeginRecoveryAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_vaultFolder);
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
+                return;
 
-            var recoveryOverlay = new RecoveryOverlayViewModel(_vaultFolder);
+            var recoveryOverlay = new RecoveryOverlayViewModel(vaultFolder);
             var result = await OverlayService.ShowAsync(recoveryOverlay);
             if (!result.Positive() || recoveryOverlay.UnlockContract is null)
             {
@@ -117,13 +107,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UnlockAsync(IDisposable unlockContract)
         {
-            if (_vaultFolder is null)
-                return;
-
             try
             {
                 // Navigate away
-                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(_vaultFolder, unlockContract, IsReadOnly);
+                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
                 NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
                 // Show vault tutorial

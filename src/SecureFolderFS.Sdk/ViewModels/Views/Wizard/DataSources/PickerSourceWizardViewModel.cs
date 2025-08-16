@@ -1,7 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
@@ -12,10 +18,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Pickers;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
@@ -33,8 +35,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override string DataSourceName { get; } = "SourceLocalStorage".ToLocalized();
 
-        public PickerSourceWizardViewModel(string sourceId, IFolderPicker folderPicker, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
-            : base(sourceId, mode, vaultCollectionModel)
+        public PickerSourceWizardViewModel(string dataSourceType, IFolderPicker folderPicker, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
+            : base(dataSourceType, mode, vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             _folderPicker = folderPicker;
@@ -58,6 +60,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
+        public override VaultStorageSourceDataModel? ToStorageSource()
+        {
+            return new LocalStorageSourceDataModel();
+        }
+
+        /// <inheritdoc/>
         public override async void OnAppearing()
         {
             CanContinue = await UpdateStatusAsync();
@@ -72,7 +80,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken = default)
         {
-            var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel, cancellationToken);
+            var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
 
             Message = result.Message;
             Severity = result.Severity;

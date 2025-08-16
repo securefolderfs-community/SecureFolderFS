@@ -26,8 +26,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
-        private readonly IRemoteResource<IFolder>? _remoteVault;
-        private IFolder? _vaultFolder;
 
         [ObservableProperty] private bool _IsRenaming;
         [ObservableProperty] private bool _IsUnlocked;
@@ -37,19 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [ObservableProperty] private IImage? _CustomIcon;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
 
-        public VaultListItemViewModel(IRemoteResource<IFolder> remoteVault, VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
-            : this(vaultViewModel, vaultCollectionModel)
-        {
-            _remoteVault = remoteVault;
-        }
-
-        public VaultListItemViewModel(IFolder vaultFolder, VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
-            : this(vaultViewModel, vaultCollectionModel)
-        {
-            _vaultFolder = vaultFolder;
-        }
-
-        private VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
+        public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             VaultViewModel = vaultViewModel;
@@ -114,7 +100,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             {
                 case "icon":
                 {
-                    if (_vaultFolder is not IModifiableFolder modifiableFolder)
+                    if (VaultViewModel.VaultModel.VaultFolder is not IModifiableFolder modifiableFolder)
                         return;
 
                     var sourceIconFile = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
@@ -152,7 +138,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private async Task RenameAsync(string? newName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(newName))
-                newName = _vaultFolder?.Name;
+                newName = VaultViewModel.VaultModel.VaultFolder?.Name;
 
             if (newName is null)
                 return;
@@ -166,7 +152,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             CustomIcon?.Dispose();
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
-            if (VaultViewModel.VaultModel.Folder is IBookmark bookmark)
+            if (VaultViewModel.VaultModel.VaultFolder is IBookmark bookmark)
                 await bookmark.RemoveBookmarkAsync(cancellationToken);
 
             await _vaultCollectionModel.TrySaveAsync(cancellationToken);
@@ -175,16 +161,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            if (_vaultFolder is not null)
-                await FileExplorerService.TryOpenInFileExplorerAsync(_vaultFolder, cancellationToken);
+            if (VaultViewModel.VaultModel.VaultFolder is { } vaultFolder)
+                await FileExplorerService.TryOpenInFileExplorerAsync(vaultFolder, cancellationToken);
         }
 
         private async Task UpdateIconAsync(CancellationToken cancellationToken)
         {
-            if (_vaultFolder is null)
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
 
-            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await _vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
+            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
             if (imageFile is null)
                 return;
 
