@@ -120,9 +120,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     break;
                 }
 
-                case "name": // TODO: Use this on mobile platforms where having an overlay is desirable
+                // An option used on platforms where having an overlay is desirable
+                case "rename":
                 {
-                    var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized());
+                    var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized()) { Message = "ChooseNewName".ToLocalized(), NewName = VaultViewModel.Title };
                     var result = await OverlayService.ShowAsync(overlayViewModel);
                     if (!result.Positive())
                         return;

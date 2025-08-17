@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Messages;
@@ -23,9 +24,10 @@ namespace SecureFolderFS.Sdk.ViewModels
 {
     [Inject<IVaultService>, Inject<IVaultFileSystemService>, Inject<IVaultPersistenceService>]
     [Bindable(true)]
-    public sealed partial class VaultViewModel : ObservableObject, IViewable
+    public sealed partial class VaultViewModel : ObservableObject, IViewable, IDisposable
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _CanRename;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
         /// <summary>
@@ -38,7 +40,9 @@ namespace SecureFolderFS.Sdk.ViewModels
             ServiceProvider = DI.Default;
             Title = vaultModel.DataModel.DisplayName ?? vaultModel.VaultFolder?.Name;
             VaultModel = vaultModel;
+            CanRename = !vaultModel.IsRemote || vaultModel.VaultFolder is not null;
             LastAccessDate = vaultModel.DataModel.LastAccessDate;
+            vaultModel.StateChanged += VaultModel_StateChanged;
         }
 
         [RelayCommand]
@@ -102,6 +106,21 @@ namespace SecureFolderFS.Sdk.ViewModels
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
             return new(vaultFolder, storageRoot, this);
+        }
+
+        private void VaultModel_StateChanged(object? sender, EventArgs e)
+        {
+            if (e is not VaultChangedEventArgs)
+                return;
+
+            CanRename = !VaultModel.IsRemote || VaultModel.VaultFolder is not null;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            VaultModel.StateChanged -= VaultModel_StateChanged;
+            VaultModel.Dispose();
         }
     }
 }

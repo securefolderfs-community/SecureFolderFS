@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
@@ -26,6 +27,9 @@ namespace SecureFolderFS.Sdk.AppModels
 
         /// <inheritdoc/>
         public VaultDataModel DataModel { get; }
+
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs>? StateChanged;
 
         public VaultModel(IFolder folder, VaultDataModel dataModel)
         {
@@ -64,6 +68,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultFolder is null)
                 throw new InvalidOperationException("Could not find the vault folder.");
 
+            StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
             return VaultFolder;
         }
 
@@ -84,7 +89,10 @@ namespace SecureFolderFS.Sdk.AppModels
         public void Dispose()
         {
             if (IsRemote)
+            {
                 VaultFolder = null;
+                StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
+            }
 
             _remoteVault?.Dispose();
         }
@@ -93,7 +101,10 @@ namespace SecureFolderFS.Sdk.AppModels
         public async ValueTask DisposeAsync()
         {
             if (IsRemote)
+            {
                 VaultFolder = null;
+                StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
+            }
 
             if (_remoteVault is not null)
                 await _remoteVault.DisposeAsync();

@@ -53,10 +53,17 @@
                         <SwipeView.RightItems>
                             <SwipeItem
                                 BackgroundColor="Red"
-                                Command="{Binding RemoveVaultCommand}"
+                                Command="{Binding RemoveVaultCommand, Mode=OneWay}"
                                 IsDestructive="True"
                                 IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Text="{l:ResourceString Rid=Remove}" />
+                            <SwipeItem
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                                                  Dark={StaticResource SecondaryDarkColor}}"
+                                Command="{Binding CustomizeCommand, Mode=OneWay}"
+                                CommandParameter="Rename"
+                                IsEnabled="{Binding VaultViewModel.CanRename, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=Rename}" />
                         </SwipeView.RightItems>
 
                         <Grid Padding="8,2" ColumnSpacing="8">

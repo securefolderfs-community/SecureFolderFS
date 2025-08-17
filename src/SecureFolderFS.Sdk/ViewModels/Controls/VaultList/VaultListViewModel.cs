@@ -50,10 +50,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
-                {
                     AddVault(new(vaultModel));
                     break;
-                }
 
                 case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
                     RemoveVault(vaultModel);
@@ -142,6 +140,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             try
             {
+                itemToRemove.VaultViewModel.Dispose();
                 Items.Remove(itemToRemove);
             }
             catch (Exception)
