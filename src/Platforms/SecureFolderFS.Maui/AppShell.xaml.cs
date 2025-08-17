@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui
             var sessionException = ExceptionHelpers.RetrieveSessionFile(App.Instance.ApplicationLifecycle.AppDirectory);
             if (sessionException is null)
                 return;
-            
+
             var overlayService = DI.Service<IOverlayService>();
             var messageOverlay = new MessageOverlayViewModel()
             {

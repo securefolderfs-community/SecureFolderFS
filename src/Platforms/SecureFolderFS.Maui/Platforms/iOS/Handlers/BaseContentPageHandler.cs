@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.Handlers
         protected new ContentView? PlatformView { get; private set; }
 
         protected ContentPage? ThisPage => VirtualView as ContentPage;
-        
+
         protected override void ConnectHandler(ContentView platformView)
         {
             base.ConnectHandler(platformView);
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Maui.Handlers
 
             ApplyHandler(viewHandler);
         }
-        
+
         private async void ContentPage_Loaded(object? sender, EventArgs e)
         {
             ThisPage!.NavigatedTo += ContentPage_NavigatedTo;
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.Handlers
             // When app is resumed, UI is reevaluated
             ApplyHandler();
         }
-        
+
         private void ContentPage_Appearing(object? sender, EventArgs e)
         {
             ApplyHandler();

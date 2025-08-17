@@ -72,7 +72,7 @@
         <None Include="Platforms/iOS/Info.plist" />
         <None Include="Platforms/iOS/Entitlements.plist" />
       </ItemGroup>
-      
+
       <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />

@@ -144,7 +144,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                 navigationService.Views.Add(ViewModel.CurrentFolder);
                 navigationService.SetCurrentViewInternal(ViewModel.CurrentFolder);
             }
-            
+
             OnPropertyChanged(nameof(ViewModel));
         }
 
@@ -155,7 +155,7 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             await Browser.FadeTo(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
-            
+
             _ = Task.Delay(40).ContinueWith(async _ =>
             {
                 await Browser.FadeTo(1.0d, 150U);

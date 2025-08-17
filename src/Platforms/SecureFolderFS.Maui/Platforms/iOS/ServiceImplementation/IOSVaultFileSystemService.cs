@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             {
                 Icon = new ImageResourceFile("network_drive_macos.png", false) 
             };
-            
+
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {
                 Icon = new ImageResourceFile("gdrive_icon.png", false) 

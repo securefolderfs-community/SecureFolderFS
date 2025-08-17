@@ -13,9 +13,9 @@ namespace SecureFolderFS.Maui.Sheets
     internal sealed class ViewOptionsSheetFragment : IOverlayControl
     {
         private readonly TaskCompletionSource<IResult> _tcs;
-        
+
         public LayoutsViewModel? ViewModel { get; private set; }
-        
+
         public static ViewOptionsSheetFragment? EarlyInstance { get; set; }
 
         public ViewOptionsSheetFragment()
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.Sheets
         {
             ViewModel ??= ViewOptionsSheetFragment.EarlyInstance?.ViewModel;
             Closed += Sheet_Closed;
-            
+
             InitializeComponent();
         }
 

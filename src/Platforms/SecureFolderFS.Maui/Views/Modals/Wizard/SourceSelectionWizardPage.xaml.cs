@@ -9,16 +9,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         public SourceSelectionWizardViewModel ViewModel { get; }
 
         public WizardOverlayViewModel OverlayViewModel { get; }
-        
+
         public SourceSelectionWizardPage(SourceSelectionWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
             ViewModel = viewModel;
             OverlayViewModel = overlayViewModel;
             BindingContext = this;
-            
+
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             if (e.CurrentSelection.FirstOrDefault() is not BaseDataSourceWizardViewModel dataSourceViewModel)
                 return;
-            
+
             if (sender is not CollectionView collectionView)
                 return;
 

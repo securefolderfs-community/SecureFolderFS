@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             var value = await propertyStore.GetValueAsync<string?>(dataSourceIdentifier, null, cancellationToken);
             if (value is null)
                 yield break;
-            
+
             var accountIds = await StreamSerializer.Instance.TryDeserializeFromStringAsync<string[]>(value, cancellationToken);
             if (accountIds.IsEmpty())
                 yield break;
@@ -29,11 +29,11 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             foreach (var accountId in accountIds)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-             
+
                 var rawAccountData = await propertyStore.GetValueAsync<string?>(accountId, null, cancellationToken);
                 if (rawAccountData is null)
                     continue;
-                
+
                 var accountData = await StreamSerializer.Instance.TryDeserializeFromStringAsync<AccountDataModel?>(rawAccountData, cancellationToken);
                 if (accountData is null)
                     continue;
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 yield return accountData.DataSourceType switch
                 {
                     DATA_SOURCE_FTP => new FtpAccountViewModel(accountData, propertyStore),
-                    
+
                     // TODO: Maybe move AccountViewModel to shared project and implement the AccountViewModel
                     // in separate projects (SecureFolderFS.Sdk.Ftp, SecureFolderFS.Sdk.GoogleDrive)
                     _ => throw new ArgumentOutOfRangeException(nameof(AccountDataModel.DataSourceType))

@@ -52,14 +52,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 await Task.CompletedTask;
             }
         }
-        
+
         /// <inheritdoc/>
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             try
             {
                 permissionRoot.StartAccessingSecurityScopedResource();
-                
+
                 var isDirectory = false;
                 var itemPath = Path.Combine(Id, name);
 

@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 #if IOS
@@ -105,13 +106,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     PrimaryText = "Save".ToLocalized(),
                     SecondaryText = "Cancel".ToLocalized()
                 };
-                    
+
 #if IOS
                 await Task.Delay(800);
 #endif
                 var result = await overlayService.ShowAsync(messageOverlay);
                 if (result.Positive())
-                    await textViewModel.SaveAsync();
+                    await textViewModel.TrySaveAsync();
             }
         }
 

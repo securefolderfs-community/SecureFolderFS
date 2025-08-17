@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
     internal sealed class IOSVFSRoot : VFSRoot
     {
         private bool _disposed;
-        
+
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.IOS.FileSystem.FS_NAME;
 

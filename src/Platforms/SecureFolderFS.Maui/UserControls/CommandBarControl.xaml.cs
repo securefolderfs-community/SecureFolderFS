@@ -91,7 +91,7 @@ namespace SecureFolderFS.Maui.UserControls
 
                     commandBar.UpdateToolbarOnTop(bValue);
                 });
-        
+
         public ICommand? PropertiesCommand
         {
             get => (ICommand?)GetValue(PropertiesCommandProperty);
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty PropertiesCommandProperty =
             BindableProperty.Create(nameof(PropertiesCommand), typeof(ICommand), typeof(CommandBarControl));
-        
+
         public ICommand? ShareCommand
         {
             get => (ICommand?)GetValue(ShareCommandProperty);

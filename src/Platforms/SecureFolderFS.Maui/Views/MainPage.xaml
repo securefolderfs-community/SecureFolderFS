@@ -41,37 +41,47 @@
                 Text="{l:ResourceString Rid=NoVaultsMessage}" />
         </VerticalStackLayout>
 
-        <ListView
+        <CollectionView
             Grid.Row="1"
             BackgroundColor="Transparent"
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay}"
-            ItemTapped="ListView_ItemTapped"
             ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
-            RowHeight="64"
             SelectionMode="None">
-            <ListView.ItemTemplate>
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
-                    <ViewCell>
-                        <ViewCell.ContextActions>
-                            <MenuFlyoutItem
+                    <SwipeView Background="{StaticResource ThemeBackgroundFillColorBrush}" HeightRequest="64">
+                        <SwipeView.RightItems>
+                            <SwipeItem
+                                BackgroundColor="Red"
                                 Command="{Binding RemoveVaultCommand}"
                                 IsDestructive="True"
                                 IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                                Text="{OnPlatform Android={l:ResourceString Rid=RemoveFromList},
-                                                  iOS={l:ResourceString Rid=Remove}}" />
-                        </ViewCell.ContextActions>
+                                Text="{l:ResourceString Rid=Remove}" />
+                        </SwipeView.RightItems>
 
-                        <HorizontalStackLayout Padding="8,2" Spacing="8">
-                            <Grid IsVisible="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
+                        <Grid Padding="8,2" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid
+                                Grid.Column="0"
+                                IsVisible="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
                             </Grid>
-                            <Grid IsVisible="{Binding IsUnlocked, Mode=OneWay}" VerticalOptions="Center">
+                            <Grid
+                                Grid.Column="0"
+                                IsVisible="{Binding IsUnlocked, Mode=OneWay}"
+                                VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material LockOpen}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino LockOpen}" OnPlatforms="iOS" />
                             </Grid>
 
-                            <VerticalStackLayout VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                                 <Label
                                     FontAttributes="Bold"
                                     FontSize="16"
@@ -79,11 +89,28 @@
                                     VerticalOptions="Center" />
                                 <Label IsVisible="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                             </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </ViewCell>
+
+                            <Grid Grid.Column="2" Margin="0,0,8,0">
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material ChevronRight}"
+                                    IconSize="16"
+                                    OnPlatforms="Android"
+                                    Opacity="0.8" />
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino ChevronRight}"
+                                    IconSize="16"
+                                    OnPlatforms="iOS"
+                                    Opacity="0.8" />
+                            </Grid>
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="ItemTapRecognizer_Tapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </SwipeView>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <Grid
             Grid.Row="0"

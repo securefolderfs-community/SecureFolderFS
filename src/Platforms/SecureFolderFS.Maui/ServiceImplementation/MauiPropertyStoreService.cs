@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             if (typeof(TValue) != typeof(string))
                 throw new ArgumentException("Value type must be string.", nameof(TValue));
-            
+
             return (TValue?)(object?)await SecureStorage.Default.GetAsync(key);
         }
 

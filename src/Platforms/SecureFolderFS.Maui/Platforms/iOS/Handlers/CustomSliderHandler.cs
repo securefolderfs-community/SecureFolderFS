@@ -28,12 +28,12 @@ namespace SecureFolderFS.Maui.Handlers
             slider.TouchUpOutside += Slider_TouchUpOutside;
             slider.TouchCancel += Slider_TouchCancel;
         }
-        
+
         /// <inheritdoc/>
         protected override void DisconnectHandler(UISlider slider)
         {
             base.DisconnectHandler(slider);
-            
+
             slider.TouchDown -= Slider_TouchDown;
             slider.TouchUpInside -= Slider_TouchUpInside;
             slider.TouchUpOutside -= Slider_TouchUpOutside;
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Maui.Handlers
             var capInsets = new UIEdgeInsets(0, size.Width / 2f - 1, 0, size.Width / 2f - 1);
             return image.CreateResizableImage(capInsets, UIImageResizingMode.Stretch);
         }
-        
+
         #region Handlers
 
         private static void Slider_TouchDown(object? sender, EventArgs e)

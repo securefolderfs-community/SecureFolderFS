@@ -10,17 +10,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     {
         /// <inheritdoc/>
         public override bool IsDesktop { get; } = false;
-        
+
         /// <inheritdoc/>
         public override string Platform { get; } = "iOS - MAUI";
-        
+
         /// <inheritdoc/>
         public override async Task OpenUriAsync(Uri uri)
         {
             var nsUrl = new NSUrl(uri.AbsoluteUri);
             _ = await UIApplication.SharedApplication.OpenUrlAsync(nsUrl, new());
         }
-        
+
         /// <inheritdoc/>
         public override string GetSystemVersion()
         {

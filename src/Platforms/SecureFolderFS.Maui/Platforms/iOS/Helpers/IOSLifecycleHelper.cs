@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
             var formattedException = ExceptionHelpers.FormatException(ex);
             if (formattedException is null)
                 return;
-            
+
             ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
             ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }

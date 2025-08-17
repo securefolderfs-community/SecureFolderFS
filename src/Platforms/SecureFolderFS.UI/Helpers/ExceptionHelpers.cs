@@ -60,7 +60,7 @@ namespace SecureFolderFS.UI.Helpers
             var exceptionMessage = FormatException(exception);
             if (exceptionMessage is null)
                 return;
-            
+
             WriteAggregateFile(appDirectory, exceptionMessage);
         }
 

@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             throw new NotImplementedException();
         }
-        
+
         private static string GetDescription(Enum? value)
         {
             var fieldInfo = value?.GetType().GetField(value.ToString());

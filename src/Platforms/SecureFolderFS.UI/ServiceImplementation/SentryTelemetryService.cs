@@ -11,12 +11,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
     {
         private readonly IApplicationService _applicationService;
         private IDisposable? _sentryCompletion;
-        
+
         public SentryTelemetryService(IApplicationService applicationService)
         {
             _applicationService = applicationService;
         }
-        
+
         /// <inheritdoc/>
         public Task<bool> IsEnabledAsync()
         {
@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             if (string.IsNullOrEmpty(ApiKeys.SentryDsnKey))
                 return Task.CompletedTask;
-            
+
             _sentryCompletion = SentrySdk.Init(options =>
             {
                 options.Dsn = ApiKeys.SentryDsnKey;
@@ -37,7 +37,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 options.Release = _applicationService.AppVersion.ToString();
                 options.TracesSampleRate = 0.80;
                 options.ProfilesSampleRate = 0.40;
-                
+
 #if DEBUG
                 options.Debug = true;
                 options.Environment = "Staging";
@@ -45,7 +45,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 options.Environment = "Production";
 #endif
             });
-            
+
             return Task.CompletedTask;
         }
 
@@ -61,7 +61,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             SentrySdk.CaptureMessage(eventName);
         }
-        
+
         /// <inheritdoc/>
         public void TrackException(Exception exception)
         {

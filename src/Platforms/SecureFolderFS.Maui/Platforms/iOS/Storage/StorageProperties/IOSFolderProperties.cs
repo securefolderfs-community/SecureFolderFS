@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties
             try
             {
                 _permissionRoot.StartAccessingSecurityScopedResource();
-                
+
                 using var document = new UIDocument(_url);
                 var path = document.FileUrl.Path;
                 if (path is null)
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties
             try
             {
                 _permissionRoot.StartAccessingSecurityScopedResource();
-                
+
                 using var document = new UIDocument(_url);
                 var path = document.FileUrl.Path;
                 if (path is null)

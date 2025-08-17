@@ -52,6 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (LoginViewModel is null)
                 return;
 
+            IsConnected = VaultViewModel.VaultModel.IsRemote;
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             await LoginViewModel.InitAsync(cancellationToken);
 
@@ -84,7 +85,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             LoginViewModel?.Dispose();
             var vaultFolder = await VaultViewModel.VaultModel.ConnectAsync(cancellationToken);
 
-            IsConnected = true;
             LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
             await InitAsync(cancellationToken);
         }

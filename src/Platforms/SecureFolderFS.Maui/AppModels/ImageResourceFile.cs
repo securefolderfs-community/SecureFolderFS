@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.AppModels
     internal sealed class ImageResourceFile : IImage
     {
         public string Name { get; }
-        
+
         public bool IsResource { get; }
 
         public ImageResourceFile(string name, bool isResource)
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.AppModels
             Name = name;
             IsResource = isResource;
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {

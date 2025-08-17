@@ -83,7 +83,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             if (e.PropertyName != nameof(OverlayViewModel.CurrentViewModel))
                 return;
-            
+
             if (OverlayViewModel?.CurrentViewModel is { } viewable)
                 _views.Add(viewable);
         }
@@ -108,11 +108,11 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             var folder = await dataSource.GetFolderAsync();
             if (folder is null)
                 return null;
-                            
+
             var storageSource = dataSource.ToStorageSource();
             if (storageSource is null)
                 return null;
-                            
+
             var dataModel = new VaultDataModel(folder.GetPersistableId(), folder.Name, null, storageSource);
             return dataSource switch
             {
@@ -132,7 +132,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             {
                 OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
                 OverlayViewModel.PropertyChanged -= OverlayViewModel_PropertyChanged;
-                
+
                 _views.DisposeAll();
                 _views.Clear();
             }
@@ -166,7 +166,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                 {
                     // Swap views
                     (_previousView, OverlayViewModel.CurrentViewModel) = (OverlayViewModel.CurrentViewModel, _previousView);
-                    
+
                     // Navigate back
                     await Navigation.PopAsync(true);
                     return;
@@ -202,7 +202,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                             var vaultModel = await FromDataSourceAsync(viewModel);
                             if (vaultModel is null)
                                 break;
-                            
+
                             nextViewModel = new SummaryWizardViewModel(vaultModel, OverlayViewModel.VaultCollectionModel);
                             break;
                         }
@@ -240,7 +240,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                         {
                             // Swap views
                             (_previousView, OverlayViewModel.CurrentViewModel) = (OverlayViewModel.CurrentViewModel, _previousView);
-                            
+
                             // Navigate back
                             await Navigation.PopAsync(true);
                             return;
@@ -249,7 +249,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                     break;
                 }
             }
-            
+
             if (nextViewModel is null)
             {
                 _modalTcs.SetResult(e.Origin is SummaryWizardViewModel ? Result.Success : Result.Failure(null));
@@ -270,7 +270,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                 SummaryWizardViewModel viewModel => new SummaryWizardPage(viewModel, OverlayViewModel),
                 _ => null
             });
-            
+
             if (page is null)
                 return;
 

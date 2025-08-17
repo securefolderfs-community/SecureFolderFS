@@ -52,7 +52,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             // Add new target
             if (view is not null && !Views.Contains(view))
                 Views.Add(view);
-            
+
             // Start actual navigation
             var navigationResult = await BeginNavigationAsync(view, NavigationType.Chained);
             if (!navigationResult)

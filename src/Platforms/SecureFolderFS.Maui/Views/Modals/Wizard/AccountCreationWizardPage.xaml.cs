@@ -8,16 +8,16 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         public AccountCreationWizardViewModel ViewModel { get; }
 
         public WizardOverlayViewModel OverlayViewModel { get; }
-        
+
         public AccountCreationWizardPage(AccountCreationWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
             ViewModel = viewModel;
             OverlayViewModel = overlayViewModel;
             BindingContext = this;
-            
+
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnAppearing()
         {

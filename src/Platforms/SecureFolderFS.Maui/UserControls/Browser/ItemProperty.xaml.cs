@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             InitializeComponent();
         }
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(ItemProperty));
-        
+
         public string? Subtitle
         {
             get => (string?)GetValue(SubtitleProperty);
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(ItemProperty));
-        
+
         public ICommand? Command
         {
             get => (ICommand?)GetValue(CommandProperty);
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
         public static readonly BindableProperty CommandProperty =
             BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ItemProperty));
-        
+
         public object? CommandParameter
         {
             get => (object?)GetValue(CommandParameterProperty);

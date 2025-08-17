@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Prompts
                     ViewModel.PrimaryText);
                 return Result<DialogOption>.Success(DialogOption.Primary);
             }
-            
+
             var option = await page.DisplayAlert(
                 ViewModel.Title,
                 ViewModel.Message,

@@ -17,18 +17,18 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             return new ContextSwitchAwaitable();
         }
-        
+
         private sealed class ContextSwitchAwaitable : IAwaitable
         {
             /// <inheritdoc/>
             public bool IsCompleted => MainThread.IsMainThread;
-            
+
             /// <inheritdoc/>
             public void OnCompleted(Action continuation)
             {
                 MainThread.BeginInvokeOnMainThread(continuation);
             }
-            
+
             /// <inheritdoc/>
             public IAwaitable GetAwaiter()
             {

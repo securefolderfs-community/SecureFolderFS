@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty LeftSlotProperty =
             BindableProperty.Create(nameof(LeftSlot), typeof(object), typeof(OptionsControl));
-        
+
         public object? Slot
         {
             get => (object?)GetValue(SlotProperty);

@@ -91,9 +91,8 @@ namespace SecureFolderFS.Sdk.Ftp
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 Inner.Dispose();
-            }
+
             base.Dispose(disposing);
         }
     }

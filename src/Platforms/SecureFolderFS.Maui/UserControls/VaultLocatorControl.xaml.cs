@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public bool IsConnected
         {
             get => (bool)GetValue(IsConnectedProperty);
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IsConnectedProperty =
             BindableProperty.Create(nameof(IsConnected), typeof(bool), typeof(VaultLocatorControl));
-        
+
         public bool IsRunning
         {
             get => (bool)GetValue(IsRunningProperty);
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IsRunningProperty =
             BindableProperty.Create(nameof(IsRunning), typeof(bool), typeof(VaultLocatorControl));
-        
+
         public ICommand? ConnectCommand
         {
             get => (ICommand?)GetValue(ConnectCommandProperty);
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ConnectCommandProperty =
             BindableProperty.Create(nameof(ConnectCommand), typeof(ICommand), typeof(VaultLocatorControl));
-        
+
         public object? LoginView
         {
             get => (object?)GetValue(LoginViewProperty);

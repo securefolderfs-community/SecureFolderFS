@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            
+
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();

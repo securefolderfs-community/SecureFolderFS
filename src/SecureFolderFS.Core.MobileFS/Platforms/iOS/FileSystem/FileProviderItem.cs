@@ -7,7 +7,7 @@ namespace SecureFolderFS.Core.MobileFS.FileSystem
     public sealed class FileProviderItem : NSObject, INSFileProviderItem
     {
         public string Filename { get; }
-        
+
         private FileProviderItem(string filename)
         {
             Filename = filename;

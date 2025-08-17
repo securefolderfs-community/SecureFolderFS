@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.Extensions
                     .Foundation<IPropertyStoreService, MauiPropertyStoreService>(AddService.AddSingleton)
                     .Foundation<IBottomSheetNavigationService, BottomSheetNavigationService>(AddService.AddSingleton)
                     .Foundation<INavigationService, MauiNavigationService>(AddService.AddTransient)
-                    
+
                     .AddBottomSheet<ViewOptionsSheet>(nameof(ViewOptionsSheet))
                 ;
         }

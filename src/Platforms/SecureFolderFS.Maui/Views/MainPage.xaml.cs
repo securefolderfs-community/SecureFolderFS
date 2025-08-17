@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Views
             InitializeComponent();
         }
 
-        private async Task ItemTappedAsync(View? view, VaultListItemViewModel itemViewModel)
+        private async Task ItemTappedAsync(VaultListItemViewModel itemViewModel, View? view)
         {
             if (view is not null)
                 view.IsEnabled = false;
@@ -56,12 +56,12 @@ namespace SecureFolderFS.Maui.Views
             }
         }
 
-        private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
+        private async void ItemTapRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
-            if (sender is not View view)
+            if (sender is not View { BindingContext: VaultListItemViewModel itemViewModel } view)
                 return;
 
-            await ItemTappedAsync(view, (VaultListItemViewModel)e.Item);
+            await ItemTappedAsync(itemViewModel, view);
         }
 
         private void MainPage_Loaded(object? sender, EventArgs e)
