@@ -2,8 +2,8 @@
 
   <PropertyGroup>
 <!--    <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>-->
-    <TargetFramework>net9.0-android</TargetFramework>
-<!--    <TargetFramework>net9.0-ios</TargetFramework>-->
+<!--    <TargetFramework>net9.0-android</TargetFramework>-->
+    <TargetFramework>net9.0-ios</TargetFramework>
 
     <!-- Note for MacCatalyst:
     The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -128,7 +128,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
-    <ProjectReference Include="..\..\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>
 
