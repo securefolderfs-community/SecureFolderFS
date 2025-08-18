@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Platforms\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
-    <ProjectReference Include="..\..\src\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    <ProjectReference Include="..\..\src\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
   </ItemGroup>
-  
+
 </Project>

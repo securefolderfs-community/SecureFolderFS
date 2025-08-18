@@ -10,9 +10,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+      <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+      <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
       <ProjectReference Include="..\SecureFolderFS.Sdk.Accounts\SecureFolderFS.Sdk.Accounts.csproj" />
-      <ProjectReference Include="..\..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     </ItemGroup>
 
 </Project>

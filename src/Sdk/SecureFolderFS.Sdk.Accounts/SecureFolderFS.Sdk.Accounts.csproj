@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+      <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     </ItemGroup>
 
 </Project>
