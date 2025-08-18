@@ -3,8 +3,11 @@ using OwlCore.Storage.System.IO;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
 {
@@ -12,13 +15,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
     internal sealed class IOSLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory;
+        public override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize settings
-            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -28,24 +31,29 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            _ = ex;
+            var formattedException = ExceptionHelpers.FormatException(ex);
+            if (formattedException is null)
+                return;
+
+            ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
+            ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }
 
         /// <inheritdoc/>
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                    //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                    .AddSingleton<IApplicationService, IOSApplicationService>()
-                    .AddSingleton<ISystemService, IOSSystemService>()
-                    .AddSingleton<IVaultCredentialsService, IOSVaultCredentialsService>()
-                    .AddSingleton<IVaultFileSystemService, IOSVaultFileSystemService>()
-                    .AddSingleton<IStorageService, IOSStorageService>()
-                    .AddSingleton<IFileExplorerService, IOSFileExplorerService>()
-                    .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                    .AddSingleton<IIapService, DebugIapService>()
-                    .AddSingleton<IUpdateService, DebugUpdateService>()
-                    .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                    //.Override<IIapService, IOSIapService>(AddService.AddSingleton)
+                    .Override<IIapService, DebugIapService>(AddService.AddSingleton)
+                    .Override<IMediaService, IOSMediaService>(AddService.AddSingleton)
+                    .Override<ISystemService, IOSSystemService>(AddService.AddSingleton)
+                    .Override<IStorageService, IOSStorageService>(AddService.AddSingleton)
+                    .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
+                    .Override<IApplicationService, IOSApplicationService>(AddService.AddSingleton)
+                    .Override<IFileExplorerService, IOSFileExplorerService>(AddService.AddSingleton)
+                    .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
+                    .Override<IVaultFileSystemService, IOSVaultFileSystemService>(AddService.AddSingleton)
+                    .Override<IVaultCredentialsService, IOSVaultCredentialsService>(AddService.AddSingleton)
 
                     .WithMauiServices(settingsFolder)
                 ;

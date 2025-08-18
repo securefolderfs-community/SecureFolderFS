@@ -5,12 +5,13 @@ using SecureFolderFS.Shared;
 namespace SecureFolderFS.Maui.Localization
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
+    [AcceptEmptyServiceProvider]
     internal sealed class ResourceString : IMarkupExtension
     {
         private static ILocalizationService? LocalizationService { get; set; }
 
         /// <summary>
-        /// Gets or sets the name identifier that is associated with a resource.
+        /// Gets or sets the name identifier associated with a resource.
         /// </summary>
         public string? Rid { get; set; }
 

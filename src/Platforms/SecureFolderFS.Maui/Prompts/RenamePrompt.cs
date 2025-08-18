@@ -9,20 +9,22 @@ namespace SecureFolderFS.Maui.Prompts
     public sealed class RenamePrompt : IOverlayControl
     {
         public RenameOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
+            var originalName = ViewModel.NewName;
             ViewModel.NewName = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
-                "Cancel".ToLocalized());
-            
+                "Cancel".ToLocalized(),
+                initialValue: ViewModel.NewName);
+
             if (string.IsNullOrWhiteSpace(ViewModel.NewName))
                 return Result.Failure(null);
 

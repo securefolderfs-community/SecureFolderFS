@@ -8,18 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/skia"
     xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     Title="{l:ResourceString Rid=WhatsNew}"
     DefaultButton="Primary"
     PrimaryButtonText="{l:ResourceString Rid=ChangelogCloseButton}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d not_win">
-
-    <ContentDialog.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-    </ContentDialog.Resources>
 
     <Grid>
         <Grid.RowDefinitions>

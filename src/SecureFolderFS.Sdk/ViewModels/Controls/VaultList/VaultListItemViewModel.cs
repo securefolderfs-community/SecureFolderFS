@@ -17,6 +17,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
@@ -27,17 +28,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         [ObservableProperty] private bool _IsRenaming;
-        [ObservableProperty] private bool _CanMove;
-        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private bool _CanMoveDown;
-        [ObservableProperty] private bool _CanRemoveVault;
+        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _CanMove;
         [ObservableProperty] private IImage? _CustomIcon;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
 
         public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
-            CanRemoveVault = true;
             VaultViewModel = vaultViewModel;
             _vaultCollectionModel = vaultCollectionModel;
 
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
             {
                 // Prevent from removing vault if it is unlocked
-                CanRemoveVault = false;
+                IsUnlocked = true;
             }
         }
 
@@ -66,7 +66,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         public void Receive(VaultLockedMessage message)
         {
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-                CanRemoveVault = true;
+                IsUnlocked = false;
+        }
+
+        [RelayCommand]
+        private void RequestLock()
+        {
+            WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]
@@ -94,25 +100,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             {
                 case "icon":
                 {
-                    if (VaultViewModel.VaultModel.Folder is not IModifiableFolder modifiableFolder)
+                    if (VaultViewModel.VaultModel.VaultFolder is not IModifiableFolder modifiableFolder)
                         return;
 
                     var sourceIconFile = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
                     if (sourceIconFile is null)
                         return;
 
-                    // TODO: Resize icon (don't load large icons)
-                    // TODO: Add .ico file with desktop.ini
-                    var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
-                    await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken);
-                    await UpdateIconAsync(cancellationToken);
+                    // TODO: Configured icon causes a crash when debugger is not attached
+                    // Update vault icon
+                    //var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
+                    //await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
+                    //await UpdateIconAsync(cancellationToken);
+
+                    // Update folder icon
+                    await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
+                    await MediaService.TrySetFolderIconAsync(modifiableFolder, iconStream, cancellationToken);
 
                     break;
                 }
 
-                case "name": // TODO: Use this on mobile platforms where having an overlay is desirable
+                // An option used on platforms where having an overlay is desirable
+                case "rename":
                 {
-                    var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized());
+                    var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized()) { Message = "ChooseNewName".ToLocalized(), NewName = VaultViewModel.Title };
                     var result = await OverlayService.ShowAsync(overlayViewModel);
                     if (!result.Positive())
                         return;
@@ -128,11 +139,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private async Task RenameAsync(string? newName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(newName))
-                newName = VaultViewModel.VaultModel.Folder.Name;
+                newName = VaultViewModel.VaultModel.VaultFolder?.Name;
+
+            if (newName is null)
+                return;
 
             IsRenaming = false;
-            if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))
-                VaultViewModel.VaultName = newName;
+            await VaultViewModel.SetNameAsync(newName, cancellationToken);
         }
 
         [RelayCommand]
@@ -140,18 +153,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             CustomIcon?.Dispose();
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
+            if (VaultViewModel.VaultModel.VaultFolder is IBookmark bookmark)
+                await bookmark.RemoveBookmarkAsync(cancellationToken);
+
             await _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 
         [RelayCommand]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.TryOpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
+            if (VaultViewModel.VaultModel.VaultFolder is { } vaultFolder)
+                await FileExplorerService.TryOpenInFileExplorerAsync(vaultFolder, cancellationToken);
         }
 
         private async Task UpdateIconAsync(CancellationToken cancellationToken)
         {
-            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await VaultViewModel.VaultModel.Folder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
+                return;
+
+            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
             if (imageFile is null)
                 return;
 

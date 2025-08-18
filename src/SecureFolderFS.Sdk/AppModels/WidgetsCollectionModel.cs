@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             // Get widgets
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
-            
+
             var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);
             if (itemToRemove is null)
                 return false;
@@ -84,9 +84,9 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task LoadAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // await VaultWidgets.LoadAsync(cancellationToken);
+            // await VaultWidgets.InitAsync(cancellationToken);
             // VaultWidgets already loaded by VaultCollectionModel // TODO: Load here as well because we shouldn't rely on the implementation
 
             // Clear previous widgets

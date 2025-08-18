@@ -24,17 +24,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // TODO: Localize
-            if (PrimaryButtonText is not null && PrimaryButtonText != "Buy")
+            if (PrimaryText is not null && PrimaryText != "Buy")
                 return;
 
             var price = await IapService.GetPriceAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (string.IsNullOrEmpty(price))
             {
-                PrimaryButtonText = "Buy";
-                PrimaryButtonEnabled = false;
+                PrimaryText = "Buy";
+                CanContinue = false;
             }
             else
-                PrimaryButtonText = price;
+                PrimaryText = price;
         }
     }
 }

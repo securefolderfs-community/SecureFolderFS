@@ -1,13 +1,12 @@
 using APES.UI.XF;
 using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-using The49.Maui.BottomSheet;
-
+using LibVLCSharp.MAUI;
+using Plugin.Maui.BottomSheet.Hosting;
 #if ANDROID
-using Material.Components.Maui.Extensions;
 using MauiIcons.Material;
 #elif IOS
 using MauiIcons.Cupertino;
+using SecureFolderFS.Maui.Handlers;
 using SecureFolderFS.Maui.Views;
 #endif
 
@@ -28,24 +27,26 @@ namespace SecureFolderFS.Maui
                 // Plugins
                 .UseMauiCommunityToolkitMediaElement()  // https://github.com/CommunityToolkit/Maui
                 .UseMauiCommunityToolkit()              // https://github.com/CommunityToolkit/Maui
-                .UseBottomSheet()                       // https://github.com/the49ltd/The49.Maui.BottomSheet
+                .UseBottomSheet()                       // https://github.com/lucacivale/Maui.BottomSheet
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
+                .UseLibVLCSharp()                       // https://github.com/videolan/libvlcsharp
 
 #if ANDROID
                 .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons
-                .UseMaterialComponents()                // https://github.com/mdc-maui/mdc-maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif
-                
+
                 // Handlers
                 .ConfigureMauiHandlers(handlers =>
                 {
 #if IOS
-                    handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
+                    //handlers.AddHandler<ContentPage, Handlers.ContentPageHandler>();
+                    handlers.AddHandler<Slider, CustomSliderHandler>();
+                    handlers.AddHandler<ContentPageExtended, ContentPageExHandler>();
 #endif
                 })
-                
+
                 ; // Finish initialization
 
             return builder.Build();

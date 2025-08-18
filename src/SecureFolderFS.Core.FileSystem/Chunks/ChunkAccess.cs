@@ -155,7 +155,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 }
                 else
                     return; // Ignore resizing the same length
-                
+
                 // Save newly modified chunk
                 chunkWriter.WriteChunk(chunkNumber, newPlaintextChunk);
             }

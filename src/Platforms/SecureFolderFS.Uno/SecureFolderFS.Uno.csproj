@@ -1,7 +1,7 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net9.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net9.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net9.0-windows10.0.26100</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
 
     <!-- To build SecureFolderFS (Desktop) on Windows, comment net9.0-windows[...] -->
@@ -9,7 +9,7 @@
     <!-- Uncomment if you want to explicity set a TargetFramework -->
     <!--<TargetFramework>net9.0-desktop</TargetFramework>-->
     <!--<TargetFramework>net9.0-maccatalyst</TargetFramework>-->
-    <!--<TargetFramework>net9.0-windows10.0.19041</TargetFramework>-->
+    <!--<TargetFramework>net9.0-windows10.0.26100</TargetFramework>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,12 +30,10 @@
 
   <!-- Package References -->
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.WinUI.Animations" />
     <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
@@ -52,7 +50,6 @@
     <!-- Mac Catalyst -->
     <When Condition="'$(TargetFramework)'=='net9.0-maccatalyst'">
       <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
 
@@ -74,7 +71,6 @@
       </PropertyGroup>
 
       <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
 
@@ -85,11 +81,11 @@
     </When>
 
     <!-- Windows -->
-    <When Condition="'$(TargetFramework)'=='net9.0-windows10.0.19041'">
+    <When Condition="'$(TargetFramework)'=='net9.0-windows10.0.26100'">
       <ItemGroup>
-        <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
+        <PackageReference Include="Vanara.PInvoke.Shell32" />
       </ItemGroup>
 
       <ItemGroup>
@@ -116,7 +112,7 @@
         <EnableMsixTooling>True</EnableMsixTooling>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-        <TargetFramework>$(DotNetVersion)-windows10.0.19041.0</TargetFramework>
+        <TargetFramework>$(DotNetVersion)-net9.0-windows10.0.26100</TargetFramework>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <!--<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>-->
 
@@ -132,11 +128,7 @@
         <GenerateTestArtifacts>False</GenerateTestArtifacts>
         <!--<UapAppxPackageBuildMode>Sideloading</UapAppxPackageBuildMode>-->
 
-        <!-- Temporary workaround for https://github.com/microsoft/WindowsAppSDK/issues/4480 -->
-        <WinAppSdkBuildToolsVersion Condition="$(TargetFramework.Contains('windows10'))">10.0.22621.3233</WinAppSdkBuildToolsVersion>
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
-        <!-- Remove when the .NET SDK 8.0.403 or later has been released -->
-        <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
         <!-- Languages -->
         <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN</AppxDefaultResourceQualifiers>
@@ -225,6 +217,7 @@
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
+    <None Remove="ResourceDictionaries\ConverterResources.xaml" />
     <None Remove="ResourceDictionaries\ImageResources.xaml" />
     <None Remove="ResourceDictionaries\TextResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
@@ -246,6 +239,7 @@
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
     <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
+    <None Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
@@ -277,6 +271,9 @@
   <ItemGroup>
     <Page Update="Dialogs\AgreementDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\RecycleBinDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\ChangelogDialog.xaml">
@@ -324,6 +321,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="ResourceDictionaries\ColorResources.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ResourceDictionaries\ConverterResources.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -435,6 +436,9 @@
     <Page Update="Views\Vault\VaultDashboardPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="Views\Vault\VaultHealthPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\Vault\VaultLoginPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
@@ -459,6 +463,7 @@
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
+    <UpToDateCheckInput Remove="ResourceDictionaries\ConverterResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
@@ -480,6 +485,7 @@
     <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
@@ -502,14 +508,9 @@
     <UpToDateCheckInput Remove="Views\VaultWizard\RecoveryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultDashboardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultHealthPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultHealthPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 </Project>

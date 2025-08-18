@@ -1,0 +1,232 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Browser.BrowserControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;assembly=SecureFolderFS.Sdk"
+    x:Name="RootControl">
+
+    <ContentView.Resources>
+        <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
+        <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
+        <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
+        <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
+
+        <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="{l:ResourceString Rid=Delete}" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        Padding="13,4"
+                        ColumnSpacing="13"
+                        Style="{StaticResource SelectableItemGridStyle}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                            <CheckBox
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                            <ContentView
+                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                HeightRequest="32"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="32" />
+                        </HorizontalStackLayout>
+                        <Label
+                            Grid.Column="1"
+                            FontSize="15"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                Padding="16"
+                Loaded="ItemContainer_Loaded">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="{l:ResourceString Rid=Delete}" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                        RowSpacing="8"
+                        Style="{StaticResource SelectableItemGridStyle}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ContentView
+                            Grid.Row="0"
+                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='48,64,132'}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            WidthRequest="{Binding Width, Source={x:Reference ItemContainer}}" />
+                        <Label
+                            Grid.Row="1"
+                            FontSize="15"
+                            HorizontalOptions="Center"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                            HorizontalOptions="End"
+                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
+                            VerticalOptions="End" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                Padding="1,0"
+                Loaded="ItemContainer_Loaded">
+                <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
+                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding DeleteCommand}"
+                        IsDestructive="True"
+                        Text="{l:ResourceString Rid=Delete}" />
+                </apesui:ContextMenuContainer.MenuItems>
+                <apesui:ContextMenuContainer.Content>
+                    <Grid
+                        x:Name="SourceGrid"
+                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                        Style="{StaticResource SelectableItemGridStyle}">
+                        <ContentView
+                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='57,82,137'}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='59,82,137'}" />
+
+                        <!--  Video Icon Grid  -->
+                        <Border
+                            Margin="0,0,8,8"
+                            Padding="0,-2"
+                            BackgroundColor="{StaticResource PlaybackIconPlateColor}"
+                            HorizontalOptions="End"
+                            IsVisible="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Media'}"
+                            VerticalOptions="End">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material PlayArrow}"
+                                    IconColor="{StaticResource PlaybackIconColor}"
+                                    IconSize="16"
+                                    OnPlatforms="Android" />
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino Play}"
+                                    IconColor="{StaticResource PlaybackIconColor}"
+                                    IconSize="16"
+                                    OnPlatforms="iOS" />
+                            </Grid>
+                        </Border>
+
+                        <CheckBox
+                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                            HorizontalOptions="End"
+                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
+                            VerticalOptions="End" />
+                    </Grid>
+                </apesui:ContextMenuContainer.Content>
+                <apesui:ContextMenuContainer.GestureRecognizers>
+                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                </apesui:ContextMenuContainer.GestureRecognizers>
+            </apesui:ContextMenuContainer>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
+        <RefreshView Refreshing="RefreshView_Refreshing">
+            <Grid>
+                <ContentView
+                    Content="{Binding EmptyView, Mode=OneWay}"
+                    HorizontalOptions="Fill"
+                    IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                    VerticalOptions="Fill" />
+
+                <CollectionView
+                    IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
+                    ItemsSource="{Binding ItemsSource, Mode=OneWay}"
+                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+                    <CollectionView.ItemTemplate>
+                        <ts:BrowserViewItemTemplateSelector
+                            GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
+                            GridItemTemplate="{StaticResource GridItemTemplate}"
+                            ListItemTemplate="{StaticResource ListItemTemplate}" />
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Grid Background="{StaticResource ThemeBackgroundFillColorBrush}">
+                            <ActivityIndicator
+                                Margin="0,0,0,64"
+                                HorizontalOptions="Center"
+                                IsRunning="True"
+                                VerticalOptions="Center"
+                                ZIndex="10" />
+                        </Grid>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
+    </Grid>
+</ContentView>

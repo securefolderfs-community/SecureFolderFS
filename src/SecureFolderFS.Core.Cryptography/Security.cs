@@ -12,66 +12,67 @@ namespace SecureFolderFS.Core.Cryptography
     /// </summary>
     public sealed class Security : IDisposable
     {
-        private readonly SecretKey _encKey;
-        private readonly SecretKey _macKey;
+        /// <summary>
+        /// Gets the key pair used for storing the DEK and MAC keys.
+        /// </summary>
+        public KeyPair KeyPair { get; }
 
-        // TODO: Needs docs
+        /// <summary>
+        /// Gets or sets the header cryptography implementation.
+        /// </summary>
         public required IHeaderCrypt HeaderCrypt { get; init; }
 
+        /// <summary>
+        /// Gets or sets the content cryptography implementation.
+        /// </summary>
         public required IContentCrypt ContentCrypt { get; init; }
 
+        /// <summary>
+        /// Gets or sets the name cryptography implementation.
+        /// </summary>
         public required INameCrypt? NameCrypt { get; init; }
 
-        private Security(SecretKey encKey, SecretKey macKey)
+        private Security(KeyPair keyPair)
         {
-            _encKey = encKey;
-            _macKey = macKey;
-        }
-
-        public SecretKey CopyEncryptionKey()
-        {
-            return _encKey.CreateCopy();
-        }
-
-        public SecretKey CopyMacKey()
-        {
-            return _macKey.CreateCopy();
+            KeyPair = keyPair;
         }
 
         /// <summary>
         /// Creates a new instance of <see cref="Security"/> object that provides content encryption and cipher access.
         /// </summary>
-        /// <param name="encKey">The DEK key that this class takes ownership of.</param>
-        /// <param name="macKey">The MAC key that this class takes ownership of.</param>
+        /// <param name="keyPair">The key pair that this class takes ownership of.</param>
         /// <param name="contentCipherId">The content cipher ID.</param>
         /// <param name="fileNameCipherId">The file name cipher ID.</param>
         /// <param name="fileNameEncodingId">The file name encoding ID.</param>
         /// <returns>A new <see cref="Security"/> object.</returns>
-        public static Security CreateNew(SecretKey encKey, SecretKey macKey, string contentCipherId, string fileNameCipherId, string fileNameEncodingId)
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when an invalid cipher ID is provided.</exception>
+        public static Security CreateNew(KeyPair keyPair, string contentCipherId, string fileNameCipherId, string fileNameEncodingId)
         {
             // Initialize crypt implementation
             IHeaderCrypt headerCrypt = contentCipherId switch
             {
-                CipherId.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(encKey, macKey),
-                CipherId.AES_GCM => new AesGcmHeaderCrypt(encKey, macKey),
-                CipherId.XCHACHA20_POLY1305 => new XChaChaHeaderCrypt(encKey, macKey),
+                CipherId.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(keyPair),
+                CipherId.AES_GCM => new AesGcmHeaderCrypt(keyPair),
+                CipherId.XCHACHA20_POLY1305 => new XChaChaHeaderCrypt(keyPair),
+                CipherId.NONE => new NoHeaderCrypt(keyPair),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
             IContentCrypt contentCrypt = contentCipherId switch
             {
-                CipherId.AES_CTR_HMAC => new AesCtrHmacContentCrypt(macKey),
+                CipherId.AES_CTR_HMAC => new AesCtrHmacContentCrypt(keyPair.MacKey),
                 CipherId.AES_GCM => new AesGcmContentCrypt(),
                 CipherId.XCHACHA20_POLY1305 => new XChaChaContentCrypt(),
+                CipherId.NONE => new NoContentCrypt(),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
             INameCrypt? nameCrypt = fileNameCipherId switch
             {
-                CipherId.AES_SIV => new AesSivNameCrypt(encKey, macKey, fileNameEncodingId),
+                CipherId.AES_SIV => new AesSivNameCrypt(keyPair, fileNameEncodingId),
                 CipherId.NONE => null,
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipherId))
             };
 
-            return new(encKey, macKey)
+            return new(keyPair)
             {
                 ContentCrypt = contentCrypt,
                 HeaderCrypt = headerCrypt,
@@ -82,9 +83,7 @@ namespace SecureFolderFS.Core.Cryptography
         /// <inheritdoc/>
         public void Dispose()
         {
-            _encKey.Dispose();
-            _macKey.Dispose();
-
+            KeyPair.Dispose();
             ContentCrypt.Dispose();
             HeaderCrypt.Dispose();
             NameCrypt?.Dispose();

@@ -18,20 +18,13 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
     internal sealed class MacOsVaultCredentialsService : BaseVaultCredentialsService
     {
         /// <inheritdoc/>
-        public override IEnumerable<string> GetContentCiphers()
-        {
-            yield return Constants.CipherId.AES_GCM;
-            yield return Constants.CipherId.XCHACHA20_POLY1305;
-        }
-
-        /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
+            var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
-            foreach (var item in authenticationMethods)
+            foreach (var item in authenticationMethod.Methods)
             {
                 yield return item switch
                 {

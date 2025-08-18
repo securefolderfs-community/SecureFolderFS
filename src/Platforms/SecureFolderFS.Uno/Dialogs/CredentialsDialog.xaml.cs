@@ -56,34 +56,44 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             args.Cancel = true;
-            if (ViewModel.SelectedViewModel is LoginViewModel loginViewModel)
+            switch (ViewModel.SelectedViewModel)
             {
-                loginViewModel.ProvideCredentialsCommand?.Execute(null);
-            }
-            else if (ViewModel.SelectedViewModel is CredentialsResetViewModel credentialsReset)
-            {
-                try
+                case LoginViewModel loginViewModel:
                 {
-                    await credentialsReset.ConfirmAsync(default);
-                    await HideAsync();
+                    loginViewModel.ProvideCredentialsCommand?.Execute(null);
+                    break;
                 }
-                catch (Exception ex)
+
+                case CredentialsResetViewModel credentialsReset:
                 {
-                    // TODO: Report to user
-                    _ = ex;
+                    try
+                    {
+                        await credentialsReset.ConfirmAsync(default);
+                        await HideAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO: Report to user
+                        _ = ex;
+                    }
+
+                    break;
                 }
-            }
-            else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
-            {
-                try
+
+                case CredentialsConfirmationViewModel credentialsConfirmation:
                 {
-                    await credentialsConfirmation.ConfirmAsync(default);
-                    await HideAsync();
-                }
-                catch (Exception ex)
-                {
-                    // TODO: Report to user
-                    _ = ex;
+                    try
+                    {
+                        await credentialsConfirmation.ConfirmAsync(default);
+                        await HideAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO: Report to user
+                        _ = ex;
+                    }
+
+                    break;
                 }
             }
         }
@@ -111,18 +121,18 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void GoBack_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel is null)
-                return;
-
-            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel confirmationViewModel)
+            if (ViewModel?.SelectedViewModel is not CredentialsConfirmationViewModel confirmationViewModel)
                 return;
 
             // We also need to revoke existing credentials if the user added and aborted
             if (confirmationViewModel.RegisterViewModel.CurrentViewModel is not null)
                 await confirmationViewModel.RegisterViewModel.RevokeCredentialsAsync(default);
 
+            // Dispose the confirmation view model
+            confirmationViewModel.Dispose();
+
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
-            ViewModel.PrimaryButtonText = null;
+            ViewModel.PrimaryText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();
 
             await BackTitle.AnimateBackAsync(false);

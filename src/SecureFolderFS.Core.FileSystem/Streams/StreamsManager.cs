@@ -104,8 +104,8 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             lock (_readOnlyStreams)
             lock (_readWriteStreams)
             {
-                _readOnlyStreams.DisposeElements();
-                _readWriteStreams.DisposeElements();
+                _readOnlyStreams.DisposeAll();
+                _readWriteStreams.DisposeAll();
 
                 _readOnlyStreams.Clear();
                 _readWriteStreams.Clear();

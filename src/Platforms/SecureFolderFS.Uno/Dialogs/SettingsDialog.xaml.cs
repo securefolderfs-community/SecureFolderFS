@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class SettingsDialog : ContentDialog, IOverlayControl
     {
         private bool _firstNavigated;
-        
+
         public SettingsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<SettingsOverlayViewModel>();
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Uno.Dialogs
         {
             if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
                 return;
-            
+
             _firstNavigated = true;
             var target = GetViewForTag(tag);
             if (ViewModel.NavigationService.Views.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)

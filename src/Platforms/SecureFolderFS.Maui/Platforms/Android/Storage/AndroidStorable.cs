@@ -43,9 +43,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             this.permissionRoot = permissionRoot ?? uri;
 
             Inner = uri;
-            BookmarkId = bookmarkId;
-            Id = Inner.ToString() ?? string.Empty;
+            Id = uri.ToString() ?? string.Empty;
             Name = GetFileName(uri);
+            BookmarkId = bookmarkId;
         }
 
         /// <inheritdoc/>
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         public abstract Task<IBasicProperties> GetPropertiesAsync();
 

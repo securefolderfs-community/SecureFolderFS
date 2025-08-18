@@ -1,14 +1,14 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
-    /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
+    /// <inheritdoc cref="IAsyncValidator{T,TResult}"/>
     internal sealed class StructureValidator : BaseFileSystemValidator<(IFolder, IProgress<IResult>?)>
     {
         private readonly IAsyncValidator<IFile, IResult> _fileValidator;

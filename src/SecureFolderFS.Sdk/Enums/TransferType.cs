@@ -4,6 +4,6 @@ namespace SecureFolderFS.Sdk.Enums
     {
         Copy = 0,
         Move = 1,
-        Recycle = 2
+        Select = 2
     }
 }

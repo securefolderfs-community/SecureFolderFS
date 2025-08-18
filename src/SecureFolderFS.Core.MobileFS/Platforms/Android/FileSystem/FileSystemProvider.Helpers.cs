@@ -2,6 +2,7 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
-            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.Inner, safRoot.RootId);
+            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.VirtualizedRoot, safRoot.RootId);
             row.Add(DocumentsContract.Root.ColumnRootId, safRoot.RootId);
             row.Add(DocumentsContract.Root.ColumnDocumentId, rootFolderId);
             row.Add(DocumentsContract.Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
@@ -26,7 +27,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             return true;
         }
-        
+
         private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, string? documentId)
         {
             documentId ??= GetDocumentIdForStorable(storable, null);
@@ -37,38 +38,25 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var safRoot = _rootCollection?.GetSafRootForStorable(storable);
             if (safRoot is null)
                 return false;
-            
+
             AddDocumentId();
             AddDisplayName();
             await AddSizeAsync();
             AddMimeType();
             AddFlags();
-            
+
             return true;
 
             async Task AddSizeAsync()
             {
-                if (storable is not IStorableProperties storableProperties)
+                if (storable is not IFile file)
                 {
                     row.Add(Document.ColumnSize, 0);
                     return;
                 }
 
-                var basicProperties = await storableProperties.TryGetPropertiesAsync();
-                if (basicProperties is not ISizeProperties sizeProperties)
-                {
-                    row.Add(Document.ColumnSize, 0);
-                    return;
-                }
-
-                var sizeProperty = await sizeProperties.GetSizeAsync();
-                if (sizeProperty is null)
-                {
-                    row.Add(Document.ColumnSize, 0);
-                    return;
-                }
-
-                row.Add(Document.ColumnSize, sizeProperty.Value);
+                var size = await file.GetSizeAsync();
+                row.Add(Document.ColumnSize, size);
             }
             void AddFlags()
             {
@@ -81,12 +69,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                                  | DocumentContractFlags.SupportsDelete
                                  | DocumentContractFlags.SupportsRemove;
                 }
-                
+
                 if (storable is IFile)
                 {
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.SupportsWrite;
-                    
+
+                    baseFlags |= DocumentContractFlags.SupportsThumbnail;
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
                 else
@@ -94,7 +83,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     baseFlags |= DocumentContractFlags.DirPrefersGrid;
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.DirSupportsCreate;
-                    
+
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
             }
@@ -121,7 +110,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            if (storable.Id == safRoot.StorageRoot.Inner.Id)
+            if (storable.Id == safRoot.StorageRoot.VirtualizedRoot.Id)
                 return $"{safRoot.RootId}:";
 
             return $"{safRoot.RootId}:{storable.Id}";
@@ -142,7 +131,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             // Extract RootID and Path
             var rootId = split[0];
             var path = split[1];
-            
+
             // Get root
             var safRoot = _rootCollection.GetSafRootForRootId(rootId);
             if (safRoot is null)
@@ -150,9 +139,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             // Return base folder if the path is empty
             if (string.IsNullOrEmpty(path))
-                return safRoot.StorageRoot.Inner;
+                return safRoot.StorageRoot.VirtualizedRoot;
 
-            return safRoot.StorageRoot.Inner.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
+            return safRoot.StorageRoot.VirtualizedRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         private string GetMimeForStorable(IStorable storable)

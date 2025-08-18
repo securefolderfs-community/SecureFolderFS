@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Routines.Operational;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -18,16 +17,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public class VaultManagerService : IVaultManagerService
     {
         /// <inheritdoc/>
-        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
-            var options = VaultHelpers.ParseOptions(vaultOptions);
 
             await creationRoutine.InitAsync(cancellationToken);
             creationRoutine.SetCredentials(passkeySecret);
-            creationRoutine.SetOptions(options);
+            creationRoutine.SetOptions(vaultOptions);
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
@@ -55,17 +52,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             var recoveryRoutine = routines.RecoverVault();
-            var keySplit = encodedRecoveryKey.Split(Core.Constants.KEY_TEXT_SEPARATOR);
-            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
+            var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
+            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
-            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))
+            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (1) was not in correct format.");
 
-            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyTraits.ENCKEY_LENGTH), out _))
+            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (2) was not in correct format.");
 
             await recoveryRoutine.InitAsync(cancellationToken);
             recoveryRoutine.SetCredentials(recoveryKey);
+
             return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
 
@@ -74,14 +72,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
             using var newPasskeySecret = VaultHelpers.ParsePasskeySecret(newPasskey);
-            var options = VaultHelpers.ParseOptions(vaultOptions);
 
             await credentialsRoutine.InitAsync(cancellationToken);
             credentialsRoutine.SetUnlockContract(unlockContract);
-            credentialsRoutine.SetOptions(options);
+            credentialsRoutine.SetOptions(vaultOptions);
             credentialsRoutine.SetCredentials(newPasskeySecret);
 
-            _ = await credentialsRoutine.FinalizeAsync(cancellationToken);
+            using var result = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }
     }
 }

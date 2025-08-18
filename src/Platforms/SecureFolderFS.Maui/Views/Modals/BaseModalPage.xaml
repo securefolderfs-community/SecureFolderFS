@@ -3,15 +3,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
     x:DataType="local:BaseModalPage">
 
     <ContentPage.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
         <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
-        <vc:WidthToMarginConverter x:Key="WidthToMarginConverter" />
     </ContentPage.Resources>
 
     <NavigationPage.HasNavigationBar>
@@ -47,15 +44,16 @@
 
                     <Button
                         x:Name="SheetPrimaryButton"
+                        Margin="0,0,-12,0"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
-                        FontSize="18"
+                        FontSize="17"
                         HorizontalOptions="End"
                         IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                         IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         SizeChanged="SheetPrimaryButton_SizeChanged"
+                        Style="{StaticResource NoBackgroundButtonStyle}"
                         Text="{Binding PrimaryText, Mode=OneWay}"
-                        TextColor="#007bff"
                         VerticalOptions="Center" />
                 </Grid>
             </On>
@@ -66,7 +64,7 @@
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
-                BackgroundColor="White"
+                Background="{StaticResource ThemeBackgroundFillColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"
                 StrokeThickness="0">
@@ -109,7 +107,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <mdc:Button
+                        <Button
                             x:Name="CloseButton"
                             Grid.Column="0"
                             Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
@@ -117,10 +115,10 @@
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Style="{DynamicResource FilledTonalButtonStyle}"
+                            Style="{StaticResource TransparentButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
-                        <mdc:Button
+                        <Button
                             x:Name="PrimaryButton"
                             Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
                             Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
@@ -128,6 +126,7 @@
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                             IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Style="{StaticResource AccentButtonStyle}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>

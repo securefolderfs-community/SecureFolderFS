@@ -1,0 +1,136 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material">
+
+    <Style x:Key="VideoLabelStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="#ffffff" />
+    </Style>
+
+    <Style x:Key="VideoSeekBarStyle" TargetType="Slider">
+        <Setter Property="ThumbColor" Value="Transparent" />
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+    </Style>
+
+    <Style x:Key="VideoBaseButtonStyle" TargetType="Button">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="TextColor" Value="#ffffff" />
+    </Style>
+
+    <Style
+        x:Key="VideoAspectRatioButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <OnPlatform x:TypeArguments="Setter">
+            <On Platform="Android">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material AspectRatio}" />
+            </On>
+            <On Platform="iOS">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino RectangleCompressVertical}" />
+            </On>
+        </OnPlatform>
+    </Style>
+
+    <Style
+        x:Key="VideoLockButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <OnPlatform x:TypeArguments="Setter">
+            <On Platform="Android">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Lock}" />
+            </On>
+            <On Platform="iOS">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Lock}" />
+            </On>
+        </OnPlatform>
+    </Style>
+
+    <Style
+        x:Key="VideoUnlockButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <OnPlatform x:TypeArguments="Setter">
+            <On Platform="Android">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material LockOpen}" />
+            </On>
+            <On Platform="iOS">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino LockOpen}" />
+            </On>
+        </OnPlatform>
+    </Style>
+
+    <Style
+        x:Key="VideoRewindButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <OnPlatform x:TypeArguments="Setter">
+            <On Platform="Android">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Replay5}" />
+            </On>
+            <On Platform="iOS">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Gobackward}" />
+            </On>
+        </OnPlatform>
+    </Style>
+
+    <Style
+        x:Key="VideoSeekButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <OnPlatform x:TypeArguments="Setter">
+            <On Platform="Android">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Forward5}" />
+            </On>
+            <On Platform="iOS">
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Goforward}" />
+            </On>
+        </OnPlatform>
+    </Style>
+
+    <Style
+        x:Key="VideoPlayPauseButtonStyle"
+        BasedOn="{StaticResource VideoBaseButtonStyle}"
+        TargetType="Button">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="PlayPauseStates">
+                    <VisualState x:Name="PlayState">
+                        <VisualState.Setters>
+                            <OnPlatform x:TypeArguments="Setter">
+                                <On Platform="Android">
+                                    <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material PlayCircleFill}" />
+                                </On>
+                                <On Platform="iOS">
+                                    <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino PlayFill}" />
+                                </On>
+                            </OnPlatform>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PauseState">
+                        <VisualState.Setters>
+                            <OnPlatform x:TypeArguments="Setter">
+                                <On Platform="Android">
+                                    <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material PauseCircleFilled}" />
+                                </On>
+                                <On Platform="iOS">
+                                    <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino PauseFill}" />
+                                </On>
+                            </OnPlatform>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="PauseAvailabilityStates">
+                    <VisualState x:Name="PauseAvailable" />
+                    <VisualState x:Name="PauseUnavailable">
+                        <VisualState.Setters>
+                            <Setter Property="IsVisible" Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+</ResourceDictionary>

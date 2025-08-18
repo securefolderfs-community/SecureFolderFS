@@ -1,0 +1,59 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.AccountCreationWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Ftp.ViewModels;assembly=SecureFolderFS.Sdk.Ftp"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:AccountCreationWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}"
+    PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
+
+    <md:BaseModalPage.Resources>
+        <DataTemplate x:Key="FtpAccountTemplate" x:DataType="vm:FtpAccountViewModel">
+            <VerticalStackLayout Spacing="16">
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Address}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="http://ftp.example.com:21"
+                        Text="{Binding Address, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Username}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="{l:ResourceString Rid=User1}"
+                        Text="{Binding Username, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+    </md:BaseModalPage.Resources>
+
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            Spacing="16">
+            <Label
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="{Binding ViewModel.AccountViewModel.Title, Mode=OneWay}" />
+            <uc:ContentPresentation Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
+                <uc:ContentPresentation.TemplateSelector>
+                    <ts:AccountCreationTemplateSelector FtpAccountTemplate="{StaticResource FtpAccountTemplate}" />
+                </uc:ContentPresentation.TemplateSelector>
+            </uc:ContentPresentation>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

@@ -5,7 +5,7 @@ using static SecureFolderFS.Core.Constants.Vault;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public class VersionDataModel
+    public record class VersionDataModel
     {
         /// <summary>
         /// Gets the version of the vault.

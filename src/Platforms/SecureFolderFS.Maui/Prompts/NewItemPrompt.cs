@@ -9,20 +9,20 @@ namespace SecureFolderFS.Maui.Prompts
     internal sealed class NewItemPrompt : IOverlayControl
     {
         public NewItemOverlayViewModel? ViewModel { get; private set; }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
                 return Result.Failure(null);
-            
+
             var page = Shell.Current.CurrentPage;
             ViewModel.ItemName = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
                 "Cancel".ToLocalized());
-            
+
             if (string.IsNullOrWhiteSpace(ViewModel.ItemName))
                 return Result.Failure(null);
 

@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.UI.AppModels;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {
@@ -16,11 +18,17 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 
         public VaultConfigurations(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.SAVED_VAULTS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            var options = new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            };
+            options.Converters.Add(new VaultDataSourceJsonConverter());
+
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.SAVED_VAULTS_FILENAME, settingsFolder, new DoubleSerializedStreamSerializer(options));
         }
 
         /// <inheritdoc/>
-        public IList<VaultDataModel>? SavedVaults
+        public IList<VaultDataModel>? PersistedVaults
         {
             get => GetSetting<List<VaultDataModel>?>();
             set => SetSetting(value);

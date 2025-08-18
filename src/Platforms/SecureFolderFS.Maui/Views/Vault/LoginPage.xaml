@@ -1,26 +1,25 @@
-﻿<vw:ContentPageExtended
+﻿<ContentPage
     x:Class="SecureFolderFS.Maui.Views.Vault.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
-    xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
-    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    Title="{Binding ViewModel.VaultViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
-    <vw:ContentPageExtended.Resources>
+    <ContentPage.Resources>
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
-    </vw:ContentPageExtended.Resources>
+    </ContentPage.Resources>
 
     <VerticalStackLayout
-        Padding="64,0"
-        Spacing="32"
+        Margin="0,0,0,96"
+        Padding="16,0"
+        Spacing="64"
         VerticalOptions="Center">
 
         <!--  Login heading  -->
@@ -29,15 +28,16 @@
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_material:Material Lock}"
-                    IconSize="40"
+                    IconSize="80"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_cupertino:Cupertino Lock}"
-                    IconSize="40"
+                    IconSize="80"
                     OnPlatforms="iOS" />
             </Grid>
             <Label
+                FontAttributes="Bold"
                 FontSize="20"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
@@ -46,23 +46,23 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <VerticalStackLayout Spacing="{OnPlatform Android=8}">
-            <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="iOS">
+        <uc:VaultLocatorControl
+            ConnectCommand="{Binding ViewModel.ConnectToVaultCommand, Mode=OneWay}"
+            IsConnected="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            IsRunning="{Binding ViewModel.ConnectToVaultCommand.IsRunning, Mode=OneWay}">
+            <uc:VaultLocatorControl.LoginView>
+                <VerticalStackLayout Spacing="4">
+                    <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <Button
                         Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
+                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                       iOS={LayoutOptions Alignment=Center}}"
                         IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
                         Text="{l:ResourceString Rid=RecoverAccess}" />
-                </On>
-                <On Platform="Android">
-                    <mdc:Button
-                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
-                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                        Style="{DynamicResource TextButtonStyle}"
-                        Text="{l:ResourceString Rid=RecoverAccess}" />
-                </On>
-            </OnPlatform>
-        </VerticalStackLayout>
+                </VerticalStackLayout>
+            </uc:VaultLocatorControl.LoginView>
+        </uc:VaultLocatorControl>
     </VerticalStackLayout>
-</vw:ContentPageExtended>
+</ContentPage>

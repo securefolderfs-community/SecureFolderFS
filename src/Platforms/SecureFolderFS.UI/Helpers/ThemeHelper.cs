@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,7 +13,7 @@ namespace SecureFolderFS.UI.Helpers
     /// <summary>
     /// Represents a helper class used for manipulating application themes.
     /// </summary>
-    public abstract class ThemeHelper : ObservableObject, IAsyncInitialize, INotifyPropertyChanged
+    public abstract class ThemeHelper : ObservableObject, IAsyncInitialize
     {
         protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;
 
@@ -27,11 +26,6 @@ namespace SecureFolderFS.UI.Helpers
             get => _CurrentTheme;
             protected set => SetProperty(ref _CurrentTheme, value);
         }
-
-        /// <summary>
-        /// Updates the UI to reflect the new changes, if necessary.
-        /// </summary>
-        public abstract void UpdateTheme();
 
         /// <summary>
         /// Updates the application's theme to specified <paramref name="themeType"/>.
@@ -56,6 +50,11 @@ namespace SecureFolderFS.UI.Helpers
 
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// Updates the UI to reflect the new changes, if necessary.
+        /// </summary>
+        protected abstract void UpdateTheme();
 
         protected static string? ConvertThemeType(ThemeType themeType)
         {

@@ -27,13 +27,13 @@ namespace SecureFolderFS.Maui.Views.Modals
 
             var closeVisible = !string.IsNullOrEmpty(modalPage.CloseText);
             var primaryVisible = !string.IsNullOrEmpty(modalPage.PrimaryText);
-            
+
             modalPage.ButtonsGrid.IsVisible = primaryVisible || closeVisible;
 #else
             _ = bindable;
 #endif
         }
-        
+
         public bool IsImmersive
         {
             get => (bool)GetValue(IsImmersiveProperty);
@@ -41,14 +41,16 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty IsImmersiveProperty =
             BindableProperty.Create(nameof(IsImmersive), typeof(bool), typeof(BaseModalPage), false, propertyChanged:
-                (bindable, _, newValue) =>
+                static (bindable, _, newValue) =>
                 {
+#if ANDROID
                     if (bindable is not BaseModalPage modalPage)
                         return;
 
                     modalPage.ModalBorder.StrokeShape = !(bool)newValue
                         ? new RoundRectangle() { CornerRadius = new(24, 24, 0, 0) }
                         : new Rectangle();
+#endif
                 });
 
         public View? ModalContent
@@ -67,9 +69,9 @@ namespace SecureFolderFS.Maui.Views.Modals
         public static readonly BindableProperty PrimaryCommandProperty =
             BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage), null);
 
-        public ICommand CloseCommand
+        public ICommand? CloseCommand
         {
-            get => (ICommand)GetValue(CloseCommandProperty);
+            get => (ICommand?)GetValue(CloseCommandProperty);
             set => SetValue(CloseCommandProperty, value);
         }
         public static readonly BindableProperty CloseCommandProperty =
@@ -82,7 +84,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty PrimaryTextProperty =
             BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, _) => UpdateButtonsVisibility(bindable));
+                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public string? CloseText
         {
@@ -91,7 +93,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty CloseTextProperty =
             BindableProperty.Create(nameof(CloseText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, _) => UpdateButtonsVisibility(bindable));
+                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public bool PrimaryEnabled
         {

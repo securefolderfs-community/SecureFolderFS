@@ -3,60 +3,87 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     x:Name="ThisRecoveryControl">
 
     <Grid
         x:Name="RootGrid"
         HorizontalOptions="Center"
         VerticalOptions="Center">
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="Android">
-                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
-                    <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
-
-                    <VerticalStackLayout Spacing="8">
-                        <mdc:Card Style="{DynamicResource FilledCardStyle}">
-                            <VerticalStackLayout Spacing="8">
-                                <Label Opacity="0.6" Text="Recovery key" />
-                                <Label
-                                    FontFamily="Courier New"
-                                    LineBreakMode="CharacterWrap"
-                                    Text="{Binding RecoveryKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
-                            </VerticalStackLayout>
-                        </mdc:Card>
-                        <mdc:Button
-                            Command="{Binding ExportCommand, Mode=OneWay}"
-                            CommandParameter="Copy"
-                            HorizontalOptions="End"
-                            Style="{DynamicResource FilledTonalButtonStyle}"
-                            Text="Copy" />
+        <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="24">
+            <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
+            <VerticalStackLayout Spacing="8">
+                <Border Background="{StaticResource ThemeCardFillPrimaryColorBrush}" StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Padding="16,8,16,12" Spacing="8">
+                        <Label
+                            Padding="0,4"
+                            FontAttributes="Bold"
+                            Opacity="0.6"
+                            Text="{l:ResourceString Rid=RecoveryKey}"
+                            TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                        Dark={StaticResource QuarternaryDarkColor}}" />
+                        <Label
+                            FontFamily="{OnPlatform Android='monospace',
+                                                    iOS='Menlo'}"
+                            LineBreakMode="CharacterWrap"
+                            Text="{Binding RecoveryKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
                     </VerticalStackLayout>
-                </VerticalStackLayout>
-            </On>
-            <On Platform="iOS">
-                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
-                    <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
+                </Border>
 
-                    <VerticalStackLayout Spacing="4">
-                        <Label Opacity="0.6" Text="Recovery key" />
-                        <Border Padding="4" BackgroundColor="Gainsboro">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="4" />
-                            </Border.StrokeShape>
-                            <Label
-                                FontFamily="Courier New"
-                                LineBreakMode="CharacterWrap"
-                                Text="{Binding RecoveryKey, Mode=OneWay}" />
-                        </Border>
-                        <Button
-                            Command="{Binding ExportCommand, Mode=OneWay}"
-                            CommandParameter="Copy"
-                            HorizontalOptions="End"
-                            Text="Copy" />
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </On>
-        </OnPlatform>
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <HorizontalStackLayout Spacing="4">
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
+                                                                         IconSize=20}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Copy"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Copy}" />
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_material:Material Icon=Share,
+                                                                         IconSize=20}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Share"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Export}"
+                                ToolTipProperties.Text="{l:ResourceString Rid=Share}" />
+                        </HorizontalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <HorizontalStackLayout Spacing="4">
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino DoconClipboard,
+                                                                           IconSize=16}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Copy"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Copy}" />
+
+                            <Button
+                                Padding="16,8"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino SquareArrowUp,
+                                                                           IconSize=16}"
+                                Command="{Binding ExportCommand, Mode=OneWay}"
+                                CommandParameter="Share"
+                                CornerRadius="10"
+                                FontSize="16"
+                                Text="{l:ResourceString Rid=Export}" />
+                        </HorizontalStackLayout>
+                    </On>
+                </OnPlatform>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </Grid>
 </ContentView>

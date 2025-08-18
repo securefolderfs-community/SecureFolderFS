@@ -11,7 +11,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             return TryConvert(value, targetType, parameter);
         }
-        
+
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

@@ -1,4 +1,5 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using OwlCore.Storage;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -10,13 +11,15 @@ namespace SecureFolderFS.Storage.Scanners
     public class DeepFolderScanner : IFolderScanner
     {
         private readonly StorableType _storableType;
+        private readonly Predicate<IStorableChild>? _predicate;
 
         /// <inheritdoc/>
         public IFolder RootFolder { get; }
 
-        public DeepFolderScanner(IFolder rootFolder, StorableType storableType = StorableType.All)
+        public DeepFolderScanner(IFolder rootFolder, StorableType storableType = StorableType.All, Predicate<IStorableChild>? predicate = null)
         {
             RootFolder = rootFolder;
+            _predicate = predicate;
             _storableType = storableType;
         }
 
@@ -38,6 +41,9 @@ namespace SecureFolderFS.Storage.Scanners
             {
                 await foreach (var folder in folderToScan.GetFoldersAsync(cancellationToken: cancellationToken).ConfigureAwait(false))
                 {
+                    if (!_predicate?.Invoke(folder) ?? false)
+                        continue;
+
                     yield return folder;
                     await foreach (var subFolder in RecursiveScanAsync(folder, cancellationToken).ConfigureAwait(false))
                         yield return subFolder;
@@ -47,6 +53,9 @@ namespace SecureFolderFS.Storage.Scanners
             {
                 await foreach (var item in folderToScan.GetItemsAsync(cancellationToken: cancellationToken).ConfigureAwait(false))
                 {
+                    if (!_predicate?.Invoke(item) ?? false)
+                        continue;
+
                     yield return item;
 
                     if (item is not IFolder folder)

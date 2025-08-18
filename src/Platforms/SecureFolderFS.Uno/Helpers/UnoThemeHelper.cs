@@ -25,7 +25,7 @@ namespace SecureFolderFS.Uno.Helpers
         /// <summary>
         /// Gets the current theme represented by <see cref="ElementTheme"/>.
         /// </summary>
-        public ElementTheme CurrentElementTheme => (ElementTheme)(uint)CurrentTheme;
+        public ElementTheme CurrentElementTheme => (ElementTheme)(int)CurrentTheme;
 
         /// <inheritdoc/>
         public override ThemeType CurrentTheme
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Uno.Helpers
         }
 
         /// <inheritdoc/>
-        public override void UpdateTheme()
+        protected override void UpdateTheme()
         {
             if (_rootContent is not null)
             {

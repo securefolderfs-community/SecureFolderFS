@@ -17,10 +17,9 @@
 
             public static class Health
             {
-                public static bool ARE_UPDATES_OPTIMIZED = true;
-                public static bool IS_SCANNING_PARALLELIZED = false;
-                public static bool IS_DISCOVERY_ASSUMED_FAST = true;
-                public static double INTERVAL_MULTIPLIER = 0.2d;
+                public const bool ARE_UPDATES_OPTIMIZED = true;
+                public const bool IS_SCANNING_PARALLELIZED = false;
+                public const double INTERVAL_MULTIPLIER = 0.2d;
             }
         }
 
@@ -31,8 +30,9 @@
 
         public static class Vault
         {
-            public const string VAULT_ICON_FILENAME = "vault.icon";
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
+            public const string VAULT_ICON_FILENAME = "vault_icon";
+            public const string VAULT_ICON_FILENAME_ICO = "vault_icon.ico";
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
             public const string VAULT_README_MESSAGE = """
                                                               PLEASE READ BEFORE USING THIS VAULT
@@ -46,6 +46,13 @@
                 """;
         }
 
+        public static class Sizes
+        {
+            public const long KILOBYTE = 1024;
+            public const long MEGABYTE = KILOBYTE * 1024;
+            public const long GIGABYTE = MEGABYTE * 1024;
+        }
+
         public static class IntegrationPermissions
         {
             public const string ENUMERATE_VAULTS = "enumerate_vaults"; // List all added vaults and get basic info
@@ -53,6 +60,11 @@
             public const string RESCAP_MANAGE_VAULTS = "manage_vaults"; // Add existing or remove vaults from saved list
             public const string RESCAP_FILESYSTEM_PROVIDER = "filesystem_provider"; // Ability to provide custom file systems
             public const string RESCAP_AUTHENTICATION_PROVIDER = "authentication_provider"; // Ability to provide custom authentication for vaults
+        }
+
+        public static class DataSources
+        {
+            public const string DATA_SOURCE_PICKER = $"{nameof(SecureFolderFS)}.Picker";
         }
     }
 }

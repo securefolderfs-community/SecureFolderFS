@@ -25,11 +25,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 {
                     if (Navigator is not FrameNavigationControl frameNavigation)
                         return false;
-                    
+
                     // Navigate back
                     if (!await Navigator.GoBackAsync())
                         return false;
-                    
+
                     var contentType = frameNavigation.Content?.GetType();
                     if (contentType is null)
                         return false;

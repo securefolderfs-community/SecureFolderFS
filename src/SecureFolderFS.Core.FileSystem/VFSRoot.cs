@@ -8,25 +8,24 @@ namespace SecureFolderFS.Core.FileSystem
     /// <inheritdoc cref="IVFSRoot"/>
     public abstract class VFSRoot : IVFSRoot, IWrapper<FileSystemSpecifics>
     {
-        protected readonly IFolder storageRoot;
         protected readonly FileSystemSpecifics specifics;
-
-        /// <inheritdoc/>
-        IFolder IWrapper<IFolder>.Inner => storageRoot;
 
         /// <inheritdoc/>
         FileSystemSpecifics IWrapper<FileSystemSpecifics>.Inner => specifics;
 
         /// <inheritdoc/>
+        public IFolder VirtualizedRoot { get; }
+
+        /// <inheritdoc/>
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
-        public FileSystemOptions Options { get; }
+        public VirtualFileSystemOptions Options { get; }
 
         protected VFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
         {
-            this.storageRoot = storageRoot;
             this.specifics = specifics;
+            VirtualizedRoot = storageRoot;
             Options = specifics.Options;
 
             // Automatically add created root

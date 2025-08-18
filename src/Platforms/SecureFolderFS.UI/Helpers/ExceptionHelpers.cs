@@ -24,20 +24,56 @@ namespace SecureFolderFS.UI.Helpers
             return exceptionString;
         }
 
-        public static void TryWriteToFile(string appDirectory, Exception? ex)
+        public static void WriteSessionFile(string appDirectory, string exceptionMessage)
         {
-            var formattedException = FormatException(ex);
-            if (formattedException is null)
+            try
+            {
+                var filePath = Path.Combine(appDirectory, Constants.Application.SESSION_EXCEPTION_FILENAME);
+                File.WriteAllText(filePath, exceptionMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Debugger.Break();
+            }
+        }
+
+        public static string? RetrieveSessionFile(string appDirectory)
+        {
+            try
+            {
+                var filePath = Path.Combine(appDirectory, Constants.Application.SESSION_EXCEPTION_FILENAME);
+                var text = File.ReadAllText(filePath);
+                File.WriteAllText(filePath, string.Empty);
+
+                return string.IsNullOrEmpty(text) ? null : text;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public static void WriteAggregateFile(string appDirectory, Exception? exception)
+        {
+            var exceptionMessage = FormatException(exception);
+            if (exceptionMessage is null)
                 return;
 
+            WriteAggregateFile(appDirectory, exceptionMessage);
+        }
+
+        public static void WriteAggregateFile(string appDirectory, string exceptionMessage)
+        {
             try
             {
                 var filePath = Path.Combine(appDirectory, Constants.Application.EXCEPTION_LOG_FILENAME);
-                File.AppendAllText(filePath, $"\n\n\t\tEXCEPTION EVENT: {DateTime.Now}\n{formattedException}");
+                File.AppendAllText(filePath, $"\n\n\t\tEXCEPTION EVENT: {DateTime.Now}\n{exceptionMessage}");
             }
-            catch (Exception ex2)
+            catch (Exception ex)
             {
-                Debug.WriteLine(ex2);
+                Debug.WriteLine(ex);
                 Debugger.Break();
             }
         }

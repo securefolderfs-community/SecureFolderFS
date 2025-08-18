@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.SummaryWizardPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -11,10 +12,11 @@
     x:DataType="local:SummaryWizardPage"
     CloseCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    CloseText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout
+            Margin="0,0,0,96"
             HorizontalOptions="Center"
             Spacing="32"
             VerticalOptions="Center">
@@ -22,25 +24,38 @@
             <Grid>
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mi_material:Material Check}"
+                    Icon="{mi_material:Material Icon=Check,
+                                                IconSize=80}"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mi_cupertino:Cupertino TrayArrowDownFill}"
+                    Icon="{mi_cupertino:Cupertino Icon=TrayArrowDownFill,
+                                                  IconSize=80}"
                     OnPlatforms="iOS" />
             </Grid>
 
             <VerticalStackLayout Spacing="4">
                 <Label
-                    FontSize="20"
-                    HorizontalOptions="Center"
-                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
-                <Label
                     FontAttributes="Bold"
-                    FontSize="16"
+                    FontSize="32"
                     HorizontalOptions="Center"
                     Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
+                <Label
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Opacity="0.8"
+                    Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="iOS">
+                    <Button
+                        Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+                        Style="{StaticResource NoBackgroundButtonStyle}"
+                        Text="{l:ResourceString Rid=GoToVaults}"
+                        VerticalOptions="End" />
+                </On>
+            </OnPlatform>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

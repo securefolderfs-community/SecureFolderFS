@@ -1,9 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
@@ -11,11 +16,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -23,29 +23,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IVaultService>, Inject<IVaultCredentialsService>]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
-        private readonly KeyChain _keyChain;
-        private readonly IVaultModel _vaultModel;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly IFolder _vaultFolder;
+        private readonly KeySequence _keySequence;
+        private readonly AuthenticationStage _authenticationStage;
 
-        [ObservableProperty] private bool _CanContinue; // TODO: Use OverlayViewModel.IsPrimaryButtonEnabled
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
-        public CredentialsOverlayViewModel(IVaultModel vaultModel, AuthenticationType authenticationStage)
+        public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
-            _keyChain = new();
-            _vaultModel = vaultModel;
+            _keySequence = new();
+            _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
 
-            RegisterViewModel = new(authenticationStage, _keyChain);
-            LoginViewModel = new(vaultModel, LoginViewType.Basic, _keyChain);
-            SelectionViewModel = new(vaultModel.Folder, authenticationStage);
+            RegisterViewModel = new(authenticationStage, _keySequence);
+            LoginViewModel = new(vaultFolder, LoginViewType.Basic, _keySequence) { Title = vaultName };
+            SelectionViewModel = new(vaultFolder, authenticationStage);
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
-            PrimaryButtonText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             RegisterViewModel.PropertyChanged += RegisterViewModel_PropertyChanged;
@@ -55,11 +54,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken);
+            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken);
             SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
             {
-                AuthenticationType.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
-                AuthenticationType.ProceedingStageOnly => await loginMethods.ElementAtOrDefaultAsync(1, cancellationToken),
+                AuthenticationStage.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
+                AuthenticationStage.ProceedingStageOnly => await loginMethods.ElementAtOrDefaultAsync(1, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
             };
 
@@ -73,18 +72,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (e.IsRecovered)
             {
                 Title = "SetCredentials".ToLocalized();
-                PrimaryButtonText = "Confirm".ToLocalized();
+                PrimaryText = "Confirm".ToLocalized();
                 CanContinue = false;
 
                 // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
-                // The flag is manipulating the order at which keys are placed in the keychain, so it shouldn't matter if it's cleared here
-                _keyChain.Dispose();
-                SelectedViewModel = new CredentialsResetViewModel(_vaultModel.Folder, e.UnlockContract, RegisterViewModel).WithInitAsync();
+                // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
+                _keySequence.Dispose();
+                SelectedViewModel = new CredentialsResetViewModel(_vaultFolder, e.UnlockContract, RegisterViewModel).WithInitAsync();
             }
             else
             {
                 Title = "SelectAuthentication".ToLocalized();
-                PrimaryButtonText = null;
+                PrimaryText = null;
                 SelectionViewModel.UnlockContract = e.UnlockContract;
                 SelectionViewModel.RegisterViewModel = RegisterViewModel;
                 SelectedViewModel = SelectionViewModel;
@@ -95,7 +94,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             CanContinue = e.IsRemoving || (SelectionViewModel.RegisterViewModel?.CanContinue ?? false);
             Title = e.IsRemoving ? "RemoveAuthentication".ToLocalized() : "Authenticate".ToLocalized();
-            PrimaryButtonText = "Confirm".ToLocalized();
+            PrimaryText = "Confirm".ToLocalized();
             SelectedViewModel = e;
         }
 

@@ -10,8 +10,8 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
     public interface IVaultConfigurations : IPersistable
     {
         /// <summary>
-        /// Gets or sets the list of saved vaults.
+        /// Gets or sets the list of persisted vaults.
         /// </summary>
-        IList<VaultDataModel>? SavedVaults { get; set; }
+        IList<VaultDataModel>? PersistedVaults { get; set; }
     }
 }

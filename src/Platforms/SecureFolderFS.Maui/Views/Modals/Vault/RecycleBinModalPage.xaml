@@ -1,0 +1,207 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Vault.RecycleBinModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
+    xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Storage;assembly=SecureFolderFS.Sdk"
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:RecycleBinModalPage">
+
+    <md:BaseModalPage.Resources>
+        <vc:DoubleFloatingNormalizationConverter x:Key="DoubleFloatingNormalizationConverter" />
+    </md:BaseModalPage.Resources>
+
+    <md:BaseModalPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
+            IsEnabled="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}">
+            <ToolbarItem.Order>
+                <OnPlatform x:TypeArguments="ToolbarItemOrder">
+                    <On Platform="iOS" Value="Primary" />
+                    <On Platform="Android" Value="Secondary" />
+                </OnPlatform>
+            </ToolbarItem.Order>
+        </ToolbarItem>
+    </md:BaseModalPage.ToolbarItems>
+
+    <md:BaseModalPage.ModalContent>
+        <Grid RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Recycle Bin Toggle  -->
+            <VerticalStackLayout
+                Grid.Row="0"
+                Padding="16,0"
+                Spacing="12">
+                <uco:OptionsContainer>
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=MaximumSize}"
+                                IsSeparatorVisible="False"
+                                IsVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                                <uco:OptionsControl.Slot>
+                                    <ucc:ModernPicker
+                                        ios:Picker.UpdateMode="WhenFinished"
+                                        HorizontalTextAlignment="Center"
+                                        IsTransparent="True"
+                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
+                                        ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                        MinimumWidthRequest="100"
+                                        SelectedIndexChanged="Picker_SelectedIndexChanged"
+                                        SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+
+                <!--  Size Bar  -->
+                <VerticalStackLayout IsVisible="{Binding ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                    <Label FontSize="12" Text="{Binding ViewModel.SpaceTakenText, Mode=OneWay}" />
+                    <ProgressBar Progress="{Binding ViewModel.PercentageTaken, Mode=OneWay, Converter={StaticResource DoubleFloatingNormalizationConverter}, ConverterParameter='0.01'}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!--  Empty View  -->
+            <VerticalStackLayout
+                Grid.Row="1"
+                Margin="0,0,0,128"
+                IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                MaximumWidthRequest="300"
+                Spacing="16"
+                VerticalOptions="Center">
+                <Grid HorizontalOptions="Center">
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_material:Material Delete}"
+                        IconSize="96"
+                        OnPlatforms="Android" />
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_cupertino:Cupertino Trash}"
+                        IconSize="96"
+                        OnPlatforms="iOS" />
+                </Grid>
+                <Label
+                    FontSize="18"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
+            </VerticalStackLayout>
+
+            <!--  Items View  -->
+            <Grid
+                Grid.Row="1"
+                Padding="16,0"
+                IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label
+                    Grid.Row="0"
+                    Margin="0,8,0,0"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
+
+                <CollectionView
+                    Grid.Row="1"
+                    ItemsSource="{Binding ViewModel.Items, Mode=OneWay}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:RecycleBinItemViewModel">
+                            <apesui:ContextMenuContainer x:Name="ItemContainer">
+                                <apesui:ContextMenuContainer.MenuItems>
+                                    <apesui:ContextMenuItem Command="{Binding RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
+                                    <apesui:ContextMenuItem
+                                        Command="{Binding DeletePermanentlyCommand}"
+                                        IsDestructive="True"
+                                        Text="{l:ResourceString Rid=DeleteImmediately}" />
+                                </apesui:ContextMenuContainer.MenuItems>
+                                <apesui:ContextMenuContainer.Content>
+                                    <Grid
+                                        x:Name="SourceGrid"
+                                        Padding="13,4"
+                                        ColumnSpacing="13"
+                                        Style="{StaticResource SelectableItemGridStyle}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding OverlayViewModel.IsSelecting, Mode=OneWay}" />
+                                            <ContentView
+                                                Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                                HeightRequest="32"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                WidthRequest="32" />
+                                        </HorizontalStackLayout>
+                                        <Label
+                                            Grid.Column="1"
+                                            FontSize="15"
+                                            LineBreakMode="TailTruncation"
+                                            Text="{Binding Title, Mode=OneWay}"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </apesui:ContextMenuContainer.Content>
+                                <apesui:ContextMenuContainer.GestureRecognizers>
+                                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                                </apesui:ContextMenuContainer.GestureRecognizers>
+                            </apesui:ContextMenuContainer>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Grid Grid.Row="2" VerticalOptions="End">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="Select all" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding ViewModel.ClearSelectionCommand, Mode=OneWay}"
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="Clear selection" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

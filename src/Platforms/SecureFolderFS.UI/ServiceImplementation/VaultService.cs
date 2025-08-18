@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -7,7 +6,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -37,14 +35,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual IEnumerable<string> GetEncodingOptions()
-        {
-            // TODO: (v3) Swap default order when Base4K (Vault V3) is implemented
-            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL;
-            yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE4K;
-        }
-
-        /// <inheritdoc/>
         public virtual async Task<VaultOptions> GetVaultOptionsAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
@@ -52,10 +42,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             return new()
             {
-                AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR),
+                UnlockProcedure = AuthenticationMethod.FromString(config.AuthenticationMethod),
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
                 NameEncodingId = config.FileNameEncodingId,
+                RecycleBinSize = config.RecycleBinSize,
                 VaultId = config.Uid,
                 Version = config.Version
             };

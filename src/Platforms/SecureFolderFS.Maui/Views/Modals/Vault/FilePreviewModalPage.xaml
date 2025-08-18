@@ -1,0 +1,135 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Vault.FilePreviewModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vlc="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
+    x:Name="ThisPage"
+    x:DataType="local:FilePreviewModalPage"
+    IsImmersive="True"
+    NavigationPage.HasNavigationBar="False">
+
+    <md:BaseModalPage.Resources>
+        <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
+        <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
+
+        <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
+            <ucc:GalleryView
+                HeightRequest="400"
+                SizeChanged="Gallery_Loaded"
+                WidthRequest="300" />
+        </DataTemplate>
+        <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
+            <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
+                <uc:PanRouter.RouterContent>
+                    <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
+                        <vlc:MediaPlayerElement.PlaybackControls>
+                            <vlc:PlaybackControls
+                                AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"
+                                BackgroundColor="Transparent"
+                                ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"
+                                Foreground="#ffffff"
+                                IsTracksButtonVisible="False"
+                                LockButtonStyle="{StaticResource VideoLockButtonStyle}"
+                                MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
+                                RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"
+                                RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
+                                SeekBarStyle="{StaticResource VideoSeekBarStyle}"
+                                SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
+                                UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
+                        </vlc:MediaPlayerElement.PlaybackControls>
+                    </vlc:MediaPlayerElement>
+                </uc:PanRouter.RouterContent>
+            </uc:PanRouter>
+        </DataTemplate>
+        <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
+            <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
+                <Image Source="{Binding Image, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+            </ucc:PanPinchContainer>
+        </DataTemplate>
+        <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
+            <ScrollView
+                Padding="8"
+                HorizontalScrollBarVisibility="Always"
+                Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
+                VerticalScrollBarVisibility="Always">
+                <Editor
+                    AutoSize="TextChanges"
+                    Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                    HorizontalOptions="Fill"
+                    IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
+                    Placeholder="{l:ResourceString Rid=WriteHere}"
+                    Text="{Binding Text, Mode=TwoWay}"
+                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
+            </ScrollView>
+        </DataTemplate>
+        <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
+            <WebView
+                HorizontalOptions="Fill"
+                Source="{Binding PdfSource, Mode=OneWay, Converter={StaticResource FileServerWebViewSourceConverter}}"
+                VerticalOptions="Fill" />
+        </DataTemplate>
+        <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
+            <VerticalStackLayout Spacing="16" VerticalOptions="Center">
+                <Grid HorizontalOptions="Center">
+                    <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="Android" />
+                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="iOS" />
+                </Grid>
+
+                <VerticalStackLayout>
+                    <Label
+                        FontSize="20"
+                        HorizontalOptions="Center"
+                        Text="{Binding Title, Mode=OneWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                    <Label
+                        HorizontalOptions="Center"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=NoPreviewAvailable}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </DataTemplate>
+    </md:BaseModalPage.Resources>
+
+    <md:BaseModalPage.ModalContent>
+        <uc:CommandBarControl
+            Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
+            Closed="Closed_Clicked"
+            IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
+            IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}"
+            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}">
+            <uc:CommandBarControl.InnerContent>
+                <uc:ContentPresentation
+                    x:Name="Presentation"
+                    Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}"
+                    ZIndex="1">
+                    <uc:ContentPresentation.TemplateSelector>
+                        <ts:PreviewerTemplateSelector
+                            CarouselTemplate="{StaticResource CarouselTemplate}"
+                            FallbackTemplate="{StaticResource FallbackTemplate}"
+                            ImageTemplate="{StaticResource ImageTemplate}"
+                            PdfTemplate="{StaticResource PdfTemplate}"
+                            TextTemplate="{StaticResource TextTemplate}"
+                            VideoTemplate="{StaticResource VideoTemplate}" />
+                    </uc:ContentPresentation.TemplateSelector>
+                </uc:ContentPresentation>
+            </uc:CommandBarControl.InnerContent>
+        </uc:CommandBarControl>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

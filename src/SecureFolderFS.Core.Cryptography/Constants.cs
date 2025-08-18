@@ -4,10 +4,12 @@
     {
         public static class KeyTraits
         {
-            public const int ARGON2_KEK_LENGTH = 32;
-            public const int ENCKEY_LENGTH = 32;
-            public const int MACKEY_LENGTH = 32;
+            public const string KEY_TEXT_SEPARATOR = "@@@";
             public const int SALT_LENGTH = 16;
+            public const int DEK_KEY_LENGTH = 32;
+            public const int MAC_KEY_LENGTH = 32;
+            public const int ARGON2_KEK_LENGTH = 32;
+            public const int CHALLENGE_KEY_PART_LENGTH = 128;
         }
 
         public static class CipherId
@@ -49,6 +51,12 @@
                     public const int CHUNK_MAC_SIZE = 32;
                     public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_PLAINTEXT_SIZE + CHUNK_MAC_SIZE;
                 }
+
+                internal static class Empty
+                {
+                    public const int CHUNK_PLAINTEXT_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_PLAINTEXT_SIZE;
+                }
             }
 
             internal static class Headers
@@ -76,13 +84,18 @@
                     public const int HEADER_MAC_SIZE = 32;
                     public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_MAC_SIZE;
                 }
+
+                internal static class Empty
+                {
+                    public const int HEADER_SIZE = 0;
+                }
             }
 
             internal static class Argon2
             {
-                public const int DEGREE_OF_PARALLELISM = 8;
-                public const int ITERATIONS = 8;
-                public const int MEMORY_SIZE = 102400;
+                public const int MEMORY_SIZE_KIBIBYTES = 32768; // 32MiB
+                public const int DEGREE_OF_PARALLELISM = 2;
+                public const int ITERATIONS = 2;
             }
         }
     }

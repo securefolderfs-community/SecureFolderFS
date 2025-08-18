@@ -1,44 +1,29 @@
-﻿using OwlCore.Storage;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
+using System.ComponentModel;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// A model that represents a vault.
     /// </summary>
-    public interface IVaultModel : IEquatable<IVaultModel>
+    public interface IVaultModel : INotifyStateChanged, IRemoteResource<IFolder>, IEquatable<IVaultModel>, IEquatable<VaultDataModel>, ISavePersistence
     {
+        /// <summary>
+        /// Gets a value indicating whether the vault is remotely stored.
+        /// </summary>
+        bool IsRemote { get; }
+
         /// <summary>
         /// Gets the folder of the vault.
         /// </summary>
-        IFolder Folder { get; }
+        IFolder? VaultFolder { get; }
 
         /// <summary>
-        /// Gets the name of the vault.
+        /// Gets the data model associated with the vault.
         /// </summary>
-        string VaultName { get; }
-
-        /// <summary>
-        /// Gets the last accessed date for this vault.
-        /// </summary>
-        DateTime? LastAccessDate { get; }
-
-        /// <summary>
-        /// Sets the <see cref="LastAccessDate"/> for this vault.
-        /// </summary>
-        /// <param name="value">The value to set.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
-        Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Sets the <see cref="VaultName"/> for this vault.
-        /// </summary>
-        /// <param name="value">The value to set.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
-        Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default);
+        VaultDataModel DataModel { get; }
     }
 }

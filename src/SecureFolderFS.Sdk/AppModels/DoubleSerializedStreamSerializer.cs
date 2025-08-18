@@ -12,30 +12,33 @@ using SecureFolderFS.Shared.Models;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="StreamSerializer"/>
-    public sealed class DoubleSerializedStreamSerializer : StreamSerializer
+    public class DoubleSerializedStreamSerializer : StreamSerializer
     {
         /// <summary>
         /// A single instance of <see cref="DoubleSerializedStreamSerializer"/>.
         /// </summary>
         public new static DoubleSerializedStreamSerializer Instance { get; } = new();
 
+        public DoubleSerializedStreamSerializer(JsonSerializerOptions? options = null)
+            : base(options)
+        {
+        }
+
         /// <inheritdoc/>
         public override Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)
         {
-            if (data is IDictionary serializedDictionary)
-            {
-                var actualDictionary = new Dictionary<object, object?>();
-                foreach (DictionaryEntry item in serializedDictionary)
-                {
-                    actualDictionary[item.Key] = item.Value is ISerializedModel serializedModel
-                        ? serializedModel.GetValue<object?>()
-                        : item.Value;
-                }
+            if (data is not IDictionary serializedDictionary)
+                return base.SerializeAsync(data, dataType, cancellationToken);
 
-                return base.SerializeAsync(actualDictionary, actualDictionary.GetType(), cancellationToken);
+            var actualDictionary = new Dictionary<object, object?>();
+            foreach (DictionaryEntry item in serializedDictionary)
+            {
+                actualDictionary[item.Key] = item.Value is ISerializedModel serializedModel
+                    ? serializedModel.GetValue<object?>()
+                    : item.Value;
             }
 
-            return base.SerializeAsync(data, dataType, cancellationToken);
+            return base.SerializeAsync(actualDictionary, actualDictionary.GetType(), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -48,7 +51,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 foreach (DictionaryEntry item in deserializedDictionary)
                 {
                     actualDictionary[item.Key] = item.Value is JsonElement jsonElement
-                        ? new JsonSerializedData(jsonElement)
+                        ? new JsonSerializedData(jsonElement, SerializerOptions)
                         : new NonSerializedData(item.Value);
                 }
 
@@ -61,18 +64,20 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc cref="ISerializedModel"/>
         private sealed class JsonSerializedData : ISerializedModel
         {
+            private readonly JsonSerializerOptions _options;
             private readonly JsonElement _jsonElement;
             private object? _deserialized;
 
-            public JsonSerializedData(JsonElement jsonElement)
+            public JsonSerializedData(JsonElement jsonElement, JsonSerializerOptions options)
             {
                 _jsonElement = jsonElement;
+                _options = options;
             }
 
             /// <inheritdoc/>
             public T? GetValue<T>()
             {
-                _deserialized ??= _jsonElement.Deserialize<T?>();
+                _deserialized ??= _jsonElement.Deserialize<T?>(_options);
                 return _deserialized.TryCast<T?>();
             }
         }

@@ -1,0 +1,79 @@
+﻿<tv:Popup
+    x:Class="SecureFolderFS.Maui.Popups.PropertiesPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
+    x:Name="ThisPopup"
+    BindingContext="{x:Reference ThisPopup}"
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="Transparent">
+
+    <Border
+        Padding="16"
+        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+        WidthRequest="392">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+
+        <VerticalStackLayout Spacing="16">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                <Border Grid.Column="0" StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                    <ContentView
+                        x:Name="ImageView"
+                        BindingContext="{Binding ViewModel}"
+                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
+                        HeightRequest="64"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="64" />
+                </Border>
+
+                <Label
+                    Grid.Column="1"
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    Text="{Binding ViewModel.Title, Mode=OneWay}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+            <!--  Item Type  -->
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=ItemType}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="ItemType"
+                Subtitle="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+
+            <!--  Date Created  -->
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="iOS">
+                    <uc:ItemProperty
+                        Title="{l:ResourceString Rid=DateCreated}"
+                        Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                        CommandParameter="DateCreated"
+                        Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
+                </On>
+            </OnPlatform>
+
+            <!--  Date Modified  -->
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=DateModified}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="DateModified"
+                Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+
+            <!--  Size  -->
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=Size}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="Size"
+                IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
+        </VerticalStackLayout>
+    </Border>
+</tv:Popup>

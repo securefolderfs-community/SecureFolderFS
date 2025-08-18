@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style ApplyToDerivedTypes="True" TargetType="Page">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillColorBrush}" />
+    </Style>
+
+    <Style ApplyToDerivedTypes="True" TargetType="Shell">
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+    </Style>
+
+    <Style x:Key="SelectableItemGridStyle" TargetType="Grid">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Style.Triggers>
+            <DataTrigger
+                Binding="{Binding IsSelected}"
+                TargetType="Grid"
+                Value="True">
+                <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

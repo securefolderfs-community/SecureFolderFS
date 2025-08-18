@@ -1,7 +1,12 @@
-using MauiIcons.Core;
+#if ANDROID
+using CustomToolbarItem = Microsoft.Maui.Controls.ToolbarItem;
+#elif IOS
+using CustomToolbarItem = SecureFolderFS.Maui.AppModels.ExMenuItem;
+#endif
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -21,52 +26,72 @@ namespace SecureFolderFS.Maui.Views
             Instance = this;
             BindingContext = this;
             _ = ViewModel.InitAsync();
-            _ = new MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
         }
 
-        private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
+        private async Task ItemTappedAsync(VaultListItemViewModel itemViewModel, View? view)
         {
-            ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
-            if (e.Item is not VaultListItemViewModel itemViewModel)
-                return;
+            if (view is not null)
+                view.IsEnabled = false;
 
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
-            if (target is null)
+            try
             {
-                var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
-                _ = vaultLoginViewModel.InitAsync();
-                target = vaultLoginViewModel;
-            }
+                ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
+                var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
+                if (target is null)
+                {
+                    var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
+                    _ = vaultLoginViewModel.InitAsync();
+                    target = vaultLoginViewModel;
+                }
 
-            // Navigate
-            await ViewModel.NavigationService.NavigateAsync(target);
+                // Navigate
+                await ViewModel.NavigationService.NavigateAsync(target);
+            }
+            finally
+            {
+                if (view is not null)
+                    view.IsEnabled = true;
+            }
         }
 
-        private async void MainPage_Loaded(object? sender, EventArgs e)
+        private async void ItemTapRecognizer_Tapped(object? sender, TappedEventArgs e)
+        {
+            if (sender is not View { BindingContext: VaultListItemViewModel itemViewModel } view)
+                return;
+
+            await ItemTappedAsync(itemViewModel, view);
+        }
+
+        private void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS
-            if (!ExToolbarItems.IsEmpty())
+            var toolbarItems = ExToolbarItems;
+#elif ANDROID
+            var toolbarItems = ToolbarItems;
+#endif
+            if (!toolbarItems.IsEmpty())
                 return;
-            
-            ExToolbarItems.Add(new ExMenuItem()
+
+#if IOS
+            toolbarItems.Add(new CustomToolbarItem()
             {
                 Text = "NewVault".ToLocalized(),
                 Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
                 Order = ToolbarItemOrder.Secondary
             });
-            ExToolbarItems.Add(new ExMenuItem()
+#endif
+            toolbarItems.Add(new CustomToolbarItem()
             {
                 Text = "Settings".ToLocalized(),
                 Command = ViewModel.OpenSettingsCommand,
                 Order = ToolbarItemOrder.Secondary
             });
-#endif
         }
     }
 }

@@ -39,8 +39,7 @@ namespace SecureFolderFS.Uno
 #else
             true ? throw new PlatformNotSupportedException() : null;
 #endif
-
-
+        
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -158,7 +157,7 @@ namespace SecureFolderFS.Uno
 #endif
 
             var settingsService = DI.Service<ISettingsService>();
-            var shouldForceClose = (!App.Instance?.UseForceClose) ?? false;
+            var shouldForceClose = (App.Instance?.UseForceClose) ?? false;
             shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
 
             if (shouldForceClose)
@@ -169,7 +168,7 @@ namespace SecureFolderFS.Uno
             else
             {
                 await SafetyHelpers.NoThrowAsync(async () => await settingsService.TrySaveAsync());
-                SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeElements());
+                SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
                 App.Current.Exit();
             }
         }
@@ -195,8 +194,6 @@ namespace SecureFolderFS.Uno
             {
 #if __WASM__
                 builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__ || __MACCATALYST__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
                 builder.AddConsole();
 #endif

@@ -10,13 +10,13 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
     /// <inheritdoc cref="FileNameAccess"/>
     internal sealed class CachingFileNameAccess : FileNameAccess
     {
-        private readonly Dictionary<NameWithDirectoryId, string> _PlaintextNames;
+        private readonly Dictionary<NameWithDirectoryId, string> _plaintextNames;
         private readonly Dictionary<NameWithDirectoryId, string> _ciphertextNames;
 
         public CachingFileNameAccess(Security security, IFileSystemStatistics fileSystemStatistics)
             : base(security, fileSystemStatistics)
         {
-            _PlaintextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES);
+            _plaintextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_PLAINTEXT_FILENAMES);
             _ciphertextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES);
         }
 
@@ -26,9 +26,9 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
             string plaintextName;
             string stringCiphertext = ciphertextName.ToString();
 
-            lock (_PlaintextNames)
+            lock (_plaintextNames)
             {
-                if (!_PlaintextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out plaintextName!))
+                if (!_plaintextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out plaintextName!))
                 {
                     // Not found in cache
                     statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
@@ -86,10 +86,10 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
 
         private void SetPlaintextName(string plaintextName, string ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_PlaintextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES)
-                _PlaintextNames.Remove(_PlaintextNames.Keys.First(), out _);
+            if (_plaintextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_PLAINTEXT_FILENAMES)
+                _plaintextNames.Remove(_plaintextNames.Keys.First(), out _);
 
-            _PlaintextNames[new(directoryId.ToArray(), ciphertextName)] = plaintextName;
+            _plaintextNames[new(directoryId.ToArray(), ciphertextName)] = plaintextName;
         }
 
         private void SetCiphertextName(string ciphertextName, string plaintextName, ReadOnlySpan<byte> directoryId)

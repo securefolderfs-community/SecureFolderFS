@@ -4,7 +4,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,11 +21,11 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class MainWizardPage : Page
     {
-        private LocationWizardViewModel? _createNewViewModel;
-        private LocationWizardViewModel? _addExistingViewModel;
+        private PickerSourceWizardViewModel? _createNewViewModel;
+        private PickerSourceWizardViewModel? _addExistingViewModel;
         private Button? _lastClickedButton;
 
-        [ObservableProperty] private LocationWizardViewModel? _CurrentViewModel;
+        [ObservableProperty] private PickerSourceWizardViewModel? _CurrentViewModel;
 
         public MainWizardViewModel? ViewModel
         {
@@ -39,10 +42,12 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         {
             if (e.Parameter is MainWizardViewModel viewModel)
             {
+                var fileExplorerService = DI.Service<IFileExplorerService>();
+
                 ViewModel = viewModel;
-                ViewModel.CreationType = NewVaultCreationType.CreateNew; // Default value for the view
-                _createNewViewModel = new(viewModel.VaultCollectionModel, NewVaultCreationType.CreateNew);
-                _addExistingViewModel = new(viewModel.VaultCollectionModel, NewVaultCreationType.AddExisting);
+                ViewModel.Mode = NewVaultMode.CreateNew; // Default value for the view
+                _createNewViewModel = new(Sdk.Constants.DataSources.DATA_SOURCE_PICKER, fileExplorerService, NewVaultMode.CreateNew, viewModel.VaultCollectionModel);
+                _addExistingViewModel = new(Sdk.Constants.DataSources.DATA_SOURCE_PICKER, fileExplorerService, NewVaultMode.AddExisting, viewModel.VaultCollectionModel);
                 CurrentViewModel = _createNewViewModel;
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
             }
@@ -58,7 +63,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             base.OnNavigatingFrom(e);
         }
 
-        partial void OnCurrentViewModelChanged(LocationWizardViewModel? oldValue, LocationWizardViewModel? newValue)
+        partial void OnCurrentViewModelChanged(PickerSourceWizardViewModel? oldValue, PickerSourceWizardViewModel? newValue)
         {
             if (oldValue is not null)
                 oldValue.PropertyChanged -= CurrentViewModel_PropertyChanged;
@@ -69,7 +74,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
 
         private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (ViewModel is not null && CurrentViewModel is not null && e.PropertyName == nameof(LocationWizardViewModel.CanContinue))
+            if (ViewModel is not null && CurrentViewModel is not null && e.PropertyName == nameof(IOverlayControls.CanContinue))
                 ViewModel.CanContinue = CurrentViewModel.CanContinue;
         }
 
@@ -83,8 +88,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             _lastClickedButton.Style = (Style?)App.Instance?.Resources["DefaultButtonStyle"];
 
             // Change type
-            ViewModel.CreationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
-            CurrentViewModel = ViewModel.CreationType == NewVaultCreationType.CreateNew ? _createNewViewModel : _addExistingViewModel;
+            ViewModel.Mode = tag == "CREATE" ? NewVaultMode.CreateNew : NewVaultMode.AddExisting;
+            CurrentViewModel = ViewModel.Mode == NewVaultMode.CreateNew ? _createNewViewModel : _addExistingViewModel;
             if (CurrentViewModel is not null)
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
 

@@ -1,13 +1,14 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels.Database
 {
@@ -32,28 +33,35 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null)
+        public override Task<TValue?> GetValueAsync<TValue>(string key, Func<TValue?>? defaultValue = null, CancellationToken cancellation = default)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return value.GetValue<TValue?>() ?? (defaultValue is not null ? defaultValue() : default);
+                return Task.FromResult(value.GetValue<TValue>() ?? (defaultValue is not null ? defaultValue() : default));
 
             var fallback = defaultValue is not null ? defaultValue() : default;
             settingsCache[key] = new NonSerializedData(fallback);
 
-            return fallback;
+            return Task.FromResult(fallback);
         }
 
         /// <inheritdoc/>
-        public override bool SetValue<TValue>(string key, TValue? value)
+        public override Task<bool> SetValueAsync<TValue>(string key, TValue? value, CancellationToken cancellation = default)
             where TValue : default
         {
             settingsCache[key] = new NonSerializedData(value);
-            return true;
+            return Task.FromResult(true);
         }
 
         /// <inheritdoc/>
-        public override async Task LoadAsync(CancellationToken cancellationToken = default)
+        public override Task<bool> RemoveAsync(string key, CancellationToken cancellation = default)
+        {
+            var result = settingsCache.Remove(key, out _);
+            return Task.FromResult(result);
+        }
+
+        /// <inheritdoc/>
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -122,7 +130,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         protected override async Task ProcessChangeAsync(string changedItem)
         {
             if (_databaseFile?.Id == changedItem)
-                await LoadAsync();
+                await InitAsync();
         }
 
         private async Task EnsureSettingsFileAsync(CancellationToken cancellationToken)
@@ -160,9 +168,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             }
 
             /// <inheritdoc/>
-            public T? GetValue<T>()
+            public TValue? GetValue<TValue>()
             {
-                return _value.TryCast<T>();
+                return (TValue?)_value;
             }
         }
     }

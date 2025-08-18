@@ -19,38 +19,41 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IVaultCredentialsService>, Inject<IVaultManagerService>, Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
+    public sealed partial class CredentialsWizardViewModel : OverlayViewModel, IStagingView
     {
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKey> _credentialsTcs;
 
-        [ObservableProperty] private VaultOptionViewModel? _ContentCipher;
-        [ObservableProperty] private VaultOptionViewModel? _FileNameCipher;
-        [ObservableProperty] private VaultOptionViewModel? _EncodingOption;
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _ContentCiphers = new();
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _FileNameCiphers = new();
-        [ObservableProperty] private ObservableCollection<VaultOptionViewModel> _EncodingOptions = new();
+        [ObservableProperty] private bool _IsNameCipherEnabled;
+        [ObservableProperty] private PickerOptionViewModel? _ContentCipher;
+        [ObservableProperty] private PickerOptionViewModel? _FileNameCipher;
+        [ObservableProperty] private PickerOptionViewModel? _EncodingOption;
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _ContentCiphers = new();
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _FileNameCiphers = new();
+        [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _EncodingOptions = new();
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions = new();
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
 
-        public IModifiableFolder Folder { get; }
+        public IVaultModel VaultModel { get; }
 
-        public CredentialsWizardViewModel(IModifiableFolder folder)
+        public CredentialsWizardViewModel(IVaultModel vaultModel)
         {
             ServiceProvider = DI.Default;
-            Folder = folder;
+            VaultModel = vaultModel;
             _credentialsTcs = new();
-            _RegisterViewModel = new(AuthenticationType.FirstStageOnly);
+            _RegisterViewModel = new(AuthenticationStage.FirstStageOnly);
             _vaultId = Guid.NewGuid().ToString();
 
-            ContinueText = "Continue".ToLocalized();
             Title = "SetCredentials".ToLocalized();
-            CancelText = "Cancel".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
             CanContinue = false;
             CanCancel = true;
 
@@ -59,12 +62,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
             ArgumentNullException.ThrowIfNull(EncodingOption);
             ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
+
+            if (VaultModel.VaultFolder is not IModifiableFolder modifiableFolder)
+                return Result.Failure(null);
 
             // Await the credentials
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
@@ -73,18 +79,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             // Make sure to also dispose the data within the current view model whether the navigation is successful or not
             using (RegisterViewModel.CurrentViewModel)
             {
+                // We don't need to set the Version property since the creator will always initialize with the latest one
                 var vaultOptions = new VaultOptions()
                 {
+                    UnlockProcedure = new AuthenticationMethod([ RegisterViewModel.CurrentViewModel.Id ], null),
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
                     NameEncodingId = EncodingOption.Id,
-                    AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
+                    RecycleBinSize = 0L,
                     VaultId = _vaultId
                 };
 
                 // Create the vault
                 var unlockContract = await VaultManagerService.CreateAsync(
-                    Folder,
+                    modifiableFolder,
                     credentials,
                     vaultOptions,
                     cancellationToken);
@@ -94,7 +102,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }
@@ -103,9 +111,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override async void OnAppearing()
         {
             // Get options
-            EnumerateOptions(VaultService.GetEncodingOptions(), EncodingOptions);
             EnumerateOptions(VaultCredentialsService.GetContentCiphers(), ContentCiphers);
             EnumerateOptions(VaultCredentialsService.GetFileNameCiphers(), FileNameCiphers);
+            EnumerateOptions(VaultCredentialsService.GetEncodingOptions(), EncodingOptions);
 
             // Set default cipher options
             ContentCipher = ContentCiphers.FirstOrDefault();
@@ -114,14 +122,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             // Get authentication options
             AuthenticationOptions.Clear();
-            await foreach (var item in VaultCredentialsService.GetCreationAsync(Folder, _vaultId))
+            await foreach (var item in VaultCredentialsService.GetCreationAsync(VaultModel.VaultFolder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option
             RegisterViewModel.CurrentViewModel = AuthenticationOptions.FirstOrDefault();
             return;
 
-            static void EnumerateOptions(IEnumerable<string> source, ICollection<VaultOptionViewModel> destination)
+            static void EnumerateOptions(IEnumerable<string> source, ICollection<PickerOptionViewModel> destination)
             {
                 destination.Clear();
                 foreach (var item in source)
@@ -137,8 +145,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             RegisterViewModel.PropertyChanged -= RegisterViewModel_PropertyChanged;
             RegisterViewModel.CredentialsProvided -= RegisterViewModel_CredentialsProvided;
-            AuthenticationOptions.DisposeElements();
+            AuthenticationOptions.DisposeAll();
             RegisterViewModel.Dispose();
+        }
+
+        partial void OnFileNameCipherChanged(PickerOptionViewModel? value)
+        {
+            IsNameCipherEnabled = !string.IsNullOrEmpty(value?.Id);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

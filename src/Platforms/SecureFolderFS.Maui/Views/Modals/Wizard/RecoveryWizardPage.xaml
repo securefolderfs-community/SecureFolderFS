@@ -10,12 +10,20 @@
     x:DataType="local:RecoveryWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
-    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <uc:RecoveryPreviewControl ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}" RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}" />
+        <VerticalStackLayout
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            Spacing="16">
+            <uc:RecoveryPreviewControl
+                ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}"
+                RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}"
+                VerticalOptions="Start" />
+        </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

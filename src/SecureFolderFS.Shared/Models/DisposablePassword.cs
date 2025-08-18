@@ -12,12 +12,12 @@ namespace SecureFolderFS.Shared.Models
         private readonly byte[] _password;
 
         /// <inheritdoc/>
-        public int Length { get; }
+        public int CharacterCount { get; }
 
         public DisposablePassword(string password)
         {
             _password = Encoding.UTF8.GetBytes(password);
-            Length = password.Length;
+            CharacterCount = password.Length;
         }
 
         /// <inheritdoc/>

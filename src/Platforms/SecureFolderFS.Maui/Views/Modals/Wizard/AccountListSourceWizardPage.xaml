@@ -1,0 +1,99 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.AccountListSourceWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Accounts.ViewModels;assembly=SecureFolderFS.Sdk.Accounts"
+    x:Name="ThisPage"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:AccountListSourceWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}"
+    PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    PrimaryEnabled="{Binding OverlayViewModel.CanContinue, Mode=OneWay}"
+    PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
+
+    <md:BaseModalPage.ModalContent>
+        <Grid
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                IsVisible="{Binding ViewModel.SelectedLocation, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Spacing="8">
+                <uco:OptionsContainer>
+                    <uco:OptionsContainer.InnerContent>
+                        <uco:OptionsControl
+                            Title="{l:ResourceString Rid=SelectedLocation}"
+                            IsSeparatorVisible="False"
+                            SlotText="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+                <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
+            </VerticalStackLayout>
+
+            <uco:OptionsContainer Title="{l:ResourceString Rid=AccountList}" Grid.Row="1">
+                <uco:OptionsContainer.InnerContent>
+                    <CollectionView ItemsSource="{Binding ViewModel.Accounts, Mode=OneWay}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:AccountViewModel">
+                                <SwipeView Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}">
+                                    <SwipeView.RightItems>
+                                        <SwipeItem
+                                            BackgroundColor="Red"
+                                            Command="{Binding ViewModel.RemoveAccountCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}"
+                                            IsDestructive="True"
+                                            Text="{l:ResourceString Rid=Remove}" />
+                                    </SwipeView.RightItems>
+                                    <uco:OptionsControl
+                                        Title="{Binding Title, Mode=OneWay}"
+                                        Command="{Binding ViewModel.SelectAccountCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding Path=.}">
+                                        <uco:OptionsControl.LeftSlot>
+                                            <Grid Margin="0,0,16,0">
+                                                <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" IsVisible="{Binding IsProgressing, Mode=OneWay}" />
+                                                <Grid
+                                                    HeightRequest="12"
+                                                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                                    WidthRequest="12">
+                                                    <Ellipse BackgroundColor="Green" IsVisible="{Binding IsConnected, Mode=OneWay}" />
+                                                    <Ellipse BackgroundColor="Red" IsVisible="{Binding IsConnected, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
+                                                </Grid>
+                                            </Grid>
+                                        </uco:OptionsControl.LeftSlot>
+                                    </uco:OptionsControl>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label
+                                Margin="0,32,0,0"
+                                HorizontalOptions="Center"
+                                Opacity="0.8"
+                                Text="{l:ResourceString Rid=NoItems}" />
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </uco:OptionsContainer.InnerContent>
+            </uco:OptionsContainer>
+
+            <Button
+                Grid.Row="2"
+                Command="{Binding ViewModel.AddAccountCommand, Mode=OneWay}"
+                HorizontalOptions="Fill"
+                Style="{OnPlatform iOS={StaticResource NoBackgroundButtonStyle}}"
+                Text="Add account" />
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

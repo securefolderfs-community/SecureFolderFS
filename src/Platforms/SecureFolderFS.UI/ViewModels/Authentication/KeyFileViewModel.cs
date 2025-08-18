@@ -14,6 +14,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {
@@ -26,10 +27,13 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         private IFileExplorerService FileExplorerService { get; } = DI.Service<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
+        public override event EventHandler<EventArgs>? StateChanged;
 
         /// <inheritdoc/>
-        public override event EventHandler<EventArgs>? StateChanged;
+        public sealed override bool CanComplement { get; } = false;
+
+        /// <inheritdoc/>
+        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         protected KeyFileViewModel()
             : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)
@@ -84,7 +88,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], false, cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync(new NameFilter([ ".key", "*" ]), false, cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 

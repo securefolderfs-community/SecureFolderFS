@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using Android.Provider;
 using Android.Webkit;
 using AndroidX.DocumentFile.Provider;
-using AndroidX.Navigation;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
@@ -16,10 +15,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
     internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName, IRenamableFolder // TODO: Implement: IGetFirstByName, IGetItem
     {
         private static Exception RenameException { get; } = new IOException("Could not rename the item.");
-        
+
         /// <inheritdoc/>
         public override string Name { get; }
-        
+
         /// <inheritdoc/>
         public override DocumentFile? Document { get; }
 
@@ -154,6 +153,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             if (overwrite && existingFile is not null)
                 existingFile.Delete();
+            else if (existingFile is not null)
+                return Task.FromResult<IChildFile>(new AndroidFile(existingFile.Uri, activity, this, permissionRoot));
 
             var newFile = Document?.CreateFile(mimeType, name);
             if (newFile is null)
@@ -186,14 +187,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return target;
         }
-        
+
         /// <inheritdoc/>
         public override Task<IBasicProperties> GetPropertiesAsync()
         {
             if (Document is null)
                 return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
 
-            properties ??= new AndroidFileProperties(Document);
+            properties ??= new AndroidFolderProperties(Document);
             return Task.FromResult(properties);
         }
     }

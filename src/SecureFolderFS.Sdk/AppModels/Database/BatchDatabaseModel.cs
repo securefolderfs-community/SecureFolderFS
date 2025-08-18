@@ -1,14 +1,15 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.Extensions;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels.Database
 {
@@ -35,20 +36,20 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null)
+        public override Task<TValue?> GetValueAsync<TValue>(string key, Func<TValue?>? defaultValue = null, CancellationToken cancellation = default)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return value.Data.TryCast(defaultValue);
+                return Task.FromResult(value.Data.TryCast(defaultValue));
 
             var fallback = defaultValue is not null ? defaultValue() : default;
-            settingsCache[key] = new(typeof(TValue), fallback); // The data needs to be saved
+            settingsCache[key] = new(value?.GetType() ?? typeof(Type), fallback); // The data needs to be saved
 
-            return fallback;
+            return Task.FromResult(fallback);
         }
 
         /// <inheritdoc/>
-        public override bool SetValue<TValue>(string key, TValue? value)
+        public override Task<bool> SetValueAsync<TValue>(string key, TValue? value, CancellationToken cancellation = default)
             where TValue : default
         {
             if (settingsCache.ContainsKey(key))
@@ -58,14 +59,21 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             }
             else
             {
-                settingsCache[key] = new(typeof(TValue), value); // The data needs to be saved
+                settingsCache[key] = new(value?.GetType() ?? typeof(Type), value); // The data needs to be saved
             }
 
-            return true;
+            return Task.FromResult(true);
         }
 
         /// <inheritdoc/>
-        public override async Task LoadAsync(CancellationToken cancellationToken = default)
+        public override Task<bool> RemoveAsync(string key, CancellationToken cancellation = default)
+        {
+            var result = settingsCache.Remove(key, out _);
+            return Task.FromResult(result);
+        }
+
+        /// <inheritdoc/>
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try
             {

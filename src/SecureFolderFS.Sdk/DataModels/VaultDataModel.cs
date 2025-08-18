@@ -1,18 +1,29 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed record VaultDataModel(string? PersistableId, string? VaultName, DateTime? LastAccessDate)
+    public abstract record VaultStorageSourceDataModel(string? StorageType);
+
+    [Serializable]
+    public sealed record VaultDataModel(
+        string? PersistableId,
+        string? DisplayName,
+        DateTime? LastAccessDate,
+        VaultStorageSourceDataModel? StorageSource)
     {
-        [JsonPropertyName("Id")]
-        public string? PersistableId { get; set; } = PersistableId;
+        public string? DisplayName { get; set; } = DisplayName;
 
-        [JsonPropertyName("Name")]
-        public string? VaultName { get; set; } = VaultName;
-
-        [JsonPropertyName("LastAccessDate")]
         public DateTime? LastAccessDate { get; set; } = LastAccessDate;
+
+        /// <inheritdoc/>
+        public bool Equals(VaultDataModel? other)
+        {
+            if (other is null)
+                return false;
+
+            return (PersistableId?.Equals(other.PersistableId) ?? false)
+                && (StorageSource?.Equals(other.StorageSource) ?? false);
+        }
     }
 }

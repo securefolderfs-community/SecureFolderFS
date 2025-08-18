@@ -1,22 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    public sealed partial class WizardOverlayViewModel : OverlayViewModel, INavigatable, IDisposable
+    public sealed partial class WizardOverlayViewModel : OverlayViewModel, IStagingView, INavigatable, IDisposable
     {
-        [ObservableProperty] private BaseWizardViewModel? _CurrentViewModel;
+        [ObservableProperty] private IStagingView? _CurrentViewModel;
 
         public IVaultCollectionModel VaultCollectionModel { get; }
 
@@ -26,8 +26,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             VaultCollectionModel = vaultCollectionModel;
-            PrimaryButtonText = "Continue".ToLocalized();
-            SecondaryButtonText = "Cancel".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
         }
 
         /// <inheritdoc />
@@ -37,32 +37,48 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 CurrentViewModel.PropertyChanged -= CurrentViewModel_PropertyChanged;
         }
 
-        [RelayCommand]
-        private async Task ContinuationAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
+        /// <inheritdoc />
+        public async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             if (CurrentViewModel is null)
-                return;
+                return Result.Failure(null);
 
-            eventDispatch?.PreventForwarding();
             var result = await CurrentViewModel.TryContinueAsync(cancellationToken);
             if (result.Successful)
                 NavigationRequested?.Invoke(this, new WizardNavigationRequestedEventArgs(result, CurrentViewModel));
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        public async Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentViewModel is null)
+                return Result.Failure(null);
+
+            var result = await CurrentViewModel.TryCancelAsync(cancellationToken);
+            if (result.Successful)
+                NavigationRequested?.Invoke(this, new DismissNavigationRequestedEventArgs(CurrentViewModel));
+
+            return result;
+        }
+
+        [RelayCommand]
+        private async Task ContinuationAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
+        {
+            eventDispatch?.PreventForwarding();
+            await TryContinueAsync(cancellationToken);
         }
 
         [RelayCommand]
         private async Task CancellationAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            if (CurrentViewModel is null)
-                return;
-
-            var result = await CurrentViewModel.TryCancelAsync(cancellationToken);
+            var result = await TryCancelAsync(cancellationToken);
             if (!result.Successful)
                 eventDispatch?.PreventForwarding();
-            else
-                NavigationRequested?.Invoke(this, new CloseNavigationRequestedEventArgs(CurrentViewModel));
         }
 
-        partial void OnCurrentViewModelChanging(BaseWizardViewModel? oldValue, BaseWizardViewModel? newValue)
+        partial void OnCurrentViewModelChanging(IStagingView? oldValue, IStagingView? newValue)
         {
             if (oldValue is not null)
             {
@@ -70,15 +86,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 oldValue.OnDisappearing();
             }
 
-            if (newValue is not null)
+            if (newValue is OverlayViewModel overlayViewModel)
             {
-                newValue.PropertyChanged += CurrentViewModel_PropertyChanged;
-                newValue.OnAppearing();
+                overlayViewModel.PropertyChanged += CurrentViewModel_PropertyChanged;
+                overlayViewModel.OnAppearing();
 
-                PrimaryButtonEnabled = newValue.CanContinue;
-                SecondaryButtonEnabled = newValue.CanCancel;
-                PrimaryButtonText = newValue.ContinueText;
-                SecondaryButtonText = newValue.CancelText;
+                CanContinue = overlayViewModel.CanContinue;
+                CanCancel = overlayViewModel.CanCancel;
+                PrimaryText = overlayViewModel.PrimaryText;
+                SecondaryText = overlayViewModel.SecondaryText;
             }
 
             Title = newValue?.Title;
@@ -86,29 +102,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (CurrentViewModel is null)
+            if (CurrentViewModel is not OverlayViewModel currentViewModel)
                 return;
 
             switch (e.PropertyName)
             {
-                case nameof(BaseWizardViewModel.CanContinue):
-                    PrimaryButtonEnabled = CurrentViewModel.CanContinue;
+                case nameof(CanContinue):
+                    CanContinue = currentViewModel.CanContinue;
                     break;
 
-                case nameof(BaseWizardViewModel.CanCancel):
-                    SecondaryButtonEnabled = CurrentViewModel.CanCancel;
+                case nameof(CanCancel):
+                    CanCancel = currentViewModel.CanCancel;
                     break;
 
-                case nameof(BaseWizardViewModel.ContinueText):
-                    PrimaryButtonText = CurrentViewModel.ContinueText;
+                case nameof(PrimaryText):
+                    PrimaryText = currentViewModel.PrimaryText;
                     break;
 
-                case nameof(BaseWizardViewModel.CancelText):
-                    SecondaryButtonText = CurrentViewModel.CancelText;
+                case nameof(SecondaryText):
+                    SecondaryText = currentViewModel.SecondaryText;
                     break;
 
-                case nameof(BaseWizardViewModel.Title):
-                    Title = CurrentViewModel.Title;
+                case nameof(Title):
+                    Title = currentViewModel.Title;
                     break;
             }
         }

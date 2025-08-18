@@ -66,6 +66,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                 return;
 
             NotifyCollectionChanged.CollectionChanged -= Settings_CollectionChanged;
+            base.Dispose();
         }
     }
 }

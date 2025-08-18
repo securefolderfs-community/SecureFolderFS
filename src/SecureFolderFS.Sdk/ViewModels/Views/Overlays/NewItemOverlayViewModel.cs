@@ -5,9 +5,8 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    public sealed partial class NewItemOverlayViewModel : OverlayViewModel, IViewable
+    public sealed partial class NewItemOverlayViewModel : MessageOverlayViewModel
     {
-        [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _ItemName;
 
         public NewItemOverlayViewModel()

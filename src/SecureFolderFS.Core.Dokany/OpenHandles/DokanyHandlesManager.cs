@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+        public DokanyHandlesManager(StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
             : base(streamsAccess, fileSystemOptions)
         {
         }

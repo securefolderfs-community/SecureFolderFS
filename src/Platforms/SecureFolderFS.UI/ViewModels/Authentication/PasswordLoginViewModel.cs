@@ -27,13 +27,15 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var key = TryGetPasswordAsKey();
-            if (key is not null)
-                CredentialsProvided?.Invoke(this, new(key));
+            if (key is null)
+                return;
 
-            return Task.CompletedTask;
+            var tcs = new TaskCompletionSource();
+            CredentialsProvided?.Invoke(this, new(key, tcs));
+            await tcs.Task;
         }
     }
 }

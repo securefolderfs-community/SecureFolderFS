@@ -1,0 +1,75 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.ProgressiveButton"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="ThisControl">
+
+    <Border
+        x:Name="ProgressContainer"
+        BindingContext="{x:Reference Name=ThisControl}"
+        SizeChanged="ProgressContainer_SizeChanged"
+        StrokeThickness="0"
+        VerticalOptions="Start">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+
+        <Grid>
+            <Grid
+                Background="{StaticResource ThemeShimFillPrimaryColorBrush}"
+                HorizontalOptions="Fill"
+                Opacity="0.5" />
+
+            <Grid
+                x:Name="ProgressStrip"
+                Background="{StaticResource ThemeSecondaryColorBrush}"
+                HorizontalOptions="Start"
+                IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                WidthRequest="200" />
+
+            <Grid Padding="16" ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <mi:MauiIcon
+                    Grid.Column="0"
+                    Margin="9,8"
+                    Icon="{Binding DefaultIcon, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
+                <ActivityIndicator
+                    Grid.Column="0"
+                    Margin="{OnPlatform Android='0',
+                                        iOS='0,13'}"
+                    IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay}" />
+
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        IsVisible="{Binding Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding Title, Mode=OneWay}" />
+                    <Label IsVisible="{Binding Subtitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding Subtitle, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid>
+                <Grid.Behaviors>
+                    <mtk:TouchBehavior
+                        DefaultAnimationDuration="150"
+                        DefaultBackgroundColor="{AppThemeBinding Light={StaticResource LightTransparentColor},
+                                                                 Dark={StaticResource DarkTransparentColor}}"
+                        PressedAnimationDuration="150"
+                        PressedBackgroundColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                                 Dark={StaticResource ShimFillSecondaryDarkColor}}"
+                        TouchGestureCompleted="TouchBehavior_TouchGestureCompleted" />
+                </Grid.Behaviors>
+            </Grid>
+        </Grid>
+    </Border>
+
+</ContentView>

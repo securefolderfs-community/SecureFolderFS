@@ -1,5 +1,5 @@
 using System;
-using Uno.UI.Runtime.Skia;
+using Uno.UI.Hosting;
 
 namespace SecureFolderFS.Uno
 {
@@ -9,10 +9,10 @@ namespace SecureFolderFS.Uno
         public static void Main(string[] args)
         {
 #if (!useDependencyInjection && useLoggingFallback)
-        App.InitializeLogging();
+            App.InitializeLogging();
 #endif
 
-            var appHost = SkiaHostBuilder.Create()
+            var appHost = UnoPlatformHostBuilder.Create()
                 .App(() => new App())
                 .UseX11()
                 .UseLinuxFrameBuffer()

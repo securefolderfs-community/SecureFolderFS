@@ -27,10 +27,10 @@ namespace SecureFolderFS.Sdk.Services
         Task DisableTelemetryAsync();
 
         /// <summary>
-        /// Reports and sends specified <paramref name="eventName"/> to the telemetry service.
+        /// Reports and sends specified <paramref name="message"/> to the telemetry service.
         /// </summary>
-        /// <param name="eventName">The name of the event that occurred within the app.</param>
-        void TrackEvent(string eventName);
+        /// <param name="message">The name of the event that occurred within the app.</param>
+        void TrackMessage(string message);
 
         /// <summary>
         /// Reports and sends specified <paramref name="exception"/> to the telemetry service.

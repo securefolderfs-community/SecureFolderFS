@@ -15,15 +15,15 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             _aesCmacSiv = aesCmacSiv;
         }
 
-        public static AesSiv128 CreateInstance(ReadOnlySpan<byte> encKey, ReadOnlySpan<byte> macKey)
+        public static AesSiv128 CreateInstance(ReadOnlySpan<byte> dekKey, ReadOnlySpan<byte> macKey)
         {
             // The longKey will be split into two keys - one for S2V and the other one for CTR
-            var longKey = new byte[encKey.Length + macKey.Length];
+            var longKey = new byte[dekKey.Length + macKey.Length];
             var longKeySpan = longKey.AsSpan();
 
             // Copy keys
-            encKey.CopyTo(longKeySpan);
-            macKey.CopyTo(longKeySpan.Slice(encKey.Length));
+            dekKey.CopyTo(longKeySpan);
+            macKey.CopyTo(longKeySpan.Slice(dekKey.Length));
 
             var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
 

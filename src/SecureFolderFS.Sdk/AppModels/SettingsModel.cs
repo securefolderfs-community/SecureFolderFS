@@ -1,11 +1,11 @@
-﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.ComponentModel;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -21,9 +21,9 @@ namespace SecureFolderFS.Sdk.AppModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <inheritdoc/>
-        public virtual Task LoadAsync(CancellationToken cancellationToken = default)
+        public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return SettingsDatabase.LoadAsync(cancellationToken);
+            return SettingsDatabase.InitAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (string.IsNullOrEmpty(settingName))
                 return defaultValue is not null ? defaultValue() : default;
 
-            return SettingsDatabase.GetValue(settingName, defaultValue);
+            return SettingsDatabase.GetValueAsync(settingName, defaultValue).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (string.IsNullOrEmpty(settingName))
                 return false;
 
-            var result = SettingsDatabase.SetValue(settingName, value);
+            var result = SettingsDatabase.SetValueAsync(settingName, value).ConfigureAwait(false).GetAwaiter().GetResult();
             if (result)
                 OnPropertyChanged(settingName);
 

@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
-    [Inject<IClipboardService>]
+    [Inject<IClipboardService>(Visibility = "protected"), Inject<IOverlayService>(Visibility = "protected")]
     [Bindable(true)]
     public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorableChild>
     {
         [ObservableProperty] private string? _Icon; // TODO: Change to IImage
-        [ObservableProperty] private SeverityType _Severity;
+        [ObservableProperty] private Severity _Severity;
 
         /// <summary>
         /// Gets the <see cref="IResult"/> associated with this view model.
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             : base(title)
         {
             ServiceProvider = DI.Default;
-            Severity = SeverityType.Warning;
+            Severity = Enums.Severity.Warning;
             Inner = storable;
             Title = title;
         }

@@ -35,9 +35,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             // and appropriate migrators are chosen based solely on vault version
             ServiceProvider = DI.Default;
             MigrationViewModel = migrationViewModel;
-            PrimaryButtonText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
             Title = "Authenticate".ToLocalized();
-            SecondaryButtonEnabled = true;
+            CanCancel = true;
         }
 
         /// <inheritdoc/>
@@ -64,10 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task AuthenticateMigrationAsync(object? credentials, CancellationToken cancellationToken)
         {
-            if (credentials is null)
-                return;
-
-            if (_vaultMigrator is null)
+            if (credentials is null || _vaultMigrator is null)
                 return;
 
             try
@@ -77,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
                 StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
                 Title = "Migrate".ToLocalized();
-                PrimaryButtonText = null;
+                PrimaryText = null;
             }
             catch (Exception ex)
             {
@@ -99,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 // Start operation and report initial progress
                 Report(0);
                 IsProgressing = true;
-                SecondaryButtonEnabled = false;
+                CanCancel = false;
 
                 // Await a short delay for better UX
                 await Task.Delay(1000);
@@ -116,7 +113,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             finally
             {
                 IsProgressing = false;
-                SecondaryButtonEnabled = true;
+                CanCancel = true;
             }
         }
 
@@ -124,6 +121,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public void Dispose()
         {
             _unlockContract?.Dispose();
+            _vaultMigrator?.Dispose();
         }
     }
 }

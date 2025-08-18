@@ -23,23 +23,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsSelectionViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly AuthenticationType _authenticationStage;
+        private readonly AuthenticationStage _authenticationStage;
 
         [ObservableProperty] private bool _CanRemoveCredentials;
         [ObservableProperty] private RegisterViewModel? _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
-        
+
         public IDisposable? UnlockContract { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
-        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType authenticationStage)
+        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
-            _CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
+            _CanRemoveCredentials = authenticationStage != AuthenticationStage.FirstStageOnly;
             _AuthenticationOptions = new();
         }
 
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await foreach (var item in VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
             {
                 // Don't add authentication methods to list which are already in use
-                if (vaultOptions.AuthenticationMethod.Contains(item.Id))
+                if (vaultOptions.UnlockProcedure.Methods.Contains(item.Id) || vaultOptions.UnlockProcedure.Complementation == item.Id)
                     continue;
 
                 // Don't add authentication methods which are not allowed in the Authentication Stage
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
-                CanComplement = false,
+                IsComplementationAvailable = false,
                 UnlockContract = UnlockContract,
                 ConfiguredViewModel = ConfiguredViewModel
             });
@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             authenticationViewModel ??= await GetExistingCreationForLoginAsync(cancellationToken);
             if (authenticationViewModel is null)
                 return;
-            
+
             if (UnlockContract is null || RegisterViewModel is null)
                 return;
 
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                IsComplementationAvailable = _authenticationStage != AuthenticationStage.FirstStageOnly,
                 UnlockContract = UnlockContract,
                 ConfiguredViewModel = ConfiguredViewModel
             });
@@ -117,7 +117,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested = null;
             RegisterViewModel?.Dispose();
             ConfiguredViewModel?.Dispose();
-            AuthenticationOptions.DisposeElements();
+            AuthenticationOptions.DisposeAll();
         }
     }
 }

@@ -1,7 +1,8 @@
 using System.Globalization;
 using MauiIcons.Core;
-using MauiIcons.Material;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
+using OwlCore.Storage;
+using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Shared.ComponentModel;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -11,23 +12,40 @@ namespace SecureFolderFS.Maui.ValueConverters
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (parameter is not View { BindingContext: BrowserItemViewModel itemViewModel })
+            if (parameter is not View { BindingContext: IWrapper<IStorable> storableWrapper })
                 return null;
 
             return value switch
             {
                 IImage image => ToImage(image),
-                _ => itemViewModel switch
+
+#if ANDROID
+                _ => storableWrapper switch
                 {
-                    FolderViewModel => new MauiIcon() { Icon = MaterialIcons.Folder },
-                    _ => new MauiIcon() { Icon = MaterialIcons.Description }
+                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Folder, IconAutoScaling = true },
+                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Description, IconAutoScaling = true }
                 }
+#else
+                _ => storableWrapper switch
+                {
+                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Folder, IconAutoScaling = true },
+                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Doc, IconAutoScaling = true }
+                }
+#endif
             };
-            
+
             static object? ToImage(IImage image)
             {
-                // TODO: Implement IImage
-                return null;
+                switch (image)
+                {
+                    case ImageStream { Stream.CanRead: true } imageStream:
+                    {
+                        imageStream.Stream.Position = 0L;
+                        return new Image() { Source = imageStream.Source, Aspect = Aspect.AspectFill };
+                    }
+
+                    default: return null; // TODO: Add more IImage implementations
+                }
             }
         }
 

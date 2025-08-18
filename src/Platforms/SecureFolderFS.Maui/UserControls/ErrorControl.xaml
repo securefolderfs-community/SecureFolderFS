@@ -1,0 +1,48 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.ErrorControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <vc:ExpandedStateToIconConverter x:Key="ExpandedStateToIconConverter" />
+    </ContentView.Resources>
+
+    <VerticalStackLayout Spacing="4">
+        <Label
+            FontSize="17"
+            HorizontalOptions="Center"
+            Text="{l:ResourceString Rid=VaultLoadError}" />
+        <mtk:Expander x:Name="ErrorExpander">
+            <mtk:Expander.Header>
+                <Grid Padding="16,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        FontSize="17"
+                        Text="{l:ResourceString Rid=ErrorDetails}" />
+                    <mi:MauiIcon
+                        Grid.Column="1"
+                        Icon="{Binding IsExpanded, Mode=OneWay, Source={x:Reference ErrorExpander}, Converter={StaticResource ExpandedStateToIconConverter}}"
+                        IconSize="19" />
+                </Grid>
+            </mtk:Expander.Header>
+            <mtk:Expander.Content>
+                <ScrollView
+                    HorizontalScrollBarVisibility="Default"
+                    MaximumHeightRequest="400"
+                    VerticalScrollBarVisibility="Always">
+                    <Label Text="{Binding ExceptionMessage, Mode=OneWay, Source={x:Reference ThisControl}}" />
+                </ScrollView>
+            </mtk:Expander.Content>
+        </mtk:Expander>
+    </VerticalStackLayout>
+</ContentView>

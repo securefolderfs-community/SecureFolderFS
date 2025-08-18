@@ -1,8 +1,8 @@
 using Android.App;
 using Android.Content;
 using Android.Provider;
-using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
+using Java.IO;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
 using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
@@ -30,10 +30,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            Stream? stream;
             if (IsVirtualFile(activity, Inner))
             {
-                stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
+                var stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
                 if (stream is null)
                     return Task.FromException<Stream>(new ArgumentException("No stream types available for '*/*' mime type."));
 
@@ -42,25 +41,27 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             if (accessMode == FileAccess.Read)
             {
-                stream = activity.ContentResolver?.OpenInputStream(Inner);
+                var inStream = activity.ContentResolver?.OpenInputStream(Inner);
+                if (inStream is null)
+                    return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open input stream."));
+
+                return Task.FromResult(inStream);
             }
             else
             {
-                var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
-                var outputStream = (activity.ContentResolver?.OpenOutputStream(Inner) as OutputStreamInvoker)?.BaseOutputStream;
-                if (inputStream is null || outputStream is null)
-                    return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
+                var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, "rwt");
+                var fInChannel = new FileInputStream(fd.FileDescriptor).Channel;
+                var fOutChannel = new FileOutputStream(fd.FileDescriptor).Channel;
 
-                var combinedInputStream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
-                stream = combinedInputStream;
+                if (fInChannel is null || fOutChannel is null)
+                    return Task.FromException<Stream>(
+                        new ArgumentException("Could not open input and output streams."));
+
+                var channelledStream = new ChannelledStream(fInChannel, fOutChannel);
+                return Task.FromResult<Stream>(channelledStream);
             }
-            
-            if (stream is null)
-                return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
-
-            return Task.FromResult(stream);
         }
-        
+
         /// <inheritdoc/>
         public override Task<IBasicProperties> GetPropertiesAsync()
         {
@@ -90,47 +91,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         private static Stream? GetVirtualFileStream(Context context, AndroidUri uri, bool isOutput)
         {
             var mimeTypes = context.ContentResolver?.GetStreamTypes(uri, "*/*");
-            if (mimeTypes?.Length >= 1)
-            {
-                var mimeType = mimeTypes[0];
-                var asset = context.ContentResolver!
-                    .OpenTypedAssetFileDescriptor(uri, mimeType, null);
+            if (!(mimeTypes?.Length >= 1))
+                return null;
 
-                var stream = isOutput
-                    ? asset?.CreateOutputStream()
-                    : asset?.CreateInputStream();
+            var mimeType = mimeTypes[0];
+            var asset = context.ContentResolver!.OpenTypedAssetFileDescriptor(uri, mimeType, null);
+            var stream = isOutput
+                ? asset?.CreateOutputStream()
+                : asset?.CreateInputStream();
 
-                return stream;
-            }
-
-            return null;
-        }
-        
-        private static long GetFileSize(ContentResolver? contentResolver, AndroidUri uri)
-        {
-            if (contentResolver is null)
-                return 0L;
-            
-            try
-            {
-                // Try to get file size using content resolver
-                using var cursor = contentResolver.Query(uri, null, null, null, null);
-                if (cursor != null && cursor.MoveToFirst())
-                {
-                    int sizeIndex = cursor.GetColumnIndex(IOpenableColumns.Size);
-                    if (sizeIndex != -1)
-                    {
-                        return cursor.GetLong(sizeIndex);
-                    }
-                }
-            }
-            catch
-            {
-                // Fallback method if content resolver fails
-            }
-
-            // If size can't be determined, return -1
-            return -1;
+            return stream;
         }
     }
 }

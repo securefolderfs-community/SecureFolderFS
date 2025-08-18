@@ -1,12 +1,15 @@
 using System.Runtime.CompilerServices;
 using Foundation;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class IOSFolder : IOSStorable, IModifiableFolder, IChildFolder
+    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName
     {
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
@@ -51,6 +54,28 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         }
 
         /// <inheritdoc/>
+        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                permissionRoot.StartAccessingSecurityScopedResource();
+
+                var isDirectory = false;
+                var itemPath = Path.Combine(Id, name);
+
+                if (!NSFileManager.DefaultManager.FileExists(itemPath, ref isDirectory))
+                    throw new FileNotFoundException($"Item '{name}' not found in folder '{Id}'.");
+
+                return NewStorage(new NSUrl(itemPath, isDirectory), this, permissionRoot);
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+
+        /// <inheritdoc/>
         public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
@@ -60,7 +85,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
             if (item is not IWrapper<NSUrl> iosWrapper)
-                return;
+                throw new ArgumentException("Storable item must wrap an NSUrl.", nameof(item));
 
             try
             {
@@ -82,7 +107,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             {
                 permissionRoot.StartAccessingSecurityScopedResource();
 
-                var path = System.IO.Path.Combine(Id, name);
+                var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
                 if (NSFileManager.DefaultManager.CreateDirectory(path, false, attributes, out var error))
@@ -108,7 +133,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 if (!permissionRoot.StartAccessingSecurityScopedResource())
                     throw new UnauthorizedAccessException("Could not create iOS file.");
 
-                var path = System.IO.Path.Combine(Id, name);
+                var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
                 if (NSFileManager.DefaultManager.CreateFile(path, new NSData(), attributes))
@@ -121,6 +146,45 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 permissionRoot.StopAccessingSecurityScopedResource();
                 await Task.CompletedTask;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                if (!permissionRoot.StartAccessingSecurityScopedResource())
+                    throw new UnauthorizedAccessException("Could not rename iOS item.");
+
+                if (storable is not IWrapper<NSUrl> iosWrapper)
+                    throw new ArgumentException("Storable item must wrap an NSUrl.", nameof(storable));
+
+                var originalUrl = iosWrapper.Inner;
+                var originalPath = originalUrl.Path;
+                var newPath = Path.Combine(Path.GetDirectoryName(originalPath)!, newName);
+                var newUrl = new NSUrl(newPath, storable is IFolder);
+
+                // Ensure the destination doesn't already exist
+                if (NSFileManager.DefaultManager.FileExists(newPath))
+                    throw new IOException($"A file or folder with the name '{newName}' already exists.");
+
+                if (!NSFileManager.DefaultManager.Move(originalUrl, newUrl, out var error))
+                    throw new NSErrorException(error);
+
+                return NewStorage(newUrl, this, permissionRoot);
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new IOSFolderProperties(Inner, permissionRoot);
+            return Task.FromResult(properties);
         }
     }
 }

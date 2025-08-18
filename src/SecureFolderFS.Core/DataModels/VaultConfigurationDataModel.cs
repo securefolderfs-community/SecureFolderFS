@@ -1,12 +1,14 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Models;
+using System;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    public sealed class VaultConfigurationDataModel : VersionDataModel
+    public sealed record class VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
         /// Gets the ID for content encryption.
@@ -25,10 +27,21 @@ namespace SecureFolderFS.Core.DataModels
         /// <summary>
         /// Gets the ID for file name encoding.
         /// </summary>
-        //[JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
-        //[DefaultValue("")]
-        [JsonIgnore]
+        [JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
+        [DefaultValue("")]
         public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
+
+        /// <summary>
+        /// Gets the size of the recycle bin.
+        /// </summary>
+        /// <remarks>
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
+        /// </remarks>
+        [JsonPropertyName(Associations.ASSOC_RECYCLE_SIZE)]
+        [DefaultValue(0L)]
+        public long RecycleBinSize { get; set; } = 0L;
 
         ///// <summary>
         ///// Gets the specialization of the vault that hints how the user data should be handled.
@@ -56,5 +69,20 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
         public byte[]? PayloadMac { get; set; }
+
+        public static VaultConfigurationDataModel FromVaultOptions(VaultOptions vaultOptions)
+        {
+            return new()
+            {
+                Version = vaultOptions.Version < 1 ? Versions.LATEST_VERSION : vaultOptions.Version,
+                ContentCipherId = vaultOptions.ContentCipherId ?? Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
+                FileNameCipherId = vaultOptions.FileNameCipherId ?? Cryptography.Constants.CipherId.AES_SIV,
+                FileNameEncodingId = vaultOptions.NameEncodingId ?? Cryptography.Constants.CipherId.ENCODING_BASE64URL,
+                AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
+                RecycleBinSize = vaultOptions.RecycleBinSize,
+                Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
+        }
     }
 }

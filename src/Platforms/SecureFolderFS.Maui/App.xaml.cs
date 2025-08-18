@@ -1,4 +1,7 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
+using APES.UI.XF;
+using SecureFolderFS.Maui.Extensions.Mappers;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
@@ -6,8 +9,8 @@ namespace SecureFolderFS.Maui
 {
     public partial class App : Application
     {
-        public static App Instance => (App)Application.Current!;
-        
+        public static App Instance => (App)Current!;
+
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
@@ -18,13 +21,23 @@ namespace SecureFolderFS.Maui
 #else
             null;
 #endif
-        
+
         public event EventHandler? AppResumed;
         public event EventHandler? AppPutToForeground;
 
         public App()
         {
             InitializeComponent();
+
+#if ANDROID
+            // Load Android-specific resource dictionaries
+            Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
+#endif
+
+            // Configure mappers
+            CustomMappers.AddEntryMappers();
+            CustomMappers.AddLabelMappers();
+            CustomMappers.AddPickerMappers();
 
             // Configure exception handlers
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -33,8 +46,8 @@ namespace SecureFolderFS.Maui
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            APES.UI.XF.ContextMenuContainer.Init();
-            
+            ContextMenuContainer.Init();
+
             var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
             return new Window(appShell);
         }
@@ -49,10 +62,17 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            
+
+            // Initialize Telemetry
+            var telemetryService = DI.Service<ITelemetryService>();
+            await telemetryService.EnableTelemetryAsync();
+
             // Create and initialize AppShell
             var appShell = new AppShell();
-            await appShell.MainViewModel.InitAsync();
+            await appShell.MainViewModel.InitAsync().ConfigureAwait(false);
+
+            // Initialize ThemeHelper
+            await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
 
             return appShell;
         }

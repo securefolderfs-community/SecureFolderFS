@@ -34,9 +34,9 @@ namespace SecureFolderFS.Core.MobileFS.FileSystem
             _ = 0;
             return base.ReparentItemAsync(itemIdentifier, parentItemIdentifier, newName);
         }
-        
+
         #region Unused
-        
+
         public override Task<INSFileProviderItem> SetFavoriteRankAsync(NSNumber? favoriteRank, string itemIdentifier)
         {
             _ = 0;

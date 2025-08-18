@@ -1,24 +1,20 @@
-using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
-using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
-    public partial class LoginPage : ContentPageExtended, IQueryAttributable
+    public partial class LoginPage : ContentPage, IQueryAttributable
     {
         public LoginPage()
         {
             BindingContext = this;
-            _ = new MauiIcon(); // Workaround for XFC0000
-
             InitializeComponent();
         }
 
@@ -30,6 +26,19 @@ namespace SecureFolderFS.Maui.Views.Vault
             {
                 ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
                 ViewModel.NavigationRequested += ViewModel_NavigationRequested;
+
+                if (ViewModel.VaultViewModel.VaultModel.IsRemote)
+                {
+                    var toolbarItem = new ToolbarItem()
+                    {
+                        Command = ViewModel.DisconnectFromVaultCommand,
+                        Text = "Disconnect".ToLocalized(),
+                        Order = ToolbarItemOrder.Secondary
+                    };
+
+                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, $"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", BindingMode.OneWay);
+                    ToolbarItems.Add(toolbarItem);
+                }
             }
 
             OnPropertyChanged(nameof(ViewModel));
@@ -56,21 +65,16 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Initialize DashboardViewModel and use the same navigation for dashboard
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
+            var browserViewModel = BrowserHelpers.CreateBrowser(
+                args.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot,
+                args.UnlockedVaultViewModel.StorageRoot.Options,
+                args.UnlockedVaultViewModel,
+                outerNavigator: ViewModel.VaultNavigation);
 
-            var rootFolder = args.UnlockedVaultViewModel.StorageRoot.Inner;
-            var navigator = DI.Service<INavigationService>();
-            var browserViewModel = new BrowserViewModel(navigator, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
-            var transferViewModel = new TransferViewModel(browserViewModel);
-            var folderViewModel = new FolderViewModel(rootFolder, browserViewModel, null);
-            _ = folderViewModel.ListContentsAsync();
-            
-            browserViewModel.TransferViewModel = transferViewModel;
-            browserViewModel.CurrentFolder = folderViewModel;
-            
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache
 
-            var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel);
+            var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel, dashboardNavigation, ViewModel.VaultNavigation);
             var overviewViewModel = new VaultOverviewViewModel(
                 args.UnlockedVaultViewModel,
                 new(ViewModel.VaultNavigation,
@@ -81,8 +85,8 @@ namespace SecureFolderFS.Maui.Views.Vault
                     new(
                         args.UnlockedVaultViewModel,
                         ViewModel.VaultNavigation,
-                        new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder)));
-            
+                        new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultFolder)));
+
             // Set Title to 'fake' navigation
             dashboardViewModel.Title = overviewViewModel.Title;
 
@@ -92,7 +96,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                 await propertiesViewModel.InitAsync();
                 await overviewViewModel.InitAsync();
             });
-            
+
             // Persist view models
             dashboardViewModel.DashboardNavigation.Views.Add(overviewViewModel);
             dashboardViewModel.DashboardNavigation.Views.Add(propertiesViewModel);

@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!--  Note: For Android please see also Platforms\Android\Resources\values\colors.xml  -->
+
+
+    <!--  Application Colors  -->
+    <Color x:Key="PrimaryLightColor">#1791ff</Color>
+    <Color x:Key="SecondaryLightColor">#D3E5F9</Color>
+    <Color x:Key="TertiaryLightColor">#7EA9C1</Color>
+    <Color x:Key="QuarternaryLightColor">#1E4F7A</Color>
+
+    <Color x:Key="PrimaryDarkColor">#106bbf</Color>
+    <Color x:Key="SecondaryDarkColor">#333f4d</Color>
+    <Color x:Key="TertiaryDarkColor">#1E4F7A</Color>
+    <Color x:Key="QuarternaryDarkColor">#7EA9C1</Color>
+
+
+    <Color x:Key="PrimaryDisabledLightColor">#81C1FA</Color>
+    <Color x:Key="PrimaryDisabledDarkColor">#3c5c7a</Color>
+
+
+    <!--  Contrasting Colors  -->
+    <Color x:Key="PrimaryContrastingLightColor">#181C1A</Color>
+    <Color x:Key="PrimaryContrastingDarkColor">#F0F0F0</Color>
+
+    <!--  Background Colors  -->
+    <Color x:Key="BackgroundFillPrimaryLightColor">#FFFFFF</Color>
+    <Color x:Key="BackgroundFillSecondaryLightColor">#E8EBFD</Color>
+    <Color x:Key="BackgroundFillPrimaryDarkColor">#181C1A</Color>
+    <Color x:Key="BackgroundFillSecondaryDarkColor">#2C2D34</Color>
+
+    <Color x:Key="ShimFillPrimaryLightColor">#DDE7E7E9</Color>
+    <Color x:Key="ShimFillSecondaryLightColor">#AAFFFFFF</Color>
+    <Color x:Key="ShimFillPrimaryDarkColor">#DD525252</Color>
+    <Color x:Key="ShimFillSecondaryDarkColor">#BB7d7d7d</Color>
+
+    <Color x:Key="CardFillPrimaryLightColor">#D3E5F9</Color>
+    <Color x:Key="CardFillPrimaryDarkColor">#35393E</Color>
+
+    <Color x:Key="ElevatedFillPrimaryLightColor">#F7F7F9</Color>
+    <Color x:Key="ElevatedFillSecondaryLightColor">#D3D3D3</Color>
+    <Color x:Key="ElevatedFillPrimaryDarkColor">#2E3236</Color>
+    <Color x:Key="ElevatedFillSecondaryDarkColor">#464A4F</Color>
+
+    <!--  Border Colors  -->
+    <Color x:Key="BorderLightColor">#CECECE</Color>
+    <Color x:Key="BorderDarkColor">#737373</Color>
+
+    <!--  Icon Plate Colors  -->
+    <Color x:Key="PlaybackIconColor">#EEEEEE</Color>
+    <Color x:Key="PlaybackIconPlateColor">#BB191919</Color>
+
+    <!--  Other Colors  -->
+    <Color x:Key="LightTransparentColor">#00FFFFFF</Color>
+    <Color x:Key="DarkTransparentColor">#00000000</Color>
+
+    <!--  ======= BRUSHES =======  -->
+
+
+    <!--  Application Theme Brushes  -->
+    <SolidColorBrush x:Key="ThemePrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource SecondaryLightColor}, Dark={StaticResource SecondaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeTertiaryColorBrush" Color="{AppThemeBinding Light={StaticResource TertiaryLightColor}, Dark={StaticResource TertiaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeQuarternaryColorBrush" Color="{AppThemeBinding Light={StaticResource QuarternaryLightColor}, Dark={StaticResource QuarternaryDarkColor}}" />
+
+    <SolidColorBrush x:Key="ThemePrimaryDisabledColorBrush" Color="{AppThemeBinding Light={StaticResource PrimaryDisabledLightColor}, Dark={StaticResource PrimaryDisabledDarkColor}}" />
+
+
+    <!--  Background Theme Brushes  -->
+    <SolidColorBrush x:Key="ThemeBackgroundFillColorBrush" Color="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor}, Dark={StaticResource BackgroundFillPrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeBackgroundFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource BackgroundFillSecondaryLightColor}, Dark={StaticResource BackgroundFillSecondaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeCardFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource CardFillPrimaryLightColor}, Dark={StaticResource CardFillPrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeShimFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource ShimFillPrimaryLightColor}, Dark={StaticResource ShimFillPrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeShimFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor}, Dark={StaticResource ShimFillSecondaryDarkColor}}" />
+
+    <SolidColorBrush x:Key="ThemeElevatedFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeElevatedFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillSecondaryLightColor}, Dark={StaticResource ElevatedFillSecondaryDarkColor}}" />
+
+
+
+    <!--  LEGACY  -->
+
+    <Color x:Key="Primary">#32608d</Color>
+    <Color x:Key="PrimaryDark">#1791ff</Color>
+    <Color x:Key="PrimaryDarkText">#242424</Color>
+    <Color x:Key="Secondary">#d6e4f7</Color>
+    <Color x:Key="SecondaryDarkText">#242424</Color>
+    <Color x:Key="Tertiary">#224265</Color>
+
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
+    <Color x:Key="Magenta">#D600AA</Color>
+    <Color x:Key="MidnightBlue">#190649</Color>
+    <Color x:Key="OffBlack">#1f1f1f</Color>
+
+    <Color x:Key="Gray100">#E1E1E1</Color>
+    <Color x:Key="Gray200">#C8C8C8</Color>
+    <Color x:Key="Gray300">#ACACAC</Color>
+    <Color x:Key="Gray400">#919191</Color>
+    <Color x:Key="Gray500">#6E6E6E</Color>
+    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#141414</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}" />
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}" />
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}" />
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}" />
+
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}" />
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}" />
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}" />
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}" />
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}" />
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}" />
+</ResourceDictionary>

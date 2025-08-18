@@ -221,7 +221,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             if (obj is not EncryptingDiskStoreFile storeItem)
                 return false;
-            
+
             return storeItem._fileInfo.FullName.Equals(_fileInfo.FullName, StringComparison.CurrentCultureIgnoreCase);
         }
 

@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <remarks>
         /// The number of characters may not be equal to the number of bytes in the password.
         /// </remarks>
-        int Length { get; }
+        int CharacterCount { get; }
 
         /// <summary>
         /// Gets the password as a sequence of characters.

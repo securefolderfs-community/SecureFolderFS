@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Handlers
                 notifyCollectionChanged.CollectionChanged -= ToolbarItemsEx_CollectionChanged;
                 notifyCollectionChanged.CollectionChanged += ToolbarItemsEx_CollectionChanged;
             }
-            
+
             if (viewHandler.ViewController?.ParentViewController?.NavigationItem is { } navItem)
                 UpdateToolbarItems(thisPageEx, navItem);
         }
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Handlers
         {
             if (ThisPage is not ContentPageExtended thisPageEx)
                 return;
-            
+
             if (ViewController?.ParentViewController?.NavigationItem is { } navItem)
                 UpdateToolbarItems(thisPageEx, navItem);
         }
@@ -43,20 +43,20 @@ namespace SecureFolderFS.Maui.Handlers
                 navigationItem.RightBarButtonItems = null;
                 return;
             }
-            
+
             // Don't do anything if there are some items in both platform view and ToolbarItems
             if (!contentPage.ExToolbarItems.IsEmpty() && !navigationItem.RightBarButtonItems.IsEmpty())
                 return;
 
             var rightBarItems = new List<UIBarButtonItem>();
-            
+
             // Get primary items
             foreach (var item in contentPage.ExToolbarItems)
             {
                 if (item.Order != ToolbarItemOrder.Secondary)
                     rightBarItems.Add(item.ToUIBarButtonItem());
             }
-            
+
             // Get secondary items
             var secondaryItems = contentPage.ExToolbarItems
                 .Where(x => x.Order == ToolbarItemOrder.Secondary)
@@ -67,17 +67,17 @@ namespace SecureFolderFS.Maui.Handlers
             {
                 // Create a popup UIMenu
                 var menu = UIMenu.Create(string.Empty, null, UIMenuIdentifier.Edit, UIMenuOptions.DisplayInline, secondaryItems);
-                
+
                 // Set ellipsis icon image (can also use UIImage.ActionsImage for a filled ellipsis)
                 var menuButton = new UIBarButtonItem(UIImage.FromBundle("cupertino_ellipsis.png"), menu);
 
                 // Add to final bar items
                 rightBarItems.Add(menuButton);
             }
-            
+
             // Assign the navigation bar buttons
             navigationItem.RightBarButtonItems = rightBarItems.ToArray();
-            
+
             static UIMenuElement CreateUIMenuElement(ExMenuItemBase item)
             {
                 // Create a UIAction for each ToolbarItem

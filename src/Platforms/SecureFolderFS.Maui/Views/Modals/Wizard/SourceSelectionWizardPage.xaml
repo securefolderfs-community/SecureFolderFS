@@ -1,0 +1,75 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.SourceSelectionWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;assembly=SecureFolderFS.Sdk"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:SourceSelectionWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
+
+    <md:BaseModalPage.ModalContent>
+        <Grid
+            Margin="{OnPlatform iOS='0,16,0,0'}"
+            Padding="16,0"
+            RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Spacing="16">
+
+                <Button
+                    Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}"
+                    CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}"
+                    FontSize="17"
+                    HeightRequest="64"
+                    ImageSource="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                    Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}" />
+                <BoxView
+                    Margin="16,0"
+                    Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                    HeightRequest="1" />
+            </VerticalStackLayout>
+
+            <CollectionView
+                Grid.Row="1"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
+                SelectionChanged="CollectionView_SelectionChanged"
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
+                        <Border Padding="16" Background="{StaticResource ThemeSecondaryColorBrush}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="16">
+                                <Image HeightRequest="48" Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+                                <Label
+                                    FontSize="17"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding DataSourceName, Mode=OneWay}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout
+                        HorizontalItemSpacing="8"
+                        Orientation="Vertical"
+                        Span="2"
+                        VerticalItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

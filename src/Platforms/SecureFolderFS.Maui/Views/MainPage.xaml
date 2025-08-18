@@ -5,23 +5,14 @@
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
-    xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
     Title="{l:ResourceString Rid=MyVaults}"
     ios:Page.LargeTitleDisplay="Always"
     x:DataType="local:MainPage"
     Loaded="MainPage_Loaded">
-
-    <ContentPage.Resources>
-        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-    </ContentPage.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -29,56 +20,15 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <SearchBar
-            Grid.Row="0"
-            HeightRequest="24"
-            IsVisible="True"
-            Placeholder="Search" />
-
-        <ListView
-            Grid.Row="1"
-            ItemTapped="ListView_ItemTapped"
-            ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
-            RowHeight="64"
-            SelectionMode="None">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:VaultListItemViewModel">
-                    <ViewCell>
-                        <ViewCell.ContextActions>
-                            <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
-                        </ViewCell.ContextActions>
-
-                        <HorizontalStackLayout
-                            Padding="8,2"
-                            Spacing="8"
-                            VerticalOptions="Center">
-                            <Grid VerticalOptions="Center">
-                                <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
-                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
-                            </Grid>
-
-                            <VerticalStackLayout VerticalOptions="Center">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="16"
-                                    Text="{Binding VaultViewModel.VaultName, Mode=OneWay}"
-                                    VerticalOptions="Center" />
-                                <Label IsVisible="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-
         <VerticalStackLayout
             Grid.Row="1"
             Margin="0,0,0,64"
             Padding="12,0"
+            InputTransparent="True"
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Spacing="16"
             VerticalOptions="Center">
-            <Image Source="app_icon.png" WidthRequest="64" />
+            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='vault_light.svg', iOS='vault_light.png'}, Dark={OnPlatform Android='vault_dark.svg', iOS='vault_dark.png'}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="24"
@@ -91,14 +41,103 @@
                 Text="{l:ResourceString Rid=NoVaultsMessage}" />
         </VerticalStackLayout>
 
-        <Grid Grid.Row="0" Grid.RowSpan="2">
+        <CollectionView
+            Grid.Row="1"
+            BackgroundColor="Transparent"
+            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay}"
+            ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
+            SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:VaultListItemViewModel">
+                    <SwipeView Background="{StaticResource ThemeBackgroundFillColorBrush}" HeightRequest="64">
+                        <SwipeView.RightItems>
+                            <SwipeItem
+                                BackgroundColor="Red"
+                                Command="{Binding RemoveVaultCommand, Mode=OneWay}"
+                                IsDestructive="True"
+                                IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                Text="{l:ResourceString Rid=Remove}" />
+                            <SwipeItem
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                                                  Dark={StaticResource SecondaryDarkColor}}"
+                                Command="{Binding CustomizeCommand, Mode=OneWay}"
+                                CommandParameter="Rename"
+                                IsEnabled="{Binding VaultViewModel.CanRename, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=Rename}" />
+                        </SwipeView.RightItems>
+
+                        <Grid Padding="8,2" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid
+                                Grid.Column="0"
+                                IsVisible="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                VerticalOptions="Center">
+                                <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
+                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
+                            </Grid>
+                            <Grid
+                                Grid.Column="0"
+                                IsVisible="{Binding IsUnlocked, Mode=OneWay}"
+                                VerticalOptions="Center">
+                                <mi:MauiIcon Icon="{mi_material:Material LockOpen}" OnPlatforms="Android" />
+                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino LockOpen}" OnPlatforms="iOS" />
+                            </Grid>
+
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    Text="{Binding VaultViewModel.Title, Mode=OneWay}"
+                                    VerticalOptions="Center" />
+                                <Label IsVisible="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                            </VerticalStackLayout>
+
+                            <Grid Grid.Column="2" Margin="0,0,8,0">
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material ChevronRight}"
+                                    IconSize="16"
+                                    OnPlatforms="Android"
+                                    Opacity="0.8" />
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino ChevronRight}"
+                                    IconSize="16"
+                                    OnPlatforms="iOS"
+                                    Opacity="0.8" />
+                            </Grid>
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="ItemTapRecognizer_Tapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            VerticalOptions="End">
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
-                    <mdc:FAB
-                        Margin="0,0,32,32"
+                    <Button
+                        Margin="0,0,16,32"
+                        mi:MauiIcon.Value="{mi_material:Material Icon=Add,
+                                                                 IconSize=26,
+                                                                 IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
+                                                                                            Dark={StaticResource PrimaryContrastingLightColor}}}"
                         Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                        FontSize="16"
                         HorizontalOptions="End"
-                        IconData="{x:Static mdci:Material.Add}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=NewVault}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
+                                                    Dark={StaticResource PrimaryContrastingLightColor}}"
                         VerticalOptions="End" />
                 </On>
             </OnPlatform>

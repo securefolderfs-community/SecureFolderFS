@@ -2,43 +2,37 @@
     x:Class="SecureFolderFS.Maui.Views.Vault.BrowserPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:uc2="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPage"
-    x:DataType="local:BrowserPage">
+    x:DataType="local:BrowserPage"
+    Background="{StaticResource ThemeBackgroundFillColorBrush}">
 
     <ContentPage.Resources>
-        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
         <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
+            Command="{Binding ViewModel.ToggleSelectionCommand}"
             Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}" />
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|SelectItems:true:LOCALIZE|Cancel'}" />
+        <ToolbarItem
+            Command="{Binding ViewModel.ChangeViewOptionsCommand}"
+            Order="Secondary"
+            Text="{l:ResourceString Rid=ViewOptions}" />
         <ToolbarItem
             Command="{Binding ViewModel.NewItemCommand}"
-            CommandParameter="File"
             Order="Secondary"
-            Text="Create new file" />
-        <ToolbarItem
-            Command="{Binding ViewModel.NewItemCommand}"
-            CommandParameter="Folder"
-            Order="Secondary"
-            Text="Create new folder" />
+            Text="{l:ResourceString Rid=CreateNew}" />
         <ToolbarItem
             Command="{Binding ViewModel.ImportItemCommand}"
-            CommandParameter="File"
             Order="Secondary"
-            Text="Import file" />
-        <ToolbarItem
-            Command="{Binding ViewModel.ImportItemCommand}"
-            CommandParameter="Folder"
-            Order="Secondary"
-            Text="Import folder" />
+            Text="{l:ResourceString Rid=ImportExisting}" />
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>
@@ -46,11 +40,13 @@
             <Label
                 FontAttributes="Bold"
                 FontSize="20"
-                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+                Text="{Binding ViewModel.Title, Mode=OneWay}"
+                TextColor="White" />
             <Label
                 FontSize="14"
                 Opacity="0.6"
-                Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}" />
+                Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
+                TextColor="White" />
         </VerticalStackLayout>
     </Shell.TitleView>
 
@@ -62,23 +58,34 @@
 
         <uc:BreadcrumbBar
             Grid.Row="0"
-            Margin="56,0,0,0"
+            Margin="56,4,0,4"
             HeightRequest="32"
             ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
 
-        <uc:BrowserControl
+        <uc2:BrowserControl
             x:Name="Browser"
             Grid.Row="1"
             IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
-            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}" />
+            RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
+            ViewType="{Binding ViewModel.Layouts.BrowserViewType, Mode=OneWay}">
+            <uc2:BrowserControl.EmptyView>
+                <Label
+                    FontSize="18"
+                    HorizontalOptions="Center"
+                    Text="{l:ResourceString Rid=NoItems}"
+                    VerticalOptions="Center" />
+            </uc2:BrowserControl.EmptyView>
+        </uc2:BrowserControl>
 
-        <uc:TransferControl
+        <uc2:TransferControl
             Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"
             Grid.Row="0"
             Grid.RowSpan="2"
+            CanCancel="{Binding ViewModel.TransferViewModel.CanCancel, Mode=OneWay}"
             CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
-            IsVisible="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
+            IsProgressing="{Binding ViewModel.TransferViewModel.IsProgressing, Mode=OneWay}"
+            IsShown="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
             PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
             PrimaryCommand="{Binding ViewModel.TransferViewModel.ConfirmCommand, Mode=OneWay}"
             VerticalOptions="End" />

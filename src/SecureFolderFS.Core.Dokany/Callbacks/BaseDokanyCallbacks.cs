@@ -418,6 +418,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return result;
 
+            if (!Debugger.IsAttached)
+                return result;
+
             if (DisallowedTraceMethods.Contains(methodName))
                 return result;
 
@@ -431,7 +434,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return result;
         }
 
-        private static string[] DisallowedTraceMethods =
+        private static string[] DisallowedTraceMethods { get; } =
         {
             "GetVolumeInformation"
         };

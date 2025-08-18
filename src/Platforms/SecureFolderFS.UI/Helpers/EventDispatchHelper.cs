@@ -6,17 +6,17 @@ namespace SecureFolderFS.UI.Helpers
     /// <inheritdoc cref="IEventDispatch"/>
     public sealed class EventDispatchHelper : IEventDispatch
     {
-        private readonly Action _flagCallback;
+        private readonly Action _callback;
 
-        public EventDispatchHelper(Action flagCallback)
+        public EventDispatchHelper(Action callback)
         {
-            _flagCallback = flagCallback;
+            _callback = callback;
         }
 
         /// <inheritdoc/>
         public void PreventForwarding()
         {
-            _flagCallback();
+            _callback();
         }
     }
 }

@@ -5,14 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-    </UserControl.Resources>
 
     <StackPanel MinWidth="500" Spacing="4">
         <InfoBar

@@ -1,23 +1,22 @@
 using System;
 using Microsoft.UI.Xaml.Data;
+using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Uno.ValueConverters
 {
-    internal sealed class CountToBoolConverter : IValueConverter
+    /// <inheritdoc cref="BaseCountToBoolConverter"/>
+    internal sealed class CountToBoolConverter : BaseCountToBoolConverter, IValueConverter
     {
         /// <inheritdoc/>
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public object? Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is not int numValue)
-                return false;
-
-            return numValue > 0;
+            return TryConvert(value, targetType, parameter);
         }
 
         /// <inheritdoc/>
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        public object? ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return TryConvertBack(value, targetType, parameter);
         }
     }
 }

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.WebDav.AppModels
 {
-    /// <inheritdoc cref="FileSystemOptions"/>
-    public sealed class WebDavOptions : FileSystemOptions
+    /// <inheritdoc cref="VirtualFileSystemOptions"/>
+    public sealed class WebDavOptions : VirtualFileSystemOptions
     {
         private int _port = 4949;
 
@@ -47,6 +47,8 @@ namespace SecureFolderFS.Core.WebDav.AppModels
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+                IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
+                RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
 
                 // WebDav specific
                 Protocol = (string?)options.Get(nameof(Protocol)) ?? "http",

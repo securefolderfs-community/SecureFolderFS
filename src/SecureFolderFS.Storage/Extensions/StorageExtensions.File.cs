@@ -1,7 +1,6 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.StorageProperties;
 using System;
 using System.IO;
 using System.Text;
@@ -22,7 +21,7 @@ namespace SecureFolderFS.Storage.Extensions
         public static async Task CopyContentsToAsync(this IFile source, IFile destination, CancellationToken cancellationToken = default)
         {
             await using var sourceStream = await source.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            await using var destinationStream = await destination.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await using var destinationStream = await destination.OpenStreamAsync(FileAccess.Write, cancellationToken);
             await sourceStream.CopyToAsync(destinationStream, cancellationToken);
         }
 
@@ -75,18 +74,20 @@ namespace SecureFolderFS.Storage.Extensions
             }
         }
 
-        /// <returns>Value is <see cref="IResult"/> depending on whether the stream was successfully opened on the file.</returns>
-        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
-        public static async Task<IResult<Stream?>> OpenStreamWithResultAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)
+        public static async Task<long> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                return Result<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
-            }
-            catch (Exception ex)
-            {
-                return Result<Stream?>.Failure(ex);
-            }
+            if (file is not IStorableProperties storableProperties)
+                return 0L;
+
+            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
+            if (properties is not ISizeProperties sizeProperties)
+                return 0L;
+
+            var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken).ConfigureAwait(false);
+            if (sizeProperty is null)
+                return 0L;
+
+            return sizeProperty.Value;
         }
     }
 }

@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Maui.UserControls.Options;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -13,13 +14,13 @@ namespace SecureFolderFS.Maui.Popups
         {
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
                 return Shared.Models.Result.Failure(null);
-            
+
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
             return Shared.Models.Result.Success;
         }
@@ -29,69 +30,76 @@ namespace SecureFolderFS.Maui.Popups
         {
             ViewModel = (CredentialsOverlayViewModel)viewable;
         }
-        
+
         /// <inheritdoc/>
         public Task HideAsync()
         {
             return CloseAsync();
         }
-        
-        private void TableRoot_Loaded(object? sender, EventArgs e)
+
+        private void AvailableOptionsPanel_Loaded(object? sender, EventArgs e)
         {
-            if (ViewModel?.SelectionViewModel is not { } selectionViewModel || sender is not TableView tableView)
+            if (ViewModel?.SelectionViewModel is not { } selectionViewModel || sender is not Layout layout)
                 return;
-            
-            // Init "Modify existing" section
+
+            // Add "Modify existing" section
             if (selectionViewModel.ConfiguredViewModel is not null)
             {
-                var modifyExistingSection = new TableSection()
+                var itemsPanel = new VerticalStackLayout();
+                var container = new OptionsContainer()
                 {
-                    Title = "ModifyExisting".ToLocalized()
+                    Title = "ModifyExisting".ToLocalized(),
+                    InnerContent = itemsPanel
                 };
-                
+
                 // Modify existing
-                modifyExistingSection.Add(new TextCell()
+                itemsPanel.Children.Add(new OptionsControl()
                 {
-                    Text = selectionViewModel.ConfiguredViewModel.Title,
-                    Detail = "ChangeCurrentAuthentication".ToLocalized(),
+                    Title = selectionViewModel.ConfiguredViewModel.Title,
                     Command = selectionViewModel.ItemSelectedCommand
                 });
-                
+
                 // Remove credentials
                 if (selectionViewModel.CanRemoveCredentials)
-                    modifyExistingSection.Add(new TextCell()
+                    itemsPanel.Children.Add(new OptionsControl()
                     {
-                        Text = "RemoveAuthentication".ToLocalized(),
-                        Detail = "RemoveAuthenticationDescription".ToLocalized(),
+                        Title = "RemoveAuthentication".ToLocalized(),
                         Command = selectionViewModel.RemoveCredentialsCommand
                     });
-                
-                tableView.Root.Add(modifyExistingSection);
+
+                if (itemsPanel.Children.LastOrDefault() is OptionsControl optionsControl)
+                    optionsControl.IsSeparatorVisible = false;
+
+                layout.Children.Insert(0, container);
             }
-            
-            // Init "All options" section
-            var allOptionsSection = tableView.Root.Last();
-            
+
+            // Add "All options" section
+            var allOptionsSection = (layout.Children.Last() as OptionsContainer)?.InnerContent as Layout;
+            if (allOptionsSection is null)
+                return;
+
             // Add items to the options section
             // Note: We could hook up CollectionChanged event and listen for item
             //      changes, however, it'd be inefficient and unnecessary
             foreach (var item in selectionViewModel.AuthenticationOptions)
             {
-                allOptionsSection.Add(new TextCell()
+                allOptionsSection.Add(new OptionsControl()
                 {
-                    Text = item.Title,
-                    Detail = item.Description,
+                    Title = item.Title,
                     Command = selectionViewModel.ItemSelectedCommand,
                     CommandParameter = item
                 });
             }
+
+            if (allOptionsSection.LastOrDefault() is OptionsControl optionsControl2)
+                optionsControl2.IsSeparatorVisible = false;
         }
 
         private async void ResetViewButton_Click(object? sender, EventArgs e)
         {
             if (ViewModel?.SelectedViewModel is not CredentialsResetViewModel credentialsResetViewModel)
                 return;
-            
+
             try
             {
                 await credentialsResetViewModel.ConfirmAsync(default);
@@ -103,7 +111,7 @@ namespace SecureFolderFS.Maui.Popups
                 _ = ex;
             }    
         }
-        
+
         private async void ConfirmationViewButton_Click(object? sender, EventArgs e)
         {
             if (ViewModel?.SelectedViewModel is not CredentialsConfirmationViewModel credentialsConfirmation)
@@ -120,7 +128,7 @@ namespace SecureFolderFS.Maui.Popups
                 _ = ex;
             }
         }
-        
+
         public CredentialsOverlayViewModel? ViewModel
         {
             get => (CredentialsOverlayViewModel?)GetValue(ViewModelProperty);

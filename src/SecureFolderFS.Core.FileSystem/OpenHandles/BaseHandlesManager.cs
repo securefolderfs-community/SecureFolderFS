@@ -18,10 +18,10 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         protected readonly object handlesLock = new();
         protected readonly StreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
-        protected readonly FileSystemOptions fileSystemOptions;
+        protected readonly VirtualFileSystemOptions fileSystemOptions;
         protected readonly Dictionary<ulong, IDisposable> handles;
 
-        protected BaseHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+        protected BaseHandlesManager(StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
         {
             this.streamsAccess = streamsAccess;
             this.fileSystemOptions = fileSystemOptions;
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             disposed = true;
             lock (handlesLock)
             {
-                handles.Values.DisposeElements();
+                handles.Values.DisposeAll();
                 handles.Clear();
             }
         }
@@ -105,8 +105,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ulong ThreadSafeIncrement()
             {
-                Interlocked.Increment(ref _handleCounter);
-                return _handleCounter;
+                return Interlocked.Increment(ref _handleCounter);
             }
         }
     }

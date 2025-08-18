@@ -30,11 +30,8 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">28.0</SupportedOSPlatformVersion>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
@@ -42,10 +39,59 @@
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
+  <Choose>
+    <When Condition="'$(TargetFramework)'=='net9.0-android'">
+      <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon ForegroundScale="0.6" Resize="True" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
+      </ItemGroup>
 
+      <ItemGroup>
+        <!-- Exclude platform spcific code -->
+        <MauiXaml Remove="Platforms\iOS\*\*" />
+        <Compile Remove="Platforms\iOS\*\*" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <!-- Include pdf.js -->
+        <AndroidAsset Include="Platforms\Android\Assets\pdfjs53\**\*" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <!-- Packages -->
+        <PackageReference Include="VideoLAN.LibVLC.Android" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)'=='net9.0-ios'">
+      <!-- Entitlements -->
+      <PropertyGroup>
+        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+      </PropertyGroup>
+      <ItemGroup>
+        <None Include="Platforms/iOS/Info.plist" />
+        <None Include="Platforms/iOS/Entitlements.plist" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <!-- Exclude platform spcific code -->
+        <MauiXaml Remove="Platforms\Android\*\*" />
+        <Compile Remove="Platforms\Android\*\*" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <!-- Packages -->
+        <PackageReference Include="VideoLAN.LibVLC.iOS" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
     <!-- Splash Screen -->
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFFFFF" BaseSize="128,128" />
 
@@ -71,15 +117,17 @@
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
     <PackageReference Include="IconPacks.Material" />
-    <PackageReference Include="Material.Components.Maui" />
+    <PackageReference Include="LibVLCSharp.MAUI" />
     <PackageReference Include="Microsoft.Maui.Controls" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
     <PackageReference Include="Microsoft.Maui.Core" />
     <PackageReference Include="Microsoft.Maui.Essentials" />
-    <PackageReference Include="The49.Maui.BottomSheet" />
+    <PackageReference Include="Plugin.Maui.BottomSheet" />
+    <PackageReference Include="SkiaSharp" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>
@@ -100,7 +148,7 @@
     <Compile Update="Views\Modals\Wizard\SummaryWizardPage.xaml.cs">
       <DependentUpon>SummaryWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Modals\Wizard\LocationWizardPage.xaml.cs">
+    <Compile Update="Views\Modals\Wizard\PickerSourceWizardPage.xaml.cs">
       <DependentUpon>LocationWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Vault\OverviewPage.xaml.cs">
@@ -108,6 +156,18 @@
     </Compile>
     <Compile Update="ServiceImplementation\MauiClipboardService.cs">
       <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
+    <Compile Update="Views\Modals\Vault\FilePreviewModalPage.xaml.cs">
+      <DependentUpon>FilePreviewModalPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Modals\Vault\RecycleBinModalPage.xaml.cs">
+      <DependentUpon>RecycleBinPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Popups\PropertiesPopup.xaml.cs">
+      <DependentUpon>PropertiesPopup.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
@@ -139,7 +199,7 @@
     <MauiXaml Update="Views\Modals\Wizard\SummaryWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Views\Modals\Wizard\LocationWizardPage.xaml">
+    <MauiXaml Update="Views\Modals\Wizard\PickerSourceWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\Modals\Wizard\MainWizardPage.xaml">
@@ -150,6 +210,16 @@
     </MauiXaml>
     <MauiXaml Update="Views\Vault\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\Vault\FilePreviewModalPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\Vault\RecycleBinModalPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Popups\PropertiesPopup.xaml">
+      <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>
 

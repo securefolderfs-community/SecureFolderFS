@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
     internal sealed class MauiNavigationService : BaseNavigationService
     {
         public int IndexInNavigation { get; private set; }
-        
+
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(IViewDesignation? target, NavigationType navigationType)
         {
@@ -22,21 +22,21 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 {
                     if (!await Navigator.GoBackAsync())
                         return false;
-                        
+
                     IndexInNavigation--;
                     CurrentView = Views[IndexInNavigation];
-                    
+
                     return true;
                 }
-                
+
                 case NavigationType.Forward:
                 {
                     if (!await Navigator.GoForwardAsync())
                         return false;
-                        
+
                     IndexInNavigation++;
                     CurrentView = Views[IndexInNavigation];
-                    
+
                     return true;
                 }
 

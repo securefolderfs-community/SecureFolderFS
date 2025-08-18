@@ -1,0 +1,83 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Browser.TransferControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    x:Name="ThisControl">
+
+    <Grid x:Name="RootPanel" IsVisible="False">
+        <Grid.Shadow>
+            <Shadow
+                Brush="{StaticResource CardFillPrimaryDarkColor}"
+                Opacity="0.4"
+                Radius="5" />
+        </Grid.Shadow>
+
+        <Border
+            Margin="16"
+            Padding="16,12"
+            x:DataType="local:TransferControl"
+            Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
+            BindingContext="{x:Reference ThisControl}"
+            HeightRequest="72">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                    <ActivityIndicator
+                        HeightRequest="32"
+                        IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                        IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                        VerticalOptions="Center"
+                        WidthRequest="32" />
+                    <Label
+                        FontSize="18"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button
+                                mi:MauiIcon.Value="{mi_material:Material Icon=Close}"
+                                Command="{Binding CancelCommand, Mode=OneWay}"
+                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                            <Button
+                                Command="{Binding PrimaryCommand, Mode=OneWay}"
+                                IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                        </HorizontalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=Xmark}"
+                                Command="{Binding CancelCommand, Mode=OneWay}"
+                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
+                                Style="{StaticResource TransparentButtonStyle}" />
+                            <Button
+                                Padding="8"
+                                Command="{Binding PrimaryCommand, Mode=OneWay}"
+                                IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                        </HorizontalStackLayout>
+                    </On>
+                </OnPlatform>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentView>

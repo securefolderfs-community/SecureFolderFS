@@ -1,0 +1,160 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.CommandBarControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <LinearGradientBrush x:Key="BarGradient" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+            <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+        </LinearGradientBrush>
+    </ContentView.Resources>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Border
+            x:Name="TopBorder"
+            Grid.Row="0"
+            Background="{OnPlatform Android={StaticResource BarGradient}}"
+            HeightRequest="{OnPlatform Android=150,
+                                       iOS=48}"
+            StrokeThickness="0"
+            VerticalOptions="Start"
+            ZIndex="5">
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <Grid
+                        Padding="16,0"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        ColumnSpacing="16"
+                        HeightRequest="75"
+                        VerticalOptions="Start">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Close Button  -->
+                        <Button
+                            Grid.Column="0"
+                            Padding="12"
+                            mi:MauiIcon.Value="{mi_material:Material Close,
+                                                                     IconSize=20}"
+                            Clicked="Close_Clicked"
+                            Style="{StaticResource TransparentButtonStyle}"
+                            VerticalOptions="Center" />
+
+                        <!--  Title  -->
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="Start"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
+
+                        <!--  Quick Options  -->
+                        <HorizontalStackLayout Grid.Column="2">
+                            <Button
+                                Padding="12"
+                                mi:MauiIcon.Value="{mi_material:Material Share,
+                                                                         IconSize=20}"
+                                Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="12"
+                                mi:MauiIcon.Value="{mi_material:Material InfoOutline,
+                                                                         IconSize=20}"
+                                Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </On>
+                <On Platform="iOS">
+                    <Grid
+                        Padding="4,0"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        HeightRequest="48"
+                        VerticalOptions="Start">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Quick Options  -->
+                        <HorizontalStackLayout Grid.Column="1">
+                            <Button
+                                Padding="12"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino SquareArrowUp,
+                                                                           IconSize=24,
+                                                                           IconColor='#007bff'}"
+                                Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource NoBackgroundButtonStyle}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="12"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
+                                                                           IconSize=24,
+                                                                           IconColor='#007bff'}"
+                                Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                Style="{StaticResource NoBackgroundButtonStyle}"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="Center"
+                            LineBreakMode="TailTruncation"
+                            MaximumWidthRequest="180"
+                            Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
+
+                        <Button
+                            Grid.Column="1"
+                            Clicked="Close_Clicked"
+                            FontAttributes="Bold"
+                            FontSize="17"
+                            HorizontalOptions="End"
+                            Style="{StaticResource NoBackgroundButtonStyle}"
+                            Text="{l:ResourceString Rid=Done}"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </On>
+            </OnPlatform>
+        </Border>
+
+        <ContentView
+            x:Name="MainContent"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
+            HorizontalOptions="Fill"
+            Loaded="MainContent_Loaded"
+            VerticalOptions="Fill" />
+    </Grid>
+</ContentView>

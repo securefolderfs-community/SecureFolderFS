@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
         }
 
-        public async Task WriteAuthenticationAsync(string fileName, VaultPasskeyDataModel? authDataModel, CancellationToken cancellationToken)
+        public async Task WriteAuthenticationAsync(string fileName, VaultChallengeDataModel? authDataModel, CancellationToken cancellationToken)
         {
             var authFile = authDataModel is null ? null : _vaultFolder switch
             {

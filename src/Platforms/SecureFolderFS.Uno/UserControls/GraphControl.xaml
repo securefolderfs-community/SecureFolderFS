@@ -5,13 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     x:Name="Graph"
     mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-    </UserControl.Resources>
 
     <Button
         Height="232"

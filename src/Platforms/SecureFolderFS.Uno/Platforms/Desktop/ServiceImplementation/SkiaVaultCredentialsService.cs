@@ -7,6 +7,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
 
@@ -19,9 +20,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
+            var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
-            foreach (var item in authenticationMethods)
+            foreach (var item in authenticationMethod.Methods)
             {
                 yield return item switch
                 {

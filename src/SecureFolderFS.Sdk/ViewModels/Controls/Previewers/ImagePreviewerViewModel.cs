@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -12,34 +13,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class ImagePreviewerViewModel : BasePreviewerViewModel<IImage>, IDisposable
+    public sealed partial class ImagePreviewerViewModel : FilePreviewerViewModel, IDisposable
     {
-        private readonly IFile? _file;
-        
-        public ImagePreviewerViewModel(IFile file)
-        {
-            ServiceProvider = DI.Default;
-            _file = file;
-            // We do not want to set the Title property for an image
-        }
+        [ObservableProperty] private IImage? _Image;
 
-        public ImagePreviewerViewModel(IImage image)
+        public ImagePreviewerViewModel(IFile file)
+            : base(file)
         {
             ServiceProvider = DI.Default;
-            Source = image;
+            Title = file.Name;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (_file is not null)
-                Source = await MediaService.ReadImageFileAsync(_file, cancellationToken);
+            Image?.Dispose();
+            Image = await MediaService.ReadImageFileAsync(Inner, cancellationToken);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Source?.Dispose();
+            Image?.Dispose();
         }
     }
 }

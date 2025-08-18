@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await VaultListViewModel.InitAsync(cancellationToken);
             await _systemMonitorModel.InitAsync(cancellationToken);
         }
-        
+
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
@@ -63,9 +63,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
                     NavigationService.Views.Remove(viewModel);
                     (viewModel as IDisposable)?.Dispose();
                     break;
-                
+
                 case NotifyCollectionChangedAction.Reset:
-                    NavigationService.Views.DisposeElements();
+                    NavigationService.Views.DisposeAll();
                     NavigationService.Views.Clear();
                     break;
             }

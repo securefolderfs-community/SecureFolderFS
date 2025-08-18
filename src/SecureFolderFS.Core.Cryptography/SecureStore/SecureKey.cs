@@ -13,6 +13,11 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             Key = new byte[size];
         }
 
+        private SecureKey(byte[] key)
+        {
+            Key = key;
+        }
+
         /// <inheritdoc/>
         public override SecretKey CreateCopy()
         {
@@ -26,6 +31,15 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         public override void Dispose()
         {
             Array.Clear(Key);
+        }
+
+        /// <summary>
+        /// Takes the ownership of the provided key and manages its lifetime.
+        /// </summary>
+        /// <param name="key">The key to import.</param>
+        public static SecretKey TakeOwnership(byte[] key)
+        {
+            return new SecureKey(key);
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.UserControls
     public sealed partial class BackButtonTitleControl : UserControl
     {
         private bool _isBackShown;
-        
+
         public event RoutedEventHandler Click;
 
         public BackButtonTitleControl()

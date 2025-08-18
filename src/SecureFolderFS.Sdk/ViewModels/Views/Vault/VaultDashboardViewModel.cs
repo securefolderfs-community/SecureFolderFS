@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultDashboardViewModel : BaseDesignationViewModel, IRecipient<VaultLockedMessage>, IUnlockedViewContext, IDisposable
     {
         public INavigationService VaultNavigation { get; }
-        
+
         public INavigationService DashboardNavigation { get; }
 
         /// <inheritdoc/>
@@ -48,10 +48,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (DashboardNavigation.CurrentView is not VaultOverviewViewModel)
                 return;
 
-            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+            if (e.PropertyName != nameof(VaultViewModel.Title))
                 return;
 
-            Title = VaultViewModel.VaultName;
+            Title = VaultViewModel.Title;
         }
 
         [RelayCommand]

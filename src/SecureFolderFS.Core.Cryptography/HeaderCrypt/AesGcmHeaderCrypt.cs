@@ -15,8 +15,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderPlaintextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public AesGcmHeaderCrypt(SecretKey encKey, SecretKey macKey)
-            : base(encKey, macKey)
+        public AesGcmHeaderCrypt(KeyPair keyPair)
+            : base(keyPair)
         {
         }
 
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Encrypt
             AesGcm128.Encrypt(
                 plaintextHeader.GetHeaderContentKey(),
-                encKey,
+                DekKey,
                 plaintextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Decrypt
             return AesGcm128.TryDecrypt(
                 ciphertextHeader.GetHeaderContentKey(),
-                encKey,
+                DekKey,
                 ciphertextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
                 plaintextHeader.Slice(HEADER_NONCE_SIZE),

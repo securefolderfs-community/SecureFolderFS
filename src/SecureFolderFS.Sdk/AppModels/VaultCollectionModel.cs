@@ -1,4 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
@@ -7,18 +13,11 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Storage.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    [Inject<IVaultPersistenceService>, Inject<IStorageService>, Inject<IApplicationService>]
+    [Inject<IVaultPersistenceService>, Inject<IStorageService>, Inject<IApplicationService>, Inject<IAccountService>, Inject<IPropertyStoreService>]
     public sealed partial class VaultCollectionModel : Collection<IVaultModel>, IVaultCollectionModel
     {
         private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
@@ -36,31 +35,65 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Move(int oldIndex, int newIndex)
         {
+            if (VaultConfigurations.PersistedVaults is null)
+                return;
+
             var item = base[oldIndex];
             base.RemoveItem(oldIndex);
             base.InsertItem(newIndex, item);
+
+            // Also update the backing store
+            // Note, that we don't need to update the order for VaultWidgets
+            var itemConfiguration = VaultConfigurations.PersistedVaults[oldIndex];
+            VaultConfigurations.PersistedVaults.RemoveAt(oldIndex);
+            VaultConfigurations.PersistedVaults.Insert(newIndex, itemConfiguration);
 
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Move, item, oldIndex, newIndex));
         }
 
         /// <inheritdoc/>
-        public async Task LoadAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
+            await Task.WhenAll(VaultConfigurations.InitAsync(cancellationToken), VaultWidgets.InitAsync(cancellationToken));
 
             // Clear previous vaults
             Items.Clear();
 
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            foreach (var item in VaultConfigurations.SavedVaults)
+            VaultConfigurations.PersistedVaults ??= new List<VaultDataModel>();
+            foreach (var item in VaultConfigurations.PersistedVaults)
             {
                 if (item.PersistableId is null)
                     continue;
 
                 try
                 {
-                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
-                    var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
+                    IVaultModel? vaultModel = null;
+                    switch (item.StorageSource)
+                    {
+                        case LocalStorageSourceDataModel:
+                        {
+                            var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
+                            vaultModel = new VaultModel(folder, item);
+
+                            break;
+                        }
+
+                        case AccountSourceDataModel { DataSourceType: { } dataSource, AccountId: { } accountId }:
+                        {
+                            await foreach (var account in AccountService.GetAccountsAsync(dataSource, PropertyStoreService.SecurePropertyStore, cancellationToken))
+                            {
+                                if (account.AccountId != accountId)
+                                    continue;
+
+                                vaultModel = new VaultModel(account, item);
+                                break;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (vaultModel is null)
+                        continue;
 
                     Items.Add(vaultModel);
                     CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
@@ -82,9 +115,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         protected override void ClearItems()
         {
-            if (VaultConfigurations.SavedVaults is not null)
-                VaultConfigurations.SavedVaults.Clear();
-
+            VaultConfigurations.PersistedVaults?.Clear();
             VaultWidgets.Clear();
 
             base.ClearItems();
@@ -94,12 +125,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         protected override void InsertItem(int index, IVaultModel item)
         {
+            ArgumentNullException.ThrowIfNull(item.DataModel.PersistableId);
+
             // Update saved vaults
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate));
+            VaultConfigurations.PersistedVaults ??= new List<VaultDataModel>();
+            VaultConfigurations.PersistedVaults.Insert(index, item.DataModel);
 
             // Add default widgets for vault
-            VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
+            VaultWidgets.SetForVault(item.DataModel.PersistableId, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
                 ApplicationService.IsDesktop
@@ -110,34 +143,34 @@ namespace SecureFolderFS.Sdk.AppModels
             // Add to cache
             base.InsertItem(index, item);
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item, index));
-            WeakReferenceMessenger.Default.Send(new AddVaultMessage(item));
+            WeakReferenceMessenger.Default.Send(new VaultAddedMessage(item));
         }
 
         /// <inheritdoc/>
         protected override void RemoveItem(int index)
         {
             var removedItem = this[index];
+            ArgumentNullException.ThrowIfNull(removedItem.DataModel.PersistableId);
 
             // Remove persisted
-            if (VaultConfigurations.SavedVaults is not null)
-                VaultConfigurations.SavedVaults.RemoveAt(index);
+            VaultConfigurations.PersistedVaults?.RemoveAt(index);
 
             // Remove widget data for that vault
-            VaultWidgets.SetForVault(removedItem.Folder.Id, null);
+            VaultWidgets.SetForVault(removedItem.DataModel.PersistableId, null);
 
             // Remove from cache
             base.RemoveItem(index);
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, removedItem, index));
-            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(removedItem));
+            WeakReferenceMessenger.Default.Send(new VaultRemovedMessage(removedItem));
         }
 
         /// <inheritdoc/>
         protected override void SetItem(int index, IVaultModel item)
         {
-            if (VaultConfigurations.SavedVaults is null)
+            if (VaultConfigurations.PersistedVaults is null)
                 return;
 
-            VaultConfigurations.SavedVaults[index] = new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate);
+            VaultConfigurations.PersistedVaults[index] = item.DataModel;
 
             var oldItem = this[index];
             base.SetItem(index, item);

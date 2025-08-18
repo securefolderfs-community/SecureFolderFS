@@ -1,17 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
@@ -21,7 +20,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     {
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;
-        [ObservableProperty] private string? _VaultName;
 
         /// <summary>
         /// Gets the current vault version.
@@ -36,13 +34,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public MigrationViewModel(IVaultModel vaultModel, int currentVersion)
+        public MigrationViewModel(IFolder vaultFolder, int currentVersion)
         {
             ServiceProvider = DI.Default;
-            _CurrentVersion = $"Version {currentVersion}";
-            _NewVersion = $"Version {VaultService.LatestVaultVersion}";
-            _VaultName = vaultModel.VaultName;
-            VaultFolder = vaultModel.Folder;
+            CurrentVersion = $"Version {currentVersion}";
+            NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            VaultFolder = vaultFolder;
             FormatVersion = currentVersion;
         }
 

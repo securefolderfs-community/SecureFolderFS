@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public ExplanationOverlayViewModel()
         {
             _periodicTimer = new(TimeSpan.FromSeconds(1));
-            PrimaryButtonText = Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS.ToString();
+            PrimaryText = Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS.ToString();
         }
 
         /// <inheritdoc/>
@@ -32,14 +32,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             while (await _periodicTimer.WaitForNextTickAsync(cancellationToken))
             {
                 _elapsedTicks++;
-                PrimaryButtonText = $"{Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS - _elapsedTicks}";
+                PrimaryText = $"{Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS - _elapsedTicks}";
 
 #if !DEBUG // Skip waiting if debugging
                 if (_elapsedTicks >= Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS)
 #endif
                 {
-                    PrimaryButtonText = "Close".ToLocalized();
-                    PrimaryButtonEnabled = true;
+                    PrimaryText = "Close".ToLocalized();
+                    CanContinue = true;
                     _periodicTimer.Dispose();
 
                     break;

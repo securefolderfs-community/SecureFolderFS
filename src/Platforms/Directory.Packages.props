@@ -2,31 +2,29 @@
   <ItemGroup>
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="4.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="4.0.0" />
-    <PackageVersion Include="CommunityToolkit.Maui" Version="9.1.1" />
-    <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
-    <PackageVersion Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="11.2.0" />
+    <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
     <PackageVersion Include="ContextMenuContainer" Version="1.2.3" />
-    <PackageVersion Include="H.NotifyIcon.Uno.WinUI" Version="2.1.4" />
+    <PackageVersion Include="H.NotifyIcon.Uno.WinUI" Version="2.3.0" />
     <PackageVersion Include="IconPacks.Material" Version="1.0.8940.2-build" />
-    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc4.5" />
-    <PackageVersion Include="Material.Components.Maui" Version="0.2.2-preview" />
-    <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
-    <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Maui.Core" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Maui.Essentials" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    <PackageVersion Include="LibVLCSharp.MAUI" Version="3.9.3" />
+    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc5.3" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.90" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.90" />
+    <PackageVersion Include="Microsoft.Maui.Core" Version="9.0.90" />
+    <PackageVersion Include="Microsoft.Maui.Essentials" Version="9.0.90" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-    <PackageVersion Include="Octokit" Version="13.0.1" />
-    <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.9-preview.2.2" />
-    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-    <PackageVersion Include="The49.Maui.BottomSheet" Version="8.0.3" />
+    <PackageVersion Include="Octokit" Version="14.0.0" />
+    <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
+    <PackageVersion Include="Sentry" Version="5.12.0" />
+    <PackageVersion Include="SkiaSharp" Version="3.119.0" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
-    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Animations" Version="7.1.200" />
-    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.203" />
+    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.204" />
     <PackageVersion Include="Uno.Core.Extensions.Logging" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
@@ -35,6 +33,9 @@
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.37" />
     <PackageVersion Include="Uno.WinUI" Version="5.3.90" />
     <PackageVersion Include="Uno.WinUI.Lottie" Version="5.3.90" />
-    <PackageVersion Include="Vanara.PInvoke.ComCtl32" Version="4.0.4" />
+    <PackageVersion Include="Vanara.PInvoke.ComCtl32" Version="4.1.2" />
+    <PackageVersion Include="Vanara.PInvoke.Shell32" Version="4.1.2" />
+    <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.5.3" />
+    <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
   </ItemGroup>
 </Project>

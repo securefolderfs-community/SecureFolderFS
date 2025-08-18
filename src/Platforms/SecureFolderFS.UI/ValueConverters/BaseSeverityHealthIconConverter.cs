@@ -14,13 +14,13 @@ namespace SecureFolderFS.UI.ValueConverters
         /// <inheritdoc/>
         protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
-            if (value is not SeverityType severity)
+            if (value is not Severity severity)
                 return null;
 
             return severity switch
             {
-                SeverityType.Warning => WarningIcon,
-                SeverityType.Critical => CriticalIcon,
+                Severity.Warning => WarningIcon,
+                Severity.Critical => CriticalIcon,
                 _ => SuccessIcon
             };
         }

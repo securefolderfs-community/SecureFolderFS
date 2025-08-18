@@ -1,40 +1,41 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Bindable(true)]
-    public sealed partial class MainWizardViewModel : BaseWizardViewModel
+    public sealed partial class MainWizardViewModel : OverlayViewModel, IStagingView
     {
-        [ObservableProperty] private NewVaultCreationType _CreationType;
+        [ObservableProperty] private NewVaultMode _Mode;
 
         public IVaultCollectionModel VaultCollectionModel { get; }
 
         public MainWizardViewModel(IVaultCollectionModel vaultCollectionModel)
         {
-            VaultCollectionModel = vaultCollectionModel;
             CanCancel = true;
             CanContinue = true;
             Title = "AddNewVault".ToLocalized();
-            CancelText = "Cancel".ToLocalized();
-            ContinueText = "Continue".ToLocalized();
+            PrimaryText = "Continue".ToLocalized();
+            SecondaryText = "Cancel".ToLocalized();
+            VaultCollectionModel = vaultCollectionModel;
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
-        public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
+        public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
         }

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Views.Vault
     public sealed partial class VaultDashboardPage : Page
     {
         private bool _isLoaded;
-        
+
         public VaultDashboardViewModel? ViewModel
         {
             get => DataContext.TryCast<VaultDashboardViewModel>();
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                 ViewModel.DashboardNavigation.ResetNavigation();
                 ViewModel.DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             }
-            
+
             Navigation.Dispose();
             base.OnNavigatingFrom(e);
         }
@@ -63,10 +63,10 @@ namespace SecureFolderFS.Uno.Views.Vault
         {
             if (_isLoaded || ViewModel is null)
                 return;
-            
+
             // Update _isLoaded flag
             _isLoaded = true;
-            
+
             // Attach navigation event
             ViewModel.DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
                         new(ViewModel.VaultNavigation, ViewModel.DashboardNavigation, ViewModel.UnlockedVaultViewModel),
-                        new(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigation, new WidgetsCollectionModel(ViewModel.VaultViewModel.VaultModel.Folder)));
+                        new(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigation, new WidgetsCollectionModel(ViewModel.UnlockedVaultViewModel.VaultFolder)));
 
                     _ = vaultOverviewViewModel.InitAsync();
                     return vaultOverviewViewModel;

@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Storage.Pickers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// A service that interacts with the system file explorer.
     /// </summary>
-    public interface IFileExplorerService
+    public interface IFileExplorerService : IFilePicker, IFolderPicker
     {
         /// <summary>
         /// Tries to open the provided <paramref name="folder"/> in platform's default file explorer.
@@ -28,22 +29,5 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
         Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Awaits the user input and picks single file from the file explorer dialog.
-        /// </summary>
-        /// <param name="filter">The filter to apply when picking files.</param>
-        /// <param name="persist">Determines whether to persist access to the picked item or not.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="IFile"/>; otherwise null.</returns>
-        Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Awaits the user input and picks single folder from the file explorer dialog.
-        /// </summary>
-        /// <param name="persist">Determines whether to persist access to the picked item or not.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="IFolder"/>; otherwise null.</returns>
-        Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default);
     }
 }

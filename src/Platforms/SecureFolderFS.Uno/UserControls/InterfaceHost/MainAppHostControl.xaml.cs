@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,15 +18,13 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
     {
         private bool _isInitialized;
         private bool _isCompactMode; // WINDOWS only
@@ -37,14 +37,14 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         }
 
         /// <inheritdoc/>
-        public void Receive(RemoveVaultMessage message)
+        public void Receive(VaultRemovedMessage message)
         {
             if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
         }
 
         /// <inheritdoc/>
-        public void Receive(AddVaultMessage message)
+        public void Receive(VaultAddedMessage message)
         {
 #if WINDOWS
             if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await SetupNavigationAsync();
             if (ViewModel is null)
                 return;
-            
+
             // Find existing target or create new
             var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
@@ -126,7 +126,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
 
             textBox.Focus(FocusState.Programmatic);
-            textBox.Text = itemViewModel.VaultViewModel.VaultName;
+            textBox.Text = itemViewModel.VaultViewModel.Title;
             textBox.SelectAll();
         }
 
@@ -140,8 +140,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
-            WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
 
             await SetupNavigationAsync();
         }
@@ -154,7 +154,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
@@ -288,5 +288,15 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                     if (s is MainAppHostControl sender)
                         _ = sender.SetupNavigationAsync();
                 }));
+
+        private void NavigationItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+#if HAS_UNO
+            if (sender is not NavigationViewItem navigationViewItem)
+                return;
+
+            navigationViewItem.ContextFlyout.ShowAt(navigationViewItem);
+#endif
+        }
     }
 }

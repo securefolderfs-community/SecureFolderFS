@@ -1,9 +1,8 @@
-﻿using OwlCore.Storage;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -33,12 +32,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="name">The file name to check.</param>
         /// <returns>Returns true if the file name is a part of vault configuration data; otherwise false.</returns>
         bool IsNameReserved(string? name);
-
-        /// <summary>
-        /// Gets all encoding options that are supported by SecureFolderFS.
-        /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of encodings.</returns>
-        IEnumerable<string> GetEncodingOptions();
 
         /// <summary>
         /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.

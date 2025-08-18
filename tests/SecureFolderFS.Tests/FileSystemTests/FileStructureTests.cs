@@ -26,11 +26,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
-            {
-                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
-                return;
-            }
+            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
 
             // Act
             var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;
@@ -48,16 +44,12 @@ namespace SecureFolderFS.Tests.FileSystemTests
         }
 
         [Test]
-        public async Task Create_FolderWith_SubFile_SubFolder_Delete_Folder_ShouldThrow()
+        public async Task Create_FolderWith_SubFile_SubFolder_Delete_BaseFolder_ShouldThrow()
         {
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
-            {
-                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
-                return;
-            }
+            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
 
             // Act
             var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;

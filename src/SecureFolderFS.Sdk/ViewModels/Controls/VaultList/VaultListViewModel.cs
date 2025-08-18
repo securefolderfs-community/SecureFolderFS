@@ -18,6 +18,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
@@ -48,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
-                    AddVault(vaultModel);
+                    AddVault(new(vaultModel));
                     break;
 
                 case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
@@ -74,14 +76,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             Items.Clear();
             foreach (var item in _vaultCollectionModel)
-                AddVault(item);
+                AddVault(new(item));
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
+                SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId?.Equals(SettingsService.AppSettings.LastVaultFolderId) ?? false);
 
             SelectedItem ??= Items.FirstOrDefault();
             HasVaults = !Items.IsEmpty();
-            
+
             return Task.CompletedTask;
         }
 
@@ -100,7 +102,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (folder is not null)
             {
                 // Check for duplicates
-                var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == folder.Id);
+                var dataModel = new VaultDataModel(folder.GetPersistableId(), folder.Name, null, new LocalStorageSourceDataModel());
+                var isDuplicate = _vaultCollectionModel.Any(x => dataModel.Equals(x.DataModel));
                 if (isDuplicate)
                     return;
 
@@ -110,7 +113,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     return;
 
                 // Try to save the new vault
-                _vaultCollectionModel.Add(new VaultModel(folder));
+                _vaultCollectionModel.Add(new VaultModel(folder, dataModel));
                 await _vaultCollectionModel.TrySaveAsync(cancellationToken);
             }
             else
@@ -120,12 +123,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
         }
 
-        private void AddVault(IVaultModel vaultModel)
+        private void AddVault(VaultViewModel vaultViewModel)
         {
-            var listItem = new VaultListItemViewModel(new(vaultModel), _vaultCollectionModel);
-            _ = listItem.InitAsync();
+            var itemViewModel = new VaultListItemViewModel(vaultViewModel, _vaultCollectionModel);
+            _ = itemViewModel.InitAsync();
 
-            Items.Add(listItem);
+            Items.Add(itemViewModel);
             HasVaults = true;
         }
 
@@ -137,9 +140,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             try
             {
+                itemToRemove.VaultViewModel.Dispose();
                 Items.Remove(itemToRemove);
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
                 // This happens rarely but the vault is actually removed
             }
@@ -151,7 +155,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.Folder.Id;
+                SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.DataModel.PersistableId;
         }
     }
 }

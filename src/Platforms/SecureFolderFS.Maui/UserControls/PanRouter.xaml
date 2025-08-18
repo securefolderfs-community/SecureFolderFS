@@ -1,0 +1,21 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.PanRouter"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:am="clr-namespace:SecureFolderFS.Maui.AppModels"
+    x:Name="ThisControl">
+
+    <Grid>
+        <ContentView Content="{Binding RouterContent, Mode=OneWay, Source={x:Reference ThisControl}}" ZIndex="1" />
+        <Grid
+            Margin="0,0,0,100"
+            BackgroundColor="Transparent"
+            HorizontalOptions="Fill"
+            ZIndex="2">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="GestureRecognizer_Tapped" />
+                <am:CorrectedPanGestureRecognizer PanUpdated="GestureRecognizer_PanUpdated" />
+            </Grid.GestureRecognizers>
+        </Grid>
+    </Grid>
+</ContentView>

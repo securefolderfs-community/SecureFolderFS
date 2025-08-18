@@ -1,12 +1,13 @@
 using System.Web;
-using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Storage;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Services;
 using Android.App;
 using Android.Content;
 using Android.Provider;
+using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Storage;
+using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.Android.Storage;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.Pickers;
 using AndroidUri = Android.Net.Uri;
 using AOSEnvironment = Android.OS.Environment;
 
@@ -16,23 +17,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
-        {
-            // TODO: Try to implement opening in android file explorer
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
-        {
-            var fileSaver = FileSaver.Default;
-            var result = await fileSaver.SaveAsync(suggestedName, dataStream, cancellationToken);
-
-            return result.IsSuccessful;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var intent = new Intent(Intent.ActionOpenDocument)
                 .AddCategory(Intent.CategoryOpenable)
@@ -41,20 +26,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             var pickerIntent = Intent.CreateChooser(intent, "Select file");
 
+            // TODO: Determine if GrantReadUriPermission and GrantWriteUriPermission are needed for access persistence
+
             // FilePicker 0x2AF9
             var result = await StartActivityAsync(pickerIntent, 0x2AF9);
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            var file = new AndroidFile(result, MainActivity.Instance);
-            if (persist)
-                await file.AddBookmarkAsync(cancellationToken);
-
-            return file;
+            return new AndroidFile(result, MainActivity.Instance);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var initialPath = AndroidPathExtensions.GetExternalDirectory();
             if (AOSEnvironment.ExternalStorageDirectory is not null)
@@ -64,7 +47,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var intent = new Intent(Intent.ActionOpenDocumentTree);
 
             intent.PutExtra(DocumentsContract.ExtraInitialUri, initialFolderUri);
-            if (persist)
+            if (offerPersistence)
             {
                 intent.AddFlags(ActivityFlags.GrantReadUriPermission);
                 intent.AddFlags(ActivityFlags.GrantWriteUriPermission);
@@ -75,11 +58,40 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            var folder = new AndroidFolder(result, MainActivity.Instance);
-            if (persist)
-                await folder.AddBookmarkAsync(cancellationToken);
+            return new AndroidFolder(result, MainActivity.Instance);
+        }
 
-            return folder;
+        /// <inheritdoc/>
+        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var context = MainActivity.Instance;
+                if (context is null)
+                    return Task.CompletedTask;
+
+                var intent = new Intent(Intent.ActionView);
+                intent.SetType("*/*");
+                intent.AddCategory(Intent.CategoryDefault);
+                intent.AddFlags(ActivityFlags.NewTask);
+                context.StartActivity(intent);
+
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                return Task.CompletedTask;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
+        {
+            var fileSaver = FileSaver.Default;
+            var result = await fileSaver.SaveAsync(suggestedName, dataStream, cancellationToken);
+
+            return result.IsSuccessful;
         }
 
         private async Task<AndroidUri?> StartActivityAsync(Intent? pickerIntent, int requestCode)

@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Load widgets for vault
-            if (!await WidgetsCollectionModel.TryLoadAsync(cancellationToken))
+            if (!await WidgetsCollectionModel.TryInitAsync(cancellationToken))
                 return;
 
             // Add widgets
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
                     return new GraphsWidgetViewModel(_unlockedVaultViewModel, widgetModel);
-                
+
                 case Constants.Widgets.AGGREGATED_DATA_WIDGET_ID:
                     return new AggregatedDataWidgetViewModel(_unlockedVaultViewModel, widgetModel);
 

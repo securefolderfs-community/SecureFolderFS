@@ -1,0 +1,31 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Options.OptionsContainer"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="ThisControl">
+
+    <Grid RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Label
+            Grid.Row="0"
+            FontAttributes="Bold"
+            FontSize="17"
+            IsVisible="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+            Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+
+        <Border
+            Grid.Row="1"
+            Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+            StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+
+            <ContentView Content="{Binding InnerContent, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        </Border>
+    </Grid>
+</ContentView>

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Core.Dokany
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var dokanyOptions = DokanyOptions.ToOptions(options);
+            var dokanyOptions = DokanyOptions.ToOptions(options.AppendContract(unlockContract));
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, dokanyOptions);
             dokanyOptions.SetupValidators(specifics);
 
@@ -54,8 +54,8 @@ namespace SecureFolderFS.Core.Dokany
             };
 
             if (dokanyOptions.MountPoint is null)
-                dokanyOptions.SetMountPointInternal(PathHelpers.GetFreeMountPath(dokanyOptions.VolumeName));
-            
+                dokanyOptions.DangerousSetMountPoint(PathHelpers.GetFreeMountPath(dokanyOptions.VolumeName));
+
             if (dokanyOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 

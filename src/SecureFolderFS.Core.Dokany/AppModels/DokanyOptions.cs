@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.Dokany.AppModels
 {
-    /// <inheritdoc cref="FileSystemOptions"/>
-    public sealed class DokanyOptions : FileSystemOptions
+    /// <inheritdoc cref="VirtualFileSystemOptions"/>
+    public sealed class DokanyOptions : VirtualFileSystemOptions
     {
         private string? _mountPoint;
 
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Dokany.AppModels
         /// </summary>
         public string? MountPoint { get => _mountPoint; init => _mountPoint = value; }
 
-        internal void SetMountPointInternal(string? value) => _mountPoint = value;
+        internal void DangerousSetMountPoint(string? value) => _mountPoint = value;
 
         public static DokanyOptions ToOptions(IDictionary<string, object> options)
         {
@@ -28,6 +28,8 @@ namespace SecureFolderFS.Core.Dokany.AppModels
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+                IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
+                RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
 
                 // Dokany specific
                 MountPoint = (string?)options.Get(nameof(MountPoint))

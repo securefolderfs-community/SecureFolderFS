@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
@@ -16,6 +17,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
+using Uno.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,7 +48,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         {
             InitializeComponent();
             Context = SynchronizationContext.Current;
-            ViewModel = new();
+            ViewModel = new(new VaultCollectionModel());
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
@@ -101,8 +103,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 #if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
 #endif
-
-            global::Uno.UI.WindowExtensions.EnableHotReload(window);
+            window.EnableHotReload();
             window.Activate();
 #endif
         }

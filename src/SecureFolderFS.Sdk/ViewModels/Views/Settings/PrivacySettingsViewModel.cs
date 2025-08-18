@@ -47,11 +47,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             if (e.PropertyName == nameof(IUserSettings.IsTelemetryEnabled) && IsTelemetryEnabled)
             {
                 await TelemetryService.EnableTelemetryAsync();
-                TelemetryService.TrackEvent("Telemetry manually enabled");
+                TelemetryService.TrackMessage("Telemetry manually enabled");
             }
             else
             {
-                TelemetryService.TrackEvent("Telemetry manually disabled");
+                TelemetryService.TrackMessage("Telemetry manually disabled");
                 await TelemetryService.DisableTelemetryAsync();
             }
         }

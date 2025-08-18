@@ -8,6 +8,7 @@ namespace SecureFolderFS.Sdk.DataModels
     /// <param name="Name">Gets the title of the release.</param>
     /// <param name="Description">Gets the description of changes.</param>
     /// <param name="Version">Gets the version of the app.</param>
+    [Serializable]
     public sealed record ChangelogDataModel(string Name, string Description, Version Version)
     {
         /// <inheritdoc/>

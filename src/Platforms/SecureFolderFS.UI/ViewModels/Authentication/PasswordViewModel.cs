@@ -21,7 +21,10 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         public virtual IKey Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+        public sealed override bool CanComplement { get; } = false;
+
+        /// <inheritdoc/>
+        public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.FirstStageOnly;
 
         protected PasswordViewModel()
             : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
