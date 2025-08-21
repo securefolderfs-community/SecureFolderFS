@@ -82,6 +82,16 @@ namespace SecureFolderFS.Maui.UserControls.Common
             _container.TranslationX = 0;
         }
 
+        public void FitToParent(ContentView? parent = null)
+        {
+            parent ??= Parent as ContentView;
+            var height = parent?.Height ?? 300d;
+            var width = parent?.Width ?? 400d;
+
+            WidthRequest = width;
+            HeightRequest = height;
+        }
+
         private async void Recognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             switch (e.StatusType)

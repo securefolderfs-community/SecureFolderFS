@@ -64,7 +64,7 @@ namespace SecureFolderFS.Maui.Views
             await ItemTappedAsync(itemViewModel, view);
         }
 
-        private void MainPage_Loaded(object? sender, EventArgs e)
+        private async void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
@@ -92,6 +92,11 @@ namespace SecureFolderFS.Maui.Views
                 Command = ViewModel.OpenSettingsCommand,
                 Order = ToolbarItemOrder.Secondary
             });
+        }
+
+        private async void Button_OnClicked(object? sender, EventArgs e)
+        {
+            await Navigation.PushModalAsync(new IntroductionPage(), true);
         }
     }
 }

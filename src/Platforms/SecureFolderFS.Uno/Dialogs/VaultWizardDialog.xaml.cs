@@ -3,14 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
@@ -110,11 +115,11 @@ namespace SecureFolderFS.Uno.Dialogs
                     if (viewModel is null)
                         return;
 
-                    var folder = await viewModel.GetFolderAsync();
-                    if (folder is null)
+                    var vaultModel = await FromDataSourceAsync(viewModel);
+                    if (vaultModel is null)
                         return;
 
-                    nextViewModel = new SummaryWizardViewModel(folder, ViewModel!.VaultCollectionModel);
+                    nextViewModel = new SummaryWizardViewModel(vaultModel, ViewModel!.VaultCollectionModel);
                     break;
                 }
 
@@ -125,11 +130,11 @@ namespace SecureFolderFS.Uno.Dialogs
                     if (viewModel is null)
                         return;
 
-                    var folder = await viewModel.GetFolderAsync();
-                    if (folder is not IModifiableFolder modifiableFolder)
+                    var vaultModel = await FromDataSourceAsync(viewModel);
+                    if (vaultModel is null)
                         return;
 
-                    nextViewModel = new CredentialsWizardViewModel(modifiableFolder);
+                    nextViewModel = new CredentialsWizardViewModel(vaultModel);
                     break;
                 }
 
@@ -139,14 +144,14 @@ namespace SecureFolderFS.Uno.Dialogs
                     if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
                         throw new ArgumentException(nameof(CredentialsResult));
 
-                    nextViewModel = new RecoveryWizardViewModel(viewModel.Folder, credentialsResult);
+                    nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
                     break;
                 }
 
                 // Recovery -> Summary
                 case RecoveryWizardViewModel viewModel:
                 {
-                    nextViewModel = new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel);
+                    nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, ViewModel!.VaultCollectionModel);
                     break;
                 }
             }
@@ -158,6 +163,25 @@ namespace SecureFolderFS.Uno.Dialogs
             }
 
             await NavigateAsync(nextViewModel);
+        }
+        
+        private async Task<IVaultModel?> FromDataSourceAsync(BaseDataSourceWizardViewModel dataSource)
+        {
+            var folder = await dataSource.GetFolderAsync();
+            if (folder is null)
+                return null;
+
+            var storageSource = dataSource.ToStorageSource();
+            if (storageSource is null)
+                return null;
+
+            var dataModel = new VaultDataModel(folder.GetPersistableId(), folder.Name, null, storageSource);
+            return dataSource switch
+            {
+                PickerSourceWizardViewModel => new VaultModel(folder, dataModel),
+                AccountSourceWizardViewModel { SelectedAccount: { } accountViewModel } => new VaultModel(accountViewModel, dataModel, folder),
+                _ => null
+            };
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)

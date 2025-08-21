@@ -20,9 +20,9 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool ShouldShowVaultTutorial { get; set; }
 
         /// <summary>
-        /// Gets or sets the value that determines whether Out of Box Experience was shown.
+        /// Gets or sets the value that determines whether Out of Box Experience (OOBE) was shown.
         /// </summary>
-        bool IsIntroduced { get; set; }
+        bool WasIntroduced { get; set; }
 
         /// <summary>
         /// Gets or sets the ID associated with vault folder.

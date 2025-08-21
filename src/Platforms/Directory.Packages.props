@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="4.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="4.0.0" />
+    <PackageVersion Include="AcrylicView.Maui" Version="2.1.3" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="11.2.0" />
     <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.250402" />

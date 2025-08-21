@@ -1,0 +1,85 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.IntroductionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
+    xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common">
+
+    <ContentPage.Resources>
+        <Grid
+            x:Key="Slide0"
+            Padding="16,0"
+            RowDefinitions="*,Auto">
+            <VerticalStackLayout
+                Grid.Row="0"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <Image HeightRequest="300" Source="{AppThemeBinding Light='showcase_apple_light.png', Dark='showcase_apple_dark.png'}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="12">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="32"
+                    Text="Welcome to SecureFolderFS!" />
+                <Label Opacity="0.7" Text="To get you started, this presentation will guide you through the most notable features of the app." />
+            </VerticalStackLayout>
+        </Grid>
+        <Grid x:Key="Slide1">
+            <Label Text="Slide1" />
+        </Grid>
+        <Grid x:Key="Slide2">
+            <Label Text="Slide2" />
+        </Grid>
+        <Grid x:Key="Slide3">
+            <Label Text="Slide3" />
+        </Grid>
+        <Grid x:Key="Slide4">
+            <Label Text="Slide4" />
+        </Grid>
+        <Grid x:Key="Slide5">
+            <Label Text="Slide5" />
+        </Grid>
+    </ContentPage.Resources>
+
+    <Grid>
+        <!--  Background  -->
+        <Grid Margin="0,-60,0,-35">
+            <Ellipse
+                Margin="0,-100,0,50"
+                Fill="#106bbf"
+                HeightRequest="550"
+                Opacity="0.7"
+                VerticalOptions="Start"
+                WidthRequest="1000" />
+        </Grid>
+
+        <!--  Foreground  -->
+        <av:AcrylicView
+            x:Name="BlurView"
+            Margin="0,-60,0,-35"
+            EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
+                                          Light={av2:EffectStyle Light}}"
+            IsVisible="True">
+            <Grid RowSpacing="48">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ucc:GalleryView
+                    x:Name="GalleryView"
+                    Grid.Row="0"
+                    Loaded="GalleryView_Loaded" />
+                <Button
+                    Grid.Row="1"
+                    Margin="16,0,16,16"
+                    Clicked="Close_Clicked"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Continue}" />
+            </Grid>
+        </av:AcrylicView>
+    </Grid>
+</ContentPage>

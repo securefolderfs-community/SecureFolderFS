@@ -119,6 +119,13 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <Button
+            Grid.Row="0"
+            Clicked="Button_OnClicked"
+            HorizontalOptions="Center"
+            Text="Introduction Screen"
+            VerticalOptions="End" />
+
         <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
