@@ -71,9 +71,7 @@
                     HorizontalOptions="Fill"
                     IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                     Placeholder="{l:ResourceString Rid=WriteHere}"
-                    Text="{Binding Text, Mode=TwoWay}"
-                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                    Text="{Binding Text, Mode=TwoWay}" />
             </ScrollView>
         </DataTemplate>
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
@@ -93,15 +91,11 @@
                     <Label
                         FontSize="20"
                         HorizontalOptions="Center"
-                        Text="{Binding Title, Mode=OneWay}"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                        Text="{Binding Title, Mode=OneWay}" />
                     <Label
                         HorizontalOptions="Center"
                         Opacity="0.8"
-                        Text="{l:ResourceString Rid=NoPreviewAvailable}"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                        Text="{l:ResourceString Rid=NoPreviewAvailable}" />
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </DataTemplate>

@@ -41,12 +41,12 @@
                 FontAttributes="Bold"
                 FontSize="20"
                 Text="{Binding ViewModel.Title, Mode=OneWay}"
-                TextColor="White" />
+                TextColor="#FFFFFF" />
             <Label
                 FontSize="14"
                 Opacity="0.6"
                 Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
-                TextColor="White" />
+                TextColor="#FFFFFF" />
         </VerticalStackLayout>
     </Shell.TitleView>
 

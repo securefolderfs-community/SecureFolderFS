@@ -896,4 +896,7 @@
   <data name="Disconnect" xml:space="preserve">
       <value>Disconnect</value>
   </data>
+  <data name="AuthenticateForCredentials" xml:space="preserve">
+      <value>Authenticate to create credentials</value>
+  </data>
 </root>

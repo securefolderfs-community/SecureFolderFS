@@ -1,0 +1,18 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.IntroductionSlide"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="ThisControl">
+
+    <Grid Padding="16,0" RowDefinitions="*,Auto">
+        <ContentView Grid.Row="0" Content="{Binding Slot, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        <VerticalStackLayout Grid.Row="1" Spacing="12">
+            <Label
+                FontAttributes="Bold"
+                FontSize="32"
+                Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+            <Label Opacity="0.7" Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentView>

@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.UserControls.Common;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Maui.Views
@@ -12,18 +13,28 @@ namespace SecureFolderFS.Maui.Views
             InitializeComponent();
         }
 
+        private void UpdateButtonStyle()
+        {
+            if (_currentIndex >= 3)
+            {
+                Continue.Style = Application.Current?.Resources.Get("AccentButtonStyle") as Style;
+                Continue.Text = "Done".ToLocalized();
+            }
+            else
+            {
+                Continue.Style = Application.Current?.Resources.Get("DefaultButtonStyle") as Style;
+                Continue.Text = "Continue".ToLocalized();
+            }
+        }
+
         private void GalleryView_Loaded(object? sender, EventArgs e)
         {
-            if (sender is not GalleryView galleryView)
-                return;
-            
-            galleryView.FitToParent(BlurView);
-            galleryView.NextRequested += GalleryView_NextRequested;
-            galleryView.PreviousRequested += GalleryView_PreviousRequested;
+            GalleryView.NextRequested += GalleryView_NextRequested;
+            GalleryView.PreviousRequested += GalleryView_PreviousRequested;
 
-            galleryView.Current = Resources.Get("Slide0") as View;
-            galleryView.Next = Resources.Get("Slide1") as View;
-            galleryView.RefreshLayout();
+            GalleryView.Current = Resources.Get("Slide0") as View;
+            GalleryView.Next = Resources.Get("Slide1") as View;
+            GalleryView.RefreshLayout();
         }
 
         private void GalleryView_PreviousRequested(object? sender, EventArgs e)
@@ -34,6 +45,7 @@ namespace SecureFolderFS.Maui.Views
             _currentIndex -= 1;
             galleryView.Previous = Resources.Get($"Slide{_currentIndex - 1}") as View;
             galleryView.RefreshLayout();
+            UpdateButtonStyle();
         }
 
         private void GalleryView_NextRequested(object? sender, EventArgs e)
@@ -44,11 +56,18 @@ namespace SecureFolderFS.Maui.Views
             _currentIndex += 1;
             galleryView.Next = Resources.Get($"Slide{_currentIndex + 1}") as View;
             galleryView.RefreshLayout();
+            UpdateButtonStyle();
         }
         
-        private async void Close_Clicked(object? sender, EventArgs e)
+        private async void Continue_Clicked(object? sender, EventArgs e)
         {
-            await MainPage.Instance!.Navigation.PopAsync();
+            if (_currentIndex >= 3)
+            {
+                await MainPage.Instance!.Navigation.PopAsync();
+                return;
+            }
+
+            await GalleryView.SwipeToNextAsync();
         }
     }
 }

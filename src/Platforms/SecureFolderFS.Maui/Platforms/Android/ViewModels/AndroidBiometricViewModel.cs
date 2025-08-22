@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Security.Cryptography;
 using Android.Hardware.Biometrics;
 using AndroidX.Core.Content;
@@ -14,6 +15,7 @@ using IKey = SecureFolderFS.Shared.ComponentModel.IKey;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {
+    [Bindable(true)]
     public abstract class AndroidBiometricViewModel : AuthenticationViewModel
     {
         private const string KEY_ALIAS_PREFIX = "securefolderfs_biometric_";
@@ -117,7 +119,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             var executor = ContextCompat.GetMainExecutor(MainActivity.Instance!);
             var promptInfo = new BiometricPrompt.Builder(MainActivity.Instance!)
                 .SetTitle("Authenticate".ToLocalized())
-                .SetSubtitle("Authenticate to create and sign challenge")
+                .SetSubtitle("AuthenticateForCredentials".ToLocalized())
                 .SetNegativeButton("Cancel", executor, new DialogOnClickListener((_, _) =>
                 {
                     tcs.TrySetCanceled();

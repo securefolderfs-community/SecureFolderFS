@@ -120,7 +120,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             }
         }
 
-        private async Task SwipeToPreviousAsync()
+        public async Task SwipeToPreviousAsync()
         {
             await _container.TranslateTo(Width, 0, 225U, Easing.CubicOut);
 
@@ -137,7 +137,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             RefreshLayout();
         }
 
-        private async Task SwipeToNextAsync()
+        public async Task SwipeToNextAsync()
         {
             await _container.TranslateTo(-Width, 0, 225U, Easing.CubicOut);
 

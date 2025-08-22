@@ -9,25 +9,25 @@ namespace SecureFolderFS.Maui.ValueConverters
         /// <inheritdoc/>
         protected override object? SuccessIcon { get; } =
 #if IOS
-            ImageSource.FromFile("success_shield.png");
+            ImageSource.FromFile("shield_success.png");
 #else
-            ImageSource.FromFile("success_shield.svg");
+            ImageSource.FromFile("shield_success.svg");
 #endif
 
         /// <inheritdoc/>
         protected override object? WarningIcon { get; } = 
 #if IOS
-            ImageSource.FromFile("warning_shield.png");
+            ImageSource.FromFile("shield_warning.png");
 #else
-            ImageSource.FromFile("warning_shield.svg");
+            ImageSource.FromFile("shield_warning.svg");
 #endif
 
         /// <inheritdoc/>
         protected override object? CriticalIcon { get; } =
 #if IOS
-            ImageSource.FromFile("error_shield.png");
+            ImageSource.FromFile("shield_error.png");
 #else
-            ImageSource.FromFile("error_shield.svg");
+            ImageSource.FromFile("shield_error.svg");
 #endif
 
         /// <inheritdoc/>

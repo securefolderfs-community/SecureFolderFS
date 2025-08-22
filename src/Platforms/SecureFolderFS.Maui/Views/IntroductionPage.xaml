@@ -5,37 +5,90 @@
     xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
     xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common">
 
     <ContentPage.Resources>
-        <Grid
+        <uc:IntroductionSlide
             x:Key="Slide0"
-            Padding="16,0"
-            RowDefinitions="*,Auto">
-            <VerticalStackLayout
-                Grid.Row="0"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
-                <Image HeightRequest="300" Source="{AppThemeBinding Light='showcase_apple_light.png', Dark='showcase_apple_dark.png'}" />
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Grid.Row="1" Spacing="12">
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="32"
-                    Text="Welcome to SecureFolderFS!" />
-                <Label Opacity="0.7" Text="To get you started, this presentation will guide you through the most notable features of the app." />
-            </VerticalStackLayout>
-        </Grid>
-        <Grid x:Key="Slide1">
-            <Label Text="Slide1" />
-        </Grid>
-        <Grid x:Key="Slide2">
-            <Label Text="Slide2" />
-        </Grid>
-        <Grid x:Key="Slide3">
-            <Label Text="Slide3" />
-        </Grid>
+            Title="Welcome to SecureFolderFS!"
+            Subtitle="To get you started, this presentation will guide you through the most notable features of the app.">
+            <uc:IntroductionSlide.Slot>
+                <Image HeightRequest="300" Source="{AppThemeBinding Light='intro_light_apple_devices.png', Dark='intro_dark_apple_devices.png'}" />
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide
+            x:Key="Slide1"
+            Title="You're in control"
+            Subtitle="Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.">
+            <uc:IntroductionSlide.Slot>
+                <ucc:MaskedImage
+                    Margin="0,128,0,0"
+                    Aspect="AspectFit"
+                    HeightRequest="600"
+                    SourceFileName="{AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                     Dark='intro_dark_iphone_dashboard.png'}"
+                    StartPoint="0.5,1"
+                    EndPoint="0.5,0.3">
+                    <ucc:MaskedImage.Stops>
+                        <GradientStop Offset="0.5" Color="Transparent" />
+                        <GradientStop Offset="1" Color="Black" />
+                    </ucc:MaskedImage.Stops>
+                </ucc:MaskedImage>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide
+            x:Key="Slide2"
+            Title="Your data — secure, anywhere"
+            Subtitle="In addition to storing vaults on your device, you can also connect to other cloud storage providers.">
+            <uc:IntroductionSlide.Slot>
+                <Grid
+                    ColumnDefinitions="*,*,*"
+                    ColumnSpacing="16"
+                    HorizontalOptions="Center"
+                    RowDefinitions="Auto,Auto"
+                    RowSpacing="16"
+                    VerticalOptions="Center">
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Source="source_gdrive.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Source="source_network_drive_ftp.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Source="source_onedrive.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Source="source_aws_s3.png" />
+                </Grid>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide x:Key="Slide3" Title="You're good to go!">
+            <uc:IntroductionSlide.Slot>
+                <Grid Margin="0,0,0,64" HorizontalOptions="Center">
+                    <mi:MauiIcon
+                        Icon="{mi_material:Material Check}"
+                        IconColor="{AppThemeBinding Light='#000000',
+                                                    Dark='#FFFFFF'}"
+                        IconSize="96"
+                        OnPlatforms="Android" />
+                    <mi:MauiIcon
+                        Icon="{mi_cupertino:Cupertino Checkmark}"
+                        IconColor="{AppThemeBinding Light='#000000',
+                                                    Dark='#FFFFFF'}"
+                        IconSize="96"
+                        OnPlatforms="iOS" />
+                </Grid>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
         <Grid x:Key="Slide4">
             <Label Text="Slide4" />
         </Grid>
@@ -74,10 +127,10 @@
                     Grid.Row="0"
                     Loaded="GalleryView_Loaded" />
                 <Button
+                    x:Name="Continue"
                     Grid.Row="1"
                     Margin="16,0,16,16"
-                    Clicked="Close_Clicked"
-                    Style="{StaticResource AccentButtonStyle}"
+                    Clicked="Continue_Clicked"
                     Text="{l:ResourceString Rid=Continue}" />
             </Grid>
         </av:AcrylicView>

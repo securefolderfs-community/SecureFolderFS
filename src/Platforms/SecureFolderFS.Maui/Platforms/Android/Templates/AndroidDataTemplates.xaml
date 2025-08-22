@@ -5,7 +5,6 @@
     xmlns:android_vm="clr-namespace:SecureFolderFS.Maui.Platforms.Android.ViewModels"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material">
 
     <!--  Android Biometrics Login Template  -->
@@ -13,18 +12,10 @@
         <ContentView>
             <VerticalStackLayout Spacing="24">
                 <!--  Logo  -->
-                <Grid>
-                    <mi:MauiIcon
-                        HorizontalOptions="Center"
-                        Icon="{mi_material:Material Fingerprint}"
-                        IconSize="60"
-                        OnPlatforms="Android" />
-                    <mi:MauiIcon
-                        HorizontalOptions="Center"
-                        Icon="{mi_cupertino:Cupertino FaceSmiling}"
-                        IconSize="60"
-                        OnPlatforms="iOS" />
-                </Grid>
+                <mi:MauiIcon
+                    HorizontalOptions="Center"
+                    Icon="{mi_material:Material Fingerprint}"
+                    IconSize="60" />
 
                 <!--  Title  -->
                 <Label
@@ -47,16 +38,7 @@
             <VerticalStackLayout Spacing="16">
                 <HorizontalStackLayout Spacing="16">
                     <!--  Icon  -->
-                    <Grid>
-                        <mi:MauiIcon
-                            Icon="{mi_material:Material Fingerprint}"
-                            OnPlatforms="Android"
-                            VerticalOptions="Center" />
-                        <mi:MauiIcon
-                            Icon="{mi_cupertino:Cupertino FaceSmiling}"
-                            OnPlatforms="iOS"
-                            VerticalOptions="Center" />
-                    </Grid>
+                    <mi:MauiIcon Icon="{mi_material:Material Fingerprint}" VerticalOptions="Center" />
 
                     <!--  Title  -->
                     <Label

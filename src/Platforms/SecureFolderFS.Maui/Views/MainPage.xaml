@@ -28,7 +28,7 @@
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Spacing="16"
             VerticalOptions="Center">
-            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='vault_light.svg', iOS='vault_light.png'}, Dark={OnPlatform Android='vault_dark.svg', iOS='vault_dark.png'}}" />
+            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='home_light_vault.svg', iOS='home_dark_vault.png'}, Dark={OnPlatform Android='home_dark_vault.svg', iOS='home_light_vault.png'}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="24"
@@ -120,7 +120,7 @@
         </CollectionView>
 
         <Button
-            Grid.Row="0"
+            Grid.Row="1"
             Clicked="Button_OnClicked"
             HorizontalOptions="Center"
             Text="Introduction Screen"

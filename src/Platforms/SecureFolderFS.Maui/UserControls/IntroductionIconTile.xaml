@@ -1,0 +1,20 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.IntroductionIconTile"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="ThisControl">
+
+    <Border
+        Padding="16"
+        Background="{StaticResource ThemeSecondaryColorBrush}"
+        HeightRequest="100"
+        WidthRequest="100">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+        <Image
+            HorizontalOptions="Center"
+            Source="{Binding Source, Mode=OneWay, Source={x:Reference ThisControl}}"
+            VerticalOptions="Center" />
+    </Border>
+</ContentView>
