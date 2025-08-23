@@ -89,17 +89,14 @@
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
-        <Grid x:Key="Slide4">
-            <Label Text="Slide4" />
-        </Grid>
-        <Grid x:Key="Slide5">
-            <Label Text="Slide5" />
-        </Grid>
     </ContentPage.Resources>
 
     <Grid>
         <!--  Background  -->
-        <Grid Margin="0,-60,0,-35">
+        <Grid
+            x:Name="BackgroundView"
+            Margin="0,-60,0,-35"
+            Opacity="0">
             <Ellipse
                 Margin="0,-100,0,50"
                 Fill="#106bbf"
@@ -110,13 +107,11 @@
         </Grid>
 
         <!--  Foreground  -->
-        <av:AcrylicView
-            x:Name="BlurView"
-            Margin="0,-60,0,-35"
-            EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
-                                          Light={av2:EffectStyle Light}}"
-            IsVisible="True">
-            <Grid RowSpacing="48">
+        <av:AcrylicView Margin="0,-60,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
+            <Grid
+                x:Name="ForegroundView"
+                Opacity="0"
+                RowSpacing="48">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="Auto" />

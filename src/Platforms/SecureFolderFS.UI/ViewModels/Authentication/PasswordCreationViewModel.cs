@@ -47,7 +47,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _SecondaryPassword = null;
+            SecondaryPassword = null;
             base.Dispose();
         }
     }

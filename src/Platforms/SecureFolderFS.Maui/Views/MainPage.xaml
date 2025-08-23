@@ -28,7 +28,7 @@
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Spacing="16"
             VerticalOptions="Center">
-            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='home_light_vault.svg', iOS='home_dark_vault.png'}, Dark={OnPlatform Android='home_dark_vault.svg', iOS='home_light_vault.png'}}" />
+            <Image HeightRequest="100" Source="{AppThemeBinding Light={OnPlatform Android='home_light_vault.svg', iOS='home_light_vault.png'}, Dark={OnPlatform Android='home_dark_vault.svg', iOS='home_dark_vault.png'}}" />
             <Label
                 FontAttributes="Bold"
                 FontSize="24"

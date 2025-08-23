@@ -1,3 +1,4 @@
+using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Maui.UserControls.Common;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
@@ -11,6 +12,19 @@ namespace SecureFolderFS.Maui.Views
         public IntroductionPage()
         {
             InitializeComponent();
+        }
+        
+        /// <inheritdoc/>
+        protected override async void OnAppearing()
+        {
+            await Task.Delay(400);
+
+            BackgroundView.TranslationY = 800d;
+            _ = ForegroundView.FadeTo(1, 300U, Easing.CubicIn);
+            _ = BackgroundView.FadeTo(1, 800U, Easing.CubicIn);
+            await BackgroundView.TranslateTo(0, 0, 3000U, EasingHelpers.EaseOutExpo);
+
+            base.OnAppearing();
         }
 
         private void UpdateButtonStyle()

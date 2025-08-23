@@ -8,6 +8,8 @@
     xmlns:uc2="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="ThisPage"
+    Title="{OnPlatform iOS={Binding ViewModel.Title,
+                                    Mode=OneWay}}"
     x:DataType="local:BrowserPage"
     Background="{StaticResource ThemeBackgroundFillColorBrush}">
 
