@@ -3,8 +3,8 @@ using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
-    /// <inheritdoc cref="BaseBoolToStringConverter"/>
-    internal sealed class BoolToStringConverter : BaseBoolToStringConverter, IValueConverter
+    /// <inheritdoc cref="BaseStringInterpolationConverter"/>
+    internal sealed class StringInterpolationConverter : BaseStringInterpolationConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

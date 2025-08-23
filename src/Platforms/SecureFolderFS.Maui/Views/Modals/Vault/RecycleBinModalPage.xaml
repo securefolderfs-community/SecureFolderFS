@@ -26,7 +26,7 @@
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
             IsEnabled="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|Select:true:LOCALIZE|Cancel'}">
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:none|Select:true:localize|Cancel'}">
             <ToolbarItem.Order>
                 <OnPlatform x:TypeArguments="ToolbarItemOrder">
                     <On Platform="iOS" Value="Primary" />

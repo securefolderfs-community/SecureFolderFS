@@ -33,7 +33,9 @@
                 FontAttributes="Bold"
                 FontSize="24"
                 HorizontalOptions="Center"
-                Text="{l:ResourceString Rid=Welcome}" />
+                Text="{l:ResourceString Rid=WelcomeTo,
+                                        Converter={StaticResource StringInterpolationConverter},
+                                        ConverterParameter='none|SecureFolderFS'}" />
             <Label
                 FontSize="16"
                 HorizontalOptions="Center"

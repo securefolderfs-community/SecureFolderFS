@@ -467,8 +467,8 @@
   <data name="Website" xml:space="preserve">
     <value>Website</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+  <data name="WelcomeTo" xml:space="preserve">
+      <value>Welcome to {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>What's new</value>
@@ -898,5 +898,26 @@
   </data>
   <data name="AuthenticateForCredentials" xml:space="preserve">
       <value>Authenticate to create credentials</value>
+  </data>
+  <data name="ViewOnboarding" xml:space="preserve">
+      <value>View onboarding</value>
+  </data>
+  <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
+      <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+  </data>
+  <data name="OnboardingDashboardTitle" xml:space="preserve">
+      <value>You're in control</value>
+  </data>
+  <data name="OnboardingDashboardSubtitle" xml:space="preserve">
+      <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+  </data>
+  <data name="OnboardingDataSourcesTitle" xml:space="preserve">
+      <value>Your data — secure, anywhere</value>
+  </data>
+  <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
+      <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+  </data>
+  <data name="OnboardingEndTitle" xml:space="preserve">
+      <value>You're ready to go!</value>
   </data>
 </root>

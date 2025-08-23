@@ -14,16 +14,18 @@
     <ContentPage.Resources>
         <uc:IntroductionSlide
             x:Key="Slide0"
-            Title="Welcome to SecureFolderFS!"
-            Subtitle="To get you started, this presentation will guide you through the most notable features of the app.">
+            Title="{l:ResourceString Rid=WelcomeTo,
+                                     Converter={StaticResource StringInterpolationConverter},
+                                     ConverterParameter='none|SecureFolderFS'}"
+            Subtitle="{l:ResourceString Rid=OnboardingWelcomeSubtitle}">
             <uc:IntroductionSlide.Slot>
                 <Image HeightRequest="300" Source="{AppThemeBinding Light='intro_light_apple_devices.png', Dark='intro_dark_apple_devices.png'}" />
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
         <uc:IntroductionSlide
             x:Key="Slide1"
-            Title="You're in control"
-            Subtitle="Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.">
+            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+            Subtitle="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
             <uc:IntroductionSlide.Slot>
                 <ucc:MaskedImage
                     Margin="0,128,0,0"
@@ -42,8 +44,8 @@
         </uc:IntroductionSlide>
         <uc:IntroductionSlide
             x:Key="Slide2"
-            Title="Your data — secure, anywhere"
-            Subtitle="In addition to storing vaults on your device, you can also connect to other cloud storage providers.">
+            Title="{l:ResourceString Rid=OnboardingDataSourcesTitle}"
+            Subtitle="{l:ResourceString Rid=OnboardingDataSourcesSubtitle}">
             <uc:IntroductionSlide.Slot>
                 <Grid
                     ColumnDefinitions="*,*,*"
@@ -71,16 +73,24 @@
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
-        <uc:IntroductionSlide x:Key="Slide3" Title="You're good to go!">
+        <uc:IntroductionSlide x:Key="Slide3" Title="{l:ResourceString Rid=OnboardingEndTitle}">
             <uc:IntroductionSlide.Slot>
                 <Grid Margin="0,0,0,64" HorizontalOptions="Center">
+                    <Ellipse
+                        Fill="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                               Dark={StaticResource SecondaryDarkColor}}"
+                        HeightRequest="140"
+                        WidthRequest="140" />
+
                     <mi:MauiIcon
+                        HorizontalOptions="Center"
                         Icon="{mi_material:Material Check}"
                         IconColor="{AppThemeBinding Light='#000000',
                                                     Dark='#FFFFFF'}"
                         IconSize="96"
                         OnPlatforms="Android" />
                     <mi:MauiIcon
+                        HorizontalOptions="Center"
                         Icon="{mi_cupertino:Cupertino Checkmark}"
                         IconColor="{AppThemeBinding Light='#000000',
                                                     Dark='#FFFFFF'}"
