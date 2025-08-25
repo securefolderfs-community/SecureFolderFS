@@ -435,8 +435,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         private static string[] DisallowedTraceMethods { get; } =
-        {
+        [
             "GetVolumeInformation"
-        };
+        ];
     }
 }
