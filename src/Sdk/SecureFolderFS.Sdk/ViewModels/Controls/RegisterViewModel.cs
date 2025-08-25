@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
 
         /// <summary>
-        /// Occurs when credentials have been provided by the user.
+        /// Occurs when the user has provided credentials.
         /// </summary>
         public event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 

@@ -30,7 +30,6 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
         {
             Title = "Password".ToLocalized();
-            Icon = "\uE8AC";
         }
 
         partial void OnPrimaryPasswordChanged(string? value)

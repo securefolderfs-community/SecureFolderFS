@@ -39,7 +39,6 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)
         {
             Title = "KeyFile".ToLocalized();
-            Icon = "\uE8D7";
         }
 
         /// <inheritdoc/>

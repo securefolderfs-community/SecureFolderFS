@@ -1,8 +1,10 @@
 using SecureFolderFS.UI.ViewModels.Authentication;
+using SecureFolderFS.Shared.Extensions;
 
 #if ANDROID
 using SecureFolderFS.Maui.Platforms.Android.ViewModels;
-using SecureFolderFS.Shared.Extensions;
+#elif IOS
+using SecureFolderFS.Maui.Platforms.iOS.ViewModels;
 #endif
 
 namespace SecureFolderFS.Maui.TemplateSelectors
@@ -13,13 +15,19 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? KeyFileTemplate { get; set; }
 
+#if ANDROID
         public DataTemplate? AndroidBiometricsTemplate { get; set; }
+#elif IOS
+        public DataTemplate? IOSBiometricsTemplate { get; set; }
+#endif
 
         /// <inheritdoc/>
         protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
 #if ANDROID
             AndroidBiometricsTemplate ??= App.Instance.Resources.Get("AndroidBiometricsRegisterTemplate") as DataTemplate;
+#elif IOS
+            IOSBiometricsTemplate ??= App.Instance.Resources.Get("IOSBiometricsRegisterTemplate") as DataTemplate;
 #endif
 
             return item switch
@@ -28,6 +36,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
                 KeyFileCreationViewModel => KeyFileTemplate,
 #if ANDROID
                 AndroidBiometricCreationViewModel => AndroidBiometricsTemplate,
+#elif IOS
+                IOSSecureEnclaveCreationViewModel => IOSBiometricsTemplate,
 #endif
                 _ => null
             };

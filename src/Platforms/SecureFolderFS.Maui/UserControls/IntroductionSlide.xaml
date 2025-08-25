@@ -14,5 +14,4 @@
             <Label Opacity="0.7" Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
         </VerticalStackLayout>
     </Grid>
-
 </ContentView>

@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     public abstract partial class AuthenticationViewModel(string id) : ReportableViewModel, IAuthenticator, IDisposable
     {
         [ObservableProperty] private string? _Description;
-        [ObservableProperty] private string? _Icon; // TODO: Change to IImage
+        [ObservableProperty] private IImage? _Icon;
 
         /// <summary>
         /// Gets the unique ID of this authentication method.

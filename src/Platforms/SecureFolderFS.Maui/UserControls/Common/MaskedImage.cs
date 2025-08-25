@@ -5,7 +5,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
 {
     public sealed class MaskedImage : GraphicsView
     {
-        public IImage? ImageInternal { get; private set; }
+        internal IImage? ImageInternal { get; private set; }
 
         public MaskedImage()
         {
@@ -149,7 +149,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                 {
                     if (imgAspect > containerAspect)
                     {
-                        // Image is wider → crop horizontally
+                        // Image is wider
                         var height = container.Height;
                         var width = height * imgAspect;
                         var x = container.X + (container.Width - width) / 2;
@@ -158,7 +158,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                     }
                     else
                     {
-                        // Image is taller → crop vertically
+                        // Image is taller
                         var width = container.Width;
                         var height = width / imgAspect;
                         var y = container.Y + (container.Height - height) / 2;

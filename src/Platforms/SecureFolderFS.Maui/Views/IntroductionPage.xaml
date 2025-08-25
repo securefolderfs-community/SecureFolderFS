@@ -108,7 +108,7 @@
             Margin="0,-60,0,-35"
             Opacity="0">
             <Ellipse
-                Margin="0,-100,0,50"
+                Margin="0,-70,0,50"
                 Fill="#106bbf"
                 HeightRequest="550"
                 Opacity="0.7"
@@ -117,16 +117,12 @@
         </Grid>
 
         <!--  Foreground  -->
-        <av:AcrylicView Margin="0,-60,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
+        <av:AcrylicView Margin="0,-70,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
             <Grid
                 x:Name="ForegroundView"
                 Opacity="0"
-                RowSpacing="48">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
+                RowDefinitions="*,Auto"
+                RowSpacing="64">
                 <ucc:GalleryView
                     x:Name="GalleryView"
                     Grid.Row="0"

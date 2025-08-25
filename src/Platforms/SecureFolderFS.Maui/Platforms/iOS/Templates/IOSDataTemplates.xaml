@@ -1,0 +1,60 @@
+﻿<ResourceDictionary
+    x:Class="SecureFolderFS.Maui.Platforms.iOS.Templates.IOSDataTemplates"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios_vm="clr-namespace:SecureFolderFS.Maui.Platforms.iOS.ViewModels"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino">
+
+    <!--  IOS Biometrics Login Template  -->
+    <DataTemplate x:Key="IOSBiometricsLoginTemplate" x:DataType="ios_vm:IOSSecureEnclaveLoginViewModel">
+        <ContentView>
+            <VerticalStackLayout Spacing="24">
+                <!--  Logo  -->
+                <mi:MauiIcon
+                    HorizontalOptions="Center"
+                    Icon="{mi_cupertino:Cupertino FaceSmiling}"
+                    IconSize="60" />
+
+                <!--  Title  -->
+                <Label
+                    HorizontalOptions="Center"
+                    Opacity="0.6"
+                    Text="{Binding Title, Mode=OneWay}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Command="{Binding ProvideCredentialsCommand}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Authenticate}" />
+            </VerticalStackLayout>
+        </ContentView>
+    </DataTemplate>
+
+    <!--  IOS Biometrics Register Template  -->
+    <DataTemplate x:Key="IOSBiometricsRegisterTemplate" x:DataType="ios_vm:IOSSecureEnclaveCreationViewModel">
+        <ContentView>
+            <VerticalStackLayout Spacing="16">
+                <HorizontalStackLayout Spacing="16">
+                    <!--  Icon  -->
+                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino FaceSmiling}" VerticalOptions="Center" />
+
+                    <!--  Title  -->
+                    <Label
+                        FontSize="20"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!--  Authenticate  -->
+                <Button
+                    Command="{Binding ProvideCredentialsCommand}"
+                    HorizontalOptions="Fill"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Setup}" />
+            </VerticalStackLayout>
+        </ContentView>
+    </DataTemplate>
+</ResourceDictionary>
+
