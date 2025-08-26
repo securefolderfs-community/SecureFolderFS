@@ -33,10 +33,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
-        public IOSBiometricViewModel(IFolder vaultFolder, string vaultId)
+        public IOSBiometricViewModel(IFolder vaultFolder, string vaultId, string title)
             : base(Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
         {
-            Title = "AppleBiometrics".ToLocalized();
+            Title = title;
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }

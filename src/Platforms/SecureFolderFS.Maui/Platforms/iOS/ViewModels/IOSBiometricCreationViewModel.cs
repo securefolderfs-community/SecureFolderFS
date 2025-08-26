@@ -1,4 +1,9 @@
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -11,15 +16,15 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
         
-        public IOSBiometricCreationViewModel(IFolder vaultFolder, string vaultId)
-            : base(vaultFolder, vaultId)
+        public IOSBiometricCreationViewModel(IFolder vaultFolder, string vaultId, string title)
+            : base(vaultFolder, vaultId, title)
         {
         }
 
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            using var keyMaterial = VaultHelpers.GenerateSecureKey(Core.Cryptography.Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
+            using var keyMaterial = VaultHelpers.GenerateSecureKey(Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
 
             try
             {
@@ -30,7 +35,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
                 // Write the ciphertext key
                 var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-                await vaultWriter.WriteAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
+                await vaultWriter.WriteAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
                 {
                     Capability = "supportsKeyProtection",
                     CiphertextKey = ciphertextKey.ToArray()

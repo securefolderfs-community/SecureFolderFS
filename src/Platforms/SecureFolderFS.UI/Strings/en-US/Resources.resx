@@ -920,4 +920,13 @@
   <data name="OnboardingEndTitle" xml:space="preserve">
       <value>You're ready to go!</value>
   </data>
+  <data name="AuthenticateWithFaceID" xml:space="preserve">
+      <value>Authenticate with Face ID</value>
+  </data>
+  <data name="AuthenticateWithTouchID" xml:space="preserve">
+      <value>Authenticate with Touch ID</value>
+  </data>
+  <data name="AuthenticateWithBiometrics" xml:space="preserve">
+      <value>Authenticate with Biometrics</value>
+  </data>
 </root>

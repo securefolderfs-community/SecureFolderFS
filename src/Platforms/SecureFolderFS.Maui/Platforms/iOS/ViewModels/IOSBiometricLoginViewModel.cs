@@ -14,8 +14,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public IOSBiometricLoginViewModel(IFolder vaultFolder, string vaultId)
-            : base(vaultFolder, vaultId)
+        public IOSBiometricLoginViewModel(IFolder vaultFolder, string vaultId, string title)
+            : base(vaultFolder, vaultId, title)
         {
         }
         
