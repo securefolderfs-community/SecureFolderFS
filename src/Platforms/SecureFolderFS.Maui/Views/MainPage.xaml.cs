@@ -64,7 +64,7 @@ namespace SecureFolderFS.Maui.Views
             await ItemTappedAsync(itemViewModel, view);
         }
 
-        private async void MainPage_Loaded(object? sender, EventArgs e)
+        private void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)

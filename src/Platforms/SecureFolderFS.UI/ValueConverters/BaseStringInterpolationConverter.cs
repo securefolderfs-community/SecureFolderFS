@@ -17,13 +17,13 @@ namespace SecureFolderFS.UI.ValueConverters
 
             var rawPhrases = formatString.Split(',');
             var phrases = new object[rawPhrases.Length];
-            foreach (var phrase in rawPhrases)
+            for (int i = 0; i < rawPhrases.Length; i++)
             {
-                var modifiers = phrase.Split('|');
+                var modifiers = rawPhrases[i].Split('|');
                 var format = modifiers[0];
                 var text = modifiers[1];
 
-                phrases[0] = format.Equals("localize", StringComparison.OrdinalIgnoreCase)
+                phrases[i] = format.Equals("localize", StringComparison.OrdinalIgnoreCase)
                     ? text.ToLocalized()
                     : text;
             }
