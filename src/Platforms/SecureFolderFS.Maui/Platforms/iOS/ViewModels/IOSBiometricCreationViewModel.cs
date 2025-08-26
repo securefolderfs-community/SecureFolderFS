@@ -1,9 +1,4 @@
 using OwlCore.Storage;
-using SecureFolderFS.Core;
-using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -24,17 +19,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var keyMaterial = VaultHelpers.GenerateKeyMaterial();
+            using var keyMaterial = VaultHelpers.GenerateSecureKey(Core.Cryptography.Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
 
             try
             {
                 var ciphertextKey = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
                 var tcs = new TaskCompletionSource();
-                CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial, tcs));
+                CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial.CreateCopy(), tcs));
                 await tcs.Task;
 
                 // Write the ciphertext key
+                var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
                 await vaultWriter.WriteAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
                 {
                     Capability = "supportsKeyProtection",

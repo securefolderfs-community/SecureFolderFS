@@ -69,8 +69,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             var privateKey = GetPrivateKey(alias);
+            var context = new LAContext();
+            var (ok, evalErr) = await EvaluateAsync(context, LAPolicy.DeviceOwnerAuthenticationWithBiometrics, "AuthenticateForCredentials".ToLocalized());
+            if (!ok)
+                throw new CryptographicException(evalErr?.LocalizedDescription ?? "Authentication failed.");
+            
             privateKey ??= CreatePrivateKey(alias);
-
             var publicKey = privateKey.GetPublicKey() ?? throw new CryptographicException("Public key could not be retrieved.");;
             return Encrypt(publicKey, data);
         }
@@ -102,13 +106,6 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
         private static async Task<SecretKey> DecryptAsync(SecKey privateKey, byte[] data)
         {
-            var context = new LAContext();
-            var policy = LAPolicy.DeviceOwnerAuthenticationWithBiometrics;
-            
-            var (ok, evalErr) = await EvaluateAsync(context, policy, "AuthenticateForCredentials".ToLocalized());
-            if (!ok)
-                throw new CryptographicException(evalErr?.LocalizedDescription ?? "Authentication failed.");
-            
             var ciphertext = NSData.FromArray(data);
             var plaintext = privateKey.CreateDecryptedData(ALGORITHM, ciphertext, out var error);
             if (plaintext is null || error is not null)
@@ -118,35 +115,35 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             return SecureKey.TakeOwnership(plaintextBuffer);
         }
         
-        private static Task<(bool ok, NSError? error)> EvaluateAsync(LAContext context, LAPolicy policy, string reason)
+        private static async Task<(bool ok, NSError? error)> EvaluateAsync(LAContext context, LAPolicy policy, string reason)
         {
-            var tcs = new TaskCompletionSource<(bool, NSError?)>();
             if (!context.CanEvaluatePolicy(policy, out var canErr))
-            {
-                tcs.SetResult((false, canErr));
-                return tcs.Task;
-            }
+                return (false, canErr);
             
+            var tcs = new TaskCompletionSource<(bool, NSError?)>();
             context.EvaluatePolicy(policy, reason, (success, evalErr) =>
             {
                 tcs.TrySetResult((success, evalErr));
             });
 
-            return tcs.Task;
+            return await tcs.Task;
         }
 
         private static SecKey CreatePrivateKey(string alias)
         {
-            var access = new SecAccessControl(SecAccessible.WhenUnlockedThisDeviceOnly, SecAccessControlCreateFlags.UserPresence);
+            var access = new SecAccessControl(SecAccessible.WhenUnlockedThisDeviceOnly, SecAccessControlCreateFlags.PrivateKeyUsage | SecAccessControlCreateFlags.UserPresence);
             var applicationTag = NSData.FromString(alias, NSStringEncoding.UTF8);
             var genParams = new SecKeyGenerationParameters()
             {
                 KeyType = SecKeyType.ECSecPrimeRandom,
                 KeySizeInBits = 256,
                 TokenID = SecTokenID.SecureEnclave,
-                IsPermanent = true,
-                AccessControl = access,
-                ApplicationTag = applicationTag
+                PrivateKeyAttrs = new SecKeyParameters()
+                {
+                    IsPermanent = true,
+                    ApplicationTag = applicationTag,
+                    AccessControl = access
+                }
             };
 
             var key = SecKey.CreateRandomKey(genParams, out var error);

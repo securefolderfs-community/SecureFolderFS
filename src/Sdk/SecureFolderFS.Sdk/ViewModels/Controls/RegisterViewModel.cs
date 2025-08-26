@@ -104,9 +104,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentialsAdded = true;
-            Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
-            CanContinue = true;
+            try
+            {
+                _credentialsAdded = true;
+                Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
+                CanContinue = true;
+            }
+            finally
+            {
+                e.TaskCompletion?.TrySetResult();
+            }
         }
 
         private void CurrentViewModel_StateChanged(object? sender, EventArgs e)

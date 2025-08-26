@@ -20,7 +20,7 @@ namespace SecureFolderFS.UI.Helpers
             return secretKey;
         }
 
-        public static SecretKey GenerateKeyMaterial(int length = Core.Cryptography.Constants.KeyTraits.KEY_MATERIAL_256)
+        public static SecretKey GenerateSecureKey(int length)
         {
             using var secureRandom = RandomNumberGenerator.Create();
             using var key = new SecureKey(length);
