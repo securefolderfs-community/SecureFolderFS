@@ -93,10 +93,5 @@ namespace SecureFolderFS.Maui.Views
                 Order = ToolbarItemOrder.Secondary
             });
         }
-
-        private async void Button_OnClicked(object? sender, EventArgs e)
-        {
-            await Navigation.PushModalAsync(new IntroductionPage(), true);
-        }
     }
 }

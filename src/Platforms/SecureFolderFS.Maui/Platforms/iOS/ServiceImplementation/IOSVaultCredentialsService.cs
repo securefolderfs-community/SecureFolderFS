@@ -5,7 +5,6 @@ using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Maui.Platforms.iOS.ViewModels;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.Models;
@@ -34,9 +33,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                     Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC when AreBiometricsAvailable(out var biometryType) => 
                         new IOSBiometricLoginViewModel(vaultFolder, config.Uid, biometryType switch
                         {
-                            LABiometryType.FaceId => "AuthenticateWithFaceID".ToLocalized(),
-                            LABiometryType.TouchId => "AuthenticateWithTouchID".ToLocalized(),
-                            _ => "AuthenticateWithBiometrics".ToLocalized()
+                            LABiometryType.FaceId => "Face ID",
+                            LABiometryType.TouchId => "Touch ID",
+                            _ => string.Empty
                         }),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
@@ -57,9 +56,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             if (AreBiometricsAvailable(out var biometryType))
                 yield return new IOSBiometricCreationViewModel(vaultFolder, vaultId, biometryType switch
                 {
-                    LABiometryType.FaceId => "AuthenticateWithFaceID".ToLocalized(),
-                    LABiometryType.TouchId => "AuthenticateWithTouchID".ToLocalized(),
-                    _ => "AuthenticateWithBiometrics".ToLocalized()
+                    LABiometryType.FaceId => "Face ID",
+                    LABiometryType.TouchId => "Touch ID",
+                    _ => string.Empty
                 });
 
             await Task.CompletedTask;
