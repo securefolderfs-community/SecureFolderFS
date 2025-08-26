@@ -90,7 +90,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 // We also need to revoke existing credentials if the user added and aborted
                 if (Credentials.Count > 0)
-                    await SafetyHelpers.NoThrowAsync(async () => await oldValue.RevokeAsync(null));
+                    await SafetyHelpers.NoFailureAsync(async () => await oldValue.RevokeAsync(null));
             }
 
             if (newValue is not null)

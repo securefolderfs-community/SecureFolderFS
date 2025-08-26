@@ -20,6 +20,18 @@ namespace SecureFolderFS.UI.Helpers
             return secretKey;
         }
 
+        public static SecretKey GenerateKeyMaterial(int length = Core.Cryptography.Constants.KeyTraits.KEY_MATERIAL_256)
+        {
+            using var secureRandom = RandomNumberGenerator.Create();
+            using var key = new SecureKey(length);
+            
+            // Fill the key
+            secureRandom.GetNonZeroBytes(key.Key);
+            
+            // Return a copy of the key since the original version is being disposed of here
+            return key.CreateCopy();
+        }
+
         public static SecretKey GenerateChallenge(string vaultId)
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
@@ -36,7 +48,7 @@ namespace SecureFolderFS.UI.Helpers
             if (written != encodedVaultIdLength)
                 throw new FormatException("The allocated buffer and vault ID written bytes amount were different.");
 
-            // Return a copy of the challenge since the original version is being disposed of
+            // Return a copy of the challenge since the original version is being disposed of here
             return challenge.CreateCopy();
         }
     }

@@ -46,10 +46,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public abstract Task RevokeAsync(string? id, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
+        public abstract Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
+        public abstract Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
         [RelayCommand]
         protected abstract Task ProvideCredentialsAsync(CancellationToken cancellationToken);

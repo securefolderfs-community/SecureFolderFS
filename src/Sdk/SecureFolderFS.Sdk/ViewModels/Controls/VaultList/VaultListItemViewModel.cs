@@ -171,7 +171,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
 
-            var imageFile = await SafetyHelpers.NoThrowAsync(async () => await vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
+            var imageFile = await SafetyHelpers.NoFailureAsync(async () => await vaultFolder.GetFileByNameAsync(Constants.Vault.VAULT_ICON_FILENAME, cancellationToken));
             if (imageFile is null)
                 return;
 

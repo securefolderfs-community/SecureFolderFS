@@ -5,7 +5,7 @@ namespace SecureFolderFS.Shared.Helpers
 {
     public static class SafetyHelpers
     {
-        public static void NoThrow(Action action)
+        public static void NoFailure(Action action)
         {
             try
             {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Shared.Helpers
             }
         }
 
-        public static T? NoThrowResult<T>(Func<T> func)
+        public static T? NoFailureResult<T>(Func<T> func)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Shared.Helpers
             }
         }
 
-        public static async Task NoThrowAsync(Func<Task> func)
+        public static async Task NoFailureAsync(Func<Task> func)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Shared.Helpers
             }
         }
 
-        public static async Task<T?> NoThrowAsync<T>(Func<Task<T>> func)
+        public static async Task<T?> NoFailureAsync<T>(Func<Task<T>> func)
         {
             try
             {

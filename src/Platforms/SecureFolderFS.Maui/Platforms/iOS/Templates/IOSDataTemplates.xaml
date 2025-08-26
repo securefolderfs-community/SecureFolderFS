@@ -8,7 +8,7 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino">
 
     <!--  IOS Biometrics Login Template  -->
-    <DataTemplate x:Key="IOSBiometricsLoginTemplate" x:DataType="ios_vm:IOSSecureEnclaveLoginViewModel">
+    <DataTemplate x:Key="IOSBiometricsLoginTemplate" x:DataType="ios_vm:IOSBiometricLoginViewModel">
         <ContentView>
             <VerticalStackLayout Spacing="24">
                 <!--  Logo  -->
@@ -33,7 +33,7 @@
     </DataTemplate>
 
     <!--  IOS Biometrics Register Template  -->
-    <DataTemplate x:Key="IOSBiometricsRegisterTemplate" x:DataType="ios_vm:IOSSecureEnclaveCreationViewModel">
+    <DataTemplate x:Key="IOSBiometricsRegisterTemplate" x:DataType="ios_vm:IOSBiometricCreationViewModel">
         <ContentView>
             <VerticalStackLayout Spacing="16">
                 <HorizontalStackLayout Spacing="16">

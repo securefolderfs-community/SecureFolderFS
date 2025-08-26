@@ -13,7 +13,7 @@ namespace SecureFolderFS.Shared.Extensions
         {
             try
             {
-                var key = await authenticator.CreateAsync(id, data, cancellationToken);
+                var key = await authenticator.EnrollAsync(id, data, cancellationToken);
                 return Result<IKey>.Success(key);
             }
             catch (Exception ex)
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Shared.Extensions
         {
             try
             {
-                var key = await authenticator.SignAsync(id, data, cancellationToken);
+                var key = await authenticator.AcquireAsync(id, data, cancellationToken);
                 return Result<IKey>.Success(key);
             }
             catch (Exception ex)

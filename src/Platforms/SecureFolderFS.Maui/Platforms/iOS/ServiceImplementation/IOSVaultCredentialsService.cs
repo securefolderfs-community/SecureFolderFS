@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 {
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
-                    Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC when AreBiometricsAvailable() => new IOSSecureEnclaveLoginViewModel(vaultFolder, config.Uid),
+                    Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC when AreBiometricsAvailable() => new IOSBiometricLoginViewModel(vaultFolder, config.Uid),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             
             // Face ID, Touch ID
             if (AreBiometricsAvailable())
-                yield return new IOSSecureEnclaveCreationViewModel(vaultFolder, vaultId);
+                yield return new IOSBiometricCreationViewModel(vaultFolder, vaultId);
 
             await Task.CompletedTask;
         }

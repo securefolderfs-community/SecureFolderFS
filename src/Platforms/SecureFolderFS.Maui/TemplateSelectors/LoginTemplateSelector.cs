@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 #if ANDROID
                 AndroidBiometricLoginViewModel => AndroidBiometricsTemplate,
 #elif IOS
-                IOSSecureEnclaveLoginViewModel => IOSBiometricsTemplate,
+                IOSBiometricLoginViewModel => IOSBiometricsTemplate,
 #endif
                 ErrorViewModel => ErrorTemplate,
                 _ => null

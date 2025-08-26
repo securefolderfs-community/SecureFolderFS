@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ValueConverters
                     : text;
             }
 
-            return SafetyHelpers.NoThrowResult(() => string.Format(strValue, phrases));
+            return SafetyHelpers.NoFailureResult(() => string.Format(strValue, phrases));
         }
 
         /// <inheritdoc/>
