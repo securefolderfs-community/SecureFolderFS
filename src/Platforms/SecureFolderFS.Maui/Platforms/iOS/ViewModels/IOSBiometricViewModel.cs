@@ -37,6 +37,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             : base(Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
         {
             Title = title;
+            Description = "AuthenticateUsing".ToLocalized(Title);
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }

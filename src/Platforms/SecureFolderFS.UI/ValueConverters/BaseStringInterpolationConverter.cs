@@ -1,5 +1,6 @@
 using System;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.UI.ValueConverters
@@ -16,8 +17,11 @@ namespace SecureFolderFS.UI.ValueConverters
                 return strValue;
 
             var rawPhrases = formatString.Split(',');
+            if (rawPhrases.IsEmpty())
+                return strValue.ToLocalized();
+            
             var phrases = new object[rawPhrases.Length];
-            for (int i = 0; i < rawPhrases.Length; i++)
+            for (var i = 0; i < rawPhrases.Length; i++)
             {
                 var modifiers = rawPhrases[i].Split('|');
                 var format = modifiers[0];

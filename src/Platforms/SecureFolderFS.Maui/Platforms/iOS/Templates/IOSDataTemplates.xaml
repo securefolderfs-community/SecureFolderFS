@@ -21,7 +21,7 @@
                 <Label
                     HorizontalOptions="Center"
                     Opacity="0.6"
-                    Text="{Binding Title, Mode=OneWay}" />
+                    Text="{Binding Description, Mode=OneWay}" />
 
                 <!--  Authenticate  -->
                 <Button
