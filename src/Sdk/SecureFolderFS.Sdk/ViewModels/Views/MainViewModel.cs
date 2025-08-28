@@ -37,18 +37,6 @@ namespace SecureFolderFS.Sdk.ViewModels
             if (!SettingsService.UserSettings.IsTelemetryEnabled)
                 await TelemetryService.DisableTelemetryAsync();
 
-            // Check if the user was introduced (OOBE)
-            if (false && !SettingsService.AppSettings.IsIntroduced)
-            {
-                var dialogService = DI.Service<IOverlayService>();
-                var dialogResult = await OverlayService.ShowAsync(new AgreementOverlayViewModel());
-                if (dialogResult is IResult<DialogOption> { Value: DialogOption.Primary } || dialogResult.Successful)
-                {
-                    SettingsService.AppSettings.IsIntroduced = true;
-                    await SettingsService.SaveAsync(cancellationToken);
-                }
-            }
-
             // Check if the changelog is available
             if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
             {

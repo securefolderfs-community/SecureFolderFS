@@ -1,0 +1,139 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.IntroductionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
+    xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common">
+
+    <ContentPage.Resources>
+        <uc:IntroductionSlide
+            x:Key="Slide0"
+            Title="{l:ResourceString Rid=WelcomeTo,
+                                     Converter={StaticResource StringInterpolationConverter},
+                                     ConverterParameter='none|SecureFolderFS'}"
+            Subtitle="{l:ResourceString Rid=OnboardingWelcomeSubtitle}">
+            <uc:IntroductionSlide.Slot>
+                <Image HeightRequest="300" Source="{AppThemeBinding Light='intro_light_apple_devices.png', Dark='intro_dark_apple_devices.png'}" />
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide
+            x:Key="Slide1"
+            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+            Subtitle="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
+            <uc:IntroductionSlide.Slot>
+                <ucc:MaskedImage
+                    Margin="0,128,0,0"
+                    Aspect="AspectFit"
+                    HeightRequest="600"
+                    SourceFileName="{AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                     Dark='intro_dark_iphone_dashboard.png'}"
+                    StartPoint="0.5,1"
+                    EndPoint="0.5,0.3">
+                    <ucc:MaskedImage.Stops>
+                        <GradientStop Offset="0.5" Color="Transparent" />
+                        <GradientStop Offset="1" Color="Black" />
+                    </ucc:MaskedImage.Stops>
+                </ucc:MaskedImage>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide
+            x:Key="Slide2"
+            Title="{l:ResourceString Rid=OnboardingDataSourcesTitle}"
+            Subtitle="{l:ResourceString Rid=OnboardingDataSourcesSubtitle}">
+            <uc:IntroductionSlide.Slot>
+                <Grid
+                    ColumnDefinitions="*,*,*"
+                    ColumnSpacing="16"
+                    HorizontalOptions="Center"
+                    RowDefinitions="Auto,Auto"
+                    RowSpacing="16"
+                    VerticalOptions="Center">
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Source="source_gdrive.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Source="source_network_drive_ftp.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Source="source_onedrive.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Source="source_aws_s3.png" />
+                </Grid>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+        <uc:IntroductionSlide x:Key="Slide3" Title="{l:ResourceString Rid=OnboardingEndTitle}">
+            <uc:IntroductionSlide.Slot>
+                <Grid Margin="0,0,0,64" HorizontalOptions="Center">
+                    <Ellipse
+                        Fill="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                               Dark={StaticResource SecondaryDarkColor}}"
+                        HeightRequest="140"
+                        WidthRequest="140" />
+
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_material:Material Check}"
+                        IconColor="{AppThemeBinding Light='#000000',
+                                                    Dark='#FFFFFF'}"
+                        IconSize="96"
+                        OnPlatforms="Android" />
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_cupertino:Cupertino Checkmark}"
+                        IconColor="{AppThemeBinding Light='#000000',
+                                                    Dark='#FFFFFF'}"
+                        IconSize="96"
+                        OnPlatforms="iOS" />
+                </Grid>
+            </uc:IntroductionSlide.Slot>
+        </uc:IntroductionSlide>
+    </ContentPage.Resources>
+
+    <Grid>
+        <!--  Background  -->
+        <Grid
+            x:Name="BackgroundView"
+            Margin="0,-60,0,-35"
+            Opacity="0">
+            <Ellipse
+                Margin="0,-70,0,50"
+                Fill="#106bbf"
+                HeightRequest="550"
+                Opacity="0.7"
+                VerticalOptions="Start"
+                WidthRequest="1000" />
+        </Grid>
+
+        <!--  Foreground  -->
+        <av:AcrylicView Margin="0,-70,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
+            <Grid
+                x:Name="ForegroundView"
+                Opacity="0"
+                RowDefinitions="*,Auto"
+                RowSpacing="64">
+                <ucc:GalleryView
+                    x:Name="GalleryView"
+                    Grid.Row="0"
+                    Loaded="GalleryView_Loaded" />
+                <Button
+                    x:Name="Continue"
+                    Grid.Row="1"
+                    Margin="16,0,16,16"
+                    Clicked="Continue_Clicked"
+                    Text="{l:ResourceString Rid=Continue}" />
+            </Grid>
+        </av:AcrylicView>
+    </Grid>
+</ContentPage>

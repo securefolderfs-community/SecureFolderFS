@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui
             var overlayService = DI.Service<IOverlayService>();
             var messageOverlay = new MessageOverlayViewModel()
             {
-                Title = SafetyHelpers.NoThrowResult(() => string.Format("ClosedUnexpectedly".ToLocalized(), nameof(SecureFolderFS))),
+                Title = "ClosedUnexpectedly".ToLocalized(nameof(SecureFolderFS)),
                 PrimaryText = "Close".ToLocalized(),
                 Message = sessionException
             };

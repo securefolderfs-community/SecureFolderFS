@@ -10,6 +10,7 @@
             public const int MAC_KEY_LENGTH = 32;
             public const int ARGON2_KEK_LENGTH = 32;
             public const int CHALLENGE_KEY_PART_LENGTH = 128;
+            public const int ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH = 32;
         }
 
         public static class CipherId

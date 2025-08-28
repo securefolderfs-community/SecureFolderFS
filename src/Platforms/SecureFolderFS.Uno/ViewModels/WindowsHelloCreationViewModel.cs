@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
+using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Uno.ViewModels
             using var challenge = VaultHelpers.GenerateChallenge(VaultId);
 
             // Write authentication data to the vault
-            await vaultWriter.WriteAuthenticationAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
+            await vaultWriter.WriteAuthenticationAsync<VaultChallengeDataModel>($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
             {
                 Capability = "supportsChallenge", // TODO: Put somewhere in Constants
                 Challenge = challenge.Key
@@ -36,7 +37,7 @@ namespace SecureFolderFS.Uno.ViewModels
 
             try
             {
-                var key = await CreateAsync(VaultId, challenge.Key, cancellationToken);
+                var key = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
 

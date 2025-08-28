@@ -15,11 +15,11 @@ namespace SecureFolderFS.UI.ValueConverters
                 return numValue.ToString();
 
             // Example:
-            // LOCALIZE|StringRes
-            // STANDARD|Some string {0}
+            // localize|StringRes
+            // none|Some string {0}
 
             var split = formatString.Split('|', 2);
-            var result = split[0] == "LOCALIZE" ? split[1].ToLocalized() : split[1];
+            var result = split[0].Equals("localize", StringComparison.OrdinalIgnoreCase) ? split[1].ToLocalized() : split[1];
 
             return string.Format(result, numValue);
         }

@@ -85,7 +85,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                     new(
                         args.UnlockedVaultViewModel,
                         ViewModel.VaultNavigation,
-                        new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultFolder)));
+                        new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultViewModel.VaultModel.DataModel.PersistableId!)));
 
             // Set Title to 'fake' navigation
             dashboardViewModel.Title = overviewViewModel.Title;

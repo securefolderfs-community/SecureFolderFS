@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.Helpers
         public static async Task<IChildFolder> GetOrCreateContentFolderAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
             var vaultService = DI.Service<IVaultService>();
-            var contentFolder = await SafetyHelpers.NoThrowAsync(async () => await GetContentFolderAsync(vaultFolder, cancellationToken));
+            var contentFolder = await SafetyHelpers.NoFailureAsync(async () => await GetContentFolderAsync(vaultFolder, cancellationToken));
 
             if (vaultFolder is not IModifiableFolder modifiableFolder)
                 throw new UnauthorizedAccessException("The vault folder is not modifiable.");

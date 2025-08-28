@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
     [Inject<IVaultPersistenceService>]
     public sealed partial class WidgetsCollectionModel : IWidgetsCollectionModel
     {
-        private readonly IFolder _vaultFolder;
+        private readonly string _id;
         private readonly List<IWidgetModel> _widgets;
 
         private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
@@ -25,24 +25,24 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-        public WidgetsCollectionModel(IFolder vaultFolder)
+        public WidgetsCollectionModel(string persistableId)
         {
             ServiceProvider = DI.Default;
-            _vaultFolder = vaultFolder;
+            _id = persistableId;
             _widgets = new();
         }
 
         /// <inheritdoc/>
         public bool AddWidget(string widgetId)
         {
-            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id) ?? new List<WidgetDataModel>();
+            var widgets = VaultWidgets.GetForVault(_id) ?? new List<WidgetDataModel>();
             var widgetData = new WidgetDataModel(widgetId);
 
             // Add the widget to widget list
             widgets.Add(widgetData);
 
             // Update widgets
-            VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
+            VaultWidgets.SetForVault(_id, widgets);
 
             // Add to cache
             var widgetModel = new WidgetModel(widgetId, VaultWidgets, widgetData);
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public bool RemoveWidget(string widgetId)
         {
             // Get widgets
-            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+            var widgets = VaultWidgets.GetForVault(_id);
 
             var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);
             if (itemToRemove is null)
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             // Remove persisted
             widgets!.Remove(itemToRemove);
-            VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
+            VaultWidgets.SetForVault(_id, widgets);
 
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, itemToRemove));
 
@@ -92,7 +92,7 @@ namespace SecureFolderFS.Sdk.AppModels
             // Clear previous widgets
             _widgets.Clear();
 
-            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+            var widgets = VaultWidgets.GetForVault(_id);
             if (widgets is null)
                 return Task.CompletedTask;
 

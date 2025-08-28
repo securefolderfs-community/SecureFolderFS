@@ -9,7 +9,7 @@
     xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;assembly=SecureFolderFS.Sdk"
-    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    Title="{Binding ViewModel.VaultViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
     <ContentPage.Resources>

@@ -10,5 +10,6 @@
     <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+    <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
 
 </ResourceDictionary>

@@ -167,8 +167,8 @@ namespace SecureFolderFS.Uno
             }
             else
             {
-                await SafetyHelpers.NoThrowAsync(async () => await settingsService.TrySaveAsync());
-                SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
+                await SafetyHelpers.NoFailureAsync(async () => await settingsService.TrySaveAsync());
+                SafetyHelpers.NoFailure(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
                 App.Current.Exit();
             }
         }

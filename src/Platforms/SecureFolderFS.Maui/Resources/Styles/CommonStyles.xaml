@@ -9,6 +9,10 @@
         <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
     </Style>
 
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={OnPlatform Android='#202020', iOS='#000000'}, Dark='#FFFFFF'}" />
+    </Style>
+
     <Style x:Key="SelectableItemGridStyle" TargetType="Grid">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Style.Triggers>

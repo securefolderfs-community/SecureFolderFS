@@ -97,6 +97,7 @@
 
     <!-- Images -->
     <MauiImage Include="Resources\Images\*" />
+    <MauiImage Include="Resources\Images\*\*" />
     <MauiImage Update="Resources\Images\cupertino_ellipsis.svg" Resize="True" BaseSize="24,24" />
 
     <!-- Custom Fonts -->
@@ -113,6 +114,7 @@
   <ItemGroup>
     <PackageReference Include="AathifMahir.Maui.MauiIcons.Cupertino" />
     <PackageReference Include="AathifMahir.Maui.MauiIcons.Material" />
+    <PackageReference Include="AcrylicView.Maui" />
     <PackageReference Include="CommunityToolkit.Maui" />
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
@@ -169,6 +171,10 @@
       <DependentUpon>PropertiesPopup.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\IntroductionPage.xaml.cs">
+      <DependentUpon>IntroductionPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -219,6 +225,9 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Popups\PropertiesPopup.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\IntroductionPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>

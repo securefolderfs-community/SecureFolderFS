@@ -30,7 +30,6 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
         {
             Title = "Password".ToLocalized();
-            Icon = "\uE8AC";
         }
 
         partial void OnPrimaryPasswordChanged(string? value)
@@ -46,13 +45,13 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }
@@ -78,7 +77,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _PrimaryPassword = null;
+            PrimaryPassword = null;
         }
     }
 }

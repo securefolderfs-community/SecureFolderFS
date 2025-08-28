@@ -163,7 +163,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             mediaPlayer.Play();
         }
 
-        private void Gallery_Loaded(object? sender, EventArgs e)
+        private void GalleryView_Loaded(object? sender, EventArgs e)
         {
             if (GalleryView is not null)
                 return;
@@ -171,14 +171,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (sender is not GalleryView { BindingContext: CarouselPreviewerViewModel carouselViewModel } galleryView)
                 return;
 
-            GalleryView = galleryView;
-
-            var parent = galleryView.Parent as ContentView;
-            var height = parent?.Height ?? 300d;
-            var width = parent?.Width ?? 400d;
-
-            galleryView.WidthRequest = width;
-            galleryView.HeightRequest = height;
+            GalleryView.Current = galleryView;
+            galleryView.FitToParent();
 
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
