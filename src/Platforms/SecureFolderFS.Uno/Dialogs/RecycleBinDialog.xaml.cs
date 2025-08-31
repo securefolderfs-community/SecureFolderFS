@@ -18,7 +18,7 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class RecycleBinDialog : ContentDialog, IOverlayControl
     {
         private readonly FirstTimeHelper _firstTime;
-        private bool _surpressToggle;
+        private bool _suppressToggle;
         private PickerOptionViewModel? _previousOption;
 
         public RecycleBinOverlayViewModel? ViewModel
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
         public RecycleBinDialog()
         {
-            _firstTime = new();
+            _firstTime = new(2);
             InitializeComponent();
         }
 
@@ -51,9 +51,9 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            if (_surpressToggle)
+            if (_suppressToggle)
             {
-                _surpressToggle = false;
+                _suppressToggle = false;
                 return;
             }
 
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             if (ViewModel.IsRecycleBinEnabled != toggleSwitch.IsOn)
             {
-                _surpressToggle = true;
+                _suppressToggle = true;
                 toggleSwitch.IsOn = ViewModel.IsRecycleBinEnabled;
             }
         }

@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        private readonly FirstTimeHelper _firstTime = new();
+        private readonly FirstTimeHelper _firstTime = new(1);
 
         public SettingsOverlayViewModel? OverlayViewModel { get; private set; }
 

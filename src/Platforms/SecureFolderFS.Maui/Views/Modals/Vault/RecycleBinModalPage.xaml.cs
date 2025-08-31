@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
-            _firstTime = new();
+            _firstTime = new(2);
             BindingContext = this;
 
             _ = new MauiIcon(); // Workaround for XFC0000
