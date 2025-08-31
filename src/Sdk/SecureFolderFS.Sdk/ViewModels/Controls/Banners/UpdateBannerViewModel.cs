@@ -53,11 +53,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         public void Report(double value)
         {
             var rounded = (int)Math.Round(value);
-
-            if (rounded == 100)
-                UpdateText = "Installing".ToLocalized();
-            else
-                UpdateText = SafetyHelpers.NoThrowResult(() => string.Format("Downloading".ToLocalized(), rounded)) ?? $"{rounded}%";
+            UpdateText = rounded == 100
+                ? "Installing".ToLocalized()
+                : "Downloading".ToLocalized(rounded);
         }
 
         private void UpdateService_StateChanged(object? sender, EventArgs e)

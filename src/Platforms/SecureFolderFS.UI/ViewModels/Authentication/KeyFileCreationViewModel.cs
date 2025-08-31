@@ -26,7 +26,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         {
             try
             {
-                var key = await CreateAsync(_vaultId, null, cancellationToken);
+                var key = await EnrollAsync(_vaultId, null, cancellationToken);
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
 

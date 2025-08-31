@@ -39,7 +39,6 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)
         {
             Title = "KeyFile".ToLocalized();
-            Icon = "\uE8D7";
         }
 
         /// <inheritdoc/>
@@ -49,7 +48,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -83,7 +82,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;

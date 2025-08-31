@@ -83,6 +83,7 @@
             <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsAbout}">
                 <uco:OptionsContainer.InnerContent>
                     <VerticalStackLayout>
+                        <uco:OptionsControl Title="{l:ResourceString Rid=ViewOnboarding}" Command="{Binding ShowIntroductionCommand, Mode=OneWay}" />
                         <uco:OptionsControl
                             Title="{l:ResourceString Rid=Version}"
                             Command="{Binding AboutViewModel.CopyAppVersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}"

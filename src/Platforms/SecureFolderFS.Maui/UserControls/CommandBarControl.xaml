@@ -63,8 +63,6 @@
                             HorizontalOptions="Start"
                             LineBreakMode="TailTruncation"
                             Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
                             VerticalOptions="Center" />
 
                         <!--  Quick Options  -->
@@ -130,8 +128,6 @@
                             LineBreakMode="TailTruncation"
                             MaximumWidthRequest="180"
                             Text="{Binding Title, Source={x:Reference ThisControl}, Mode=OneWay}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
                             VerticalOptions="Center" />
 
                         <Button

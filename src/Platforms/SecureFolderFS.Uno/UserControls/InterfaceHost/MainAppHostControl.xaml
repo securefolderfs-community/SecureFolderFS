@@ -33,7 +33,7 @@
         MenuItemsSource="{x:Bind ViewModel.VaultListViewModel.Items, Mode=OneWay}"
         OpenPaneLength="260"
         PaneClosed="Sidebar_PaneClosed"
-        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
+        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:none|:true:localize|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.VaultListViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
@@ -175,10 +175,10 @@
             <DataTemplate x:DataType="vm:VaultListItemViewModel">
                 <NavigationViewItem
                     Height="64"
-                    AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    AutomationProperties.Name="{x:Bind VaultViewModel.Title, Mode=OneWay}"
                     DoubleTapped="NavigationItem_DoubleTapped"
                     IsDoubleTapEnabled="True"
-                    ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind VaultViewModel.Title, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <IconSourceElement IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
                     </NavigationViewItem.Icon>

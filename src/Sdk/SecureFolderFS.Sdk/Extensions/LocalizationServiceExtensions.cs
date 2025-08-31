@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.Extensions
             var dateString = dateTime switch
             {
                 _ when dateTime.Year == 1 => "Unspecified",
-                _ when dateTime.Date == DateTime.Today => SafetyHelpers.NoThrowResult(() => string.Format("DateToday".ToLocalized(), dateTime.ToString("t", cultureInfo))),
+                _ when dateTime.Date == DateTime.Today => "DateToday".ToLocalized(dateTime.ToString("t", cultureInfo)),
                 _ => null
             };
 

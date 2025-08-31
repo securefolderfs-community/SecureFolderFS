@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
 
         /// <summary>
-        /// Occurs when credentials have been provided by the user.
+        /// Occurs when the user has provided credentials.
         /// </summary>
         public event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 // We also need to revoke existing credentials if the user added and aborted
                 if (Credentials.Count > 0)
-                    await SafetyHelpers.NoThrowAsync(async () => await oldValue.RevokeAsync(null));
+                    await SafetyHelpers.NoFailureAsync(async () => await oldValue.RevokeAsync(null));
             }
 
             if (newValue is not null)
@@ -104,9 +104,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentialsAdded = true;
-            Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
-            CanContinue = true;
+            try
+            {
+                _credentialsAdded = true;
+                Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, e.Authentication);
+                CanContinue = true;
+            }
+            finally
+            {
+                e.TaskCompletion?.TrySetResult();
+            }
         }
 
         private void CurrentViewModel_StateChanged(object? sender, EventArgs e)

@@ -3,9 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Shared.Helpers
 {
-    public sealed class FirstTimeHelper
+    public sealed class FirstTimeHelper(int capacity)
     {
-        private readonly List<string> _callers = new();
+        private readonly List<string> _callers = new(capacity);
 
         public bool IsFirstTime([CallerMemberName] string callerId = "")
         {

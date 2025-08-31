@@ -33,7 +33,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public virtual bool IsIntroduced
+        public virtual bool WasIntroduced
         {
             get => GetSetting(static () => false);
             set => SetSetting(value);

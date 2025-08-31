@@ -2,6 +2,7 @@ using APES.UI.XF;
 using CommunityToolkit.Maui;
 using LibVLCSharp.MAUI;
 using Plugin.Maui.BottomSheet.Hosting;
+using Xe.AcrylicView;
 #if ANDROID
 using MauiIcons.Material;
 #elif IOS
@@ -30,6 +31,7 @@ namespace SecureFolderFS.Maui
                 .UseBottomSheet()                       // https://github.com/lucacivale/Maui.BottomSheet
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
                 .UseLibVLCSharp()                       // https://github.com/videolan/libvlcsharp
+                .UseAcrylicView()                       // https://github.com/sswi/AcrylicView.MAUI
 
 #if ANDROID
                 .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons

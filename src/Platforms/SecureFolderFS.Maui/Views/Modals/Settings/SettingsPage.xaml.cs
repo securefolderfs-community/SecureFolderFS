@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.Extensions;
@@ -22,7 +23,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        private readonly FirstTimeHelper _firstTime = new();
+        private readonly FirstTimeHelper _firstTime = new(1);
 
         public SettingsOverlayViewModel? OverlayViewModel { get; private set; }
 
@@ -101,6 +102,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
         {
             _modalTcs.TrySetResult(Result.Success);
             base.OnDisappearing();
+        }
+
+        [RelayCommand]
+        private async Task ShowIntroductionAsync()
+        {
+            await _sourceNavigation.PopAsync();
+            await Task.Delay(500);
+            await _sourceNavigation.PushModalAsync(new IntroductionPage(), true);
         }
 
         private async void ThemePicker_SelectedIndexChanged(object? sender, EventArgs e)

@@ -16,12 +16,12 @@ namespace SecureFolderFS.UI.ValueConverters
 
             // Example:
             // If false, localize using "StringRes" resource. If true, don't localize, just use "Some string"
-            // false:LOCALIZE|StringRes:true:STANDARD|Some string
+            // false:localize|StringRes:true:none|Some string
 
             var valueSplit = formatString.Split(':');
             var splitOption = bValue ? valueSplit[3].Split('|') : valueSplit[1].Split('|');
 
-            return splitOption[0] == "LOCALIZE" ? splitOption[1].ToLocalized() : splitOption[1];
+            return splitOption[0].Equals("localize", StringComparison.OrdinalIgnoreCase) ? splitOption[1].ToLocalized() : splitOption[1];
         }
 
         /// <inheritdoc/>

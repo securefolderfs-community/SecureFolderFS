@@ -32,6 +32,9 @@ namespace SecureFolderFS.Maui
 #if ANDROID
             // Load Android-specific resource dictionaries
             Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
+#elif IOS
+            // Load IOS-specific resource dictionaries
+            Resources.MergedDictionaries.Add(new Platforms.iOS.Templates.IOSDataTemplates());
 #endif
 
             // Configure mappers
