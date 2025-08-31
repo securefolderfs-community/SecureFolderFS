@@ -10,8 +10,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
     public static partial class AbstractPathHelpers
     {
-        public static async Task<bool> GetDirectoryIdAsync(IFolder folderOfDirectoryId, FileSystemSpecifics specifics,
-            Memory<byte> directoryId, CancellationToken cancellationToken)
+        public static async Task<bool> GetDirectoryIdAsync(
+            IFolder folderOfDirectoryId,
+            FileSystemSpecifics specifics,
+            Memory<byte> directoryId,
+            CancellationToken cancellationToken)
         {
             if (folderOfDirectoryId.Id == specifics.ContentFolder.Id)
                 return false;

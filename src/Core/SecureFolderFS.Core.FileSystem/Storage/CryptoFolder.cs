@@ -143,7 +143,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             await directoryIdStream.WriteAsync(directoryId, cancellationToken);
 
             // Set DirectoryID to known IDs
-            specifics.DirectoryIdCache.CacheSet(directoryIdFile.Id, new(Guid.NewGuid().ToByteArray()));
+            specifics.DirectoryIdCache.CacheSet(directoryIdFile.Id, new(directoryId));
 
             return (IChildFolder)Wrap(folder, name);
         }
