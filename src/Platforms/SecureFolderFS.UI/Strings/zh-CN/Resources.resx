@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>添加现有</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Add existing vault</value>
