@@ -26,7 +26,8 @@ namespace SecureFolderFS.Sdk.Ftp
                 _ => await ftpClient.OpenWrite(Id, token: cancellationToken)
             };
 
-            return new SeekableFtpStream(stream, size);
+            return stream;
+            //return new SeekableFtpStream(stream, size);
         }
     }
 }

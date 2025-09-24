@@ -40,7 +40,6 @@ namespace SecureFolderFS.Uno.ViewModels
             Title = "WindowsHello".ToLocalized();
             VaultFolder = vaultFolder;
             VaultId = vaultId;
-            Icon = "\uEB68";
         }
 
         /// <inheritdoc/>

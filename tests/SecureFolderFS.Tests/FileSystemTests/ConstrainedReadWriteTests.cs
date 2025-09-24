@@ -1,13 +1,18 @@
 ﻿using NUnit.Framework;
+using SecureFolderFS.Storage.MemoryStorageEx;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {
     [TestFixture]
-    public class ReadWriteTests : BaseReadWriteTests
+    public class ConstrainedReadWriteTests : BaseReadWriteTests
     {
         [SetUp]
         public async Task Initialize()
         {
+            var options = new MockVaultOptions()
+            {
+                VaultFolder = new MemoryFolderEx()
+            };
             await SetupAsync(null);
         }
 

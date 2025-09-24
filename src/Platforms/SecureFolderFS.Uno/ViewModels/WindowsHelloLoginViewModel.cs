@@ -7,6 +7,7 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
 using Windows.Security.Credentials;
+using SecureFolderFS.Core.DataModels;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
@@ -24,7 +25,7 @@ namespace SecureFolderFS.Uno.ViewModels
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
-            var auth = await vaultReader.ReadAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            var auth = await vaultReader.ReadAuthenticationAsync<VaultChallengeDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
 
             if (auth?.Challenge is null)
             {

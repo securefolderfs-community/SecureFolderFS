@@ -28,9 +28,9 @@ namespace SecureFolderFS.Tests.Helpers
                                                   }
                                                   """;
 
-        public static async Task<(IFolder, string)> CreateVaultV3Async(CancellationToken cancellationToken = default)
+        public static async Task<(IFolder, string)> CreateVaultV3Async(MockVaultOptions? options, CancellationToken cancellationToken = default)
         {
-            return (await SetupMockVault(V3_SFCONFIG_STRING, V3_KEYSTORE_STRING, cancellationToken), V3_RECOVERY_KEY);
+            return (await SetupMockVault(V3_SFCONFIG_STRING, V3_KEYSTORE_STRING, options, cancellationToken), V3_RECOVERY_KEY);
         }
     }
 }

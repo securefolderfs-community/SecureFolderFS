@@ -92,7 +92,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             // Read header if not ready
             if (!TryReadHeader())
-                throw new CryptographicException();
+                throw new CryptographicException("Could not read header.");
 
             var read = 0;
             var positionInBuffer = 0;
