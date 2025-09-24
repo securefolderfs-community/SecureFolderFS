@@ -3,6 +3,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.Tests.Helpers;
+using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {

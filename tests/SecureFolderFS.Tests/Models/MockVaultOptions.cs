@@ -1,6 +1,6 @@
 using OwlCore.Storage;
 
-namespace SecureFolderFS.Tests
+namespace SecureFolderFS.Tests.Models
 {
     public sealed record class MockVaultOptions
     {

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using SecureFolderFS.Storage.MemoryStorageEx;
+using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {
@@ -9,11 +10,15 @@ namespace SecureFolderFS.Tests.FileSystemTests
         [SetUp]
         public async Task Initialize()
         {
+            var vaultPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), "TestVault");
+            var streamSource = new ConstrainedMemoryStreamSource(false, true, true);
+            var vaultFolder = new MemoryFolderEx(vaultPath, Path.GetFileName(vaultPath), null, streamSource);
             var options = new MockVaultOptions()
             {
-                VaultFolder = new MemoryFolderEx()
+                VaultFolder = vaultFolder
             };
-            await SetupAsync(null);
+
+            await SetupAsync(options);
         }
 
         [Test]

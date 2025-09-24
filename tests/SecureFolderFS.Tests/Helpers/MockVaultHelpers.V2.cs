@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.Helpers
 {

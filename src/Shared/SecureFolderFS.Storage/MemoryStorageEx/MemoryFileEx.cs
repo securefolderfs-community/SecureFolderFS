@@ -1,5 +1,5 @@
-﻿using OwlCore.Storage.Memory;
-using System.IO;
+﻿using System.IO;
+using OwlCore.Storage.Memory;
 
 namespace SecureFolderFS.Storage.MemoryStorageEx
 {
@@ -9,16 +9,18 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
         internal MemoryStream InternalStream { get; }
 
         /// <inheritdoc/>
-        public MemoryFileEx(MemoryStream memoryStream)
+        public MemoryFileEx(MemoryStream memoryStream, MemoryFolder? parent)
             : base(memoryStream)
         {
+            Parent = parent;
             InternalStream = memoryStream;
         }
 
         /// <inheritdoc/>
-        public MemoryFileEx(string id, string name, MemoryStream memoryStream)
+        public MemoryFileEx(string id, string name, MemoryStream memoryStream, MemoryFolder? parent)
             : base(id, name, memoryStream)
         {
+            Parent = parent;
             InternalStream = memoryStream;
         }
 

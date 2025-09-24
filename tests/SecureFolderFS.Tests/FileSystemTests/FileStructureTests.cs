@@ -17,7 +17,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var vaultFileSystemService = DI.Service<IVaultFileSystemService>();
             var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync(default);
 
-            _storageRoot = await MountVault(localFileSystem);
+            _storageRoot = await MountVault(localFileSystem, null);
         }
 
         [Test]

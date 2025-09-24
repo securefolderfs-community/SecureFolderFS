@@ -16,7 +16,7 @@ namespace SecureFolderFS.Tests.VaultTests
         public async Task Create_V1Vault_MigrateTo_V2Vault_NoThrow()
         {
             // Arrange
-            var v1VaultFolder = await MockVaultHelpers.CreateVaultV1Async();
+            var v1VaultFolder = await MockVaultHelpers.CreateVaultV1Async(null);
             var service = DI.Service<IVaultService>();
 
             // Act
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Tests.VaultTests
         public async Task Create_V2Vault_MigrateTo_V3Vault_NoThrow()
         {
             // Arrange
-            var (v2VaultFolder, _) = await MockVaultHelpers.CreateVaultV2Async();
+            var (v2VaultFolder, _) = await MockVaultHelpers.CreateVaultV2Async(null);
             var service = DI.Service<IVaultService>();
 
             // Act

@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var vaultFileSystemService = DI.Service<IVaultFileSystemService>();
             var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync(default);
 
-            StorageRoot = await MountVault(localFileSystem);
+            StorageRoot = await MountVault(localFileSystem, options);
         }
 
         protected async Task Base_Write_SmallFile_Read_SameContent_NoThrow()
