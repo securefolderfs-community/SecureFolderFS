@@ -60,7 +60,7 @@
             Spacing="8"
             Visibility="Collapsed">
             <InfoBar
-                Title="You're about to migrate a vault"
+                Title="{l:ResourceString Rid=AboutToMigrate}"
                 IsClosable="False"
                 IsOpen="True"
                 Severity="Informational" />

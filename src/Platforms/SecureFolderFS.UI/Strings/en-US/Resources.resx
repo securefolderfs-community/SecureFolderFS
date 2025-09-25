@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -468,7 +468,7 @@
     <value>Website</value>
   </data>
   <data name="WelcomeTo" xml:space="preserve">
-      <value>Welcome to {0}</value>
+    <value>Welcome to {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>What's new</value>
@@ -819,105 +819,111 @@
     <value>Recently deleted</value>
   </data>
   <data name="FileBrowser" xml:space="preserve">
-      <value>File browser</value>
+    <value>File browser</value>
   </data>
   <data name="EnableAdaptiveLayout" xml:space="preserve">
-      <value>Enable adaptive layout</value>
+    <value>Enable adaptive layout</value>
   </data>
   <data name="FoundIssues" xml:space="preserve">
-      <value>Found issues</value>
+    <value>Found issues</value>
   </data>
   <data name="UnsavedChanges" xml:space="preserve">
-      <value>Unsaved changes</value>
+    <value>Unsaved changes</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-      <value>You have made changes to the file. Do you want to save them now?</value>
+    <value>You have made changes to the file. Do you want to save them now?</value>
   </data>
   <data name="Save" xml:space="preserve">
-      <value>Save</value>
+    <value>Save</value>
   </data>
   <data name="WriteHere" xml:space="preserve">
-      <value>Write here...</value>
+    <value>Write here...</value>
   </data>
   <data name="NoIssuesFound" xml:space="preserve">
-      <value>No issues found</value>
+    <value>No issues found</value>
   </data>
   <data name="Remove" xml:space="preserve">
-      <value>Remove</value>
+    <value>Remove</value>
   </data>
   <data name="GoToVaults" xml:space="preserve">
-      <value>Go to vault list</value>
+    <value>Go to vault list</value>
   </data>
   <data name="DateCreated" xml:space="preserve">
-      <value>Date created</value>
+    <value>Date created</value>
   </data>
   <data name="ClosedUnexpectedly" xml:space="preserve">
-      <value>{0} has closed unexpectedly</value>
+    <value>{0} has closed unexpectedly</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-      <value>Select</value>
+    <value>Select</value>
   </data>
   <data name="Done" xml:space="preserve">
-      <value>Done</value>
+    <value>Done</value>
   </data>
   <data name="ChooseDataSource" xml:space="preserve">
-      <value>Choose data source</value>
+    <value>Choose data source</value>
   </data>
   <data name="SourceLocalStorage" xml:space="preserve">
-      <value>Device storage</value>
+    <value>Device storage</value>
   </data>
   <data name="FTP" xml:space="preserve">
-      <value>FTP</value>
+    <value>FTP</value>
   </data>
   <data name="GoogleDrive" xml:space="preserve">
-      <value>Google Drive</value>
+    <value>Google Drive</value>
   </data>
   <data name="Address" xml:space="preserve">
-      <value>Address</value>
+    <value>Address</value>
   </data>
   <data name="Username" xml:space="preserve">
-      <value>Username</value>
+    <value>Username</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
-      <value>Add account</value>
+    <value>Add account</value>
   </data>
   <data name="User1" xml:space="preserve">
-      <value>User1</value>
+    <value>User1</value>
   </data>
   <data name="ChooseAccount" xml:space="preserve">
-      <value>Choose account</value>
+    <value>Choose account</value>
   </data>
   <data name="SelectedLocation" xml:space="preserve">
-      <value>Selected location</value>
+    <value>Selected location</value>
   </data>
   <data name="AccountList" xml:space="preserve">
-      <value>Account list</value>
+    <value>Account list</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-      <value>Disconnect</value>
+    <value>Disconnect</value>
   </data>
   <data name="AuthenticateForCredentials" xml:space="preserve">
-      <value>Authenticate to create credentials</value>
+    <value>Authenticate to create credentials</value>
   </data>
   <data name="ViewOnboarding" xml:space="preserve">
-      <value>View onboarding</value>
+    <value>View onboarding</value>
   </data>
   <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
-      <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
   </data>
   <data name="OnboardingDashboardTitle" xml:space="preserve">
-      <value>You're in control</value>
+    <value>You're in control</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-      <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
-      <value>Your data — secure, anywhere</value>
+    <value>Your data — secure, anywhere</value>
   </data>
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
-      <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
-      <value>You're ready to go!</value>
+    <value>You're ready to go!</value>
+  </data>
+  <data name="AboutToMigrate" xml:space="preserve">
+    <value>You're about to migrate a vault</value>
+  </data>
+  <data name="VersionValue" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
 </root>

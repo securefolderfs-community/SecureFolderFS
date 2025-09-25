@@ -126,6 +126,11 @@ namespace SecureFolderFS.Core.Migration.AppModels
                     cancellationToken);
             }
 
+
+            // Reset length
+            configStream.SetLength(0L);
+
+            // Copy serialized output
             await using var serializedStream = await _streamSerializer.SerializeAsync(v2ConfigDataModel, cancellationToken);
             await serializedStream.CopyToAsync(configStream, cancellationToken);
 

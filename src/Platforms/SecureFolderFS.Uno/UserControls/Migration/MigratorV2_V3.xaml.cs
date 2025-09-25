@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using OwlCore.Storage;
@@ -46,8 +47,13 @@ namespace SecureFolderFS.Uno.UserControls.Migration
             if (value is null)
                 return;
 
-            if (!value.Successful)
-                RestartLoginProcess();
+            if (value.Successful)
+                return;
+
+            RestartLoginProcess();
+            var passwordControl = (LoginControl.LoginContentControl.ContentTemplateRoot as FrameworkElement)?.FindChild<PasswordControl>();
+            if (passwordControl is not null && !value.Successful)
+                passwordControl.ShowInvalidPasswordMessage = true;
         }
 
         private async Task BeginAuthenticationAsync(IFolder vaultFolder)

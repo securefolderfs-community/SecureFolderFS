@@ -146,9 +146,11 @@
     </UserControl.Resources>
 
     <ContentControl
+        x:Name="LoginContentControl"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
         HorizontalContentAlignment="Center"
+        x:FieldModifier="public"
         Content="{x:Bind CurrentViewModel, Mode=OneWay}"
         IsTabStop="False">
         <ContentControl.ContentTemplateSelector>
