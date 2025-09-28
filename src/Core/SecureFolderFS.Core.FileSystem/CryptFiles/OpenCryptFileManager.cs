@@ -48,7 +48,6 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         public OpenCryptFile NewCryptFile(string id, BufferHolder headerBuffer)
         {
             var cryptFile = GetCryptFile(id, headerBuffer);
-
             lock (_openCryptFiles)
                 _openCryptFiles[id] = cryptFile;
 

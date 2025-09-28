@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
             try
             {
-                // ArrayPool may return larger array than requested
+                // ArrayPool may return a larger array than requested
                 var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
                 // Get available read stream or throw
@@ -56,8 +56,15 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 if (ciphertextPosition > ciphertextStream.Length)
                     return 0;
 
+                // Set the correct stream position
+                if (!ciphertextStream.TrySetPositionOrAdvance(ciphertextPosition))
+                    return 0;
+
+                // Return early if the stream is at the EOF position
+                if (ciphertextStream.IsEndOfStream())
+                    return 0;
+
                 // Read from stream at correct chunk
-                ciphertextStream.Position = ciphertextPosition;
                 var read = ciphertextStream.Read(realCiphertextChunk);
 
                 // Check for end of file

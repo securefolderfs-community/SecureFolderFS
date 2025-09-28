@@ -11,7 +11,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
         public async Task Initialize()
         {
             var vaultPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), "TestVault");
-            var streamSource = new ConstrainedMemoryStreamSource(false, true, true);
+            var streamSource = new ConstrainedMemoryStreamSource();
             var vaultFolder = new MemoryFolderEx(vaultPath, Path.GetFileName(vaultPath), null, streamSource);
             var options = new MockVaultOptions()
             {

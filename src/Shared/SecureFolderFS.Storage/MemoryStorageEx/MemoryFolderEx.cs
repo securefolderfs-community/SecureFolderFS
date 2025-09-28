@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.Streams;
 
 namespace SecureFolderFS.Storage.MemoryStorageEx
 {
@@ -34,7 +35,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
                 case MemoryFileEx memoryFile:
                 {
                     FolderContents.Remove(oldPath);
-                    var newFile = new MemoryFileEx(newPath, newName, memoryFile.InternalStream, this);
+                    var newFile = new MemoryFileEx(newPath, newName, memoryFile.InternalStream, this, _streamSource);
                     newFile.SetParent(this);
                     FolderContents.Add(newPath, newFile);
 
@@ -88,7 +89,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
                 await DeleteAsync(existingFile, cancellationToken);
 
             var stream = _streamSource?.GetInMemoryStream() ?? new MemoryStream();
-            var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, stream, this);
+            var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, stream, this, _streamSource);
             emptyMemoryFolder.SetParent(this);
 
             var file = overwrite ? emptyMemoryFolder : (existingFile ?? emptyMemoryFolder);

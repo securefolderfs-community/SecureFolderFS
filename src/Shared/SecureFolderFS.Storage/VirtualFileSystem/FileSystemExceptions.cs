@@ -18,6 +18,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public static Exception StreamReadOnly { get; } = new NotSupportedException("The stream instance is read-only.");
 
         /// <summary>
+        /// Gets an exception indicating that the stream instance is not readable.
+        /// </summary>
+        public static Exception StreamNotReadable { get; } = new NotSupportedException("The stream instance is not readable.");
+
+        /// <summary>
         /// Gets an exception indicating that seeking is not supported for the stream.
         /// </summary>
         public static Exception StreamNotSeekable { get; } = new NotSupportedException("Seeking is not supported for this stream.");

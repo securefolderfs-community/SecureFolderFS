@@ -63,5 +63,28 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Assert
             data.SequenceEqual(compareData).Should().BeTrue();
         }
+
+        protected async Task Base_Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow()
+        {
+            ArgumentNullException.ThrowIfNull(StorageRoot);
+
+            // Arrange
+            const string dataString = "test";
+            const string dataString2 = dataString + dataString;
+            if (StorageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
+            {
+                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
+                return;
+            }
+
+            // Act
+            var file = await modifiableFolder.CreateFileAsync("SMALL_FILE");
+            await file.WriteTextAsync(dataString);
+            await file.WriteTextAsync(dataString2);
+            var compareString = await file.ReadTextAsync();
+
+            // Assert
+            dataString2.SequenceEqual(compareString).Should().BeTrue();
+        }
     }
 }

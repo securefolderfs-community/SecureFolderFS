@@ -1,26 +1,22 @@
-using SecureFolderFS.Storage.MemoryStorageEx;
+using SecureFolderFS.Storage.Streams;
 
 namespace SecureFolderFS.Tests.Models
 {
     public sealed class ConstrainedMemoryStreamSource : IStreamSource
     {
-        public bool CanSeek { get; }
-
-        public bool CanRead { get; }
-
-        public bool CanWrite { get; }
-
-        public ConstrainedMemoryStreamSource(bool canSeek, bool canRead, bool canWrite)
-        {
-            CanSeek = canSeek;
-            CanRead = canRead;
-            CanWrite = canWrite;
-        }
-
         /// <inheritdoc/>
         public MemoryStream GetInMemoryStream()
         {
-            return new ConstrainedMemoryStream(CanSeek, CanRead, CanWrite);
+            return new MemoryStream();
+        }
+
+        /// <inheritdoc/>
+        public Stream WrapStreamSource(FileAccess access, Stream dataStream)
+        {
+            dataStream.Position = 0L;
+            var canSeek = !access.HasFlag(FileAccess.Write);
+            canSeek = false;
+            return new NonDisposableStream(dataStream, canSeek, access.HasFlag(FileAccess.Read));
         }
     }
 }

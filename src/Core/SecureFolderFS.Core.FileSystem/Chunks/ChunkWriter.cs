@@ -5,6 +5,7 @@ using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
@@ -39,35 +40,44 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             // Calculate position in ciphertext stream
             var streamPosition = _security.HeaderCrypt.HeaderCiphertextSize + chunkNumber * _security.ContentCrypt.ChunkCiphertextSize;
 
-            // Rent array for ciphertext chunk
+            // Rent buffer
             var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
-            var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
+            try
+            {
+                // ArrayPool may return a larger array than requested
+                var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
-            // Encrypt
-            _security.ContentCrypt.EncryptChunk(
-                plaintextChunk,
-                chunkNumber,
-                _fileHeader,
-                realCiphertextChunk);
+                // Encrypt
+                _security.ContentCrypt.EncryptChunk(
+                    plaintextChunk,
+                    chunkNumber,
+                    _fileHeader,
+                    realCiphertextChunk);
 
-            _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
+                _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
-            // Get available read-write stream or throw
-            var ciphertextStream = _streamsManager.GetReadWriteStream();
-            _ = ciphertextStream ?? throw new UnavailableStreamException();
+                // Get available read-write stream or throw
+                var ciphertextStream = _streamsManager.GetReadWriteStream();
+                _ = ciphertextStream ?? throw new UnavailableStreamException();
 
-            // Check position bounds
-            if (streamPosition > ciphertextStream.Length)
-                return;
+                // Check position bounds
+                if (streamPosition > ciphertextStream.Length)
+                    return;
 
-            // Write to stream at correct chunk
-            ciphertextStream.Position = streamPosition;
-            ciphertextStream.Write(realCiphertextChunk);
+                // Set the correct stream position
+                if (!ciphertextStream.TrySetPositionOrAdvance(streamPosition))
+                    return;
 
-            _fileSystemStatistics.BytesWritten?.Report(plaintextChunk.Length);
+                // Write to stream at the correct chunk
+                ciphertextStream.Write(realCiphertextChunk);
 
-            // Return array
-            ArrayPool<byte>.Shared.Return(ciphertextChunk);
+                _fileSystemStatistics.BytesWritten?.Report(realCiphertextChunk.Length);
+            }
+            finally
+            {
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(ciphertextChunk);
+            }
         }
 
         /// <inheritdoc/>

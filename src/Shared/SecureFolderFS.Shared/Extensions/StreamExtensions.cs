@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json.Serialization;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Shared.Extensions
 {
@@ -23,6 +25,70 @@ namespace SecureFolderFS.Shared.Extensions
                 _ = ex;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Determines whether the given stream has reached the end of its content.
+        /// </summary>
+        /// <param name="stream">The stream to check for the end of the content.</param>
+        /// <returns>True if the stream has reached its end; otherwise, false.</returns>
+        /// <remarks>
+        /// When the <see cref="Stream.Length"/> or <see cref="Stream.Position"/> properties
+        /// are unavailable on the <paramref name="stream"/> parameter, the method will return false.
+        /// In some rare circumstances, when this happens, the stream might have already reached its end;
+        /// in that case, it is advised to check the end of the stream by using the read call.
+        /// </remarks>
+        public static bool IsEndOfStream(this Stream stream)
+        {
+            if (stream.CanSeek)
+                return stream.Position == stream.Length;
+
+            var positionInStream = SafetyHelpers.NoFailureResult<long?>(() => stream.Position);
+            if (positionInStream is null)
+                return false;
+
+            var lengthInStream = SafetyHelpers.NoFailureResult<long?>(() => stream.Length);
+            if (lengthInStream is null)
+                return false;
+
+            return positionInStream == lengthInStream;
+        }
+
+        public static bool TrySetPositionOrAdvance(this Stream stream, long position)
+        {
+            var positionInStream = SafetyHelpers.NoFailureResult<long?>(() => stream.Position);
+            if (positionInStream is null)
+                return false;
+
+            if (positionInStream == position)
+                return true;
+
+            if (stream.CanSeek)
+            {
+                stream.Position = position;
+                return true;
+            }
+
+            if (!stream.CanSeek && position < positionInStream)
+                return false;
+
+            if (!stream.CanRead)
+                return false;
+
+            // Read to a buffer in loop until the desired position is reached
+            var bytesToAdvance = position - positionInStream.Value;
+            var buffer = new byte[4096];
+            while (bytesToAdvance > 0)
+            {
+                var bytesToRead = (int)Math.Min(buffer.Length, bytesToAdvance);
+                var bytesRead = stream.Read(buffer.AsSpan(0, bytesToRead));
+                if (bytesRead <= 0)
+                    return false;
+
+                bytesToAdvance -= bytesRead;
+            }
+
+            return true;
         }
 
         /// <summary>
