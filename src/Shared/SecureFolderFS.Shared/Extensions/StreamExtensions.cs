@@ -1,7 +1,6 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Helpers;
+using System;
 using System.IO;
-using System.Text.Json.Serialization;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Shared.Extensions
 {

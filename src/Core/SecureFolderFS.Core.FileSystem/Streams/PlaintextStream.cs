@@ -332,10 +332,10 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // Write header
                     if (CanSeek)
                     {
-                        var savedPos = Inner.Position;
+                        var savedPosition = Inner.Position;
                         Inner.Position = 0L;
                         Inner.Write(ciphertextHeader);
-                        Inner.Position = savedPos + ciphertextHeader.Length;
+                        Inner.Position = savedPosition + ciphertextHeader.Length;
                     }
                     else
                     {
