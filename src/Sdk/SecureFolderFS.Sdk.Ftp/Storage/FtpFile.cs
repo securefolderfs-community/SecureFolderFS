@@ -19,15 +19,12 @@ namespace SecureFolderFS.Sdk.Ftp
             if (!ftpClient.IsConnected)
                 throw FtpExceptions.NotConnectedException;
 
-            var size = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
-            var stream = accessMode switch
+            return accessMode switch
             {
                 FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
-                _ => await ftpClient.OpenWrite(Id, token: cancellationToken)
+                FileAccess.Write => await ftpClient.OpenWrite(Id, token: cancellationToken),
+                FileAccess.ReadWrite => new SeekableFtpStream(await ftpClient.OpenWrite(Id, token: cancellationToken), await ftpClient.GetFileSize(Id, -1L, cancellationToken))
             };
-
-            return stream;
-            //return new SeekableFtpStream(stream, size);
         }
     }
 }

@@ -14,9 +14,7 @@ namespace SecureFolderFS.Tests.Models
         public Stream WrapStreamSource(FileAccess access, Stream dataStream)
         {
             dataStream.Position = 0L;
-            var canSeek = !access.HasFlag(FileAccess.Write);
-            canSeek = false;
-            return new NonDisposableStream(dataStream, canSeek, access.HasFlag(FileAccess.Read));
+            return new NonDisposableStream(dataStream, false, access.HasFlag(FileAccess.Read));
         }
     }
 }
