@@ -43,8 +43,7 @@ namespace SecureFolderFS.Tests.VaultTests
 
             // Act
             var migrator = await service.GetMigratorAsync(v2VaultFolder);
-            var keySequence = new KeySequence();
-            keySequence.Add(new DisposablePassword(MockVaultHelpers.VAULT_PASSWORD));
+            var keySequence = new KeySequence() { new DisposablePassword(MockVaultHelpers.VAULT_PASSWORD) };
 
             var contract = await migrator.UnlockAsync(keySequence);
             await migrator.MigrateAsync(contract, new());

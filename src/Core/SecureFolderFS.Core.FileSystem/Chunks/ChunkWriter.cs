@@ -2,10 +2,10 @@
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {

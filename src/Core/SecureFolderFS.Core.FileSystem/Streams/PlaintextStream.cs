@@ -1,16 +1,16 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
-using SecureFolderFS.Core.FileSystem.Extensions;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
