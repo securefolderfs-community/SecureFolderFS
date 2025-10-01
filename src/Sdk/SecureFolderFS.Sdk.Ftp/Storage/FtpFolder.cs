@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Ftp.Extensions;
 
 namespace SecureFolderFS.Sdk.Ftp
 {
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
             await foreach (var item in ftpClient.GetListingEnumerable(Id, cancellationToken, cancellationToken))
@@ -45,7 +46,7 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, item.Name);
@@ -67,7 +68,7 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, name);
@@ -80,7 +81,7 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
             var id = CombinePath(Id, name);

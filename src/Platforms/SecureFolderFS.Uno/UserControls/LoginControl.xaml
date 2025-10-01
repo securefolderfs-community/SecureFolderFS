@@ -143,6 +143,15 @@
                 HorizontalContentAlignment="Stretch"
                 ExceptionMessage="{x:Bind ExceptionMessage, Mode=OneWay}" />
         </DataTemplate>
+
+        <!--  Unsupported Template  -->
+        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm3:UnsupportedViewModel">
+            <TextBlock
+                HorizontalAlignment="Center"
+                HorizontalTextAlignment="Center"
+                Opacity="0.8"
+                Text="{x:Bind Title, Mode=OneWay}" />
+        </DataTemplate>
     </UserControl.Resources>
 
     <ContentControl
@@ -159,6 +168,7 @@
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 MigrationTemplate="{StaticResource MigrationTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
+                UnsupportedTemplate="{StaticResource UnsupportedTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
         </ContentControl.ContentTemplateSelector>
         <ContentControl.ContentTransitions>

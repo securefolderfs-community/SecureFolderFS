@@ -325,7 +325,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // Allocate ciphertext header
                     Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
 
-                    // Get and encrypt header
+                    // Get and encrypt the header
                     _security.HeaderCrypt.CreateHeader(_headerBuffer);
                     _security.HeaderCrypt.EncryptHeader(_headerBuffer, ciphertextHeader);
 

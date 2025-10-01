@@ -77,7 +77,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
                 var chunkReserved = realCiphertextChunk.Slice(0, chunkReservedSize);
 
-                // Check if the reserved part is all zeros in which case the decryption will be skipped (the chunk was extended)
+                // Check if the reserved part is all zeros, in which case the decryption will be skipped (the chunk was extended)
                 if (chunkReservedSize > 0 && SpanExtensions.IsAllZeros(chunkReserved))
                 {
                     plaintextChunk.Clear();

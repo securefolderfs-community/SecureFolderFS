@@ -17,6 +17,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? KeyFileTemplate { get; set; }
 
         public DataTemplate? ErrorTemplate { get; set; }
+        
+        public DataTemplate? UnsupportedTemplate { get; set; }
 
 #if ANDROID
         public DataTemplate? AndroidBiometricsTemplate { get; set; }
@@ -43,6 +45,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
                 IOSBiometricLoginViewModel => IOSBiometricsTemplate,
 #endif
                 ErrorViewModel => ErrorTemplate,
+                UnsupportedViewModel => UnsupportedTemplate,
                 _ => null
             };
         }

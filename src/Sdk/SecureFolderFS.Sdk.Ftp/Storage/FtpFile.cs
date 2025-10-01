@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Ftp.Extensions;
 
 namespace SecureFolderFS.Sdk.Ftp
 {
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
             return accessMode switch

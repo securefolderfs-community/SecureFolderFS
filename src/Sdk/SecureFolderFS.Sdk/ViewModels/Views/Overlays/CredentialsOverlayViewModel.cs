@@ -54,13 +54,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken);
-            SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
+            try
             {
-                AuthenticationStage.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),
-                AuthenticationStage.ProceedingStageOnly => await loginMethods.ElementAtOrDefaultAsync(1, cancellationToken),
-                _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
-            };
+                var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToListAsync(cancellationToken);
+                SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
+                {
+                    AuthenticationStage.FirstStageOnly => loginItems.FirstOrDefault(),
+                    AuthenticationStage.ProceedingStageOnly => loginItems.ElementAtOrDefault(1),
+                    _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+                };
+            }
+            catch (Exception ex)
+            {
+                // If an unsupported authentication method is configured, don't offer to modify it
+                _ = ex;
+            }
 
             await SelectionViewModel.InitAsync(cancellationToken);
             await LoginViewModel.InitAsync(cancellationToken);
