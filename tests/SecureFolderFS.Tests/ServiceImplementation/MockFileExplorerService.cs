@@ -13,7 +13,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
             await Task.CompletedTask;
             var guid = Guid.NewGuid().ToString();
 
-            return new MemoryFileEx(guid, guid, new());
+            return new MemoryFileEx(guid, guid, new(), null);
         }
 
         /// <inheritdoc/>
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
             await Task.CompletedTask;
             var guid = Guid.NewGuid().ToString();
 
-            return new MemoryFolderEx(guid, guid);
+            return new MemoryFolderEx(guid, guid, null);
         }
 
         /// <inheritdoc/>

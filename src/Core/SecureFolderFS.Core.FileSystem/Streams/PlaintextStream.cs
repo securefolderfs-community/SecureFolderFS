@@ -1,7 +1,10 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
@@ -57,7 +60,8 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
 
-            if (CanSeek)
+            var ciphertextStreamLength = SafetyHelpers.NoFailureResult<long?>(() => ciphertextStream.Length);
+            if (ciphertextStreamLength is not null)
                 _length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
 
@@ -76,23 +80,26 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override int Read(Span<byte> buffer)
         {
-            if (!CanSeek)
+            if (!CanRead)
+                throw FileSystemExceptions.StreamNotReadable;
+
+            if (buffer.IsEmpty)
                 return 0;
 
-            var ciphertextStreamLength = Inner.Length;
-            if (ciphertextStreamLength == 0L)
+            if (Inner.IsEndOfStream())
                 return FileSystem.Constants.FILE_EOF;
 
+            var ciphertextStreamLength = Inner.Length;
             if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
                 return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
 
-            var lengthToEof = Length - _position;
+            var lengthToEof = Length - Position;
             if (lengthToEof <= 0L)
                 return FileSystem.Constants.FILE_EOF;
 
-            // Read header if not ready
-            if (!TryReadHeader())
-                throw new CryptographicException();
+            // Read header if is not ready
+            if (!_headerBuffer.ReadHeader(Inner, _security))
+                throw new CryptographicException("Could not read header.");
 
             var read = 0;
             var positionInBuffer = 0;
@@ -101,7 +108,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
-                var readPosition = _position + read;
+                var readPosition = Position + read;
                 var chunkNumber = readPosition / plaintextChunkSize;
                 var offsetInChunk = (int)(readPosition % plaintextChunkSize);
                 var length = Math.Min(adjustedBuffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
@@ -146,7 +153,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             else
             {
                 // Write contents
-                WriteInternal(buffer, CanSeek ? Position : 0L);
+                WriteInternal(buffer, Position);
             }
         }
 
@@ -164,7 +171,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 return;
 
             // Make sure header is ready before we can read/modify chunks
-            if (!TryWriteHeader() && !TryReadHeader())
+            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security))
                 throw new CryptographicException();
 
             var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
@@ -262,7 +269,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
         private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
         {
-            if (!TryWriteHeader() && !TryReadHeader())
+            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security))
                 throw new CryptographicException();
 
             var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
@@ -288,43 +295,15 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 written += length;
             }
 
-            if (CanSeek)
-            {
-                // Update length after writing
-                _length = Math.Max(position + written, Length);
+            // Update length after writing
+            _length = Math.Max(position + written, Length);
 
-                // Update position after writing
-                _position += written;
-            }
+            // Update position after writing
+            _position += written;
 
             // Update last write time
             if (Inner is FileStream fileStream)
                 File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
-        }
-
-        [SkipLocalsInit]
-        private bool TryReadHeader()
-        {
-            if (!_headerBuffer.IsHeaderReady && CanRead && CanSeek)
-            {
-                // Allocate ciphertext header
-                Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
-
-                // Read header
-                var savedPos = Inner.Position;
-                Inner.Position = 0L;
-                var read = Inner.Read(ciphertextHeader);
-                Inner.Position = savedPos;
-
-                // Check if read is correct
-                if (read < ciphertextHeader.Length)
-                    return false;
-
-                // Decrypt header
-                _headerBuffer.IsHeaderReady = _security.HeaderCrypt.DecryptHeader(ciphertextHeader, _headerBuffer);
-            }
-
-            return _headerBuffer.IsHeaderReady;
         }
 
         [SkipLocalsInit]
@@ -337,7 +316,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 if (!_headerBuffer.IsHeaderReady && CanWrite)
                 {
                     // Check if there is data already written only when we can seek
-                    if (CanSeek && Inner.Length > 0L)
+                    if (Inner.Length > 0L)
                         return false;
 
                     // Make sure we save the header state
@@ -346,17 +325,17 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // Allocate ciphertext header
                     Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
 
-                    // Get and encrypt header
+                    // Get and encrypt the header
                     _security.HeaderCrypt.CreateHeader(_headerBuffer);
                     _security.HeaderCrypt.EncryptHeader(_headerBuffer, ciphertextHeader);
 
                     // Write header
                     if (CanSeek)
                     {
-                        var savedPos = Inner.Position;
+                        var savedPosition = Inner.Position;
                         Inner.Position = 0L;
                         Inner.Write(ciphertextHeader);
-                        Inner.Position = savedPos + ciphertextHeader.Length;
+                        Inner.Position = savedPosition + ciphertextHeader.Length;
                     }
                     else
                     {

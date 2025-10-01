@@ -1,69 +1,32 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
-using SecureFolderFS.Storage.VirtualFileSystem;
+﻿using NUnit.Framework;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {
     [TestFixture]
-    public class ReadWriteTests : BaseFileSystemTests
+    public class ReadWriteTests : BaseReadWriteTests
     {
-        private IVFSRoot? _storageRoot;
-
         [SetUp]
         public async Task Initialize()
         {
-            var vaultFileSystemService = DI.Service<IVaultFileSystemService>();
-            var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync(default);
-
-            _storageRoot = await MountVault(localFileSystem);
+            await SetupAsync(null);
         }
 
         [Test]
         public async Task Write_SmallFile_Read_SameContent_NoThrow()
         {
-            ArgumentNullException.ThrowIfNull(_storageRoot);
-
-            // Arrange
-            const string dataString = "test";
-            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
-            {
-                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
-                return;
-            }
-
-            // Act
-            var file = await modifiableFolder.CreateFileAsync("SMALL_FILE");
-            await file.WriteTextAsync(dataString);
-            var compareString = await file.ReadTextAsync();
-
-            // Assert
-            dataString.SequenceEqual(compareString).Should().BeTrue();
+            await Base_Write_SmallFile_Read_SameContent_NoThrow();
         }
 
         [Test]
         public async Task Write_LargeFile_Read_SameContent_NoThrow()
         {
-            ArgumentNullException.ThrowIfNull(_storageRoot);
+            await Base_Write_LargeFile_Read_SameContent_NoThrow();
+        }
 
-            // Arrange
-            var data = new byte[300_000];
-            Random.Shared.NextBytes(data);
-            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
-            {
-                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
-                return;
-            }
-
-            // Act
-            var file = await modifiableFolder.CreateFileAsync("LARGE_FILE");
-            await file.WriteBytesAsync(data);
-            var compareData = await file.ReadBytesAsync(default);
-
-            // Assert
-            data.SequenceEqual(compareData).Should().BeTrue();
+        [Test]
+        public async Task Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow()
+        {
+            await Base_Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow();
         }
     }
 }

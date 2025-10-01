@@ -23,7 +23,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             _recycleBinService = DI.Service<IRecycleBinService>();
             _fileExplorerService = DI.Service<IFileExplorerService>();
-            _storageRoot = await MountVault(localFileSystem, (nameof(FileSystemOptions.RecycleBinSize), -1L));
+            _storageRoot = await MountVault(localFileSystem, null, (nameof(FileSystemOptions.RecycleBinSize), -1L));
         }
 
         [Test]

@@ -58,7 +58,6 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             lock (_readOnlyStreams)
             lock (_readWriteStreams)
             {
-
                 _ = _readOnlyStreams.Remove(stream);
                 _ = _readWriteStreams.Remove(stream);
             }

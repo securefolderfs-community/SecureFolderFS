@@ -11,8 +11,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
-        <vc:LoginViewModelVisibilityConverter x:Key="LoginViewModelVisibilityConverter" />
+        <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
     </Page.Resources>
 
     <ScrollViewer>
@@ -58,7 +57,7 @@
                         HorizontalAlignment="Center"
                         Click="LoginOptions_Click"
                         Content="{l:ResourceString Rid=LoginOptions}"
-                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}">
+                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout>
                                 <StackPanel Spacing="4">

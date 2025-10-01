@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Ftp.Extensions;
 
 namespace SecureFolderFS.Sdk.Ftp
 {
@@ -16,17 +17,15 @@ namespace SecureFolderFS.Sdk.Ftp
         /// <inheritdoc/>
         public async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            if (!ftpClient.IsConnected)
+            if (!await ftpClient.EnsureConnectionAsync(cancellationToken))
                 throw FtpExceptions.NotConnectedException;
 
-            var size = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
-            var stream = accessMode switch
+            return accessMode switch
             {
                 FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
-                _ => await ftpClient.OpenWrite(Id, token: cancellationToken)
+                FileAccess.Write => await ftpClient.OpenWrite(Id, token: cancellationToken),
+                FileAccess.ReadWrite => new SeekableFtpStream(await ftpClient.OpenWrite(Id, token: cancellationToken), await ftpClient.GetFileSize(Id, -1L, cancellationToken))
             };
-
-            return new SeekableFtpStream(stream, size);
         }
     }
 }

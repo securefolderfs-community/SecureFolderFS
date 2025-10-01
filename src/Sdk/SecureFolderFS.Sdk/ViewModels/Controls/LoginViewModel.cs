@@ -71,14 +71,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
             if (validationResult.Successful)
             {
-                // Get the authentication method enumerator for this vault
-                _loginSequence = new(await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsync(cancellationToken));
-                IsLoginSequence = _loginSequence.Count > 1;
+                try
+                {
+                    // Get the authentication method enumerator for this vault
+                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsync(cancellationToken);
+                    _loginSequence = new(loginItems);
+                    IsLoginSequence = _loginSequence.Count > 1;
 
-                // Set up the first authentication method
-                var result = ProceedAuthentication();
-                if (!result.Successful)
-                    CurrentViewModel = new ErrorViewModel(result);
+                    // Set up the first authentication method
+                    var result = ProceedAuthentication();
+                    if (!result.Successful)
+                        CurrentViewModel = new ErrorViewModel(result);
+                }
+                catch (NotSupportedException)
+                {
+                    // Catch any errors if a given authentication method is unsupported
+                    CurrentViewModel = new UnsupportedViewModel("AuthenticationUnavailableOrExpired".ToLocalized());
+                }
+                catch (Exception ex)
+                {
+                    // Default to an error view
+                    CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
+                }
             }
             else
             {

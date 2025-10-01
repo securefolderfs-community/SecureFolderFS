@@ -3,7 +3,7 @@
 namespace SecureFolderFS.Core.FileSystem.Buffers
 {
     /// <inheritdoc cref="BufferHolder"/>
-    internal sealed class HeaderBuffer : BufferHolder
+    public sealed class HeaderBuffer : BufferHolder
     {
         /// <summary>
         /// Gets or sets the value that determines whether the header buffer is initialized or not.

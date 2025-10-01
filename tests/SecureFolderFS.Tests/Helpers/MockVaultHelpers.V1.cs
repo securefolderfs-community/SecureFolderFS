@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.Helpers
 {
@@ -21,9 +22,9 @@ namespace SecureFolderFS.Tests.Helpers
                                                }
                                                """;
 
-        public static async Task<IFolder> CreateVaultV1Async(CancellationToken cancellationToken = default)
+        public static async Task<IFolder> CreateVaultV1Async(MockVaultOptions? options, CancellationToken cancellationToken = default)
         {
-            return await SetupMockVault(V1_SFCONFIG_STRING, V1_KEYSTORE_STRING, cancellationToken);
+            return await SetupMockVault(V1_SFCONFIG_STRING, V1_KEYSTORE_STRING, options, cancellationToken);
         }
     }
 }

@@ -156,6 +156,12 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             await using var serializedConfigStream = await _streamSerializer.SerializeAsync(v3ConfigDataModel, cancellationToken);
             await using var serializedKeystoreStream = await _streamSerializer.SerializeAsync(v3KeystoreDataModel, cancellationToken);
+
+            // Reset length
+            configStream.SetLength(0L);
+            keystoreStream.SetLength(0L);
+
+            // Copy serialized output
             await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
             await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
 

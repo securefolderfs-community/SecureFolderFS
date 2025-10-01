@@ -15,6 +15,7 @@ using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
 using Uno.UI;
@@ -71,6 +72,16 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             if (ViewModel is null)
                 return;
+
+            if (!VaultListMigratorHelpers.IsMigrated())
+            {
+                var file = await VaultListMigratorHelpers.TryGetVaultsFileAsync(CancellationToken.None);
+                if (file is not null)
+                {
+                    await VaultListMigratorHelpers.TryMigrateVaultsAsync(file, StreamSerializer.Instance, CancellationToken.None);
+                    VaultListMigratorHelpers.SetMigrated();
+                }
+            }
 
             // Initialize the root view model
             await ViewModel.InitAsync();

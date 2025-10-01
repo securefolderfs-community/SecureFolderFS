@@ -95,13 +95,10 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync(IStorableChild item, long sizeHint, bool deleteImmediately = false,
-            CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(IStorableChild item, long sizeHint, bool deleteImmediately = false, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
-
-            // TODO: Get by ID instead of name
 
             // We need to get the equivalent on the disk
             var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, Inner, specifics, cancellationToken);

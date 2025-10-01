@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.Streams;
 
 namespace SecureFolderFS.Storage.MemoryStorageEx
 {
     /// <inheritdoc cref="MemoryFolder"/>
     public class MemoryFolderEx : MemoryFolder, IRenamableFolder
     {
+        private readonly IStreamSource? _streamSource;
+
         /// <inheritdoc/>
-        public MemoryFolderEx(string id, string name)
+        public MemoryFolderEx(string id, string name, MemoryFolder? parent, IStreamSource? streamSource = null)
             : base(id, name)
         {
-            Parent = this;
+            _streamSource = streamSource;
+            Parent = parent;
         }
 
         /// <inheritdoc/>
@@ -31,7 +35,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
                 case MemoryFileEx memoryFile:
                 {
                     FolderContents.Remove(oldPath);
-                    var newFile = new MemoryFileEx(newPath, newName, memoryFile.InternalStream);
+                    var newFile = new MemoryFileEx(newPath, newName, memoryFile.InternalStream, this, _streamSource);
                     newFile.SetParent(this);
                     FolderContents.Add(newPath, newFile);
 
@@ -41,7 +45,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
                 case IFolder:
                 {
                     FolderContents.Remove(oldPath);
-                    var newFolder = new MemoryFolderEx(newPath, newName);
+                    var newFolder = new MemoryFolderEx(newPath, newName, this, _streamSource);
                     newFolder.SetParent(this);
                     FolderContents.Add(newPath, newFolder);
 
@@ -63,7 +67,7 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
             if (overwrite && existingFolder is not null)
                 await DeleteAsync(existingFolder, cancellationToken);
 
-            var emptyMemoryFolder = new MemoryFolderEx(Path.Combine(Id, name), name);
+            var emptyMemoryFolder = new MemoryFolderEx(Path.Combine(Id, name), name, this, _streamSource);
             emptyMemoryFolder.SetParent(this);
 
             var folder = overwrite ? emptyMemoryFolder : (existingFolder ?? emptyMemoryFolder);
@@ -84,7 +88,8 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
             if (overwrite && existingFile is not null)
                 await DeleteAsync(existingFile, cancellationToken);
 
-            var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, new MemoryStream());
+            var stream = _streamSource?.GetInMemoryStream() ?? new MemoryStream();
+            var emptyMemoryFolder = new MemoryFileEx(Path.Combine(Id, name), name, stream, this, _streamSource);
             emptyMemoryFolder.SetParent(this);
 
             var file = overwrite ? emptyMemoryFolder : (existingFile ?? emptyMemoryFolder);

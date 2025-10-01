@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
 {
     public static class StreamingExtensions
     {
-        /// <inheritdoc cref="StreamsAccess.OpenPlaintextStream"/>
+        /// <inheritdoc cref="StreamsAccess.OpenPlaintextStream(string, Stream, bool)"/>
         public static Stream? TryOpenPlaintextStream(this StreamsAccess streamsAccess, string id, Stream ciphertextStream, bool takeFailureOwnership = true)
         {
             try

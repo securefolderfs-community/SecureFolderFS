@@ -74,6 +74,17 @@
                 <local:ErrorControl ExceptionMessage="{Binding ExceptionMessage, Mode=OneWay}" />
             </ContentView>
         </DataTemplate>
+
+        <!--  Unsupported Template  -->
+        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm2:UnsupportedViewModel">
+            <ContentView>
+                <Label
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.8"
+                    Text="{Binding Title, Mode=OneWay}" />
+            </ContentView>
+        </DataTemplate>
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
@@ -82,7 +93,8 @@
                 <ts:LoginTemplateSelector
                     ErrorTemplate="{StaticResource ErrorTemplate}"
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
-                    PasswordTemplate="{StaticResource PasswordTemplate}" />
+                    PasswordTemplate="{StaticResource PasswordTemplate}"
+                    UnsupportedTemplate="{StaticResource UnsupportedTemplate}" />
             </local:ContentPresentation.TemplateSelector>
         </local:ContentPresentation>
     </Grid>

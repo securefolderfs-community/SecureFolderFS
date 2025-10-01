@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
@@ -37,8 +38,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public MigrationViewModel(IFolder vaultFolder, int currentVersion)
         {
             ServiceProvider = DI.Default;
-            CurrentVersion = $"Version {currentVersion}";
-            NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            CurrentVersion = "VersionValue".ToLocalized(currentVersion);
+            NewVersion = "VersionValue".ToLocalized(currentVersion + 1);
             VaultFolder = vaultFolder;
             FormatVersion = currentVersion;
         }

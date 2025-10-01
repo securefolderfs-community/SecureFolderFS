@@ -155,12 +155,11 @@ namespace SecureFolderFS.Uno
                 boundsManager.SaveWindowState(UI.Constants.MAIN_WINDOW_ID);
             }
 #endif
-
             var settingsService = DI.Service<ISettingsService>();
-            var shouldForceClose = (App.Instance?.UseForceClose) ?? false;
-            shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
+            var useForceClose = App.Instance!.UseForceClose;
+            var reduceToBackground = settingsService.UserSettings.ReduceToBackground;
 
-            if (shouldForceClose)
+            if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
                 App.Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
@@ -169,7 +168,6 @@ namespace SecureFolderFS.Uno
             {
                 await SafetyHelpers.NoFailureAsync(async () => await settingsService.TrySaveAsync());
                 SafetyHelpers.NoFailure(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
-                App.Current.Exit();
             }
         }
 

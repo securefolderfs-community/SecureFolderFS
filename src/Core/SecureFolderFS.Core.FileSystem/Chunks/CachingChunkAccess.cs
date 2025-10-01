@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         public CachingChunkAccess(ChunkReader chunkReader, ChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
             : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
-            _chunkCache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK);
+            _chunkCache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNKS);
         }
 
         /// <inheritdoc/>
@@ -151,7 +151,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             lock (_chunkCache)
             {
-                if (_chunkCache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK)
+                if (_chunkCache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNKS)
                 {
                     // Get chunk number to remove
                     var chunkNumberToRemove = _chunkCache.Keys.First();

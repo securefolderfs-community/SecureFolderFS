@@ -13,7 +13,7 @@
     x:DataType="local:LoginPage">
 
     <ContentPage.Resources>
-        <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
+        <vc:TypeNameBoolConverter x:Key="TypeNameBoolConverter" />
     </ContentPage.Resources>
 
     <VerticalStackLayout
@@ -57,7 +57,7 @@
                         Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
                         HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
                                                        iOS={LayoutOptions Alignment=Center}}"
-                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
                         Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
                                            iOS={StaticResource NoBackgroundButtonStyle}}"
                         Text="{l:ResourceString Rid=RecoverAccess}" />

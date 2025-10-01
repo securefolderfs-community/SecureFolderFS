@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
@@ -107,8 +108,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
-            var items = await VaultCredentialsService.GetLoginAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken).ToArrayAsync(cancellationToken);
-            SecurityText = string.Join(" + ", items.Select(x => x.Title));
+            try
+            {
+                var loginItems = await VaultCredentialsService
+                    .GetLoginAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken)
+                    .ToArrayAsync(cancellationToken);
+                SecurityText = string.Join(" + ", loginItems.Select(x => x.Title));
+            }
+            catch (Exception)
+            {
+                SecurityText = "AuthenticationUnavailable".ToLocalized();
+            }
         }
     }
 }

@@ -17,6 +17,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? MigrationTemplate { get; set; }
 
         public DataTemplate? ErrorTemplate { get; set; }
+        
+        public DataTemplate? UnsupportedTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
@@ -27,6 +29,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 WindowsHelloLoginViewModel => WindowsHelloTemplate,
                 MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,
+                UnsupportedViewModel => UnsupportedTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }
