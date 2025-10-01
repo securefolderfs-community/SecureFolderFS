@@ -372,17 +372,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         protected static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)
         {
-            if (info.PagingIo)
-            {
-                var longDistanceToEnd = streamLength - offset;
-                if (longDistanceToEnd > int.MaxValue)
-                    return bufferLength;
-
-                if (longDistanceToEnd < bufferLength)
-                    return (int)longDistanceToEnd;
-
+            if (!info.PagingIo)
                 return bufferLength;
-            }
+
+            var longDistanceToEnd = streamLength - offset;
+            if (longDistanceToEnd > int.MaxValue)
+                return bufferLength;
+
+            if (longDistanceToEnd < bufferLength)
+                return (int)longDistanceToEnd;
 
             return bufferLength;
         }

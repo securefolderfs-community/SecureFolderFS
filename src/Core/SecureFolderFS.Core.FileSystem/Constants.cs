@@ -3,7 +3,6 @@
     public static class Constants
     {
         public const string LOCAL_FILE_SYSTEM_NAME = "AbstractStorage";
-
         public const string UNC_NAME = "securefolderfs";
         public const int FILE_EOF = 0;
         public const int DIRECTORY_ID_SIZE = 16;
@@ -26,7 +25,7 @@
 
         public static class Caching
         {
-            public const int RECOMMENDED_SIZE_CHUNK = 6;
+            public const int RECOMMENDED_SIZE_CHUNKS = 6;
             public const int RECOMMENDED_SIZE_DIRECTORY_ID = 1000;
             public const int RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES = 2000;
             public const int RECOMMENDED_SIZE_PLAINTEXT_FILENAMES = 2000;
