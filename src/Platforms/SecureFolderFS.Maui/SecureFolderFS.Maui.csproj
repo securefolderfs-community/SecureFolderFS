@@ -116,7 +116,6 @@
     <PackageReference Include="AathifMahir.Maui.MauiIcons.Material" />
     <PackageReference Include="AcrylicView.Maui" />
     <PackageReference Include="CommunityToolkit.Maui" />
-    <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
     <PackageReference Include="IconPacks.Material" />
     <PackageReference Include="LibVLCSharp.MAUI" />
