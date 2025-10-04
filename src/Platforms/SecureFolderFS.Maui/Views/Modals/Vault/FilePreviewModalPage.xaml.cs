@@ -1,8 +1,6 @@
-using CommunityToolkit.Maui.Views;
 using LibVLCSharp.MAUI;
 using LibVLCSharp.Shared;
 using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.TemplateSelectors;
 using SecureFolderFS.Maui.UserControls;
 using SecureFolderFS.Maui.UserControls.Common;
@@ -86,14 +84,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 (GalleryView.Previous as IDisposable)?.Dispose();
                 (GalleryView.Current as IDisposable)?.Dispose();
                 (GalleryView.Next as IDisposable)?.Dispose();
-            }
-
-            if ((Presentation.Content as ContentView)?.Content is MediaElement mediaElement)
-            {
-                mediaElement.Stop();
-                mediaElement.Handler?.DisconnectHandler();
-                mediaElement.Dispose();
-                mediaElement.Source = null;
             }
 
             if (ViewModel?.PreviewerViewModel is TextPreviewerViewModel { WasModified: true } textViewModel)

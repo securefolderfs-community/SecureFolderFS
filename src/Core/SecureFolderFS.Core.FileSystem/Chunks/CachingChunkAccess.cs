@@ -111,8 +111,6 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     if (item.Value.WasModified)
                         chunkWriter.WriteChunk(item.Key, item.Value.Buffer.AsSpan(0, item.Value.ActualLength));
                 }
-
-                _chunkCache.Clear();
             }
         }
 

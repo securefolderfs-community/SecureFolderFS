@@ -26,7 +26,6 @@ namespace SecureFolderFS.Maui
                 })
 
                 // Plugins
-                .UseMauiCommunityToolkitMediaElement()  // https://github.com/CommunityToolkit/Maui
                 .UseMauiCommunityToolkit()              // https://github.com/CommunityToolkit/Maui
                 .UseBottomSheet()                       // https://github.com/lucacivale/Maui.BottomSheet
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer

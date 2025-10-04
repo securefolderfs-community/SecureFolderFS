@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// </summary>
         /// <param name="chunkNumber">The chunk number to read at.</param>
         /// <param name="plaintextChunk">The plaintext chunk to write to.</param>
-        /// <returns>The amount of plaintext bytes or -1 if integrity error occurred.</returns>
+        /// <returns>The number of plaintext bytes or -1 if integrity error occurred.</returns>
         public int ReadChunk(long chunkNumber, Span<byte> plaintextChunk)
         {
             // Calculate sizes
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // Read from stream at correct chunk
                 var read = ciphertextStream.Read(realCiphertextChunk);
 
-                // Check for end of file
+                // Check for the end of the file
                 if (read == FileSystem.Constants.FILE_EOF)
                     return 0;
 
