@@ -14,6 +14,9 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public int CharacterCount { get; }
 
+        /// <inheritdoc/>
+        public int Length => _password.Length;
+
         public DisposablePassword(string password)
         {
             _password = Encoding.UTF8.GetBytes(password);

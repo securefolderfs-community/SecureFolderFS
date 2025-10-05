@@ -70,7 +70,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             dataStream.Position = 0L;
             var result = await FileExplorerService.SaveFileAsync("Vault key file", dataStream, new Dictionary<string, string>()
             {
-                { "Key File", Constants.FileNames.KEY_FILE_EXTENSION },
+                { "KeyFile".ToLocalized(), Constants.FileNames.KEY_FILE_EXTENSION },
                 { "All Files", "*" }
             }, cancellationToken);
 

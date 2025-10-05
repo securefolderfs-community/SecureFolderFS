@@ -2,6 +2,7 @@
 using SecureFolderFS.Shared.Extensions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SecureFolderFS.Shared.Models
 {
@@ -12,9 +13,15 @@ namespace SecureFolderFS.Shared.Models
     {
         private readonly List<IKey> _keys;
 
+        public IReadOnlyCollection<IKey> Keys => _keys;
+
+        /// <summary>
+        /// Gets the number of keys in the sequence.
+        /// </summary>
         public int Count => _keys.Count;
 
-        public IReadOnlyCollection<IKey> Keys => _keys;
+        /// <inheritdoc/>
+        public int Length => _keys.Sum(key => key.Length);
 
         public KeySequence()
         {

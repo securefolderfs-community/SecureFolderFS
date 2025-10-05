@@ -1,8 +1,6 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Storage.VirtualFileSystem
 {

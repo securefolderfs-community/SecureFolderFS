@@ -8,5 +8,9 @@ namespace SecureFolderFS.Shared.ComponentModel
     /// </summary>
     public interface IKey : IEnumerable<byte>, IDisposable
     {
+        /// <summary>
+        /// Gets the number of bytes in the key.
+        /// </summary>
+        int Length { get; }
     }
 }
