@@ -316,12 +316,13 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             lock (_writeLock)
             {
+                // Re-check after lock
+                if (_headerBuffer.IsHeaderReady)
+                    return true;
+
                 // Check if there is data already written only when we can seek
                 if (Inner.Length > 0L)
                     return false;
-
-                // Make sure we save the header state
-                _headerBuffer.IsHeaderReady = true;
 
                 // Allocate ciphertext header
                 Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
@@ -342,6 +343,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 {
                     Inner.Write(ciphertextHeader);
                 }
+
+                // Make sure we save the header state
+                _headerBuffer.IsHeaderReady = true;
 
                 return true;
             }

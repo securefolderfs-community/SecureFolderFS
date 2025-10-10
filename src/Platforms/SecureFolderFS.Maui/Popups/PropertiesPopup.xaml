@@ -49,6 +49,14 @@
                 CommandParameter="ItemType"
                 Subtitle="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
 
+            <!--  Size  -->
+            <uc:ItemProperty
+                Title="{l:ResourceString Rid=Size}"
+                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                CommandParameter="Size"
+                IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
+
             <!--  Date Created  -->
             <OnPlatform x:TypeArguments="View">
                 <On Platform="iOS">
@@ -66,14 +74,6 @@
                 Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
                 CommandParameter="DateModified"
                 Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
-
-            <!--  Size  -->
-            <uc:ItemProperty
-                Title="{l:ResourceString Rid=Size}"
-                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                CommandParameter="Size"
-                IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
         </VerticalStackLayout>
     </Border>
 </tv:Popup>

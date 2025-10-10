@@ -98,7 +98,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 };
 
 #if IOS
-                await Task.Delay(800);
+                await Task.Delay(600);
 #endif
                 var result = await overlayService.ShowAsync(messageOverlay);
                 if (result.Positive())
@@ -161,7 +161,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (sender is not GalleryView { BindingContext: CarouselPreviewerViewModel carouselViewModel } galleryView)
                 return;
 
-            GalleryView.Current = galleryView;
+            GalleryView = galleryView;
             galleryView.FitToParent();
 
             galleryView.PreviousRequested += Gallery_PreviousRequested;

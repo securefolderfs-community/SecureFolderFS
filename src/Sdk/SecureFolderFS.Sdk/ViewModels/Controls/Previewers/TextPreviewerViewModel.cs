@@ -41,10 +41,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             if (IsReadOnly)
                 return;
 
-            if (Text is  null)
+            if (Text is null)
                 return;
 
-            await Inner.WriteAllTextAsync(Text, null, cancellationToken);
+            await Inner.WriteTextAsync(Text, cancellationToken);
             _persistedText = Text;
             WasModified = false;
         }

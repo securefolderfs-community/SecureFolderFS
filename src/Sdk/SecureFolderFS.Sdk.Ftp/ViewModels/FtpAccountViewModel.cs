@@ -116,7 +116,12 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             try
             {
                 var uri = new Uri(address);
-                _ftpClient = new AsyncFtpClient(uri.Host, username, password ?? string.Empty, uri.Port);
+                var config = new FtpConfig();
+                // Sandbox may block automatic detection of PASV, so it's necessary to be set manually
+                if (OperatingSystem.IsIOS())
+                    config.DataConnectionType = FtpDataConnectionType.PASV;
+
+                _ftpClient = new AsyncFtpClient(uri.Host, username, password ?? string.Empty, uri.Port, config);
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(3000));
                 await _ftpClient.Connect(timeoutCts.Token);

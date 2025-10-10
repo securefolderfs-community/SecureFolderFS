@@ -133,11 +133,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             try
             {
                 // Copy the information to the destination stream
-                using (var outputStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    await inputStream.CopyToAsync(outputStream).ConfigureAwait(false);
-                }
-
+                await using var outputStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false);
+                await inputStream.CopyToAsync(outputStream, cancellationToken).ConfigureAwait(false);
                 return HttpStatusCode.OK;
             }
             catch (IOException ioException) when (ioException.IsDiskFull())

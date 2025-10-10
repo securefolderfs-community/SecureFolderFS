@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.Extensions
             if (OperatingSystem.IsLinux())
                 return Linux;
 
-            throw new System.PlatformNotSupportedException();
+            throw new PlatformNotSupportedException();
 #endif
         }
     }

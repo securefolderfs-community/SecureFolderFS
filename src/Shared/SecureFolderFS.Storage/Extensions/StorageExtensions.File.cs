@@ -35,14 +35,14 @@ namespace SecureFolderFS.Storage.Extensions
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public static async Task WriteAllTextAsync(this IFile file, string text, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
-            await using var fileStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.Write, cancellationToken);
 
             // Reset the stream
             fileStream.TrySetLength(0L);
             fileStream.TrySeek(0L, SeekOrigin.Begin);
 
-            await using var streamWriter = new StreamWriter(fileStream, encoding ?? Encoding.UTF8);
-            await streamWriter.WriteAsync(text.AsMemory(), cancellationToken);
+            encoding ??= Encoding.UTF8;
+            await fileStream.WriteAsync(encoding.GetBytes(text), cancellationToken);
         }
 
         /// <summary>

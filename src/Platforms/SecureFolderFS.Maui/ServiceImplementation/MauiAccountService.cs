@@ -41,9 +41,6 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 yield return accountData.DataSourceType switch
                 {
                     DATA_SOURCE_FTP => new FtpAccountViewModel(accountData, propertyStore),
-
-                    // TODO: Maybe move AccountViewModel to shared project and implement the AccountViewModel
-                    // in separate projects (SecureFolderFS.Sdk.Ftp, SecureFolderFS.Sdk.GoogleDrive)
                     _ => throw new ArgumentOutOfRangeException(nameof(AccountDataModel.DataSourceType))
                 };
             }
