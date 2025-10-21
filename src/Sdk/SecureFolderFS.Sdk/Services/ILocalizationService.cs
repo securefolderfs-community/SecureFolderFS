@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// A service that manages localization of the app.
     /// </summary>
-    public interface ILocalizationService
+    public interface ILocalizationService : IResourceLocator<string?>
     {
         /// <summary>
         /// Gets the current language of the app.
@@ -18,13 +19,6 @@ namespace SecureFolderFS.Sdk.Services
         /// Gets all supported languages by the app.
         /// </summary>
         IReadOnlyList<CultureInfo> AppLanguages { get; }
-
-        /// <summary>
-        /// Tries to get the localized string for the <paramref name="resourceKey"/>.
-        /// </summary>
-        /// <param name="resourceKey">The resource key that associates with translations.</param>
-        /// <returns>If successful, returns a localized string for the <see cref="CurrentCulture"/>; otherwise null.</returns>
-        string? TryGetString(string resourceKey);
 
         /// <summary>
         /// Sets the current language of the app.

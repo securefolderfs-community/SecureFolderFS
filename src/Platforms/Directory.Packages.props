@@ -37,5 +37,6 @@
     <PackageVersion Include="Vanara.PInvoke.Shell32" Version="4.1.2" />
     <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.5.3" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
+    <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.0.1.31" />
   </ItemGroup>
 </Project>

@@ -1,14 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
@@ -34,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public abstract AuthenticationStage Availability { get; }
 
         /// <summary>
-        /// Occurs when credentials have been provided by the user.
+        /// Occurs when the user has provided credentials.
         /// </summary>
         public abstract event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 

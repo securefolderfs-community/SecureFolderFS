@@ -23,7 +23,7 @@ namespace SecureFolderFS.Uno.Localization
             if (LocalizationService is null)
                 return $"{{{Rid}}}";
 
-            return LocalizationService.TryGetString(Rid ?? string.Empty) ?? $"{{{Rid}}}";
+            return LocalizationService.GetResource(Rid ?? string.Empty) ?? $"{{{Rid}}}";
         }
     }
 }

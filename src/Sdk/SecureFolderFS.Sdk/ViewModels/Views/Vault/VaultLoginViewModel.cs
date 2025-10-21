@@ -83,7 +83,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private async Task ConnectToVaultAsync(CancellationToken cancellationToken)
         {
             LoginViewModel?.Dispose();
-            var vaultFolder = await VaultViewModel.VaultModel.ConnectAsync(cancellationToken);
+            var result = await VaultViewModel.VaultModel.TryConnectAsync(cancellationToken);
+            if (!result.TryGetValue(out var vaultFolder))
+            {
+                // TODO: Report error
+                return;
+            }
 
             LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
             await InitAsync(cancellationToken);

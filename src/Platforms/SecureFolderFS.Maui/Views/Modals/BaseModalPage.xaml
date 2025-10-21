@@ -97,7 +97,7 @@
                     <Grid
                         x:Name="ButtonsGrid"
                         Grid.Row="2"
-                        Padding="8"
+                        Padding="16,8"
                         ColumnSpacing="8"
                         HorizontalOptions="Fill"
                         IsVisible="False">

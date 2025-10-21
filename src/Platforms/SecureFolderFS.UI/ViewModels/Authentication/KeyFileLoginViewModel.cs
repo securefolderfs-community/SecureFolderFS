@@ -22,12 +22,12 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var key = await this.TrySignAsync(config.Uid, null, cancellationToken);
-            if (!key.Successful || key.Value is null)
+            var keyResult = await this.TrySignAsync(config.Uid, null, cancellationToken);
+            if (!keyResult.TryGetValue(out var key))
                 return;
 
             var tcs = new TaskCompletionSource();
-            CredentialsProvided?.Invoke(this, new(key.Value, tcs));
+            CredentialsProvided?.Invoke(this, new(key, tcs));
             await tcs.Task;
         }
     }

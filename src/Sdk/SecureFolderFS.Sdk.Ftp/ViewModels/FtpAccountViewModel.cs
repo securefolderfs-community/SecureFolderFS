@@ -117,6 +117,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             {
                 var uri = new Uri(address);
                 var config = new FtpConfig();
+
                 // Sandbox may block automatic detection of PASV, so it's necessary to be set manually
                 if (OperatingSystem.IsIOS())
                     config.DataConnectionType = FtpDataConnectionType.PASV;

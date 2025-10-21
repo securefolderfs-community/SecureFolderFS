@@ -61,7 +61,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);

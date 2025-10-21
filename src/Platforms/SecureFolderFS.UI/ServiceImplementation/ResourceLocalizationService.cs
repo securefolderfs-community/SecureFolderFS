@@ -58,7 +58,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual string? TryGetString(string resourceKey)
+        public virtual string? GetResource(string resourceKey)
         {
             try
             {

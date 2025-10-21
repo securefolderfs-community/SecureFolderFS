@@ -1,4 +1,5 @@
 using OwlCore.Storage;
+using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
-            var auth = await vaultReader.ReadAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            var auth = await vaultReader.ReadAuthenticationAsync<VaultChallengeDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
 
             if (auth?.Challenge is null)
             {
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             try
             {
                 // Ask for credentials
-                var key = await SignAsync(VaultId, auth.Challenge, cancellationToken);
+                var key = await AcquireAsync(VaultId, auth.Challenge, cancellationToken);
                 var tcs = new TaskCompletionSource();
 
                 // Report that credentials were provided and new provision needs to be applied

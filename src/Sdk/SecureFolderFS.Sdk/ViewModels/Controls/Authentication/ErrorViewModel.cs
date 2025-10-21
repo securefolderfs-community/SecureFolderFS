@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         /// <summary>
-        /// Updates the current state upon error report.
+        /// Updates the current state upon an error report.
         /// </summary>
         /// <param name="result">The <see cref="IResult"/> that was reported.</param>
         protected virtual void UpdateStatus(IResult? result)

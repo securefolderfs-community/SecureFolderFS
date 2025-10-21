@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
     internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
+        public override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)

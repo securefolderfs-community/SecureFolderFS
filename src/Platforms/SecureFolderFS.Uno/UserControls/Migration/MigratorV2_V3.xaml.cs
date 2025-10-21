@@ -88,10 +88,10 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         private void RestartLoginProcess()
         {
-            // Dispose built key sequence
+            // Dispose of the built key sequence
             _keySequence.Dispose();
 
-            // Reset login sequence only if chain is longer than one authentication
+            // Reset a login sequence only if chain is longer than one authentication
             if (_loginSequence?.Count > 1)
             {
                 _loginSequence?.Reset();
@@ -103,14 +103,21 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         private async void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            // Add authentication
-            _keySequence.Add(e.Authentication);
-
-            var result = ProceedAuthentication();
-            if (!result.Successful && CurrentViewModel is not ErrorViewModel)
+            try
             {
-                // Reached the end in which case we should try to unlock the vault
-                MigrateCommand?.Execute(_keySequence);
+                // Add authentication
+                _keySequence.Add(e.Authentication);
+
+                var result = ProceedAuthentication();
+                if (!result.Successful && CurrentViewModel is not ErrorViewModel)
+                {
+                    // Reached the end in which case we should try to unlock the vault
+                    MigrateCommand?.Execute(_keySequence);
+                }
+            }
+            finally
+            {
+                e.TaskCompletion?.TrySetResult();
             }
         }
 

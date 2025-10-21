@@ -55,7 +55,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             var navigationPage = new NavigationPage(this);
 #if ANDROID
             navigationPage.BackgroundColor = Color.FromArgb("#80000000");
-            await _sourceNavigation.PushModalAsync(_navigationPage);
+            await _sourceNavigation.PushModalAsync(navigationPage);
 #elif IOS
             NavigationPage.SetIconColor(navigationPage, Color.FromArgb("#007bff"));
             navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
