@@ -44,7 +44,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         private async void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(IUserSettings.IsTelemetryEnabled) && IsTelemetryEnabled)
+            if (e.PropertyName != nameof(IUserSettings.IsTelemetryEnabled))
+                return;
+
+            if (IsTelemetryEnabled)
             {
                 await TelemetryService.EnableTelemetryAsync();
                 TelemetryService.TrackMessage("Telemetry manually enabled");

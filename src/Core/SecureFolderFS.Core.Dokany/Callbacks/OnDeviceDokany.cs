@@ -357,9 +357,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         continue;
 
                     var plaintextName = NativePathHelpers.GetPlaintextPath(item.FullName, Specifics, directoryId);
-                    plaintextName = plaintextName is not null
-                        ? Path.GetFileName(plaintextName)
-                        : item.Name;
+                    plaintextName = plaintextName is not null ? Path.GetFileName(plaintextName) : null;
 
                     if (string.IsNullOrEmpty(plaintextName))
                         continue;

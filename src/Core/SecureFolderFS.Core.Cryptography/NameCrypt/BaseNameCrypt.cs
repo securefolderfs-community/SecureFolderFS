@@ -46,21 +46,28 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// <inheritdoc/>
         public virtual string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            // Decode buffer
-            var ciphertextNameBuffer = fileNameEncodingId switch
+            try
             {
-                Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(ciphertextName),
-                Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(ciphertextName),
-                _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
-            };
+                // Decode buffer
+                var ciphertextNameBuffer = fileNameEncodingId switch
+                {
+                    Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(ciphertextName),
+                    Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(ciphertextName),
+                    _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
+                };
 
-            // Decrypt
-            var plaintextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
-            if (plaintextNameBuffer is null)
+                // Decrypt
+                var plaintextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
+                if (plaintextNameBuffer is null)
+                    return null;
+
+                // Get string from plaintext buffer
+                return Encoding.UTF8.GetString(plaintextNameBuffer);
+            }
+            catch (Exception)
+            {
                 return null;
-
-            // Get string from plaintext buffer
-            return Encoding.UTF8.GetString(plaintextNameBuffer);
+            }
         }
 
         protected abstract byte[] EncryptFileName(ReadOnlySpan<byte> plaintextFileNameBuffer, ReadOnlySpan<byte> directoryId);

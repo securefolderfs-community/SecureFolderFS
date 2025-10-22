@@ -20,7 +20,7 @@ using Point = Android.Graphics.Point;
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     [ContentProvider(["${applicationId}.provider"],
-        Name = "org.securefolderfs.securefolderfs.provider",
+        Name = Constants.Android.FileSystem.AUTHORITY,
         Permission = "android.permission.MANAGE_DOCUMENTS",
         Enabled = true,
         Exported = true,

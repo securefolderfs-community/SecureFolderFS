@@ -60,7 +60,6 @@ namespace SecureFolderFS.UI.Helpers
 
                 // Singleton services
                     .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
-                    .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
                     .Foundation<IIapService, DebugIapService>(AddService.AddSingleton)
                     .Foundation<IRecycleBinService, RecycleBinService>(AddService.AddSingleton)
                     .Foundation<IVaultHealthService, VaultHealthService>(AddService.AddSingleton)

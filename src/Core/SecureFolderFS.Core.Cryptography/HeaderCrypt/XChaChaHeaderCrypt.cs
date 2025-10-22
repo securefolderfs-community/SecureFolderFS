@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                 plaintextHeader.GetHeaderContentKey(),
                 DekKey,
                 plaintextHeader.GetHeaderNonce(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE),
+                ciphertextHeader.SkipNonce(),
                 default);
         }
 
@@ -53,10 +53,10 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 
             // Decrypt
             return XChaCha20Poly1305.Decrypt(
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE),
+                ciphertextHeader.SkipNonce(),
                 DekKey,
                 ciphertextHeader.GetHeaderNonce(),
-                plaintextHeader.Slice(HEADER_NONCE_SIZE),
+                plaintextHeader.SkipNonce(),
                 default);
         }
     }

@@ -17,6 +17,7 @@
             {
                 public const string FS_ID = "ANDROID_DOCUMENTS_PROVIDER";
                 public const string FS_NAME = "Android SAF";
+                public const string AUTHORITY = "org.securefolderfs.securefolderfs.provider";
             }
 
             internal static class Saf

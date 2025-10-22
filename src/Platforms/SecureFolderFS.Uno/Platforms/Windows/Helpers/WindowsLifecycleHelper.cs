@@ -11,13 +11,8 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation;
 using Windows.Storage;
-
-#if !DEBUG
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using SecureFolderFS.UI.Api;
-#endif
+using SecureFolderFS.Shared.Extensions;
+using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 {
@@ -30,29 +25,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-#if !DEBUG
-            try
-            {
-                if (false) // TODO(t): Disable AppCenter
-                {
-                    // Start AppCenter
-                    var appCenterKey = ApiKeys.GetAppCenterKey();
-                    if (!string.IsNullOrEmpty(appCenterKey) || !AppCenter.Configured)
-                        AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
-                }
-            }
-            catch (Exception)
-            {
-            }
-#endif
-
+            // Initialize settings
             var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
             return Task.CompletedTask;
         }
-
 
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
@@ -69,34 +48,26 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                .AddSingleton<ISystemService, WindowsSystemService>()
-                .AddSingleton<IPrinterService, WindowsPrinterService>()
-                .AddSingleton<IApplicationService, WindowsApplicationService>()
-                .AddSingleton<IVaultFileSystemService, WindowsVaultFileSystemService>()
-                .AddSingleton<IVaultCredentialsService, WindowsVaultCredentialsService>()
-
-                // ITelemetryService
-#if DEBUG
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-#else
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                // .AddSingleton<ITelemetryService, AppCenterTelemetryService>() // TODO(t): Disable AppCenter
-#endif
+                .Override<ISystemService, WindowsSystemService>(AddService.AddSingleton)
+                .Override<IPrinterService, WindowsPrinterService>(AddService.AddSingleton)
+                .Override<IApplicationService, WindowsApplicationService>(AddService.AddSingleton)
+                .Override<IVaultFileSystemService, WindowsVaultFileSystemService>(AddService.AddSingleton)
+                .Override<IVaultCredentialsService, WindowsVaultCredentialsService>(AddService.AddSingleton)
 
                 // IIapService, IUpdateService
 #if DEBUG || UNPACKAGED
-                .AddSingleton<IIapService, DebugIapService>()
-                .AddSingleton<IUpdateService, DebugUpdateService>()
+                .Override<IIapService, DebugIapService>(AddService.AddSingleton)
+                .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
 #else
-                .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
-                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
+                .Override<IIapService, DebugIapService>(AddService.AddSingleton) // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
+                .Override<IUpdateService, MicrosoftStoreUpdateService>(AddService.AddSingleton)
 #endif
 
                 // ILocalizationService
 #if UNPACKAGED
-                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
 #else
-                .AddSingleton<ILocalizationService, WindowsLocalizationService>()
+                .Override<ILocalizationService, WindowsLocalizationService>(AddService.AddSingleton)
 #endif
                 
                 .WithUnoServices(settingsFolder)

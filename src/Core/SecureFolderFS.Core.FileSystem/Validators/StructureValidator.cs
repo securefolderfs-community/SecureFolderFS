@@ -24,8 +24,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         /// <inheritdoc/>
         public override Task ValidateAsync((IFolder, IProgress<IResult>?) value, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc/>
@@ -55,7 +54,6 @@ namespace SecureFolderFS.Core.FileSystem.Validators
                 }
             }
 
-            // TODO: Return appropriate result
             return Result.Success;
         }
     }

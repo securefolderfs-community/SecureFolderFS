@@ -42,19 +42,6 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             return _aesCmacSiv.Open(bytes.ToArray(), data: associatedData.ToArray());
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[]? TryDecrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> associatedData)
-        {
-            try
-            {
-                return Decrypt(bytes, associatedData);
-            }
-            catch (CryptographicException)
-            {
-                return null;
-            }
-        }
-
         /// <inheritdoc/>
         public void Dispose()
         {

@@ -84,6 +84,10 @@ namespace SecureFolderFS.Uno
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
 
+            // Initialize Telemetry
+            var telemetryService = DI.Service<ITelemetryService>();
+            await telemetryService.EnableTelemetryAsync();
+
             // Prepare MainWindow
             EnsureEarlyWindow(MainWindow);
 
@@ -162,12 +166,13 @@ namespace SecureFolderFS.Uno
             if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
-                App.Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
+                App.Instance.MainWindow?.Hide(enableEfficiencyMode: false);
             }
             else
             {
                 await SafetyHelpers.NoFailureAsync(async () => await settingsService.TrySaveAsync());
                 SafetyHelpers.NoFailure(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
+                Application.Current.Exit();
             }
         }
 

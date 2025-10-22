@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
@@ -8,7 +9,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 {
