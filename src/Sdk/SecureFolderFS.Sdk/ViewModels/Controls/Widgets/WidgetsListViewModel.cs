@@ -70,8 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public void Dispose()
         {
-            foreach (var item in Widgets)
-                item.Dispose();
+            Widgets.DisposeAll();
         }
     }
 }

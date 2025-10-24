@@ -32,17 +32,46 @@ namespace SecureFolderFS.Sdk.Extensions
             return await navigation.NavigateAsync(view);
         }
 
-        public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, IViewDesignation view)
+        public static async Task<bool> ForgetNavigateCurrentViewAsync(this INavigationService navigationService, IViewDesignation view)
+        {
+            return await ForgetNavigateViewAsync(navigationService, view, () =>
+            {
+                if (navigationService.CurrentView is null)
+                    return null;
+
+                navigationService.Views.Remove(navigationService.CurrentView);
+                return navigationService.CurrentView;
+            });
+        }
+
+        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewFinder)
+        {
+            return await ForgetNavigateViewAsync(navigationService, view, () =>
+            {
+                var targetView = navigationService.Views.FirstOrDefault(viewFinder);
+                if (targetView is null)
+                    return null;
+
+                navigationService.Views.Remove(targetView);
+                return targetView;
+            }, navigationService.CurrentView is null || viewFinder(navigationService.CurrentView));
+        }
+
+        private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true)
         {
             var navigated = false;
             IViewDesignation? currentView = null;
 
             try
             {
-                if (navigationService.CurrentView is not null)
+                currentView = viewForgetter();
+                if (!shouldTriggerNavigation)
                 {
-                    navigationService.Views.Remove(navigationService.CurrentView);
-                    currentView = navigationService.CurrentView;
+                    // Silently replace the removed view without triggering navigation
+                    if (currentView is not null)
+                        navigationService.Views.Add(view);
+
+                    return false;
                 }
 
                 navigated = await navigationService.NavigateAsync(view);

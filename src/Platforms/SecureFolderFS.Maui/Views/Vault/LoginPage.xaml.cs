@@ -101,7 +101,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             dashboardViewModel.DashboardNavigation.Views.Add(overviewViewModel);
             dashboardViewModel.DashboardNavigation.Views.Add(propertiesViewModel);
 
-            await ViewModel.VaultNavigation.TryNavigateAndForgetAsync(dashboardViewModel);
+            await ViewModel.VaultNavigation.ForgetNavigateCurrentViewAsync(dashboardViewModel);
         }
 
         public VaultLoginViewModel? ViewModel

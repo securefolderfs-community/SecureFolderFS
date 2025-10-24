@@ -66,13 +66,11 @@ namespace SecureFolderFS.Shared.Extensions
 
         public static T? RemoveMatch<T>(this ICollection<T> list, Func<T, bool> predicate)
         {
-            foreach (var item in list)
-            {
-                if (predicate(item))
-                    return list.Remove(item) ? item : default;
-            }
+            var item = list.FirstOrDefault(predicate);
+            if (item is null)
+                return default;
 
-            return default;
+            return list.Remove(item) ? item : default;
         }
 
         public static bool IsEmpty<T>([NotNullWhen(false)] this IEnumerable<T>? enumerable)
