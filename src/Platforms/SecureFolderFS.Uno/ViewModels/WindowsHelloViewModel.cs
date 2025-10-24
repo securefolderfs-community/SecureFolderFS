@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI.AppModels;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels
@@ -38,6 +39,7 @@ namespace SecureFolderFS.Uno.ViewModels
             : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
         {
             Title = "WindowsHello".ToLocalized();
+            Icon = new ImageGlyph("\uEB68");
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }

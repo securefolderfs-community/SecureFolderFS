@@ -7,6 +7,7 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.ViewModels;
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 yield return item switch
                 {
                     // Password
-                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
 
                     // Windows Hello
                     Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken)
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
 
                     // Key File
-                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
 
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
@@ -49,14 +50,14 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new PasswordCreationViewModel();
+            yield return new PasswordCreationViewModel() { Icon = new ImageGlyph("\uE8AC") };
 
             // Windows Hello
             if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
                 yield return new WindowsHelloCreationViewModel(vaultFolder, vaultId);
 
             // Key File
-            yield return new KeyFileCreationViewModel(vaultId);
+            yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };
         }
     }
 }

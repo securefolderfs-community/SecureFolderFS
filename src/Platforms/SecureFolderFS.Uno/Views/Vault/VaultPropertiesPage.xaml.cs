@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
@@ -24,6 +25,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         public VaultPropertiesPage()
         {
             InitializeComponent();
+            FileSystemText.AddHandler(PointerReleasedEvent, new PointerEventHandler(FileSystemText_PointerReleased), true);
         }
 
         /// <inheritdoc/>
@@ -33,6 +35,21 @@ namespace SecureFolderFS.Uno.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
+        }
+
+        private void FileSystemText_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (sender is not TextBlock textBlock)
+                return;
+
+            if (!string.IsNullOrEmpty(textBlock.SelectedText))
+                return;
+
+            ViewModel?.ToggleFileSystemTextCommand.Execute(null);
+
+            // The TextBlock might sometimes flicker so re-draw is necessary
+            textBlock.InvalidateMeasure();
+            textBlock.UpdateLayout();
         }
     }
 }

@@ -167,6 +167,7 @@
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <StackPanel Orientation="Horizontal" Spacing="8">
+                        <HyperlinkButton Content="{l:ResourceString Rid=Documentation}" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/wiki" />
                         <HyperlinkButton Content="Discord" NavigateUri="https://discord.com/invite/NrTxXpJ2Zj" />
                     </StackPanel>
                 </ucab:ActionBlockControl.ActionElement>

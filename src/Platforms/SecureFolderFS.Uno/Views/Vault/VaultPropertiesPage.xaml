@@ -54,6 +54,7 @@
                                 Opacity="0.6"
                                 Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
                             <TextBlock
+                                x:Name="FileSystemText"
                                 IsTextSelectionEnabled="True"
                                 Opacity="0.6"
                                 Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}"

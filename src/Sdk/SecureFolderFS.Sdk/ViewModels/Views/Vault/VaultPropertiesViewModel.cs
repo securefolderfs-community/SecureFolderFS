@@ -106,6 +106,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await OverlayService.ShowAsync(recycleOverlay);
         }
 
+        [RelayCommand]
+        private void ToggleFileSystemText()
+        {
+            if (string.IsNullOrEmpty(FileSystemDescriptionText))
+                return;
+
+            (ActiveFileSystemText, FileSystemDescriptionText) = (FileSystemDescriptionText, ActiveFileSystemText);
+        }
+
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
             try

@@ -10,5 +10,6 @@
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <vc:IconSourceConverter x:Key="IconSourceConverter" />
 
 </ResourceDictionary>

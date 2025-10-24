@@ -17,7 +17,6 @@
     <UserControl.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:IconSourceConverter x:Key="IconSourceConverter" />
     </UserControl.Resources>
 
     <NavigationView
