@@ -5,6 +5,7 @@ using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
@@ -50,11 +51,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             if (IsTelemetryEnabled)
             {
                 await TelemetryService.EnableTelemetryAsync();
-                TelemetryService.TrackMessage("Telemetry manually enabled");
+                TelemetryService.TrackMessage("[Telemetry] Enabled", Severity.Default);
             }
             else
             {
-                TelemetryService.TrackMessage("Telemetry manually disabled");
+                TelemetryService.TrackMessage("[Telemetry] Disabled", Severity.Default);
                 await TelemetryService.DisableTelemetryAsync();
             }
         }

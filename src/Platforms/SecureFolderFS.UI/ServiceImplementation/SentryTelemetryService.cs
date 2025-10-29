@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Api;
 using Sentry;
@@ -53,13 +54,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public Task DisableTelemetryAsync()
         {
             _sentryCompletion?.Dispose();
+            _sentryCompletion = null;
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public void TrackMessage(string eventName)
+        public void TrackMessage(string eventName, Severity severity)
         {
-            SentrySdk.CaptureMessage(eventName);
+            SentrySdk.CaptureMessage(eventName, severity switch
+            {
+                Severity.Warning => SentryLevel.Warning,
+                Severity.Critical => SentryLevel.Error,
+                _ => SentryLevel.Info
+            });
         }
 
         /// <inheritdoc/>

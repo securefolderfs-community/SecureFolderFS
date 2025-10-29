@@ -20,8 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
-            // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), specifics);
+            return new WebDavRootFolder(webDavWrapper, new SystemFolderEx(remotePath, options.VolumeName), specifics);
         }
 #endif
     }

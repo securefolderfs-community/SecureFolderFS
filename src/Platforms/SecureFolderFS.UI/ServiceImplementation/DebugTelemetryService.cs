@@ -1,6 +1,7 @@
-﻿using SecureFolderFS.Sdk.Services;
 using System;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -26,9 +27,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public void TrackMessage(string eventName)
+        public void TrackMessage(string eventName, Severity severity)
         {
             _ = eventName;
+            _ = severity;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Enums;
+using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
@@ -30,7 +31,8 @@ namespace SecureFolderFS.Sdk.Services
         /// Reports and sends specified <paramref name="message"/> to the telemetry service.
         /// </summary>
         /// <param name="message">The name of the event that occurred within the app.</param>
-        void TrackMessage(string message);
+        /// <param name="severity">The severity of the message to log.</param>
+        void TrackMessage(string message, Severity severity);
 
         /// <summary>
         /// Reports and sends specified <paramref name="exception"/> to the telemetry service.

@@ -16,6 +16,12 @@ namespace SecureFolderFS.Core.Dokany.AppModels
         /// </summary>
         public string? MountPoint { get => _mountPoint; init => _mountPoint = value; }
 
+        /// <inheritdoc/>
+        public override string? GetDescription()
+        {
+            return MountPoint;
+        }
+
         internal void DangerousSetMountPoint(string? value) => _mountPoint = value;
 
         public static DokanyOptions ToOptions(IDictionary<string, object> options)

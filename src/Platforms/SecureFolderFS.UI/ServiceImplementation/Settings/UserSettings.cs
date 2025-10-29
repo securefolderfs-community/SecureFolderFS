@@ -2,6 +2,7 @@ using System.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
@@ -121,6 +122,9 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
 
         protected virtual void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            // Opt out
+            return;
+
             var eventName = e.PropertyName switch
             {
                 nameof(LockOnSystemLock) => $"{nameof(LockOnSystemLock)}: {LockOnSystemLock}",
@@ -136,7 +140,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             };
 
             if (eventName is not null)
-                TelemetryService.TrackMessage(eventName);
+                TelemetryService.TrackMessage(eventName, Severity.Default);
         }
     }
 }

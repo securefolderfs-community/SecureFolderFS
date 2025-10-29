@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,8 +32,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async IAsyncEnumerable<LicenseViewModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
-            foreach (var item in assembly.GetManifestResourceNames().Where(resource => resource.StartsWith("SecureFolderFS.UI.Assets.Licenses")))
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == $"{nameof(SecureFolderFS)}.{nameof(UI)}");
+            foreach (var item in assembly.GetManifestResourceNames().Where(resource => resource.StartsWith($"{nameof(SecureFolderFS)}.{nameof(UI)}.Assets.Licenses")))
             {
                 await using var stream = assembly.GetManifestResourceStream(item);
                 if (stream is null)

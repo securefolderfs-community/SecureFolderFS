@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         /// <summary>
         /// Gets the path where the file system should be mounted. If a null value is given, default mount point will be used.
         /// </summary>
-        public string? MountPoint { get; init; } = null;
+        public string? MountPoint { get; init; }
 
         /// <summary>
         /// Gets whether the root user should have access to the filesystem.
@@ -42,6 +42,12 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         /// Gets whether to print debugging information to the console.
         /// </summary>
         public bool PrintDebugInformation { get; init; } // TODO: Use ILogger in the base class
+
+        /// <inheritdoc/>
+        public override string? GetDescription()
+        {
+            return MountPoint;
+        }
 
         public static FuseOptions ToOptions(IDictionary<string, object> options)
         {
