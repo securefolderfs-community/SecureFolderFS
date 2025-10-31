@@ -228,9 +228,6 @@
   <data name="ExportSettings" xml:space="preserve">
     <value>Eksportuj ustawienia</value>
   </data>
-  <data name="FileNameEncryption" xml:space="preserve">
-    <value>Szyfrowanie nazw plików</value>
-  </data>
   <data name="FileSystemProvider" xml:space="preserve">
     <value>Dostawca systemu plików</value>
   </data>
@@ -393,7 +390,7 @@
     <value>Prywatność</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show in File Explorer</value>
+    <value>Pokaż w Eksploratorze plików</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Społeczność</value>
@@ -470,8 +467,8 @@
   <data name="Website" xml:space="preserve">
     <value>Strona internetowa</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Witamy w SecureFolderFS</value>
+  <data name="WelcomeTo" xml:space="preserve">
+    <value>Witamy w {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Co nowego</value>
@@ -645,27 +642,297 @@
     <value>Dowiedz się więcej</value>
   </data>
   <data name="VaultAlreadyExists" xml:space="preserve">
-    <value>The selected vault already exists</value>
+    <value>Wybrany sejf już istnieje</value>
   </data>
   <data name="UnlockAsReadOnly" xml:space="preserve">
-    <value>Unlock as read-only</value>
+    <value>Odblokuj jako tylko do odczytu</value>
   </data>
   <data name="VaultReadOnlyMode" xml:space="preserve">
-    <value>The vault is in read-only mode</value>
+    <value>Sejf jest w trybie tylko do odczytu</value>
   </data>
   <data name="HealthReport" xml:space="preserve">
-    <value>Health report</value>
+    <value>Raport o kondycji</value>
     <comment>Title for health report view</comment>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Zmień nazwę</value>
   </data>
   <data name="MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Przesuń w górę</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Przesuń w dół</value>
     <comment>Change order of vaults</comment>
+  </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+    <value>Wybierz folder docelowy</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Klucz odzyskiwania</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Plik</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Kopiuj</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Udostępnij</value>
+  </data>
+  <data name="SetupPassword" xml:space="preserve">
+    <value>Ustaw uwierzytelnianie hasłem</value>
+  </data>
+  <data name="RecycleBin" xml:space="preserve">
+    <value>Kosz</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sortuj według</value>
+  </data>
+  <data name="ItemLayout" xml:space="preserve">
+    <value>Układ elementów</value>
+  </data>
+  <data name="ViewOptions" xml:space="preserve">
+    <value>Opcje wyświetlania</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="ListViewLayout" xml:space="preserve">
+    <value>Widok listy</value>
+  </data>
+  <data name="ColumnViewLayout" xml:space="preserve">
+    <value>Widok kolumn</value>
+  </data>
+  <data name="GridViewLayout" xml:space="preserve">
+    <value>Widok siatki</value>
+  </data>
+  <data name="GalleryViewLayout" xml:space="preserve">
+    <value>Widok galerii</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>Rozmiar elementu</value>
+  </data>
+  <data name="SmallSize" xml:space="preserve">
+    <value>Mały</value>
+  </data>
+  <data name="MediumSize" xml:space="preserve">
+    <value>Średni</value>
+  </data>
+  <data name="LargeSize" xml:space="preserve">
+    <value>Duży</value>
+  </data>
+  <data name="EmptyRecycleBinDescription" xml:space="preserve">
+    <value>Kosz jest pusty. Usuń kilka elementów, aby zobaczyć je tutaj.</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Data modyfikacji</value>
+  </data>
+  <data name="ItemType" xml:space="preserve">
+    <value>Typ elementu</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Przenieś</value>
+  </data>
+  <data name="ImportExisting" xml:space="preserve">
+    <value>Importuj istniejący</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Zaznacz</value>
+  </data>
+  <data name="NameEncryption" xml:space="preserve">
+    <value>Szyfrowanie nazw</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Brak elementów</value>
+  </data>
+  <data name="EnableFileThumbnails" xml:space="preserve">
+    <value>Włącz miniaturki plików</value>
+  </data>
+  <data name="OpenFileBrowser" xml:space="preserve">
+    <value>Otwórz przeglądarkę plików</value>
+  </data>
+  <data name="DeleteImmediately" xml:space="preserve">
+    <value>Usuń natychmiast</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="GetInfo" xml:space="preserve">
+    <value>Uzyskaj informacje</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Przywróć</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>Napraw</value>
+  </data>
+  <data name="RepairDescription" xml:space="preserve">
+    <value>Podczas naprawy twój sejf będzie ustawiony w trybie tylko do odczytu.</value>
+  </data>
+  <data name="ChooseNewName" xml:space="preserve">
+    <value>Wybierz nową nazwę</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Eksportuj</value>
+  </data>
+  <data name="MaximumSize" xml:space="preserve">
+    <value>Maksymalny rozmiar</value>
+  </data>
+  <data name="EnableRecycleBin" xml:space="preserve">
+    <value>Włącz kosz</value>
+  </data>
+  <data name="NoSizeLimit" xml:space="preserve">
+    <value>Brak limitu rozmiaru</value>
+  </data>
+  <data name="NoPreviewAvailable" xml:space="preserve">
+    <value>Podgląd niedostępny</value>
+  </data>
+  <data name="AndroidBiometrics" xml:space="preserve">
+    <value>Biometria Android</value>
+  </data>
+  <data name="TransferDone" xml:space="preserve">
+    <value>Ukończone</value>
+  </data>
+  <data name="EnableFileExtensions" xml:space="preserve">
+    <value>Pokaż rozszerzenia plików</value>
+  </data>
+  <data name="NameEncoding" xml:space="preserve">
+    <value>Kodowanie nazw</value>
+  </data>
+  <data name="OpenRecycleBin" xml:space="preserve">
+    <value>Otwórz kosz</value>
+  </data>
+  <data name="OpenRecycleBinDescription" xml:space="preserve">
+    <value>Wyświetl usunięte pliki i foldery</value>
+  </data>
+  <data name="RecentlyDeleted" xml:space="preserve">
+    <value>Ostatnio usunięte</value>
+  </data>
+  <data name="FileBrowser" xml:space="preserve">
+    <value>Przeglądarka plików</value>
+  </data>
+  <data name="EnableAdaptiveLayout" xml:space="preserve">
+    <value>Włącz układ adaptacyjny</value>
+  </data>
+  <data name="FoundIssues" xml:space="preserve">
+    <value>Znalezione problemy</value>
+  </data>
+  <data name="UnsavedChanges" xml:space="preserve">
+    <value>Niezapisane zmiany</value>
+  </data>
+  <data name="UnsavedChangesDescription" xml:space="preserve">
+    <value>Wprowadziłeś zmiany do pliku. Czy chcesz je teraz zapisać?</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="WriteHere" xml:space="preserve">
+    <value>Pisz tutaj...</value>
+  </data>
+  <data name="NoIssuesFound" xml:space="preserve">
+    <value>Nie znaleziono problemów</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="GoToVaults" xml:space="preserve">
+    <value>Przejdź do listy sejfów</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>Data utworzenia</value>
+  </data>
+  <data name="ClosedUnexpectedly" xml:space="preserve">
+    <value>{0} został nieoczekiwanie zamknięty</value>
+  </data>
+  <data name="SelectItems" xml:space="preserve">
+    <value>Zaznacz</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Gotowe</value>
+  </data>
+  <data name="ChooseDataSource" xml:space="preserve">
+    <value>Wybierz źródło danych</value>
+  </data>
+  <data name="SourceLocalStorage" xml:space="preserve">
+    <value>Pamięć urządzenia</value>
+  </data>
+  <data name="FTP" xml:space="preserve">
+    <value>FTP</value>
+  </data>
+  <data name="GoogleDrive" xml:space="preserve">
+    <value>Dysk Google</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nazwa użytkownika</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Dodaj konto</value>
+  </data>
+  <data name="User1" xml:space="preserve">
+    <value>Użytkownik1</value>
+  </data>
+  <data name="ChooseAccount" xml:space="preserve">
+    <value>Wybierz konto</value>
+  </data>
+  <data name="SelectedLocation" xml:space="preserve">
+    <value>Wybrana lokalizacja</value>
+  </data>
+  <data name="AccountList" xml:space="preserve">
+    <value>Lista kont</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Rozłącz</value>
+  </data>
+  <data name="AuthenticateForCredentials" xml:space="preserve">
+    <value>Uwierzytelnij, aby utworzyć poświadczenia</value>
+  </data>
+  <data name="ViewOnboarding" xml:space="preserve">
+    <value>Obejrzyj wprowadzenie</value>
+  </data>
+  <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
+    <value>Aby rozpocząć, ta prezentacja poprowadzi Cię przez najbardziej godne uwagi funkcje aplikacji.</value>
+  </data>
+  <data name="OnboardingDashboardTitle" xml:space="preserve">
+    <value>Masz kontrolę</value>
+  </data>
+  <data name="OnboardingDashboardSubtitle" xml:space="preserve">
+    <value>Szybko zarządzaj sejfem z panelu nawigacyjnego. Modyfikuj poświadczenia, przeglądaj pliki i sprawdź integralność plików.</value>
+  </data>
+  <data name="OnboardingDataSourcesTitle" xml:space="preserve">
+    <value>Twoje dane — bezpieczne, w dowolnym miejscu</value>
+  </data>
+  <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
+    <value>Oprócz przechowywania sejfów na Twoim urządzeniu, możesz również połączyć się z innymi dostawcami pamięci w chmurze.</value>
+  </data>
+  <data name="OnboardingEndTitle" xml:space="preserve">
+    <value>Wszystko gotowe!</value>
+  </data>
+  <data name="AboutToMigrate" xml:space="preserve">
+    <value>Dzieli Cię krok od migracji sejfu</value>
+  </data>
+  <data name="VersionValue" xml:space="preserve">
+    <value>Wersja {0}</value>
+  </data>
+  <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
+    <value>Skonfigurowana metoda uwierzytelniania jest niedostępna lub wygasła. Użyj klucza odzyskiwania.</value>
+  </data>
+  <data name="AuthenticationUnavailable" xml:space="preserve">
+    <value>Uwierzytelnianie niedostępne</value>
+  </data>
+  <data name="Documentation" xml:space="preserve">
+    <value>Dokumentacja</value>
   </data>
 </root>

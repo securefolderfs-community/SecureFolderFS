@@ -118,554 +118,821 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>添加现有</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>添加现有保险库</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>从您的设备中选择一个现有的保险库</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>添加新的保险库</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>身份认证</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>使用 {0} 进行身份验证</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>自动锁定保险库</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>当设备锁定时锁定所有保险库</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>开机自启</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>系统启动时启动 SecureFolderFS</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>返回</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>取消</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>更新日志</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>太棒了！</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>查看此版本的最新版本说明</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>加载更新日志时发生问题。</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>检查更新</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>关闭</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>确认</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>继续</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>已复制</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>复制应用版本</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>复制操作系统版本</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>复制版本</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>选择复制到剪贴板的版本</value>
   </data>
   <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
+    <value>新建</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>创建新的保险库</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>创建新的 SecureFolderFS 保险库</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>当前密码</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>数据加密</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>禁用最近访问列表</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>解锁保险库时，暂时禁用最近的文件列表</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>正在下载 {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>加密</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>输入密码</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>错误</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
-  </data>
-  <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>导出设置</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>文件系统提供程序</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>选择偏好的虚拟文件系统类型</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>需要注意</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>未发现问题</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>找到问题</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>导入设置</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>正在安装...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>无效的密码</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>密码错误</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>密钥文件</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>语言</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>选择显示语言</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>上次检查: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>已安装最新版本</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>许可协议</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>许可协议</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>锁定保险库</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>安全锁定此保险库并关闭仪表板</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>管理设置</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>这是恢复密钥，您可以用它来重新获得此保险库的访问权限。丢失它将无法找回密码。</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>我的保险库</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>新密码</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>新保险库</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>无加密</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>未选中文件夹</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>您尚未添加任何保险库。创建一个新保险库或添加现有保险库以开始！</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>打开日志位置</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>启动日志文件所在位置的文件资源管理器</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>打开保险库文件夹</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>解锁保险库时自动打开文件夹</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>密码</value>
   </data>
   <data name="Paste" xml:space="preserve">
-    <value>Paste</value>
+    <value>粘贴</value>
   </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>打印</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>隐私条款</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>查看隐私条款说明</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>读取速度</value>
   </data>
   <data name="Recover" xml:space="preserve">
-    <value>Recover</value>
+    <value>恢复</value>
   </data>
   <data name="RecoverAccess" xml:space="preserve">
-    <value>Recover access</value>
+    <value>恢复访问权限</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>从列表中删除保险库</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>确认密码</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>需要重启</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>从离开的位置继续</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>从先前选择的保险库开始</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>重试</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal recovery key</value>
+    <value>显示恢复密钥</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>搜索</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>选择保险库路径</value>
   </data>
   <data name="SetCredentials" xml:space="preserve">
-    <value>Set credentials</value>
+    <value>设置凭据</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>设置</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>关于</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>通用</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>偏好</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>隐私</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show in File Explorer</value>
+    <value>在文件资源管理器中显示</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Social</value>
+    <value>社群</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>提问、建议和讨论 SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>总结</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>启用数据上传</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>收集匿名崩溃报告和使用数据</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>主题</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>深色</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>选择应用主题</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>浅色</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>跟随系统</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>第三方许可协议</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>查看 SecureFolderFS 使用的第三方库</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>解锁</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>保险库已添加</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>保险库信息</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>保险库已锁定</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>保险库属性</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>查看关于此保险库的信息</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>保险库恢复</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>版本</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>在 GitHub 上查看</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>查看仓库</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>查看保险库</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>在文件资源管理器中显示此保险库</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>网站</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+  <data name="WelcomeTo" xml:space="preserve">
+    <value>Welcome to {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>更新内容</value>
   </data>
   <data name="WindowsHello" xml:space="preserve">
     <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>写入速度</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>添加</value>
   </data>
   <data name="VaultLoadError" xml:space="preserve">
-    <value>Vault could not be loaded</value>
+    <value>无法加载保险库</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>错误详细信息</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Open</value>
+    <value>打开</value>
   </data>
   <data name="SelectFolderToContinue" xml:space="preserve">
-    <value>Select a folder to continue</value>
+    <value>选择一个文件夹以继续</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>可能不支持所选保险库</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
-    <value>Vault folder is invalid</value>
+    <value>保险库文件夹无效</value>
   </data>
   <data name="SelectedValidVault" xml:space="preserve">
-    <value>Found a valid vault folder</value>
+    <value>发现一个有效的保险库文件夹</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>选定的保险库将被覆盖</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>将在选定的文件夹中创建一个新的保险库</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
-    <value>No location selected</value>
+    <value>未选择位置</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>锁定方式</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
-    <value>Advanced options</value>
+    <value>高级选项</value>
     <comment>Use a short-hand name, if possible</comment>
   </data>
   <data name="Setup" xml:space="preserve">
-    <value>Setup</value>
+    <value>配置</value>
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>配置密钥文件认证</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>设置 Windows Hello 认证</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
-    <value>Login options</value>
+    <value>登录选项</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>安全</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
-    <value>View recovery codes</value>
+    <value>查看恢复代码</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>如果您忘记了凭据，访问此保险库的恢复码</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use recovery key</value>
+    <value>使用恢复密钥</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>更改凭据</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>更改登录到此保险库的方式</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
+    <value>双重身份验证</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>设置或更改双重身份验证</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>修改现有的</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Select authentication option</value>
+    <value>选择身份验证选项</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
-    <value>All options</value>
+    <value>所有选项</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>使用密钥文件验证</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
-    <value>Authenticate with Windows Hello</value>
+    <value>使用 Windows Hello 验证</value>
   </data>
   <data name="RemoveAuthentication" xml:space="preserve">
-    <value>Remove authentication</value>
+    <value>移除身份验证</value>
   </data>
   <data name="RemoveAuthenticationDescription" xml:space="preserve">
-    <value>Remove this authentication method</value>
+    <value>删除此身份验证方法</value>
   </data>
   <data name="ChangeCurrentAuthentication" xml:space="preserve">
-    <value>Change current authentication method</value>
+    <value>更改当前身份验证方法</value>
   </data>
   <data name="ViewInFiles" xml:space="preserve">
-    <value>View in Files</value>
+    <value>在文件中查看</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
-    <value>Quick actions</value>
+    <value>快捷操作</value>
   </data>
   <data name="Authentication" xml:space="preserve">
-    <value>Authentication</value>
+    <value>认证</value>
   </data>
   <data name="TotalRead" xml:space="preserve">
-    <value>Total read</value>
+    <value>总读取</value>
   </data>
   <data name="TotalWrite" xml:space="preserve">
-    <value>Total write</value>
+    <value>总写入</value>
   </data>
   <data name="SystemVersion" xml:space="preserve">
-    <value>System version</value>
+    <value>系统版本</value>
   </data>
   <data name="Migrate" xml:space="preserve">
-    <value>Migrate</value>
+    <value>迁移</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-    <value>Enter the recovery key for this vault</value>
+    <value>输入此保险库的恢复密钥</value>
   </data>
   <data name="DateToday" xml:space="preserve">
-    <value>Today, {0}</value>
+    <value>今天，{0}</value>
   </data>
   <data name="DateAgo" xml:space="preserve">
-    <value>{0} ago</value>
+    <value>{0}之前</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
-    <value>An error occurred</value>
+    <value>发生错误</value>
   </data>
   <data name="VaultMigrated" xml:space="preserve">
-    <value>Vault has been migrated successfully</value>
+    <value>保险库已成功迁移</value>
   </data>
   <data name="VaultNeedsMigration" xml:space="preserve">
-    <value>The vault needs to be migrated before it can be used</value>
+    <value>保险库需要迁移后才能使用</value>
   </data>
   <data name="ActiveFileSystem" xml:space="preserve">
-    <value>Active file system</value>
+    <value>当前文件系统</value>
   </data>
   <data name="RestartLogin" xml:space="preserve">
-    <value>Restart login process</value>
+    <value>重启登录进程</value>
   </data>
   <data name="ResetCredentials" xml:space="preserve">
-    <value>Reset credentials</value>
+    <value>重置凭证信息</value>
   </data>
   <data name="RecoveryKeyTip" xml:space="preserve">
-    <value>You can recover your vault using Recovery Key in case you lose or forget your credentials</value>
+    <value>如果您丢失或忘记凭据，您可以使用恢复密钥恢复保险库</value>
   </data>
   <data name="RemoveAuthenticationQuestion" xml:space="preserve">
-    <value>The following authentication method will be removed. Do you wish to continue?</value>
+    <value>以下验证方法将被删除。您想要继续吗？</value>
   </data>
   <data name="RemoveAuthenticationTip" xml:space="preserve">
-    <value>You can always re-add it later</value>
+    <value>您也可以稍后重新添加它</value>
   </data>
   <data name="LearnMore" xml:space="preserve">
-    <value>Learn more</value>
+    <value>了解更多</value>
   </data>
   <data name="VaultAlreadyExists" xml:space="preserve">
-    <value>The selected vault already exists</value>
+    <value>选中的保险库已存在</value>
   </data>
   <data name="UnlockAsReadOnly" xml:space="preserve">
-    <value>Unlock as read-only</value>
+    <value>以只读模式解锁</value>
   </data>
   <data name="VaultReadOnlyMode" xml:space="preserve">
-    <value>The vault is in read-only mode</value>
+    <value>保险库处于只读模式</value>
   </data>
   <data name="HealthReport" xml:space="preserve">
-    <value>Health report</value>
+    <value>健康报告</value>
     <comment>Title for health report view</comment>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>重命名</value>
   </data>
   <data name="MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>上移</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>下移</value>
     <comment>Change order of vaults</comment>
+  </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+    <value>Choose destination folder</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Recovery key</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="SetupPassword" xml:space="preserve">
+    <value>Setup password authentication</value>
+  </data>
+  <data name="RecycleBin" xml:space="preserve">
+    <value>Recycle bin</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="ItemLayout" xml:space="preserve">
+    <value>Item layout</value>
+  </data>
+  <data name="ViewOptions" xml:space="preserve">
+    <value>View options</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="ListViewLayout" xml:space="preserve">
+    <value>List view</value>
+  </data>
+  <data name="ColumnViewLayout" xml:space="preserve">
+    <value>Column view</value>
+  </data>
+  <data name="GridViewLayout" xml:space="preserve">
+    <value>Grid view</value>
+  </data>
+  <data name="GalleryViewLayout" xml:space="preserve">
+    <value>Gallery view</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>Item size</value>
+  </data>
+  <data name="SmallSize" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="MediumSize" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="LargeSize" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="EmptyRecycleBinDescription" xml:space="preserve">
+    <value>Recycle bin is empty. Delete some items to see them here.</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Date modified</value>
+  </data>
+  <data name="ItemType" xml:space="preserve">
+    <value>Item type</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="ImportExisting" xml:space="preserve">
+    <value>Import existing</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="NameEncryption" xml:space="preserve">
+    <value>Name encryption</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>No items</value>
+  </data>
+  <data name="EnableFileThumbnails" xml:space="preserve">
+    <value>Enable file thumbnails</value>
+  </data>
+  <data name="OpenFileBrowser" xml:space="preserve">
+    <value>Open file browser</value>
+  </data>
+  <data name="DeleteImmediately" xml:space="preserve">
+    <value>Delete immediately</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="GetInfo" xml:space="preserve">
+    <value>Get info</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>Repair</value>
+  </data>
+  <data name="RepairDescription" xml:space="preserve">
+    <value>During repair, your vault will be set into read-only mode.</value>
+  </data>
+  <data name="ChooseNewName" xml:space="preserve">
+    <value>Choose a new name</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="MaximumSize" xml:space="preserve">
+    <value>Maximum size</value>
+  </data>
+  <data name="EnableRecycleBin" xml:space="preserve">
+    <value>Enable recycle bin</value>
+  </data>
+  <data name="NoSizeLimit" xml:space="preserve">
+    <value>No size limit</value>
+  </data>
+  <data name="NoPreviewAvailable" xml:space="preserve">
+    <value>No preview available</value>
+  </data>
+  <data name="AndroidBiometrics" xml:space="preserve">
+    <value>Android Biometrics</value>
+  </data>
+  <data name="TransferDone" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="EnableFileExtensions" xml:space="preserve">
+    <value>Show file extensions</value>
+  </data>
+  <data name="NameEncoding" xml:space="preserve">
+    <value>Name encoding</value>
+  </data>
+  <data name="OpenRecycleBin" xml:space="preserve">
+    <value>Open recycle bin</value>
+  </data>
+  <data name="OpenRecycleBinDescription" xml:space="preserve">
+    <value>View deleted files and folders</value>
+  </data>
+  <data name="RecentlyDeleted" xml:space="preserve">
+    <value>Recently deleted</value>
+  </data>
+  <data name="FileBrowser" xml:space="preserve">
+    <value>File browser</value>
+  </data>
+  <data name="EnableAdaptiveLayout" xml:space="preserve">
+    <value>Enable adaptive layout</value>
+  </data>
+  <data name="FoundIssues" xml:space="preserve">
+    <value>Found issues</value>
+  </data>
+  <data name="UnsavedChanges" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="UnsavedChangesDescription" xml:space="preserve">
+    <value>You have made changes to the file. Do you want to save them now?</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WriteHere" xml:space="preserve">
+    <value>Write here...</value>
+  </data>
+  <data name="NoIssuesFound" xml:space="preserve">
+    <value>No issues found</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="GoToVaults" xml:space="preserve">
+    <value>Go to vault list</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>Date created</value>
+  </data>
+  <data name="ClosedUnexpectedly" xml:space="preserve">
+    <value>{0} has closed unexpectedly</value>
+  </data>
+  <data name="SelectItems" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="ChooseDataSource" xml:space="preserve">
+    <value>Choose data source</value>
+  </data>
+  <data name="SourceLocalStorage" xml:space="preserve">
+    <value>Device storage</value>
+  </data>
+  <data name="FTP" xml:space="preserve">
+    <value>FTP</value>
+  </data>
+  <data name="GoogleDrive" xml:space="preserve">
+    <value>Google Drive</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Add account</value>
+  </data>
+  <data name="User1" xml:space="preserve">
+    <value>User1</value>
+  </data>
+  <data name="ChooseAccount" xml:space="preserve">
+    <value>Choose account</value>
+  </data>
+  <data name="SelectedLocation" xml:space="preserve">
+    <value>Selected location</value>
+  </data>
+  <data name="AccountList" xml:space="preserve">
+    <value>Account list</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="AuthenticateForCredentials" xml:space="preserve">
+    <value>Authenticate to create credentials</value>
+  </data>
+  <data name="ViewOnboarding" xml:space="preserve">
+    <value>View onboarding</value>
+  </data>
+  <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
+    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+  </data>
+  <data name="OnboardingDashboardTitle" xml:space="preserve">
+    <value>You're in control</value>
+  </data>
+  <data name="OnboardingDashboardSubtitle" xml:space="preserve">
+    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+  </data>
+  <data name="OnboardingDataSourcesTitle" xml:space="preserve">
+    <value>Your data — secure, anywhere</value>
+  </data>
+  <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
+    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+  </data>
+  <data name="OnboardingEndTitle" xml:space="preserve">
+    <value>You're ready to go!</value>
+  </data>
+  <data name="AboutToMigrate" xml:space="preserve">
+    <value>You're about to migrate a vault</value>
+  </data>
+  <data name="VersionValue" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
+    <value>The configured authentication method is unavailable or has expired. Please use your recovery key.</value>
+  </data>
+  <data name="AuthenticationUnavailable" xml:space="preserve">
+    <value>Authentication unavailable</value>
+  </data>
+  <data name="Documentation" xml:space="preserve">
+    <value>Documentation</value>
   </data>
 </root>
