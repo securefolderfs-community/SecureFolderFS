@@ -228,9 +228,6 @@
   <data name="ExportSettings" xml:space="preserve">
     <value>Exporter les paramètres</value>
   </data>
-  <data name="FileNameEncryption" xml:space="preserve">
-    <value>Chiffrement des noms de fichiers</value>
-  </data>
   <data name="FileSystemProvider" xml:space="preserve">
     <value>Fournisseur du système de fichiers</value>
   </data>
@@ -470,8 +467,8 @@
   <data name="Website" xml:space="preserve">
     <value>Site Web</value>
   </data>
-  <data name="Welcome" xml:space="preserve">
-    <value>Bienvenue dans SecureFolderFS</value>
+  <data name="WelcomeTo" xml:space="preserve">
+    <value>Welcome to {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Nouveautés</value>
@@ -667,5 +664,275 @@
   <data name="MoveDown" xml:space="preserve">
     <value>Move down</value>
     <comment>Change order of vaults</comment>
+  </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+    <value>Choose destination folder</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Recovery key</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="SetupPassword" xml:space="preserve">
+    <value>Setup password authentication</value>
+  </data>
+  <data name="RecycleBin" xml:space="preserve">
+    <value>Recycle bin</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="ItemLayout" xml:space="preserve">
+    <value>Item layout</value>
+  </data>
+  <data name="ViewOptions" xml:space="preserve">
+    <value>View options</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="ListViewLayout" xml:space="preserve">
+    <value>List view</value>
+  </data>
+  <data name="ColumnViewLayout" xml:space="preserve">
+    <value>Column view</value>
+  </data>
+  <data name="GridViewLayout" xml:space="preserve">
+    <value>Grid view</value>
+  </data>
+  <data name="GalleryViewLayout" xml:space="preserve">
+    <value>Gallery view</value>
+  </data>
+  <data name="ItemSize" xml:space="preserve">
+    <value>Item size</value>
+  </data>
+  <data name="SmallSize" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="MediumSize" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="LargeSize" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="EmptyRecycleBinDescription" xml:space="preserve">
+    <value>Recycle bin is empty. Delete some items to see them here.</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Date modified</value>
+  </data>
+  <data name="ItemType" xml:space="preserve">
+    <value>Item type</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="ImportExisting" xml:space="preserve">
+    <value>Import existing</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="NameEncryption" xml:space="preserve">
+    <value>Name encryption</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>No items</value>
+  </data>
+  <data name="EnableFileThumbnails" xml:space="preserve">
+    <value>Enable file thumbnails</value>
+  </data>
+  <data name="OpenFileBrowser" xml:space="preserve">
+    <value>Open file browser</value>
+  </data>
+  <data name="DeleteImmediately" xml:space="preserve">
+    <value>Delete immediately</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="GetInfo" xml:space="preserve">
+    <value>Get info</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>Repair</value>
+  </data>
+  <data name="RepairDescription" xml:space="preserve">
+    <value>During repair, your vault will be set into read-only mode.</value>
+  </data>
+  <data name="ChooseNewName" xml:space="preserve">
+    <value>Choose a new name</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="MaximumSize" xml:space="preserve">
+    <value>Maximum size</value>
+  </data>
+  <data name="EnableRecycleBin" xml:space="preserve">
+    <value>Enable recycle bin</value>
+  </data>
+  <data name="NoSizeLimit" xml:space="preserve">
+    <value>No size limit</value>
+  </data>
+  <data name="NoPreviewAvailable" xml:space="preserve">
+    <value>No preview available</value>
+  </data>
+  <data name="AndroidBiometrics" xml:space="preserve">
+    <value>Android Biometrics</value>
+  </data>
+  <data name="TransferDone" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="EnableFileExtensions" xml:space="preserve">
+    <value>Show file extensions</value>
+  </data>
+  <data name="NameEncoding" xml:space="preserve">
+    <value>Name encoding</value>
+  </data>
+  <data name="OpenRecycleBin" xml:space="preserve">
+    <value>Open recycle bin</value>
+  </data>
+  <data name="OpenRecycleBinDescription" xml:space="preserve">
+    <value>View deleted files and folders</value>
+  </data>
+  <data name="RecentlyDeleted" xml:space="preserve">
+    <value>Recently deleted</value>
+  </data>
+  <data name="FileBrowser" xml:space="preserve">
+    <value>File browser</value>
+  </data>
+  <data name="EnableAdaptiveLayout" xml:space="preserve">
+    <value>Enable adaptive layout</value>
+  </data>
+  <data name="FoundIssues" xml:space="preserve">
+    <value>Found issues</value>
+  </data>
+  <data name="UnsavedChanges" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="UnsavedChangesDescription" xml:space="preserve">
+    <value>You have made changes to the file. Do you want to save them now?</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WriteHere" xml:space="preserve">
+    <value>Write here...</value>
+  </data>
+  <data name="NoIssuesFound" xml:space="preserve">
+    <value>No issues found</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="GoToVaults" xml:space="preserve">
+    <value>Go to vault list</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>Date created</value>
+  </data>
+  <data name="ClosedUnexpectedly" xml:space="preserve">
+    <value>{0} has closed unexpectedly</value>
+  </data>
+  <data name="SelectItems" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="ChooseDataSource" xml:space="preserve">
+    <value>Choose data source</value>
+  </data>
+  <data name="SourceLocalStorage" xml:space="preserve">
+    <value>Device storage</value>
+  </data>
+  <data name="FTP" xml:space="preserve">
+    <value>FTP</value>
+  </data>
+  <data name="GoogleDrive" xml:space="preserve">
+    <value>Google Drive</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="AddAccount" xml:space="preserve">
+    <value>Add account</value>
+  </data>
+  <data name="User1" xml:space="preserve">
+    <value>User1</value>
+  </data>
+  <data name="ChooseAccount" xml:space="preserve">
+    <value>Choose account</value>
+  </data>
+  <data name="SelectedLocation" xml:space="preserve">
+    <value>Selected location</value>
+  </data>
+  <data name="AccountList" xml:space="preserve">
+    <value>Account list</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="AuthenticateForCredentials" xml:space="preserve">
+    <value>Authenticate to create credentials</value>
+  </data>
+  <data name="ViewOnboarding" xml:space="preserve">
+    <value>View onboarding</value>
+  </data>
+  <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
+    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+  </data>
+  <data name="OnboardingDashboardTitle" xml:space="preserve">
+    <value>You're in control</value>
+  </data>
+  <data name="OnboardingDashboardSubtitle" xml:space="preserve">
+    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+  </data>
+  <data name="OnboardingDataSourcesTitle" xml:space="preserve">
+    <value>Your data — secure, anywhere</value>
+  </data>
+  <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
+    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+  </data>
+  <data name="OnboardingEndTitle" xml:space="preserve">
+    <value>You're ready to go!</value>
+  </data>
+  <data name="AboutToMigrate" xml:space="preserve">
+    <value>You're about to migrate a vault</value>
+  </data>
+  <data name="VersionValue" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
+    <value>The configured authentication method is unavailable or has expired. Please use your recovery key.</value>
+  </data>
+  <data name="AuthenticationUnavailable" xml:space="preserve">
+    <value>Authentication unavailable</value>
+  </data>
+  <data name="Documentation" xml:space="preserve">
+    <value>Documentation</value>
   </data>
 </root>
