@@ -935,4 +935,10 @@
   <data name="Documentation" xml:space="preserve">
     <value>Dokumentacja</value>
   </data>
+  <data name="DokanyNotDetected" xml:space="preserve">
+    <value>Dokany has not been detected. Please install Dokany (v{0}) to continue.</value>
+  </data>
+  <data name="DokanyIncompatible" xml:space="preserve">
+    <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
+  </data>
 </root>
