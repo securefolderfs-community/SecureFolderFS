@@ -7,8 +7,16 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
+    Margin="0"
+    Padding="0"
+    Background="Transparent"
+    BackgroundColor="Transparent"
     BindingContext="{x:Reference ThisPopup}"
-    Color="Transparent">
+    HorizontalOptions="FillAndExpand">
+
+    <tv:Popup.Shadow>
+        <Shadow Offset="0,0" />
+    </tv:Popup.Shadow>
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
@@ -22,10 +30,7 @@
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <Border
-        Padding="16"
-        Background="{StaticResource ThemeBackgroundFillColorBrush}"
-        WidthRequest="392">
+    <Border Padding="16" Background="{StaticResource ThemeBackgroundFillColorBrush}">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="12" />
         </Border.StrokeShape>

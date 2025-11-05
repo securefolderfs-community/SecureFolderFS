@@ -34,7 +34,9 @@ namespace SecureFolderFS.Shared.Extensions
             return add(services, serviceType, implementationFactory);
         }
 
-        public static IServiceCollection Foundation<TService, TImplementation>(this IServiceCollection services, Func<IServiceCollection, Type, Type, IServiceCollection> add)
+        public static IServiceCollection Foundation<TService, TImplementation>(
+            this IServiceCollection services,
+            Func<IServiceCollection, Type, Type, IServiceCollection> add)
             where TImplementation : class, TService
         {
             var serviceType = typeof(TService);

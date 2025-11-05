@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -18,7 +20,10 @@ namespace SecureFolderFS.Maui.Popups
             if (ViewModel is null)
                 return Shared.Models.Result.Failure(null);
 
-            _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
+            _ = await Shell.Current.CurrentPage.ShowPopupAsync(this, new PopupOptions()
+            {
+                PageOverlayColor = Colors.Transparent
+            });
             return Shared.Models.Result.Success;
         }
 
