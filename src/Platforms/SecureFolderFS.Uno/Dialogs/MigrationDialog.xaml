@@ -35,6 +35,7 @@
             <uc2:MigratorV2_V3
                 MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"
                 ProvideContinuationButton="False"
+                RecoverCommand="{Binding ViewModel.AuthenticateRecoveryCommand, Mode=OneWay, ElementName=ThisDialog}"
                 VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
                 VaultName="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>

@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.VaultAccess
             using var hmacSha256 = new HMACSHA256(macKey.Key);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                              // Version
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.Version));                                              // Version
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));                                       // RecycleBinSize

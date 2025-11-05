@@ -244,6 +244,7 @@
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
     <None Remove="UserControls\PasswordControl.xaml" />
+    <None Remove="UserControls\RecoveryControl.xaml" />
     <None Remove="UserControls\RecoveryPreviewControl.xaml" />
     <None Remove="UserControls\RegisterControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
@@ -390,6 +391,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControls\PasswordControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\RecoveryControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

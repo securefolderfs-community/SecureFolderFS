@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.Api;
+using SecureFolderFS.Shared.Api;
 using Sentry;
 
 namespace SecureFolderFS.UI.ServiceImplementation

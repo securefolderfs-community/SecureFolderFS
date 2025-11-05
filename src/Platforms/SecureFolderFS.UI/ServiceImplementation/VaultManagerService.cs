@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -50,20 +51,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)
         {
+            using var recoveryKey = KeyPair.CombineRecoveryKey(encodedRecoveryKey);
+            
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
-            var recoveryRoutine = routines.RecoverVault();
-            var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Core.Cryptography.Constants.KeyTraits.KEY_TEXT_SEPARATOR);
-            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH + Core.Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
-
-            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
-                throw new FormatException("The recovery key (1) was not in correct format.");
-
-            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH), out _))
-                throw new FormatException("The recovery key (2) was not in correct format.");
+            using var recoveryRoutine = routines.RecoverVault();
 
             await recoveryRoutine.InitAsync(cancellationToken);
             recoveryRoutine.SetCredentials(recoveryKey);
-
             return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
 

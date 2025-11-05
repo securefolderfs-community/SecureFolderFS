@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             if (string.IsNullOrEmpty(rawData))
                 throw new ArgumentException("Data cannot be empty.");
 
-
+            return null;
         }
 
         /// <inheritdoc/>

@@ -6,11 +6,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -28,6 +29,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
         private Iterator<AuthenticationViewModel>? _loginSequence;
 
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
+        [ObservableProperty] private RecoveryOverlayViewModel? _RecoveryOverlayViewModel;
 
         public MigratorV2_V3()
         {
@@ -58,6 +60,9 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         private async Task BeginAuthenticationAsync(IFolder vaultFolder)
         {
+            RecoveryOverlayViewModel?.Dispose();
+            RecoveryOverlayViewModel = new RecoveryOverlayViewModel(vaultFolder);
+
             var vaultCredentialsService = DI.Service<IVaultCredentialsService>();
             _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultFolder).ToArrayAsync());
 
@@ -132,9 +137,26 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 newViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
         }
 
+        private void RequestRecoveryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(RecoveryOverlayViewModel?.OptionalNewPassword))
+                return;
+
+            RecoverCommand?.Execute(RecoveryOverlayViewModel);
+            FlyoutBase.GetAttachedFlyout(RecoverButton).Hide();
+        }
+
+        private void RecoverButton_Click(object sender, RoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {
+            _keySequence.Dispose();
+            _loginSequence?.Dispose();
+            RecoveryOverlayViewModel?.Dispose();
         }
 
         public ICommand? MigrateCommand
@@ -145,6 +167,14 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         public static readonly DependencyProperty MigrateCommandProperty =
             DependencyProperty.Register(nameof(MigrateCommand), typeof(ICommand), typeof(MigratorV2_V3), new PropertyMetadata(null));
+
+        public ICommand? RecoverCommand
+        {
+            get => (ICommand?)GetValue(RecoverCommandProperty);
+            set => SetValue(RecoverCommandProperty, value);
+        }
+        public static readonly DependencyProperty RecoverCommandProperty =
+            DependencyProperty.Register(nameof(RecoverCommand), typeof(ICommand), typeof(MigratorV2_V3), new PropertyMetadata(null));
 
         public string? VaultName
         {

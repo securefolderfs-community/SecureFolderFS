@@ -68,7 +68,9 @@ namespace SecureFolderFS.Uno.Dialogs
                 }
                 else
                 {
+                    PrimaryButtonText = null;
                     MigrationView.Visibility = Visibility.Collapsed;
+                    AuthenticationView.Visibility = Visibility.Collapsed;
                     ErrorView.Visibility = Visibility.Visible;
                     ErrorView.ExceptionMessage = args.Result.GetExceptionMessage();
                 }

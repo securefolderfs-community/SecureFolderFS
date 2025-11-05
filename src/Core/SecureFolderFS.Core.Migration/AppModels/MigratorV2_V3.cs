@@ -20,12 +20,13 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.Migration.AppModels
 {
     /// <inheritdoc cref="IVaultMigratorModel"/>
-    internal sealed class MigratorV2_V3 : IVaultMigratorModel
+    internal sealed class MigratorV2_V3 : IVaultMigratorModel, IProgress<IKey>
     {
         private readonly IAsyncSerializer<Stream> _streamSerializer;
         private V2VaultConfigurationDataModel? _v2ConfigDataModel;
         private VaultKeystoreDataModel? _v2KeystoreDataModel;
         private SecretKey? _secretKeySequence;
+        private bool _wasNewPasswordSet;
 
         /// <inheritdoc/>
         public IFolder VaultFolder { get; }
@@ -37,14 +38,22 @@ namespace SecureFolderFS.Core.Migration.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default)
+        public void Report(IKey key)
+        {
+            _wasNewPasswordSet = true;
+            _secretKeySequence = SecureKey.TakeOwnership(key.ToArray());
+        }
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> UnlockAsync(IKey credentials, CancellationToken cancellationToken = default)
         {
             if (credentials is not KeySequence keySequence)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeySequence)}.");
 
             _secretKeySequence?.Dispose();
-            _secretKeySequence = SecureKey.TakeOwnership(keySequence.ToArray());
+            _secretKeySequence = null;
 
+            var secretKeySequence = SecureKey.TakeOwnership(keySequence.ToArray());
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
 
@@ -60,15 +69,53 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
-            Argon2id.Old_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
+            Argon2id.Old_DeriveKey(secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
             rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedDekKey, kek, dekKey.Key);
             rfc3394.UnwrapKey(_v2KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
+            // Set the secret key sequence for later use, only on success
+            _secretKeySequence = secretKeySequence;
+
             // Create copies of keys for later use
             return KeyPair.ImportKeys(dekKey, macKey);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> RecoverAsync(string encodedRecoveryKey, CancellationToken cancellationToken = default)
+        {
+            using var recoveryKey = KeyPair.CombineRecoveryKey(encodedRecoveryKey);
+            using var keyPair = KeyPair.CopyFromRecoveryKey(recoveryKey);
+
+            var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
+
+            await using var configStream = await configFile.OpenReadAsync(cancellationToken);
+            await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
+
+            _v2ConfigDataModel = await _streamSerializer.DeserializeAsync<Stream, V2VaultConfigurationDataModel>(configStream, cancellationToken);
+            _v2KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, VaultKeystoreDataModel>(keystoreStream, cancellationToken);
+            if (_v2ConfigDataModel is null)
+                throw new FormatException($"{nameof(V2VaultConfigurationDataModel)} was not in the correct format.");
+
+            // Initialize HMAC
+            using var hmacSha256 = new HMACSHA256(keyPair.MacKey.Key);
+            hmacSha256.AppendData(BitConverter.GetBytes(_v2ConfigDataModel.Version));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(_v2ConfigDataModel.ContentCipherId)));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(_v2ConfigDataModel.FileNameCipherId)));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(_v2ConfigDataModel.Uid));
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(_v2ConfigDataModel.AuthenticationMethod));
+
+            var payloadMac = new byte[HMACSHA256.HashSizeInBytes];
+            hmacSha256.GetCurrentHash(payloadMac);
+
+            // Check if stored hash equals to computed hash
+            if (!payloadMac.SequenceEqual(_v2ConfigDataModel.PayloadMac ?? []))
+                throw new CryptographicException("Vault hash doesn't match the computed hash.");
+
+            return KeyPair.ImportKeys(keyPair.DekKey, keyPair.MacKey);
         }
 
         /// <inheritdoc/>
@@ -90,7 +137,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             var macKey = keyPair.MacKey;
             var v3ConfigDataModel = new VaultConfigurationDataModel()
             {
-                AuthenticationMethod = _v2ConfigDataModel.AuthenticationMethod,
+                AuthenticationMethod = _wasNewPasswordSet ? Core.Constants.Vault.Authentication.AUTH_PASSWORD : _v2ConfigDataModel.AuthenticationMethod,
                 ContentCipherId = _v2ConfigDataModel.ContentCipherId,
                 FileNameCipherId = _v2ConfigDataModel.FileNameCipherId,
                 FileNameEncodingId = Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL,
@@ -104,7 +151,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var hmacSha256 = new HMACSHA256(macKey.Key);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));
+            hmacSha256.AppendData(BitConverter.GetBytes(v3ConfigDataModel.Version));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v3ConfigDataModel.ContentCipherId)));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v3ConfigDataModel.FileNameCipherId)));
             hmacSha256.AppendData(BitConverter.GetBytes(v3ConfigDataModel.RecycleBinSize));

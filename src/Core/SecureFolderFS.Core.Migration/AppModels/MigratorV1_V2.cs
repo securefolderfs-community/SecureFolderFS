@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> UnlockAsync(IKey credentials, CancellationToken cancellationToken = default)
         {
             if (credentials is not IPassword password)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(IPassword)}.");
@@ -65,6 +65,13 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Create copies of keys for later use
             return KeyPair.ImportKeys(dekKey, macKey);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> RecoverAsync(string encodedRecoveryKey, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc/>
@@ -97,7 +104,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             using var hmacSha256 = new HMACSHA256(macKey.Key);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));
+            hmacSha256.AppendData(BitConverter.GetBytes(v2ConfigDataModel.Version));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v2ConfigDataModel.ContentCipherId)));
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v2ConfigDataModel.FileNameCipherId)));
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(v2ConfigDataModel.Uid));

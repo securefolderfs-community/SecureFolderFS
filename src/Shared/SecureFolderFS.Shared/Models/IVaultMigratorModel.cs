@@ -1,5 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
+﻿using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,22 +8,8 @@ namespace SecureFolderFS.Shared.Models
     /// <summary>
     /// Represents a model responsible for migrating vaults to a new format.
     /// </summary>
-    public interface IVaultMigratorModel : IDisposable
+    public interface IVaultMigratorModel : IVaultUnlockingModel
     {
-        /// <summary>
-        /// Gets the folder associated with the vault.
-        /// </summary>
-        IFolder VaultFolder { get; }
-
-        /// <summary>
-        /// Unlocks the vault using the provided credentials.
-        /// </summary>
-        /// <typeparam name="T">The type of the credentials used to unlock the vault.</typeparam>
-        /// <param name="credentials">The credentials required to unlock the vault.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the unlock contract represented by <see cref="IDisposable"/>.</returns>
-        Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default);
-
         /// <summary>
         /// Migrates the vault to a new format or structure.
         /// </summary>
