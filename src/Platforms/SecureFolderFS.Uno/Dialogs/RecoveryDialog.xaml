@@ -6,6 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     Title="{l:ResourceString Rid=RecoverAccess}"
     Width="600"
     HorizontalAlignment="Stretch"
@@ -23,22 +24,5 @@
         <x:Double x:Key="ContentDialogMinWidth">500</x:Double>
     </ContentDialog.Resources>
 
-    <StackPanel Spacing="8">
-        <TextBlock Text="{l:ResourceString Rid=EnterRecoveryKey}" />
-        <TextBox
-            AcceptsReturn="True"
-            FontFamily="Consolas"
-            Text="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}"
-            TextWrapping="Wrap" />
-
-        <Button HorizontalAlignment="Right" Command="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <FontIcon
-                    Margin="0,0,0,-4"
-                    FontSize="16"
-                    Glyph="&#xE77F;" />
-                <TextBlock Text="{l:ResourceString Rid=Paste}" />
-            </StackPanel>
-        </Button>
-    </StackPanel>
+    <uc:RecoveryControl PasteRecoveryKeyCommand="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}" RecoveryKey="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}" />
 </ContentDialog>

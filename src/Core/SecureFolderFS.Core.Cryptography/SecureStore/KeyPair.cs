@@ -46,6 +46,41 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             return $"{Convert.ToBase64String(DekKey)}{Constants.KeyTraits.KEY_TEXT_SEPARATOR}{Convert.ToBase64String(MacKey)}";
         }
 
+        /// <summary>
+        /// Combines the provided encoded recovery key into a <see cref="SecretKey"/> instance.
+        /// </summary>
+        /// <param name="encodedRecoveryKey">The Base64 encoded recovery key.</param>
+        /// <returns>A <see cref="SecretKey"/> instance representing the combined recovery key.</returns>
+        public static SecretKey CombineRecoveryKey(string encodedRecoveryKey)
+        {
+            var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Constants.KeyTraits.KEY_TEXT_SEPARATOR);
+            using var recoveryKey = new SecureKey(Constants.KeyTraits.DEK_KEY_LENGTH + Constants.KeyTraits.MAC_KEY_LENGTH);
+
+            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH), out _))
+                throw new FormatException("The recovery key (1) was not in the correct format.");
+
+            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH), out _))
+                throw new FormatException("The recovery key (2) was not in the correct format.");
+
+            return recoveryKey.CreateCopy();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="KeyPair"/> from the specified recovery key.
+        /// </summary>
+        /// <param name="recoveryKey">The combined recovery key.</param>
+        /// <returns>A <see cref="KeyPair"/> instance representing the key pair.</returns>
+        public static KeyPair CopyFromRecoveryKey(SecretKey recoveryKey)
+        {
+            var dekKey = new SecureKey(Constants.KeyTraits.DEK_KEY_LENGTH);
+            var macKey = new SecureKey(Constants.KeyTraits.MAC_KEY_LENGTH);
+
+            recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH).CopyTo(dekKey.Key);
+            recoveryKey.Key.AsSpan(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH).CopyTo(macKey.Key);
+
+            return new KeyPair(dekKey, macKey);
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {

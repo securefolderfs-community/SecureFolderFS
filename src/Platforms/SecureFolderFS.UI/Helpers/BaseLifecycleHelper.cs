@@ -72,7 +72,6 @@ namespace SecureFolderFS.UI.Helpers
 #else
                     .Foundation<ITelemetryService, SentryTelemetryService>(AddService.AddSingleton)
 #endif
-
                 ; // Finish service initialization
         }
 

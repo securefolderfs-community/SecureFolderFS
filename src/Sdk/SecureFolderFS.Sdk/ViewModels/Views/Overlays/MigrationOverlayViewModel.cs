@@ -62,9 +62,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task AuthenticateMigrationAsync(object? credentials, CancellationToken cancellationToken)
+        private async Task AuthenticateMigrationAsync(IKey? credentials, CancellationToken cancellationToken)
         {
-            if (credentials is null || _vaultMigrator is null)
+            if (_vaultMigrator is null || credentials is null)
                 return;
 
             try
@@ -72,6 +72,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 _unlockContract?.Dispose();
                 _unlockContract = await _vaultMigrator.UnlockAsync(credentials, cancellationToken);
 
+                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
+                Title = "Migrate".ToLocalized();
+                PrimaryText = null;
+            }
+            catch (Exception ex)
+            {
+                Report(Result.Failure(ex));
+            }
+        }
+
+        [RelayCommand]
+        private async Task AuthenticateRecoveryAsync(RecoveryOverlayViewModel? overlayViewModel, CancellationToken cancellationToken)
+        {
+            if (_vaultMigrator is null || string.IsNullOrEmpty(overlayViewModel?.RecoveryKey))
+                return;
+
+            try
+            {
+                // Dispose previous contract if any
+                _unlockContract?.Dispose();
+
+                // Check if configuring a new password was requested
+                if (!string.IsNullOrEmpty(overlayViewModel.OptionalNewPassword))
+                {
+                    if (_vaultMigrator is not IProgress<IKey> credentialsReporter)
+                        return;
+
+                    using var password = new DisposablePassword(overlayViewModel.OptionalNewPassword);
+                    credentialsReporter.Report(password);
+                }
+
+                _unlockContract = await _vaultMigrator.RecoverAsync(overlayViewModel.RecoveryKey, cancellationToken);
                 StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
                 Title = "Migrate".ToLocalized();
                 PrimaryText = null;

@@ -6,9 +6,9 @@
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     x:Name="ThisPopup"
+    BackgroundColor="Transparent"
     BindingContext="{x:Reference ThisPopup}"
-    CanBeDismissedByTappingOutsideOfPopup="True"
-    Color="Transparent">
+    CanBeDismissedByTappingOutsideOfPopup="True">
 
     <Border
         Padding="16"

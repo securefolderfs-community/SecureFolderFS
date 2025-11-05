@@ -6,13 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentFTP" Version="53.0.2" />
+        <PackageReference Include="FluentFTP" Version="53.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
-      <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
-      <ProjectReference Include="..\SecureFolderFS.Sdk.Accounts\SecureFolderFS.Sdk.Accounts.csproj" />
+        <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj"/>
+        <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj"/>
+        <ProjectReference Include="..\SecureFolderFS.Sdk.Accounts\SecureFolderFS.Sdk.Accounts.csproj"/>
     </ItemGroup>
 
 </Project>

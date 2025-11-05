@@ -9,58 +9,58 @@
 
   <!-- Packages -->
   <ItemGroup>
-    <PackageReference Include="Octokit"/>
-    <PackageReference Include="Sentry"/>
+    <PackageReference Include="Octokit" />
+    <PackageReference Include="Sentry" />
   </ItemGroup>
 
   <!-- Project References -->
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj"/>
-    <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj"/>
-    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj"/>
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\AppAssets\app_icon.ico"/>
-    <None Remove="Assets\AppAssets\app_icon.png"/>
-    <None Remove="Assets\AppAssets\app_icon.svg"/>
-    <None Remove="Assets\AppAssets\app_title.png"/>
-    <None Remove="Assets\AppAssets\app_title.svg"/>
-    <None Remove="Assets\AppAssets\vault_dark.svg"/>
-    <None Remove="Assets\AppAssets\vault_light.svg"/>
-    <None Remove="Assets\AppAssets\Shields\error_shield.svg"/>
-    <None Remove="Assets\AppAssets\Shields\error_shield.png"/>
-    <None Remove="Assets\AppAssets\Shields\success_shield.png"/>
-    <None Remove="Assets\AppAssets\Shields\success_shield.svg"/>
-    <None Remove="Assets\AppAssets\Shields\warning_shield.png"/>
-    <None Remove="Assets\AppAssets\Shields\warning_shield.svg"/>
-    <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov"/>
-    <None Remove="Assets\Licenses\FluentAvalonia LICENSE"/>
-    <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE"/>
-    <None Remove="Assets\Licenses\PolySharp LICENSE"/>
-    <None Remove="Assets\Licenses\Roslyn Analyzers LICENSE"/>
-    <None Remove="Assets\Licenses\Roslyn LICENSE"/>
-    <None Remove="Assets\Licenses\WinUI3Utilities LICENSE"/>
-    <None Remove="Assets\Licenses\Tmds.Fuse LICENSE"/>
-    <None Remove="Assets\Licenses\NWebDav LICENSE"/>
-    <None Remove="Assets\Licenses\DokanNet LICENSE"/>
-    <None Remove="Assets\Licenses\DotnetCommunityToolkit LICENSE"/>
-    <None Remove="Assets\Licenses\WindowsCommunityToolkit LICENSE"/>
-    <None Remove="Assets\Licenses\WinUIEx LICENSE"/>
-    <None Remove="Assets\Licenses\ByteSize LICENSE"/>
-    <None Remove="Assets\Licenses\Miscreant LICENSE"/>
-    <None Remove="Assets\Licenses\Konscious.Security.Cryptography LICENSE"/>
-    <None Remove="Assets\Licenses\NSec LICENSE"/>
-    <None Remove="Assets\Licenses\LiveCharts2 LICENSE"/>
-    <None Remove="Assets\Licenses\WindowsAppSDK LICENSE"/>
-    <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection"/>
-    <None Remove="Assets\Licenses\WindowsSDKBuildTools LICENSE"/>
-    <None Remove="Assets\Licenses\Avalonia LICENSE"/>
-    <None Remove="Assets\Licenses\SvgSkia LICENSE"/>
-    <None Remove="Assets\Licenses\AvaloniaBehaviors LICENSE"/>
-    <None Remove="Assets\Licenses\TextCopy LICENSE"/>
-    <None Remove="Assets\Licenses\AvaloniaNameGenerator LICENSE"/>
-    <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE"/>
+    <None Remove="Assets\AppAssets\app_icon.ico" />
+    <None Remove="Assets\AppAssets\app_icon.png" />
+    <None Remove="Assets\AppAssets\app_icon.svg" />
+    <None Remove="Assets\AppAssets\app_title.png" />
+    <None Remove="Assets\AppAssets\app_title.svg" />
+    <None Remove="Assets\AppAssets\vault_dark.svg" />
+    <None Remove="Assets\AppAssets\vault_light.svg" />
+    <None Remove="Assets\AppAssets\Shields\error_shield.svg" />
+    <None Remove="Assets\AppAssets\Shields\error_shield.png" />
+    <None Remove="Assets\AppAssets\Shields\success_shield.png" />
+    <None Remove="Assets\AppAssets\Shields\success_shield.svg" />
+    <None Remove="Assets\AppAssets\Shields\warning_shield.png" />
+    <None Remove="Assets\AppAssets\Shields\warning_shield.svg" />
+    <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
+    <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
+    <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
+    <None Remove="Assets\Licenses\PolySharp LICENSE" />
+    <None Remove="Assets\Licenses\Roslyn Analyzers LICENSE" />
+    <None Remove="Assets\Licenses\Roslyn LICENSE" />
+    <None Remove="Assets\Licenses\WinUI3Utilities LICENSE" />
+    <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
+    <None Remove="Assets\Licenses\NWebDav LICENSE" />
+    <None Remove="Assets\Licenses\DokanNet LICENSE" />
+    <None Remove="Assets\Licenses\DotnetCommunityToolkit LICENSE" />
+    <None Remove="Assets\Licenses\WindowsCommunityToolkit LICENSE" />
+    <None Remove="Assets\Licenses\WinUIEx LICENSE" />
+    <None Remove="Assets\Licenses\ByteSize LICENSE" />
+    <None Remove="Assets\Licenses\Miscreant LICENSE" />
+    <None Remove="Assets\Licenses\Konscious.Security.Cryptography LICENSE" />
+    <None Remove="Assets\Licenses\NSec LICENSE" />
+    <None Remove="Assets\Licenses\LiveCharts2 LICENSE" />
+    <None Remove="Assets\Licenses\WindowsAppSDK LICENSE" />
+    <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
+    <None Remove="Assets\Licenses\WindowsSDKBuildTools LICENSE" />
+    <None Remove="Assets\Licenses\Avalonia LICENSE" />
+    <None Remove="Assets\Licenses\SvgSkia LICENSE" />
+    <None Remove="Assets\Licenses\AvaloniaBehaviors LICENSE" />
+    <None Remove="Assets\Licenses\TextCopy LICENSE" />
+    <None Remove="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
+    <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
   </ItemGroup>
 
   <ItemGroup>

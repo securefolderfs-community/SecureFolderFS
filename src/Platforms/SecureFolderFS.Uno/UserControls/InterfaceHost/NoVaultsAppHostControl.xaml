@@ -6,7 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
+    </UserControl.Resources>
 
     <Grid>
         <Grid
@@ -41,7 +46,9 @@
                     MaxWidth="450"
                     HorizontalAlignment="Center"
                     Opacity="0.6"
-                    Text="{l:ResourceString Rid=NoVaultsMessage}"
+                    Text="{l:ResourceString Rid=WelcomeTo,
+                                            Converter={StaticResource StringInterpolationConverter},
+                                            ConverterParameter='none|SecureFolderFS'}"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
             </StackPanel>

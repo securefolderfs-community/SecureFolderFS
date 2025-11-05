@@ -1,6 +1,8 @@
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.Maui.Popups
@@ -16,10 +18,10 @@ namespace SecureFolderFS.Maui.Popups
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
-                return Shared.Models.Result.Failure(null);
+                return Result.Failure(null);
 
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
-            return Shared.Models.Result.Success;
+            return Result.Success;
         }
 
         /// <inheritdoc/>

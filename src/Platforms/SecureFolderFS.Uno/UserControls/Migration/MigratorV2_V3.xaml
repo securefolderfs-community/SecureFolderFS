@@ -3,12 +3,42 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     mc:Ignorable="d">
 
-    <uc:LoginControl
-        x:Name="LoginControl"
-        CurrentViewModel="{x:Bind CurrentViewModel, Mode=OneWay}"
-        ProvideContinuationButton="{x:Bind ProvideContinuationButton, Mode=OneWay}" />
+    <StackPanel Spacing="8">
+        <uc:LoginControl
+            x:Name="LoginControl"
+            CurrentViewModel="{x:Bind CurrentViewModel, Mode=OneWay}"
+            ProvideContinuationButton="{x:Bind ProvideContinuationButton, Mode=OneWay}" />
+
+        <HyperlinkButton
+            x:Name="RecoverButton"
+            Padding="4,2"
+            HorizontalAlignment="Center"
+            Click="RecoverButton_Click"
+            Content="{l:ResourceString Rid=RecoverAccess}">
+            <FlyoutBase.AttachedFlyout>
+                <Flyout>
+                    <StackPanel Spacing="8">
+                        <uc:RecoveryControl
+                            Width="400"
+                            PasteRecoveryKeyCommand="{x:Bind RecoveryOverlayViewModel.PasteRecoveryKeyCommand, Mode=OneWay}"
+                            RecoveryKey="{x:Bind RecoveryOverlayViewModel.RecoveryKey, Mode=TwoWay}" />
+
+                        <uc:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{x:Bind RecoveryOverlayViewModel.OptionalNewPassword, Mode=TwoWay}" />
+
+                        <Button
+                            Padding="32,6"
+                            HorizontalAlignment="Center"
+                            Click="RequestRecoveryButton_Click"
+                            Content="{l:ResourceString Rid=Recover}"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                    </StackPanel>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </HyperlinkButton>
+    </StackPanel>
 </UserControl>

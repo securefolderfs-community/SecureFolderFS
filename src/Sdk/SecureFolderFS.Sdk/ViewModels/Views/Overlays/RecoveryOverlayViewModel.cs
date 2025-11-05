@@ -20,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         [ObservableProperty] private string? _RecoveryKey;
         [ObservableProperty] private string? _ErrorMessage;
+        [ObservableProperty] private string? _OptionalNewPassword;
 
         public IDisposable? UnlockContract { get; private set; }
 
