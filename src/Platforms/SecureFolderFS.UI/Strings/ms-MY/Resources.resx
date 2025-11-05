@@ -157,7 +157,7 @@
     <value>Nota rilis</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Hebat!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>Lihat nota rilis terkini untuk versi ini</value>
@@ -205,19 +205,19 @@
     <value>Kata laluan semasa</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Penyulitan data</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Lumpuhkan senarai dicapai baru-baru ini</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Lumpuhkan senarai fail terbaru buat sementara ketika menyahkunci peti kebal</value>
   </data>
   <data name="Downloading" xml:space="preserve">
     <value>Memuat turun {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Penyulitan</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
     <value>Masukkan kata laluan</value>
@@ -232,7 +232,7 @@
     <value>Pembekal sistem fail</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Pilih jenis sistem fail maya yang diutamakan</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
     <value>Perlu perhatian</value>
@@ -253,10 +253,10 @@
     <value>Kata laluan tidak sah</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Kata laluan yang diberikan salah.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>Fail Kunci</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Bahasa</value>
@@ -280,13 +280,13 @@
     <value>Kunci peti kebal</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Kunci peti kebal ini dengan aman dan tutup papan pemuka</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
     <value>Urus tetapan</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Ini ialah kunci pemulihan yg anda boleh guna utk mendapat semula capaian ke peti kebal ini. Menghilangkannya akan menghalang anda dari menetap semula kata laluan anda.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Peti kebal saya</value>
@@ -298,26 +298,26 @@
     <value>Peti kebal baharu</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Tiada penyulitan</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
     <value>Tiada folder dipilih</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Anda belum lagi menambah sebarang peti kebal. Cipta yg baharu atau tambah sedia ada utk bermula!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
     <value>Buka lokasi log</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Lancarkan penjelajah fail di lokasi fail log</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
     <value>Buka folder peti kebal</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Buka folder secara automatik ketika peti kebal dinyahkunci</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Kata laluan</value>
@@ -335,13 +335,13 @@
     <value>Lihat pernyataan dasar privasi</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Kelajuan membaca</value>
   </data>
   <data name="Recover" xml:space="preserve">
-    <value>Pulih semula</value>
+    <value>Pulihkan</value>
   </data>
   <data name="RecoverAccess" xml:space="preserve">
-    <value>Recover access</value>
+    <value>Pulihkan capaian</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Alih keluar peti kebal dari senarai</value>
@@ -363,7 +363,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal recovery key</value>
+    <value>Dedahkan kunci pemulihan</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Cari</value>
@@ -372,19 +372,19 @@
     <value>Pilih laluan peti kebal</value>
   </data>
   <data name="SetCredentials" xml:space="preserve">
-    <value>Set credentials</value>
+    <value>Tetapkan butir tauliah</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Tetapan</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Tentang</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
     <value>Umum</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Keutamaan</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
     <value>Privasi</value>
@@ -405,7 +405,7 @@
     <value>Dayakan telemetri</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Kumpul laporan ranap nirnama dan data penggunaan</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Tema</value>
@@ -426,10 +426,10 @@
     <value>Lesen pihak ketiga</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Lihat pustaka pihak ketiga yang diguna oleh SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Nyahkunci</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
     <value>Peti kebal telah ditambah</value>
@@ -444,7 +444,7 @@
     <value>Perihal peti kebal</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Lihat maklumat tentang peti kebal ini</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
     <value>Pemulihan peti kebal</value>
@@ -477,7 +477,7 @@
     <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Kelajuan menulis</value>
   </data>
   <data name="Add" xml:space="preserve">
     <value>Tambah</value>
@@ -486,7 +486,7 @@
     <value>Peti kebal tidak dapat dimuat</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>Butiran pengecualian</value>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Buka</value>
@@ -495,7 +495,7 @@
     <value>Pilih folder untuk teruskan</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>Peti kebal yang dipilih mungkin tidak disokong</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
     <value>Folder peti kebal tidak sah</value>
@@ -504,16 +504,16 @@
     <value>Menemui folder peti kebal yang sah</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>Peti kebal yang dipilih akan ditimpa</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>Peti kebal baharu akan dicipta dalam folder yang dipilih</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
     <value>Tiada lokasi dipilih</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>Jenis kuncian</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
     <value>Pilihan lanjutan</value>
@@ -524,65 +524,65 @@
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>Sediakan penentusahan fail kunci</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>Sediakan penentusahan Windows Hello</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
     <value>Pilihan log masuk</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Keamanan</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
     <value>Lihat kod pemulihan</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>Capai kod pemulihan untuk peti kebal ini sekiranya anda lupa butir tauliah</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use recovery key</value>
+    <value>Guna kunci pemulihan</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>Ubah butir tauliah</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>Ubah cara anda mengelog masuk ke peti kebal ini</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
     <value>Penentusahan dua faktor</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>Sediakan atau ubah penentusahan dua faktor</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>Ubah suai sedia ada</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Pilih jenis penentusahan</value>
+    <value>Pilih pilihan penentusahan</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
     <value>Semua pilihan</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>Tentusah menggunakan Fail Kunci</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
-    <value>Authenticate with Windows Hello</value>
+    <value>Tentusah dengan Windows Hello</value>
   </data>
   <data name="RemoveAuthentication" xml:space="preserve">
-    <value>Remove authentication</value>
+    <value>Alih keluar penentusahan</value>
   </data>
   <data name="RemoveAuthenticationDescription" xml:space="preserve">
-    <value>Remove this authentication method</value>
+    <value>Alih keluar kaedah penentusahan ini</value>
   </data>
   <data name="ChangeCurrentAuthentication" xml:space="preserve">
-    <value>Change current authentication method</value>
+    <value>Ubah kaedah penentusahan semasa</value>
   </data>
   <data name="ViewInFiles" xml:space="preserve">
-    <value>View in Files</value>
+    <value>Lihat dalam Fail</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
     <value>Tindakan pantas</value>
@@ -591,19 +591,19 @@
     <value>Penentusahan</value>
   </data>
   <data name="TotalRead" xml:space="preserve">
-    <value>Total read</value>
+    <value>Jumlah baca</value>
   </data>
   <data name="TotalWrite" xml:space="preserve">
-    <value>Total write</value>
+    <value>Jumlah tulis</value>
   </data>
   <data name="SystemVersion" xml:space="preserve">
     <value>Versi sistem</value>
   </data>
   <data name="Migrate" xml:space="preserve">
-    <value>Migrate</value>
+    <value>Hijrahkan</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-    <value>Enter the recovery key for this vault</value>
+    <value>Masukkan kunci pemulihan untuk peti kebal ini</value>
   </data>
   <data name="DateToday" xml:space="preserve">
     <value>Hari ini, {0}</value>
@@ -615,40 +615,40 @@
     <value>Ralat berlaku</value>
   </data>
   <data name="VaultMigrated" xml:space="preserve">
-    <value>Vault has been migrated successfully</value>
+    <value>Peti kebal telah berjaya dihijrahkan</value>
   </data>
   <data name="VaultNeedsMigration" xml:space="preserve">
-    <value>The vault needs to be migrated before it can be used</value>
+    <value>Peti kebal perlu berhijrah sebelum ia boleh digunakan</value>
   </data>
   <data name="ActiveFileSystem" xml:space="preserve">
-    <value>Active file system</value>
+    <value>Sistem fail aktif</value>
   </data>
   <data name="RestartLogin" xml:space="preserve">
-    <value>Restart login process</value>
+    <value>Mula semula proses log masuk</value>
   </data>
   <data name="ResetCredentials" xml:space="preserve">
-    <value>Reset credentials</value>
+    <value>Tetap semula butir tauliah</value>
   </data>
   <data name="RecoveryKeyTip" xml:space="preserve">
-    <value>You can recover your vault using Recovery Key in case you lose or forget your credentials</value>
+    <value>Anda boleh memulihkan peti kebal anda menggunakan Kunci Pemulihan sekiranya anda kehilangan atau terlupa butir tauliah anda</value>
   </data>
   <data name="RemoveAuthenticationQuestion" xml:space="preserve">
-    <value>The following authentication method will be removed. Do you wish to continue?</value>
+    <value>Kaedah penentusahan berikut akan dialih keluar. Adakah anda ingin teruskan?</value>
   </data>
   <data name="RemoveAuthenticationTip" xml:space="preserve">
-    <value>You can always re-add it later</value>
+    <value>Anda sentiasa boleh menambahnya semula kemudian</value>
   </data>
   <data name="LearnMore" xml:space="preserve">
-    <value>Learn more</value>
+    <value>Pelajari lebih</value>
   </data>
   <data name="VaultAlreadyExists" xml:space="preserve">
-    <value>The selected vault already exists</value>
+    <value>Peti kebal yang dipilih sudah wujud</value>
   </data>
   <data name="UnlockAsReadOnly" xml:space="preserve">
-    <value>Unlock as read-only</value>
+    <value>Nyahkunci sebagai baca sahaja</value>
   </data>
   <data name="VaultReadOnlyMode" xml:space="preserve">
-    <value>The vault is in read-only mode</value>
+    <value>Peti kebal dalam mod baca sahaja</value>
   </data>
   <data name="HealthReport" xml:space="preserve">
     <value>Laporan kesihatan</value>
@@ -658,11 +658,11 @@
     <value>Nama semula</value>
   </data>
   <data name="MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Gerak ke atas</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Gerak ke bawah</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="ChooseDestinationFolder" xml:space="preserve">
@@ -684,7 +684,7 @@
     <value>Kongsi</value>
   </data>
   <data name="SetupPassword" xml:space="preserve">
-    <value>Setup password authentication</value>
+    <value>Sediakan penentusahan kata laluan</value>
   </data>
   <data name="RecycleBin" xml:space="preserve">
     <value>Tong kitar semula</value>
@@ -696,13 +696,13 @@
     <value>Tataletak item</value>
   </data>
   <data name="ViewOptions" xml:space="preserve">
-    <value>View options</value>
+    <value>Pilihan Pandangan</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Nama</value>
   </data>
   <data name="Kind" xml:space="preserve">
-    <value>Kind</value>
+    <value>Jenis</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Saiz</value>
@@ -732,7 +732,7 @@
     <value>Besar</value>
   </data>
   <data name="EmptyRecycleBinDescription" xml:space="preserve">
-    <value>Recycle bin is empty. Delete some items to see them here.</value>
+    <value>Tong kitar semula kosong. Padam beberapa item utk melihatnya di sini.</value>
   </data>
   <data name="DateModified" xml:space="preserve">
     <value>Tarikh diubah suai</value>
@@ -741,7 +741,7 @@
     <value>Jenis item</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Move</value>
+    <value>Alih</value>
   </data>
   <data name="ImportExisting" xml:space="preserve">
     <value>Import sedia ada</value>
@@ -750,7 +750,7 @@
     <value>Pilih</value>
   </data>
   <data name="NameEncryption" xml:space="preserve">
-    <value>Name encryption</value>
+    <value>Penyulitan nama</value>
   </data>
   <data name="NoItems" xml:space="preserve">
     <value>Tiada item</value>
@@ -777,7 +777,7 @@
     <value>Perbaiki</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
-    <value>During repair, your vault will be set into read-only mode.</value>
+    <value>Semasa pembaikan, peti kebal anda akan ditetapkan ke dalam mod baca sahaja.</value>
   </data>
   <data name="ChooseNewName" xml:space="preserve">
     <value>Pilih nama baharu</value>
@@ -825,13 +825,13 @@
     <value>Dayakan tataletak adaptif</value>
   </data>
   <data name="FoundIssues" xml:space="preserve">
-    <value>Found issues</value>
+    <value>Isu yang ditemui</value>
   </data>
   <data name="UnsavedChanges" xml:space="preserve">
-    <value>Unsaved changes</value>
+    <value>Perubahan tidak disimpan</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-    <value>You have made changes to the file. Do you want to save them now?</value>
+    <value>Anda telah membuat perubahan pada fail. Anda mahu menyimpannya sekarang?</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Simpan</value>
@@ -852,7 +852,7 @@
     <value>Tarikh dicipta</value>
   </data>
   <data name="ClosedUnexpectedly" xml:space="preserve">
-    <value>{0} has closed unexpectedly</value>
+    <value>{0} telah ditutup secara tidak dijangka</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
     <value>Pilih</value>
@@ -861,7 +861,7 @@
     <value>Selesai</value>
   </data>
   <data name="ChooseDataSource" xml:space="preserve">
-    <value>Choose data source</value>
+    <value>Pilih punca data</value>
   </data>
   <data name="SourceLocalStorage" xml:space="preserve">
     <value>Storan peranti</value>
@@ -882,13 +882,13 @@
     <value>Tambah akaun</value>
   </data>
   <data name="User1" xml:space="preserve">
-    <value>User1</value>
+    <value>Pengguna1</value>
   </data>
   <data name="ChooseAccount" xml:space="preserve">
     <value>Pilih akaun</value>
   </data>
   <data name="SelectedLocation" xml:space="preserve">
-    <value>Selected location</value>
+    <value>Lokasi dipilih</value>
   </data>
   <data name="AccountList" xml:space="preserve">
     <value>Senarai akaun</value>
@@ -897,42 +897,48 @@
     <value>Nyahsambung</value>
   </data>
   <data name="AuthenticateForCredentials" xml:space="preserve">
-    <value>Authenticate to create credentials</value>
+    <value>Tentusah untuk mencipta butir tauliah</value>
   </data>
   <data name="ViewOnboarding" xml:space="preserve">
     <value>View onboarding</value>
   </data>
   <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
-    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+    <value>Untuk memulakan anda, pembentangan ini akan membimbing anda melalui ciri apl yg paling ketara.</value>
   </data>
   <data name="OnboardingDashboardTitle" xml:space="preserve">
-    <value>You're in control</value>
+    <value>Anda yang mengawal</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Urus peti kebal anda dgn pantas dari pandangan papan pemuka teratas. Ubah suai butir tauliah, semak imbas fail dan uji integriti fail anda.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
-    <value>Your data — secure, anywhere</value>
+    <value>Data anda — aman, di mana sahaja</value>
   </data>
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
-    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+    <value>Selain menyimpan peti kebal pd peranti anda, anda juga boleh menyambung ke pembekal storan awan yg lain.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
-    <value>You're ready to go!</value>
+    <value>Anda bersedia untuk pergi!</value>
   </data>
   <data name="AboutToMigrate" xml:space="preserve">
-    <value>You're about to migrate a vault</value>
+    <value>Anda akan menghijrahkan peti kebal</value>
   </data>
   <data name="VersionValue" xml:space="preserve">
     <value>Versi {0}</value>
   </data>
   <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
-    <value>The configured authentication method is unavailable or has expired. Please use your recovery key.</value>
+    <value>Kaedah penentusahan yang dikonfigurasikan tidak tersedia atau tamat tempoh. Sila guna kunci pemulihan anda.</value>
   </data>
   <data name="AuthenticationUnavailable" xml:space="preserve">
     <value>Penentusahan tidak tersedia</value>
   </data>
   <data name="Documentation" xml:space="preserve">
     <value>Dokumentasi</value>
+  </data>
+  <data name="DokanyNotDetected" xml:space="preserve">
+    <value>Dokany has not been detected. Please install Dokany (v{0}) to continue.</value>
+  </data>
+  <data name="DokanyIncompatible" xml:space="preserve">
+    <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
   </data>
 </root>
