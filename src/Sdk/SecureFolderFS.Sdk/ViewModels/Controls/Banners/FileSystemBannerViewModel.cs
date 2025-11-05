@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             await foreach (var item in VaultFileSystemService.GetFileSystemsAsync(cancellationToken))
             {
                 var fileSystemResult = await item.GetStatusAsync(cancellationToken);
-                if (fileSystemResult == FileSystemAvailability.Available)
+                if (fileSystemResult != FileSystemAvailability.None)
                     FileSystemAdapters.Add(new(item, item.Name));
             }
 

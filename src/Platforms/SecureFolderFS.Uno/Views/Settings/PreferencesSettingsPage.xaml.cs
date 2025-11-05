@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Enums;
@@ -75,7 +76,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                 ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Warning;
                 ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
             }
-            else
+            else if (fileSystem.Id == Core.Dokany.Constants.FileSystem.FS_ID)
             {
                 var fileSystemResult = await fileSystem.GetStatusAsync(cancellationToken);
                 if (fileSystemResult == FileSystemAvailability.Available)
@@ -89,10 +90,8 @@ namespace SecureFolderFS.Uno.Views.Settings
                 ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Critical;
                 ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystemResult switch
                 {
-                    FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "Dokany has not been detected. Please install Dokany (v2.0.5) to continue using SecureFolderFS.",
-                    FileSystemAvailability.VersionTooLow => "The installed version of Dokany is outdated. Please update Dokany to the match requested version. (v2.0.5)",
-                    FileSystemAvailability.VersionTooHigh => "The installed version of Dokany is not compatible with SecureFolderFS version. Please install requested version of Dokany. (v2.0.5)",
-                    _ => "SecureFolderFS cannot work with this version. Please install the required version of Dokany. (v2.0.5)"
+                    FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "DokanyNotDetected".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
+                    _ => "DokanyIncompatible".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
                 };
             }
         }

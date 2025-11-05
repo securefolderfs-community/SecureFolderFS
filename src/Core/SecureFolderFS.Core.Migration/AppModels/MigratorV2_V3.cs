@@ -126,7 +126,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             _ = _secretKeySequence ?? throw new InvalidOperationException($"{nameof(_secretKeySequence)} is null.");
 
             if (unlockContract is not KeyPair keyPair)
-                throw new ArgumentException($"{nameof(unlockContract)} is not of correct type.");
+                throw new ArgumentException($"{nameof(unlockContract)} is not of the correct type.");
 
             // Begin progress report
             progress.PercentageProgress?.Report(0d);
