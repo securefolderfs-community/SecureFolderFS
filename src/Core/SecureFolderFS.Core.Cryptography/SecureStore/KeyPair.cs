@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (1) was not in the correct format.");
 
-            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Constants.KeyTraits.MAC_KEY_LENGTH), out _))
+            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (2) was not in the correct format.");
 
             return recoveryKey.CreateCopy();
