@@ -73,6 +73,17 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
+        public override async Task WipeAsync(CancellationToken cancellationToken = default)
+        {
+            if (_databaseFolder is null)
+                return;
+
+            settingsCache.Clear();
+            await foreach (var item in _databaseFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                await _databaseFolder.DeleteAsync(item, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try

@@ -131,6 +131,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.GoogleDrive\SecureFolderFS.Sdk.GoogleDrive.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>
 

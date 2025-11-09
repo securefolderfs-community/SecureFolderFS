@@ -61,6 +61,17 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
+        public override async Task WipeAsync(CancellationToken cancellationToken = default)
+        {
+            if (_databaseFile is null)
+                return;
+
+            await using var stream = await _databaseFile.OpenStreamAsync(FileAccess.Write, cancellationToken);
+            stream.SetLength(0L);
+            settingsCache.Clear();
+        }
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try

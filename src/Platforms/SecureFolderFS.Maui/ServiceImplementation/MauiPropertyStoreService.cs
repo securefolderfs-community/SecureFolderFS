@@ -40,5 +40,12 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             return Task.FromResult(SecureStorage.Default.Remove(key));
         }
+
+        /// <inheritdoc/>
+        public Task WipeAsync(CancellationToken cancellationToken = default)
+        {
+            SecureStorage.Default.RemoveAll();
+            return Task.CompletedTask;
+        }
     }
 }

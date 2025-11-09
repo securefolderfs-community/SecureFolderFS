@@ -3,11 +3,13 @@ using SecureFolderFS.Sdk.Accounts.DataModels;
 using SecureFolderFS.Sdk.Accounts.ViewModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Ftp.ViewModels;
+using SecureFolderFS.Sdk.GoogleDrive.ViewModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Sdk.Ftp.Constants;
+using static SecureFolderFS.Sdk.GoogleDrive.Constants;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
@@ -41,6 +43,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 yield return accountData.DataSourceType switch
                 {
                     DATA_SOURCE_FTP => new FtpAccountViewModel(accountData, propertyStore),
+                    DATA_SOURCE_GOOGLE_DRIVE => new GDriveAccountViewModel(accountData, propertyStore),
                     _ => throw new ArgumentOutOfRangeException(nameof(AccountDataModel.DataSourceType))
                 };
             }
@@ -53,6 +56,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             return dataSourceIdentifier switch
             {
                 DATA_SOURCE_FTP => new FtpAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "FTP".ToLocalized()),
+                DATA_SOURCE_GOOGLE_DRIVE => new GDriveAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "GoogleDrive".ToLocalized()),
                 _ => throw new ArgumentOutOfRangeException(nameof(dataSourceIdentifier))
             };
         }
