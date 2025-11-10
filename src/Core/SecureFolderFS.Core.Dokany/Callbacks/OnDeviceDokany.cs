@@ -233,7 +233,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
-            if (info.DeleteOnClose && !Specifics.Options.IsReadOnly)
+            if (info.DeletePending && !Specifics.Options.IsReadOnly)
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
                 if (ciphertextPath is null)
