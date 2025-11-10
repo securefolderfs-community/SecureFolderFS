@@ -177,7 +177,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             var formattedName = CollisionHelpers.GetAvailableName(
                     FormattingHelpers.SanitizeItemName(newItemViewModel.ItemName, "New item"),
-                    CurrentFolder.Items.Select(x => x.Inner));
+                    CurrentFolder.Items.Select(x => x.Inner.Name));
             switch (itemType)
             {
                 case "File":

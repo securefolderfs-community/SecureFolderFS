@@ -21,13 +21,26 @@
                 Title="{x:Bind Title, Mode=OneWay}"
                 BlockMode="Expandable"
                 Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                IsExpanded="True"
                 ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                    <FontIcon Glyph="&#xE8B7;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
-                    <Border Margin="-16">
+                    <Grid Margin="-16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <InfoBar
+                            Grid.Row="0"
+                            IsClosable="False"
+                            IsOpen="True"
+                            Message="{l:ResourceString Rid=ItemsLoseOriginalName}"
+                            Severity="Informational" />
+
                         <ListView
+                            Grid.Row="1"
                             Margin="-16,0"
                             IsItemClickEnabled="False"
                             ItemsSource="{x:Bind Issues, Mode=OneWay}"
@@ -39,16 +52,16 @@
                                     NameIssueTemplate="{StaticResource NameIssueTemplate}" />
                             </ListView.ItemTemplateSelector>
                         </ListView>
-                    </Border>
+                    </Grid>
                 </ucab:ActionBlockControl.ExpanderContent>
                 <ucab:ActionBlockControl.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyPath}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyError}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;" />
                             </MenuFlyoutItem.Icon>
@@ -66,22 +79,43 @@
                 Description="{x:Bind ErrorMessage, Mode=OneWay}"
                 ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                    <FontIcon Glyph="&#xE8AC;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <Grid MaxWidth="200">
-                        <TextBlock
-                            FontSize="14"
-                            Opacity="0.8"
-                            Tapped="NameText_Tapped"
-                            Text="{x:Bind ItemName, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}"
-                            Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                    <Grid MaxWidth="264">
+                        <Grid ColumnSpacing="8" Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="14"
+                                HorizontalTextAlignment="End"
+                                Opacity="0.8"
+                                Tapped="NameText_Tapped"
+                                Text="{x:Bind ItemName, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}" />
+
+                            <Grid Grid.Column="1">
+                                <FontIcon
+                                    FontSize="18"
+                                    Glyph="&#xE8B7;"
+                                    Opacity="0.8"
+                                    Visibility="{x:Bind IsFolder, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <FontIcon
+                                    FontSize="18"
+                                    Glyph="&#xE8A5;"
+                                    Opacity="0.8"
+                                    Visibility="{x:Bind IsFolder, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                            </Grid>
+                        </Grid>
 
                         <TextBox
-                            x:Name="NameEdit"
-                            Width="200"
+                            Grid.Column="0"
+                            Width="232"
                             IsEnabled="{x:Bind IsEditing, Mode=OneWay}"
                             IsEnabledChanged="NameEdit_IsEnabledChanged"
                             LostFocus="NameEdit_LostFocus"
@@ -92,12 +126,41 @@
                 </ucab:ActionBlockControl.ActionElement>
                 <ucab:ActionBlockControl.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyPath}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyError}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+
+        <!--  Data Issue  -->
+        <DataTemplate x:Key="FileDataIssueTemplate" x:DataType="vm2:HealthFileDataIssueViewModel">
+
+            <!--  TODO: Add a backup button  -->
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Default"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE74C;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyPath}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE62F;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyError}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;" />
                             </MenuFlyoutItem.Icon>
@@ -115,16 +178,30 @@
                 Description="{x:Bind ErrorMessage, Mode=OneWay}"
                 ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                    <FontIcon Glyph="&#xE783;" />
                 </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Grid>
+                        <FontIcon
+                            FontSize="18"
+                            Glyph="&#xE8B7;"
+                            Opacity="0.8"
+                            Visibility="{x:Bind IsFolder, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <FontIcon
+                            FontSize="18"
+                            Glyph="&#xE8A5;"
+                            Opacity="0.8"
+                            Visibility="{x:Bind IsFolder, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                    </Grid>
+                </ucab:ActionBlockControl.ActionElement>
                 <ucab:ActionBlockControl.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyPath}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyError}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;" />
                             </MenuFlyoutItem.Icon>
@@ -178,6 +255,7 @@
                 </Grid>
             </InfoBar>
             <ListView
+                x:Name="ItemsList"
                 Grid.Row="1"
                 IsItemClickEnabled="False"
                 ItemsSource="{x:Bind ViewModel.HealthViewModel.FoundIssues, Mode=OneWay}"
@@ -199,6 +277,7 @@
                 <ListView.ItemTemplateSelector>
                     <ts:HealthIssueTemplateSelector
                         DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
+                        FileDataIssueTemplate="{StaticResource FileDataIssueTemplate}"
                         IssueTemplate="{StaticResource IssueTemplate}"
                         NameIssueTemplate="{StaticResource NameIssueTemplate}" />
                 </ListView.ItemTemplateSelector>
@@ -214,7 +293,7 @@
             <Button
                 Width="124"
                 Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
-                Content="{l:ResourceString Rid=Repair}"
+                Content="{l:ResourceString Rid=RepairAll}"
                 IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
             <TextBlock
                 VerticalAlignment="Center"

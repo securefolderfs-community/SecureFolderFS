@@ -773,14 +773,14 @@
   <data name="Restore" xml:space="preserve">
     <value>Restore</value>
   </data>
-  <data name="Repair" xml:space="preserve">
-    <value>Repair</value>
+  <data name="RepairAll" xml:space="preserve">
+    <value>Repair all</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
     <value>During repair, your vault will be set into read-only mode.</value>
   </data>
-  <data name="ChooseNewName" xml:space="preserve">
-    <value>Choose a new name</value>
+  <data name="GenerateNewName" xml:space="preserve">
+    <value>Generate a new name</value>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Export</value>
@@ -940,5 +940,41 @@
   </data>
   <data name="DokanyIncompatible" xml:space="preserve">
     <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
+  </data>
+  <data name="CopyPath" xml:space="preserve">
+    <value>Copy path</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>Copy error</value>
+  </data>
+  <data name="RegenerateInvalidDirectoryId" xml:space="preserve">
+    <value>Regenerate invalid Directory ID</value>
+  </data>
+  <data name="InvalidDirectoryId" xml:space="preserve">
+    <value>Invalid directory ID</value>
+  </data>
+  <data name="InvalidItemName" xml:space="preserve">
+    <value>Invalid item name</value>
+  </data>
+  <data name="GenerateNewNameChanged" xml:space="preserve">
+    <value>A custom name will be applied</value>
+  </data>
+  <data name="InvalidFileContents" xml:space="preserve">
+    <value>Corrupted file contents</value>
+  </data>
+  <data name="RegenerateFileContents" xml:space="preserve">
+    <value>Overwrite affected file regions</value>
+  </data>
+  <data name="RegenerateMissingDirectoryId" xml:space="preserve">
+    <value>Regenerate missing directory ID</value>
+  </data>
+  <data name="MissingDirectoryId" xml:space="preserve">
+    <value>Missing directory ID</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="ItemsLoseOriginalName" xml:space="preserve">
+    <value>Items in this directory will lose their original name</value>
   </data>
 </root>

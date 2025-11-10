@@ -56,7 +56,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             await LoginViewModel.InitAsync(cancellationToken);
 
+
             #region Test for quick unlock on mobile
+#if DEBUG
 
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
@@ -76,7 +78,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await Task.Delay(200);
             await UnlockAsync(unlockContract);
 
-            #endregion
+#endif
+           #endregion
         }
 
         [RelayCommand]

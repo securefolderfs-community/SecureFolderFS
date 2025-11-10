@@ -90,7 +90,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                 InfoBarViewModel.IsOpen = true;
                 InfoBarViewModel.Title = "Error".ToLocalized();
                 InfoBarViewModel.IsCloseable = true;
-                InfoBarViewModel.Message = result.GetMessage();
+                InfoBarViewModel.Message = result.GetMessage("UnknownError".ToLocalized());
                 InfoBarViewModel.Severity = Severity.Critical;
             }
         }

@@ -122,9 +122,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
 #pragma warning disable MVVMTK0034
             var severity = Severity;
-            if (severity != Enums.Severity.Success && FoundIssues.IsEmpty())
+            if (severity != Severity.Success && FoundIssues.IsEmpty())
             {
-                _Severity = Enums.Severity.Success;
+                _Severity = Severity.Success;
                 _context.PostOrExecute(_ => OnPropertyChanged(nameof(Severity)));
                 return;
             }
