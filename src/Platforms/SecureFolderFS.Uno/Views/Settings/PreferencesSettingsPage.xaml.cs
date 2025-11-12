@@ -69,30 +69,51 @@ namespace SecureFolderFS.Uno.Views.Settings
             if (fileSystem is null)
                 return;
 
-            if (fileSystem.Id == Core.WebDav.Constants.FileSystem.FS_ID)
+            switch (fileSystem.Id)
             {
-                ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
-                ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Warning;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
-            }
-            else if (fileSystem.Id == Core.Dokany.Constants.FileSystem.FS_ID)
-            {
-                var fileSystemResult = await fileSystem.GetStatusAsync(cancellationToken);
-                if (fileSystemResult == FileSystemAvailability.Available)
+                case Core.WebDav.Constants.FileSystem.FS_ID:
                 {
-                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
-                    return;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Warning;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
+                    break;
                 }
 
-                ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
-                ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Critical;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystemResult switch
+                case Core.Dokany.Constants.FileSystem.FS_ID:
+                case Core.WinFsp.Constants.FileSystem.FS_ID:
                 {
-                    FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "DokanyNotDetected".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
-                    _ => "DokanyIncompatible".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
-                };
+                    var fileSystemResult = await fileSystem.GetStatusAsync(cancellationToken);
+                    if (fileSystemResult == FileSystemAvailability.Available)
+                    {
+                        ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
+                        return;
+                    }
+
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Critical;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystem.Id switch
+                    {
+                        Core.Dokany.Constants.FileSystem.FS_ID => fileSystemResult switch
+                        {
+                            FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "DokanyNotDetected".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
+                            _ => "DokanyIncompatible".ToLocalized(Core.Dokany.Constants.FileSystem.VERSION_STRING),
+                        },
+
+                        Core.WinFsp.Constants.FileSystem.FS_ID => fileSystemResult switch
+                        {
+                            FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "WinFspNotDetected".ToLocalized(Core.WinFsp.Constants.FileSystem.VERSION_STRING),
+                            _ => "WinFspIncompatible".ToLocalized(Core.WinFsp.Constants.FileSystem.VERSION_STRING),
+                        }
+                    };
+
+                    break;
+                }
+
+                default:
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
+                    break;
             }
         }
 

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Core.WinFsp;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -24,6 +25,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             await Task.CompletedTask;
             yield return new WindowsWebDavFileSystem();
             yield return new DokanyFileSystem();
+            yield return new WinFspFileSystem();
         }
 
         /// <inheritdoc/>

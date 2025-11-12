@@ -1,7 +1,7 @@
 ﻿using DokanNet;
-using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using System;
@@ -19,11 +19,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
     internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe, IDisposable
     {
         protected readonly BaseHandlesManager handlesManager;
-        protected readonly DokanyVolumeModel volumeModel;
+        protected readonly VolumeModel volumeModel;
 
         public FileSystemSpecifics Specifics { get; }
 
-        protected BaseDokanyCallbacks(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel)
+        protected BaseDokanyCallbacks(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, VolumeModel volumeModel)
         {
             Specifics = specifics;
             this.handlesManager = handlesManager;
@@ -105,8 +105,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             volumeLabel = volumeModel.VolumeName;
             fileSystemName = volumeModel.FileSystemName;
-            maximumComponentLength = volumeModel.MaximumComponentLength;
-            features = volumeModel.FileSystemFeatures;
+            maximumComponentLength = Constants.Dokan.MAX_COMPONENT_LENGTH;
+            features = Constants.Dokan.FEATURES;
 
             return Trace(DokanResult.Success, null, info);
         }
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
 
             // Memory-mapped
-            if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
+            if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
                 contextHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
@@ -171,8 +171,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     bytesRead = 0;
                     return NtStatus.EndOfFile;
                 }
-                else
-                    fileHandle.Stream.Position = offset;
+
+                // Align position
+                fileHandle.Stream.Position = offset;
 
                 // Read file
                 var bufferSpan = new Span<byte>(buffer.ToPointer(), (int)bufferLength);
@@ -225,7 +226,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
 
             // Memory-mapped
-            if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
+            if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
                 contextHandle = handlesManager.OpenFileHandle(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
@@ -280,7 +281,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
             catch (IOException ioEx)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                if (DokanyErrorHelpers.NtStatusFromException(ioEx, out var ntStatus))
                 {
                     bytesWritten = 0;
                     return Trace((NtStatus)ntStatus, fileName, info);
