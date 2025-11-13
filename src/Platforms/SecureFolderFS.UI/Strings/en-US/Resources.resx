@@ -977,4 +977,10 @@
   <data name="ItemsLoseOriginalName" xml:space="preserve">
     <value>Items in this directory will lose their original name</value>
   </data>
+  <data name="WelcomeUser" xml:space="preserve">
+      <value>Welcome, {0}</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+      <value>Connect</value>
+  </data>
 </root>

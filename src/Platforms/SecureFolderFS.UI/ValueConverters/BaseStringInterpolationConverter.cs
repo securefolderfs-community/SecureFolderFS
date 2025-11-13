@@ -13,26 +13,42 @@ namespace SecureFolderFS.UI.ValueConverters
             if (value is not string strValue)
                 return string.Empty;
             
-            if (parameter is not string formatString)
+            if (parameter is not string formatStringParam)
                 return strValue;
-
-            var rawPhrases = formatString.Split(',');
-            if (rawPhrases.IsEmpty())
-                return strValue.ToLocalized();
             
-            var phrases = new object[rawPhrases.Length];
-            for (var i = 0; i < rawPhrases.Length; i++)
+            var isInverse = formatStringParam.Contains("inversemode:", StringComparison.OrdinalIgnoreCase);
+            formatStringParam = isInverse ? formatStringParam.Replace("inversemode:", string.Empty, StringComparison.OrdinalIgnoreCase) : formatStringParam;
+
+            if (!isInverse)
             {
-                var modifiers = rawPhrases[i].Split('|');
+                var rawPhrases = formatStringParam.Split(',');
+                if (rawPhrases.IsEmpty())
+                    return strValue.ToLocalized();
+                
+                var phrases = new object[rawPhrases.Length];
+                for (var i = 0; i < rawPhrases.Length; i++)
+                {
+                    var modifiers = rawPhrases[i].Split('|');
+                    var format = modifiers[0];
+                    var text = modifiers[1];
+
+                    phrases[i] = format.Equals("localize", StringComparison.OrdinalIgnoreCase)
+                        ? text.ToLocalized()
+                        : text;
+                }
+                
+                return SafetyHelpers.NoFailureResult(() => string.Format(strValue, phrases));
+            }
+            else
+            {
+                var modifiers = formatStringParam.Split('|');
                 var format = modifiers[0];
                 var text = modifiers[1];
 
-                phrases[i] = format.Equals("localize", StringComparison.OrdinalIgnoreCase)
-                    ? text.ToLocalized()
-                    : text;
+                return format.Equals("localize", StringComparison.OrdinalIgnoreCase)
+                    ? text.ToLocalized(strValue)
+                    : SafetyHelpers.NoFailureResult(() => string.Format(text, strValue));
             }
-
-            return SafetyHelpers.NoFailureResult(() => string.Format(strValue, phrases));
         }
 
         /// <inheritdoc/>

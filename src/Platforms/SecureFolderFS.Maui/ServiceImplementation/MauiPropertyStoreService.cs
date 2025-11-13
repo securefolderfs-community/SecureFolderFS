@@ -1,13 +1,16 @@
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
     /// <inheritdoc cref="IPropertyStoreService"/>
-    internal sealed class MauiPropertyStoreService : IPropertyStoreService
+    internal sealed class MauiPropertyStoreService : BasePropertyStoreService
     {
         /// <inheritdoc/>
-        public IPropertyStore<string> SecurePropertyStore { get; } = new SecureStoragePropertyStore();
+        //public override IPropertyStore<string> SecurePropertyStore { get; } = new SecureStoragePropertyStore();
+        public override IPropertyStore<string> SecurePropertyStore { get; } = new InMemoryPropertyStore();
+        
     }
 
     /// <inheritdoc cref="IPropertyStore{TKey}"/>

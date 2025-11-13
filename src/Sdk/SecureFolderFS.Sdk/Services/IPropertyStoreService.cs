@@ -1,3 +1,5 @@
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
@@ -16,7 +18,11 @@ namespace SecureFolderFS.Sdk.Services
         /// </remarks>
         IPropertyStore<string> SecurePropertyStore { get; }
 
-        // TODO: Use this method for storing settings
-        //IDatabaseModel<string> GetDatabaseModelAsync(IFolder persistenceFolder, CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets a new <see cref="IDatabaseModel{TKey}"/> for storing data in a <paramref name="databaseFile"/>.
+        /// </summary>
+        /// <param name="databaseFile">The file where data will be stored and read from.</param>
+        /// <returns>An instance of <see cref="IDatabaseModel{TKey}"/> which holds data backed by <paramref name="databaseFile"/>.</returns>
+        IDatabaseModel<string> GetDatabaseModel(IFile databaseFile);
     }
 }

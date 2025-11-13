@@ -15,8 +15,8 @@ namespace SecureFolderFS.Sdk.AppModels.Database
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
     public sealed class SingleFileDatabaseModel : ObservableDatabaseModel<ISerializedModel>
     {
-        private readonly string _fileName;
-        private readonly IModifiableFolder _settingsFolder;
+        private readonly string? _fileName;
+        private readonly IModifiableFolder? _settingsFolder;
         private IFile? _databaseFile;
         private IFolderWatcher? _folderWatcher;
         private bool _canCaptureChanges;
@@ -29,6 +29,13 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         {
             _fileName = fileName;
             _settingsFolder = settingsFolder;
+            _canCaptureChanges = true;
+        }
+
+        public SingleFileDatabaseModel(IFile file, IAsyncSerializer<Stream> serializer)
+            : base(serializer)
+        {
+            _databaseFile = file;
             _canCaptureChanges = true;
         }
 
@@ -146,6 +153,12 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
         private async Task EnsureSettingsFileAsync(CancellationToken cancellationToken)
         {
+            if (_databaseFile is not null)
+                return;
+
+            if (_settingsFolder is null || string.IsNullOrEmpty(_fileName))
+                throw new InvalidOperationException("The database file was not properly initialized.");
+
             _databaseFile ??= await _settingsFolder.CreateFileAsync(_fileName, false, cancellationToken);
             if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder && _canCaptureChanges)
             {

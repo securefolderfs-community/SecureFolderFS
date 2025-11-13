@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Google.Apis.Util.Store;
 using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Sdk.GoogleDrive
+namespace SecureFolderFS.Sdk.GoogleDrive.AppModels
 {
     internal sealed class PropertyDataStore : IDataStore
     {
