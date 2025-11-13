@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
             {
                 case FileAccess.Read:
                 {
-                    var request = DriveService.Files.Get(Id);
+                    var request = DriveService.Files.Get(DetachedId);
                     var stream = new MemoryStream();
 
                     await request.DownloadAsync(stream, cancellationToken);

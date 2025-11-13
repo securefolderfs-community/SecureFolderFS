@@ -1,8 +1,3 @@
-#if ANDROID
-using CustomToolbarItem = Microsoft.Maui.Controls.ToolbarItem;
-#elif IOS
-using CustomToolbarItem = SecureFolderFS.Maui.AppModels.ExMenuItem;
-#endif
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Contexts;
@@ -15,7 +10,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views
 {
-    public partial class MainPage : ContentPageExtended
+    public partial class MainPage : ContentPage
     {
         public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
@@ -71,27 +66,14 @@ namespace SecureFolderFS.Maui.Views
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS
-            var toolbarItems = ExToolbarItems;
-#elif ANDROID
-            var toolbarItems = ToolbarItems;
+            if (ToolbarItems.Count == 1)
+                ToolbarItems.Insert(0, new()
+                {
+                    Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
+                    Order = ToolbarItemOrder.Secondary,
+                    Text = "NewVault".ToLocalized()
+                });
 #endif
-            if (!toolbarItems.IsEmpty())
-                return;
-
-#if IOS
-            toolbarItems.Add(new CustomToolbarItem()
-            {
-                Text = "NewVault".ToLocalized(),
-                Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
-                Order = ToolbarItemOrder.Secondary
-            });
-#endif
-            toolbarItems.Add(new CustomToolbarItem()
-            {
-                Text = "Settings".ToLocalized(),
-                Command = ViewModel.OpenSettingsCommand,
-                Order = ToolbarItemOrder.Secondary
-            });
         }
     }
 }

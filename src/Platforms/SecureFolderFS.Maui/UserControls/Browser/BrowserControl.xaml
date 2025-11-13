@@ -98,10 +98,8 @@
                         <ContentView
                             Grid.Row="0"
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='48,64,132'}"
                             HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            WidthRequest="{Binding Width, Source={x:Reference ItemContainer}}" />
+                            VerticalOptions="Center" />
                         <Label
                             Grid.Row="1"
                             FontSize="15"
@@ -149,10 +147,10 @@
                         Style="{StaticResource SelectableItemGridStyle}">
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='57,82,137'}"
+                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}"
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
-                            WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='59,82,137'}" />
+                            WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}" />
 
                         <!--  Video Icon Grid  -->
                         <Border

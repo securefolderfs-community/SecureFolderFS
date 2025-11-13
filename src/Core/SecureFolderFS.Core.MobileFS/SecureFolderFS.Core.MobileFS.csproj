@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-<!--		<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>-->
-<!--		<TargetFramework>net9.0-android</TargetFramework>-->
-		<TargetFramework>net9.0-ios</TargetFramework>
+<!--		<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>-->
+<!--		<TargetFramework>net10.0-android</TargetFramework>-->
+		<TargetFramework>net10.0-ios</TargetFramework>
 
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>

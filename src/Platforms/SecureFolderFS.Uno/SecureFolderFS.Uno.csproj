@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net9.0-windows10.0.26100</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net10.0-windows10.0.26100</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
 
-    <!-- To build SecureFolderFS (Desktop) on Windows, comment net9.0-windows[...] -->
+    <!-- To build SecureFolderFS (Desktop) on Windows, comment net10.0-windows[...] -->
 
     <!-- Uncomment if you want to explicity set a TargetFramework -->
-    <!--<TargetFramework>net9.0-desktop</TargetFramework>-->
-    <!--<TargetFramework>net9.0-maccatalyst</TargetFramework>-->
-    <!--<TargetFramework>net9.0-windows10.0.26100</TargetFramework>-->
+    <!--<TargetFramework>net10.0-desktop</TargetFramework>-->
+    <!--<TargetFramework>net10.0-maccatalyst</TargetFramework>-->
+    <!--<TargetFramework>net10.0-windows10.0.26100</TargetFramework>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -48,7 +48,7 @@
   <Choose>
 
     <!-- Mac Catalyst -->
-    <When Condition="'$(TargetFramework)'=='net9.0-maccatalyst'">
+    <When Condition="'$(TargetFramework)'=='net10.0-maccatalyst'">
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
@@ -65,7 +65,7 @@
     </When>
 
     <!-- Skia Desktop -->
-    <When Condition="'$(TargetFramework)'=='net9.0-desktop'">
+    <When Condition="'$(TargetFramework)'=='net10.0-desktop'">
       <PropertyGroup>
         <DefineConstants>HAS_UNO_SKIA</DefineConstants>
       </PropertyGroup>
@@ -81,7 +81,7 @@
     </When>
 
     <!-- Windows -->
-    <When Condition="'$(TargetFramework)'=='net9.0-windows10.0.26100'">
+    <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
@@ -112,7 +112,7 @@
         <EnableMsixTooling>True</EnableMsixTooling>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-        <TargetFramework>$(DotNetVersion)-net9.0-windows10.0.26100</TargetFramework>
+        <TargetFramework>$(DotNetVersion)-net10.0-windows10.0.26100</TargetFramework>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <!--<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>-->
 

@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             AssertApiAccess();
 
             if (_driveService is not null)
-                return GetRootFolder(_driveService);
+                return GetRootGDriveFolder(_driveService);
 
             _userId = Guid.NewGuid().ToString();
             _credential = await AuthorizeAsync(_userId, forcePrompt: true, cancellationToken: cancellationToken);
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             IsInputFilled = IsConnected = true;
 
             await SaveAccountAsync(cancellationToken);
-            return GetRootFolder(_driveService);
+            return GetRootGDriveFolder(_driveService);
         }
 
         /// <inheritdoc/>
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             AssertApiAccess();
 
             if (_driveService is not null)
-                return GetRootFolder(_driveService);
+                return GetRootGDriveFolder(_driveService);
 
             ArgumentNullException.ThrowIfNull(propertyStore);
             ArgumentNullException.ThrowIfNull(accountDataModel);
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
                 await SaveAccountAsync(cancellationToken);
             }
 
-            return GetRootFolder(_driveService);
+            return GetRootGDriveFolder(_driveService);
         }
 
         /// <inheritdoc/>
@@ -303,9 +303,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             return credential;
         }
 
-        private IFolder GetRootFolder(DriveService driveService)
+        private IFolder GetRootGDriveFolder(DriveService driveService)
         {
-            return new GDriveFolder(driveService, "root", "Drive");
+            return new GDriveFolder(driveService, "Root", "Drive");
         }
 
         public static void AssertApiAccess()

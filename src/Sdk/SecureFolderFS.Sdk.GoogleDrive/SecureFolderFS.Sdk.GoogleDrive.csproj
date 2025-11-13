@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -14,5 +14,5 @@
         <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
         <ProjectReference Include="..\SecureFolderFS.Sdk.Accounts\SecureFolderFS.Sdk.Accounts.csproj" />
     </ItemGroup>
-    
+
 </Project>
