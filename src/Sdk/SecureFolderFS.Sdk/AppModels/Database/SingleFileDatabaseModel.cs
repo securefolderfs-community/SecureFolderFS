@@ -124,7 +124,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var dataStream = await _databaseFile.OpenReadWriteAsync(cancellationToken);
+                await using var dataStream = await _databaseFile.OpenWriteAsync(cancellationToken);
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content

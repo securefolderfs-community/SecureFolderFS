@@ -161,7 +161,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         // Data file part
 
                         // Open file stream and serialize
-                        await using var dataStream = await dataFile.OpenReadWriteAsync(cancellationToken);
+                        await using var dataStream = await dataFile.OpenWriteAsync(cancellationToken);
                         await using var serializedDataStream = await serializer.SerializeAsync(item.Value.Data, item.Value.Type, cancellationToken);
 
                         // Overwrite existing content
@@ -178,7 +178,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         var typeBuffer = Encoding.UTF8.GetBytes(item.Value.Type.FullName ?? string.Empty);
 
                         // Open file stream
-                        await using var typeStream = await typeFile.OpenReadWriteAsync(cancellationToken);
+                        await using var typeStream = await typeFile.OpenWriteAsync(cancellationToken);
 
                         // Reset the stream
                         typeStream.Position = 0L;
