@@ -168,12 +168,15 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         /// <inheritdoc/>
         public virtual async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
+            if (item is not GDriveStorable gdriveStorable)
+                throw new ArgumentException($"Item '{item.Name}' is not a Google Drive item.", nameof(item));
+
             // Make sure the item belongs to this folder
             var parent = await item.GetParentAsync(cancellationToken);
             if (parent == null || parent.Id != Id)
                 throw new InvalidOperationException($"Item '{item.Name}' does not belong to folder '{Name}'.");
 
-            var request = DriveService.Files.Delete(item.Id);
+            var request = DriveService.Files.Delete(gdriveStorable.DetachedId);
             await request.ExecuteAsync(cancellationToken);
         }
 

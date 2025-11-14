@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         /// Unline the <see cref="Id"/> which keeps the parent structure, the <see cref="DetachedId"/>
         /// uniquely represents only this storage object.
         /// </remarks>
-        protected string DetachedId { get; }
+        public string DetachedId { get; }
 
         /// <inheritdoc/>
         public string Id { get; }
