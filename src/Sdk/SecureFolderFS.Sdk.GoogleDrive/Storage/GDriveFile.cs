@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
+        public virtual async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
             switch (accessMode)
             {
@@ -29,7 +29,6 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 {
                     var request = DriveService.Files.Get(DetachedId);
                     var stream = new MemoryStream();
-
                     await request.DownloadAsync(stream, cancellationToken);
                     stream.Position = 0;
 

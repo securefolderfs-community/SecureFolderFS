@@ -92,7 +92,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             try
             {
+                TransferViewModel.IsPickingFolder = true;
                 await OuterNavigator.NavigateAsync(this);
+
                 var cts = TransferViewModel.GetCancellation();
                 return await TransferViewModel.PickFolderAsync(new TransferOptions(TransferType.Select), false, cts.Token);
             }
@@ -162,12 +164,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             IResult result;
             if (itemType is not ("Folder" or "File"))
             {
-                var storableTypeViewModel = new StorableTypeOverlayViewModel();
-                result = await OverlayService.ShowAsync(storableTypeViewModel);
-                if (result.Aborted())
-                    return;
+                if (TransferViewModel?.IsPickingFolder ?? false)
+                    itemType = nameof(StorableType.Folder);
+                else
+                {
+                    var storableTypeViewModel = new StorableTypeOverlayViewModel();
+                    result = await OverlayService.ShowAsync(storableTypeViewModel);
+                    if (result.Aborted())
+                        return;
 
-                itemType = storableTypeViewModel.StorableType.ToString();
+                    itemType = storableTypeViewModel.StorableType.ToString();
+                }
             }
 
             var newItemViewModel = new NewItemOverlayViewModel();

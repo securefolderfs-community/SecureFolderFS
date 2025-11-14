@@ -11,7 +11,7 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
-    public class GDriveFolder : GDriveStorable, IRenamableFolder, IChildFolder, IGetFirstByName
+    public class GDriveFolder : GDriveStorable, IRenamableFolder, IChildFolder, IGetFirstByName, IGetItem
     {
         public GDriveFolder(DriveService driveService, string id, string name, IFolder? parent = null)
             : base(driveService, id, name, parent)
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string? pageToken = null;
 
@@ -53,7 +53,57 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
+        public async Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
+        {
+            // The id should be in the format "parentId/childId/..."
+            // We need to check if this is a direct child of the current folder
+            if (!id.StartsWith(Id + '/'))
+                throw new FileNotFoundException($"Item with id '{id}' is not a child of folder '{Name}'.");
+
+            // Extract the direct child ID from the path
+            var relativePath = id.Substring(Id.Length + 1); // Remove "parentId/"
+            var firstSlashIndex = relativePath.IndexOf('/');
+            var directChildId = firstSlashIndex >= 0 ? relativePath.Substring(0, firstSlashIndex) : relativePath;
+
+            // Query Google Drive for this specific child
+            var request = DriveService.Files.Get(directChildId);
+            request.Fields = "id,name,mimeType,parents";
+
+            var file = await request.ExecuteAsync(cancellationToken);
+
+            // Verify the file is actually a child of this folder
+            if (file.Parents == null || !file.Parents.Contains(DetachedId))
+                throw new FileNotFoundException($"Item with id '{id}' is not a child of folder '{Name}'.");
+
+            // Check if the full path matches (in case we're looking for a nested item)
+            var expectedId = CombinePaths(Id, file.Id);
+            if (id != expectedId && !id.StartsWith(expectedId + "/"))
+                throw new FileNotFoundException($"Item with id '{id}' was not found in folder '{Name}'.");
+
+            var isFolder = file.MimeType == "application/vnd.google-apps.folder";
+
+            if (isFolder)
+            {
+                var folder = new GDriveFolder(DriveService, CombinePaths(Id, file.Id), file.Name, this);
+
+                // If we need to go deeper into the path, recursively get the item
+                if (id != expectedId)
+                    return await folder.GetItemAsync(id, cancellationToken);
+
+                return folder;
+            }
+            else
+            {
+                // Files can't have children, so the id must match exactly
+                if (id != expectedId)
+                    throw new FileNotFoundException($"Item with id '{id}' was not found.");
+
+                return new GDriveFile(DriveService, file.MimeType, CombinePaths(Id, file.Id), file.Name, this);
+            }
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var request = DriveService.Files.List();
             request.Q = $"'{DetachedId}' in parents and name='{name}' and trashed=false";
@@ -74,7 +124,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
+        public virtual async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {
             // Verify the item belongs to this folder
             var parent = await storable.GetParentAsync(cancellationToken);
@@ -110,13 +160,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        public virtual Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
             return Task.FromException<IFolderWatcher>(new NotImplementedException());
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
             // Make sure the item belongs to this folder
             var parent = await item.GetParentAsync(cancellationToken);
@@ -128,7 +178,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
+        public virtual async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             var request = DriveService.Files.List();
             request.Q = $"'{DetachedId}' in parents and name='{name}' and mimeType='application/vnd.google-apps.folder' and trashed=false";
@@ -161,7 +211,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
+        public virtual async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             var request = DriveService.Files.List();
             request.Q = $"'{DetachedId}' in parents and name='{name}' and trashed=false";

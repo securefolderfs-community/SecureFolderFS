@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -63,10 +64,15 @@ namespace SecureFolderFS.Sdk.AppModels
             ArgumentNullException.ThrowIfNull(_remoteVault);
             ArgumentNullException.ThrowIfNull(DataModel.PersistableId);
 
+            // Connect to remote vault
             var rootFolder = await _remoteVault.ConnectAsync(cancellationToken);
-            VaultFolder = await rootFolder.GetItemByRelativePathOrSelfAsync(DataModel.PersistableId, cancellationToken) as IFolder;
-            if (VaultFolder is null)
-                throw new InvalidOperationException("Could not find the vault folder.");
+
+            // Try getting by relative path (crawl by name)
+            VaultFolder = await rootFolder.TryGetItemByRelativePathOrSelfAsync(DataModel.PersistableId, cancellationToken) as IFolder;
+
+            // Try getting by relative ID (crawl by ID)
+            VaultFolder ??= await rootFolder.TryGetItemRecursiveOrSelfAsync(DataModel.PersistableId, cancellationToken) as IFolder;
+            _ = VaultFolder ?? throw new InvalidOperationException("Could not find the vault folder.");
 
             StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
             return VaultFolder;

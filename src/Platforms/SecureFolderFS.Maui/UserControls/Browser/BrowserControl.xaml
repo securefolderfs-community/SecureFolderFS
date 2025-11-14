@@ -86,37 +86,43 @@
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
-                    <Grid
-                        x:Name="SourceGrid"
-                        HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
-                        RowSpacing="8"
-                        Style="{StaticResource SelectableItemGridStyle}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <ContentView
-                            Grid.Row="0"
-                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center" />
-                        <Label
-                            Grid.Row="1"
-                            FontSize="15"
-                            HorizontalOptions="Center"
-                            LineBreakMode="TailTruncation"
-                            Text="{Binding Title, Mode=OneWay}"
-                            VerticalOptions="Center" />
+                    <Border Margin="-8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid
+                            x:Name="SourceGrid"
+                            Padding="8"
+                            HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                            RowSpacing="8"
+                            Style="{StaticResource SelectableItemGridStyle}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ContentView
+                                Grid.Row="0"
+                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Row="1"
+                                FontSize="15"
+                                HorizontalOptions="Center"
+                                LineBreakMode="TailTruncation"
+                                Text="{Binding Title, Mode=OneWay}"
+                                VerticalOptions="Center" />
 
-                        <CheckBox
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
-                            HorizontalOptions="End"
-                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
-                            VerticalOptions="End" />
-                    </Grid>
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                HorizontalOptions="Center"
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />

@@ -60,8 +60,27 @@ namespace SecureFolderFS.Storage.Extensions
             if (from.Id == relativePath)
                 return from;
 
-            var relativePathWithoutRoot = relativePath.Replace(from.Id, string.Empty);
+            var relativePathWithoutRoot = relativePath
+                .Replace(from.Id, string.Empty)
+                .TrimStart()
+                .TrimStart(Path.AltDirectorySeparatorChar)
+                .TrimStart(Path.DirectorySeparatorChar);
             return await from.GetItemByRelativePathAsync(relativePathWithoutRoot, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves an item recursively or returns the folder itself if the relative ID matches.
+        /// </summary>
+        /// <param name="folder">The folder to search within or compare.</param>
+        /// <param name="relativeId">The relative ID of the item to find.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result is the item matching the relative ID, or the folder itself if the ID matches.</returns>
+        public static async Task<IStorable> GetItemRecursiveOrSelfAsync(this IFolder folder, string relativeId, CancellationToken cancellationToken = default)
+        {
+            if (folder.Id == relativeId)
+                return folder;
+
+            return await folder.GetItemRecursiveAsync(relativeId, cancellationToken);
         }
 
         /// <inheritdoc cref="GetItemByRelativePathOrSelfAsync"/>
@@ -69,7 +88,20 @@ namespace SecureFolderFS.Storage.Extensions
         {
             try
             {
-                return from.Id == relativePath ? from : await from.GetItemByRelativePathAsync(relativePath, cancellationToken);
+                return await GetItemByRelativePathOrSelfAsync(from, relativePath, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="GetItemRecursiveOrSelfAsync"/>
+        public static async Task<IStorable?> TryGetItemRecursiveOrSelfAsync(this IFolder folder, string relativeId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetItemRecursiveOrSelfAsync(folder, relativeId, cancellationToken);
             }
             catch (Exception)
             {
