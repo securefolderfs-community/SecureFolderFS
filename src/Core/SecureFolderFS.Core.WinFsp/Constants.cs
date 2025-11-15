@@ -6,7 +6,7 @@
         {
             public const string FS_ID = "WINFSP";
             public const string FS_NAME = "WinFsp";
-            public const string VERSION_STRING = "2.1.2X";
+            public const string VERSION_STRING = "2.1.x";
         }
 
         internal static class WinFsp

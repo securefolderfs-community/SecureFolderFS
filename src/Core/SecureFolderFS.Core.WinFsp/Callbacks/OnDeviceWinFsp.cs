@@ -495,8 +495,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     fileHandle.FileInfo.LastWriteTimeUtc = DateTime.FromFileTimeUtc((long)LastWriteTime);
                     fileHandle.FileInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
                     fileHandle.FileInfo.Attributes = (FileAttributes)FileAttributes;
-
                     FileInfo = fileHandle.GetFileInfo();
+
                     break;
                 }
 
@@ -506,8 +506,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     dirHandle.DirectoryInfo.LastWriteTimeUtc = DateTime.FromFileTimeUtc((long)LastWriteTime);
                     dirHandle.DirectoryInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
                     dirHandle.DirectoryInfo.Attributes = (FileAttributes)FileAttributes;
-                    
                     FileInfo = dirHandle.GetFileInfo();
+                    
                     break;
                 }
 

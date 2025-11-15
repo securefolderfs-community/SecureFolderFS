@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         private readonly TaskCompletionSource<int> _tcs;
         private readonly string _startMountPoint;
         private FileSystemHost? _host;
-        private Thread? _fsThead;
+        private Thread? _fsThread;
 
         public WinFspService(OnDeviceWinFsp winFspCallbacks, string startMountPoint)
             : base(Constants.WinFsp.SERVICE_NAME)
@@ -28,8 +28,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         public async Task<IResult<int>> StartFileSystemAsync()
         {
             var ts = new ThreadStart(() => Run());
-            _fsThead = new Thread(ts);
-            _fsThead.Start();
+            _fsThread = new Thread(ts);
+            _fsThread.Start();
 
             var status = await _tcs.Task;
             return status < 0 ? Result<int>.Failure(status) : Result<int>.Success(status);
