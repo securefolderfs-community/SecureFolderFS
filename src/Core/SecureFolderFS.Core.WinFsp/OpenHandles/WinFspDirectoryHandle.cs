@@ -15,16 +15,21 @@ namespace SecureFolderFS.Core.WinFsp.OpenHandles
 
         public FileInfo GetFileInfo()
         {
+            return ToFileInfo(DirectoryInfo);
+        }
+
+        public static FileInfo ToFileInfo(DirectoryInfo directoryInfo)
+        {
             return new()
             {
-                FileAttributes = (uint)DirectoryInfo.Attributes,
+                FileAttributes = (uint)directoryInfo.Attributes,
                 ReparseTag = 0,
                 FileSize = 0UL,
                 AllocationSize = (0UL + Constants.WinFsp.ALLOCATION_UNIT - 1) / Constants.WinFsp.ALLOCATION_UNIT * Constants.WinFsp.ALLOCATION_UNIT,
-                CreationTime = (ulong)DirectoryInfo.CreationTimeUtc.ToFileTimeUtc(),
-                LastAccessTime = (ulong)DirectoryInfo.LastAccessTimeUtc.ToFileTimeUtc(),
-                LastWriteTime = (ulong)DirectoryInfo.LastWriteTimeUtc.ToFileTimeUtc(),
-                ChangeTime = (ulong)DirectoryInfo.LastWriteTimeUtc.ToFileTimeUtc(),
+                CreationTime = (ulong)directoryInfo.CreationTimeUtc.ToFileTimeUtc(),
+                LastAccessTime = (ulong)directoryInfo.LastAccessTimeUtc.ToFileTimeUtc(),
+                LastWriteTime = (ulong)directoryInfo.LastWriteTimeUtc.ToFileTimeUtc(),
+                ChangeTime = (ulong)directoryInfo.LastWriteTimeUtc.ToFileTimeUtc(),
                 IndexNumber = 0UL,
                 HardLinks = 0u
             };

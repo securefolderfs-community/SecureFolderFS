@@ -21,17 +21,22 @@ namespace SecureFolderFS.Core.WinFsp.OpenHandles
 
         public FileInfo GetFileInfo()
         {
-            var size = (ulong)_security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, FileInfo.Length - _security.HeaderCrypt.HeaderCiphertextSize));
+            return ToFileInfo(FileInfo, _security);
+        }
+
+        public static FileInfo ToFileInfo(System.IO.FileInfo fileInfo, Security security)
+        {
+            var size = (ulong)security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo.Length - security.HeaderCrypt.HeaderCiphertextSize));
             return new()
             {
-                FileAttributes = (uint)FileInfo.Attributes,
+                FileAttributes = (uint)(fileInfo.Attributes == 0 ? FileAttributes.Normal : fileInfo.Attributes),
                 ReparseTag = 0,
                 FileSize = size,
                 AllocationSize = (size + Constants.WinFsp.ALLOCATION_UNIT - 1) / Constants.WinFsp.ALLOCATION_UNIT * Constants.WinFsp.ALLOCATION_UNIT,
-                CreationTime = (ulong)FileInfo.CreationTimeUtc.ToFileTimeUtc(),
-                LastAccessTime = (ulong)FileInfo.LastAccessTimeUtc.ToFileTimeUtc(),
-                LastWriteTime = (ulong)FileInfo.LastWriteTimeUtc.ToFileTimeUtc(),
-                ChangeTime = (ulong)FileInfo.LastWriteTimeUtc.ToFileTimeUtc(),
+                CreationTime = (ulong)fileInfo.CreationTimeUtc.ToFileTimeUtc(),
+                LastAccessTime = (ulong)fileInfo.LastAccessTimeUtc.ToFileTimeUtc(),
+                LastWriteTime = (ulong)fileInfo.LastWriteTimeUtc.ToFileTimeUtc(),
+                ChangeTime = (ulong)fileInfo.LastWriteTimeUtc.ToFileTimeUtc(),
                 IndexNumber = 0UL,
                 HardLinks = 0u
             };

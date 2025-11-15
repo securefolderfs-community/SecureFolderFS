@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             _host.SectorsPerAllocationUnit = Constants.WinFsp.SECTORS_PER_UNIT;
             _host.MaxComponentLength = Constants.WinFsp.MAX_COMPONENT_LENGTH;
             _host.FileInfoTimeout = Constants.WinFsp.FILE_INFO_TIMEOUT;
-            _host.CaseSensitiveSearch = false;
+            _host.CaseSensitiveSearch = true;
             _host.CasePreservedNames = true;
             _host.UnicodeOnDisk = true;
             _host.PersistentAcls = true;
@@ -209,24 +209,12 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             if (index < entries.Count)
             {
                 var entry = entries[index];
-                var info = entry.info;
-                var size = info is System.IO.FileInfo fi ?
-                    (ulong)_specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fi.Length - _specifics.Security.HeaderCrypt.HeaderCiphertextSize))
-                    : 0UL;
-
                 FileName = entry.plaintextName;
-                FileInfo = new FileInfo()
+                FileInfo = entry.info switch
                 {
-                    FileAttributes = (uint)(info.Attributes == 0 ? FileAttributes.Normal : info.Attributes),
-                    ReparseTag = 0,
-                    FileSize = size,
-                    AllocationSize = (size + Constants.WinFsp.ALLOCATION_UNIT - 1) / Constants.WinFsp.ALLOCATION_UNIT * Constants.WinFsp.ALLOCATION_UNIT,
-                    CreationTime = (ulong)info.CreationTimeUtc.ToFileTimeUtc(),
-                    LastAccessTime = (ulong)info.LastAccessTimeUtc.ToFileTimeUtc(),
-                    LastWriteTime = (ulong)info.LastWriteTimeUtc.ToFileTimeUtc(),
-                    ChangeTime = (ulong)info.LastWriteTimeUtc.ToFileTimeUtc(),
-                    IndexNumber = 0UL,
-                    HardLinks = 0u
+                    System.IO.FileInfo fi => WinFspFileHandle.ToFileInfo(fi, _specifics.Security),
+                    DirectoryInfo di => WinFspDirectoryHandle.ToFileInfo(di),
+                    _ => throw new ArgumentOutOfRangeException(nameof(entry.info))
                 };
 
                 Context = index + 1;
@@ -440,6 +428,42 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         }
 
         /// <inheritdoc/>
+        public override int GetDirInfoByName(
+            object FileNode,
+            object FileDesc,
+            string FileName,
+            [UnscopedRef] out string? NormalizedName,
+            [UnscopedRef] out FileInfo FileInfo)
+        {
+            var ciphertextPath = GetCiphertextPath(FileName);
+            if (!Directory.Exists(ciphertextPath))
+            {
+                FileInfo = default;
+                NormalizedName = null;
+
+                return Trace(STATUS_OBJECT_NAME_NOT_FOUND, FileName);
+            }
+
+            try
+            {
+                NormalizedName = null;
+                FileInfo = WinFspDirectoryHandle.ToFileInfo(new DirectoryInfo(ciphertextPath));
+
+                return Trace(STATUS_SUCCESS, FileName);
+            }
+            catch (Exception ex)
+            {
+                FileInfo = default;
+                NormalizedName = null;
+
+                if (ErrorHandlingHelpers.Win32ErrorFromException(ex, out var win32error))
+                    return NtStatusFromWin32(win32error);
+
+                return STATUS_ACCESS_DENIED;
+            }
+        }
+
+        /// <inheritdoc/>
         public override int SetBasicInfo(
             object FileNode,
             object FileDesc,
@@ -518,12 +542,26 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_INVALID_HANDLE);
             }
 
-            // If the new AllocationSize is less than the current FileSize we must truncate the file
-            if (!SetAllocationSize || (ulong)fileHandle.Stream.Length > NewSize)
-                fileHandle.Stream.SetLength((long)NewSize);
+            try
+            {
+                // If the new AllocationSize is less than the current FileSize we must truncate the file
+                if (!SetAllocationSize || (ulong)fileHandle.Stream.Length > NewSize)
+                    fileHandle.Stream.SetLength((long)NewSize);
 
-            FileInfo = fileHandle.GetFileInfo();
-            return Trace(STATUS_SUCCESS);
+                FileInfo = fileHandle.GetFileInfo();
+                return Trace(STATUS_SUCCESS);
+            }
+            catch (IOException ioEx)
+            {
+                FileInfo = default;
+                if (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+                    return Trace(STATUS_DISK_FULL);
+
+                if (ErrorHandlingHelpers.Win32ErrorFromException(ioEx, out var win32error))
+                    return Trace(NtStatusFromWin32(win32error));
+
+                return Trace(STATUS_ACCESS_DENIED);
+            }
         }
 
         /// <inheritdoc/>
@@ -842,31 +880,50 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             if ((Flags & CleanupDelete) == 0)
                 return;
 
-            switch (_handlesManager.GetHandle<IDisposable>(GetContextValue(FileDesc)))
+            string? pathToDelete = null;
+            var storableType = StorableType.File;
+            var handle = _handlesManager.GetHandle<IDisposable>(GetContextValue(FileDesc));
+
+            // Extract path before disposing
+            switch (handle)
             {
                 case WinFspFileHandle fileHandle:
                 {
-                    fileHandle.Dispose();
-                    NativeRecycleBinHelpers.DeleteOrRecycle(fileHandle.FileInfo.FullName, _specifics, StorableType.File);
+                    pathToDelete = fileHandle.FileInfo.FullName;
+                    storableType = StorableType.File;
 
                     break;
                 }
 
                 case WinFspDirectoryHandle dirHandle:
                 {
-                    dirHandle.Dispose();
-                    var ciphertextPath = dirHandle.DirectoryInfo.FullName;
-                    var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
+                    pathToDelete = dirHandle.DirectoryInfo.FullName;
+                    storableType = StorableType.Folder;
 
+                    var directoryIdPath = Path.Combine(pathToDelete, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                     _specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
-                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, _specifics, StorableType.Folder);
-
+                 
                     break;
                 }
             }
 
+            // Close handle first
             CloseHandle(FileDesc);
             InvalidateContext(out FileDesc);
+            Trace(STATUS_SUCCESS, FileName);
+
+            try
+            {
+                if (pathToDelete is null)
+                    return;
+
+                // Then delete
+                NativeRecycleBinHelpers.DeleteOrRecycle(pathToDelete, _specifics, storableType);
+            }
+            catch (Exception)
+            {
+                Trace(STATUS_UNSUCCESSFUL, FileName);
+            }
         }
 
         /// <inheritdoc/>

@@ -105,7 +105,9 @@ namespace SecureFolderFS.Uno.Views.Settings
                         {
                             FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "WinFspNotDetected".ToLocalized(Core.WinFsp.Constants.FileSystem.VERSION_STRING),
                             _ => "WinFspIncompatible".ToLocalized(Core.WinFsp.Constants.FileSystem.VERSION_STRING),
-                        }
+                        },
+
+                        _ => null
                     };
 
                     break;

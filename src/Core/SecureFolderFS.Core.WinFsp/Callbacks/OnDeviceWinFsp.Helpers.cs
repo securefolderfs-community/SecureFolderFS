@@ -46,33 +46,32 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         {
             var access = FileAccess.Read;
 
-            // If the caller can write data, append write access
-            if ((rights & (FileSystemRights.WriteData | FileSystemRights.AppendData |
-                           FileSystemRights.CreateFiles | FileSystemRights.CreateDirectories)) != 0)
-                access |= FileAccess.Write;
+            // Check for write permissions
+            var writeRights = FileSystemRights.WriteData | FileSystemRights.AppendData |
+                              FileSystemRights.CreateFiles | FileSystemRights.CreateDirectories;
 
-            // If the caller can only read
-            if ((rights & (FileSystemRights.ReadData | FileSystemRights.ReadAttributes |
-                           FileSystemRights.ReadExtendedAttributes)) != 0)
-                access |= FileAccess.Read;
+            if ((rights & writeRights) != 0)
+                access = FileAccess.ReadWrite;
+            else if ((rights & (FileSystemRights.ReadData | FileSystemRights.ReadAttributes)) == 0)
+                access = 0; // No access
 
-            return access;
+            return access == 0 ? FileAccess.Read : access;
         }
 
         private static FileOptions ToFileOptions(uint createOptions)
         {
             var options = FileOptions.None;
 
-            if ((createOptions & 0x00000002) != 0) // FILE_WRITE_THROUGH
+            if ((createOptions & FILE_WRITE_THROUGH) != 0)
                 options |= FileOptions.WriteThrough;
 
-            if ((createOptions & 0x00000004) != 0) // FILE_SEQUENTIAL_ONLY
+            if ((createOptions & FILE_SEQUENTIAL_ONLY) != 0)
                 options |= FileOptions.SequentialScan;
 
-            if ((createOptions & 0x00000800) != 0) // FILE_RANDOM_ACCESS
+            if ((createOptions & FILE_RANDOM_ACCESS) != 0)
                 options |= FileOptions.RandomAccess;
 
-            if ((createOptions & 0x00001000) != 0) // FILE_DELETE_ON_CLOSE
+            if ((createOptions & FILE_DELETE_ON_CLOSE) != 0)
                 options |= FileOptions.DeleteOnClose;
 
             return options;
