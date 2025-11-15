@@ -12,6 +12,9 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
     <PackageReference Include="OwlCore.Storage" Version="0.14.0" />
     <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1">
+      <ExcludeAssets>all</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
