@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DokanNet" Version="2.3.0.3" />
+    <PackageReference Include="winfsp.net" Version="2.1.25156" />
   </ItemGroup>
 
   <ItemGroup>

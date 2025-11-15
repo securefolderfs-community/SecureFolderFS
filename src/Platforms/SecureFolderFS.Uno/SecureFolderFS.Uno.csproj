@@ -90,6 +90,7 @@
 
       <ItemGroup>
         <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj" />
+        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WinFsp\SecureFolderFS.Core.WinFsp.csproj" />
         <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
       </ItemGroup>
 

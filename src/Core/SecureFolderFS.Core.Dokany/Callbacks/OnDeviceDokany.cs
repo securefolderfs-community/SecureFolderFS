@@ -1,13 +1,16 @@
 ﻿using DokanNet;
-using SecureFolderFS.Core.Dokany.AppModels;
+using OwlCore.Storage;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
@@ -19,8 +22,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
-using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -30,7 +31,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         private DriveInfo? _vaultDriveInfo;
         private int _vaultDriveInfoTries;
 
-        public OnDeviceDokany(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel)
+        public OnDeviceDokany(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, VolumeModel volumeModel)
             : base(specifics, handlesManager, volumeModel)
         {
         }
@@ -439,7 +440,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     var lat = lastAccessTime?.ToFileTime() ?? 0L;
                     var lwt = lastWriteTime?.ToFileTime() ?? 0L;
 
-                    if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                    if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                     {
                         if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
                             return Trace(DokanResult.Success, fileName, info);
@@ -545,11 +546,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (oldCiphertextPath is null || newCiphertextPath is null)
                 return Trace(NtStatus.ObjectPathInvalid, fileNameCombined, info);
 
-            CloseHandle(info);
-            InvalidateContext(info);
-
             if (Specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileNameCombined, info);
+
+            CloseHandle(info);
+            InvalidateContext(info);
 
             var newPathExists = info.IsDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
             try
@@ -613,7 +614,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ErrorHandlingHelpers.IsDiskFullException(ioEx))
                     return Trace(DokanResult.DiskFull, fileNameCombined, info);
 
-                if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                if (DokanyErrorHelpers.NtStatusFromException(ioEx, out var ntStatus))
                     return Trace((NtStatus)ntStatus, fileNameCombined, info);
 
                 throw;
@@ -629,7 +630,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
             catch (IOException ex)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ex, out var ntStatus))
+                if (DokanyErrorHelpers.NtStatusFromException(ex, out var ntStatus))
                     return Trace((NtStatus)ntStatus, fileName, info);
 
                 throw;
@@ -641,7 +642,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             try
             {
-                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Lock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);
@@ -660,7 +661,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             try
             {
-                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Unlock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);
@@ -769,7 +770,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
             catch (IOException ioEx)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                if (DokanyErrorHelpers.NtStatusFromException(ioEx, out var ntStatus))
                 {
                     bytesRead = 0;
                     return Trace((NtStatus)ntStatus, fileName, info);
@@ -797,7 +798,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
             catch (IOException ex)
             {
-                if (ErrorHandlingHelpers.NtStatusFromException(ex, out var ntStatus))
+                if (DokanyErrorHelpers.NtStatusFromException(ex, out var ntStatus))
                 {
                     bytesWritten = 0;
                     return Trace((NtStatus)ntStatus, fileName, info);
@@ -824,8 +825,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string plaintextName)
         {
-            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-            return NativePathHelpers.GetCiphertextPath(plaintextName, Specifics, directoryId);
+            return NativePathHelpers.GetCiphertextPath(plaintextName, Specifics);
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
     /// <inheritdoc cref="DirectoryHandle"/>
-    internal sealed class Win32DirectoryHandle : DirectoryHandle
+    internal sealed class DokanyDirectoryHandle : DirectoryHandle
     {
         /// <inheritdoc/>
         public override void Dispose()

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
         /// <returns>A full ciphertext path.</returns>
         public static string GetCiphertextPath(string plaintextRelativePath, FileSystemSpecifics specifics)
         {
-            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+            var directoryId = new byte[Constants.DIRECTORY_ID_SIZE];
             return GetCiphertextPath(plaintextRelativePath, specifics, directoryId);
         }
 
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
         /// <returns>A relative plaintext path.</returns>
         public static string? GetPlaintextPath(string ciphertextPath, FileSystemSpecifics specifics)
         {
-            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+            var directoryId = new byte[Constants.DIRECTORY_ID_SIZE];
             return GetPlaintextPath(ciphertextPath, specifics, directoryId);
         }
 

@@ -9,9 +9,9 @@ using System.IO;
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
     /// <inheritdoc cref="FileHandle"/>
-    internal sealed class Win32FileHandle : FileHandle
+    internal sealed class DokanyFileHandle : FileHandle
     {
-        public Win32FileHandle(Stream stream)
+        public DokanyFileHandle(Stream stream)
             : base(stream)
         {
         }

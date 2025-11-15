@@ -18,6 +18,13 @@
             public const uint MAX_COMPONENT_LENGTH = 256;
             public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP = 5;
 
+            public const DokanNet.FileSystemFeatures FEATURES =
+                                                          DokanNet.FileSystemFeatures.CasePreservedNames
+                                                        | DokanNet.FileSystemFeatures.CaseSensitiveSearch
+                                                        | DokanNet.FileSystemFeatures.PersistentAcls
+                                                        | DokanNet.FileSystemFeatures.SupportsRemoteStorage
+                                                        | DokanNet.FileSystemFeatures.UnicodeOnDisk;
+
             public const DokanNet.FileAccess DATA_ACCESS =
                                                           DokanNet.FileAccess.ReadData
                                                         | DokanNet.FileAccess.WriteData
