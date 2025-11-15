@@ -440,7 +440,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     var lat = lastAccessTime?.ToFileTime() ?? 0L;
                     var lwt = lastWriteTime?.ToFileTime() ?? 0L;
 
-                    if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                    if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                     {
                         if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
                             return Trace(DokanResult.Success, fileName, info);
@@ -642,7 +642,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             try
             {
-                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Lock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);
@@ -661,7 +661,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             try
             {
-                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<DokanyFileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Unlock(offset, length);
                     return Trace(DokanResult.Success, fileName, info);

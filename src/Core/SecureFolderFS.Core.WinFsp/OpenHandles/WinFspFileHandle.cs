@@ -6,6 +6,7 @@ using FileInfo = Fsp.Interop.FileInfo;
 
 namespace SecureFolderFS.Core.WinFsp.OpenHandles
 {
+    /// <inheritdoc cref="FileHandle"/>
     internal sealed class WinFspFileHandle : FileHandle
     {
         private readonly Security _security;

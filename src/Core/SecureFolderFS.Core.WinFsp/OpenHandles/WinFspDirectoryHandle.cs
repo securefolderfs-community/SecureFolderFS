@@ -4,6 +4,7 @@ using FileInfo = Fsp.Interop.FileInfo;
 
 namespace SecureFolderFS.Core.WinFsp.OpenHandles
 {
+    /// <inheritdoc cref="DirectoryHandle"/>
     internal sealed class WinFspDirectoryHandle : DirectoryHandle
     {
         public DirectoryInfo DirectoryInfo { get; }
