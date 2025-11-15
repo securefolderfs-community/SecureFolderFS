@@ -35,6 +35,9 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
+    <PackageReference Include="System.Linq.Async">
+      <ExcludeAssets>all</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <!-- Project References -->
@@ -42,6 +45,7 @@
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>
 

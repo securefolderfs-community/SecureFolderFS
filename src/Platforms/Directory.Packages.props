@@ -22,6 +22,7 @@
     <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
     <PackageVersion Include="Sentry" Version="5.16.0" />
     <PackageVersion Include="SkiaSharp" Version="3.119.0" />
+    <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="9.0.4" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.204" />
