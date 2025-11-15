@@ -1,17 +1,20 @@
-﻿using SecureFolderFS.Core.FileSystem.Extensions;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.IO;
 
-namespace SecureFolderFS.Core.Dokany.OpenHandles
+namespace SecureFolderFS.Core.WinFsp.OpenHandles
 {
-    /// <inheritdoc cref="BaseHandlesManager"/>
-    internal sealed class DokanyHandlesManager : BaseHandlesManager
+    internal sealed class WinFspHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
+        private readonly Security _security;
+
+        public WinFspHandlesManager(Security security, StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
             : base(streamsAccess, fileSystemOptions)
         {
+            _security = security;
         }
 
         /// <inheritdoc/>
@@ -37,7 +40,8 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
                 plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new DokanyFileHandle(plaintextStream);
+            var fileInfo = new FileInfo(ciphertextPath);
+            var fileHandle = new WinFspFileHandle(fileInfo, _security, plaintextStream);
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle
@@ -50,8 +54,20 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         /// <inheritdoc/>
         public override ulong OpenDirectoryHandle(string ciphertextPath)
         {
-            // Not supported, return invalid handle
-            return FileSystem.Constants.INVALID_HANDLE;
+            // Make sure the handles manager was not disposed
+            if (disposed)
+                return FileSystem.Constants.INVALID_HANDLE;
+
+            // Create handle
+            var directoryInfo = new DirectoryInfo(ciphertextPath);
+            var directoryHandle = new WinFspDirectoryHandle(directoryInfo);
+            var handleId = handlesGenerator.ThreadSafeIncrement();
+
+            // Lock collection and add handle
+            lock (handlesLock)
+                handles.TryAdd(handleId, directoryHandle);
+
+            return handleId;
         }
     }
 }

@@ -1,12 +1,11 @@
-﻿using SecureFolderFS.Core.Dokany.UnsafeNative;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace SecureFolderFS.Core.Dokany.Helpers
+namespace SecureFolderFS.Core.FileSystem.Helpers
 {
-    internal static class ErrorHandlingHelpers
+    public static class ErrorHandlingHelpers
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsFileAlreadyExistsException(IOException ioEx)
@@ -76,18 +75,6 @@ namespace SecureFolderFS.Core.Dokany.Helpers
                 hr = Marshal.GetHRForException(ex);
 
             return hr != 0;
-        }
-
-        public static bool NtStatusFromException(Exception ex, out long ntStatus)
-        {
-            if (!Win32ErrorFromException(ex, out var win32error))
-            {
-                ntStatus = -1L;
-                return false;
-            }
-
-            ntStatus = UnsafeNativeApis.DokanNtStatusFromWin32(win32error);
-            return true;
         }
     }
 }
