@@ -34,6 +34,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         public abstract Task<bool> RemoveAsync(string key, CancellationToken cancellation = default);
 
         /// <inheritdoc/>
+        public abstract Task WipeAsync(CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>

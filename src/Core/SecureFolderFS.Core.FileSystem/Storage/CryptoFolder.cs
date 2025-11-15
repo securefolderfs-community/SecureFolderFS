@@ -133,7 +133,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             // Get the DirectoryID file
             var directoryIdFile = await createdModifiableFolder.CreateFileAsync(Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
-            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Write, cancellationToken);
 
             // Initialize directory with DirectoryID
             var directoryId = Guid.NewGuid().ToByteArray();

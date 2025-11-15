@@ -21,6 +21,13 @@ namespace SecureFolderFS.Maui.ServiceImplementation
     internal abstract class BaseMauiMediaService : IMediaService
     {
         /// <inheritdoc/>
+        public Task<IImage> GetImageFromUrlAsync(string url, CancellationToken cancellationToken = default)
+        {
+            var remoteImageUrl = new ImageRemoteUrl(url);
+            return Task.FromResult<IImage>(remoteImageUrl);
+        }
+
+        /// <inheritdoc/>
         public async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
             var stream = await file.OpenReadAsync(cancellationToken);

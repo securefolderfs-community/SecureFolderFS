@@ -60,9 +60,9 @@ namespace SecureFolderFS.Core.VaultAccess
                 return;
 
             // Open a stream to the data file
-            await using var fileStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.Write, cancellationToken);
 
-            // Clear contents if opened from existing file
+            // Clear contents if opened from an existing file
             fileStream.TrySetLength(0L);
 
             if (data is not null)

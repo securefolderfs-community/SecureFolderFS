@@ -160,7 +160,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Create configuration file
             var configurationFile = await renamableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-            await using var configurationStream = await configurationFile.OpenReadWriteAsync(cancellationToken);
+            await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
 
             // Serialize configuration data model
             await using var serializedStream = await streamSerializer.SerializeAsync(

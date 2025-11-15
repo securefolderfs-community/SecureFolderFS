@@ -1,7 +1,7 @@
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.ServiceImplementation;
+using NavigationType = SecureFolderFS.Sdk.Enums.NavigationType;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {

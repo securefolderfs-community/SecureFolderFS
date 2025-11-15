@@ -140,7 +140,7 @@
             Background="{StaticResource ThemeBackgroundFillColorBrush}"
             IsVisible="{Binding ViewModel.CanResolve, Mode=OneWay}"
             Spacing="8">
-            <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=Repair}" />
+            <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=RepairAll}" />
             <Label
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"

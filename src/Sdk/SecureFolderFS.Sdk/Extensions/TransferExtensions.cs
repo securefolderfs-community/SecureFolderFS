@@ -19,6 +19,7 @@ namespace SecureFolderFS.Sdk.Extensions
 
         public static async Task HideAsync(this TransferViewModel transferViewModel)
         {
+            transferViewModel.IsPickingFolder = false;
             transferViewModel.IsVisible = false;
             await Task.Delay(400);
             transferViewModel.IsProgressing = false;

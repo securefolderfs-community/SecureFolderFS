@@ -183,7 +183,11 @@
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
                         <Grid DataContext="{x:Bind}">
-                            <StackPanel Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                                 <StackPanel.ChildrenTransitions>
                                     <TransitionCollection>
                                         <RepositionThemeTransition />
@@ -204,8 +208,20 @@
                                     Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
                                     Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                             </StackPanel>
+
+                            <FontIcon
+                                x:Name="LockIcon"
+                                Grid.Column="1"
+                                x:Load="{x:Bind IsUnlocked, Mode=OneWay}"
+                                FontSize="14"
+                                Glyph="&#xE785;"
+                                Opacity="0.6"
+                                Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+
                             <TextBox
                                 x:Name="RenameBox"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
                                 VerticalAlignment="Center"
                                 x:Load="{x:Bind IsRenaming, Mode=OneWay}"
                                 KeyDown="RenameBox_KeyDown"

@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
             {
                 // Overwrite existing DirectoryID
                 var directoryIdFile = await renamableFolder.CreateFileAsync(Constants.Names.DIRECTORY_ID_FILENAME, true, cancellationToken);
-                await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
+                await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Write, FileShare.Read, cancellationToken);
 
                 var directoryId = Guid.NewGuid().ToByteArray();
                 await directoryIdStream.WriteAsync(directoryId, cancellationToken);

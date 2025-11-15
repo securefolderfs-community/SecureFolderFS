@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Helpers
 {
@@ -54,7 +53,7 @@ namespace SecureFolderFS.Sdk.Helpers
                 : await ValidateNewVault(selectedFolder, cancellationToken);
 
             severity = result.Value;
-            message = result.GetMessage();
+            message = result.GetMessage("UnknownError".ToLocalized());
             selectedLocation = GetSelectedLocation();
 
             return (severity, message, selectedLocation, result.Successful);

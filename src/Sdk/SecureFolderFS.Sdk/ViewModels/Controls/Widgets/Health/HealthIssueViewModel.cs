@@ -3,11 +3,11 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
     [Bindable(true)]
     public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorableChild>
     {
-        [ObservableProperty] private string? _Icon; // TODO: Change to IImage
+        [ObservableProperty] private bool _IsFolder;
         [ObservableProperty] private Severity _Severity;
 
         /// <summary>
@@ -30,18 +30,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         public IStorableChild Inner { get; }
 
         public HealthIssueViewModel(IStorableChild storable, IResult? result, string? title = null)
-            : this(storable, title ?? "Unknown error")
+            : this(storable, title ?? "UnknownError".ToLocalized())
         {
             Result = result;
+            base.UpdateStatus(result);
         }
 
         public HealthIssueViewModel(IStorableChild storable, string title)
             : base(title)
         {
             ServiceProvider = DI.Default;
-            Severity = Enums.Severity.Warning;
+            Severity = Severity.Warning;
             Inner = storable;
             Title = title;
+            IsFolder = storable is IFolder;
         }
 
         /// <inheritdoc/>
@@ -58,11 +60,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         [RelayCommand]
         protected virtual async Task CopyErrorAsync(CancellationToken cancellationToken)
         {
-            if (await ClipboardService.IsSupportedAsync())
-                await ClipboardService.SetTextAsync(ExceptionMessage
-                                                    ?? Result?.GetExceptionMessage()
-                                                    ?? ErrorMessage
-                                                    ?? "Unknown error", cancellationToken);
+            if (!await ClipboardService.IsSupportedAsync())
+                return;
+
+            await ClipboardService.SetTextAsync(ExceptionMessage ?? ErrorMessage ?? "UnknownError".ToLocalized(), cancellationToken);
         }
 
         [RelayCommand]

@@ -63,7 +63,7 @@
                                 <uco:OptionsControl.Slot>
                                     <ucc:ModernPicker
                                         ios:Picker.UpdateMode="WhenFinished"
-                                        HorizontalTextAlignment="Center"
+                                        HorizontalTextAlignment="End"
                                         IsTransparent="True"
                                         ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
                                         ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"

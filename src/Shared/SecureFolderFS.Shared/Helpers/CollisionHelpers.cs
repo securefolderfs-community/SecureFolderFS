@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using OwlCore.Storage;
 
 namespace SecureFolderFS.Shared.Helpers
 {
     public static class CollisionHelpers
     {
-        public static string GetAvailableName(string desiredName, IEnumerable<IStorable> existingItems)
+        public static string GetAvailableName(string desiredName, IEnumerable<string> existingNames)
         {
-            var existingNames = new HashSet<string>(existingItems.Select(item => item.Name), StringComparer.OrdinalIgnoreCase);
-
-            if (!existingNames.Contains(desiredName))
+            var existingNamesSet = new HashSet<string>(existingNames, StringComparer.OrdinalIgnoreCase);
+            if (!existingNamesSet.Contains(desiredName))
                 return desiredName;
 
             var baseName = Path.GetFileNameWithoutExtension(desiredName);
@@ -24,7 +21,7 @@ namespace SecureFolderFS.Shared.Helpers
             {
                 newName = $"{baseName} ({counter}){extension}";
                 counter++;
-            } while (existingNames.Contains(newName));
+            } while (existingNamesSet.Contains(newName));
 
             return newName;
         }

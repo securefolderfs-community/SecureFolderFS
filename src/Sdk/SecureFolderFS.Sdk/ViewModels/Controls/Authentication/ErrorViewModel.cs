@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -46,8 +47,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         {
             if (result is { Successful: false })
             {
-                ErrorMessage = result.GetMessage();
-                ExceptionMessage = result.GetExceptionMessage();
+                ErrorMessage = result.GetMessage("UnknownError".ToLocalized());
+                ExceptionMessage = result.GetExceptionMessage("UnknownError".ToLocalized());
             }
             else
             {

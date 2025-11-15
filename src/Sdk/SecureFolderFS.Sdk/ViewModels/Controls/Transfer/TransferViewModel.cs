@@ -25,6 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _IsVisible;
         [ObservableProperty] private bool _IsProgressing;
+        [ObservableProperty] private bool _IsPickingFolder;
         [ObservableProperty] private TransferType _TransferType;
 
         public TransferViewModel(BrowserViewModel browserViewModel)
@@ -71,19 +72,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
-            _tcs?.TrySetCanceled(CancellationToken.None);
-            _tcs = new TaskCompletionSource<IFolder?>();
+            try
+            {
+                IsPickingFolder = true;
+                _tcs?.TrySetCanceled(CancellationToken.None);
+                _tcs = new TaskCompletionSource<IFolder?>();
 
-            if (options is TransferOptions transferOptions)
-                TransferType = transferOptions.TransferType;
+                if (options is TransferOptions transferOptions)
+                    TransferType = transferOptions.TransferType;
 
-            Title = "ChooseDestinationFolder".ToLocalized();
-            IsProgressing = false;
-            IsVisible = true;
+                Title = "ChooseDestinationFolder".ToLocalized();
+                IsProgressing = false;
+                IsVisible = true;
 
-            return _tcs.Task;
+                return await _tcs.Task;
+            }
+            finally
+            {
+                IsPickingFolder = false;
+            }
         }
 
         [RelayCommand]

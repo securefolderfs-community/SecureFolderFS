@@ -5,10 +5,12 @@ namespace SecureFolderFS.Maui.Helpers
     /// <inheritdoc cref="ThemeHelper"/>
     internal sealed class MauiThemeHelper : ThemeHelper
     {
+        private static MauiThemeHelper? _Instance;
+        
         /// <summary>
         /// Gets the singleton instance of <see cref="MauiThemeHelper"/>.
         /// </summary>
-        public static MauiThemeHelper Instance { get; } = new();
+        public static MauiThemeHelper Instance => _Instance ??= new();
 
         /// <inheritdoc/>
         protected override void UpdateTheme()

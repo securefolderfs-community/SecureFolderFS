@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Health;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
@@ -32,19 +33,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
             {
                 AggregateException aggregate => aggregate.InnerException switch
                 {
-                    EndOfStreamException => new HealthDirectoryIssueViewModel(storable, result, "Invalid directory ID") { ErrorMessage = "Regenerate invalid directory ID", Icon = "\uE8B7" }.WithInitAsync(),
-                    FileNotFoundException => new HealthDirectoryIssueViewModel(storable, result, "Missing directory ID") { ErrorMessage = "Regenerate missing directory ID", Icon = "\uE8B7" }.WithInitAsync(),
+                    EndOfStreamException => new HealthDirectoryIssueViewModel(storable, result, "InvalidDirectoryId".ToLocalized()) { ErrorMessage = "RegenerateInvalidDirectoryId".ToLocalized() }.WithInitAsync(),
+                    FileNotFoundException => new HealthDirectoryIssueViewModel(storable, result, "MissingDirectoryId".ToLocalized()) { ErrorMessage = "RegenerateMissingDirectoryId".ToLocalized() }.WithInitAsync(),
                     { } ex => GetDefault(ex),
                     _ => GetDefault(aggregate)
                 },
-                FormatException => new HealthNameIssueViewModel(storable, result, "Invalid item name") { ErrorMessage = "Choose a new name", Icon = "\uE8AC" },
-                CryptographicException => new HealthFileDataIssueViewModel(storable, result, "Corrupted file contents") { ErrorMessage = "Overwrite affected file regions", Icon = "\uE74C" },
+                FormatException => new HealthNameIssueViewModel(storable, result, "InvalidItemName".ToLocalized()) { ErrorMessage = "GenerateNewName".ToLocalized() },
+                CryptographicException => new HealthFileDataIssueViewModel(storable, result, "InvalidFileContents".ToLocalized()) { ErrorMessage = "RegenerateFileContents".ToLocalized() },
                 { } ex => GetDefault(ex)
             };
 
             HealthIssueViewModel GetDefault(Exception ex)
             {
-                return new HealthIssueViewModel(storable, result, ex.GetType().ToString()) { Icon = "\uE783" };
+                return new HealthIssueViewModel(storable, result, ex.GetType().Name);
             }
         }
 
@@ -83,14 +84,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
                             FormattingHelpers.SanitizeItemName(nameIssue.ItemName ?? string.Empty, nameIssue.OriginalName),
                             cancellationToken),
 
-                        // TODO: Implement repair for HealthFileDataIssueViewModel
-                        HealthFileDataIssueViewModel dataIssue => Result.Failure(null),
-
                         // Directory ID issue
                         HealthDirectoryIssueViewModel directoryIssue => await HealthHelpers.RepairDirectoryAsync(
                             directoryIssue.Folder ?? throw new ArgumentNullException(nameof(HealthDirectoryIssueViewModel.Folder)),
                             specificsWrapper.Inner.Security,
                             cancellationToken),
+
+                        // TODO: Implement repair for HealthFileDataIssueViewModel
+                        HealthFileDataIssueViewModel dataIssue => Result.Failure(null),
 
                         // Default
                         _ => null

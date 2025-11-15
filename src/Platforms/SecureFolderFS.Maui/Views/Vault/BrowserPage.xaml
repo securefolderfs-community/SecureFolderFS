@@ -33,6 +33,7 @@
             Text="{l:ResourceString Rid=CreateNew}" />
         <ToolbarItem
             Command="{Binding ViewModel.ImportItemCommand}"
+            IsEnabled="{Binding ViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
             Order="Secondary"
             Text="{l:ResourceString Rid=ImportExisting}" />
     </ContentPage.ToolbarItems>

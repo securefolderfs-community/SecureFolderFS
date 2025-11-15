@@ -53,7 +53,9 @@ namespace SecureFolderFS.Core.Dokany
             var dokanyWrapper = new DokanyWrapper(dokanyCallbacks);
             dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);
 
-            await Task.CompletedTask;
+            // Await a short delay before locating the folder
+            await Task.Delay(500);
+
             return new DokanyVFSRoot(dokanyWrapper, new SystemFolderEx(dokanyOptions.MountPoint), specifics);
         }
     }

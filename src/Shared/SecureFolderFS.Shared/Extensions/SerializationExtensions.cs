@@ -24,14 +24,14 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static async Task<TData?> TryDeserializeFromStringAsync<TData>(
+        public static async Task<TResult?> TryDeserializeFromStringAsync<TResult>(
             this IAsyncSerializer<Stream> serializer,
             string serialized,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await DeserializeFromStringAsync<TData>(serializer, serialized, cancellationToken);
+                return await DeserializeFromStringAsync<TResult>(serializer, serialized, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Shared.Extensions
             return await streamReader.ReadToEndAsync(cancellationToken);
         }
 
-        public static async Task<TData?> DeserializeFromStringAsync<TData>(
+        public static async Task<TResult?> DeserializeFromStringAsync<TResult>(
             this IAsyncSerializer<Stream> serializer,
             string serialized,
             CancellationToken cancellationToken = default)
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Shared.Extensions
             await streamWriter.WriteAsync(serialized);
             await streamWriter.FlushAsync(cancellationToken);
 
-            return await serializer.DeserializeAsync<Stream, TData?>(stream, cancellationToken);
+            return await serializer.DeserializeAsync<Stream, TResult?>(stream, cancellationToken);
         }
 
         public static async Task<TSerialized> SerializeAsync<TSerialized, TData>(

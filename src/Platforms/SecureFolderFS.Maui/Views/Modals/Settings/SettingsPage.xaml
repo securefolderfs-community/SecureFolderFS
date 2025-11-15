@@ -25,7 +25,7 @@
                             <uco:OptionsControl.Slot>
                                 <ucc:ModernPicker
                                     BindingContext="{x:Reference ThisPage}"
-                                    HorizontalTextAlignment="Center"
+                                    HorizontalTextAlignment="End"
                                     IsTransparent="True"
                                     ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
                                     ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
@@ -36,18 +36,21 @@
                             <uco:OptionsControl.Slot>
                                 <ucc:ModernPicker
                                     x:Name="ThemePicker"
-                                    HorizontalTextAlignment="Center"
+                                    HorizontalTextAlignment="End"
                                     IsTransparent="True"
-                                    MinimumWidthRequest="120"
+                                    MinimumWidthRequest="164"
                                     SelectedIndexChanged="ThemePicker_SelectedIndexChanged" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=AutoLock}">
+                        <uco:OptionsControl Title="{l:ResourceString Rid=AutoLock}" ApplySlotOpacity="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=Telemetry}" IsSeparatorVisible="False">
+                        <uco:OptionsControl
+                            Title="{l:ResourceString Rid=Telemetry}"
+                            ApplySlotOpacity="False"
+                            IsSeparatorVisible="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>
@@ -60,17 +63,20 @@
             <uco:OptionsContainer Title="{l:ResourceString Rid=FileBrowser}">
                 <uco:OptionsContainer.InnerContent>
                     <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}">
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}" ApplySlotOpacity="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.AreFileExtensionsEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableAdaptiveLayout}">
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableAdaptiveLayout}" ApplySlotOpacity="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.IsAdaptiveLayoutEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>
                         </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileThumbnails}" IsSeparatorVisible="False">
+                        <uco:OptionsControl
+                            Title="{l:ResourceString Rid=EnableFileThumbnails}"
+                            ApplySlotOpacity="False"
+                            IsSeparatorVisible="False">
                             <uco:OptionsControl.Slot>
                                 <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />
                             </uco:OptionsControl.Slot>

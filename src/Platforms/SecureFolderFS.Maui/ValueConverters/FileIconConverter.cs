@@ -1,5 +1,4 @@
 using System.Globalization;
-using MauiIcons.Core;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Shared.ComponentModel;
@@ -22,14 +21,14 @@ namespace SecureFolderFS.Maui.ValueConverters
 #if ANDROID
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Folder, IconAutoScaling = true },
-                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Material.MaterialIcons.Description, IconAutoScaling = true }
+                    { Inner: IFolder } => new Image() { Source = "android_folder.png" },
+                    _ => new Image() { Source = "android_file.png" }
                 }
 #else
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Folder, IconAutoScaling = true },
-                    _ => new MauiIcon() { HorizontalOptions = LayoutOptions.Center, Icon = MauiIcons.Cupertino.CupertinoIcons.Doc, IconAutoScaling = true }
+                    { Inner: IFolder } => new Image() { Source = "ios_folder.png" },
+                    _ => new Image() { Source = "ios_file.png" }
                 }
 #endif
             };

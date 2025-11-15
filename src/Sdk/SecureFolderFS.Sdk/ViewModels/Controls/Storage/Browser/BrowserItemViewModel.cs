@@ -207,7 +207,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 var formattedName = CollisionHelpers.GetAvailableName(
                     FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item"),
-                    ParentFolder.Items.Select(x => x.Inner));
+                    ParentFolder.Items.Select(x => x.Inner.Name));
 
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";

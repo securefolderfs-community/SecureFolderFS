@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
@@ -16,6 +12,10 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -56,7 +56,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             await LoginViewModel.InitAsync(cancellationToken);
 
+
             #region Test for quick unlock on mobile
+#if DEBUG
 
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
@@ -76,7 +78,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await Task.Delay(200);
             await UnlockAsync(unlockContract);
 
-            #endregion
+#endif
+           #endregion
         }
 
         [RelayCommand]
@@ -156,6 +159,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             IsConnected = false;
             LoginViewModel?.Dispose();
+            NavigationRequested = null;
         }
     }
 }

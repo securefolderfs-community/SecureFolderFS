@@ -15,7 +15,7 @@ namespace SecureFolderFS.UI.Helpers
     /// </summary>
     public abstract class ThemeHelper : ObservableObject, IAsyncInitialize
     {
-        protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;
+        protected IAppSettings? AppSettings { get; } = DI.OptionalService<ISettingsService>()?.AppSettings;
 
         private ThemeType _CurrentTheme;
         /// <summary>
@@ -36,16 +36,19 @@ namespace SecureFolderFS.UI.Helpers
         public Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
         {
             CurrentTheme = themeType;
-            AppSettings.ApplicationTheme = ConvertThemeType(themeType);
-
             UpdateTheme();
+
+            if (AppSettings is null)
+                return Task.CompletedTask;
+
+            AppSettings.ApplicationTheme = ConvertThemeType(themeType);
             return AppSettings.TrySaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            CurrentTheme = ConvertThemeString(AppSettings.ApplicationTheme);
+            CurrentTheme = ConvertThemeString(AppSettings?.ApplicationTheme);
             UpdateTheme();
 
             return Task.CompletedTask;

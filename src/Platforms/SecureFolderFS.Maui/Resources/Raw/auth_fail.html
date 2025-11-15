@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFolderFS</title>
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            color: #303030;
+            background-color: #fefefe;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            padding: 8px;
+            align-items: center;
+            background-color: #f8f8f8;
+            gap: 8px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: #fff;
+                background-color: #1a1a1a;
+            }
+
+            header {
+                background-color: #2b2b2b;
+            }
+
+            .error-container {
+                background-color: #2b2b2b;
+                border-color: #444;
+            }
+        }
+
+        header > h3 {
+            margin: 0 0 -2px 0;
+        }
+
+        h1, h3, p {
+            text-align: center;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .crossmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #dc3545;
+            animation: fill .4s ease-in-out .4s forwards, .9s both;
+        }
+
+        .crossmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #dc3545;
+            fill: none;
+            animation: stroke .6s cubic-bezier(0.650, 0.000, 0.450, 1.000) forwards;
+        }
+
+        .crossmark__cross {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke .3s cubic-bezier(0.650, 0.000, 0.450, 1.000) .8s forwards;
+        }
+
+        .error-container {
+            width: 90%;
+            max-width: 600px;
+            max-height: 200px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #d63384;
+        }
+
+        .error-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .error-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .error-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .error-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px #dc3545;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img height="50" width="50" src="data:image/png;base64,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" />
+        <h3>SecureFolderFS</h3>
+    </header>
+    <div class="container">
+        <svg class="crossmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="crossmark__cross" fill="none" d="M16 16 l20 20 M36 16 l-20 20"/>
+        </svg>
+
+        <div>
+            <h1>Authentication Failed</h1>
+            <p>Unable to authenticate. Please try again.</p>
+        </div>
+
+        <div class="error-container">
+            ERROR_MESSAGE
+        </div>
+    </div>
+</body>
+</html>

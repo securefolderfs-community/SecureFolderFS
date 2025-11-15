@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ViewModels.Health;
@@ -76,32 +79,59 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private void NameEdit_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (ViewModel is null)
+                return;
+
             if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel nameIssueViewModel } actionBlock })
                 return;
 
             switch (e.Key)
             {
-                case VirtualKey.Enter:
                 case VirtualKey.Escape:
+                {
                     e.Handled = true;
                     nameIssueViewModel.IsEditing = false;
                     break;
+                }
 
-                case VirtualKey.Tab:
-                    if (actionBlock.GetParent<ListView>()?.DataContext is not ActionBlockControl { DataContext: HealthDirectoryIssueViewModel directoryIssueViewModel })
-                        break;
-
+                case VirtualKey.Enter:
+                {
                     e.Handled = true;
                     nameIssueViewModel.IsEditing = false;
 
-                    var index = directoryIssueViewModel.Issues.IndexOf(directoryIssueViewModel) + 1;
-                    if (index >= directoryIssueViewModel.Issues.Count)
-                        index = 0;
+                    ItemsControl itemsList;
+                    IList<HealthIssueViewModel> issueCollection;
 
-                    if (directoryIssueViewModel.Issues.ElementAtOrDefault(index) is HealthNameIssueViewModel nextElement)
-                        nextElement.IsEditing = true;
+                    if (actionBlock.FindAscendant<ListView>() is { DataContext: ActionBlockControl { DataContext: HealthDirectoryIssueViewModel directoryIssue } } parentListView)
+                    {
+                        itemsList = parentListView;
+                        issueCollection = directoryIssue.Issues;
+                    }
+                    else
+                    {
+                        itemsList = ItemsList;
+                        issueCollection = ViewModel.HealthViewModel.FoundIssues;
+                    }
+
+                    var nextIndex = issueCollection.IndexOf(nameIssueViewModel) + 1;
+                    if (issueCollection.Count == 1)
+                        return;
+
+                    if (nextIndex >= issueCollection.Count)
+                        nextIndex = 0;
+
+                    if (issueCollection.ElementAtOrDefault(nextIndex) is not HealthNameIssueViewModel nextItem)
+                        return;
+
+                    var nextContainer = itemsList.ContainerFromIndex(nextIndex);
+                    if (nextContainer is not ContentControl { ContentTemplateRoot: ActionBlockControl nextActionBlock } || nextActionBlock.FindDescendant<TextBox>() is not { } textBox)
+                        return;
+
+                    nextItem.IsEditing = true;
+                    textBox.Focus(FocusState.Programmatic);
 
                     break;
+                }
             }
         }
     }

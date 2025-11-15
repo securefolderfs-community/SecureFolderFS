@@ -15,6 +15,14 @@ namespace SecureFolderFS.Sdk.Services
     public interface IMediaService
     {
         /// <summary>
+        /// Downloads an image from the specified URL and returns a new instance of <see cref="IImage"/>
+        /// </summary>
+        /// <param name="url">The URL from which to download the image.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the image returned from the URL.</returns>
+        Task<IImage> GetImageFromUrlAsync(string url, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Reads an image file and returns a new instance of <see cref="IImage"/>
         /// </summary>
         /// <param name="file">The <see cref="IFile"/> to read.</param>

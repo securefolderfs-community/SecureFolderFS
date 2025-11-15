@@ -6,9 +6,11 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Ftp.ViewModels;assembly=SecureFolderFS.Sdk.Ftp"
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.GoogleDrive.ViewModels;assembly=SecureFolderFS.Sdk.GoogleDrive"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:AccountCreationWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
@@ -38,6 +40,52 @@
                 <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
             </VerticalStackLayout>
         </DataTemplate>
+        <DataTemplate x:Key="GoogleDriveAccountTemplate" x:DataType="vm2:GDriveAccountViewModel">
+            <Grid Padding="0,32,0,0">
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding IsConnected, Mode=OneWay}"
+                    Spacing="16">
+                    <tv:AvatarView
+                        BorderWidth="0"
+                        CornerRadius="48"
+                        HeightRequest="96"
+                        ImageSource="{Binding UserPhotoUri, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                        WidthRequest="96" />
+
+                    <VerticalStackLayout>
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="28"
+                            HorizontalTextAlignment="Center"
+                            LineBreakMode="WordWrap"
+                            Text="{Binding UserDisplayName, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|WelcomeUser'}" />
+
+                        <Label
+                            FontSize="14"
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding UserEmail, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            LineBreakMode="TailTruncation"
+                            Opacity="0.6"
+                            Text="{Binding UserEmail, Mode=OneWay}" />
+                    </VerticalStackLayout>
+
+                    <Button
+                        Command="{Binding DisconnectCommand, Mode=OneWay}"
+                        Style="{OnPlatform iOS={StaticResource NoBackgroundButtonStyle},
+                                           Android={StaticResource TransparentButtonStyle}}"
+                        Text="{l:ResourceString Rid=Disconnect}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsConnected, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="64">
+                    <Image HeightRequest="64" Source="source_gdrive.png" />
+                    <Button
+                        Command="{Binding ConnectAccountPromptCommand, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=Connect}" />
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
@@ -51,7 +99,7 @@
                 Text="{Binding ViewModel.AccountViewModel.Title, Mode=OneWay}" />
             <uc:ContentPresentation Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
                 <uc:ContentPresentation.TemplateSelector>
-                    <ts:AccountCreationTemplateSelector FtpAccountTemplate="{StaticResource FtpAccountTemplate}" />
+                    <ts:AccountCreationTemplateSelector FtpAccountTemplate="{StaticResource FtpAccountTemplate}" GoogleDriveAccountTemplate="{StaticResource GoogleDriveAccountTemplate}" />
                 </uc:ContentPresentation.TemplateSelector>
             </uc:ContentPresentation>
         </VerticalStackLayout>

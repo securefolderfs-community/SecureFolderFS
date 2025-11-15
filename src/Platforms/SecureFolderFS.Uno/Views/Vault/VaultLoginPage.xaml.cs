@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -46,14 +47,6 @@ namespace SecureFolderFS.Uno.Views.Vault
             base.OnNavigatedTo(e);
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            if (ViewModel is not null)
-                ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
-
-            base.OnNavigatingFrom(e);
-        }
-
         private void LoginOptions_Click(object sender, RoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
@@ -67,12 +60,12 @@ namespace SecureFolderFS.Uno.Views.Vault
             if (e is not UnlockNavigationRequestedEventArgs args)
                 return;
 
-            ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
-
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
+            ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
-            await ViewModel.VaultNavigation.ForgetNavigateCurrentViewAsync(dashboardViewModel);
+            await ViewModel.VaultNavigation.ForgetNavigateSpecificViewAsync(dashboardViewModel,
+               x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(args.UnlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
         }
     }
 }
