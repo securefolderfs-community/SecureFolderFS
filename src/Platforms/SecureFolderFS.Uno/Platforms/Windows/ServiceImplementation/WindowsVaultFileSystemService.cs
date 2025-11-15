@@ -25,7 +25,10 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             await Task.CompletedTask;
             yield return new WindowsWebDavFileSystem();
             yield return new DokanyFileSystem();
+
+#if DEBUG
             yield return new WinFspFileSystem();
+#endif
         }
 
         /// <inheritdoc/>

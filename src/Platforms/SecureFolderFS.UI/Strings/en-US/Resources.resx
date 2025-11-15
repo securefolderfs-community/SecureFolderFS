@@ -941,4 +941,10 @@
   <data name="DokanyIncompatible" xml:space="preserve">
     <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
   </data>
+  <data name="WinFspNotDetected" xml:space="preserve">
+    <value>WinFsp has not been detected. Please install WinFsp (v{0}) to continue.</value>
+  </data>
+  <data name="WinFspIncompatible" xml:space="preserve">
+    <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
+  </data>
 </root>
