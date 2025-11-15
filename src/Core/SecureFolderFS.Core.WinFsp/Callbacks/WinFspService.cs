@@ -1,12 +1,13 @@
 ﻿using Fsp;
-using System.Threading;
-using System.Threading.Tasks;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WinFsp.Callbacks
 {
-    internal sealed class WinFspService : Service
+    internal sealed class WinFspService : Service, IDisposable
     {
         private readonly OnDeviceWinFsp _winFspCallbacks;
         private readonly TaskCompletionSource<int> _tcs;
@@ -34,14 +35,6 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             return status < 0 ? Result<int>.Failure(status) : Result<int>.Success(status);
         }
 
-        public bool CloseFileSystem()
-        {
-            Stop();
-            _host?.Dispose();
-            _winFspCallbacks.Dispose();
-            return true;
-        }
-
         /// <inheritdoc/>
         protected override void OnStart(string[] Args)
         {
@@ -49,6 +42,14 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             var status = _host.Mount(_startMountPoint, null, true);
 
             _tcs.TrySetResult(status);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Stop();
+            _host?.Dispose();
+            _winFspCallbacks.Dispose();
         }
     }
 }

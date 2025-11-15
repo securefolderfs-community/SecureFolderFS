@@ -54,14 +54,15 @@ namespace SecureFolderFS.Core.WinFsp
             var pathRoot = Path.GetPathRoot(specifics.ContentFolder.Id) ?? throw new InvalidOperationException("Content folder has an invalid path.");
             var driveInfo = new DriveInfo(pathRoot);
             var winFspCallbacks = new OnDeviceWinFsp(specifics, handlesManager, volumeModel, driveInfo);
-            var winFspService = new WinFspService(winFspCallbacks, winFspOptions.MountPoint);
-            var result = await winFspService.StartFileSystemAsync();
+            //var winFsp = new WinFspService(winFspCallbacks, winFspOptions.MountPoint);
+            var winFsp = new WinFspHost(winFspCallbacks, winFspOptions.MountPoint); 
+            var result = await winFsp.StartFileSystemAsync();
 
             if (!result.Successful)
                 throw new Win32Exception(result.Value);
 
-            winFspOptions.DangerousSetMountPoint(winFspService.GetMountPointInternal());
-            return new WinFspVFSRoot(winFspService, new SystemFolderEx(winFspOptions.MountPoint), specifics);
+            winFspOptions.DangerousSetMountPoint(winFsp.GetMountPointInternal());
+            return new WinFspVFSRoot(winFsp, new SystemFolderEx(winFspOptions.MountPoint), specifics);
         }
     }
 }
