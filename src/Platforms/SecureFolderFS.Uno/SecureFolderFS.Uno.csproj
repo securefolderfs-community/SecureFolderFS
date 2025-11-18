@@ -22,8 +22,8 @@
 
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
-    <AssemblyVersion>0.7.1.0</AssemblyVersion>
-    <ApplicationDisplayVersion>0.7.1.0</ApplicationDisplayVersion>
+    <AssemblyVersion>0.7.2.0</AssemblyVersion>
+    <ApplicationDisplayVersion>0.7.2.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
   </PropertyGroup>
