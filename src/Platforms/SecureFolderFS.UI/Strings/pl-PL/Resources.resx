@@ -773,14 +773,14 @@
   <data name="Restore" xml:space="preserve">
     <value>Przywróć</value>
   </data>
-  <data name="Repair" xml:space="preserve">
-    <value>Napraw</value>
+  <data name="RepairAll" xml:space="preserve">
+    <value>Napraw wszystko</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
     <value>Podczas naprawy twój sejf będzie ustawiony w trybie tylko do odczytu.</value>
   </data>
-  <data name="ChooseNewName" xml:space="preserve">
-    <value>Wybierz nową nazwę</value>
+  <data name="GenerateNewName" xml:space="preserve">
+    <value>Wygeneruj nową nazwę</value>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Eksportuj</value>
@@ -936,9 +936,60 @@
     <value>Dokumentacja</value>
   </data>
   <data name="DokanyNotDetected" xml:space="preserve">
-    <value>Dokany has not been detected. Please install Dokany (v{0}) to continue.</value>
+    <value>Dokany nie zostało wykryte. Zainstaluj Dokany (v{0}), aby kontynuować.</value>
   </data>
   <data name="DokanyIncompatible" xml:space="preserve">
-    <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
+    <value>Zainstalowana wersja Dokany jest niekompatybilna. Zainstaluj żądaną wersję Dokany (v{0}).</value>
+  </data>
+  <data name="CopyPath" xml:space="preserve">
+    <value>Kopiuj ścieżkę</value>
+  </data>
+  <data name="CopyError" xml:space="preserve">
+    <value>Kopiuj błąd</value>
+  </data>
+  <data name="RegenerateInvalidDirectoryId" xml:space="preserve">
+    <value>Regeneruj nieprawidłowy identyfikator katalogu</value>
+  </data>
+  <data name="InvalidDirectoryId" xml:space="preserve">
+    <value>Nieprawidłowy identyfikator katalogu</value>
+  </data>
+  <data name="InvalidItemName" xml:space="preserve">
+    <value>Nieprawidłowa nazwa elementu</value>
+  </data>
+  <data name="GenerateNewNameChanged" xml:space="preserve">
+    <value>Zostanie zastosowana niestandardowa nazwa</value>
+  </data>
+  <data name="InvalidFileContents" xml:space="preserve">
+    <value>Uszkodzona zawartość pliku</value>
+  </data>
+  <data name="RegenerateFileContents" xml:space="preserve">
+    <value>Nadpisz uszkodzone regiony pliku</value>
+  </data>
+  <data name="RegenerateMissingDirectoryId" xml:space="preserve">
+    <value>Regeneruj brakujący identyfikator katalogu</value>
+  </data>
+  <data name="MissingDirectoryId" xml:space="preserve">
+    <value>Brakujący identyfikator katalogu</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Nieznany błąd</value>
+  </data>
+  <data name="ItemsLoseOriginalName" xml:space="preserve">
+    <value>Elementy w tym katalogu utracą swoją oryginalną nazwę</value>
+  </data>
+  <data name="WelcomeUser" xml:space="preserve">
+      <value>Witaj, {0}</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+      <value>Połącz</value>
+  </data>
+  <data name="WinFspNotDetected" xml:space="preserve">
+    <value>WinFsp nie został wykryty. Zainstaluj WinFsp (v{0}), aby kontynuować.</value>
+  </data>
+  <data name="WinFspIncompatible" xml:space="preserve">
+    <value>Zainstalowana wersja WinFsp jest niekompatybilna. Zainstaluj żądaną wersję WinFsp (v{0}).</value>
+  </data>
+  <data name="ChooseNewName" xml:space="preserve">
+      <value>Wybierz nową nazwę</value>
   </data>
 </root>
