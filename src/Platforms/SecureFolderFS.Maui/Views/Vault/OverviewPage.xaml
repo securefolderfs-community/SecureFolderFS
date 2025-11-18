@@ -37,18 +37,15 @@
             </Grid.RowDefinitions>
 
             <!--  Top widgets  -->
-            <CollectionView
+            <VerticalStackLayout
                 Grid.Row="0"
                 Margin="16,16"
-                ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}"
-                VerticalScrollBarVisibility="Never">
-                <CollectionView.ItemTemplate>
+                BindableLayout.ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}"
+                Spacing="16">
+                <BindableLayout.ItemTemplateSelector>
                     <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
-                </CollectionView.ItemTemplate>
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
-                </CollectionView.ItemsLayout>
-            </CollectionView>
+                </BindableLayout.ItemTemplateSelector>
+            </VerticalStackLayout>
 
             <!--  Top buttons  -->
             <Grid

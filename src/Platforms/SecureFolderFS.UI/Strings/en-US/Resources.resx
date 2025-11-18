@@ -989,4 +989,7 @@
   <data name="WinFspIncompatible" xml:space="preserve">
     <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
   </data>
+  <data name="ChooseNewName" xml:space="preserve">
+      <value>Choose a new name</value>
+  </data>
 </root>

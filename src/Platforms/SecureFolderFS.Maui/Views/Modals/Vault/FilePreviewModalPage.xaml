@@ -60,19 +60,31 @@
             </ucc:PanPinchContainer>
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
-            <ScrollView
-                Padding="8"
-                HorizontalScrollBarVisibility="Always"
-                Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
-                VerticalScrollBarVisibility="Always">
-                <Editor
-                    AutoSize="TextChanges"
-                    Background="{StaticResource ThemeBackgroundFillColorBrush}"
-                    HorizontalOptions="Fill"
-                    IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
-                    Placeholder="{l:ResourceString Rid=WriteHere}"
-                    Text="{Binding Text, Mode=TwoWay}" />
-            </ScrollView>
+            <Grid>
+                <ScrollView
+                    Padding="8"
+                    HorizontalScrollBarVisibility="Always"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                    Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
+                    VerticalScrollBarVisibility="Always">
+                    <Editor
+                        AutoSize="TextChanges"
+                        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                        HorizontalOptions="Fill"
+                        IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
+                        Placeholder="{l:ResourceString Rid=WriteHere}"
+                        Text="{Binding Text, Mode=TwoWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                </ScrollView>
+                <ActivityIndicator
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                    VerticalOptions="Center"
+                    Color="{OnPlatform iOS={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                            Dark={StaticResource PrimaryContrastingDarkColor}}}" />
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
             <WebView

@@ -71,7 +71,7 @@
                                                                   Dark={StaticResource SecondaryDarkColor}}"
                                 Command="{Binding CustomizeCommand, Mode=OneWay}"
                                 CommandParameter="Rename"
-                                IsEnabled="{Binding VaultViewModel.CanRename, Mode=OneWay}"
+                                IsVisible="{Binding VaultViewModel.CanRename, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=Rename}" />
                         </SwipeView.RightItems>
 
