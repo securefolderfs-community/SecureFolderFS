@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,6 +31,17 @@ namespace SecureFolderFS.Shared.Extensions
             }
 
             return default;
+        }
+
+        public static async IAsyncEnumerable<TResult> SelectAsyncImpl<TSource, TResult>(
+            this IAsyncEnumerable<TSource> source,
+            Func<TSource, TResult> selector,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var item in source.WithCancellation(cancellationToken))
+            {
+                yield return selector(item);
+            }
         }
     }
 }

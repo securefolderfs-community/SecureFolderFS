@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,6 +13,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
             RecoveryOverlayViewModel = new RecoveryOverlayViewModel(vaultFolder);
 
             var vaultCredentialsService = DI.Service<IVaultCredentialsService>();
-            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultFolder).ToArrayAsync());
+            _loginSequence = new(await vaultCredentialsService.GetLoginAsync(vaultFolder).ToArrayAsyncImpl());
 
             // Set up the first authentication method
             var result = ProceedAuthentication();
