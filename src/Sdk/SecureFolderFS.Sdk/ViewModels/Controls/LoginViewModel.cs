@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 try
                 {
                     // Get the authentication method enumerator for this vault
-                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsync(cancellationToken);
+                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
                     _loginSequence = new(loginItems);
                     IsLoginSequence = _loginSequence.Count > 1;
 

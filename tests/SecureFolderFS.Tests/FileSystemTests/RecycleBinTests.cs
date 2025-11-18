@@ -4,6 +4,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Tests.FileSystemTests
@@ -42,7 +43,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Assert
             var recycleBin = await _recycleBinService.GetOrCreateRecycleBinAsync(_storageRoot);
-            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsyncImpl();
             recycleBinItems.First().Name.Should().BeEquivalentTo(fileName);
 
             Assert.Pass($"{nameof(recycleBinItems)}:\n" + string.Join('\n', recycleBinItems.Select(x => (x as IWrapper<IStorableChild>)?.Inner.Id)));
@@ -69,7 +70,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Assert
             var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
-            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsyncImpl();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
 
@@ -100,7 +101,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFolder);
 
             var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
-            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsync();
+            var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsyncImpl();
             var first = recycleBinItems[0];
             var second = recycleBinItems[1];
 
@@ -108,7 +109,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await recycleBin.RestoreItemsAsync([ second ], _fileExplorerService);
 
             // Assert
-            var restoredItems = await subFolder.GetItemsAsync().ToArrayAsync();
+            var restoredItems = await subFolder.GetItemsAsync().ToArrayAsyncImpl();
             restoredItems.Should().HaveCount(2);
             restoredItems[0].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
             restoredItems[1].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");

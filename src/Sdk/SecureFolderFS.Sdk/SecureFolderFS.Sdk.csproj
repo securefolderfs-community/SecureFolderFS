@@ -11,9 +11,6 @@
   <ItemGroup>
     <PackageReference Include="ByteSize" Version="2.1.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1">
-      <ExcludeAssets>all</ExcludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

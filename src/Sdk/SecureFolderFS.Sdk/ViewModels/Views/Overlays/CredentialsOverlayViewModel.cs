@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             try
             {
-                var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToListAsync(cancellationToken);
+                var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
                 SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
                 {
                     AuthenticationStage.FirstStageOnly => loginItems.FirstOrDefault(),

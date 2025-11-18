@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
 
-                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
+                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToArrayAsyncImpl(cancellationToken);
                 var nonTypeFiles = allFiles.Where(x => !x.Name.Contains(TYPE_FILE_SUFFIX, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var dataFile in nonTypeFiles)

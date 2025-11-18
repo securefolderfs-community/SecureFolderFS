@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
             if (!Accounts.IsEmpty())
                 return;
 
-            var accounts = await AccountService.GetAccountsAsync(DataSourceType, PropertyStoreService.SecurePropertyStore).ToArrayAsync();
+            var accounts = await AccountService.GetAccountsAsync(DataSourceType, PropertyStoreService.SecurePropertyStore).ToArrayAsyncImpl();
             Accounts.DisposeAll();
             Accounts.Clear();
             Accounts.AddMultiple(accounts);

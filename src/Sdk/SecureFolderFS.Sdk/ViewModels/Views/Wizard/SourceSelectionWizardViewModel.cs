@@ -59,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             if (!Sources.IsEmpty())
                 return;
 
-            var sources = await VaultFileSystemService.GetSourcesAsync(_vaultCollectionModel, _mode).ToArrayAsync();
+            var sources = await VaultFileSystemService.GetSourcesAsync(_vaultCollectionModel, _mode).ToArrayAsyncImpl();
             Sources.DisposeAll();
             Sources.Clear();
             Sources.AddMultiple(sources.Skip(1));
