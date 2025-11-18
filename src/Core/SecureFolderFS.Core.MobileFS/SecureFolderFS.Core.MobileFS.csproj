@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-<!--		<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>-->
-<!--		<TargetFramework>net9.0-android</TargetFramework>-->
-		<TargetFramework>net9.0-ios</TargetFramework>
+<!--		<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>-->
+<!--		<TargetFramework>net10.0-android</TargetFramework>-->
+		<TargetFramework>net10.0-ios</TargetFramework>
 
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
@@ -13,11 +13,6 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">28.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.50" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.70" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />

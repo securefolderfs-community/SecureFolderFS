@@ -1,4 +1,4 @@
-﻿<local:ContentPageExtended
+﻿<ContentPage
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -13,6 +13,13 @@
     ios:Page.LargeTitleDisplay="Always"
     x:DataType="local:MainPage"
     Loaded="MainPage_Loaded">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.OpenSettingsCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="{l:ResourceString Rid=Settings}" />
+    </ContentPage.ToolbarItems>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -64,7 +71,7 @@
                                                                   Dark={StaticResource SecondaryDarkColor}}"
                                 Command="{Binding CustomizeCommand, Mode=OneWay}"
                                 CommandParameter="Rename"
-                                IsEnabled="{Binding VaultViewModel.CanRename, Mode=OneWay}"
+                                IsVisible="{Binding VaultViewModel.CanRename, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=Rename}" />
                         </SwipeView.RightItems>
 
@@ -145,4 +152,4 @@
             </OnPlatform>
         </Grid>
     </Grid>
-</local:ContentPageExtended>
+</ContentPage>

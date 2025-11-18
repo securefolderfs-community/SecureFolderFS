@@ -150,7 +150,8 @@
                 HorizontalAlignment="Center"
                 HorizontalTextAlignment="Center"
                 Opacity="0.8"
-                Text="{x:Bind Title, Mode=OneWay}" />
+                Text="{x:Bind Title, Mode=OneWay}"
+                TextWrapping="Wrap" />
         </DataTemplate>
     </UserControl.Resources>
 

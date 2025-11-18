@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Shared.Extensions
 {
@@ -11,6 +12,14 @@ namespace SecureFolderFS.Shared.Extensions
                 action(state);
             else
                 synchronizationContext.Post(action, state);
+        }
+
+        public static async Task PostOrExecuteAsync(this SynchronizationContext? synchronizationContext, Func<object?, Task> func, object? state = null)
+        {
+            if (synchronizationContext is null)
+                await func(state);
+            else
+                synchronizationContext.Post(async obj => await func(obj), state);
         }
 
         public static void TryCancel(this CancellationTokenSource cancellationTokenSource)

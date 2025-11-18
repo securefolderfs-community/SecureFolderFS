@@ -73,6 +73,17 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
+        public override async Task WipeAsync(CancellationToken cancellationToken = default)
+        {
+            if (_databaseFolder is null)
+                return;
+
+            settingsCache.Clear();
+            await foreach (var item in _databaseFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                await _databaseFolder.DeleteAsync(item, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -82,7 +93,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
 
-                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
+                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToArrayAsyncImpl(cancellationToken);
                 var nonTypeFiles = allFiles.Where(x => !x.Name.Contains(TYPE_FILE_SUFFIX, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var dataFile in nonTypeFiles)
@@ -150,7 +161,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         // Data file part
 
                         // Open file stream and serialize
-                        await using var dataStream = await dataFile.OpenReadWriteAsync(cancellationToken);
+                        await using var dataStream = await dataFile.OpenWriteAsync(cancellationToken);
                         await using var serializedDataStream = await serializer.SerializeAsync(item.Value.Data, item.Value.Type, cancellationToken);
 
                         // Overwrite existing content
@@ -167,7 +178,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         var typeBuffer = Encoding.UTF8.GetBytes(item.Value.Type.FullName ?? string.Empty);
 
                         // Open file stream
-                        await using var typeStream = await typeFile.OpenReadWriteAsync(cancellationToken);
+                        await using var typeStream = await typeFile.OpenWriteAsync(cancellationToken);
 
                         // Reset the stream
                         typeStream.Position = 0L;

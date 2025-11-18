@@ -1,15 +1,13 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Core.Constants.Vault;
 using static SecureFolderFS.Core.Cryptography.Constants;
 

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Accounts.ViewModels
     public abstract partial class AccountViewModel : ObservableObject, IViewable, IRemoteResource<IFolder>, ISavePersistence
     {
         protected readonly AccountDataModel? accountDataModel;
-        protected readonly IPropertyStore<string>? propertyStore;
+        protected readonly IPropertyStore<string> propertyStore;
         private IFolder? _folder;
 
         [ObservableProperty] private string? _Title;

@@ -14,8 +14,9 @@ namespace SecureFolderFS.Maui.ValueConverters
             if (parameter is not string strParam)
                 return 0d;
 
+            // Get columns for each indent
             var indents = strParam.Split(',', 3);
-            var smallStr = indents.FirstOrDefault() ?? "0";
+            var smallStr = indents.FirstOrDefault() ?? "3";
             var mediumStr = indents.ElementAtOrDefault(1) ?? smallStr;
             var largeStr = indents.LastOrDefault() ?? mediumStr;
 
@@ -23,15 +24,22 @@ namespace SecureFolderFS.Maui.ValueConverters
             var medium = System.Convert.ToDouble(mediumStr);
             var large = System.Convert.ToDouble(largeStr);
 
-            return viewType switch
+            // Get columns count
+            var columns = viewType switch
             {
                 BrowserViewType.SmallGridView or BrowserViewType.SmallGalleryView => small,
                 BrowserViewType.MediumGridView or BrowserViewType.MediumGalleryView => medium,
                 BrowserViewType.LargeGridView or BrowserViewType.LargeGalleryView => large,
-                _ => 0d
+                _ => 3
             };
 
-            throw new NotImplementedException();
+            // Calculate dimensions with spacing consideration
+            var spacing = 0;
+            var screenWidth = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
+            var availableWidth = screenWidth - (spacing * (columns + 1));
+            var itemWidth = availableWidth / columns;
+
+            return itemWidth;
         }
 
         /// <inheritdoc/>

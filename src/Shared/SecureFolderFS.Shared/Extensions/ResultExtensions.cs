@@ -17,20 +17,19 @@ namespace SecureFolderFS.Shared.Extensions
             return true;
         }
 
-        public static string GetMessage(this IResult result, string? fallback = null)
+        public static string GetMessage(this IResult? result, string fallback)
         {
             if (result is IResultWithMessage resultWithMessage)
-                return resultWithMessage.Message ?? (fallback ?? "Unknown error");
+                return resultWithMessage.Message ?? fallback;
 
-            return fallback ?? "Unknown error";
+            return fallback;
         }
 
-        public static string GetExceptionMessage(this IResult result, string? fallback = null)
+        public static string GetExceptionMessage(this IResult? result, string fallback)
         {
-            return result.ToString()
-                   ?? (string.IsNullOrEmpty(result.Exception?.Message) ? null : result.Exception?.Message)
-                   ?? fallback
-                   ?? "Unknown error";
+            return result?.ToString()
+                   ?? (string.IsNullOrEmpty(result?.Exception?.Message) ? null : result.Exception.Message)
+                   ?? fallback;
         }
     }
 }

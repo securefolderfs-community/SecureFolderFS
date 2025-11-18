@@ -108,7 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return null;
 
             return await VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
-                .FirstOrDefaultAsync(x => x.Id == ConfiguredViewModel?.Id, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsyncImpl(x => x.Id == ConfiguredViewModel?.Id, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>

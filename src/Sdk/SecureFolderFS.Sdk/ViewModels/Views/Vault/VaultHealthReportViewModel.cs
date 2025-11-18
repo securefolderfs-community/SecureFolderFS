@@ -20,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IDisposable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+        private readonly SynchronizationContext? _context;
 
         [ObservableProperty] private bool _CanResolve;
         [ObservableProperty] private VaultHealthViewModel _HealthViewModel;
@@ -31,6 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             Title = "HealthReport".ToLocalized();
             HealthViewModel.StateChanged += HealthViewModel_StateChanged;
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            _context = SynchronizationContext.Current;
         }
 
         [RelayCommand]
@@ -56,12 +58,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private void HealthViewModel_StateChanged(object? sender, EventArgs e)
         {
-            CanResolve = e switch
+            _context.PostOrExecute(_ =>
             {
-                ScanningStartedEventArgs => false,
-                ScanningFinishedEventArgs args => !args.WasCanceled && !HealthViewModel.FoundIssues.IsEmpty(),
-                _ => CanResolve
-            };
+                CanResolve = e switch
+                {
+                    ScanningStartedEventArgs => false,
+                    ScanningFinishedEventArgs args => !args.WasCanceled && !HealthViewModel.FoundIssues.IsEmpty(),
+                    _ => CanResolve
+                };
+            });
         }
 
         /// <inheritdoc/>

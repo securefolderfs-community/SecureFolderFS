@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.GoogleDrive.Streams;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
@@ -21,24 +22,23 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
+        public virtual async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
+            var request = DriveService.Files.Get(DetachedId);
+            request.Fields = "size";
+            var file = await request.ExecuteAsync(cancellationToken);
+            var size = file.Size ?? 0L;
+
             switch (accessMode)
             {
                 case FileAccess.Read:
                 {
-                    var request = DriveService.Files.Get(Id);
-                    var stream = new MemoryStream();
-
-                    await request.DownloadAsync(stream, cancellationToken);
-                    stream.Position = 0;
-
-                    return stream;
+                    return new GoogleDriveReadStream(DriveService, DetachedId, size);
                 }
 
                 case FileAccess.Write:
                 {
-                    return new GoogleDriveUploadStream(DriveService, Id, Name, MimeType);
+                    return new GoogleDriveWriteStream(DriveService, DetachedId, Name, MimeType);
                 }
 
                 default:

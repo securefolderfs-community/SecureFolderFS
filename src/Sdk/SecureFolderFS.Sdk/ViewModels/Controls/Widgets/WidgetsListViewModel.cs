@@ -17,6 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     {
         private readonly INavigator _dashboardNavigator;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+        private readonly SynchronizationContext? _synchronizationContext;
 
         public IWidgetsCollectionModel WidgetsCollectionModel { get; }
 
@@ -26,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         {
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            _synchronizationContext = SynchronizationContext.Current;
             WidgetsCollectionModel = widgetsCollectionModel;
             Widgets = new();
         }
@@ -33,20 +35,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // Load widgets for vault
-            if (!await WidgetsCollectionModel.TryInitAsync(cancellationToken))
-                return;
-
-            // Add widgets
-            foreach (var item in WidgetsCollectionModel.GetWidgets())
+            await _synchronizationContext.PostOrExecuteAsync(async state =>
             {
-                var widgetViewModel = GetWidgetForModel(item);
-                if (widgetViewModel is null)
-                    continue;
+                // Load widgets for vault
+                if (!await WidgetsCollectionModel.TryInitAsync(cancellationToken))
+                    return;
 
-                _ = widgetViewModel.InitAsync(cancellationToken);
-                Widgets.Add(widgetViewModel);
-            }
+                // Add widgets
+                foreach (var item in WidgetsCollectionModel.GetWidgets())
+                {
+                    var widgetViewModel = GetWidgetForModel(item);
+                    if (widgetViewModel is null)
+                        continue;
+
+                    _ = widgetViewModel.InitAsync(cancellationToken);
+                    Widgets.Add(widgetViewModel);
+                }
+            });
         }
 
         private BaseWidgetViewModel? GetWidgetForModel(IWidgetModel widgetModel)

@@ -1,13 +1,17 @@
-using Microsoft.Maui.Handlers;
-using Microsoft.Maui.Platform;
-using SecureFolderFS.Maui.UserControls.Common;
-using SecureFolderFS.UI.Enums;
 #if ANDROID
 using Android.Graphics.Drawables.Shapes;
 using SecureFolderFS.Maui.Helpers;
 using Paint = Android.Graphics.Paint;
 using ShapeDrawable = Android.Graphics.Drawables.ShapeDrawable;
+#elif IOS
+using UIKit;
+using CoreGraphics;
 #endif
+using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Maui.UserControls.Common;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.Extensions.Mappers
 {
@@ -38,6 +42,40 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 }] as Color)!.ToPlatform());
                 handler.PlatformView.Background = shape;
                 handler.PlatformView.SetPadding(32, 24, 32, 24);
+#elif IOS || MACCATALYST
+                var uiTextField = handler.PlatformView;
+                
+                // Remove border
+                uiTextField.BorderStyle = UITextBorderStyle.None;
+                
+                // Set background color
+                uiTextField.BackgroundColor = modernPicker.IsTransparent
+                    ? UIColor.Clear
+                    : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
+                
+                // Set text color
+                uiTextField.TextColor = (App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                {
+                    ThemeType.Dark => "PrimaryContrastingDarkColor",
+                    _ => "PrimaryContrastingLightColor"
+                }] as Color)!.ToPlatform();
+                
+                // Add the chevron icon on the right
+                var chevronConfig = UIImageSymbolConfiguration.Create(UIImageSymbolScale.Small);
+                var chevronImage = UIImage.GetSystemImage("chevron.up.chevron.down", chevronConfig);
+                var chevronImageView = new UIImageView(chevronImage)
+                {
+                    ContentMode = UIViewContentMode.ScaleAspectFit,
+                    TintColor = uiTextField.TextColor
+                };
+                
+                // Create a container for the chevron with padding
+                var rightView = new UIView(new CGRect(0, 0, 30, 20));
+                chevronImageView.Frame = new CGRect(6, 2, 16, 16);
+                rightView.AddSubview(chevronImageView);
+                
+                uiTextField.RightView = rightView;
+                uiTextField.RightViewMode = UITextFieldViewMode.Always;
 #else
                 modernPicker.BackgroundColor = modernPicker.IsTransparent
                     ? Colors.Transparent

@@ -24,6 +24,8 @@ namespace SecureFolderFS.Maui.ValueConverters
                     }] as Color)!,
                     FontFamily = iconImage.MauiIcon.Icon?.GetType().Name,
                 },
+                Uri uriImage => ImageSource.FromUri(uriImage),
+                ImageRemoteUrl remoteUrlImage => ImageSource.FromUri(new Uri(remoteUrlImage.Url)),
                 ImageResourceFile resourceFileImage => resourceFileImage.IsResource
                     ? ImageSource.FromResource(resourceFileImage.Name)
                     : ImageSource.FromFile(resourceFileImage.Name),

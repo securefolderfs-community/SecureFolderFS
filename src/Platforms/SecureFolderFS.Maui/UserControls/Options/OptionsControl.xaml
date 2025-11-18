@@ -38,10 +38,12 @@
             </HorizontalStackLayout>
 
             <ContentView
+                x:Name="SlotView"
                 Grid.Row="0"
                 Grid.Column="1"
                 Content="{Binding Slot, Mode=OneWay, Source={x:Reference ThisControl}}"
                 HorizontalOptions="End"
+                Opacity="0.8"
                 VerticalOptions="Center" />
 
             <ContentView

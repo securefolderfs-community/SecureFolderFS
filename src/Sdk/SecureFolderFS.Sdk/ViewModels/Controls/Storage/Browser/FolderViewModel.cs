@@ -54,8 +54,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             Items.DisposeAll();
             Items.Clear();
 
-            var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsync(cancellationToken: cancellationToken);
-            BrowserViewModel.Layouts.GetSorter().SortCollection(items.Select(x => (BrowserItemViewModel)(x switch
+            var isPickingFolder = BrowserViewModel.TransferViewModel?.IsPickingFolder ?? false;
+            var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken: cancellationToken);
+            BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
             {
                 IFile file => new FileViewModel(file, BrowserViewModel, this),
                 IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),

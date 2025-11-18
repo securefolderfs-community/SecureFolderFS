@@ -15,8 +15,8 @@ namespace SecureFolderFS.Sdk.AppModels.Database
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
     public sealed class SingleFileDatabaseModel : ObservableDatabaseModel<ISerializedModel>
     {
-        private readonly string _fileName;
-        private readonly IModifiableFolder _settingsFolder;
+        private readonly string? _fileName;
+        private readonly IModifiableFolder? _settingsFolder;
         private IFile? _databaseFile;
         private IFolderWatcher? _folderWatcher;
         private bool _canCaptureChanges;
@@ -29,6 +29,13 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         {
             _fileName = fileName;
             _settingsFolder = settingsFolder;
+            _canCaptureChanges = true;
+        }
+
+        public SingleFileDatabaseModel(IFile file, IAsyncSerializer<Stream> serializer)
+            : base(serializer)
+        {
+            _databaseFile = file;
             _canCaptureChanges = true;
         }
 
@@ -58,6 +65,17 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         {
             var result = settingsCache.Remove(key, out _);
             return Task.FromResult(result);
+        }
+
+        /// <inheritdoc/>
+        public override async Task WipeAsync(CancellationToken cancellationToken = default)
+        {
+            if (_databaseFile is null)
+                return;
+
+            await using var stream = await _databaseFile.OpenStreamAsync(FileAccess.Write, cancellationToken);
+            stream.SetLength(0L);
+            settingsCache.Clear();
         }
 
         /// <inheritdoc/>
@@ -106,7 +124,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var dataStream = await _databaseFile.OpenReadWriteAsync(cancellationToken);
+                await using var dataStream = await _databaseFile.OpenWriteAsync(cancellationToken);
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
@@ -135,6 +153,12 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
         private async Task EnsureSettingsFileAsync(CancellationToken cancellationToken)
         {
+            if (_databaseFile is not null)
+                return;
+
+            if (_settingsFolder is null || string.IsNullOrEmpty(_fileName))
+                throw new InvalidOperationException("The database file was not properly initialized.");
+
             _databaseFile ??= await _settingsFolder.CreateFileAsync(_fileName, false, cancellationToken);
             if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder && _canCaptureChanges)
             {

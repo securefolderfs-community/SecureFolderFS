@@ -17,6 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         [ObservableProperty] private string? _Text;
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _WasModified;
+        [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private bool _IsWrappingText;
 
         public TextPreviewerViewModel(IFile file, bool isReadOnly)
@@ -31,8 +32,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            IsProgressing = true;
+            await Task.Delay(100);
+
             _persistedText = await Inner.ReadAllTextAsync(Encoding.UTF8, cancellationToken);
             Text = _persistedText;
+            IsProgressing = false;
         }
 
         /// <inheritdoc/>

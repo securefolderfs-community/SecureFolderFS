@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -121,7 +122,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 var loginItems = await VaultCredentialsService
                     .GetLoginAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken)
-                    .ToArrayAsync(cancellationToken);
+                    .ToArrayAsyncImpl(cancellationToken);
                 SecurityText = string.Join(" + ", loginItems.Select(x => x.Title));
             }
             catch (Exception)

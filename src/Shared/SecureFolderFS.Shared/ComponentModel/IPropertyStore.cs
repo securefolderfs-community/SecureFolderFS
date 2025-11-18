@@ -37,5 +37,12 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns true if the value was successfully removed; otherwise, false.</returns>
         Task<bool> RemoveAsync(TKey key, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Removes all entries from the property store.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task WipeAsync(CancellationToken cancellationToken = default);
     }
 }

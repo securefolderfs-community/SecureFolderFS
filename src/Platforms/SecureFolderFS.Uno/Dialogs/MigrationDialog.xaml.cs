@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -72,7 +73,7 @@ namespace SecureFolderFS.Uno.Dialogs
                     MigrationView.Visibility = Visibility.Collapsed;
                     AuthenticationView.Visibility = Visibility.Collapsed;
                     ErrorView.Visibility = Visibility.Visible;
-                    ErrorView.ExceptionMessage = args.Result.GetExceptionMessage();
+                    ErrorView.ExceptionMessage = args.Result.GetExceptionMessage("UnknownError".ToLocalized());
                 }
             }
         }

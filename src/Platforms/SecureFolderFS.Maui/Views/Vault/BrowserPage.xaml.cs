@@ -47,9 +47,6 @@ namespace SecureFolderFS.Maui.Views.Vault
                 return true;
             }
 
-            // On iOS: Navigate whole page using shell
-            // TODO: Set folder source in BrowserViewModel (to reuse the BrowserViewModel) and navigate the whole page instead of only the source
-
             return false;
         }
 

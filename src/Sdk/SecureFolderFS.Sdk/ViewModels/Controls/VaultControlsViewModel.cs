@@ -77,6 +77,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultViewModel, _vaultNavigation);
             _ = loginPageViewModel.InitAsync();
 
+            // TODO: On MAUI iOS, after navigating to Browser and back, the current view is set to the BrowserViewModel.
+            // Since the back navigation is not being tracked of, the CurrentView is not updated, and thus
+            // the navigator only silently navigates assuming that we're on a different/correct view already.
+            // The fix would involve keeping track of Shell.Current.Navigated event. This would also require for a custom
+            // interface to be added to retrieve a view model from a current view (IWrapper<INotifyPropertyChanged?>)
+
             // Navigate away
             await _vaultNavigation.ForgetNavigateSpecificViewAsync(loginPageViewModel, x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));

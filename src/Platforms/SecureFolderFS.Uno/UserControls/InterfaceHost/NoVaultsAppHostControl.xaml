@@ -40,15 +40,15 @@
                     HorizontalAlignment="Center"
                     FontSize="22"
                     FontWeight="SemiBold"
-                    Text="{l:ResourceString Rid=Welcome}" />
+                    Text="{l:ResourceString Rid=WelcomeTo,
+                                            Converter={StaticResource StringInterpolationConverter},
+                                            ConverterParameter='none|SecureFolderFS'}" />
 
                 <TextBlock
                     MaxWidth="450"
                     HorizontalAlignment="Center"
                     Opacity="0.6"
-                    Text="{l:ResourceString Rid=WelcomeTo,
-                                            Converter={StaticResource StringInterpolationConverter},
-                                            ConverterParameter='none|SecureFolderFS'}"
+                    Text="{l:ResourceString Rid=NoVaultsMessage}"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
             </StackPanel>
