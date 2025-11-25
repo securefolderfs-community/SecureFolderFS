@@ -80,6 +80,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Core.FSKit",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Core.FSKit.Bridge", "src\Core\SecureFolderFS.Core.FSKit.Bridge\SecureFolderFS.Core.FSKit.Bridge.csproj", "{DFBDCE87-587F-4983-B0BA-A676162B6ABC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.Ipc", "src\Sdk\SecureFolderFS.Sdk.Ipc\SecureFolderFS.Sdk.Ipc.csproj", "{A790F022-8336-4AA2-8EFE-868ECC998D3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -540,6 +542,22 @@ Global
 		{DFBDCE87-587F-4983-B0BA-A676162B6ABC}.Release|x64.Build.0 = Release|Any CPU
 		{DFBDCE87-587F-4983-B0BA-A676162B6ABC}.Release|x86.ActiveCfg = Release|Any CPU
 		{DFBDCE87-587F-4983-B0BA-A676162B6ABC}.Release|x86.Build.0 = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|arm64.Build.0 = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|x64.Build.0 = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Debug|x86.Build.0 = Debug|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|arm64.ActiveCfg = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|arm64.Build.0 = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|x64.ActiveCfg = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|x64.Build.0 = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|x86.ActiveCfg = Release|Any CPU
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -577,6 +595,7 @@ Global
 		{A9219707-C494-4D3B-8123-43652707B516} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
 		{8606CDC9-E7F8-4B2D-9079-C5DF97708AA4} = {F2ACE2B7-1599-4769-8FF4-41FA03B25D26}
 		{DFBDCE87-587F-4983-B0BA-A676162B6ABC} = {F2ACE2B7-1599-4769-8FF4-41FA03B25D26}
+		{A790F022-8336-4AA2-8EFE-868ECC998D3C} = {086CDAC6-2730-4F09-BA28-B41F737E6C4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1906FD8-BB54-4688-BC0F-9ED7532D2CB0}

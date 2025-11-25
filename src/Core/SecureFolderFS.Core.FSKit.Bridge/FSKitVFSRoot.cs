@@ -5,40 +5,31 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FSKit.Bridge
 {
-    internal sealed class FSKitVFSRoot : IVFSRoot
+    /// <inheritdoc cref="IVFSRoot"/>
+    internal sealed class FSKitVFSRoot : VFSRoot
     {
         private readonly FSKitHost _host;
-        private readonly FileSystemSpecifics _specifics;
+        private bool _disposed;
 
         /// <inheritdoc/>
-        public IFolder VirtualizedRoot { get; }
+        public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        /// <inheritdoc/>
-        public string FileSystemName { get; }
-
-        /// <inheritdoc/>
-        public VirtualFileSystemOptions Options => _specifics.Options;
-
-        public FSKitVFSRoot(FSKitHost host, IFolder virtualizedRoot, FileSystemSpecifics specifics)
+        public FSKitVFSRoot(FSKitHost host, IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
             _host = host;
-            VirtualizedRoot = virtualizedRoot;
-            _specifics = specifics;
-            FileSystemName = Constants.FileSystem.FS_NAME;
         }
 
         /// <inheritdoc/>
-        public async ValueTask DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
-            await _host.StopFileSystemAsync();
-            _specifics.Dispose();
-        }
+            if (_disposed)
+                return;
 
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            _host.StopFileSystemAsync().GetAwaiter().GetResult();
-            _specifics.Dispose();
+            await Task.Run(_host.Dispose);
+            _disposed = true;
+            FileSystemManager.Instance.FileSystems.Remove(this);
+            await base.DisposeAsync();
         }
     }
 }

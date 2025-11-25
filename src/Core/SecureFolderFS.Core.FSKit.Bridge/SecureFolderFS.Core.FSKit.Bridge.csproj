@@ -6,11 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ipc\SecureFolderFS.Sdk.Ipc.csproj" />
       <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
       <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
       <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
       <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
-
     </ItemGroup>
 
     <ItemGroup>

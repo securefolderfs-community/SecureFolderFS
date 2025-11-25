@@ -23,4 +23,8 @@
         </None>
         <None Include="Entitlements.plist" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ipc\SecureFolderFS.Sdk.Ipc.csproj" />
+    </ItemGroup>
 </Project>

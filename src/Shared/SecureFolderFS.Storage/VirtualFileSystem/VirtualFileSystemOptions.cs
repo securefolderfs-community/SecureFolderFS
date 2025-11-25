@@ -10,38 +10,38 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <summary>
         /// Gets or sets the name to use for the volume.
         /// </summary>
-        public required string VolumeName { get; init; }
+        public virtual required string VolumeName { get; init; }
 
         /// <summary>
         /// Gets or sets the instance file system health statistics which are reported by the underlying virtual file system.
         /// </summary>
-        public required IHealthStatistics HealthStatistics { get; init; }
+        public virtual required IHealthStatistics HealthStatistics { get; init; }
 
         /// <summary>
         /// Gets or sets the instance file system statistics which are reported by the underlying virtual file system.
         /// </summary>
-        public required IFileSystemStatistics FileSystemStatistics { get; init; }
+        public virtual required IFileSystemStatistics FileSystemStatistics { get; init; }
 
         /// <summary>
         /// Gets or sets whether to enable caching for decrypted content chunks.
         /// </summary>
-        public bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
+        public virtual bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
         /// Gets or sets whether to enable caching for Directory IDs.
         /// </summary>
-        public bool IsCachingDirectoryIds { get; protected set => SetField(ref field, value); } = true;
+        public virtual bool IsCachingDirectoryIds { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
         /// </summary>
-        public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
+        public virtual bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
         /// Sets the read-only status of the file system.
         /// </summary>
         /// <param name="value">If true, sets the file system to read-only mode; otherwise, sets it to read-write mode.</param>
-        public void DangerousSetReadOnly(bool value)
+        public virtual void DangerousSetReadOnly(bool value)
         {
             IsReadOnly = value;
         }
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Sets the maximum size of the recycle bin.
         /// </summary>
         /// <param name="value">The size in bytes.</param>
-        public void DangerousSetRecycleBin(long value)
+        public virtual void DangerousSetRecycleBin(long value)
         {
             RecycleBinSize = value;
         }

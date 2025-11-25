@@ -8,10 +8,10 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FSKit.Bridge.AppModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
-using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FSKit.Bridge
@@ -38,8 +38,6 @@ namespace SecureFolderFS.Core.FSKit.Bridge
         /// <inheritdoc/>
         public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
-            await Task.CompletedTask;
-
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
@@ -47,28 +45,39 @@ namespace SecureFolderFS.Core.FSKit.Bridge
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fskitOptions);
             fskitOptions.SetupValidators(specifics);
 
-            // Determine mount point
+            // Determine mount point - this is used as a hint for FSKit, the actual mount is managed by the OS
             if (fskitOptions.MountPoint is null)
                 fskitOptions.DangerousSetMountPoint(PathHelpers.GetFreeMountPath(fskitOptions.VolumeName));
 
             if (fskitOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
-            // Ensure mount point directory exists
-            if (!Directory.Exists(fskitOptions.MountPoint))
-                Directory.CreateDirectory(fskitOptions.MountPoint);
+            // Note: Unlike WinFsp/Dokany, FSKit manages the mount point creation itself (like iOS FileProvider)
+            // We don't create the directory - the file system driver handles that when mounting
 
-            // Create the FSKit host
-            var fskitHost = new FSKitHost(fskitOptions.MountPoint);
-            var result = await fskitHost.StartFileSystemAsync();
+            // Create the FSKit host with IPC communication
+            var fskitHost = new FSKitHost(
+                fskitOptions.MountPoint,
+                fskitOptions.VolumeName,
+                fskitOptions.IsReadOnly);
 
-            if (!result)
-                throw new InvalidOperationException("Failed to start FSKit file system.");
+            try
+            {
+                var result = await fskitHost.StartFileSystemAsync(cancellationToken);
+                if (!result)
+                    throw new InvalidOperationException("Failed to start FSKit file system.");
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                throw;
+            }
 
-            // TODO: Implement actual FSKit file system operations via IPC
-            // For now, this is a placeholder that will be extended with proper FSKit integration
+            // Use a virtual CryptoFolder as the storage root (similar to iOS/Android)
+            // The actual file system operations are handled by FSKit via IPC
+            var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
 
-            return new FSKitVFSRoot(fskitHost, new SystemFolderEx(fskitOptions.MountPoint), specifics);
+            return new FSKitVFSRoot(fskitHost, storageRoot, specifics);
         }
     }
 }

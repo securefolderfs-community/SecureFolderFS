@@ -1,13 +1,14 @@
 using AppKit;
 
-namespace SecureFolderFS.Core.FSKit;
-
-public static class MainClass
+namespace SecureFolderFS.Core.FSKit
 {
-    public static void Main(string[] args)
+    public static class MainClass
     {
-        NSApplication.Init();
-        NSApplication.SharedApplication.Delegate = new AppDelegate();
-        NSApplication.Main(args);
+        public static void Main(string[] args)
+        {
+            NSApplication.Init();
+            NSApplication.SharedApplication.Delegate = new AppDelegate();
+            NSApplication.Main(args);
+        }
     }
 }

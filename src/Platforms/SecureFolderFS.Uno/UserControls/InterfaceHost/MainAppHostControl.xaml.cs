@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -19,7 +18,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.Uno.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -174,80 +172,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             SettingsService.AppSettings.WasBetaNotificationShown1 = true;
             await SettingsService.AppSettings.TrySaveAsync();
-        }
-        
-        private FSKitProcessManager? _fskitManager;
-
-        private async void TestIpc_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Start the FSKit service if not already running
-                _fskitManager ??= new FSKitProcessManager();
-                var started = await _fskitManager.StartServiceAsync();
-
-                if (!started)
-                {
-                    Debug.WriteLine("Failed to start FSKit service");
-                    return;
-                }
-
-                // Connect to FSKit service via Unix domain socket
-                using var client = new FSKitIPCClient();
-                var connected = await client.ConnectAsync(retries: 10, delayMs: 500);
-                
-                if (!connected)
-                {
-                    Debug.WriteLine("Failed to connect to FSKit service");
-                    
-                    var errorDialog = new ContentDialog
-                    {
-                        Title = "Connection Failed",
-                        Content = "Could not connect to FSKit service. Check debug output for details.",
-                        CloseButtonText = "OK",
-                        XamlRoot = XamlRoot
-                    };
-                    await errorDialog.ShowAsync();
-                    return;
-                }
-
-                // Send test messages
-                var response1 = await client.SendMessageAsync("ping");
-                Debug.WriteLine($"IPC Response 1: {response1}");
-                
-                var response2 = await client.SendMessageAsync("hello");
-                Debug.WriteLine($"IPC Response 2: {response2}");
-                
-                var response3 = await client.SendMessageAsync("Hello from Uno Platform!");
-                Debug.WriteLine($"IPC Response 3: {response3}");
-
-                // Show result in UI
-                var dialog = new ContentDialog
-                {
-                    Title = "IPC Test Result",
-                    Content = $"Service started: {started}\nConnected: {connected}\n\n" +
-                              $"ping → {response1}\n" +
-                              $"hello → {response2}\n" +
-                              $"custom → {response3}",
-                    CloseButtonText = "OK",
-                    XamlRoot = XamlRoot
-                };
-
-                await dialog.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"IPC Test Error: {ex.Message}");
-                
-                var errorDialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = $"IPC test failed: {ex.Message}",
-                    CloseButtonText = "OK",
-                    XamlRoot = XamlRoot
-                };
-                await errorDialog.ShowAsync();
-            }
         }
 
         #region Drag and Drop

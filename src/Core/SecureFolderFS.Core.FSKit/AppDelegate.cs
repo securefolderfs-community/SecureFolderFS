@@ -1,8 +1,8 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using Foundation;
 using AppKit;
+using Foundation;
+using SecureFolderFS.Core.FSKit.Ipc;
 
 namespace SecureFolderFS.Core.FSKit;
 
@@ -32,7 +32,7 @@ public class AppDelegate : NSApplicationDelegate
 
     public override NSApplicationTerminateReply ApplicationShouldTerminate(NSApplication sender)
     {
-        _ipcServer?.Stop();
+        _ipcServer?.StopAsync().GetAwaiter().GetResult();
         return NSApplicationTerminateReply.Now;
     }
 }

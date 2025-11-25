@@ -19,5 +19,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             return new byte[Constants.DIRECTORY_ID_SIZE];
         }
+
+        public static string GetParentPath(string path, int levels)
+        {
+            for (var i = 0; i < levels; i++)
+            {
+                path = Path.GetDirectoryName(path) ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                    break;
+            }
+
+            return path;
+        }
     }
 }
