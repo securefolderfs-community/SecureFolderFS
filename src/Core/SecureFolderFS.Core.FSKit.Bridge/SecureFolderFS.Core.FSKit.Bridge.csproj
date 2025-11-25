@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+      <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+      <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+      <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OwlCore.Storage" Version="0.14.0" />
+    </ItemGroup>
+
+</Project>

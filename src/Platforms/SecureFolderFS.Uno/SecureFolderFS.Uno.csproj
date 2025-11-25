@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
+<!--    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net10.0-maccatalyst</TargetFrameworks>-->
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net10.0-windows10.0.26100</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
 
@@ -44,6 +45,9 @@
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
+    
+    <!-- MacOS FSKit file system -->
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.FSKit.Bridge\SecureFolderFS.Core.FSKit.Bridge.csproj" Condition=" $([MSBuild]::IsOSPlatform('macOS')) " />
   </ItemGroup>
 
   <Choose>

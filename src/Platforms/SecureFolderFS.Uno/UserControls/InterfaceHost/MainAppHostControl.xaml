@@ -113,6 +113,12 @@
                     </StackPanel>
                 </Button>
 
+                <Button
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Click="TestIpc_Click"
+                    Content="Test XPC" />
+
                 <!--  TODO(uno): #18589  -->
                 <Button
                     x:Name="CompactAddVaultButton"

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FSKit.Bridge;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -22,7 +23,8 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         {
             await Task.CompletedTask;
             yield return new SkiaWebDavFileSystem();
-            
+            yield return new FSKitFileSystem();
+
 #if !__UNO_SKIA_MACOS__
             yield return new FuseFileSystem();
 #endif
