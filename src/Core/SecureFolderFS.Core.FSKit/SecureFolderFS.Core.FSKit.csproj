@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <SupportedOSPlatformVersion>15.4</SupportedOSPlatformVersion>
         <UseAppHost>true</UseAppHost>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ApplicationId>com.securefolder.fskit.xpc</ApplicationId>
 
         <!-- Create app bundle -->

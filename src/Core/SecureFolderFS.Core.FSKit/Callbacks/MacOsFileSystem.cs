@@ -12,5 +12,10 @@ namespace SecureFolderFS.Core.FSKit.Callbacks
             var fsVolume = new FSVolume(new FSVolumeIdentifier(), FSFileName.Create("Test"));
             replyHandler(fsVolume, null);
         }
+
+        public void UnloadResource(FSResource resource, FSTaskOptions options, FSUnaryFileSystemOperationsUnloadResourceResult reply)
+        {
+            reply(null);
+        }
     }
 }
