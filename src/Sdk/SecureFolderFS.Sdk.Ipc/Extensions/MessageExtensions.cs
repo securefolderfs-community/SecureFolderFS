@@ -55,17 +55,24 @@ namespace SecureFolderFS.Sdk.Ipc.Extensions
             };
         }
 
-        public static IpcRequest CreateMountRequest(string mountPoint, string volumeName, bool readOnly)
+        public static IpcRequest CreateMountRequest(string? mountPoint, string volumeName, bool readOnly)
         {
+            var parameters = new Dictionary<string, object>()
+            {
+                ["volumeName"] = volumeName,
+                ["readOnly"] = readOnly
+            };
+
+            // Add mountPoint only if provided (FSKit can choose mount point if null)
+            if (mountPoint != null)
+            {
+                parameters["mountPoint"] = mountPoint;
+            }
+
             return new IpcRequest
             {
                 Command = Sdk.Ipc.Constants.Commands.MOUNT,
-                Parameters = new Dictionary<string, object>()
-                {
-                    ["mountPoint"] = mountPoint,
-                    ["volumeName"] = volumeName,
-                    ["readOnly"] = readOnly
-                }
+                Parameters = parameters
             };
         }
 

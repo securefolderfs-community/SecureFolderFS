@@ -8,26 +8,30 @@ using SecureFolderFS.Sdk.Ipc.Extensions;
 namespace SecureFolderFS.Core.FSKit.Bridge
 {
     /// <summary>
-    /// Manages the FSKit file system lifecycle via IPC communication.
+    /// Manages the FSKit file system lifecycle via IPC communication with the native extension.
     /// </summary>
     internal sealed class FSKitHost : IDisposable
     {
-        private readonly string _mountPoint;
         private readonly string _volumeName;
         private readonly bool _isReadOnly;
-        private readonly FSKitProcessManager _processManager;
+        private readonly FSKitExtensionManager _extensionManager;
         private readonly FSKitIPCClient _ipcClient;
         private bool _isMounted;
         private bool _isDisposed;
+        private string? _actualMountPoint; // Determined by FSKit after mounting
 
         public bool IsMounted => _isMounted && !_isDisposed;
 
-        public FSKitHost(string mountPoint, string volumeName, bool isReadOnly)
+        /// <summary>
+        /// Gets the actual mount point assigned by FSKit after successful mounting.
+        /// </summary>
+        public string? MountPoint => _actualMountPoint;
+
+        public FSKitHost(string volumeName, bool isReadOnly)
         {
-            _mountPoint = mountPoint ?? throw new ArgumentNullException(nameof(mountPoint));
             _volumeName = volumeName ?? throw new ArgumentNullException(nameof(volumeName));
             _isReadOnly = isReadOnly;
-            _processManager = new FSKitProcessManager();
+            _extensionManager = new FSKitExtensionManager();
             _ipcClient = new FSKitIPCClient();
         }
 
@@ -44,22 +48,22 @@ namespace SecureFolderFS.Core.FSKit.Bridge
 
             try
             {
-                // Step 1: Start the FSKit service process
-                Debug.WriteLine("FSKit: Starting FSKit service...");
-                var serviceStarted = await _processManager.StartServiceAsync(cancellationToken);
-                if (!serviceStarted)
+                // Step 1: Load the FSKit extension (this loads the native extension which loads our .NET library)
+                Debug.WriteLine("FSKit: Loading FSKit extension...");
+                var extensionLoaded = await _extensionManager.LoadExtensionAsync(cancellationToken);
+                if (!extensionLoaded)
                 {
-                    Debug.WriteLine("FSKit: Failed to start FSKit service process");
+                    Debug.WriteLine("FSKit: Failed to load FSKit extension");
                     return false;
                 }
 
-                // Step 2: Connect to the IPC server
+                // Step 2: Connect to the IPC server (started by the .NET library when loaded)
                 Debug.WriteLine("FSKit: Connecting to IPC server...");
                 var connected = await _ipcClient.ConnectAsync(retries: 15, delayMs: 500, cancellationToken);
                 if (!connected)
                 {
                     Debug.WriteLine("FSKit: Failed to connect to IPC server");
-                    await _processManager.StopServiceAsync();
+                    await _extensionManager.UnloadExtensionAsync();
                     return false;
                 }
 
@@ -71,25 +75,35 @@ namespace SecureFolderFS.Core.FSKit.Bridge
                 {
                     Debug.WriteLine($"FSKit: Ping failed - {pingResponse.Error}");
                     _ipcClient.Disconnect();
-                    await _processManager.StopServiceAsync();
+                    await _extensionManager.UnloadExtensionAsync();
                     return false;
                 }
 
-                // Step 4: Send mount request
-                Debug.WriteLine($"FSKit: Mounting file system at {_mountPoint}...");
-                var mountRequest = MessageExtensions.CreateMountRequest(_mountPoint, _volumeName, _isReadOnly);
+                // Step 4: Send mount request (mount point will be determined by FSKit)
+                Debug.WriteLine($"FSKit: Mounting file system with volume name '{_volumeName}'...");
+                var mountRequest = MessageExtensions.CreateMountRequest(null, _volumeName, _isReadOnly);
                 var mountResponse = await _ipcClient.SendRequestAsync(mountRequest, cancellationToken);
 
                 if (!mountResponse.IsSuccess())
                 {
                     Debug.WriteLine($"FSKit: Mount failed - {mountResponse.Error ?? mountResponse.Message}");
                     _ipcClient.Disconnect();
-                    await _processManager.StopServiceAsync();
+                    await _extensionManager.UnloadExtensionAsync();
                     return false;
                 }
 
+                // Extract the actual mount point assigned by FSKit
+                if (mountResponse.Data?.TryGetValue("mountPoint", out var mountPointObj) == true && mountPointObj != null)
+                {
+                    _actualMountPoint = mountPointObj.ToString();
+                    Debug.WriteLine($"FSKit: File system successfully mounted at {_actualMountPoint}");
+                }
+                else
+                {
+                    Debug.WriteLine("FSKit: File system mounted but mount point not returned");
+                }
+
                 _isMounted = true;
-                Debug.WriteLine($"FSKit: File system successfully mounted at {_mountPoint}");
                 return true;
             }
             catch (Exception ex)
@@ -100,7 +114,7 @@ namespace SecureFolderFS.Core.FSKit.Bridge
                 try
                 {
                     _ipcClient.Disconnect();
-                    await _processManager.StopServiceAsync();
+                    await _extensionManager.UnloadExtensionAsync();
                 }
                 catch { /* Ignore cleanup errors */ }
 
@@ -122,13 +136,13 @@ namespace SecureFolderFS.Core.FSKit.Bridge
             try
             {
                 // Step 1: Send unmount request via IPC
-                if (_ipcClient.IsConnected)
+                if (_ipcClient.IsConnected && _actualMountPoint != null)
                 {
-                    Debug.WriteLine($"FSKit: Unmounting file system from {_mountPoint}...");
+                    Debug.WriteLine($"FSKit: Unmounting file system from {_actualMountPoint}...");
 
                     try
                     {
-                        var unmountRequest = MessageExtensions.CreateUnmountRequest(_mountPoint);
+                        var unmountRequest = MessageExtensions.CreateUnmountRequest(_actualMountPoint);
                         var unmountResponse = await _ipcClient.SendRequestAsync(unmountRequest, cancellationToken);
 
                         if (!unmountResponse.IsSuccess())
@@ -147,12 +161,13 @@ namespace SecureFolderFS.Core.FSKit.Bridge
                 }
 
                 _isMounted = false;
+                _actualMountPoint = null;
             }
             finally
             {
-                // Step 2: Disconnect IPC and stop service
+                // Step 2: Disconnect IPC and unload extension
                 _ipcClient.Disconnect();
-                await _processManager.StopServiceAsync();
+                await _extensionManager.UnloadExtensionAsync();
             }
         }
 
@@ -173,7 +188,6 @@ namespace SecureFolderFS.Core.FSKit.Bridge
             finally
             {
                 _ipcClient.Dispose();
-                _processManager.Dispose();
             }
         }
     }

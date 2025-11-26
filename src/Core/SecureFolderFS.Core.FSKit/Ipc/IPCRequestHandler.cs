@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FSKit.Callbacks;
 using SecureFolderFS.Sdk.Ipc;
 using SecureFolderFS.Sdk.Ipc.Extensions;
 
@@ -13,7 +14,9 @@ namespace SecureFolderFS.Core.FSKit.Ipc
     /// </summary>
     internal sealed class IPCRequestHandler
     {
-        private readonly Dictionary<string, string> _activeMounts = new();
+#pragma warning disable APL0002
+        private readonly Dictionary<string, MacOsFileSystemInstance> _activeMounts = new();
+#pragma warning restore APL0002
         private readonly SemaphoreSlim _mountLock = new(1, 1);
 
         public async Task<IpcResponse> HandleRequestAsync(IpcRequest request, CancellationToken cancellationToken)
@@ -55,45 +58,60 @@ namespace SecureFolderFS.Core.FSKit.Ipc
             {
                 // Extract parameters
                 if (request.Parameters == null)
-                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Missing parameters", "Mount requires mountPoint, volumeName, and readOnly parameters");
+                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Missing parameters", "Mount requires volumeName and readOnly parameters");
 
-                if (!request.Parameters.TryGetValue("mountPoint", out var mountPointObj) ||
-                    !request.Parameters.TryGetValue("volumeName", out var volumeNameObj) ||
+                // mountPoint is optional - FSKit will choose it
+                if (!request.Parameters.TryGetValue("volumeName", out var volumeNameObj) ||
                     !request.Parameters.TryGetValue("readOnly", out var readOnlyObj))
                 {
-                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Invalid parameters", "Mount requires mountPoint, volumeName, and readOnly parameters");
+                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Invalid parameters", "Mount requires volumeName and readOnly parameters");
                 }
 
                 // Extract values from objects (handles JsonElement deserialization)
-                var mountPoint = ExtractString(mountPointObj);
                 var volumeName = ExtractString(volumeNameObj);
                 var readOnly = ExtractBool(readOnlyObj);
 
-                if (string.IsNullOrEmpty(mountPoint) || string.IsNullOrEmpty(volumeName))
-                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Invalid parameters", "mountPoint and volumeName cannot be empty");
+                if (string.IsNullOrEmpty(volumeName))
+                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Invalid parameters", "volumeName cannot be empty");
 
-                Console.WriteLine($"FSKit IPC: Mount request - mountPoint: {mountPoint}, volumeName: {volumeName}, readOnly: {readOnly}");
+                Console.WriteLine($"FSKit IPC: Mount request - volumeName: {volumeName}, readOnly: {readOnly}");
 
-                // Check if already mounted
-                if (_activeMounts.ContainsKey(mountPoint))
+                // Create and mount the file system
+#pragma warning disable APL0002
+                var fileSystem = new MacOsFileSystem();
+                var instance = new MacOsFileSystemInstance(fileSystem, volumeName);
+#pragma warning restore APL0002
+
+                try
                 {
-                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Already mounted", $"A file system is already mounted at {mountPoint}");
-                }
+                    // Mount the file system - FSKit will determine the mount point
+                    var mountPoint = await instance.MountAsync(readOnly, cancellationToken);
 
-                // TODO: Implement actual FSKit file system mounting
-                // For now, just track the mount request
-                _activeMounts[mountPoint] = volumeName;
-
-                Console.WriteLine($"FSKit IPC: File system mounted at {mountPoint}");
-
-                return MessageExtensions.CreateSuccessResponse(
-                    request.RequestId,
-                    "File system mounted successfully",
-                    new Dictionary<string, object>
+                    if (string.IsNullOrEmpty(mountPoint))
                     {
-                        ["mountPoint"] = mountPoint,
-                        ["volumeName"] = volumeName
-                    });
+                        return MessageExtensions.CreateErrorResponse(request.RequestId, "Mount failed", "FSKit did not return a mount point");
+                    }
+
+                    // Track the mounted file system
+                    _activeMounts[mountPoint] = instance;
+
+                    Console.WriteLine($"FSKit IPC: File system mounted at {mountPoint}");
+
+                    return MessageExtensions.CreateSuccessResponse(
+                        request.RequestId,
+                        "File system mounted successfully",
+                        new Dictionary<string, object>
+                        {
+                            ["mountPoint"] = mountPoint,
+                            ["volumeName"] = volumeName
+                        });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"FSKit IPC: Mount failed: {ex.Message}");
+                    instance.Dispose();
+                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Mount failed", ex.Message);
+                }
             }
             finally
             {
@@ -117,24 +135,36 @@ namespace SecureFolderFS.Core.FSKit.Ipc
                 Console.WriteLine($"FSKit IPC: Unmount request - mountPoint: {mountPoint}");
 
                 // Check if mounted
-                if (!_activeMounts.ContainsKey(mountPoint))
+                if (!_activeMounts.TryGetValue(mountPoint, out var instance))
                 {
                     return MessageExtensions.CreateErrorResponse(request.RequestId, "Not mounted", $"No file system is mounted at {mountPoint}");
                 }
 
-                // TODO: Implement actual FSKit file system unmounting
-                // For now, just remove from tracking
-                _activeMounts.Remove(mountPoint);
+                try
+                {
+                    // Unmount the file system
+                    await instance.UnmountAsync(cancellationToken);
+                    _activeMounts.Remove(mountPoint);
 
-                Console.WriteLine($"FSKit IPC: File system unmounted from {mountPoint}");
+                    Console.WriteLine($"FSKit IPC: File system unmounted from {mountPoint}");
 
-                return MessageExtensions.CreateSuccessResponse(
-                    request.RequestId,
-                    "File system unmounted successfully",
-                    new Dictionary<string, object>
-                    {
-                        ["mountPoint"] = mountPoint
-                    });
+                    return MessageExtensions.CreateSuccessResponse(
+                        request.RequestId,
+                        "File system unmounted successfully",
+                        new Dictionary<string, object>
+                        {
+                            ["mountPoint"] = mountPoint
+                        });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"FSKit IPC: Unmount failed: {ex.Message}");
+                    return MessageExtensions.CreateErrorResponse(request.RequestId, "Unmount failed", ex.Message);
+                }
+                finally
+                {
+                    instance.Dispose();
+                }
             }
             finally
             {

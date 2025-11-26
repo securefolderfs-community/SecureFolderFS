@@ -45,19 +45,13 @@ namespace SecureFolderFS.Core.FSKit.Bridge
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fskitOptions);
             fskitOptions.SetupValidators(specifics);
 
-            // Determine mount point - this is used as a hint for FSKit, the actual mount is managed by the OS
-            if (fskitOptions.MountPoint is null)
-                fskitOptions.DangerousSetMountPoint(PathHelpers.GetFreeMountPath(fskitOptions.VolumeName));
-
-            if (fskitOptions.MountPoint is null)
-                throw new DirectoryNotFoundException("No available free mount points for vault file system.");
-
-            // Note: Unlike WinFsp/Dokany, FSKit manages the mount point creation itself (like iOS FileProvider)
-            // We don't create the directory - the file system driver handles that when mounting
+            // FSKit manages mount points automatically via FSUnaryFileSystem
+            // We don't need to specify or create a mount point - the OS chooses it
+            // The mount point will be available after successful mounting
 
             // Create the FSKit host with IPC communication
+            // Mount point will be determined by FSKit after mounting
             var fskitHost = new FSKitHost(
-                fskitOptions.MountPoint,
                 fskitOptions.VolumeName,
                 fskitOptions.IsReadOnly);
 
