@@ -1,5 +1,5 @@
+#pragma warning disable APL0002
 using System;
-using Foundation;
 using FSKit;
 
 namespace SecureFolderFS.Core.FSKit.Callbacks

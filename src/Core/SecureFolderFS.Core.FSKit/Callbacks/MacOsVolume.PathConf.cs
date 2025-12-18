@@ -1,3 +1,4 @@
+#pragma warning disable APL0002
 using System;
 using FSKit;
 

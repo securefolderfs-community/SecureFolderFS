@@ -5,19 +5,29 @@
         <Nullable>enable</Nullable>
         <SupportedOSPlatformVersion>15.4</SupportedOSPlatformVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
         
+        <!-- DNNE Configuration -->
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <DnneNativeBinaryName>SecureFolderFS.Core.FSKit</DnneNativeBinaryName>
+        <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+
         <!-- NativeAOT Configuration -->
-        <PublishAot>true</PublishAot>
-        <UseNativeHttpHandler>true</UseNativeHttpHandler>
-        <InvariantGlobalization>false</InvariantGlobalization>
-        
+<!--        <PublishAot>true</PublishAot>-->
+<!--        <EnableLibraryAot>true</EnableLibraryAot>-->
+
         <!-- Create dylib instead of executable -->
-        <NativeLib>Shared</NativeLib>
-        
+<!--        <NativeLib>Shared</NativeLib>-->
+<!--        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>-->
+<!--        <PublishTrimmed>false</PublishTrimmed>-->
+<!--        <PublishReadyToRun>true</PublishReadyToRun>-->
+
         <!-- Trimming configuration for NativeAOT -->
-        <TrimMode>partial</TrimMode>
-        <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
-        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+<!--        <UseNativeHttpHandler>true</UseNativeHttpHandler>-->
+<!--        <InvariantGlobalization>false</InvariantGlobalization>-->
+<!--        <TrimMode>partial</TrimMode>-->
+<!--        <IlcOptimizationPreference>Speed</IlcOptimizationPreference>-->
+<!--        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>-->
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,7 +36,7 @@
         </None>
         <None Include="Entitlements.plist" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <!-- Exclude old app files - we're now a library -->
         <Compile Remove="Main.cs" />
@@ -38,5 +48,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ipc\SecureFolderFS.Sdk.Ipc.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DNNE" Version="2.0.8" />
     </ItemGroup>
 </Project>

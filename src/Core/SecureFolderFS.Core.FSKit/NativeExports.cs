@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.FSKit.Ipc;
@@ -9,10 +10,16 @@ namespace SecureFolderFS.Core.FSKit
     /// Provides native entry points for the FSKit extension to call from Objective-C/Swift.
     /// These methods are exported and callable from the native FSKit extension.
     /// </summary>
-    public static class NativeExports
+    public class NativeExports
     {
         private static FSKitIPCServer? _ipcServer;
         private static bool _isInitialized;
+
+        [UnmanagedCallersOnly(EntryPoint = "SecureFolderFS_FSKit_GetStatusErr")]
+        public static int GetStatusErr()
+        {
+            return 10;
+        }
 
         /// <summary>
         /// Initializes the FSKit .NET library and starts the IPC server.
