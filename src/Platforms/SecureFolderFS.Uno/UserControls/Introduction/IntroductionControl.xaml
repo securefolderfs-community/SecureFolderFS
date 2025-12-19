@@ -12,99 +12,145 @@
 
     <UserControl.Resources>
         <vc:IndexToProgressConverter x:Key="IndexToProgressConverter" />
+
+        <!--  Fade In + Scale In Animation  -->
+        <Storyboard x:Key="ShowOverlayStoryboard" x:Name="ShowOverlayStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
+                From="0.95"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
+                From="0.95"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!--  Fade Out + Scale Out Animation  -->
+        <Storyboard x:Key="HideOverlayStoryboard" x:Name="HideOverlayStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
+                To="0.95"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
+                To="0.95"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid Margin="0,80,0,64" RowSpacing="16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+    <Grid
+        x:Name="RootGrid"
+        RenderTransformOrigin="0.5,0.5"
+        RowSpacing="16">
+        <Grid.RenderTransform>
+            <CompositeTransform />
+        </Grid.RenderTransform>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <!--  FlipView  -->
-                <RowDefinition />
-                <!--  Caption  -->
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
+        <Grid.RowDefinitions>
             <!--  FlipView  -->
-            <FlipView
-                Grid.Row="0"
-                Grid.Column="1"
-                SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
-                <!--  Views  -->
-                <local:WelcomeScreen />
-                <local:AgreementScreen />
-                <local:EndScreen />
+            <RowDefinition />
+            <!--  Caption  -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-                <!--  Attached shadow TODO(u)  -->
-                <!--
+        <!--  FlipView  -->
+        <FlipView
+            Grid.Row="0"
+            Grid.Column="1"
+            SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
+            <!--  Views  -->
+            <local:WelcomeScreen />
+            <local:AgreementScreen />
+            <local:EndScreen />
+
+            <!--  Attached shadow TODO(u)  -->
+            <!--
                 <ui:Effects.Shadow>
                     <ui:AttachedDropShadow
                         BlurRadius="8"
                         CornerRadius="8"
                         IsMasked="True" />
                 </ui:Effects.Shadow>-->
-            </FlipView>
+        </FlipView>
 
-            <!--  Caption  -->
+        <!--  Caption  -->
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="1"
+            MinHeight="60"
+            Spacing="8"
+            Visibility="Collapsed">
+
+            <!--  Caption title  -->
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontWeight="Medium"
+                Text="Feature showcase" />
+
+            <!--  Progress  -->
             <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                MinHeight="60"
-                Spacing="8"
-                Visibility="Collapsed">
-
-                <!--  Caption title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontWeight="Medium"
-                    Text="Feature showcase" />
-
-                <!--  Progress  -->
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="4">
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='0'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='1'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='2'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='3'}" />
-                </StackPanel>
-
-                <!--  Step  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{x:Bind ViewModel.CurrentStep, Mode=OneWay}" />
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="4">
+                <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='0'}" />
+                <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='1'}" />
+                <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='2'}" />
+                <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='3'}" />
             </StackPanel>
-        </Grid>
 
-        <!--  Settings  -->
-        <Button
-            Width="36"
-            Height="36"
-            Margin="0,0,16,16"
-            Padding="8"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Background="Transparent"
-            BorderThickness="0"
-            Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}">
-            <AnimatedIcon>
-                <AnimatedIcon.Source>
-                    <animvis:AnimatedSettingsVisualSource />
-                </AnimatedIcon.Source>
-                <AnimatedIcon.FallbackIconSource>
-                    <SymbolIconSource Symbol="Setting" />
-                </AnimatedIcon.FallbackIconSource>
-            </AnimatedIcon>
-        </Button>
+            <!--  Step  -->
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Opacity="0.8"
+                Text="{x:Bind ViewModel.CurrentStep, Mode=OneWay}" />
+        </StackPanel>
     </Grid>
 </UserControl>

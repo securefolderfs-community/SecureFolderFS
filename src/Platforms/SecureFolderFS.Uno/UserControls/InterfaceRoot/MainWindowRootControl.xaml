@@ -98,5 +98,14 @@
                 </hni:TaskbarIcon.ContextFlyout>
             </hni:TaskbarIcon>
         </win:Border>
+
+        <!--  Overlay Container  -->
+        <Grid
+            x:Name="OverlayContainer"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            x:FieldModifier="public"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Visibility="Collapsed" />
     </Grid>
 </UserControl>

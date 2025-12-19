@@ -13,29 +13,26 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Image
-            Width="56"
-            Height="56"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
+        <Grid Grid.Row="0" Grid.RowSpan="3">
+            <WebView2 x:Name="BackgroundWebView" Loaded="BackgroundWebView_Loaded" />
+        </Grid>
 
-        <TextBlock
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            FontSize="25"
-            FontWeight="Bold"
-            Text="Welcome to SecureFolderFS!" />
-
-        <TextBlock
-            Grid.Row="2"
-            Margin="0,-32,0,0"
-            Padding="80,0,80,0"
-            FontSize="14"
-            Opacity="0.8"
-            Text="Thank you for trying out SecureFolderFS. To help get you started, this presentation will guide you through the app's core concepts and most notable features."
-            TextAlignment="Center"
-            TextWrapping="WrapWholeWords" />
+        <!--  <TextBlock  -->
+        <!--  Grid.Row="1"  -->
+        <!--  HorizontalAlignment="Center"  -->
+        <!--  VerticalAlignment="Top"  -->
+        <!--  FontSize="25"  -->
+        <!--  FontWeight="Bold"  -->
+        <!--  Text="Welcome to SecureFolderFS!" />  -->
+        <!--    -->
+        <!--  <TextBlock  -->
+        <!--  Grid.Row="2"  -->
+        <!--  Margin="0,-32,0,0"  -->
+        <!--  Padding="80,0,80,0"  -->
+        <!--  FontSize="14"  -->
+        <!--  Opacity="0.8"  -->
+        <!--  Text="Thank you for trying out SecureFolderFS. To help get you started, this presentation will guide you through the app's core concepts and most notable features."  -->
+        <!--  TextAlignment="Center"  -->
+        <!--  TextWrapping="WrapWholeWords" />  -->
     </Grid>
 </UserControl>
