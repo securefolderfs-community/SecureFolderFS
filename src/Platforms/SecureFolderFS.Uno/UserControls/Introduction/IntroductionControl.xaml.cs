@@ -1,6 +1,9 @@
+using System;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -11,6 +14,7 @@ using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,24 +45,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (ViewModel.TaskCompletion.Task.IsCompleted)
                 return ViewModel.TaskCompletion.Task.Result;
             
-            // Get the main window and its content
-            var mainWindow = App.Instance?.MainWindow;
-            if (mainWindow?.Content is not MainWindowRootControl rootControl)
+            if (App.Instance?.MainWindow?.Content is not MainWindowRootControl { OverlayContainer: var overlayContainer })
                 return Result.Failure(null);
             
-            // Get the OverlayContainer from MainWindowRootControl
-            _overlayContainer = rootControl.OverlayContainer;
+            _overlayContainer = overlayContainer;
             if (_overlayContainer is null)
                 return Result.Failure(null);
             
             // Add this control to the overlay container
             _overlayContainer.Children.Add(this);
+            await Task.Delay(300);
             
-            // Set initial state for animation (invisible and slightly scaled down)
-            RootGrid.Opacity = 0;
-            
-            // Show the overlay container
+            // Set the visibility of the overlay container
             _overlayContainer.Visibility = Visibility.Visible;
+            RootGrid.Opacity = 0;
             
             // Play the show animation
             await ShowOverlayStoryboard.BeginAsync();
@@ -73,6 +73,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public void SetView(IViewable viewable) => ViewModel = (IntroductionOverlayViewModel)viewable;
 
         /// <inheritdoc/>
+        [RelayCommand]
         public async Task HideAsync()
         {
             // Play the hide animation
@@ -87,10 +88,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 _overlayContainer = null;
             }
             
-            ViewModel?.TaskCompletion.SetResult(ContentDialogResult.None.ParseOverlayOption());
+            ViewModel?.TaskCompletion.SetResult(Result.Success);
         }
         
-        private void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
+        private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
         {
             var htmlString = Constants.Introduction.BACKGROUND_WEBVIEW
                 .Replace("c_bg", UnoThemeHelper.Instance.CurrentTheme switch
@@ -103,8 +104,27 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                     ThemeType.Light => "vec3(0.10, 0.42, 0.75)",
                     _ => "vec3(0.090, 0.569, 1.0)"
                 });
-            
+
+            await BackgroundWebView.EnsureCoreWebView2Async();
             BackgroundWebView.NavigateToString(htmlString);
+        }
+
+        private void IntroductionControl_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case VirtualKey.Right:
+                    ViewModel?.Next();
+                    e.Handled = true;
+
+                    break;
+
+                case VirtualKey.Left:
+                    ViewModel?.Previous();
+                    e.Handled = true;
+
+                    break;
+            }
         }
     }
 }

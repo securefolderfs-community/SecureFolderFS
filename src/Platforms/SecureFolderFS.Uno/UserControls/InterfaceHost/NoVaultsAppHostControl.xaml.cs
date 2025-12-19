@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void IntroButton_Click(object sender, RoutedEventArgs e)
         {
             var overlayService = DI.Service<IOverlayService>();
-            var overlay = new IntroductionOverlayViewModel(10);
+            var overlay = new IntroductionOverlayViewModel(3);
 
             await overlayService.ShowAsync(overlay);
         }

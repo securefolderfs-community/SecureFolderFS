@@ -14,19 +14,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Bindable(true)]
     public sealed partial class IntroductionOverlayViewModel : OverlayViewModel
     {
-        private readonly int _maxAmount;
+        private readonly int _slidesCount;
 
         [ObservableProperty] private int _CurrentIndex;
         [ObservableProperty] private string? _CurrentStep;
 
         public TaskCompletionSource<IResult> TaskCompletion { get; }
 
-        public IntroductionOverlayViewModel(int maxAmount)
+        public IntroductionOverlayViewModel(int slidesCount)
         {
             ServiceProvider = DI.Default;
-            _maxAmount = maxAmount;
-            CurrentStep = $"1/{maxAmount}";
+            _slidesCount = slidesCount;
+            CurrentStep = $"1/{slidesCount}";
             TaskCompletion = new();
+        }
+
+        public void Next()
+        {
+            if (CurrentIndex < _slidesCount - 1)
+                CurrentIndex++;
+        }
+
+        public void Previous()
+        {
+            if (CurrentIndex > 0)
+                CurrentIndex--;
         }
 
         [RelayCommand]
@@ -38,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         partial void OnCurrentIndexChanged(int value)
         {
-            CurrentStep = $"{CurrentIndex+1}/{_maxAmount}";
+            CurrentStep = $"{CurrentIndex+1}/{_slidesCount}";
         }
     }
 }

@@ -5,7 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tui="using:CommunityToolkit.WinUI"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -101,48 +103,29 @@
             Grid.ColumnSpan="3"
             DefaultBackgroundColor="Transparent"
             Loaded="BackgroundWebView_Loaded" />
+
+        <Border
+            x:Name="ShadowTarget"
+            Grid.Row="1"
+            Grid.Column="1" />
         <Grid
             Grid.Row="1"
             Grid.Column="1"
             CornerRadius="8">
-            <FlipView SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
+            <tui:Effects.Shadow>
+                <tui:AttachedDropShadow
+                    BlurRadius="10"
+                    CastTo="{x:Bind ShadowTarget}"
+                    CornerRadius="8"
+                    Opacity="0.6" />
+            </tui:Effects.Shadow>
+
+            <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                 <!--  Views  -->
                 <local:WelcomeScreen />
                 <local:Slide1 />
-                <local:EndScreen />
+                <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
             </FlipView>
-
-            <!--  Caption  -->
-            <StackPanel
-                MinHeight="60"
-                VerticalAlignment="Bottom"
-                Spacing="8"
-                Visibility="Collapsed">
-                <!--  Caption title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontWeight="Medium"
-                    Text="Feature showcase" />
-
-                <!--  Progress  -->
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="4">
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='0'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='1'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='2'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='3'}" />
-                </StackPanel>
-
-                <!--  Step  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{x:Bind ViewModel.CurrentStep, Mode=OneWay}" />
-            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

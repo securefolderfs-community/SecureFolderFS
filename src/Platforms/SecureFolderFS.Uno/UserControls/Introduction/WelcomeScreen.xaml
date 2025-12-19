@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:l="clr-namespace:SecureFolderFS.Uno.Localization"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -32,8 +32,9 @@
                                         ConverterParameter='none|SecureFolderFS'}" />
 
             <TextBlock
-                Padding="80,0,80,0"
+                Padding="80,0"
                 FontSize="14"
+                Opacity="0.8"
                 Text="{l:ResourceString Rid=OnboardingWelcomeSubtitle}"
                 TextAlignment="Center"
                 TextWrapping="WrapWholeWords" />
@@ -42,6 +43,7 @@
         <TextBlock
             Grid.Row="2"
             HorizontalAlignment="Center"
+            FontSize="12"
             Opacity="0.8"
             TextAlignment="Center"
             TextWrapping="Wrap">
