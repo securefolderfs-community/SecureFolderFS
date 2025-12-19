@@ -68,6 +68,13 @@ namespace SecureFolderFS.UI
                                                                   <title>Fragment Shader</title>
                                                                   <style>html,body,canvas{height:100%;width:100%;margin:0;padding:0;overflow:hidden;background:#000}</style>
                                                                   </head>
+                                                                  <style>
+                                                                  body {
+                                                                    background: transparent !important;
+                                                                    margin: 0;
+                                                                    overflow: hidden;
+                                                                  }
+                                                                  </style>
                                                                   <body>
                                                                   <canvas id="gl"></canvas>
                                                                   <script>
@@ -92,31 +99,29 @@ namespace SecureFolderFS.UI
                                                                   }
                                                                   
                                                                   void main() {
-                                                                      vec2 uv = vUv;
-                                                                      uv.y = (uv.y - 0.5) * 2.0;
-                                                                  
-                                                                      float t = iTime;
-                                                                  
-                                                                      // Color Palette (replaced dynamically)
-                                                                      vec3 bgColor   = c_bg;
-                                                                      vec3 waveColor = c_wave;
-                                                                  
-                                                                      vec3 c = bgColor;
-                                                                  
-                                                                      for (int i = 1; i < 8; i++) {
-                                                                          float fi = float(i);
-                                                                          float x = uv.x * 1.6 + t * sin(fi * 3.3) * 0.4 + fi * 4.3;
-                                                                          float f = 0.3 * cos(fi) * sin(x);
-                                                                          float b = sin(uv.x * sin(fi + t * 0.2) * 3.4 + cos(fi + 7.1)) * 0.1 + 0.896;
-                                                                          float y = smoothstep(b, 1.0, 1.0 - abs(uv.y - f)) * (b - 0.8) * 2.5;
-                                                                  
-                                                                          c += waveColor * y * (0.6 + fi * 0.1);
-                                                                      }
-                                                                  
-                                                                      fragColor = vec4(c, 1.0);
+                                                                    vec2 uv = vUv;
+                                                                    uv.y = (uv.y - 0.5) * 2.0;
+
+                                                                    float t = iTime;
+
+                                                                    // Color Palette (replaced dynamically)
+                                                                    vec3 bgColor   = c_bg;
+                                                                    vec3 waveColor = c_wave;
+                                                                    vec3 c = bgColor;
+
+                                                                    for (int i = 1; i < 8; i++) {
+                                                                        float fi = float(i);
+                                                                        float x = uv.x * 1.6 + t * sin(fi * 3.3) * 0.4 + fi * 4.3;
+                                                                        float f = 0.3 * cos(fi) * sin(x);
+                                                                        float b = sin(uv.x * sin(fi + t * 0.2) * 3.4 + cos(fi + 7.1)) * 0.1 + 0.896;
+                                                                        float y = smoothstep(b, 1.0, 1.0 - abs(uv.y - f)) * (b - 0.8) * 2.5;
+
+                                                                        float strength = 0.35 + fi * 0.06;
+                                                                        c = mix(c, waveColor, y * strength);
+                                                                    }
+
+                                                                    fragColor = vec4(c, 1.0);
                                                                   }
-                                                                  
-                                                                  
                                                                   `;
                                                                   
                                                                   const canvas = document.getElementById('gl');

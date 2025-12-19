@@ -5,8 +5,11 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI;
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
+using SecureFolderFS.Uno.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -85,6 +88,23 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
             
             ViewModel?.TaskCompletion.SetResult(ContentDialogResult.None.ParseOverlayOption());
+        }
+        
+        private void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
+        {
+            var htmlString = Constants.Introduction.BACKGROUND_WEBVIEW
+                .Replace("c_bg", UnoThemeHelper.Instance.CurrentTheme switch
+                {
+                    ThemeType.Light => "vec3(0.80, 0.86, 0.92)",
+                    _ => "vec3(0.00, 0.08, 0.15)"
+                })
+                .Replace("c_wave", UnoThemeHelper.Instance.CurrentTheme switch
+                {
+                    ThemeType.Light => "vec3(0.10, 0.42, 0.75)",
+                    _ => "vec3(0.090, 0.569, 1.0)"
+                });
+            
+            BackgroundWebView.NavigateToString(htmlString);
         }
     }
 }

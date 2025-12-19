@@ -11,5 +11,6 @@
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <vc:IconSourceConverter x:Key="IconSourceConverter" />
+    <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
 
 </ResourceDictionary>

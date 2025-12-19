@@ -5,9 +5,9 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace SecureFolderFS.Uno.UserControls.Introduction
 {
-    public sealed partial class AgreementScreen : UserControl
+    public sealed partial class Slide1 : UserControl
     {
-        public AgreementScreen()
+        public Slide1()
         {
             InitializeComponent();
         }
