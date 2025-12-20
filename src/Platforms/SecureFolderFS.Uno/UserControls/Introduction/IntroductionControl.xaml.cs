@@ -70,7 +70,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (IntroductionOverlayViewModel)viewable;
+        public void SetView(IViewable viewable)
+        {
+            ViewModel = (IntroductionOverlayViewModel)viewable;
+            if (ViewModel is { SlidesCount: < 0 })
+                ViewModel.SlidesCount = 3;
+        }
 
         /// <inheritdoc/>
         [RelayCommand]

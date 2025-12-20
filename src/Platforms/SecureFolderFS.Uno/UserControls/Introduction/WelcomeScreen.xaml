@@ -48,6 +48,6 @@
             TextAlignment="Center"
             TextWrapping="Wrap">
             By continuing, you agree to our&#x0020;<Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">Privacy Policy</Hyperlink>
-            &#x0020;and&#x0020;<Hyperlink>Terms of Service</Hyperlink></TextBlock>
+            &#x0020;and&#x0020;<Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md">Terms of Service</Hyperlink></TextBlock>
     </Grid>
 </UserControl>

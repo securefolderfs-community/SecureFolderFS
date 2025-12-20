@@ -992,4 +992,7 @@
   <data name="ChooseNewName" xml:space="preserve">
       <value>Choose a new name</value>
   </data>
+  <data name="ViewOnboardingDescription" xml:space="preserve">
+      <value>Show the onboarding screen</value>
+  </data>
 </root>

@@ -220,6 +220,18 @@
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=ViewOnboarding}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.OpenOnboardingCommand, Mode=OneWay}"
+                Description="{l:ResourceString Rid=ViewOnboardingDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE80F;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
         </StackPanel>
     </Grid>
 </Page>

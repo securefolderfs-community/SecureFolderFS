@@ -51,6 +51,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             return OverlayService.ShowAsync(new LicensesOverlayViewModel());
         }
 
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private Task OpenOnboardingAsync()
+        {
+            return OverlayService.ShowAsync(new IntroductionOverlayViewModel());
+        }
+
         [RelayCommand]
         private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {

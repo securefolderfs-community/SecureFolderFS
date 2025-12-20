@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -25,6 +26,6 @@
             Text="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
             TextWrapping="WrapWholeWords" />
 
-        <Image />
+        <Image Grid.Row="2" />
     </Grid>
 </UserControl>

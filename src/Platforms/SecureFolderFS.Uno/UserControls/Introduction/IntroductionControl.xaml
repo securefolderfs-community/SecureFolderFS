@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tui="using:CommunityToolkit.WinUI"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
@@ -108,17 +109,20 @@
             x:Name="ShadowTarget"
             Grid.Row="1"
             Grid.Column="1" />
+
         <Grid
             Grid.Row="1"
             Grid.Column="1"
             CornerRadius="8">
-            <tui:Effects.Shadow>
-                <tui:AttachedDropShadow
-                    BlurRadius="10"
-                    CastTo="{x:Bind ShadowTarget}"
-                    CornerRadius="8"
-                    Opacity="0.6" />
-            </tui:Effects.Shadow>
+
+            <!--  TODO: Not supported on non_win platforms. Implement and use OnPlatform  -->
+            <!-- <tui:Effects.Shadow> -->
+            <!--  <tui:AttachedDropShadow  -->
+            <!--  BlurRadius="10"  -->
+            <!--  CastTo="{x:Bind ShadowTarget}"  -->
+            <!--  CornerRadius="8"  -->
+            <!--  Opacity="0.6" />  -->
+            <!-- </tui:Effects.Shadow> -->
 
             <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                 <!--  Views  -->

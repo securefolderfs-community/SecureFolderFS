@@ -56,14 +56,6 @@
                 Command="{x:Bind ViewModel.AddNewVaultCommand, Mode=OneWay}"
                 Content="{l:ResourceString Rid=NewVault}"
                 Style="{ThemeResource AccentButtonStyle}" />
-
-            <Button
-                Grid.Row="2"
-                Margin="0,64,0,0"
-                Padding="32,6"
-                HorizontalAlignment="Center"
-                Click="IntroButton_Click"
-                Content="[DEBUG] intro" />
         </Grid>
 
         <!--  Settings  -->
