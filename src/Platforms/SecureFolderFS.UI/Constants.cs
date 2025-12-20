@@ -66,15 +66,17 @@ namespace SecureFolderFS.UI
                                                                   <meta charset="utf-8"/>
                                                                   <meta name="viewport" content="width=device-width,initial-scale=1"/>
                                                                   <title>Fragment Shader</title>
-                                                                  <style>html,body,canvas{height:100%;width:100%;margin:0;padding:0;overflow:hidden;background:#000}</style>
-                                                                  </head>
                                                                   <style>
-                                                                  body {
+                                                                  body, html, canvas {
                                                                     background: transparent !important;
                                                                     margin: 0;
+                                                                    padding: 0;
+                                                                    width: 100%;
+                                                                    height: 100%;
                                                                     overflow: hidden;
                                                                   }
                                                                   </style>
+                                                                  </head>
                                                                   <body>
                                                                   <canvas id="gl"></canvas>
                                                                   <script>

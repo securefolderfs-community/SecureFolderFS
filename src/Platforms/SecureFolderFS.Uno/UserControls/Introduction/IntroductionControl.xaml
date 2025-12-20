@@ -3,12 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="using:SecureFolderFS.Uno.Extensions"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tui="using:CommunityToolkit.WinUI"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
@@ -128,10 +128,20 @@
             <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                 <!--  Views  -->
                 <local:WelcomeScreen />
-                <local:FeatureSlide
-                    Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
-                    Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
-                    ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+                            Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+                            Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                    </ext:On>
+                </ext:OnPlatform>
                 <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
             </FlipView>
         </Grid>

@@ -119,16 +119,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             switch (e.Key)
             {
                 case VirtualKey.Right:
+                {
                     ViewModel?.Next();
                     e.Handled = true;
 
                     break;
+                }
 
                 case VirtualKey.Left:
+                {
                     ViewModel?.Previous();
                     e.Handled = true;
 
                     break;
+                }
             }
         }
     }
