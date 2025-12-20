@@ -2,7 +2,7 @@
 
 ###### Effective date: January 1st, 2026
 
-These Terms of Service ("Terms") for SecureFolderFS ("we", "us", or "our") govern your use of the SecureFolderFS application and any related services (collectively, the "App" or "Services"), which include our desktop and mobile applications (the "Application", "SecureFolderFS").
+These Terms of Service ("Terms") for SecureFolderFS ("we", "us", or "our") govern your use of the SecureFolderFS application and any related services (collectively, the "App" or "Services"), which include our desktop and mobile applications (the "Application", "SecureFolderFS", also, "App", or "Services").
 
 By using our Services, you agree to be bound by these Terms. If you do not agree, do not use our Services.
 
@@ -34,12 +34,11 @@ Zero-Knowledge Architecture: SecureFolderFS is designed as a "zero-knowledge" ap
 
 Any processing of technical or diagnostic data is performed on the basis of our legitimate interest in maintaining and improving the reliability and security of the Services, as further described in the Privacy Policy.
 
-## Consumer Rights & Dispute Resolution (EU Users)
-If you are a consumer residing in the European Union (EEA, European Economic Area):
+## Consumer Rights & Dispute Resolution (EEA, European Economic Area)
 
-Statutory Warranties: Nothing in these Terms affects your legal rights regarding faulty or misdescribed goods/services.
-
-Online Dispute Resolution (ODR): The European Commission provides a platform for online dispute resolution, available at: https://ec.europa.eu/consumers/odr.
+If you are a consumer residing in the European Union:
+- Statutory Warranties: Nothing in these Terms affects your legal rights regarding faulty or misdescribed goods or services.
+- Online Dispute Resolution (ODR): The European Commission provides a platform for online dispute resolution, available at: https://ec.europa.eu/consumers/odr.
 
 ## Limitation of Liability
 
@@ -49,7 +48,7 @@ To the maximum extent permitted by applicable law:
   - loss of access due to forgotten credentials;
   - security incidents caused by user actions or third-party software;
   - indirect, incidental, special, or consequential damages.
-- Our total liability shall not exceed the amount paid by you for the App or Services, if any
+- Our total liability shall not exceed the amount paid by you for the App or Services, if any.
 
 ## Governing Law
 
@@ -65,7 +64,7 @@ These Terms do not override or replace any applicable open-source licenses gover
 
 SecureFolderFS may allow you to connect to third-party or virtual storage providers, including but not limited to:
 - cloud storage services (e.g., Google Drive, OneDrive),
-- network or remote storage (e.g., FTP, WebDAV)
+- network or remote storage (through e.g., FTP, WebDAV)
 
 You acknowledge and agree that:
 - These providers are independent third parties.
@@ -107,10 +106,10 @@ We do not control and are not responsible for the availability, security, or beh
 ## No Warranty
 
 The Services are provided “AS IS” and “AS AVAILABLE”, without warranties of any kind, whether express or implied, including but not limited to:
-- merchantability
-- fitness for a particular purpose
-- security guarantees
-- uninterrupted availability
+- merchantability,
+- fitness for a particular purpose,
+- security guarantees,
+- uninterrupted availability.
 
 We do not guarantee that the Services will be error-free, uninterrupted, or suitable for your specific needs.
 
