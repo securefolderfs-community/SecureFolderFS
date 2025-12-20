@@ -237,7 +237,6 @@
     <None Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
     <None Remove="UserControls\Introduction\EndScreen.xaml" />
     <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
-    <None Remove="UserControls\Introduction\Slide1.xaml" />
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
     <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
@@ -362,7 +361,7 @@
     <Page Update="UserControls\InterfaceRoot\MainWindowRootControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="UserControls\Introduction\Slide1.xaml">
+    <Page Update="UserControls\Introduction\FeatureSlide.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
