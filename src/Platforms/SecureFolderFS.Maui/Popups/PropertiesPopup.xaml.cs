@@ -1,5 +1,5 @@
-using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.Popups
             if (ViewModel is null)
                 return Result.Failure(null);
 
-            _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
+            await this.OverlayPopupAsync();
             return Result.Success;
         }
 

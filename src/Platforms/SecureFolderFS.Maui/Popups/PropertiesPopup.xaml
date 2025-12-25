@@ -6,14 +6,17 @@
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     x:Name="ThisPopup"
+    Margin="0"
+    Padding="0"
     BackgroundColor="Transparent"
-    BindingContext="{x:Reference ThisPopup}"
-    CanBeDismissedByTappingOutsideOfPopup="True">
+    BindingContext="{x:Reference ThisPopup}">
 
     <Border
+        Margin="16,0"
         Padding="16"
         Background="{StaticResource ThemeBackgroundFillColorBrush}"
-        WidthRequest="392">
+        HorizontalOptions="Fill"
+        VerticalOptions="Center">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="12" />
         </Border.StrokeShape>

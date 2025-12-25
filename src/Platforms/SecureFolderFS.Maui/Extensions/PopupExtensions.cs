@@ -1,4 +1,6 @@
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.Extensions;
 
@@ -42,9 +44,9 @@ internal static class PopupExtensions
         overlayGrid.Children.Add(originalContent);
 
         // Create the dimming background
-        var dimBackground = new BoxView
+        var dimBackground = new BoxView()
         {
-            Color = Colors.Black,
+            Color = MauiThemeHelper.Instance.CurrentTheme == ThemeType.Light ? Colors.Black : Colors.DimGray,
             Opacity = 0,
             InputTransparent = false
         };
@@ -60,9 +62,9 @@ internal static class PopupExtensions
         }
 
         // Create a container for the popup content with centering
-        var popupContainer = new Grid
+        var popupContainer = new Grid()
         {
-            HorizontalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Center,
             InputTransparent = false,
             CascadeInputTransparent = false,
@@ -70,7 +72,7 @@ internal static class PopupExtensions
         };
 
         // Add the popup content to the container
-        popup.HorizontalOptions = LayoutOptions.Center;
+        popup.HorizontalOptions = LayoutOptions.Fill;
         popup.VerticalOptions = LayoutOptions.Center;
         popup.CascadeInputTransparent = false;
         popup.InputTransparent = false;
@@ -184,7 +186,7 @@ internal static class PopupExtensions
         contentPage.NavigatedFrom += navigatedFromHandler;
         
         // Handle Android back button/gesture - close popup instead of navigating
-        var backButtonBehavior = new BackButtonBehavior
+        var backButtonBehavior = new BackButtonBehavior()
         {
             Command = new Command(() => _ = CloseOverlayAsync())
         };
