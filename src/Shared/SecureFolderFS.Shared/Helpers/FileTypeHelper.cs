@@ -39,6 +39,7 @@ namespace SecureFolderFS.Shared.Helpers
 
         public static TypeHint GetTypeFromMime(string mimeType)
         {
+            mimeType = mimeType.ToLowerInvariant();
             return Image()
                    ?? Plaintext()
                    ?? Document()

@@ -8,9 +8,8 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
 {
     internal sealed class GoogleDriveReadStream : Stream
     {
-        private readonly DriveService _service;
-        private readonly string _fileId;
         private readonly long _fileSize;
+        private readonly FilesResource.GetRequest _cachedRequest;
         private long _position;
         private bool _disposed;
 
@@ -40,9 +39,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         }
 
         public GoogleDriveReadStream(DriveService service, string fileId, long fileSize)
+            : this(service.Files.Get(fileId), fileSize)
         {
-            _service = service;
-            _fileId = fileId;
+        }
+
+        public GoogleDriveReadStream(FilesResource.GetRequest request, long fileSize)
+        {
+            _cachedRequest = request;
             _fileSize = fileSize;
             _position = 0;
         }
@@ -57,14 +60,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
                 return 0;
 
             var bytesToRead = (int)Math.Min(count, _fileSize - _position);
-            var request = _service.Files.Get(_fileId);
 
             // Set range header for partial download
             var endByte = _position + bytesToRead - 1;
             using var memoryStream = new MemoryStream();
 
             var rangeHeader = new System.Net.Http.Headers.RangeHeaderValue(_position, endByte);
-            _ = request.DownloadRange(memoryStream, rangeHeader);
+            _ = _cachedRequest.DownloadRange(memoryStream, rangeHeader);
 
             memoryStream.Position = 0;
             var read = memoryStream.Read(buffer.AsSpan(offset, count));
@@ -83,14 +85,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
                 return 0;
 
             var bytesToRead = (int)Math.Min(count, _fileSize - _position);
-            var request = _service.Files.Get(_fileId);
 
             // Set range header for partial download
             var endByte = _position + bytesToRead - 1;
             using var memoryStream = new MemoryStream();
 
             var rangeHeader = new System.Net.Http.Headers.RangeHeaderValue(_position, endByte);
-            _ = await request.DownloadRangeAsync(memoryStream, rangeHeader, cancellationToken);
+            _ = await _cachedRequest.DownloadRangeAsync(memoryStream, rangeHeader, cancellationToken);
 
             memoryStream.Position = 0;
             var read = await memoryStream.ReadAsync(buffer.AsMemory(offset, count), CancellationToken.None);

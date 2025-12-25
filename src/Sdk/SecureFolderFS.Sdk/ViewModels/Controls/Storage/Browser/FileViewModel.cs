@@ -4,11 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
 
@@ -67,6 +69,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             using var viewModel = new PreviewerOverlayViewModel(this, ParentFolder);
             await viewModel.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(viewModel);
+
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
+            if (viewModel.PreviewerViewModel is IChangeTracker { WasModified: true } and IPersistable persistable)
+            {
+                var messageOverlay = new MessageOverlayViewModel()
+                {
+                    Title = "UnsavedChanges".ToLocalized(),
+                    Message = "UnsavedChangesDescription".ToLocalized(),
+                    PrimaryText = "Save".ToLocalized(),
+                    SecondaryText = "Cancel".ToLocalized()
+                };
+
+                await Task.Delay(700);
+                var result = await OverlayService.ShowAsync(messageOverlay);
+                if (!result.Positive())
+                    return;
+
+                if (BrowserViewModel.TransferViewModel is null)
+                {
+                    await persistable.SaveAsync(cancellationToken);
+                    return;
+                }
+
+                BrowserViewModel.TransferViewModel.TransferType = TransferType.Upload;
+                using var saveCancellation = BrowserViewModel.TransferViewModel.GetCancellation();
+                await BrowserViewModel.TransferViewModel.PerformOperationAsync(async ct =>
+                {
+                    await persistable.SaveAsync(ct);
+                }, saveCancellation.Token);
+            }
         }
     }
 }

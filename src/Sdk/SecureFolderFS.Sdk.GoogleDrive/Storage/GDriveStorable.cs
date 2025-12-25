@@ -3,11 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using OwlCore.Storage;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
-    public abstract class GDriveStorable : IStorableChild
+    public abstract class GDriveStorable : IStorableChild, IStorableProperties
     {
+        protected IBasicProperties? properties;
+
         /// <summary>
         /// Gets the ID of the object that can exist independently of the parent context.
         /// </summary>
@@ -47,6 +50,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         {
             return Task.FromResult(ParentFolder);
         }
+
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         /// <summary>
         /// Combines a parent path and a child path into a single path string.

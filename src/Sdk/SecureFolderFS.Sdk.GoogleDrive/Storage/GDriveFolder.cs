@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.GoogleDrive.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
@@ -248,6 +250,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 CombinePaths(Id, targetFile.Id),
                 targetFile.Name,
                 this);
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new GDriveFolderProperties(this, DriveService);
+            return Task.FromResult(properties);
         }
     }
 }
