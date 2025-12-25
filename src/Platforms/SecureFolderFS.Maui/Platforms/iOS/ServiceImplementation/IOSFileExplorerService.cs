@@ -8,7 +8,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Pickers;
 using UIKit;
 using UniformTypeIdentifiers;
-using UTType = MobileCoreServices.UTType;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 {
@@ -42,10 +41,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             AssertCanPick();
-            using var documentPicker = new UIDocumentPickerViewController([
-                    UTType.Content,
-                    UTType.Item,
-                    "public.data"], UIDocumentPickerMode.Open);
+            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Item, UTTypes.Content, UTTypes.Data], asCopy: false);
 
             var nsUrl = await PickInternalAsync(documentPicker, cancellationToken);
             if (nsUrl is null)
@@ -61,7 +57,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             AssertCanPick();
-            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Folder], false);
+            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Folder], asCopy: false);
 
             var nsUrl = await PickInternalAsync(documentPicker, cancellationToken);
             if (nsUrl is null)

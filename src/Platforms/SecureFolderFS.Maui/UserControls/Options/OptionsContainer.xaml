@@ -18,6 +18,7 @@
             Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
 
         <Border
+            x:Name="ContainerBorder"
             Grid.Row="1"
             Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
             StrokeThickness="0">

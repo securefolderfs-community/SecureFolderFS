@@ -49,31 +49,29 @@
                 Padding="16,0"
                 Spacing="12">
                 <uco:OptionsContainer>
-                    <uco:OptionsContainer.InnerContent>
-                        <VerticalStackLayout>
-                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-                                <uco:OptionsControl.Slot>
-                                    <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
-                                </uco:OptionsControl.Slot>
-                            </uco:OptionsControl>
-                            <uco:OptionsControl
-                                Title="{l:ResourceString Rid=MaximumSize}"
-                                IsSeparatorVisible="False"
-                                IsVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-                                <uco:OptionsControl.Slot>
-                                    <ucc:ModernPicker
-                                        ios:Picker.UpdateMode="WhenFinished"
-                                        HorizontalTextAlignment="End"
-                                        IsTransparent="True"
-                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
-                                        ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
-                                        MinimumWidthRequest="100"
-                                        SelectedIndexChanged="Picker_SelectedIndexChanged"
-                                        SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
-                                </uco:OptionsControl.Slot>
-                            </uco:OptionsControl>
-                        </VerticalStackLayout>
-                    </uco:OptionsContainer.InnerContent>
+                    <VerticalStackLayout>
+                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                            <uco:OptionsControl.Slot>
+                                <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
+                            </uco:OptionsControl.Slot>
+                        </uco:OptionsControl>
+                        <uco:OptionsControl
+                            Title="{l:ResourceString Rid=MaximumSize}"
+                            IsSeparatorVisible="False"
+                            IsVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                            <uco:OptionsControl.Slot>
+                                <ucc:ModernPicker
+                                    ios:Picker.UpdateMode="WhenFinished"
+                                    HorizontalTextAlignment="End"
+                                    IsTransparent="True"
+                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
+                                    ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                    MinimumWidthRequest="100"
+                                    SelectedIndexChanged="Picker_SelectedIndexChanged"
+                                    SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
+                            </uco:OptionsControl.Slot>
+                        </uco:OptionsControl>
+                    </VerticalStackLayout>
                 </uco:OptionsContainer>
 
                 <!--  Size Bar  -->
@@ -117,69 +115,65 @@
                 IsVisible="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
                 RowSpacing="8">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Label
+                <uco:OptionsContainer
+                    Title="{l:ResourceString Rid=RecentlyDeleted}"
                     Grid.Row="0"
-                    Margin="0,8,0,0"
-                    FontAttributes="Bold"
-                    FontSize="17"
-                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
+                    Margin="0,8,0,0">
+                    <uco:OptionsContainer.InnerContent>
+                        <CollectionView ItemsSource="{Binding ViewModel.Items, Mode=OneWay}" SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:RecycleBinItemViewModel">
+                                    <apesui:ContextMenuContainer x:Name="ItemContainer">
+                                        <apesui:ContextMenuContainer.MenuItems>
+                                            <apesui:ContextMenuItem Command="{Binding RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
+                                            <apesui:ContextMenuItem
+                                                Command="{Binding DeletePermanentlyCommand}"
+                                                IsDestructive="True"
+                                                Text="{l:ResourceString Rid=DeleteImmediately}" />
+                                        </apesui:ContextMenuContainer.MenuItems>
+                                        <apesui:ContextMenuContainer.Content>
+                                            <Grid
+                                                x:Name="SourceGrid"
+                                                Padding="13,4"
+                                                ColumnSpacing="13"
+                                                Style="{StaticResource SelectableItemGridStyle}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
 
-                <CollectionView
-                    Grid.Row="1"
-                    ItemsSource="{Binding ViewModel.Items, Mode=OneWay}"
-                    SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="vm:RecycleBinItemViewModel">
-                            <apesui:ContextMenuContainer x:Name="ItemContainer">
-                                <apesui:ContextMenuContainer.MenuItems>
-                                    <apesui:ContextMenuItem Command="{Binding RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
-                                    <apesui:ContextMenuItem
-                                        Command="{Binding DeletePermanentlyCommand}"
-                                        IsDestructive="True"
-                                        Text="{l:ResourceString Rid=DeleteImmediately}" />
-                                </apesui:ContextMenuContainer.MenuItems>
-                                <apesui:ContextMenuContainer.Content>
-                                    <Grid
-                                        x:Name="SourceGrid"
-                                        Padding="13,4"
-                                        ColumnSpacing="13"
-                                        Style="{StaticResource SelectableItemGridStyle}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding OverlayViewModel.IsSelecting, Mode=OneWay}" />
+                                                    <ContentView
+                                                        Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                                        HeightRequest="32"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center"
+                                                        WidthRequest="32" />
+                                                </HorizontalStackLayout>
+                                                <Label
+                                                    Grid.Column="1"
+                                                    FontSize="15"
+                                                    LineBreakMode="TailTruncation"
+                                                    Text="{Binding Title, Mode=OneWay}"
+                                                    VerticalOptions="Center" />
+                                            </Grid>
+                                        </apesui:ContextMenuContainer.Content>
+                                        <apesui:ContextMenuContainer.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                                        </apesui:ContextMenuContainer.GestureRecognizers>
+                                    </apesui:ContextMenuContainer>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
 
-                                        <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding OverlayViewModel.IsSelecting, Mode=OneWay}" />
-                                            <ContentView
-                                                Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                                                HeightRequest="32"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center"
-                                                WidthRequest="32" />
-                                        </HorizontalStackLayout>
-                                        <Label
-                                            Grid.Column="1"
-                                            FontSize="15"
-                                            LineBreakMode="TailTruncation"
-                                            Text="{Binding Title, Mode=OneWay}"
-                                            VerticalOptions="Center" />
-                                    </Grid>
-                                </apesui:ContextMenuContainer.Content>
-                                <apesui:ContextMenuContainer.GestureRecognizers>
-                                    <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
-                                </apesui:ContextMenuContainer.GestureRecognizers>
-                            </apesui:ContextMenuContainer>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-                <Grid Grid.Row="2" VerticalOptions="End">
+                <Grid Grid.Row="1" VerticalOptions="End">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />

@@ -1004,4 +1004,7 @@
   <data name="Cancelling" xml:space="preserve">
       <value>Cancelling</value>
   </data>
+  <data name="SizeOptions" xml:space="preserve">
+      <value>Size options</value>
+  </data>
 </root>
