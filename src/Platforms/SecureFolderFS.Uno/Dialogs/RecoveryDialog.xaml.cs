@@ -61,7 +61,8 @@ namespace SecureFolderFS.Uno.Dialogs
 
 #if HAS_UNO_SKIA
             args.Cancel = true;
-            if (await ViewModel.RecoverAsync(default))
+            var result = await ViewModel.RecoverAsync(default); 
+            if (result.Successful)
             {
                 _primaryClicked = true;
                 Hide();

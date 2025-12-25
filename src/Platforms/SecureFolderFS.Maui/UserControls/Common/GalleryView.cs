@@ -122,7 +122,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         public async Task SwipeToPreviousAsync()
         {
-            await _container.TranslateTo(Width, 0, 225U, Easing.CubicOut);
+            await _container.TranslateToAsync(Width, 0, 225U, Easing.CubicOut);
 
             // Shift views
             var oldCurrent = _currentView;
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         public async Task SwipeToNextAsync()
         {
-            await _container.TranslateTo(-Width, 0, 225U, Easing.CubicOut);
+            await _container.TranslateToAsync(-Width, 0, 225U, Easing.CubicOut);
 
             // Shift views
             var oldCurrent = _currentView;
@@ -156,7 +156,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task ResetPositionAsync()
         {
-            await _container.TranslateTo(0, 0, 225U, Easing.CubicOut);
+            await _container.TranslateToAsync(0, 0, 225U, Easing.CubicOut);
         }
 
         /// <inheritdoc/>

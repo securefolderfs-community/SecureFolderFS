@@ -28,12 +28,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     {
                         transferControl.RootPanel.TranslationY = 200d;
                         transferControl.RootPanel.IsVisible = true;
-                        await transferControl.RootPanel.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+                        await transferControl.RootPanel.TranslateToAsync(0, 0, 350U, Easing.CubicInOut);
                     }
                     else
                     {
                         transferControl.RootPanel.TranslationY = 0d;
-                        await transferControl.RootPanel.TranslateTo(0, 200, 350U, Easing.CubicInOut);
+                        await transferControl.RootPanel.TranslateToAsync(0, 200, 350U, Easing.CubicInOut);
                         transferControl.RootPanel.IsVisible = false;
                     }
                 });

@@ -25,8 +25,8 @@ namespace SecureFolderFS.Maui.Prompts
                 "Cancel".ToLocalized());
 
             var result = await ViewModel.RecoverAsync(default);
-            if (!result)
-                return Result.Failure(new CryptographicException(ViewModel.ErrorMessage));
+            if (!result.Successful)
+                return result;
 
             return Result.Success;
         }

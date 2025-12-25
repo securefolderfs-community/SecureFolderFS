@@ -20,11 +20,11 @@ namespace SecureFolderFS.Maui.Views
             await Task.Delay(400);
 
             BackgroundView.TranslationY = 800d;
-            _ = BackgroundView.FadeTo(1, 800U, Easing.CubicIn);
-            _ = BackgroundView.TranslateTo(0, 0, 3000U, EasingHelpers.EaseOutExpo);
+            _ = BackgroundView.FadeToAsync(1, 800U, Easing.CubicIn);
+            _ = BackgroundView.TranslateToAsync(0, 0, 3000U, EasingHelpers.EaseOutExpo);
 
             await Task.Delay(600);
-            _ = ForegroundView.FadeTo(1, 600U, Easing.CubicIn);
+            _ = ForegroundView.FadeToAsync(1, 600U, Easing.CubicIn);
 
             base.OnAppearing();
         }

@@ -244,13 +244,13 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
         private async Task ScaleToAsync(double scale)
         {
-            await Content.ScaleTo(scale, 300U, Easing.CubicOut);
+            await Content.ScaleToAsync(scale, 300U, Easing.CubicOut);
             CurrentScale = scale;
         }
 
         private async Task TranslateToAsync(double x, double y)
         {
-            await Content.TranslateTo(x, y, 300U, Easing.CubicOut);
+            await Content.TranslateToAsync(x, y, 300U, Easing.CubicOut);
             _panX = x;
             _panY = y;
         }

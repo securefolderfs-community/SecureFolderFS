@@ -150,12 +150,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is null)
                 return;
 
-            await Browser.FadeTo(0.0d, 150U);
+            await Browser.FadeToAsync(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
 
             _ = Task.Delay(40).ContinueWith(async _ =>
             {
-                await Browser.FadeTo(1.0d, 150U);
+                await Browser.FadeToAsync(1.0d, 150U);
             }).Unwrap();
         }
 

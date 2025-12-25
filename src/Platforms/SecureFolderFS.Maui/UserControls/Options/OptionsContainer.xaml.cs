@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
 
                     container.ContainerBorder.Background = (bool)newValue
                         ? Colors.Transparent
-                        : App.Current.Resources["ThemeElevatedFillPrimaryColorBrush"] as Brush;
+                        : Application.Current?.Resources["ThemeElevatedFillPrimaryColorBrush"] as Brush;
                 });
     }
 }
