@@ -71,38 +71,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             return _cts;
         }
 
-        public async Task PerformOperationAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                Title = TransferType switch
-                {
-                    TransferType.Upload => "Uploading".ToLocalized(),
-                    TransferType.Download => "Downloading".ToLocalized(),
-                    _ => string.Empty,
-                };
-                CanCancel = cancellationToken != CancellationToken.None;
-                IsProgressing = true;
-                IsVisible = true;
-
-                await Task.Delay(300); // Allow UI to update
-                await operation(cancellationToken);
-                Title = "TransferDone".ToLocalized();
-                IsVisible = false;
-                await Task.Delay(300);
-            }
-            catch (OperationCanceledException)
-            {
-                CanCancel = false;
-                Title = "Cancelling".ToLocalized();
-            }
-            finally
-            {
-                IsVisible = false;
-                IsProgressing = false;
-            }
-        }
-
         /// <inheritdoc/>
         public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {

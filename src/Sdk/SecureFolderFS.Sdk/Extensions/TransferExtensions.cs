@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             transferViewModel.IsPickingFolder = false;
             transferViewModel.IsVisible = false;
-            await Task.Delay(400);
+            await Task.Delay(350);
             transferViewModel.IsProgressing = false;
         }
 
@@ -78,6 +78,69 @@ namespace SecureFolderFS.Sdk.Extensions
 
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
+        }
+
+        public static async Task PerformOperationAsync(this TransferViewModel transferViewModel, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
+        {
+            var uiShown = false;
+            var showUiCts = new CancellationTokenSource();
+
+            try
+            {
+                transferViewModel.Title = transferViewModel.TransferType switch
+                {
+                    TransferType.Save => "Saving".ToLocalized(),
+                    TransferType.Load => "Loading".ToLocalized(),
+                    _ => string.Empty,
+                };
+                transferViewModel.CanCancel = cancellationToken != CancellationToken.None;
+                transferViewModel.IsProgressing = true;
+
+                // Start a task that will show the UI after a delay if the operation is still running
+                _ = ShowUiAfterDelayAsync(500, showUiCts.Token);
+
+                // Run the operation and wait for it to complete
+                var operationTask = operation(cancellationToken);
+                await operationTask;
+
+                // Cancel the delayed UI show if operation completed quickly
+                await showUiCts.CancelAsync();
+                if (uiShown)
+                {
+                    transferViewModel.Title = "TransferDone".ToLocalized();
+                    await Task.Delay(300); // Allow user to see the "Done" message
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                await showUiCts.CancelAsync();
+                if (uiShown)
+                {
+                    transferViewModel.CanCancel = false;
+                    transferViewModel.Title = "Cancelling".ToLocalized();
+                }
+            }
+            finally
+            {
+                showUiCts.Dispose();
+                await HideAsync(transferViewModel);
+            }
+
+            return;
+
+            async Task ShowUiAfterDelayAsync(int delayMs, CancellationToken ct)
+            {
+                try
+                {
+                    await Task.Delay(delayMs, ct);
+                    uiShown = true;
+                    transferViewModel.IsVisible = true;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Operation completed before delay, don't show UI
+                }
+            }
         }
     }
 }
