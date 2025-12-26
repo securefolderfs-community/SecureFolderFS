@@ -27,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _IsConnected;
+        [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
@@ -104,8 +105,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     return;
                 }
 
+                IsProgressing = true;
+                await Task.Delay(100, linkedCts.Token); // Wait for the UI to update
+
                 LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
                 await InitAsync(linkedCts.Token);
+
+                IsProgressing = false;
             }
             catch (OperationCanceledException)
             {

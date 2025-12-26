@@ -19,11 +19,10 @@
     <VerticalStackLayout
         Margin="0,0,0,96"
         Padding="16,0"
-        Spacing="64"
         VerticalOptions="Center">
 
         <!--  Login heading  -->
-        <VerticalStackLayout Spacing="8">
+        <VerticalStackLayout Margin="0,0,0,64" Spacing="8">
             <Grid>
                 <mi:MauiIcon
                     HorizontalOptions="Center"
@@ -44,6 +43,12 @@
                 Text="{l:ResourceString Rid=VaultLocked}"
                 VerticalOptions="Center" />
         </VerticalStackLayout>
+
+        <!--  Remote connection progress indicator  -->
+        <ActivityIndicator
+            IsRunning="{Binding ViewModel.IsProgressing, Mode=OneWay}"
+            IsVisible="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            Opacity="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}}" />
 
         <!--  Login  -->
         <uc:VaultLocatorControl
