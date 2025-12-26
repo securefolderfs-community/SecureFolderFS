@@ -110,13 +110,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                 LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
                 await InitAsync(linkedCts.Token);
-
-                IsProgressing = false;
             }
             catch (OperationCanceledException)
             {
                 LoginViewModel?.Dispose();
                 LoginViewModel = null;
+            }
+            finally
+            {
+                IsProgressing = false;
             }
         }
 

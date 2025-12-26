@@ -57,7 +57,7 @@
             IsConnected="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             IsRunning="{Binding ViewModel.ConnectToVaultCommand.IsRunning, Mode=OneWay}">
             <uc:VaultLocatorControl.LoginView>
-                <VerticalStackLayout Spacing="4">
+                <VerticalStackLayout IsVisible="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="4">
                     <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <Button
                         Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
