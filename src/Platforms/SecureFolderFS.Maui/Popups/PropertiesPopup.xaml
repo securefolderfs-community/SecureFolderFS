@@ -11,6 +11,10 @@
     BackgroundColor="Transparent"
     BindingContext="{x:Reference ThisPopup}">
 
+    <tv:Popup.Shadow>
+        <Shadow Offset="0,0" />
+    </tv:Popup.Shadow>
+
     <Border
         Margin="16,0"
         Padding="16"
