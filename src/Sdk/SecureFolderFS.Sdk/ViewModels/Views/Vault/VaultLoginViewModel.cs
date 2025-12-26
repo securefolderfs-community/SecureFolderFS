@@ -23,6 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseDesignationViewModel, IVaultViewContext, INavigatable, IAsyncInitialize, IDisposable
     {
+        private CancellationTokenSource? _connectionCts;
+
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _IsConnected;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
@@ -85,16 +87,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ConnectToVaultAsync(CancellationToken cancellationToken)
         {
-            LoginViewModel?.Dispose();
-            var result = await VaultViewModel.VaultModel.TryConnectAsync(cancellationToken);
-            if (!result.TryGetValue(out var vaultFolder))
-            {
-                // TODO: Report error
-                return;
-            }
+            // Cancel any previous connection attempt and create a new CTS
+            CancelConnection();
+            _connectionCts = new CancellationTokenSource();
 
-            LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
-            await InitAsync(cancellationToken);
+            // Link the command's token with our controllable token
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _connectionCts.Token);
+
+            try
+            {
+                LoginViewModel?.Dispose();
+                var result = await VaultViewModel.VaultModel.TryConnectAsync(linkedCts.Token);
+                if (!result.TryGetValue(out var vaultFolder))
+                {
+                    // TODO: Report error
+                    return;
+                }
+
+                LoginViewModel = new(vaultFolder, LoginViewType.Full) { Title = VaultViewModel.Title };
+                await InitAsync(linkedCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                LoginViewModel?.Dispose();
+                LoginViewModel = null;
+            }
         }
 
         [RelayCommand]
@@ -104,6 +121,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             LoginViewModel?.Dispose();
             LoginViewModel = null;
             IsConnected = false;
+        }
+
+        [RelayCommand]
+        private void CancelConnection()
+        {
+            if (_connectionCts is null)
+                return;
+
+            _connectionCts.Cancel();
+            _connectionCts.Dispose();
+            _connectionCts = null;
         }
 
         [RelayCommand]
@@ -157,6 +185,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
+            _connectionCts?.Cancel();
+            _connectionCts?.Dispose();
+            _connectionCts = null;
             IsConnected = false;
             LoginViewModel?.Dispose();
             NavigationRequested = null;

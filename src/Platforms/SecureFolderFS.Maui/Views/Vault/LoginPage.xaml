@@ -47,6 +47,7 @@
 
         <!--  Login  -->
         <uc:VaultLocatorControl
+            CancelConnectionCommand="{Binding ViewModel.CancelConnectionCommand, Mode=OneWay}"
             ConnectCommand="{Binding ViewModel.ConnectToVaultCommand, Mode=OneWay}"
             IsConnected="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             IsRunning="{Binding ViewModel.ConnectToVaultCommand.IsRunning, Mode=OneWay}">

@@ -11,7 +11,6 @@
     x:Name="ThisControl">
 
     <ContentView.Resources>
-        <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
         <vc:BreadcrumbConverter x:Key="BreadcrumbConverter" />
     </ContentView.Resources>
 

@@ -23,20 +23,31 @@
                     Text="Before logging in, establish a connection to the remote vault." />
             </VerticalStackLayout>
 
-            <Grid>
+            <VerticalStackLayout Spacing="8">
                 <ActivityIndicator
                     HorizontalOptions="Center"
                     IsRunning="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}"
-                    IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}" />
-                <Button
-                    Command="{Binding ConnectCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
-                    HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
-                                                   iOS={LayoutOptions Alignment=Center}}"
-                    IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}"
-                    Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
-                                       iOS={StaticResource NoBackgroundButtonStyle}}"
-                    Text="{l:ResourceString Rid=Connect}" />
-            </Grid>
+                    Opacity="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolOpacityConverter}}" />
+                <Grid>
+                    <Button
+                        Command="{Binding ConnectCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                       iOS={LayoutOptions Alignment=Center}}"
+                        IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="{l:ResourceString Rid=Connect}" />
+                    <Button
+                        Command="{Binding CancelConnectionCommand, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                       iOS={LayoutOptions Alignment=Center}}"
+                        IsEnabled="{Binding CancelConnectionCommand, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+                        IsVisible="{Binding IsRunning, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                           iOS={StaticResource NoBackgroundButtonStyle}}"
+                        Text="{l:ResourceString Rid=Cancel}" />
+                </Grid>
+            </VerticalStackLayout>
         </VerticalStackLayout>
 
         <ContentView

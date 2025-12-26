@@ -6,6 +6,7 @@
     <vc:FileIconConverter x:Key="FileIconConverter" />
     <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
