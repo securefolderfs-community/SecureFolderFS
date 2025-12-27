@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultDashboardViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultDashboardViewModel), typeof(OverviewPage));
 
         public VaultOverviewViewModel? OverviewViewModel
         {
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(OverviewViewModelProperty, value);
         }
         public static readonly BindableProperty OverviewViewModelProperty =
-            BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage));
 
         public VaultPropertiesViewModel? PropertiesViewModel
         {
@@ -50,6 +50,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(PropertiesViewModelProperty, value);
         }
         public static readonly BindableProperty PropertiesViewModelProperty =
-            BindableProperty.Create(nameof(PropertiesViewModel), typeof(VaultPropertiesViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(PropertiesViewModel), typeof(VaultPropertiesViewModel), typeof(OverviewPage));
     }
 }

@@ -84,10 +84,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             try
             {
-                // Disable selection, if called with selected items
+                // Disable selection if called with selected items
                 BrowserViewModel.IsSelecting = false;
 
-                using var cts = transferViewModel.GetCancellation();
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
                 var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Move), false, cts.Token);
                 if (destination is not IModifiableFolder destinationFolder)
                     return;
@@ -147,7 +147,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 // Disable selection, if called with selected items
                 BrowserViewModel.IsSelecting = false;
 
-                using var cts = transferViewModel.GetCancellation();
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
                 var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Copy), false, cts.Token);
                 if (destination is not IModifiableFolder modifiableDestination)
                     return;
@@ -332,7 +332,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return;
 
             transferViewModel.TransferType = TransferType.Move;
-            using var cts = transferViewModel.GetCancellation();
+            using var cts = transferViewModel.GetCancellation(cancellationToken);
             await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
             {
                 // Copy and delete

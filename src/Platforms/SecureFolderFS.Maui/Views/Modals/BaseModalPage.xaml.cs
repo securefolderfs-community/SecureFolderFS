@@ -83,8 +83,8 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(PrimaryTextProperty, value);
         }
         public static readonly BindableProperty PrimaryTextProperty =
-            BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
+            BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage),
+                propertyChanged: static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public string? CloseText
         {
@@ -92,8 +92,8 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(CloseTextProperty, value);
         }
         public static readonly BindableProperty CloseTextProperty =
-            BindableProperty.Create(nameof(CloseText), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                static (bindable, _, _) => UpdateButtonsVisibility(bindable));
+            BindableProperty.Create(nameof(CloseText), typeof(string), typeof(BaseModalPage),
+                propertyChanged: static (bindable, _, _) => UpdateButtonsVisibility(bindable));
 
         public bool PrimaryEnabled
         {

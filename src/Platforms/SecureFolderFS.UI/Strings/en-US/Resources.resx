@@ -1007,4 +1007,7 @@
   <data name="SizeOptions" xml:space="preserve">
       <value>Size options</value>
   </data>
+  <data name="OperationTimedOut" xml:space="preserve">
+      <value>Operation timed out</value>
+  </data>
 </root>

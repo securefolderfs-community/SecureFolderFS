@@ -167,22 +167,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                 // It is expected that the existing connection will return the root folder immediately
                 var rootFolder = await accountViewModel.ConnectAsync(cancellationToken);
                 var browser = BrowserHelpers.CreateBrowser(rootFolder, new FileSystemOptions(), accountViewModel, outerNavigator: this);
-                try
-                {
-                    // Prompt the user to pick a folder
-                    browser.OnAppearing();
-                    _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
 
-                    // Update CanContinue
-                    var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
-                    Message = result.Message;
-                    CanContinue = result.CanContinue;
-                    SelectedLocation = result.SelectedLocation;
-                }
-                finally
-                {
-                    browser.OnDisappearing();
-                }
+                // Prompt the user to pick a folder
+                browser.OnAppearing();
+                _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
+                if (_selectedFolder is null)
+                    return;
+
+                // Update CanContinue
+                var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
+                Message = result.Message;
+                CanContinue = result.CanContinue;
+                SelectedLocation = result.SelectedLocation;
             }
             catch (Exception ex)
             {

@@ -45,8 +45,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsImmersedProperty, value);
         }
         public static readonly BindableProperty IsImmersedProperty =
-            BindableProperty.Create(nameof(IsImmersed), typeof(bool), typeof(CommandBarControl), propertyChanged:
-                static async (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsImmersed), typeof(bool), typeof(CommandBarControl),
+                propertyChanged: static async (bindable, _, newValue) =>
                 {
                     if (newValue is not bool bValue)
                         return;
@@ -80,8 +80,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsToolbarOnTopProperty, value);
         }
         public static readonly BindableProperty IsToolbarOnTopProperty =
-            BindableProperty.Create(nameof(IsToolbarOnTop), typeof(bool), typeof(CommandBarControl), propertyChanged:
-                static (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsToolbarOnTop), typeof(bool), typeof(CommandBarControl),
+                propertyChanged: static (bindable, _, newValue) =>
                 {
                     if (newValue is not bool bValue)
                         return;

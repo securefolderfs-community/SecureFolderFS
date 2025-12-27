@@ -15,8 +15,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             set => SetValue(IsShownProperty, value);
         }
         public static readonly BindableProperty IsShownProperty =
-            BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(TransferControl), false, propertyChanged:
-                static async (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(TransferControl), false,
+                propertyChanged: static async (bindable, _, newValue) =>
                 {
                     if (newValue is not bool bValue)
                         return;

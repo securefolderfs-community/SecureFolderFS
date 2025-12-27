@@ -28,6 +28,7 @@ namespace SecureFolderFS.Sdk.Ftp
                 _ => throw new NotSupportedException($"The {nameof(FileAccess)} '{accessMode}' is not supported on an FTP stream."),
             };
 
+            return ftpStream;
             var fileSize = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
             if (fileSize < 0L)
                 throw new UnauthorizedAccessException("Cannot read the file size.");

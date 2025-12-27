@@ -35,7 +35,7 @@
                     <ucc:ModernEntry
                         BackgroundColor="Transparent"
                         Placeholder="{l:ResourceString Rid=User1}"
-                        Text="{Binding Username, Mode=TwoWay}" />
+                        Text="{Binding UserName, Mode=TwoWay}" />
                 </VerticalStackLayout>
                 <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
             </VerticalStackLayout>

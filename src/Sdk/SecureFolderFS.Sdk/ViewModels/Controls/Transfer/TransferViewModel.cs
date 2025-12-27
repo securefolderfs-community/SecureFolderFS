@@ -62,10 +62,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             }
         }
 
-        public CancellationTokenSource GetCancellation()
+        public CancellationTokenSource GetCancellation(CancellationToken? linkToken = null)
         {
             _cts?.Dispose();
-            _cts = new CancellationTokenSource();
+            _cts = linkToken is not null
+                ? CancellationTokenSource.CreateLinkedTokenSource(linkToken.Value)
+                : new CancellationTokenSource();
 
             CanCancel = true;
             return _cts;

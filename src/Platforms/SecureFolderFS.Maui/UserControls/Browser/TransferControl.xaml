@@ -27,7 +27,7 @@
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
 
-            <Grid>
+            <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
@@ -41,19 +41,21 @@
                         VerticalOptions="Center"
                         WidthRequest="32" />
                     <Label
-                        FontSize="18"
+                        FontSize="16"
                         Text="{Binding Title, Mode=OneWay}"
                         VerticalOptions="Center" />
                 </HorizontalStackLayout>
 
                 <OnPlatform x:TypeArguments="View">
                     <On Platform="Android">
-                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4">
                             <Button
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_material:Material Icon=Close}"
                                 Command="{Binding CancelCommand, Mode=OneWay}"
                                 IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                                Style="{StaticResource TransparentButtonStyle}" />
+                                Style="{StaticResource TransparentButtonStyle}"
+                                WidthRequest="{Binding Height, Mode=OneWay, Source={x:RelativeSource Mode=Self}}" />
                             <Button
                                 Command="{Binding PrimaryCommand, Mode=OneWay}"
                                 IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
@@ -62,14 +64,16 @@
                         </HorizontalStackLayout>
                     </On>
                     <On Platform="iOS">
-                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4">
                             <Button
+                                Padding="12"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=Xmark}"
                                 Command="{Binding CancelCommand, Mode=OneWay}"
                                 IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                                Style="{StaticResource TransparentButtonStyle}" />
+                                Style="{StaticResource TransparentButtonStyle}"
+                                WidthRequest="{Binding Height, Mode=OneWay, Source={x:RelativeSource Mode=Self}}" />
                             <Button
-                                Padding="8"
+                                Padding="16,8"
                                 Command="{Binding PrimaryCommand, Mode=OneWay}"
                                 IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Style="{StaticResource AccentButtonStyle}"
