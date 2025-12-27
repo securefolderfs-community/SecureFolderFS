@@ -55,10 +55,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (LoginViewModel is null)
                 return;
 
-            IsConnected = VaultViewModel.VaultModel.IsRemote;
-            LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
-            await LoginViewModel.InitAsync(cancellationToken);
+            try
+            {
+                IsConnected = VaultViewModel.VaultModel.IsRemote;
+                LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+                IsProgressing = true;
 
+                await Task.Delay(100, cancellationToken); // Wait for the UI to update
+                await LoginViewModel.InitAsync(cancellationToken);
+            }
+            finally
+            {
+                IsProgressing = false;
+            }
 
             #region Test for quick unlock on mobile
 #if DEBUG
