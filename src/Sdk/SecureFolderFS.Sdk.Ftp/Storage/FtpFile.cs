@@ -29,11 +29,6 @@ namespace SecureFolderFS.Sdk.Ftp
             };
 
             return ftpStream;
-            var fileSize = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
-            if (fileSize < 0L)
-                throw new UnauthorizedAccessException("Cannot read the file size.");
-
-            return new LengthSupportedFtpStream(ftpStream, fileSize);
         }
     }
 }

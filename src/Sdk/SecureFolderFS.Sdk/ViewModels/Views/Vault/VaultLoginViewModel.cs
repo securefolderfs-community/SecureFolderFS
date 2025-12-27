@@ -146,7 +146,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (_connectionCts is null)
                 return;
 
-            _connectionCts.Cancel();
+            _connectionCts.TryCancel();
             _connectionCts.Dispose();
             _connectionCts = null;
         }
@@ -202,7 +202,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
-            _connectionCts?.Cancel();
+            _connectionCts?.TryCancel();
             _connectionCts?.Dispose();
             _connectionCts = null;
             IsConnected = false;

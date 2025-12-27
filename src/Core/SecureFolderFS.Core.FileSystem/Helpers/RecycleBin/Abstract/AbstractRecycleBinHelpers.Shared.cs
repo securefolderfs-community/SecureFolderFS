@@ -1,12 +1,12 @@
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
