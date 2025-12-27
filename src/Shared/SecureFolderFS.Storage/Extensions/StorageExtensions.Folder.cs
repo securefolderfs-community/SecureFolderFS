@@ -122,6 +122,32 @@ namespace SecureFolderFS.Storage.Extensions
             }
         }
 
+        /// <inheritdoc cref="GetFileByNameAsync"/>
+        public static async Task<IFile?> TryGetFileByNameAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFileByNameAsync(fileName, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="GetFolderByNameAsync"/>
+        public static async Task<IFolder?> TryGetFolderByNameAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFolderByNameAsync(folderName, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)
         {
             if (folder is IStorableProperties storableProperties)

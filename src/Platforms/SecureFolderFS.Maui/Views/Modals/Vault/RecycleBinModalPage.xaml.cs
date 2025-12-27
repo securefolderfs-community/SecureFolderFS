@@ -83,6 +83,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             if (sender is not Switch toggleSwitch)
                 return;
+            
+            if (!toggleSwitch.IsEnabled)
+                return;
 
             try
             {

@@ -49,29 +49,31 @@
                 Padding="16,0"
                 Spacing="12">
                 <uco:OptionsContainer>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=MaximumSize}"
-                            IsSeparatorVisible="False"
-                            IsVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-                            <uco:OptionsControl.Slot>
-                                <ucc:ModernPicker
-                                    ios:Picker.UpdateMode="WhenFinished"
-                                    HorizontalTextAlignment="End"
-                                    IsTransparent="True"
-                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
-                                    ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
-                                    MinimumWidthRequest="100"
-                                    SelectedIndexChanged="Picker_SelectedIndexChanged"
-                                    SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                    </VerticalStackLayout>
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableRecycleBin}" IsSeparatorVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}" Toggled="Switch_Toggled" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=MaximumSize}"
+                                IsSeparatorVisible="False"
+                                IsVisible="{Binding ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
+                                <uco:OptionsControl.Slot>
+                                    <ucc:ModernPicker
+                                        ios:Picker.UpdateMode="WhenFinished"
+                                        HorizontalTextAlignment="End"
+                                        IsTransparent="True"
+                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm2:PickerOptionViewModel}}"
+                                        ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
+                                        MinimumWidthRequest="100"
+                                        SelectedIndexChanged="Picker_SelectedIndexChanged"
+                                        SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
                 </uco:OptionsContainer>
 
                 <!--  Size Bar  -->

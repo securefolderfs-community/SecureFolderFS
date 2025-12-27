@@ -15,17 +15,18 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
     {
         public static async Task<long> GetOccupiedSizeAsync(IModifiableFolder recycleBin, CancellationToken cancellationToken = default)
         {
-            var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
-            var text = await recycleBinConfig.ReadAllTextAsync(null, cancellationToken);
-            if (!long.TryParse(text, out var value))
-                return 0L;
+            var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            recycleBinConfig ??= await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
 
-            return Math.Max(0L, value);
+            var text = await recycleBinConfig.ReadAllTextAsync(null, cancellationToken);
+            return !long.TryParse(text, out var value) ? 0L : Math.Max(0L, value);
         }
 
         public static async Task SetOccupiedSizeAsync(IModifiableFolder recycleBin, long value, CancellationToken cancellationToken = default)
         {
-            var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
+            var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+            recycleBinConfig ??= await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
+
             await recycleBinConfig.WriteAllTextAsync(Math.Max(0L, value).ToString(), null, cancellationToken);
         }
 
@@ -47,18 +48,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             return deserialized;
         }
 
-        public static async Task<IFolder?> TryGetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                return await specifics.ContentFolder.GetFolderByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public static async Task<IFolder> GetOrCreateRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
@@ -69,6 +58,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             return await modifiableFolder.CreateFolderAsync(Constants.Names.RECYCLE_BIN_NAME, false, cancellationToken);
+        }
+
+        public static async Task<IFolder?> TryGetRecycleBinAsync(FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        {
+            return await specifics.ContentFolder.TryGetFolderByNameAsync(Constants.Names.RECYCLE_BIN_NAME, cancellationToken);
         }
     }
 }

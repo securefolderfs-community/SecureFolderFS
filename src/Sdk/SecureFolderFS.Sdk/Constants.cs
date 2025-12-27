@@ -46,13 +46,6 @@
                 """;
         }
 
-        public static class Sizes
-        {
-            public const long KILOBYTE = 1024;
-            public const long MEGABYTE = KILOBYTE * 1024;
-            public const long GIGABYTE = MEGABYTE * 1024;
-        }
-
         public static class IntegrationPermissions
         {
             public const string ENUMERATE_VAULTS = "enumerate_vaults"; // List all added vaults and get basic info

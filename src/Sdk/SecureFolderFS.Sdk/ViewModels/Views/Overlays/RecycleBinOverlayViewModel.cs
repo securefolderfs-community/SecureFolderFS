@@ -16,6 +16,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -58,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 rootFolder = await childFolder.GetRootAsync(cancellationToken) ?? childFolder;
 
             // Get and populate available size options
-            var deviceFreeSpace = await SystemService.GetAvailableFreeSpaceAsync(rootFolder, cancellationToken);
+            var deviceFreeSpace = await SafetyHelpers.NoFailureAsync(async () => await SystemService.GetAvailableFreeSpaceAsync(rootFolder, cancellationToken));
             var sizeOptions = RecycleBinHelpers.GetSizeOptions(deviceFreeSpace);
             SizeOptions.AddMultiple(sizeOptions);
 
