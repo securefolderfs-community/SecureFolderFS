@@ -52,7 +52,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         {
             await foreach (var item in base.GetItemsAsync(type, cancellationToken))
             {
-                if (SpecialNames.IllegalNames.Contains(item.Name, StringComparer.OrdinalIgnoreCase))
+                if (Constants.SpecialNames.IllegalNames.Contains(item.Name, StringComparer.OrdinalIgnoreCase))
                     continue;
 
                 yield return item switch

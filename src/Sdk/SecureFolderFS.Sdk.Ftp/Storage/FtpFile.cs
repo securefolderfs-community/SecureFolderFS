@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.Ftp
             var ftpStream = accessMode switch
             {
                 FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
-                FileAccess.Write => await ftpClient.OpenWrite(Id, token: cancellationToken),
+                FileAccess.Write => await ftpClient.OpenWrite(Id, FtpDataType.Binary, false, token: cancellationToken),
                 _ => throw new NotSupportedException($"The {nameof(FileAccess)} '{accessMode}' is not supported on an FTP stream."),
             };
 
