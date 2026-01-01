@@ -25,128 +25,128 @@
         </Grid.RowDefinitions>
 
         <!--  Banner  -->
-        <uc:BannerControl Grid.Row="0">
-            <uc:BannerControl.LeftSide>
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Text="{x:Bind ViewModel.BannerViewModel.UpdateText, Mode=OneWay}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="11"
-                        Opacity="0.8"
-                        Text="{x:Bind ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|LastChecked'}" />
-                </StackPanel>
-            </uc:BannerControl.LeftSide>
-            <uc:BannerControl.RightSide>
-                <Grid>
-                    <Button
-                        AutomationProperties.Name="{l:ResourceString Rid=CheckForUpdates}"
-                        Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand, Mode=OneWay}"
-                        IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Glyph="&#xE72C;" />
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontWeight="SemiBold"
-                                Text="{l:ResourceString Rid=CheckForUpdates}" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </uc:BannerControl.RightSide>
-            <uc:BannerControl.AdditionalBottomContent>
-                <!--  Version InfoBar  -->
-                <InfoBar
-                    Title="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Title, Mode=OneWay}"
-                    IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsCloseable, Mode=OneWay}"
-                    IsOpen="True"
-                    Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
-                    Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
-                    <anim:Implicit.ShowAnimations>
-                        <anim:TranslationAnimation
-                            From="0,-15,0"
-                            To="0"
-                            Duration="0:0:0.4" />
-                        <anim:OpacityAnimation
-                            From="0"
-                            To="1.0"
-                            Duration="0:0:0.6" />
-                    </anim:Implicit.ShowAnimations>
-                    <anim:Implicit.HideAnimations>
-                        <anim:OpacityAnimation
-                            From="1.0"
-                            To="0.0"
-                            Duration="0:0:0.2" />
-                        <anim:TranslationAnimation
-                            From="0"
-                            To="0,-15,0"
-                            Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>
-                </InfoBar>
-            </uc:BannerControl.AdditionalBottomContent>
-        </uc:BannerControl>
+        <StackPanel Grid.Row="0">
+            <uc:BannerControl>
+                <uc:BannerControl.LeftSide>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            Text="{x:Bind ViewModel.BannerViewModel.UpdateText, Mode=OneWay}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="11"
+                            Opacity="0.8"
+                            Text="{x:Bind ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|LastChecked'}" />
+                    </StackPanel>
+                </uc:BannerControl.LeftSide>
+                <uc:BannerControl.RightSide>
+                    <Grid>
+                        <Button
+                            AutomationProperties.Name="{l:ResourceString Rid=CheckForUpdates}"
+                            Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Glyph="&#xE72C;" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="{l:ResourceString Rid=CheckForUpdates}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </uc:BannerControl.RightSide>
+                <uc:BannerControl.AdditionalBottomContent>
+                    <!--  Version InfoBar  -->
+                    <InfoBar
+                        Title="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Title, Mode=OneWay}"
+                        IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsCloseable, Mode=OneWay}"
+                        IsOpen="True"
+                        Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
+                        Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                        Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
+                        <anim:Implicit.ShowAnimations>
+                            <anim:TranslationAnimation
+                                From="0,-15,0"
+                                To="0"
+                                Duration="0:0:0.4" />
+                            <anim:OpacityAnimation
+                                From="0"
+                                To="1.0"
+                                Duration="0:0:0.6" />
+                        </anim:Implicit.ShowAnimations>
+                        <anim:Implicit.HideAnimations>
+                            <anim:OpacityAnimation
+                                From="1.0"
+                                To="0.0"
+                                Duration="0:0:0.2" />
+                            <anim:TranslationAnimation
+                                From="0"
+                                To="0,-15,0"
+                                Duration="0:0:0.2" />
+                        </anim:Implicit.HideAnimations>
+                    </InfoBar>
+                </uc:BannerControl.AdditionalBottomContent>
+            </uc:BannerControl>
+            <InfoBar
+                Title="{l:ResourceString Rid=RestartRequired}"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="Warning"
+                Visibility="{x:Bind ViewModel.IsRestartRequired, Mode=OneWay}">
+                <anim:Implicit.ShowAnimations>
+                    <anim:TranslationAnimation
+                        From="0,-15,0"
+                        To="0"
+                        Duration="0:0:0.4" />
+                    <anim:OpacityAnimation
+                        From="0"
+                        To="1.0"
+                        Duration="0:0:0.6" />
+                </anim:Implicit.ShowAnimations>
+                <anim:Implicit.HideAnimations>
+                    <anim:OpacityAnimation
+                        From="1.0"
+                        To="0.0"
+                        Duration="0:0:0.2" />
+                    <anim:TranslationAnimation
+                        From="0"
+                        To="0,-15,0"
+                        Duration="0:0:0.2" />
+                </anim:Implicit.HideAnimations>
+            </InfoBar>
+        </StackPanel>
 
         <!--  Other settings  -->
         <StackPanel
             Grid.Row="1"
             Loaded="Root_Loaded"
             Spacing="4">
-            <StackPanel>
-                <ucab:ActionBlockControl
-                    Title="{l:ResourceString Rid=Language}"
-                    BlockMode="Default"
-                    Description="{l:ResourceString Rid=LanguageDescription}">
-                    <ucab:ActionBlockControl.Icon>
-                        <FontIcon Glyph="&#xF2B7;" />
-                    </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.ActionElement>
-                        <ComboBox
-                            AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
-                            ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="vm:LanguageViewModel">
-                                    <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </ucab:ActionBlockControl.ActionElement>
-                    <ucab:ActionBlockControl.CustomDescription />
-                </ucab:ActionBlockControl>
-                <InfoBar
-                    Title="{l:ResourceString Rid=RestartRequired}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Severity="Warning"
-                    Visibility="{x:Bind ViewModel.IsRestartRequired, Mode=OneWay}">
-                    <anim:Implicit.ShowAnimations>
-                        <anim:TranslationAnimation
-                            From="0,-15,0"
-                            To="0"
-                            Duration="0:0:0.4" />
-                        <anim:OpacityAnimation
-                            From="0"
-                            To="1.0"
-                            Duration="0:0:0.6" />
-                    </anim:Implicit.ShowAnimations>
-                    <anim:Implicit.HideAnimations>
-                        <anim:OpacityAnimation
-                            From="1.0"
-                            To="0.0"
-                            Duration="0:0:0.2" />
-                        <anim:TranslationAnimation
-                            From="0"
-                            To="0,-15,0"
-                            Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>
-                </InfoBar>
-            </StackPanel>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=Language}"
+                BlockMode="Default"
+                Description="{l:ResourceString Rid=LanguageDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xF2B7;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ComboBox
+                        AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:LanguageViewModel">
+                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ucab:ActionBlockControl.ActionElement>
+                <ucab:ActionBlockControl.CustomDescription />
+            </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=Theme}"
                 BlockMode="Default"
@@ -168,16 +168,16 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl
-                Title="{l:ResourceString Rid=ManageSettings}"
-                BlockMode="Expandable"
-                IsEnabled="False">
+            <ucab:ActionBlockControl Title="{l:ResourceString Rid=ManageSettings}" BlockMode="Expandable">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
                     <StackPanel Margin="-16" Spacing="1">
-                        <ucab:ActionBlockControl Title="{l:ResourceString Rid=ImportSettings}" BlockMode="Clickable">
+                        <ucab:ActionBlockControl
+                            Title="{l:ResourceString Rid=ImportSettings}"
+                            BlockMode="Clickable"
+                            ClickCommand="{x:Bind ViewModel.ImportSettingsCommand, Mode=OneWay}">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -185,7 +185,10 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl Title="{l:ResourceString Rid=ExportSettings}" BlockMode="Clickable">
+                        <ucab:ActionBlockControl
+                            Title="{l:ResourceString Rid=ExportSettings}"
+                            BlockMode="Clickable"
+                            ClickCommand="{x:Bind ViewModel.ExportSettingsCommand, Mode=OneWay}">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>

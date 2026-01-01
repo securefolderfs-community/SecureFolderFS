@@ -2,6 +2,12 @@
 {
     public static class Constants
     {
+        public static class Settings
+        {
+            public const string EXPORTED_ARCHIVE_FILENAME = $"{nameof(SecureFolderFS)} Settings";
+            public const string EXPORTED_ARCHIVE_EXTENSION = ".appsettings";
+        }
+
         public static class Widgets
         {
             public const string HEALTH_WIDGET_ID = "health_widget";

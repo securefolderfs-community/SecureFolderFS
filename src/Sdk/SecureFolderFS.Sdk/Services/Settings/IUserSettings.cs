@@ -1,5 +1,8 @@
 ﻿using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services.Settings
 {
@@ -77,6 +80,25 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// Gets or sets the value that determines whether to periodically clear or untrack system-wide recently accessed items.
         /// </summary>
         bool DisableRecentAccess { get; set; }
+
+        #endregion
+
+        #region Import/Export
+
+        /// <summary>
+        /// Exports the user settings to a stream as a zip archive.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns a <see cref="Stream"/> containing the exported settings.</returns>
+        Task<Stream> ExportAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Imports the user settings from a stream containing a zip archive.
+        /// </summary>
+        /// <param name="dataStream">The data stream containing the zip archive with settings.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns true if import was successful, false otherwise.</returns>
+        Task<bool> ImportAsync(Stream dataStream, CancellationToken cancellationToken = default);
 
         #endregion
     }
