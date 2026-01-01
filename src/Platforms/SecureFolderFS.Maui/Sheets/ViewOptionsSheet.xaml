@@ -20,26 +20,6 @@
             <btsh:BottomSheetContent.ContentTemplate>
                 <DataTemplate>
                     <VerticalStackLayout Padding="16,32" Spacing="16">
-                        <uco:OptionsContainer Title="{l:ResourceString Rid=SizeOptions}" IsTransparent="True">
-                            <uco:OptionsContainer.InnerContent>
-                                <scm:SegmentedControl
-                                    x:Name="SizeSegments"
-                                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
-                                    HorizontalOptions="Fill"
-                                    SegmentSelectedCommand="{Binding ViewModel.SetLayoutSizeOptionCommand, Mode=OneWay}"
-                                    SegmentSelectedCommandParameter="{Binding SelectedSegment, Mode=OneWay, Source={x:Reference SizeSegments}}"
-                                    SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
-                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
-                                    TintColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
-                                                                Dark={StaticResource ShimFillSecondaryDarkColor}}">
-                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=SmallSize}" />
-                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
-                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
-                                </scm:SegmentedControl>
-                            </uco:OptionsContainer.InnerContent>
-                        </uco:OptionsContainer>
                         <uco:OptionsContainer Title="{l:ResourceString Rid=ViewOptions}">
                             <uco:OptionsContainer.InnerContent>
                                 <VerticalStackLayout>
@@ -55,7 +35,7 @@
                                                 SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="False">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
@@ -68,6 +48,29 @@
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
                                 </VerticalStackLayout>
+                            </uco:OptionsContainer.InnerContent>
+                        </uco:OptionsContainer>
+                        <uco:OptionsContainer
+                            Title="{l:ResourceString Rid=SizeOptions}"
+                            IsTransparent="True"
+                            IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
+                            <uco:OptionsContainer.InnerContent>
+                                <scm:SegmentedControl
+                                    x:Name="SizeSegments"
+                                    Background="Transparent"
+                                    HorizontalOptions="Fill"
+                                    SegmentSelectedCommand="{Binding ViewModel.SetLayoutSizeOptionCommand, Mode=OneWay}"
+                                    SegmentSelectedCommandParameter="{Binding SelectedSegment, Mode=OneWay, Source={x:Reference SizeSegments}}"
+                                    SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                    TintColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                                Dark={StaticResource ShimFillSecondaryDarkColor}}">
+                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=SmallSize}" />
+                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
+                                    <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
+                                </scm:SegmentedControl>
                             </uco:OptionsContainer.InnerContent>
                         </uco:OptionsContainer>
                     </VerticalStackLayout>
