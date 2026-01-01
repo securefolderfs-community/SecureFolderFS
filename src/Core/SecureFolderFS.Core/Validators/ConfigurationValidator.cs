@@ -26,8 +26,8 @@ namespace SecureFolderFS.Core.Validators
             Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
             VaultParser.CalculateConfigMac(value, _macKey, payloadMac);
 
-            // Check if stored hash equals to computed hash
-            if (!payloadMac.SequenceEqual(value.PayloadMac))
+            // Check if stored hash equals to computed hash using constant-time comparison to prevent timing attacks
+            if (!CryptographicOperations.FixedTimeEquals(payloadMac, value.PayloadMac))
                 return Task.FromException(new CryptographicException("Vault hash doesn't match the computed hash."));
 
             return Task.CompletedTask;

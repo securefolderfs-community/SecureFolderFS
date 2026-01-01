@@ -63,6 +63,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
+                // Clear sensitive plaintext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
+
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(plaintextChunk);
             }
@@ -106,6 +109,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
+                // Clear sensitive plaintext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
+
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(plaintextChunk);
             }
@@ -161,6 +167,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
+                // Clear sensitive plaintext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
+
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(plaintextChunk);
             }

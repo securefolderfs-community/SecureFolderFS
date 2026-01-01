@@ -6,6 +6,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
@@ -75,6 +76,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
+                // Clear ciphertext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(ciphertextChunk.AsSpan(0, ciphertextSize));
+
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(ciphertextChunk);
             }

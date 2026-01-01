@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
+﻿﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Runtime.CompilerServices;
@@ -66,8 +66,8 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
                 chunkNumber,
                 mac);
 
-            // Check MAC
-            if (!mac.SequenceEqual(ciphertextChunk.GetChunkMac()))
+            // Check MAC using constant-time comparison to prevent timing attacks
+            if (!CryptographicOperations.FixedTimeEquals(mac, ciphertextChunk.GetChunkMac()))
                 return false;
 
             // Decrypt
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             hmacSha256.AppendData(headerNonce);         // headerNonce
             hmacSha256.AppendData(beChunkNumber);       // beChunkNumber
             hmacSha256.AppendData(chunkNonce);          // chunkNonce
-            hmacSha256.AppendData(ciphertextPayload);   // ciphertextPayload   
+            hmacSha256.AppendData(ciphertextPayload);   // ciphertextPayload
 
             hmacSha256.GetCurrentHash(chunkMac);
         }

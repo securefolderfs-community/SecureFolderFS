@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.SecureStore
 {
@@ -30,7 +31,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// <inheritdoc/>
         public override void Dispose()
         {
-            Array.Clear(Key);
+            CryptographicOperations.ZeroMemory(Key);
         }
 
         /// <summary>

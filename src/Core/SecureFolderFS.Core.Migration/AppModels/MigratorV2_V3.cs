@@ -112,7 +112,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             hmacSha256.GetCurrentHash(payloadMac);
 
             // Check if stored hash equals to computed hash
-            if (!payloadMac.SequenceEqual(_v2ConfigDataModel.PayloadMac ?? []))
+            if (!CryptographicOperations.FixedTimeEquals(payloadMac, _v2ConfigDataModel.PayloadMac ?? []))
                 throw new CryptographicException("Vault hash doesn't match the computed hash.");
 
             return KeyPair.ImportKeys(keyPair.DekKey, keyPair.MacKey);

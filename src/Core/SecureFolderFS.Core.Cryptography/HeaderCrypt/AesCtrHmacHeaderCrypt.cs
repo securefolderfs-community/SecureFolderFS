@@ -65,8 +65,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                 ciphertextHeader.GetHeaderContentKey(),
                 mac);
 
-            // Check MAC
-            if (!mac.SequenceEqual(ciphertextHeader.GetHeaderMac()))
+            // Check MAC using constant-time comparison to prevent timing attacks
+            if (!CryptographicOperations.FixedTimeEquals(mac, ciphertextHeader.GetHeaderMac()))
                 return false;
 
             // Nonce
