@@ -8,6 +8,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Extensions;
 using static SecureFolderFS.Core.Constants.Vault;
 using static SecureFolderFS.Core.Cryptography.Constants;
 

@@ -55,8 +55,11 @@ namespace SecureFolderFS.Core.Routines.Operational
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
-            // Encrypt new keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, _keyPair.DekKey, _keyPair.MacKey, salt);
+            _keyPair.UseKeys((dekKey, macKey) =>
+            {
+                // Encrypt a new keystore
+                _keystoreDataModel = VaultParser.EncryptKeystore(passkey, dekKey, macKey, salt);
+            });
         }
 
         /// <inheritdoc/>
@@ -65,8 +68,11 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_keyPair);
             ArgumentNullException.ThrowIfNull(_configDataModel);
 
-            // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(_configDataModel, _keyPair.MacKey, _configDataModel.PayloadMac);
+            // First, we need to fill in the PayloadMac of the content
+            _keyPair.MacKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+            });
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
@@ -74,7 +80,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             // Key copies need to be created because the original ones are disposed of here
             using (_keyPair)
-                return new SecurityWrapper(KeyPair.ImportKeys(_keyPair.DekKey, _keyPair.MacKey), _configDataModel);
+                return new SecurityWrapper(_keyPair.CreateCopy(), _configDataModel);
         }
 
         /// <inheritdoc/>

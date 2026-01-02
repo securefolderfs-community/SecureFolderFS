@@ -1,5 +1,6 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;

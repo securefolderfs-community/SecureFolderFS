@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.ComponentModel;
 

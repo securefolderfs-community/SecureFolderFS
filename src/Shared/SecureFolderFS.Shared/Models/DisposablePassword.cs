@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Security.Cryptography;
 using System.Text;
 using SecureFolderFS.Shared.ComponentModel;
@@ -31,9 +32,21 @@ namespace SecureFolderFS.Shared.Models
         }
 
         /// <inheritdoc/>
+        public void UseKey<TState>(TState state, ReadOnlySpanAction<byte, TState> keyAction)
+        {
+            keyAction(Key, state);
+        }
+
+        /// <inheritdoc/>
         public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
             return keyAction(Key);
+        }
+
+        /// <inheritdoc/>
+        public TResult UseKey<TState, TResult>(TState state, ReadOnlySpanFunc<byte, TState, TResult> keyAction)
+        {
+            return keyAction(Key, state);
         }
 
         /// <inheritdoc cref="IPassword.ToString"/>

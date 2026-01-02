@@ -87,7 +87,6 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Vault Configuration ------------------------------------
             //
-            var macKey = keyPair.MacKey;
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new V2VaultConfigurationDataModel()
             {
@@ -99,18 +98,21 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 Version = Constants.Vault.Versions.V2
             };
 
-            // Initialize HMAC
-            using var hmacSha256 = new HMACSHA256(macKey.Key);
+            keyPair.MacKey.UseKey(macKey =>
+            {
+                // Initialize HMAC
+                using var hmacSha256 = new HMACSHA256(macKey.ToArray()); // Note: HMACSHA256 requires a byte[] key.
 
-            // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(v2ConfigDataModel.Version));
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v2ConfigDataModel.ContentCipherId)));
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v2ConfigDataModel.FileNameCipherId)));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(v2ConfigDataModel.Uid));
-            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(v2ConfigDataModel.AuthenticationMethod));
+                // Update HMAC
+                hmacSha256.AppendData(BitConverter.GetBytes(v2ConfigDataModel.Version));
+                hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v2ConfigDataModel.ContentCipherId)));
+                hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v2ConfigDataModel.FileNameCipherId)));
+                hmacSha256.AppendData(Encoding.UTF8.GetBytes(v2ConfigDataModel.Uid));
+                hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(v2ConfigDataModel.AuthenticationMethod));
 
-            // Fill the hash to payload
-            hmacSha256.GetCurrentHash(v2ConfigDataModel.PayloadMac);
+                // Fill the hash to payload
+                hmacSha256.GetCurrentHash(v2ConfigDataModel.PayloadMac);
+            });
 
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);

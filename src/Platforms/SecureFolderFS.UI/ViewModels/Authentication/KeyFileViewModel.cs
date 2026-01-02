@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;

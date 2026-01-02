@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Security.Cryptography;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
@@ -9,9 +10,9 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
     {
         private readonly KeyPair _keyPair;
 
-        protected ManagedKey DekKey => _keyPair.DekKey;
+        protected IKeyUsage DekKey => _keyPair.DekKey;
 
-        protected ManagedKey MacKey => _keyPair.MacKey;
+        protected IKeyUsage MacKey => _keyPair.MacKey;
 
         /// <inheritdoc/>
         public abstract int HeaderCiphertextSize { get; }

@@ -32,35 +32,59 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         }
 
         /// <inheritdoc/>
-        public override void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
+        public override unsafe void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
         {
             // Nonce
             plaintextHeader.GetHeaderNonce().CopyTo(ciphertextHeader);
 
-            // Encrypt
-            AesGcm128.Encrypt(
-                plaintextHeader.GetHeaderContentKey(),
-                DekKey,
-                plaintextHeader.GetHeaderNonce(),
-                ciphertextHeader.GetHeaderTag(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
-                default);
+            // Use unsafe pointers to pass span data through the UseKey callback
+            fixed (byte* plaintextPtr = plaintextHeader)
+            fixed (byte* ciphertextPtr = ciphertextHeader)
+            {
+                var state = (ptPtr: (nint)plaintextPtr, ptLen: plaintextHeader.Length, ctPtr: (nint)ciphertextPtr, ctLen: ciphertextHeader.Length);
+                DekKey.UseKey(state, static (dekKey, s) =>
+                {
+                    var pt = new ReadOnlySpan<byte>((byte*)s.ptPtr, s.ptLen);
+                    var ct = new Span<byte>((byte*)s.ctPtr, s.ctLen);
+
+                    // Encrypt
+                    AesGcm128.Encrypt(
+                        pt.GetHeaderContentKey(),
+                        dekKey,
+                        pt.GetHeaderNonce(),
+                        ct.GetHeaderTag(),
+                        ct.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
+                        ReadOnlySpan<byte>.Empty);
+                });
+            }
         }
 
         /// <inheritdoc/>
-        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
+        public override unsafe bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
         {
             // Nonce
             ciphertextHeader.GetHeaderNonce().CopyTo(plaintextHeader);
 
-            // Decrypt
-            return AesGcm128.TryDecrypt(
-                ciphertextHeader.GetHeaderContentKey(),
-                DekKey,
-                ciphertextHeader.GetHeaderNonce(),
-                ciphertextHeader.GetHeaderTag(),
-                plaintextHeader.Slice(HEADER_NONCE_SIZE),
-                default);
+            // Use unsafe pointers to pass span data through the UseKey callback
+            fixed (byte* ciphertextPtr = ciphertextHeader)
+            fixed (byte* plaintextPtr = plaintextHeader)
+            {
+                var state = (ctPtr: (nint)ciphertextPtr, ctLen: ciphertextHeader.Length, ptPtr: (nint)plaintextPtr, ptLen: plaintextHeader.Length);
+                return DekKey.UseKey(state, static (dekKey, s) =>
+                {
+                    var ct = new ReadOnlySpan<byte>((byte*)s.ctPtr, s.ctLen);
+                    var pt = new Span<byte>((byte*)s.ptPtr, s.ptLen);
+
+                    // Decrypt
+                    return AesGcm128.TryDecrypt(
+                        ct.GetHeaderContentKey(),
+                        dekKey,
+                        ct.GetHeaderNonce(),
+                        ct.GetHeaderTag(),
+                        pt.Slice(HEADER_NONCE_SIZE),
+                        ReadOnlySpan<byte>.Empty);
+                });
+            }
         }
     }
 }

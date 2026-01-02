@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
@@ -16,13 +17,13 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
     /// <list type="bullet">
     ///   <item>Memory is pinned to prevent GC from moving it (which would leave copies in memory)</item>
     ///   <item>Key material is XOR'd with a random mask, so the plaintext key never exists on the heap</item>
-    ///   <item>When accessing the key via <see cref="UseKey{TResult}"/>, it's de-XOR'd into a stack-allocated buffer</item>
+    ///   <item>When accessing the key via UseKey, it's de-XOR'd into a stack-allocated buffer</item>
     ///   <item>On Windows/Unix, memory pages are locked to prevent swapping to disk</item>
     ///   <item>On disposal, memory is securely zeroed using constant-time operations</item>
     /// </list>
     /// Without memory hardening, the key is stored in plaintext for maximum performance.
     /// </remarks>
-    public sealed class SecureKey : IKeyUsage
+    public sealed class SecureKey : IKeyUsage, ICloneable
     {
         // Maximum key size for stack allocation (256 bytes = 2048 bits, covers most crypto keys)
         private const int MAX_STACK_ALLOC_SIZE = 256;
@@ -119,6 +120,50 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         }
 
         /// <inheritdoc/>
+        public void UseKey<TState>(TState state, ReadOnlySpanAction<byte, TState> keyAction)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            ArgumentNullException.ThrowIfNull(keyAction);
+
+            if (!UseMemoryHardening || _xorMask is null)
+            {
+                // Fast path: no obfuscation, just use the key directly
+                keyAction(_obfuscatedKey.AsSpan(), state);
+                return;
+            }
+
+            // Slow path with XOR obfuscation: de-XOR into stack buffer
+            if (Length <= MAX_STACK_ALLOC_SIZE)
+            {
+                // Stack allocate for small keys
+                Span<byte> tempKey = stackalloc byte[Length];
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey);
+                    keyAction(tempKey, state);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+            else
+            {
+                // For larger keys, use a pinned array (rare case)
+                var tempKey = GC.AllocateArray<byte>(Length, pinned: true);
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey.AsSpan());
+                    keyAction(tempKey.AsSpan(), state);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
@@ -161,11 +206,51 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             }
         }
 
-        /// <summary>
-        /// Creates a copy of this key.
-        /// </summary>
-        /// <returns>A new <see cref="SecureKey"/> containing the same key material.</returns>
-        public SecureKey CreateCopy()
+        /// <inheritdoc/>
+        public TResult UseKey<TState, TResult>(TState state, ReadOnlySpanFunc<byte, TState, TResult> keyAction)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            ArgumentNullException.ThrowIfNull(keyAction);
+
+            if (!UseMemoryHardening || _xorMask is null)
+            {
+                // Fast path: no obfuscation, just use the key directly
+                return keyAction(_obfuscatedKey.AsSpan(), state);
+            }
+
+            // Slow path with XOR obfuscation: de-XOR into stack buffer
+            if (Length <= MAX_STACK_ALLOC_SIZE)
+            {
+                // Stack allocate for small keys
+                Span<byte> tempKey = stackalloc byte[Length];
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey);
+                    return keyAction(tempKey, state);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+            else
+            {
+                // For larger keys, use a pinned array (rare case)
+                var tempKey = GC.AllocateArray<byte>(Length, pinned: true);
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey.AsSpan());
+                    return keyAction(tempKey, state);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public object Clone()
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 

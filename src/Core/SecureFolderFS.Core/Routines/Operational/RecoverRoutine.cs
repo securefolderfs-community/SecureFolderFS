@@ -41,16 +41,13 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             using (_keyPair)
             {
-                // Create MAC key copy for the validator that can be disposed here
-                using var macKeyCopy = _keyPair.MacKey.CreateCopy();
-
                 // Check if the payload has not been tampered with
-                var validator = new ConfigurationValidator(macKeyCopy);
+                var validator = new ConfigurationValidator(_keyPair.MacKey);
                 await validator.ValidateAsync(_configDataModel, cancellationToken);
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here
-                return new SecurityWrapper(KeyPair.ImportKeys(_keyPair.DekKey, _keyPair.MacKey), _configDataModel);
+                return new SecurityWrapper(_keyPair.CreateCopy(), _configDataModel);
             }
         }
 
