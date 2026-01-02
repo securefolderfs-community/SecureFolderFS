@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetCredentials(ManagedKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
 

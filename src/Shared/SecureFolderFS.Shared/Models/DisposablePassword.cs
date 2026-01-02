@@ -1,50 +1,51 @@
-﻿using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Shared.Models
 {
     /// <inheritdoc cref="IPassword"/>
     public sealed class DisposablePassword : IPassword
     {
-        private readonly byte[] _password;
+        /// <inheritdoc/>
+        public byte[] Key { get; }
 
         /// <inheritdoc/>
         public int CharacterCount { get; }
 
         /// <inheritdoc/>
-        public int Length => _password.Length;
+        public int Length { get; }
 
         public DisposablePassword(string password)
         {
-            _password = Encoding.UTF8.GetBytes(password);
+            Key = Encoding.UTF8.GetBytes(password);
+            Length = Key.Length;
             CharacterCount = password.Length;
         }
 
         /// <inheritdoc/>
-        public IEnumerator<byte> GetEnumerator()
+        public void UseKey(Action<ReadOnlySpan<byte>> keyAction)
         {
-            return ((IEnumerable<byte>)_password).GetEnumerator();
+            keyAction(Key);
         }
 
         /// <inheritdoc/>
-        IEnumerator IEnumerable.GetEnumerator()
+        public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
-            return GetEnumerator();
+            return keyAction(Key);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IPassword.ToString"/>
         public new string ToString()
         {
-            return Encoding.UTF8.GetString(_password);
+            return Encoding.UTF8.GetString(Key);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Array.Clear(_password);
+            CryptographicOperations.ZeroMemory(Key);
         }
     }
 }

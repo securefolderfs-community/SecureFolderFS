@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultWriter _vaultWriter;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private SecretKey? _macKey;
-        private SecretKey? _dekKey;
+        private ManagedKey? _macKey;
+        private ManagedKey? _dekKey;
 
         public CreationRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
         {
@@ -36,11 +36,11 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetCredentials(ManagedKey passkey)
         {
             // Allocate shallow keys which will be later disposed of
-            using var dekKey = new SecureKey(KeyTraits.DEK_KEY_LENGTH);
-            using var macKey = new SecureKey(KeyTraits.MAC_KEY_LENGTH);
+            using var dekKey = new ManagedKey(KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new ManagedKey(KeyTraits.MAC_KEY_LENGTH);
             var salt = new byte[KeyTraits.SALT_LENGTH];
 
             // Fill keys

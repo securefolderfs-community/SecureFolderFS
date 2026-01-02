@@ -13,12 +13,12 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
     [Bindable(true)]
-    public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKey>
+    public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKeyBytes>
     {
         [ObservableProperty] private string? _PrimaryPassword;
 
         /// <inheritdoc/>
-        public virtual IKey Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
+        public virtual IKeyBytes Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
 
         /// <inheritdoc/>
         public sealed override bool CanComplement { get; } = false;
@@ -45,13 +45,13 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }
@@ -66,10 +66,10 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <summary>
-        /// Tries to retrieve <see cref="PrimaryPassword"/> as a <see cref="IKey"/> instance.
+        /// Tries to retrieve <see cref="PrimaryPassword"/> as a <see cref="IKeyBytes"/> instance.
         /// </summary>
-        /// <returns>A new instance of <see cref="IKey"/> that represents the password.</returns>
-        protected virtual IKey? TryGetPasswordAsKey()
+        /// <returns>A new instance of <see cref="IKeyBytes"/> that represents the password.</returns>
+        protected virtual IKeyBytes? TryGetPasswordAsKey()
         {
             return !string.IsNullOrEmpty(PrimaryPassword) ? new DisposablePassword(PrimaryPassword) : null;
         }

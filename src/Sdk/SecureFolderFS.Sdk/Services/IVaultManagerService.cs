@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="vaultOptions">The required options to set for this vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the recovery key used to decrypt the vault.</returns>
-        Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+        Task<IDisposable> CreateAsync(IFolder vaultFolder, IKeyBytes passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Unlocks the specified <paramref name="vaultFolder"/> using the provided <paramref name="passkey"/>.
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="passkey"></param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the recovery key used to decrypt the vault.</returns>
-        Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKey passkey, CancellationToken cancellationToken = default);
+        Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKeyBytes passkey, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Recovers the specified <paramref name="vaultFolder"/> using the provided <paramref name="encodedRecoveryKey"/>.
@@ -57,6 +57,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="vaultOptions">>The required options to set for this vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+        Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKeyBytes newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
     }
 }

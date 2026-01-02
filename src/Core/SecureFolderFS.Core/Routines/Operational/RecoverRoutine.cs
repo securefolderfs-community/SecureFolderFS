@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetCredentials(ManagedKey passkey)
         {
             _keyPair = KeyPair.CopyFromRecoveryKey(passkey);
         }

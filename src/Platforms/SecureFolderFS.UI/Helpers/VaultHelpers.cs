@@ -9,21 +9,18 @@ namespace SecureFolderFS.UI.Helpers
 {
     public static class VaultHelpers
     {
-        public static SecretKey ParsePasskeySecret(IKey passkey)
+        public static ManagedKey ParsePasskeySecret(IKeyBytes passkey)
         {
-            var keyArray = passkey.ToArray();
-            var secretKey = new SecureKey(keyArray.Length);
-
-            keyArray.CopyTo(secretKey.Key, 0);
-            Array.Clear(keyArray);
+            var secretKey = new ManagedKey(passkey.Length);
+            passkey.Key.CopyTo(secretKey.Key, 0);
 
             return secretKey;
         }
 
-        public static SecretKey GenerateSecureKey(int length)
+        public static ManagedKey GenerateSecureKey(int length)
         {
             using var secureRandom = RandomNumberGenerator.Create();
-            using var key = new SecureKey(length);
+            using var key = new ManagedKey(length);
             
             // Fill the key
             secureRandom.GetNonZeroBytes(key.Key);
@@ -32,10 +29,10 @@ namespace SecureFolderFS.UI.Helpers
             return key.CreateCopy();
         }
 
-        public static SecretKey GenerateChallenge(string vaultId)
+        public static ManagedKey GenerateChallenge(string vaultId)
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
-            using var challenge = new SecureKey(Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH + encodedVaultIdLength);
+            using var challenge = new ManagedKey(Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH + encodedVaultIdLength);
             using var secureRandom = RandomNumberGenerator.Create();
 
             // Fill the first CHALLENGE_KEY_PART_LENGTH bytes with secure random data

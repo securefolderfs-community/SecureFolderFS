@@ -18,7 +18,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public class VaultManagerService : IVaultManagerService
     {
         /// <inheritdoc/>
-        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        public virtual async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKeyBytes passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
@@ -37,7 +37,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKey passkey, CancellationToken cancellationToken = default)
+        public virtual async Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKeyBytes passkey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
@@ -62,7 +62,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        public virtual async Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKeyBytes newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
             using var newPasskeySecret = VaultHelpers.ParsePasskeySecret(newPasskey);

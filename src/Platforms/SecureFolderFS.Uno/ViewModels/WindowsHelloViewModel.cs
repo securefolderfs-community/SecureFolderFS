@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Uno.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -80,14 +80,14 @@ namespace SecureFolderFS.Uno.ViewModels
             return await MakeSignatureAsync(result.Credential, data, cancellationToken);
         }
 
-        protected static async Task<SecretKey> MakeSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
+        protected static async Task<ManagedKey> MakeSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
         {
             var buffer = data.AsBuffer();
             var signed = await credential.RequestSignAsync(buffer).AsTask(cancellationToken);
             if (signed.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to sign the data.");
 
-            var secretKey = new SecureKey((int)signed.Result.Length);
+            var secretKey = new ManagedKey((int)signed.Result.Length);
             signed.Result.CopyTo(secretKey.Key);
 
             return secretKey;

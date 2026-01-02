@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="configDataModel">The <see cref="VaultConfigurationDataModel"/> to compute the thumbprint for.</param>
         /// <param name="macKey">The key part of HMAC.</param>
         /// <param name="mac">The destination to fill the calculated HMAC thumbprint into.</param>
-        public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, Span<byte> mac)
+        public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, ManagedKey macKey, Span<byte> mac)
         {
             // Initialize HMAC
             using var hmacSha256 = new HMACSHA256(macKey.Key);
@@ -43,10 +43,10 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         [SkipLocalsInit]
-        public static (SecretKey dekKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
+        public static (ManagedKey dekKey, ManagedKey macKey) DeriveKeystore(ManagedKey passkey, VaultKeystoreDataModel keystoreDataModel)
         {
-            var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
-            var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
+            var dekKey = new ManagedKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            var macKey = new ManagedKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
@@ -70,9 +70,9 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys.</returns>
         [SkipLocalsInit]
         public static VaultKeystoreDataModel EncryptKeystore(
-            SecretKey passkey,
-            SecretKey dekKey,
-            SecretKey macKey,
+            ManagedKey passkey,
+            ManagedKey dekKey,
+            ManagedKey macKey,
             byte[] salt)
         {
             // Derive KEK

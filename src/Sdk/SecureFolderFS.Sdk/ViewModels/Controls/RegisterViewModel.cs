@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task ConfirmCredentialsAsync()
         {
             // In case the authentication was not reported, try to extract it manually, if possible
-            if (!_credentialsAdded && CurrentViewModel is IWrapper<IKey> keyWrapper)
+            if (!_credentialsAdded && CurrentViewModel is IWrapper<IKeyBytes> keyWrapper)
             {
                 Credentials.SetOrAdd(_authenticationStage == AuthenticationStage.FirstStageOnly ? 0 : 1, keyWrapper.Inner);
                 _credentialsAdded = true;

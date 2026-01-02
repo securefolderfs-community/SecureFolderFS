@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
     /// <inheritdoc cref="IContentCrypt"/>
     internal sealed class AesCtrHmacContentCrypt : BaseContentCrypt
     {
-        private readonly SecretKey _macKey;
+        private readonly ManagedKey _macKey;
 
         /// <inheritdoc/>
         public override int ChunkPlaintextSize { get; } = CHUNK_PLAINTEXT_SIZE;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkFirstReservedSize { get; } = CHUNK_NONCE_SIZE;
 
-        public AesCtrHmacContentCrypt(SecretKey macKey)
+        public AesCtrHmacContentCrypt(ManagedKey macKey)
         {
             _macKey = macKey;
         }

@@ -12,9 +12,9 @@ namespace SecureFolderFS.Core.Validators
 {
     internal sealed class ConfigurationValidator : IAsyncValidator<VaultConfigurationDataModel>
     {
-        private readonly SecretKey _macKey;
+        private readonly ManagedKey _macKey;
 
-        public ConfigurationValidator(SecretKey macKey)
+        public ConfigurationValidator(ManagedKey macKey)
         {
             _macKey = macKey;
         }

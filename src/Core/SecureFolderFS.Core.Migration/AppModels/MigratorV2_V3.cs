@@ -20,12 +20,12 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.Migration.AppModels
 {
     /// <inheritdoc cref="IVaultMigratorModel"/>
-    internal sealed class MigratorV2_V3 : IVaultMigratorModel, IProgress<IKey>
+    internal sealed class MigratorV2_V3 : IVaultMigratorModel, IProgress<IKeyBytes>
     {
         private readonly IAsyncSerializer<Stream> _streamSerializer;
         private V2VaultConfigurationDataModel? _v2ConfigDataModel;
         private VaultKeystoreDataModel? _v2KeystoreDataModel;
-        private SecretKey? _secretKeySequence;
+        private ManagedKey? _secretKeySequence;
         private bool _wasNewPasswordSet;
 
         /// <inheritdoc/>
@@ -38,14 +38,17 @@ namespace SecureFolderFS.Core.Migration.AppModels
         }
 
         /// <inheritdoc/>
-        public void Report(IKey key)
+        public void Report(IKeyBytes key)
         {
             _wasNewPasswordSet = true;
-            _secretKeySequence = SecureKey.TakeOwnership(key.ToArray());
+
+            var copy = new byte[key.Length];
+            key.Key.AsSpan().CopyTo(copy);
+            _secretKeySequence = ManagedKey.TakeOwnership(copy);
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> UnlockAsync(IKey credentials, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> UnlockAsync(IKeyBytes credentials, CancellationToken cancellationToken = default)
         {
             if (credentials is not KeySequence keySequence)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(KeySequence)}.");
@@ -53,7 +56,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             _secretKeySequence?.Dispose();
             _secretKeySequence = null;
 
-            var secretKeySequence = SecureKey.TakeOwnership(keySequence.ToArray());
+            var secretKeySequence = ManagedKey.TakeOwnership(keySequence.Key);
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
 
@@ -66,8 +69,8 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
 
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            using var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
+            using var dekKey = new ManagedKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new ManagedKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
             Argon2id.Old_DeriveKey(secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 

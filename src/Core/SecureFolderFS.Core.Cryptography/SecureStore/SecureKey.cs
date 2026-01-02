@@ -1,90 +1,185 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.Cryptography.UnsafeNative;
+using SecureFolderFS.Shared.ComponentModel;
 using static SecureFolderFS.Shared.SharedConfiguration;
 
 namespace SecureFolderFS.Core.Cryptography.SecureStore
 {
-    /// <inheritdoc cref="SecretKey"/>
+    /// <summary>
+    /// A secure key implementation that protects key material in memory.
+    /// </summary>
     /// <remarks>
-    /// When <see cref="SecureFolderFS.Shared.SharedConfiguration.UseMemoryHardening"/> is enabled, this class provides additional security measures:
+    /// When <see cref="UseMemoryHardening"/> is enabled, this class provides additional security measures:
     /// <list type="bullet">
     ///   <item>Memory is pinned to prevent GC from moving it (which would leave copies in memory)</item>
-    ///   <item>On Windows, memory pages are locked to prevent swapping to disk (VirtualLock)</item>
+    ///   <item>Key material is XOR'd with a random mask, so the plaintext key never exists on the heap</item>
+    ///   <item>When accessing the key via <see cref="UseKey{TResult}"/>, it's de-XOR'd into a stack-allocated buffer</item>
+    ///   <item>On Windows/Unix, memory pages are locked to prevent swapping to disk</item>
     ///   <item>On disposal, memory is securely zeroed using constant-time operations</item>
     /// </list>
+    /// Without memory hardening, the key is stored in plaintext for maximum performance.
     /// </remarks>
-    public sealed class SecureKey : SecretKey
+    public sealed class SecureKey : IKeyUsage
     {
-        private GCHandle _pinnedHandle;
+        // Maximum key size for stack allocation (256 bytes = 2048 bits, covers most crypto keys)
+        private const int MAX_STACK_ALLOC_SIZE = 256;
+
+        private readonly byte[] _obfuscatedKey;
+        private readonly byte[]? _xorMask;
         private readonly bool _isMemoryLocked;
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override byte[] Key { get; }
+        public int Length { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this key has been disposed.
+        /// Gets a value indicating whether this key has been disposed of.
         /// </summary>
         public bool IsDisposed => _disposed;
 
-        public SecureKey(int size)
+        private SecureKey(byte[] key, bool takeOwnership)
         {
-            // Allocate pinned array to prevent GC from moving it in memory
-            // This prevents leaving copies of sensitive data scattered in heap
-            Key = UseMemoryHardening
-                ? GC.AllocateArray<byte>(size, pinned: true)
-                : new byte[size];
+            Length = key.Length;
 
             if (UseMemoryHardening)
             {
-                _pinnedHandle = GCHandle.Alloc(Key, GCHandleType.Pinned);
-                _isMemoryLocked = TryLockMemory(Key);
+                // Always create a new secure copy with XOR obfuscation
+                _obfuscatedKey = GC.AllocateArray<byte>(key.Length, pinned: true);
+                _xorMask = GC.AllocateArray<byte>(key.Length, pinned: true);
+                RandomNumberGenerator.Fill(_xorMask);
+
+                _isMemoryLocked = TryLockMemory(_obfuscatedKey) && TryLockMemory(_xorMask);
+
+                // XOR the key with mask and store
+                XorBytes(key.AsSpan(), _xorMask.AsSpan(), _obfuscatedKey.AsSpan());
+
+                // If we took ownership, zero the original
+                if (takeOwnership)
+                    CryptographicOperations.ZeroMemory(key);
+            }
+            else
+            {
+                if (takeOwnership)
+                {
+                    _obfuscatedKey = key;
+                }
+                else
+                {
+                    _obfuscatedKey = new byte[key.Length];
+                    key.AsSpan().CopyTo(_obfuscatedKey);
+                }
             }
         }
 
-        private SecureKey(byte[] key, bool takeOwnership)
+        /// <inheritdoc/>
+        public void UseKey(Action<ReadOnlySpan<byte>> keyAction)
         {
-            if (takeOwnership)
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            ArgumentNullException.ThrowIfNull(keyAction);
+
+            if (!UseMemoryHardening || _xorMask is null)
             {
-                // Taking ownership of existing array - pin it but can't guarantee it wasn't already copied
-                Key = key;
-                if (UseMemoryHardening)
+                // Fast path: no obfuscation, just use the key directly
+                keyAction(_obfuscatedKey.AsSpan());
+                return;
+            }
+
+            // Slow path with XOR obfuscation: de-XOR into stack buffer
+            if (Length <= MAX_STACK_ALLOC_SIZE)
+            {
+                // Stack allocate for small keys
+                Span<byte> tempKey = stackalloc byte[Length];
+                try
                 {
-                    _pinnedHandle = GCHandle.Alloc(Key, GCHandleType.Pinned);
-                    _isMemoryLocked = TryLockMemory(Key);
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey);
+                    keyAction(tempKey);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
                 }
             }
             else
             {
-                // Create a new secure copy
-                Key = UseMemoryHardening
-                    ? GC.AllocateArray<byte>(key.Length, pinned: true)
-                    : new byte[key.Length];
-
-                if (UseMemoryHardening)
+                // For larger keys, use a pinned array (rare case)
+                var tempKey = GC.AllocateArray<byte>(Length, pinned: true);
+                try
                 {
-                    _pinnedHandle = GCHandle.Alloc(Key, GCHandleType.Pinned);
-                    _isMemoryLocked = TryLockMemory(Key);
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey.AsSpan());
+                    keyAction(tempKey.AsSpan());
                 }
-
-                // Copy data securely
-                key.AsSpan().CopyTo(Key);
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
             }
         }
 
         /// <inheritdoc/>
-        public override SecretKey CreateCopy()
+        public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-            return new SecureKey(Key, takeOwnership: false);
+            ArgumentNullException.ThrowIfNull(keyAction);
+
+            if (!UseMemoryHardening || _xorMask is null)
+            {
+                // Fast path: no obfuscation, just use the key directly
+                return keyAction(_obfuscatedKey.AsSpan());
+            }
+
+            // Slow path with XOR obfuscation: de-XOR into stack buffer
+            if (Length <= MAX_STACK_ALLOC_SIZE)
+            {
+                // Stack allocate for small keys
+                Span<byte> tempKey = stackalloc byte[Length];
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey);
+                    return keyAction(tempKey);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+            else
+            {
+                // For larger keys, use a pinned array (rare case)
+                var tempKey = GC.AllocateArray<byte>(Length, pinned: true);
+                try
+                {
+                    XorBytes(_obfuscatedKey.AsSpan(), _xorMask.AsSpan(), tempKey.AsSpan());
+                    return keyAction(tempKey.AsSpan());
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(tempKey);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of this key.
+        /// </summary>
+        /// <returns>A new <see cref="SecureKey"/> containing the same key material.</returns>
+        public SecureKey CreateCopy()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            // De-XOR and create a new copy
+            return UseKey(key =>
+            {
+                var copy = new byte[Length];
+                key.CopyTo(copy);
+                return new SecureKey(copy, takeOwnership: true);
+            });
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
             if (_disposed)
                 return;
@@ -92,17 +187,22 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             _disposed = true;
 
             // Securely zero the memory using constant-time operation
-            CryptographicOperations.ZeroMemory(Key);
+            CryptographicOperations.ZeroMemory(_obfuscatedKey);
+            if (_xorMask is not null)
+                CryptographicOperations.ZeroMemory(_xorMask);
 
             if (UseMemoryHardening)
             {
                 // Unlock memory pages if they were locked
                 if (_isMemoryLocked)
-                    TryUnlockMemory(Key);
+                {
+                    TryUnlockMemory(_obfuscatedKey);
+                    if (_xorMask is not null)
+                        TryUnlockMemory(_xorMask);
+                }
 
-                // Release the pinned handle
-                if (_pinnedHandle.IsAllocated)
-                    _pinnedHandle.Free();
+                // Note: Arrays allocated with GC.AllocateArray(pinned: true) are on the POH
+                // They don't need explicit unpinning - they're freed when GC collects them
             }
         }
 
@@ -111,14 +211,56 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// </summary>
         /// <param name="key">The key to import.</param>
         /// <remarks>
-        /// Warning: When memory hardening is enabled, the original array will be pinned,
-        /// but copies may already exist in memory from before this call.
-        /// For maximum security, prefer creating keys directly with <see cref="SecureKey(int)"/>
-        /// and filling them in place.
+        /// When memory hardening is enabled, the key will be XOR-obfuscated immediately,
+        /// and the original array will be securely zeroed.
         /// </remarks>
-        public static SecretKey TakeOwnership(byte[] key)
+        public static SecureKey TakeOwnership(byte[] key)
         {
             return new SecureKey(key, takeOwnership: true);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="SecureKey"/> by copying data from the provided key.
+        /// </summary>
+        /// <param name="key">The key to copy from.</param>
+        public static SecureKey FromCopy(byte[] key)
+        {
+            return new SecureKey(key, takeOwnership: false);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="SecureKey"/> filled with cryptographically secure random bytes.
+        /// </summary>
+        /// <param name="size">The size of the key in bytes.</param>
+        /// <returns>A new <see cref="SecureKey"/> containing random key material.</returns>
+        public static SecureKey CreateSecureRandom(int size)
+        {
+            var randomBytes = new byte[size];
+            RandomNumberGenerator.Fill(randomBytes);
+
+            return new SecureKey(randomBytes, takeOwnership: true);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="SecureKey"/> and copies the data from a span of bytes.
+        /// </summary>
+        /// <param name="key">The key data to copy.</param>
+        /// <returns>A new <see cref="SecureKey"/> containing the provided key material.</returns>
+        public static SecureKey FromSpanCopy(ReadOnlySpan<byte> key)
+        {
+            var copy = new byte[key.Length];
+            key.CopyTo(copy);
+            return new SecureKey(copy, takeOwnership: true);
+        }
+
+        /// <summary>
+        /// XORs source with mask and writes to destination.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void XorBytes(ReadOnlySpan<byte> source, ReadOnlySpan<byte> mask, Span<byte> destination)
+        {
+            for (var i = 0; i < source.Length; i++)
+                destination[i] = (byte)(source[i] ^ mask[i]);
         }
 
         #region Platform-specific memory locking
@@ -175,31 +317,22 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         #region Windows Memory Locking
 
         [SupportedOSPlatform("windows")]
-        private static bool TryLockMemoryWindows(byte[] buffer)
+        private static unsafe bool TryLockMemoryWindows(byte[] buffer)
         {
             // VirtualLock prevents pages from being swapped to the pagefile
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            try
+            // The buffer is already pinned (allocated on POH), so we can safely get its address
+            fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.VirtualLock(handle.AddrOfPinnedObject(), (nuint)buffer.Length);
-            }
-            finally
-            {
-                handle.Free();
+                return UnsafeNativeApis.VirtualLock((nint)ptr, (nuint)buffer.Length);
             }
         }
 
         [SupportedOSPlatform("windows")]
-        private static void TryUnlockMemoryWindows(byte[] buffer)
+        private static unsafe bool TryUnlockMemoryWindows(byte[] buffer)
         {
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            try
+            fixed (byte* ptr = buffer)
             {
-                UnsafeNativeApis.VirtualUnlock(handle.AddrOfPinnedObject(), (nuint)buffer.Length);
-            }
-            finally
-            {
-                handle.Free();
+                return UnsafeNativeApis.VirtualUnlock((nint)ptr, (nuint)buffer.Length);
             }
         }
 
@@ -209,37 +342,27 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
 
         [SupportedOSPlatform("linux")]
         [SupportedOSPlatform("macos")]
-        private static bool TryLockMemoryUnix(byte[] buffer)
+        private static unsafe bool TryLockMemoryUnix(byte[] buffer)
         {
             // mlock prevents pages from being swapped out
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            try
+            // The buffer is already pinned (allocated on POH), so we can safely get its address
+            fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.mlock(handle.AddrOfPinnedObject(), (nuint)buffer.Length) == 0;
-            }
-            finally
-            {
-                handle.Free();
+                return UnsafeNativeApis.mlock((nint)ptr, (nuint)buffer.Length) == 0;
             }
         }
 
         [SupportedOSPlatform("linux")]
         [SupportedOSPlatform("macos")]
-        private static void TryUnlockMemoryUnix(byte[] buffer)
+        private static unsafe bool TryUnlockMemoryUnix(byte[] buffer)
         {
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            try
+            fixed (byte* ptr = buffer)
             {
-                UnsafeNativeApis.munlock(handle.AddrOfPinnedObject(), (nuint)buffer.Length);
-            }
-            finally
-            {
-                handle.Free();
+                return UnsafeNativeApis.munlock((nint)ptr, (nuint)buffer.Length) == 0;
             }
         }
 
         #endregion
-
 
         #endregion
     }

@@ -22,8 +22,8 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <param name="id">The persistent ID that uniquely identifies the individual authentication transaction.</param>
         /// <param name="data">The data that represents the key material or the data to sign.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IKey"/> that represents the key material for authentication.</returns>
-        Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IKeyBytes"/> that represents the key material for authentication.</returns>
+        Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Authenticates the user asynchronously.
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <param name="id">The persistent ID that uniquely identifies the individual authentication transaction.</param>
         /// <param name="data">The data that represents the ciphertext material or the data to sign.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IKey"/> that represents the key material for authentication.</returns>
-        Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IKeyBytes"/> that represents the key material for authentication.</returns>
+        Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
     }
 }

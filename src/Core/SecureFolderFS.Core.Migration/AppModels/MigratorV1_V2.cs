@@ -1,4 +1,10 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
@@ -9,13 +15,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
-using System;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Migration.AppModels
 {
@@ -36,7 +35,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> UnlockAsync(IKey credentials, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> UnlockAsync(IKeyBytes credentials, CancellationToken cancellationToken = default)
         {
             if (credentials is not IPassword password)
                 throw new ArgumentException($"Argument {credentials} is not of type {typeof(IPassword)}.");
@@ -53,10 +52,10 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
 
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            using var dekKey = new SecureKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
+            using var dekKey = new ManagedKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
+            using var macKey = new ManagedKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
-            Argon2id.Old_DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
+            Argon2id.Old_DeriveKey(password.Key, _v1KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();

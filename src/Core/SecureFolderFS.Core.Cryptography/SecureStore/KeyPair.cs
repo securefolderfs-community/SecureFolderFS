@@ -11,14 +11,14 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// <summary>
         /// Gets the Data Encryption Key (DEK).
         /// </summary>
-        public SecretKey DekKey { get; }
+        public ManagedKey DekKey { get; }
 
         /// <summary>
         /// Gets the Message Authentication Code (MAC) key.
         /// </summary>
-        public SecretKey MacKey { get; }
+        public ManagedKey MacKey { get; }
 
-        private KeyPair(SecretKey dekKey, SecretKey macKey)
+        private KeyPair(ManagedKey dekKey, ManagedKey macKey)
         {
             DekKey = dekKey;
             MacKey = macKey;
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// Instead, use <see cref="DekKey"/> and <see cref="MacKey"/> instances.
         /// </remarks>
         /// <returns>A new instance of the <see cref="KeyPair"/> class with the imported keys.</returns>
-        public static KeyPair ImportKeys(SecretKey dekKeyToDestroy, SecretKey macKeyToDestroy)
+        public static KeyPair ImportKeys(ManagedKey dekKeyToDestroy, ManagedKey macKeyToDestroy)
         {
             return new(dekKeyToDestroy.CreateUniqueCopy(), macKeyToDestroy.CreateUniqueCopy());
         }
@@ -47,14 +47,14 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         }
 
         /// <summary>
-        /// Combines the provided encoded recovery key into a <see cref="SecretKey"/> instance.
+        /// Combines the provided encoded recovery key into a <see cref="ManagedKey"/> instance.
         /// </summary>
         /// <param name="encodedRecoveryKey">The Base64 encoded recovery key.</param>
-        /// <returns>A <see cref="SecretKey"/> instance representing the combined recovery key.</returns>
-        public static SecretKey CombineRecoveryKey(string encodedRecoveryKey)
+        /// <returns>A <see cref="ManagedKey"/> instance representing the combined recovery key.</returns>
+        public static ManagedKey CombineRecoveryKey(string encodedRecoveryKey)
         {
             var keySplit = encodedRecoveryKey.ReplaceLineEndings(string.Empty).Split(Constants.KeyTraits.KEY_TEXT_SEPARATOR);
-            using var recoveryKey = new SecureKey(Constants.KeyTraits.DEK_KEY_LENGTH + Constants.KeyTraits.MAC_KEY_LENGTH);
+            using var recoveryKey = new ManagedKey(Constants.KeyTraits.DEK_KEY_LENGTH + Constants.KeyTraits.MAC_KEY_LENGTH);
 
             if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH), out _))
                 throw new FormatException("The recovery key (1) was not in the correct format.");
@@ -70,10 +70,10 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// </summary>
         /// <param name="recoveryKey">The combined recovery key.</param>
         /// <returns>A <see cref="KeyPair"/> instance representing the key pair.</returns>
-        public static KeyPair CopyFromRecoveryKey(SecretKey recoveryKey)
+        public static KeyPair CopyFromRecoveryKey(ManagedKey recoveryKey)
         {
-            var dekKey = new SecureKey(Constants.KeyTraits.DEK_KEY_LENGTH);
-            var macKey = new SecureKey(Constants.KeyTraits.MAC_KEY_LENGTH);
+            var dekKey = new ManagedKey(Constants.KeyTraits.DEK_KEY_LENGTH);
+            var macKey = new ManagedKey(Constants.KeyTraits.MAC_KEY_LENGTH);
 
             recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH).CopyTo(dekKey.Key);
             recoveryKey.Key.AsSpan(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH).CopyTo(macKey.Key);

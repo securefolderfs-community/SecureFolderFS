@@ -15,8 +15,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private SecretKey? _dekKey;
-        private SecretKey? _macKey;
+        private ManagedKey? _dekKey;
+        private ManagedKey? _macKey;
 
         public UnlockRoutine(VaultReader vaultReader)
         {
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetCredentials(ManagedKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);

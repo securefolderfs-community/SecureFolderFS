@@ -64,7 +64,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         }
         
         /// <inheritdoc/>
-        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             return await DecryptAsync(privateKey, data);
         }
 
-        private static SecretKey Encrypt(SecKey publicKey, byte[] data)
+        private static ManagedKey Encrypt(SecKey publicKey, byte[] data)
         {
             using var plaintext = NSData.FromArray(data);
             using var ciphertext = publicKey.CreateEncryptedData(ALGORITHM, plaintext, out var error);
@@ -102,10 +102,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 throw new CryptographicException($"Could not encrypt the data. {error?.LocalizedDescription}");
             
             var ciphertextBuffer = ciphertext.ToArray();
-            return SecureKey.TakeOwnership(ciphertextBuffer);
+            return ManagedKey.TakeOwnership(ciphertextBuffer);
         }
 
-        private static async Task<SecretKey> DecryptAsync(SecKey privateKey, byte[] data)
+        private static async Task<ManagedKey> DecryptAsync(SecKey privateKey, byte[] data)
         {
             var ciphertext = NSData.FromArray(data);
             var plaintext = privateKey.CreateDecryptedData(ALGORITHM, ciphertext, out var error);
@@ -113,7 +113,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 throw new CryptographicException($"Could not decrypt the data. {error?.LocalizedDescription}");
             
             var plaintextBuffer = plaintext.ToArray();
-            return SecureKey.TakeOwnership(plaintextBuffer);
+            return ManagedKey.TakeOwnership(plaintextBuffer);
         }
         
         private static async Task<(bool ok, NSError? error)> EvaluateAsync(LAContext context, LAPolicy policy, string reason)

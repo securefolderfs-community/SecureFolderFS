@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     public sealed partial class CredentialsWizardViewModel : OverlayViewModel, IStagingView
     {
         private readonly string _vaultId;
-        private readonly TaskCompletionSource<IKey> _credentialsTcs;
+        private readonly TaskCompletionSource<IKeyBytes> _credentialsTcs;
 
         [ObservableProperty] private bool _IsNameCipherEnabled;
         [ObservableProperty] private PickerOptionViewModel? _ContentCipher;

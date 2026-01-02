@@ -48,13 +48,13 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
             using var secureRandom = RandomNumberGenerator.Create();
-            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
+            using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
             await using var dataStream = new MemoryStream();
 
             // Fill the first 128 bytes with secure random data
@@ -82,7 +82,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -92,7 +92,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 throw new OperationCanceledException("The user did not pick a file.");
 
             await using var keyStream = await keyFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
+            using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
 
             var read = await keyStream.ReadAsync(secretKey.Key, cancellationToken);
             if (read < secretKey.Length)

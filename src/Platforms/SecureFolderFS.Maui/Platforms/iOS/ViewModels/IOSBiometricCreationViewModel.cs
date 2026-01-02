@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 await vaultWriter.WriteAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
                 {
                     Capability = "supportsKeyProtection",
-                    CiphertextKey = ciphertextKey.ToArray()
+                    CiphertextKey = ciphertextKey.Key
                 }, cancellationToken);
             }
             catch (Exception ex)

@@ -10,9 +10,9 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         protected readonly KeyPair keyPair;
         protected readonly RandomNumberGenerator secureRandom;
 
-        protected SecretKey DekKey => keyPair.DekKey;
+        protected ManagedKey DekKey => keyPair.DekKey;
 
-        protected SecretKey MacKey => keyPair.MacKey;
+        protected ManagedKey MacKey => keyPair.MacKey;
 
         /// <inheritdoc/>
         public abstract int HeaderCiphertextSize { get; }
