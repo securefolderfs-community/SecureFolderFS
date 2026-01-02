@@ -14,6 +14,8 @@
             <RowDefinition Height="Auto" />
             <!--  Other settings  -->
             <RowDefinition />
+            <!--  Bottom info  -->
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Banner  -->
@@ -69,6 +71,23 @@
                         IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
+        </StackPanel>
+
+        <!--  Bottom info  -->
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal"
+            Spacing="8">
+            <FontIcon
+                VerticalAlignment="Center"
+                FontSize="16"
+                Glyph="&#xEEA1;"
+                Opacity="0.8" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Opacity="0.8"
+                Text="Core Memory Protection is enabled" />
         </StackPanel>
     </Grid>
 </Page>

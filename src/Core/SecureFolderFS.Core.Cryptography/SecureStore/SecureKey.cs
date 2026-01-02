@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
     /// A secure key implementation that protects key material in memory.
     /// </summary>
     /// <remarks>
-    /// When <see cref="UseMemoryHardening"/> is enabled, this class provides additional security measures:
+    /// When <see cref="UseCoreMemoryProtection"/> is enabled, this class provides additional security measures:
     /// <list type="bullet">
     ///   <item>Memory is pinned to prevent GC from moving it (which would leave copies in memory)</item>
     ///   <item>Key material is XOR'd with a random mask, so the plaintext key never exists on the heap</item>
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         {
             Length = key.Length;
 
-            if (UseMemoryHardening)
+            if (UseCoreMemoryProtection)
             {
                 // Always create a new secure copy with XOR obfuscation
                 _obfuscatedKey = GC.AllocateArray<byte>(key.Length, pinned: true);
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             ObjectDisposedException.ThrowIf(_disposed, this);
             ArgumentNullException.ThrowIfNull(keyAction);
 
-            if (!UseMemoryHardening || _xorMask is null)
+            if (!UseCoreMemoryProtection || _xorMask is null)
             {
                 // Fast path: no obfuscation, just use the key directly
                 keyAction(_obfuscatedKey.AsSpan());
@@ -125,7 +125,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             ObjectDisposedException.ThrowIf(_disposed, this);
             ArgumentNullException.ThrowIfNull(keyAction);
 
-            if (!UseMemoryHardening || _xorMask is null)
+            if (!UseCoreMemoryProtection || _xorMask is null)
             {
                 // Fast path: no obfuscation, just use the key directly
                 keyAction(_obfuscatedKey.AsSpan(), state);
@@ -169,7 +169,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             ObjectDisposedException.ThrowIf(_disposed, this);
             ArgumentNullException.ThrowIfNull(keyAction);
 
-            if (!UseMemoryHardening || _xorMask is null)
+            if (!UseCoreMemoryProtection || _xorMask is null)
             {
                 // Fast path: no obfuscation, just use the key directly
                 return keyAction(_obfuscatedKey.AsSpan());
@@ -212,7 +212,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             ObjectDisposedException.ThrowIf(_disposed, this);
             ArgumentNullException.ThrowIfNull(keyAction);
 
-            if (!UseMemoryHardening || _xorMask is null)
+            if (!UseCoreMemoryProtection || _xorMask is null)
             {
                 // Fast path: no obfuscation, just use the key directly
                 return keyAction(_obfuscatedKey.AsSpan(), state);
@@ -276,7 +276,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             if (_xorMask is not null)
                 CryptographicOperations.ZeroMemory(_xorMask);
 
-            if (UseMemoryHardening)
+            if (UseCoreMemoryProtection)
             {
                 // Unlock memory pages if they were locked
                 if (_isMemoryLocked)
@@ -357,7 +357,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryLockMemory(byte[] buffer)
         {
-            if (!UseMemoryHardening || buffer.Length == 0)
+            if (!UseCoreMemoryProtection || buffer.Length == 0)
                 return false;
 
             try
@@ -383,7 +383,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void TryUnlockMemory(byte[] buffer)
         {
-            if (!UseMemoryHardening || buffer.Length == 0)
+            if (!UseCoreMemoryProtection || buffer.Length == 0)
                 return;
 
             try

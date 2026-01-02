@@ -68,7 +68,8 @@ namespace SecureFolderFS.Uno.Dialogs
                 Hide();
             }
 #else
-            args.Cancel = !await ViewModel.RecoverAsync(default);
+            var result = await ViewModel.RecoverAsync(default);
+            args.Cancel = !result.Successful;
 #endif
         }
     }

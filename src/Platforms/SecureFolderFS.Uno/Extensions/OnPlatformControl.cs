@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.UI.Xaml;
@@ -59,13 +60,13 @@ namespace SecureFolderFS.Uno.Extensions
         /// <summary>
         /// Gets the collection of platform-specific values.
         /// </summary>
-        public ItemCollection Platforms { get; } = new();
+        public IList<On> Platforms { get; } = new List<On>();
 
         /// <inheritdoc/>
-        protected override void OnDataContextChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnApplyTemplate()
         {
-            Content = GetPlatformValue();
-            base.OnDataContextChanged(e);
+            Content ??= GetPlatformValue();
+            base.OnApplyTemplate();
         }
 
         private object? GetPlatformValue()
@@ -74,7 +75,7 @@ namespace SecureFolderFS.Uno.Extensions
             var platformValue = Platforms.FirstOrDefault(p => (p as On)!.Platform == currentPlatform)
                                 ?? Platforms.FirstOrDefault(p => (p as On)!.Platform == Platform.Default);
 
-            return (platformValue as On)?.Value;
+            return platformValue?.Value;
         }
 
         private static Platform GetCurrentPlatform()
