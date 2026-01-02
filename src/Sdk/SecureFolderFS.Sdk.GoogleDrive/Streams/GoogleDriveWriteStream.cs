@@ -48,27 +48,21 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             _memoryStreamBuffer.Write(buffer, offset, count);
         }
 
         /// <inheritdoc/>
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             return _memoryStreamBuffer.WriteAsync(buffer, offset, count, cancellationToken);
         }
 
         /// <inheritdoc/>
         public override void Flush()
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             if (_memoryStreamBuffer.Length == 0)
                 return;
 
@@ -85,9 +79,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override async Task FlushAsync(CancellationToken cancellationToken)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             if (_memoryStreamBuffer.Length == 0)
                 return;
 
@@ -104,18 +96,14 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             return _memoryStreamBuffer.Seek(offset, origin);
         }
 
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveWriteStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             _memoryStreamBuffer.SetLength(value);
         }
 

@@ -53,9 +53,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveReadStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             if (_position >= _fileSize)
                 return 0;
 
@@ -78,9 +76,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveReadStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             if (_position >= _fileSize)
                 return 0;
 
@@ -103,9 +99,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Streams
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(GoogleDriveReadStream));
-
+            ObjectDisposedException.ThrowIf(_disposed, this);
             var newPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
