@@ -44,10 +44,9 @@ namespace SecureFolderFS.Core.Routines.Operational
             var salt = new byte[KeyTraits.SALT_LENGTH];
 
             // Fill keys
-            using var secureRandom = RandomNumberGenerator.Create();
-            secureRandom.GetNonZeroBytes(dekKey.Key);
-            secureRandom.GetNonZeroBytes(macKey.Key);
-            secureRandom.GetNonZeroBytes(salt);
+            RandomNumberGenerator.Fill(dekKey.Key);
+            RandomNumberGenerator.Fill(macKey.Key);
+            RandomNumberGenerator.Fill(salt);
 
             // Generate keystore
             _keystoreDataModel = VaultParser.EncryptKeystore(passkey, dekKey, macKey, salt);

@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.Cryptography.Helpers;
 using System;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions.XChaChaContentExtensions;
@@ -26,7 +27,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         public override void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
-            secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
+            RandomNumberGenerator.Fill(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];

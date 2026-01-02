@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         public override void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
-            secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
+            RandomNumberGenerator.Fill(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Encrypt
             AesCtr128.Encrypt(

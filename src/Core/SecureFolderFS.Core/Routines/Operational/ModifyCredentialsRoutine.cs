@@ -52,9 +52,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_keyPair);
 
             // Generate new salt
-            using var secureRandom = RandomNumberGenerator.Create();
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
-            secureRandom.GetNonZeroBytes(salt);
+            RandomNumberGenerator.Fill(salt);
 
             // Encrypt new keystore
             _keystoreDataModel = VaultParser.EncryptKeystore(passkey, _keyPair.DekKey, _keyPair.MacKey, salt);

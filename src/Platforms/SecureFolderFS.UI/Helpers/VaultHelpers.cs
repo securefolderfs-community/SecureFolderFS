@@ -19,11 +19,10 @@ namespace SecureFolderFS.UI.Helpers
 
         public static ManagedKey GenerateSecureKey(int length)
         {
-            using var secureRandom = RandomNumberGenerator.Create();
             using var key = new ManagedKey(length);
             
             // Fill the key
-            secureRandom.GetNonZeroBytes(key.Key);
+            RandomNumberGenerator.Fill(key.Key);
             
             // Return a copy of the key since the original version is being disposed of here
             return key.CreateCopy();
@@ -33,10 +32,9 @@ namespace SecureFolderFS.UI.Helpers
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
             using var challenge = new ManagedKey(Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH + encodedVaultIdLength);
-            using var secureRandom = RandomNumberGenerator.Create();
 
             // Fill the first CHALLENGE_KEY_PART_LENGTH bytes with secure random data
-            secureRandom.GetNonZeroBytes(challenge.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH));
+            RandomNumberGenerator.Fill(challenge.Key.AsSpan(0, Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH));
 
             // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us

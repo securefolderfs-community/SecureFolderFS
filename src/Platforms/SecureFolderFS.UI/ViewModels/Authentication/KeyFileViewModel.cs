@@ -53,12 +53,11 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            using var secureRandom = RandomNumberGenerator.Create();
             using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
             await using var dataStream = new MemoryStream();
 
             // Fill the first 128 bytes with secure random data
-            secureRandom.GetNonZeroBytes(secretKey.Key.AsSpan(0, KEY_LENGTH));
+            RandomNumberGenerator.Fill(secretKey.Key.AsSpan(0, KEY_LENGTH));
 
             // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us

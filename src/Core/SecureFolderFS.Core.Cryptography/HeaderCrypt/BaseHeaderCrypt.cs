@@ -7,12 +7,11 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
     /// <inheritdoc cref="IHeaderCrypt"/>
     internal abstract class BaseHeaderCrypt : IHeaderCrypt
     {
-        protected readonly KeyPair keyPair;
-        protected readonly RandomNumberGenerator secureRandom;
+        private readonly KeyPair _keyPair;
 
-        protected ManagedKey DekKey => keyPair.DekKey;
+        protected ManagedKey DekKey => _keyPair.DekKey;
 
-        protected ManagedKey MacKey => keyPair.MacKey;
+        protected ManagedKey MacKey => _keyPair.MacKey;
 
         /// <inheritdoc/>
         public abstract int HeaderCiphertextSize { get; }
@@ -22,8 +21,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 
         protected BaseHeaderCrypt(KeyPair keyPair)
         {
-            this.keyPair = keyPair;
-            this.secureRandom = RandomNumberGenerator.Create();
+            _keyPair = keyPair;
         }
 
         /// <inheritdoc/>
@@ -38,7 +36,6 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            secureRandom.Dispose();
         }
     }
 }
