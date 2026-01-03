@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
@@ -26,7 +27,7 @@ namespace SecureFolderFS.Uno.ViewModels
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var challenge = VaultHelpers.GenerateChallenge(VaultId);
+            using var challenge = CryptHelpers.GenerateChallenge(VaultId);
 
             // Write authentication data to the vault
             await vaultWriter.WriteAuthenticationAsync<VaultChallengeDataModel>($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()

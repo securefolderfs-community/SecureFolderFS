@@ -129,7 +129,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
 
                 _ftpClient = new AsyncFtpClient(uri.Host, username, password ?? string.Empty, uri.Port, config);
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(3000));
+                timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(6000));
                 await _ftpClient.Connect(timeoutCts.Token);
                 IsConnected = true;
                 Password = null;

@@ -167,13 +167,16 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// </summary>
         /// <param name="recoveryKey">The combined recovery key.</param>
         /// <returns>A <see cref="KeyPair"/> instance representing the key pair.</returns>
-        public static KeyPair CopyFromRecoveryKey(ManagedKey recoveryKey)
+        public static KeyPair CopyFromRecoveryKey(IKeyUsage recoveryKey)
         {
             var dekKey = new byte[Constants.KeyTraits.DEK_KEY_LENGTH];
             var macKey = new byte[Constants.KeyTraits.MAC_KEY_LENGTH];
 
-            recoveryKey.Key.AsSpan(0, Constants.KeyTraits.DEK_KEY_LENGTH).CopyTo(dekKey);
-            recoveryKey.Key.AsSpan(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH).CopyTo(macKey);
+            recoveryKey.UseKey(key =>
+            {
+                key.Slice(0, Constants.KeyTraits.DEK_KEY_LENGTH).CopyTo(dekKey);
+                key.Slice(Constants.KeyTraits.DEK_KEY_LENGTH, Constants.KeyTraits.MAC_KEY_LENGTH).CopyTo(macKey);
+            });
 
             return new KeyPair(SecureKey.TakeOwnership(dekKey), SecureKey.TakeOwnership(macKey));
         }

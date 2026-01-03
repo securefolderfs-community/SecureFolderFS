@@ -1,11 +1,12 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Routines.Operational
 {
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(ManagedKey passkey)
+        public void SetCredentials(IKeyUsage passkey)
         {
             _keyPair = KeyPair.CopyFromRecoveryKey(passkey);
         }

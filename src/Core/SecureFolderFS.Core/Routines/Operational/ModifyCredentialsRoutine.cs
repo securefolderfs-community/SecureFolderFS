@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(ManagedKey passkey)
+        public unsafe void SetCredentials(IKeyUsage passkey)
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
 
@@ -55,10 +55,18 @@ namespace SecureFolderFS.Core.Routines.Operational
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
-            _keyPair.UseKeys((dekKey, macKey) =>
+            // Encrypt a new keystore
+            passkey.UseKey(key =>
             {
-                // Encrypt a new keystore
-                _keystoreDataModel = VaultParser.EncryptKeystore(passkey, dekKey, macKey, salt);
+                fixed (byte* keyPtr = key)
+                {
+                    var state = (keyPtr: (nint)keyPtr, keyLen: key.Length);
+                    _keyPair.UseKeys(state, (dekKey, macKey, s) =>
+                    {
+                        var k = new ReadOnlySpan<byte>((byte*)s.keyPtr, s.keyLen);
+                        _keystoreDataModel = VaultParser.EncryptKeystore(k, dekKey, macKey, salt);
+                    });
+                }
             });
         }
 

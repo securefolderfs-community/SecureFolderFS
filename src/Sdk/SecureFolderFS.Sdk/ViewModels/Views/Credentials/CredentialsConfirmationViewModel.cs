@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     {
         private readonly IFolder _vaultFolder;
         private readonly AuthenticationStage _authenticationStage;
-        private readonly TaskCompletionSource<IKeyBytes> _credentialsTcs;
+        private readonly TaskCompletionSource<IKeyUsage> _credentialsTcs;
 
         [ObservableProperty] private bool _IsRemoving;
         [ObservableProperty] private bool _IsComplementing;
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
         }
 
-        private async Task ChangeCredentialsAsync(IKeyBytes key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
+        private async Task ChangeCredentialsAsync(IKeyUsage key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
         {
             // Modify the current unlock procedure
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, configuredOptions with

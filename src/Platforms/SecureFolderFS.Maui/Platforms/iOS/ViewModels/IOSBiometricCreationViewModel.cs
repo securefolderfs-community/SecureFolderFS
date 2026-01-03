@@ -1,11 +1,12 @@
+using System.Security.Cryptography;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Extensions;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 {
@@ -25,7 +26,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            using var keyMaterial = VaultHelpers.GenerateSecureKey(Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
+            using var keyMaterial = new ManagedKey(Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
+            RandomNumberGenerator.Fill(keyMaterial.Key);
 
             try
             {

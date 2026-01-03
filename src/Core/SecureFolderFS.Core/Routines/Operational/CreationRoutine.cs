@@ -8,7 +8,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
 using static SecureFolderFS.Core.Constants.Vault;
 using static SecureFolderFS.Core.Cryptography.Constants;
 
@@ -21,8 +21,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultWriter _vaultWriter;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private ManagedKey? _macKey;
-        private ManagedKey? _dekKey;
+        private IKeyUsage? _dekKey;
+        private IKeyUsage? _macKey;
 
         public CreationRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
         {
@@ -37,24 +37,24 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(ManagedKey passkey)
+        public void SetCredentials(IKeyUsage passkey)
         {
-            // Allocate shallow keys which will be later disposed of
-            using var dekKey = new ManagedKey(KeyTraits.DEK_KEY_LENGTH);
-            using var macKey = new ManagedKey(KeyTraits.MAC_KEY_LENGTH);
+            // Allocate keys for later use
+            var dekKey = new byte[KeyTraits.DEK_KEY_LENGTH];
+            var macKey = new byte[KeyTraits.MAC_KEY_LENGTH];
             var salt = new byte[KeyTraits.SALT_LENGTH];
 
             // Fill keys
-            RandomNumberGenerator.Fill(dekKey.Key);
-            RandomNumberGenerator.Fill(macKey.Key);
+            RandomNumberGenerator.Fill(dekKey);
+            RandomNumberGenerator.Fill(macKey);
             RandomNumberGenerator.Fill(salt);
 
             // Generate keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, dekKey, macKey, salt);
+            _keystoreDataModel = passkey.UseKey(key => VaultParser.EncryptKeystore(key, dekKey, macKey, salt));
 
             // Create key copies for later use
-            _macKey = macKey.CreateCopy();
-            _dekKey = dekKey.CreateCopy();
+            _dekKey = SecureKey.TakeOwnership(dekKey);
+            _macKey = SecureKey.TakeOwnership(macKey);
         }
 
         /// <inheritdoc/>
@@ -71,14 +71,17 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_macKey);
             ArgumentNullException.ThrowIfNull(_dekKey);
 
-            // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(_configDataModel, _macKey, _configDataModel.PayloadMac);
+            // First, we need to fill in the PayloadMac of the content
+            _macKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+            });
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
-            // Create content folder
+            // Create the content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
                 await modifiableFolder.CreateFolderAsync(Names.VAULT_CONTENT_FOLDERNAME, true, cancellationToken);
 

@@ -14,9 +14,9 @@ namespace SecureFolderFS.Shared.Models
     public sealed class KeySequence : IKeyBytes
     {
         private byte[]? _combinedKey;
-        private readonly List<IKeyBytes> _keys;
+        private readonly List<IKeyUsage> _keys;
 
-        public IReadOnlyCollection<IKeyBytes> Keys => _keys;
+        public IReadOnlyCollection<IKeyUsage> Keys => _keys;
 
         public byte[] Key
         {
@@ -80,14 +80,14 @@ namespace SecureFolderFS.Shared.Models
             return keyAction(Key, state);
         }
 
-        public void Add(IKeyBytes key)
+        public void Add(IKeyUsage key)
         {
             _keys.Add(key);
             CryptographicOperations.ZeroMemory(_combinedKey);
             _combinedKey = null;
         }
 
-        public void SetOrAdd(int index, IKeyBytes key)
+        public void SetOrAdd(int index, IKeyUsage key)
         {
             if (index >= 0 && index < _keys.Count)
             {

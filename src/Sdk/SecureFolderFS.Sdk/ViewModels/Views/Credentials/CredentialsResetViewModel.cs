@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     {
         private readonly IFolder _vaultFolder;
         private readonly IDisposable _unlockContract;
-        private readonly TaskCompletionSource<IKeyBytes> _credentialsTcs;
+        private readonly TaskCompletionSource<IKeyUsage> _credentialsTcs;
 
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions = new();

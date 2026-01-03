@@ -7,6 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Routines.Operational
 {
@@ -32,16 +33,16 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(ManagedKey passkey)
+        public void SetCredentials(IKeyUsage passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             // Derive keystore
-            var (dekKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
+            var derived = passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel));
 
-            _dekKey = SecureKey.TakeOwnership(dekKey);
-            _macKey = SecureKey.TakeOwnership(macKey);
+            _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+            _macKey = SecureKey.TakeOwnership(derived.macKey);
         }
 
         /// <inheritdoc/>
