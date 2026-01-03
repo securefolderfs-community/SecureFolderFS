@@ -209,25 +209,24 @@
                                     Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                             </StackPanel>
 
-                            <FontIcon
-                                x:Name="LockIcon"
-                                Grid.Column="1"
-                                x:Load="{x:Bind IsUnlocked, Mode=OneWay}"
-                                FontSize="14"
-                                Glyph="&#xE785;"
-                                Opacity="0.6"
-                                Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                            <Grid Grid.Column="1" Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                                <FontIcon
+                                    x:Name="LockIcon"
+                                    FontSize="14"
+                                    Glyph="&#xE785;"
+                                    Opacity="0.6"
+                                    Visibility="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </Grid>
 
                             <TextBox
                                 x:Name="RenameBox"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2"
                                 VerticalAlignment="Center"
-                                x:Load="{x:Bind IsRenaming, Mode=OneWay}"
                                 KeyDown="RenameBox_KeyDown"
-                                Loaded="RenameBox_Loaded"
                                 LostFocus="RenameBox_LostFocus"
-                                Text="{x:Bind VaultViewModel.Title, Mode=OneWay}" />
+                                Text="{x:Bind VaultViewModel.Title, Mode=OneWay}"
+                                Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
