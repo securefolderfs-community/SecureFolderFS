@@ -1,4 +1,4 @@
-﻿using ByteSizeLib;
+﻿﻿using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
@@ -19,6 +19,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;
         private readonly List<long> _writeRates;
+        private IDisposable? _bytesReadSubscription;
+        private IDisposable? _bytesWrittenSubscription;
         private long _currentReadAmount;
         private long _currentWriteAmount;
         private int _updateTimeCount;
@@ -46,8 +48,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             await ReadGraphViewModel.InitAsync(cancellationToken);
             await WriteGraphViewModel.InitAsync(cancellationToken);
 
-            _fileSystemStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
-            _fileSystemStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
+            // Subscribe to statistics if it supports subscription
+            if (_fileSystemStatistics is IFileSystemStatisticsSubscriber subscriber)
+            {
+                _bytesReadSubscription = subscriber.SubscribeToBytesRead(new Progress<long>(x => _currentReadAmount += x));
+                _bytesWrittenSubscription = subscriber.SubscribeToBytesWritten(new Progress<long>(x => _currentWriteAmount += x));
+            }
 
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
@@ -100,8 +106,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _fileSystemStatistics.BytesRead = null;
-            _fileSystemStatistics.BytesWritten = null;
+            _bytesReadSubscription?.Dispose();
+            _bytesWrittenSubscription?.Dispose();
             _periodicTimer.Dispose();
         }
     }
