@@ -1,4 +1,4 @@
-﻿﻿using SecureFolderFS.Shared.ComponentModel;
+﻿using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;

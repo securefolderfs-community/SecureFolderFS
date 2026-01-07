@@ -1,4 +1,4 @@
-﻿﻿using ByteSizeLib;
+﻿using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
