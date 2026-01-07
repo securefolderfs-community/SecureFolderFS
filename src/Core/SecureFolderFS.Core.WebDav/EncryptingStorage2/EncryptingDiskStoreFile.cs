@@ -129,44 +129,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             if (!IsWritable)
                 return HttpStatusCode.Forbidden;
 
-            // Debug: Log stream info
-            System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] Input stream type: {inputStream.GetType().Name}");
-            System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] CanRead: {inputStream.CanRead}, CanSeek: {inputStream.CanSeek}");
-            if (inputStream.CanSeek)
-                System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] Input stream length: {inputStream.Length}");
-
-            // Copy the stream
             try
             {
                 // Copy the information to the destination stream
                 await using var outputStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false);
-
-                // Read and copy manually to track bytes
-                var buffer = new byte[81920];
-                long totalBytesRead = 0;
-                int bytesRead;
-                bool isFirstRead = true;
-
-                while ((bytesRead = await inputStream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
-                {
-                    // Log first chunk to see what data we're receiving
-                    if (isFirstRead)
-                    {
-                        var hexDump = BitConverter.ToString(buffer, 0, Math.Min(64, bytesRead));
-                        System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] First {Math.Min(64, bytesRead)} bytes (hex): {hexDump}");
-
-                        // Also try to interpret as ASCII for text files
-                        var asciiPreview = System.Text.Encoding.ASCII.GetString(buffer, 0, Math.Min(64, bytesRead));
-                        System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] ASCII preview: {asciiPreview}");
-                        isFirstRead = false;
-                    }
-
-                    await outputStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
-                    totalBytesRead += bytesRead;
-                }
-
-                System.Diagnostics.Debug.WriteLine($"[UploadFromStreamAsync] Total bytes copied: {totalBytesRead}");
-
+                await inputStream.CopyToAsync(outputStream, cancellationToken).ConfigureAwait(false);
                 await outputStream.FlushAsync(cancellationToken).ConfigureAwait(false);
 
                 return HttpStatusCode.OK;
@@ -174,11 +141,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             catch (IOException ioException) when (ioException.IsDiskFull())
             {
                 return HttpStatusCode.InsufficientStorage;
-            }
-            catch (Exception ex)
-            {
-                _ = ex;
-                throw;
             }
         }
 
