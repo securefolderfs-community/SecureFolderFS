@@ -126,6 +126,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             disposables.Add(media);
             disposables.Add(mediaPlayer);
 
+            mediaPlayerElement.LibVLC = libVlc;
             mediaPlayerElement.MediaPlayer = mediaPlayer;
             mediaPlayer.Play();
         }

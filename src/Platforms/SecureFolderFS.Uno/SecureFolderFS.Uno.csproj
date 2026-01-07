@@ -519,4 +519,11 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UserControls\Widgets\AggregatedDataWidget.xaml.cs">
+      <DependentUpon>AggregatedDataWidget.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+  </ItemGroup>
 </Project>

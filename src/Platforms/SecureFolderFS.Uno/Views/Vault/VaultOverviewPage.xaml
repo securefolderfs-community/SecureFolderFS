@@ -38,6 +38,11 @@
                 WriteGraphIsExtended="{x:Bind WriteGraphViewModel.IsExtended, Mode=TwoWay}"
                 WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubHeader, Mode=OneWay}" />
         </DataTemplate>
+
+        <!--  Aggregated Data Statistics Widget  -->
+        <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm3:AggregatedDataWidgetViewModel">
+            <ucw:AggregatedDataWidget TotalRead="{x:Bind TotalRead, Mode=OneWay}" TotalWrite="{x:Bind TotalWrite, Mode=OneWay}" />
+        </DataTemplate>
     </Page.Resources>
 
     <!--  Margins are to align the scrollbar to prevent overlap with content  -->
@@ -52,7 +57,10 @@
                             VerticalContentAlignment="Stretch"
                             Content="{Binding}">
                             <ContentControl.ContentTemplateSelector>
-                                <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                                <ts:WidgetsTemplateSelector
+                                    AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}"
+                                    GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}"
+                                    HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
                             </ContentControl.ContentTemplateSelector>
                         </ContentControl>
                     </DataTemplate>
