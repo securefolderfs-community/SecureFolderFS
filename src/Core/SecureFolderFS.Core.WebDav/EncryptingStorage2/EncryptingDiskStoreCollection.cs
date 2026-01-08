@@ -114,7 +114,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task<IStoreItem> GetFirstByNameAsync_Dav(string name, CancellationToken cancellationToken)
+        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             cancellationToken.ThrowIfCancellationRequested();
