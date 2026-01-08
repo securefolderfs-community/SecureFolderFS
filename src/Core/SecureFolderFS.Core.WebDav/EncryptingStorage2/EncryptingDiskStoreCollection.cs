@@ -33,6 +33,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         /// <inheritdoc/>
         public string Name { get; }
 
+        /// <inheritdoc/>
+        public EnumerationDepthMode DepthMode => EnumerationDepthMode.Rejected;
+
         public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, FileSystemSpecifics specifics)
         {
             _specifics = specifics;
@@ -43,7 +46,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             LockingManager = lockingManager;
             IsWritable = isWritable;
         }
-
 
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -103,14 +105,20 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
+        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            // Folder watcher in WebDav is not supported
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
         public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             var parentDirectory = _directoryInfo.Parent;
             if (parentDirectory is null)
                 return Task.FromResult<IFolder?>(null);
 
-            return Task.FromResult<IFolder?>(null);
-            //return Task.FromResult<IFolder?>(new DiskStoreCollection(LockingManager, parentDirectory, IsWritable));
+            return Task.FromResult<IFolder?>(new DiskStoreCollection(LockingManager, parentDirectory, IsWritable));
         }
 
         /// <inheritdoc/>
@@ -206,7 +214,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     var result = await storeItem.CopyAsync(destinationCollection, destinationName, overwrite, cancellationToken).ConfigureAwait(false);
                     if (result.Result == HttpStatusCode.Created || result.Result == HttpStatusCode.NoContent)
                     {
-                        await DeleteAsync_Dav(storeItem, cancellationToken).ConfigureAwait(false);
+                        await DeleteAsync(storeItem, cancellationToken).ConfigureAwait(false);
                         return result.Item!;
                     }
                     else
@@ -222,7 +230,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync_Dav(IStoreItem storeItem, CancellationToken cancellationToken)
+        public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
 
@@ -231,7 +239,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 throw new HttpListenerException((int)HttpStatusCode.PreconditionFailed);
 
             // Determine the full path
-            var fullPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, storeItem.Name), _specifics);
+            var fullPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, item.Name), _specifics);
             try
             {
                 // Check if the file exists
@@ -264,6 +272,21 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 //s_log.Log(LogLevel.Error, () => $"Unable to delete '{fullPath}' directory.", exc);
                 throw new HttpListenerException((int)HttpStatusCode.InternalServerError);
             }
+        }
+
+
+        /// <inheritdoc/>
+        public Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> CreateFileAsync(string name, bool overwrite = false,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -500,7 +523,5 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             // We can only move disk-store collections
             return destination is EncryptingDiskStoreCollection;
         }
-
-        public EnumerationDepthMode DepthMode => EnumerationDepthMode.Rejected;
     }
 }
