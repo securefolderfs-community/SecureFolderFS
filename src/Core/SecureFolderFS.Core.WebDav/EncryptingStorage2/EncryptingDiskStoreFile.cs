@@ -55,8 +55,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             if (parentDirectory is null)
                 return Task.FromResult<IFolder?>(null);
 
-            return Task.FromResult<IFolder?>(null);
-            //return Task.FromResult<IFolder?>(new EncryptingDiskStoreCollection(LockingManager, parentDirectory, IsWritable, _specifics));
+            return Task.FromResult<IFolder?>(new EncryptingDiskStoreCollection(LockingManager, parentDirectory, IsWritable, _specifics));
         }
 
         public static PropertyManager<EncryptingDiskStoreFile> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreFile>[]
