@@ -1,15 +1,15 @@
-﻿using NWebDav.Server.Helpers;
-using NWebDav.Server.Locking;
-using NWebDav.Server.Props;
-using NWebDav.Server.Stores;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using NWebDav.Server.Helpers;
+using NWebDav.Server.Locking;
+using NWebDav.Server.Props;
+using NWebDav.Server.Stores;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
@@ -184,7 +184,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 else
                 {
                     // Create the item in the destination collection
-                    var result = await destination.CreateItemAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
+                    var result = await destination.CreateItemAsync_Dav(name, overwrite, cancellationToken).ConfigureAwait(false);
 
                     // Check if the item could be created
                     if (result.Item is IStoreFile storeFile)

@@ -1,13 +1,4 @@
-﻿using NWebDav.Server;
-using NWebDav.Server.Enums;
-using NWebDav.Server.Locking;
-using NWebDav.Server.Props;
-using NWebDav.Server.Stores;
-using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -17,6 +8,15 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using NWebDav.Server;
+using NWebDav.Server.Enums;
+using NWebDav.Server.Locking;
+using NWebDav.Server.Props;
+using NWebDav.Server.Stores;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
@@ -44,8 +44,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             IsWritable = isWritable;
         }
 
+
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IStoreItem> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             cancellationToken.ThrowIfCancellationRequested();
@@ -59,7 +60,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         if (PathHelpers.IsCoreName(file.Name))
                             continue;
 
-                        yield return new DiskStoreFile(LockingManager, file, IsWritable);
+                        yield return new EncryptingDiskStoreFile(LockingManager, file, IsWritable, _specifics);
                     }
 
                     break;
@@ -72,7 +73,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         if (PathHelpers.IsCoreName(folder.Name))
                             continue;
 
-                        yield return new DiskStoreCollection(LockingManager, folder, IsWritable);
+                        yield return new EncryptingDiskStoreCollection(LockingManager, folder, IsWritable, _specifics);
                     }
 
                     break;
@@ -84,7 +85,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     {
                         if (PathHelpers.IsCoreName(folder.Name))
                             continue;
-
 
                         yield return new EncryptingDiskStoreCollection(LockingManager, folder, IsWritable, _specifics);
                     }
@@ -114,7 +114,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task<IStoreItem> GetFirstByNameAsync(string name, CancellationToken cancellationToken)
+        public async Task<IStoreItem> GetFirstByNameAsync_Dav(string name, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             cancellationToken.ThrowIfCancellationRequested();
@@ -135,7 +135,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task<IStoreItem> MoveItemAsync(IStoreItem storeItem, IStoreCollection destinationCollection, string destinationName, bool overwrite, CancellationToken cancellationToken)
+        public async Task<IStoreItem> MoveItemAsync_Dav(IStoreItem storeItem, IStoreCollection destinationCollection, string destinationName, bool overwrite, CancellationToken cancellationToken)
         {
             // Return error
             if (!IsWritable)
@@ -206,7 +206,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     var result = await storeItem.CopyAsync(destinationCollection, destinationName, overwrite, cancellationToken).ConfigureAwait(false);
                     if (result.Result == HttpStatusCode.Created || result.Result == HttpStatusCode.NoContent)
                     {
-                        await DeleteAsync(storeItem, cancellationToken).ConfigureAwait(false);
+                        await DeleteAsync_Dav(storeItem, cancellationToken).ConfigureAwait(false);
                         return result.Item!;
                     }
                     else
@@ -222,7 +222,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync(IStoreItem storeItem, CancellationToken cancellationToken)
+        public async Task DeleteAsync_Dav(IStoreItem storeItem, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
 
@@ -392,7 +392,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public Task<StoreItemResult> CreateItemAsync(string name, bool overwrite, CancellationToken cancellationToken)
+        public Task<StoreItemResult> CreateItemAsync_Dav(string name, bool overwrite, CancellationToken cancellationToken)
         {
             // Return error
             if (!IsWritable)
@@ -434,7 +434,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreFile(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics)));
         }
 
-        public Task<StoreCollectionResult> CreateCollectionAsync(string name, bool overwrite, CancellationToken cancellationToken)
+        public Task<StoreCollectionResult> CreateCollectionAsync_Dav(string name, bool overwrite, CancellationToken cancellationToken)
         {
             // Return error
             if (!IsWritable)
@@ -491,16 +491,16 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, CancellationToken cancellationToken)
         {
             // Just create the folder itself
-            var result = await destinationCollection.CreateCollectionAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
+            var result = await destinationCollection.CreateCollectionAsync_Dav(name, overwrite, cancellationToken).ConfigureAwait(false);
             return new StoreItemResult(result.Result, result.Collection);
         }
 
-        public bool SupportsFastMove(IStoreCollection destination, string destinationName, bool overwrite)
+        public bool SupportsFastMove_Dav(IStoreCollection destination, string destinationName, bool overwrite)
         {
             // We can only move disk-store collections
             return destination is EncryptingDiskStoreCollection;
         }
 
-        public EnumerationDepthMode InfiniteDepthMode => EnumerationDepthMode.Rejected;
+        public EnumerationDepthMode DepthMode => EnumerationDepthMode.Rejected;
     }
 }
