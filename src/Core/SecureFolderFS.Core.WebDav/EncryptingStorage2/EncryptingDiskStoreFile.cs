@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NWebDav.Server.Helpers;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
+using NWebDav.Server.Storage;
 using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
@@ -13,7 +14,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal class EncryptingDiskStoreFile : IStoreFile
+    internal class EncryptingDiskStoreFile : IDavFile
     {
         private readonly FileSystemSpecifics _specifics;
         private readonly FileInfo _fileInfo;
@@ -156,7 +157,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, CancellationToken cancellationToken)
+        public async Task<StoreItemResult> CopyAsync(IDavFolder destination, string name, bool overwrite, CancellationToken cancellationToken)
         {
             try
             {
@@ -184,10 +185,10 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 else
                 {
                     // Create the item in the destination collection
-                    IStoreFile storeFile;
+                    IDavFile davFile;
                     try
                     {
-                        storeFile = (IStoreFile)await destination.CreateFileAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
+                        davFile = (IDavFile)await destination.CreateFileAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
                     }
                     catch (HttpListenerException ex)
                     {
@@ -198,21 +199,21 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     try
                     {
                         await using var sourceStream = await OpenStreamAsync(FileAccess.Read, cancellationToken).ConfigureAwait(false);
-                        await using var destinationStream = await storeFile.OpenStreamAsync(FileAccess.Write, cancellationToken).ConfigureAwait(false);
+                        await using var destinationStream = await davFile.OpenStreamAsync(FileAccess.Write, cancellationToken).ConfigureAwait(false);
                         await sourceStream.CopyToAsync(destinationStream, cancellationToken).ConfigureAwait(false);
                         await destinationStream.FlushAsync(cancellationToken).ConfigureAwait(false);
                     }
                     catch (IOException ioException) when (ioException.IsDiskFull())
                     {
-                        return new StoreItemResult(HttpStatusCode.InsufficientStorage, storeFile);
+                        return new StoreItemResult(HttpStatusCode.InsufficientStorage, davFile);
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        return new StoreItemResult(HttpStatusCode.Forbidden, storeFile);
+                        return new StoreItemResult(HttpStatusCode.Forbidden, davFile);
                     }
 
                     // Return result
-                    return new StoreItemResult(HttpStatusCode.Created, storeFile);
+                    return new StoreItemResult(HttpStatusCode.Created, davFile);
                 }
             }
             catch (Exception exc)

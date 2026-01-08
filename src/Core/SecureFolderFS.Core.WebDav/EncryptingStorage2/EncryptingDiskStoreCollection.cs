@@ -12,6 +12,7 @@ using NWebDav.Server;
 using NWebDav.Server.Enums;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
+using NWebDav.Server.Storage;
 using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
@@ -21,7 +22,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal sealed class EncryptingDiskStoreCollection : IStoreCollection
+    internal sealed class EncryptingDiskStoreCollection : IDavFolder
     {
         private static readonly XElement s_xDavCollection = new XElement(WebDavNamespaces.DavNs + "collection");
         private readonly DirectoryInfo _directoryInfo;
@@ -143,7 +144,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
-        public async Task<IStoreItem> MoveItemAsync_Dav(IStoreItem storeItem, IStoreCollection destinationCollection, string destinationName, bool overwrite, CancellationToken cancellationToken)
+        public async Task<IDavStorable> MoveItemAsync(IDavStorable item, IDavFolder destination, string destinationName, bool overwrite, CancellationToken cancellationToken = default)
         {
             // Return error
             if (!IsWritable)
@@ -152,14 +153,14 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             try
             {
                 // If the destination collection is a directory too, then we can simply move the file
-                if (destinationCollection is EncryptingDiskStoreCollection destinationDiskStoreCollection)
+                if (destination is EncryptingDiskStoreCollection destinationDiskStoreCollection)
                 {
                     // Return error
                     if (!destinationDiskStoreCollection.IsWritable)
                         throw new HttpListenerException((int)HttpStatusCode.PreconditionFailed);
 
                     // Determine source and destination paths
-                    var sourcePath = NativePathHelpers.GetCiphertextPath(storeItem.Id, _specifics);
+                    var sourcePath = NativePathHelpers.GetCiphertextPath(item.Id, _specifics);
                     var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(destinationDiskStoreCollection.Id, destinationName), _specifics);
 
                     // Check if the file already exists
@@ -190,7 +191,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         result = HttpStatusCode.Created;
                     }
 
-                    switch (storeItem)
+                    switch (item)
                     {
                         case EncryptingDiskStoreFile _:
                             // Move the file
@@ -204,17 +205,17 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
                         default:
                             // Invalid item
-                            Debug.Fail($"Invalid item {storeItem.GetType()} inside the {nameof(DiskStoreCollection)}.");
+                            Debug.Fail($"Invalid item {item.GetType()} inside the {nameof(DiskStoreCollection)}.");
                             throw new HttpListenerException((int)HttpStatusCode.InternalServerError);
                     }
                 }
                 else
                 {
                     // Attempt to copy the item to the destination collection
-                    var result = await storeItem.CopyAsync(destinationCollection, destinationName, overwrite, cancellationToken).ConfigureAwait(false);
+                    var result = await item.CopyAsync(destination, destinationName, overwrite, cancellationToken).ConfigureAwait(false);
                     if (result.Result == HttpStatusCode.Created || result.Result == HttpStatusCode.NoContent)
                     {
-                        await DeleteAsync(storeItem, cancellationToken).ConfigureAwait(false);
+                        await DeleteAsync(item, cancellationToken).ConfigureAwait(false);
                         return result.Item!;
                     }
                     else
@@ -489,13 +490,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, CancellationToken cancellationToken)
+        public async Task<StoreItemResult> CopyAsync(IDavFolder destination, string name, bool overwrite, CancellationToken cancellationToken)
         {
             // Just create the folder itself
             try
             {
-                var result = await destinationCollection.CreateFolderAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
-                return new StoreItemResult(HttpStatusCode.Created, (IStoreItem)result);
+                var result = await destination.CreateFolderAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
+                return new StoreItemResult(HttpStatusCode.Created, (IDavStorable)result);
             }
             catch (HttpListenerException ex)
             {
@@ -503,7 +504,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
         }
 
-        public bool SupportsFastMove(IStoreCollection destination, string destinationName, bool overwrite)
+        public bool SupportsFastMove(IDavFolder destination, string destinationName, bool overwrite)
         {
             // We can only move disk-store collections
             return destination is EncryptingDiskStoreCollection;
