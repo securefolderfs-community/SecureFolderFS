@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
@@ -17,12 +18,44 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private readonly FileSystemSpecifics _specifics;
         private readonly FileInfo _fileInfo;
 
+        /// <inheritdoc/>
+        public string Name => Path.GetFileName(Id);
+
+        /// <inheritdoc/>
+        public string Id => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
+
         public EncryptingDiskStoreFile(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
         {
             LockingManager = lockingManager;
             IsWritable = isWritable;
             _fileInfo = fileInfo;
             _specifics = specifics;
+        }
+
+        /// <inheritdoc/>
+        public Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
+        {
+            var baseStream = accessMode switch
+            {
+                FileAccess.Read => _fileInfo.OpenRead(),
+                FileAccess.Write => _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write),
+                FileAccess.ReadWrite => _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite),
+                _ => throw new ArgumentOutOfRangeException(nameof(accessMode), accessMode, null)
+            };
+
+            var plaintextStream = _specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, baseStream);
+            return Task.FromResult(plaintextStream);
+        }
+
+        /// <inheritdoc/>
+        public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        {
+            var parentDirectory = _fileInfo.Directory;
+            if (parentDirectory is null)
+                return Task.FromResult<IFolder?>(null);
+
+            return Task.FromResult<IFolder?>(null);
+            //return Task.FromResult<IFolder?>(new EncryptingDiskStoreCollection(LockingManager, parentDirectory, IsWritable, _specifics));
         }
 
         public static PropertyManager<EncryptingDiskStoreFile> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreFile>[]
@@ -118,31 +151,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         });
 
         public bool IsWritable { get; }
-        public string Name => Path.GetFileName(Id);
-        public string Id => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(CancellationToken cancellationToken) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(CancellationToken cancellationToken) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
-        public async Task<HttpStatusCode> UploadFromStreamAsync(Stream inputStream, CancellationToken cancellationToken)
-        {
-            // Check if the item is writable
-            if (!IsWritable)
-                return HttpStatusCode.Forbidden;
-
-            try
-            {
-                // Copy the information to the destination stream
-                await using var outputStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false);
-                await inputStream.CopyToAsync(outputStream, cancellationToken).ConfigureAwait(false);
-                await outputStream.FlushAsync(cancellationToken).ConfigureAwait(false);
-
-                return HttpStatusCode.OK;
-            }
-            catch (IOException ioException) when (ioException.IsDiskFull())
-            {
-                return HttpStatusCode.InsufficientStorage;
-            }
-        }
 
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
@@ -180,11 +189,20 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     // Check if the item could be created
                     if (result.Item is IStoreFile storeFile)
                     {
-                        using (var sourceStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false))
+                        try
                         {
-                            var copyResult = await storeFile.UploadFromStreamAsync(sourceStream, cancellationToken).ConfigureAwait(false);
-                            if (copyResult != HttpStatusCode.OK)
-                                return new StoreItemResult(copyResult, result.Item);
+                            await using var sourceStream = await OpenStreamAsync(FileAccess.Read, cancellationToken).ConfigureAwait(false);
+                            await using var destinationStream = await storeFile.OpenStreamAsync(FileAccess.Write, cancellationToken).ConfigureAwait(false);
+                            await sourceStream.CopyToAsync(destinationStream, cancellationToken).ConfigureAwait(false);
+                            await destinationStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                        }
+                        catch (IOException ioException) when (ioException.IsDiskFull())
+                        {
+                            return new StoreItemResult(HttpStatusCode.InsufficientStorage, result.Item);
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            return new StoreItemResult(HttpStatusCode.Forbidden, result.Item);
                         }
                     }
                     else
