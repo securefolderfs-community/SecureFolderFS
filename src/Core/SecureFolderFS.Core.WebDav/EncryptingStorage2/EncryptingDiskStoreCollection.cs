@@ -276,17 +276,91 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
 
         /// <inheritdoc/>
-        public Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false,
+        public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            // Return error
+            if (!IsWritable)
+                throw new HttpListenerException((int)HttpStatusCode.Forbidden);
+
+            // Determine the destination path
+            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, name), _specifics);
+
+            // Check if the directory can be overwritten
+            if (Directory.Exists(destinationPath))
+            {
+                // Check if overwrite is allowed
+                if (!overwrite)
+                    throw new HttpListenerException((int)HttpStatusCode.MethodNotAllowed);
+            }
+
+            try
+            {
+                // Attempt to create the directory
+                Directory.CreateDirectory(destinationPath);
+
+                // Create new DirectoryID
+                var directoryId = Guid.NewGuid().ToByteArray();
+                var directoryIdPath = Path.Combine(destinationPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
+
+                // Initialize directory with DirectoryID
+                await using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                directoryIdStream.Write(directoryId);
+
+                // Set DirectoryID to known IDs
+                _specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new HttpListenerException((int)HttpStatusCode.Forbidden);
+            }
+            catch (Exception)
+            {
+                throw new HttpListenerException((int)HttpStatusCode.InternalServerError);
+            }
+
+            // Return the collection
+            return new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics);
         }
 
         /// <inheritdoc/>
-        public Task<IChildFile> CreateFileAsync(string name, bool overwrite = false,
+        public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+
+            // Return error
+            if (!IsWritable)
+                throw new HttpListenerException((int)HttpStatusCode.Forbidden);
+
+            // Determine the destination path
+            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, name), _specifics);
+
+            // Check if the file can be overwritten
+            if (File.Exists(destinationPath))
+            {
+                if (!overwrite)
+                    throw new HttpListenerException((int)HttpStatusCode.PreconditionFailed);
+            }
+
+            try
+            {
+                // Create a new file
+                File.Create(destinationPath).Dispose();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new HttpListenerException((int)HttpStatusCode.Forbidden);
+            }
+            catch (Exception)
+            {
+                throw new HttpListenerException((int)HttpStatusCode.InternalServerError);
+            }
+
+            // Return result
+            return new EncryptingDiskStoreFile(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics);
         }
 
 
@@ -415,110 +489,21 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public Task<StoreItemResult> CreateItemAsync_Dav(string name, bool overwrite, CancellationToken cancellationToken)
-        {
-            // Return error
-            if (!IsWritable)
-                return Task.FromResult(new StoreItemResult(HttpStatusCode.Forbidden));
-
-            // Determine the destination path
-            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, name), _specifics);
-
-            // Determine result
-            HttpStatusCode result;
-
-            // Check if the file can be overwritten
-            if (File.Exists(name))
-            {
-                if (!overwrite)
-                    return Task.FromResult(new StoreItemResult(HttpStatusCode.PreconditionFailed));
-
-                result = HttpStatusCode.NoContent;
-            }
-            else
-            {
-                result = HttpStatusCode.Created;
-            }
-
-            try
-            {
-                // Create a new file
-                File.Create(destinationPath).Dispose();
-            }
-            catch (Exception exc)
-            {
-                // Log exception
-                // TODO(wd): Add logging
-                //s_log.Log(LogLevel.Error, () => $"Unable to create '{destinationPath}' file.", exc);
-                return Task.FromResult(new StoreItemResult(HttpStatusCode.InternalServerError));
-            }
-
-            // Return result
-            return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreFile(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics)));
-        }
-
-        public Task<StoreCollectionResult> CreateCollectionAsync_Dav(string name, bool overwrite, CancellationToken cancellationToken)
-        {
-            // Return error
-            if (!IsWritable)
-                return Task.FromResult(new StoreCollectionResult(HttpStatusCode.Forbidden));
-
-            // Determine the destination path
-            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(Id, name), _specifics);
-
-            // Check if the directory can be overwritten
-            HttpStatusCode result;
-            if (Directory.Exists(destinationPath))
-            {
-                // Check if overwrite is allowed
-                if (!overwrite)
-                    return Task.FromResult(new StoreCollectionResult(HttpStatusCode.MethodNotAllowed));
-
-                // Overwrite existing
-                result = HttpStatusCode.NoContent;
-            }
-            else
-            {
-                // Created new directory
-                result = HttpStatusCode.Created;
-            }
-
-            try
-            {
-                // Attempt to create the directory
-                Directory.CreateDirectory(destinationPath);
-
-                // Create new DirectoryID
-                var directoryId = Guid.NewGuid().ToByteArray();
-                var directoryIdPath = Path.Combine(destinationPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
-
-                // Initialize directory with DirectoryID
-                using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
-                directoryIdStream.Write(directoryId);
-
-                // Set DirectoryID to known IDs
-                _specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
-            }
-            catch (Exception exc)
-            {
-                // Log exception
-                // TODO(wd): Add logging
-                //s_log.Log(LogLevel.Error, () => $"Unable to create '{destinationPath}' directory.", exc);
-                return null;
-            }
-
-            // Return the collection
-            return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics)));
-        }
-
         public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, CancellationToken cancellationToken)
         {
             // Just create the folder itself
-            var result = await destinationCollection.CreateCollectionAsync_Dav(name, overwrite, cancellationToken).ConfigureAwait(false);
-            return new StoreItemResult(result.Result, result.Collection);
+            try
+            {
+                var result = await destinationCollection.CreateFolderAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
+                return new StoreItemResult(HttpStatusCode.Created, (IStoreItem)result);
+            }
+            catch (HttpListenerException ex)
+            {
+                return new StoreItemResult((HttpStatusCode)ex.ErrorCode);
+            }
         }
 
-        public bool SupportsFastMove_Dav(IStoreCollection destination, string destinationName, bool overwrite)
+        public bool SupportsFastMove(IStoreCollection destination, string destinationName, bool overwrite)
         {
             // We can only move disk-store collections
             return destination is EncryptingDiskStoreCollection;
