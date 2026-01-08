@@ -103,6 +103,17 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         }
 
         /// <inheritdoc/>
+        public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        {
+            var parentDirectory = _directoryInfo.Parent;
+            if (parentDirectory is null)
+                return Task.FromResult<IFolder?>(null);
+
+            return Task.FromResult<IFolder?>(null);
+            //return Task.FromResult<IFolder?>(new DiskStoreCollection(LockingManager, parentDirectory, IsWritable));
+        }
+
+        /// <inheritdoc/>
         public async Task<IStoreItem> GetFirstByNameAsync(string name, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
