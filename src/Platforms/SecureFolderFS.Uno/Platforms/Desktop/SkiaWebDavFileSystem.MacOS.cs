@@ -25,6 +25,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
+            await Task.CompletedTask;
             var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, options.Domain, options.Port, options.VolumeName);
             var remoteUri = new Uri(remotePath);
 
@@ -37,7 +38,6 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             webDavWrapper.StartFileSystem();
 
             Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
-            await Task.CompletedTask;
             return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
         }
 #endif

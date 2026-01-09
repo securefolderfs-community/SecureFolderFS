@@ -74,6 +74,12 @@ namespace SecureFolderFS.Storage.Extensions
             }
         }
 
+        /// <summary>
+        /// Retrieves the size of the specified <paramref name="file"/>.
+        /// </summary>
+        /// <param name="file">The file whose size is to be retrieved.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the size of the file in bytes, or 0 if unavailable.</returns>
         public static async Task<long> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
         {
             if (file is not IStorableProperties storableProperties)
