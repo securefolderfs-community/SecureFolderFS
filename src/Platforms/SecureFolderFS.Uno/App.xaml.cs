@@ -101,6 +101,14 @@ namespace SecureFolderFS.Uno
 
             // Activate MainWindow
             MainWindow.Activate();
+
+#if WINDOWS
+            // Process initial file activation if the app was launched via file association
+            if (Program.InitialActivationArgs is { } initialArgs)
+            {
+                await OnActivatedAsync(initialArgs);
+            }
+#endif
         }
 
         /// <summary>
@@ -108,15 +116,15 @@ namespace SecureFolderFS.Uno
         /// </summary>
         public async Task OnActivatedAsync(AppActivationArguments args)
         {
-            _ = args;
-            //if (args.Kind == ExtendedActivationKind.File)
-            //{
-            //    var file = fileArgs.Files.FirstOrDefault();
-            //    if (file is not null && file.Path.EndsWith(IVaultShortcutService.FILE_EXTENSION_WITH_DOT, StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        await HandleVaultShortcutActivationAsync(file.Path);
-            //    }
-            //}
+            if (args.Kind == ExtendedActivationKind.File && args.Data is Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+            {
+                var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+                if (file is Windows.Storage.IStorageFile storageFile 
+                    && storageFile.Path.EndsWith(".sfvault", StringComparison.OrdinalIgnoreCase))
+                {
+                    await HandleVaultShortcutActivationAsync(storageFile.Path);
+                }
+            }
         }
 
         /// <summary>
