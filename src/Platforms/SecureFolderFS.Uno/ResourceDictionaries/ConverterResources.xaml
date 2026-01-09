@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="using:System"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters">
 
     <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
@@ -13,8 +12,5 @@
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <vc:IconSourceConverter x:Key="IconSourceConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
-
-    <sys:Boolean x:Key="BooleanTrue">True</sys:Boolean>
-    <sys:Boolean x:Key="BooleanFalse">False</sys:Boolean>
 
 </ResourceDictionary>

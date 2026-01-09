@@ -21,6 +21,7 @@ namespace SecureFolderFS.UI
             public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
             public const string ICON_ASSET_PATH = "Assets/AppAssets/app_icon.ico";
+            public const string VAULT_SHORTCUT_FILE_EXTENSION = ".sfvault";
         }
 
         public static class AppThemes

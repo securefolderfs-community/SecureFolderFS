@@ -156,26 +156,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 // Show no vaults screen
                 await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
-
-#if WINDOWS
-            // Process any pending vault shortcut activation
-            await ProcessPendingVaultShortcutAsync();
-#endif
         }
-
-#if WINDOWS
-        private async Task ProcessPendingVaultShortcutAsync()
-        {
-            if (App.Instance?.PendingVaultShortcutPath is { } pendingPath)
-            {
-                // Clear the pending path
-                App.Instance.PendingVaultShortcutPath = null;
-                
-                // Process the shortcut
-                await App.Instance.HandleVaultShortcutActivationAsync(pendingPath);
-            }
-        }
-#endif
 
         private void DebugButton_Click(object sender, RoutedEventArgs e)
         {

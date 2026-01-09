@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+
     <!-- Build Properties -->
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -26,6 +27,11 @@
     <ApplicationDisplayVersion>0.7.2.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
+
+    <!-- Entry Point -->
+    <DisableEmbeddedXbf>false</DisableEmbeddedXbf>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+
   </PropertyGroup>
 
   <!-- Package References -->

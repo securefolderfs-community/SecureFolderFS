@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
@@ -20,6 +19,11 @@ using Windows.ApplicationModel;
 using H.NotifyIcon;
 using SecureFolderFS.Shared.Helpers;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using Microsoft.Windows.AppLifecycle;
+using SecureFolderFS.Storage.SystemStorageEx;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Sdk.DataModels;
 
 namespace SecureFolderFS.Uno
 {
@@ -28,14 +32,6 @@ namespace SecureFolderFS.Uno
         public static App? Instance { get; private set; }
 
         public bool UseForceClose { get; set; }
-
-#if WINDOWS
-        /// <summary>
-        /// Gets the pending vault shortcut file path that was used to activate the app.
-        /// This is consumed during app initialization.
-        /// </summary>
-        public string? PendingVaultShortcutPath { get; set; }
-#endif
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -107,23 +103,20 @@ namespace SecureFolderFS.Uno
             MainWindow.Activate();
         }
 
-#if WINDOWS
         /// <summary>
         /// Invoked when the application is activated by opening a file.
         /// </summary>
-        protected override async void OnActivated(Windows.ApplicationModel.Activation.IActivatedEventArgs args)
+        public async Task OnActivatedAsync(AppActivationArguments args)
         {
-            base.OnActivated(args);
-
-            if (args.Kind == Windows.ApplicationModel.Activation.ActivationKind.File 
-                && args is Windows.ApplicationModel.Activation.FileActivatedEventArgs fileArgs)
-            {
-                var file = fileArgs.Files.FirstOrDefault();
-                if (file is not null && file.Path.EndsWith(IVaultShortcutService.FILE_EXTENSION_WITH_DOT, StringComparison.OrdinalIgnoreCase))
-                {
-                    await HandleVaultShortcutActivationAsync(file.Path);
-                }
-            }
+            _ = args;
+            //if (args.Kind == ExtendedActivationKind.File)
+            //{
+            //    var file = fileArgs.Files.FirstOrDefault();
+            //    if (file is not null && file.Path.EndsWith(IVaultShortcutService.FILE_EXTENSION_WITH_DOT, StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        await HandleVaultShortcutActivationAsync(file.Path);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -132,22 +125,13 @@ namespace SecureFolderFS.Uno
         /// <param name="filePath">The path to the .sfvault file.</param>
         public async Task HandleVaultShortcutActivationAsync(string filePath)
         {
-            // If services aren't initialized yet, store the path for later processing
-            if (ServiceProvider is null)
-            {
-                PendingVaultShortcutPath = filePath;
-                return;
-            }
+            var shortcutFile = new SystemFileEx(filePath);
+            await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
 
-            var shortcutService = DI.Service<IVaultShortcutService>();
-            var shortcutData = await shortcutService.ReadFromFileAsync(filePath);
-            
+            var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
             if (shortcutData is not null)
-            {
                 WeakReferenceMessenger.Default.Send(new VaultShortcutActivatedMessage(shortcutData, filePath));
-            }
         }
-#endif
 
         #region Window Configuration
 

@@ -19,15 +19,18 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Storage;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Sdk.DataModels;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultShortcutService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>]
     [Bindable(true)]
     public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
+        [ObservableProperty] private bool _CanCreateShortcut;
         [ObservableProperty] private bool _IsRenaming;
         [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private bool _CanMoveDown;
@@ -40,6 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             ServiceProvider = DI.Default;
             VaultViewModel = vaultViewModel;
+            CanCreateShortcut = OperatingSystem.IsWindows();
             _vaultCollectionModel = vaultCollectionModel;
 
             UpdateCanMove();
@@ -173,17 +177,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
 
-            var shortcutData = VaultShortcutService.CreateShortcutData(
-                VaultViewModel.VaultModel.DataModel.PersistableId,
-                VaultViewModel.Title,
-                vaultFolder.Id);
-
-            var suggestedName = $"{VaultViewModel.Title}{IVaultShortcutService.FILE_EXTENSION_WITH_DOT}";
-            await using var dataStream = await VaultShortcutService.SerializeAsync(shortcutData, cancellationToken);
-
+            var shortcutData = new VaultShortcutDataModel(VaultViewModel.VaultModel.DataModel.PersistableId, VaultViewModel.Title);
+            var suggestedName = $"{VaultViewModel.Title}{VaultService.ShortcutFileExtension}";
+            await using var dataStream = await StreamSerializer.Instance.SerializeAsync(shortcutData, cancellationToken);
+            
             var filter = new Dictionary<string, string>
             {
-                { "SecureFolderFS Vault Shortcut", IVaultShortcutService.FILE_EXTENSION_WITH_DOT }
+                { "SecureFolderFS Vault Shortcut", VaultService.ShortcutFileExtension }
             };
 
             await FileExplorerService.SaveFileAsync(suggestedName, dataStream, filter, cancellationToken);
