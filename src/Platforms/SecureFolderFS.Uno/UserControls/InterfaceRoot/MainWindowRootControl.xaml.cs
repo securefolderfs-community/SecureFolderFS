@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
@@ -11,7 +10,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
@@ -25,7 +24,6 @@ using Uno.UI;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
-    [INotifyPropertyChanged]
     public sealed partial class MainWindowRootControl : UserControl
 #if WINDOWS
         , IRecipient<VaultShortcutActivatedMessage>
@@ -48,11 +46,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             set => DataContext = value;
         }
 
-        public MainWindowRootControl()
+        public MainWindowRootControl(MainViewModel mainViewModel)
         {
             InitializeComponent();
             Context = SynchronizationContext.Current;
-            ViewModel = new(new VaultCollectionModel());
+            ViewModel = mainViewModel;
             
 #if WINDOWS
             // Register for vault shortcut activation messages
@@ -70,18 +68,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void HandleVaultShortcutActivation(VaultShortcutActivatedMessage message)
         {
-            if (ViewModel is null)
-                return;
+            Context.PostOrExecute(_ =>
+            {
+                if (ViewModel is null)
+                    return;
 
-            // Ensure we're on the UI thread
-            if (Context is not null)
-            {
-                Context.Post(_ => ProcessVaultShortcut(message), null);
-            }
-            else
-            {
                 ProcessVaultShortcut(message);
-            }
+            });
         }
 
         private void ProcessVaultShortcut(VaultShortcutActivatedMessage message)
@@ -149,12 +142,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
             {
                 // Show main app screen
-                await RootNavigationService.TryNavigateAsync(() => new MainHostViewModel(ViewModel.VaultCollectionModel), false);
+                await RootNavigationService.TryNavigateAsync(() => new MainHostViewModel(ViewModel.VaultListViewModel, ViewModel.VaultCollectionModel), false);
             }
             else // Doesn't have vaults
             {
                 // Show no vaults screen
-                await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
+                await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(ViewModel.VaultListViewModel, RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
         }
 

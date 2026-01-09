@@ -1,29 +1,33 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
+using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.AppLifecycle;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Root;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.ApplicationModel;
-using H.NotifyIcon;
-using SecureFolderFS.Shared.Helpers;
+using Windows.Storage;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-using Microsoft.Windows.AppLifecycle;
-using SecureFolderFS.Storage.SystemStorageEx;
-using OwlCore.Storage;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Sdk.DataModels;
 
 namespace SecureFolderFS.Uno
 {
@@ -36,6 +40,8 @@ namespace SecureFolderFS.Uno
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public Window? MainWindow { get; private set; }
+
+        public MainViewModel? MainViewModel { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
@@ -70,7 +76,7 @@ namespace SecureFolderFS.Uno
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            MainWindow = new Window();
+            MainWindow ??= new Window();
 #if DEBUG
             MainWindow.EnableHotReload();
 #endif
@@ -96,8 +102,11 @@ namespace SecureFolderFS.Uno
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();
 
+            // Initialize MainViewModel
+            MainViewModel = new(new VaultCollectionModel());
+
             // Prepare MainWindow
-            EnsureEarlyWindow(MainWindow);
+            EnsureEarlyWindow(MainWindow, MainViewModel);
 
             // Activate MainWindow
             MainWindow.Activate();
@@ -116,37 +125,48 @@ namespace SecureFolderFS.Uno
         /// </summary>
         public async Task OnActivatedAsync(AppActivationArguments args)
         {
-            if (args.Kind == ExtendedActivationKind.File && args.Data is Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
-            {
-                var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
-                if (file is Windows.Storage.IStorageFile storageFile 
-                    && storageFile.Path.EndsWith(".sfvault", StringComparison.OrdinalIgnoreCase))
-                {
-                    await HandleVaultShortcutActivationAsync(storageFile.Path);
-                }
-            }
+            // Do not remove this assignment
+            var kind = args.Kind;
+            var data = args.Data;
+
+            if (kind != ExtendedActivationKind.File || data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+                return;
+
+            var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+            if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            await HandleVaultShortcutActivationAsync(storageFile.Path);
         }
 
         /// <summary>
         /// Handles vault shortcut file activation.
         /// </summary>
-        /// <param name="filePath">The path to the .sfvault file.</param>
+        /// <param name="filePath">The path to the extension file.</param>
         public async Task HandleVaultShortcutActivationAsync(string filePath)
         {
             var shortcutFile = new SystemFileEx(filePath);
             await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
 
             var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
-            if (shortcutData is not null)
-                WeakReferenceMessenger.Default.Send(new VaultShortcutActivatedMessage(shortcutData, filePath));
+            if (shortcutData is null)
+                return;
+
+            var window = new Window();
+            var vaultPreviewViewModel = new VaultPreviewViewModel(null!);
+            window.Content = new VaultPreviewRootControl(vaultPreviewViewModel);
+            window.Show();
+            window.Activate();
+
+            WeakReferenceMessenger.Default.Send(new VaultShortcutActivatedMessage(shortcutData, filePath));
         }
 
         #region Window Configuration
 
-        private static void EnsureEarlyWindow(Window window)
+        private static void EnsureEarlyWindow(Window window, MainViewModel mainViewModel)
         {
             // Set window content
-            window.Content = new MainWindowRootControl();
+            window.Content = new MainWindowRootControl(mainViewModel);
 
             // Attach event for window closing
             window.Closed += Window_Closed;

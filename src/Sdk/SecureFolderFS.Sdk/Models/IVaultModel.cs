@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Shared.ComponentModel;

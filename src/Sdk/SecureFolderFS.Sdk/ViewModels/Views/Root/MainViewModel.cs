@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -13,7 +12,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels
+namespace SecureFolderFS.Sdk.ViewModels.Root
 {
     [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>]
     [Bindable(true)]
@@ -21,10 +20,13 @@ namespace SecureFolderFS.Sdk.ViewModels
     {
         public IVaultCollectionModel VaultCollectionModel { get; }
 
+        public VaultListViewModel VaultListViewModel { get; }
+
         public MainViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             VaultCollectionModel = vaultCollectionModel;
+            VaultListViewModel = new(vaultCollectionModel);
         }
 
         /// <inheritdoc/>

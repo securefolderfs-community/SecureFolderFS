@@ -50,34 +50,11 @@
                 <StackPanel Spacing="8">
                     <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
 
-                    <!--  TODO(uno): #18589  -->
-                    <HyperlinkButton
-                        x:Name="LoginOptions"
-                        Padding="4,2"
-                        HorizontalAlignment="Center"
-                        Click="LoginOptions_Click"
-                        Content="{l:ResourceString Rid=LoginOptions}"
-                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}">
-                        <FlyoutBase.AttachedFlyout>
-                            <Flyout>
-                                <StackPanel Spacing="4">
-                                    <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}" />
-                                    <CheckBox Content="Save credentials" IsEnabled="False" />
-
-                                    <!--  TODO(uno): #18589  -->
-                                    <Button
-                                        x:Name="RestartProcessButton"
-                                        Command="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                                        Content="{l:ResourceString Rid=RestartLogin}"
-                                        Visibility="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    <Button
-                                        HorizontalAlignment="Stretch"
-                                        Command="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
-                                        Content="{l:ResourceString Rid=RecoverAccess}" />
-                                </StackPanel>
-                            </Flyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </HyperlinkButton>
+                    <uc:LoginOptions
+                        IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
+                        RecoverAccessCommand="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
+                        RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

@@ -1,38 +1,37 @@
 ﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Storage;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Sdk.DataModels;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
     [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
+    public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         [ObservableProperty] private bool _CanCreateShortcut;
         [ObservableProperty] private bool _IsRenaming;
-        [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private bool _CanMoveDown;
         [ObservableProperty] private bool _CanMoveUp;
         [ObservableProperty] private bool _CanMove;
@@ -47,31 +46,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             _vaultCollectionModel = vaultCollectionModel;
 
             UpdateCanMove();
-            WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
-            WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             await UpdateIconAsync(cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public void Receive(VaultUnlockedMessage message)
-        {
-            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-            {
-                // Prevent from removing vault if it is unlocked
-                IsUnlocked = true;
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Receive(VaultLockedMessage message)
-        {
-            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-                IsUnlocked = false;
         }
 
         [RelayCommand]

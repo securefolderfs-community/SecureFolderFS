@@ -241,10 +241,12 @@
     <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
     <None Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <None Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
+    <None Remove="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml" />
     <None Remove="UserControls\Introduction\EndScreen.xaml" />
     <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
+    <None Remove="UserControls\LoginOptions.xaml" />
     <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <None Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
@@ -255,6 +257,7 @@
     <None Remove="UserControls\RecoveryPreviewControl.xaml" />
     <None Remove="UserControls\RegisterControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
+    <None Remove="UserControls\VaultControls.xaml" />
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <None Remove="UserControls\Widgets\HealthWidget.xaml" />
@@ -531,5 +534,23 @@
       <DependentUpon>AggregatedDataWidget.xaml</DependentUpon>
       <IsDefaultItem>true</IsDefaultItem>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserControls\LoginOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserControls\VaultControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

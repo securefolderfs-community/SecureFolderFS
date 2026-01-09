@@ -28,13 +28,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         public VaultListViewModel VaultListViewModel { get; }
 
-        public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
+        public MainHostViewModel(VaultListViewModel vaultListViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _systemMonitorModel = new SystemMonitorModel(vaultCollectionModel);
             Title = "MyVaults".ToLocalized();
-            VaultListViewModel = new(vaultCollectionModel);
+            VaultListViewModel = vaultListViewModel;
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 

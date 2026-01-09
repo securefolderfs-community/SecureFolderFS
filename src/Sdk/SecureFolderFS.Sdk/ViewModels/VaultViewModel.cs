@@ -23,10 +23,11 @@ namespace SecureFolderFS.Sdk.ViewModels
 {
     [Inject<IVaultService>, Inject<IVaultFileSystemService>, Inject<IVaultPersistenceService>]
     [Bindable(true)]
-    public sealed partial class VaultViewModel : ObservableObject, IViewable, IDisposable
+    public sealed partial class VaultViewModel : ObservableObject, IViewable, IDisposable, IRecipient<VaultLockedMessage>
     {
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanRename;
+        [ObservableProperty] private bool _IsUnlocked;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
         /// <summary>
@@ -42,6 +43,8 @@ namespace SecureFolderFS.Sdk.ViewModels
             CanRename = !vaultModel.IsRemote || vaultModel.VaultFolder is not null;
             LastAccessDate = vaultModel.DataModel.LastAccessDate;
             vaultModel.StateChanged += VaultModel_StateChanged;
+
+            WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
         [RelayCommand]
@@ -76,6 +79,9 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract, bool isReadOnly)
         {
+            if (IsUnlocked)
+                throw new InvalidOperationException("The vault is already unlocked.");
+
             if (VaultModel.VaultFolder is not { } vaultFolder)
                 throw new InvalidOperationException("The vault folder is not set.");
 
@@ -102,6 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             await SetLastAccessDateAsync(DateTime.Now, CancellationToken.None);
 
             // Notify that the vault has been unlocked
+            IsUnlocked = true;
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
             return new(vaultFolder, storageRoot, this);
@@ -116,8 +123,16 @@ namespace SecureFolderFS.Sdk.ViewModels
         }
 
         /// <inheritdoc/>
+        public void Receive(VaultLockedMessage message)
+        {
+            if (VaultModel.Equals(message.VaultModel))
+                IsUnlocked = false;
+        }
+
+        /// <inheritdoc/>
         public void Dispose()
         {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
             VaultModel.StateChanged -= VaultModel_StateChanged;
             VaultModel.Dispose();
         }

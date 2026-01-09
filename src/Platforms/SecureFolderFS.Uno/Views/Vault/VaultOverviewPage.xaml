@@ -6,6 +6,7 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
@@ -67,60 +68,12 @@
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
 
-            <!--  Vault options  -->
-            <StackPanel Spacing="4">
-
-                <!--  Vault read-only InfoBar  -->
-                <InfoBar
-                    x:Name="ReadOnlyInfoBar"
-                    x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:ResourceString Rid=VaultReadOnlyMode}"
-                    Severity="Informational" />
-
-                <!--  Open in File Explorer  -->
-                <ucab:ActionBlockControl
-                    Title="{l:ResourceString Rid=ViewVault}"
-                    BlockMode="Clickable"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Rid=ViewVaultDescription}">
-                    <ucab:ActionBlockControl.Icon>
-                        <FontIcon Glyph="&#xEC50;" />
-                    </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.ActionElement>
-                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
-                    </ucab:ActionBlockControl.ActionElement>
-                </ucab:ActionBlockControl>
-
-                <!--  Vault properties  -->
-                <ucab:ActionBlockControl
-                    Title="{l:ResourceString Rid=VaultProperties}"
-                    BlockMode="Clickable"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Rid=VaultPropertiesDescription}">
-                    <ucab:ActionBlockControl.Icon>
-                        <FontIcon Glyph="&#xE946;" />
-                    </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.ActionElement>
-                        <FontIcon FontSize="14" Glyph="&#xE76C;" />
-                    </ucab:ActionBlockControl.ActionElement>
-                </ucab:ActionBlockControl>
-
-                <!--  Lock vault  -->
-                <ucab:ActionBlockControl
-                    Title="{l:ResourceString Rid=LockVault}"
-                    BlockMode="Clickable"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Rid=LockVaultDescription}">
-                    <ucab:ActionBlockControl.Icon>
-                        <FontIcon Glyph="&#xE72E;" />
-                    </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.ActionElement>
-                        <FontIcon FontSize="14" Glyph="&#xE7E8;" />
-                    </ucab:ActionBlockControl.ActionElement>
-                </ucab:ActionBlockControl>
-            </StackPanel>
+            <!--  Vault Controls  -->
+            <uc:VaultControls
+                IsReadOnly="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
+                LockVaultCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
+                OpenPropertiesCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
+                RevealFolderCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}" />
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.EventArguments;
@@ -45,11 +43,6 @@ namespace SecureFolderFS.Uno.Views.Vault
             }
 
             base.OnNavigatedTo(e);
-        }
-
-        private void LoginOptions_Click(object sender, RoutedEventArgs e)
-        {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)

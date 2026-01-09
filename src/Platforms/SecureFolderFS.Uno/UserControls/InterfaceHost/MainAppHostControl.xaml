@@ -215,7 +215,7 @@
                                     FontSize="14"
                                     Glyph="&#xE785;"
                                     Opacity="0.6"
-                                    Visibility="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    Visibility="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             </Grid>
 
                             <TextBox
@@ -297,7 +297,7 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind RequestLockCommand, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=LockVault}"
-                                Visibility="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                Visibility="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72E;" />
                                 </MenuFlyoutItem.Icon>
@@ -306,7 +306,7 @@
                             <!--  Remove  -->
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                IsEnabled="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Text="{l:ResourceString Rid=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />
