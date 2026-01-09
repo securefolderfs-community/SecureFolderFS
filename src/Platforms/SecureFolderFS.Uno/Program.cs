@@ -1,3 +1,4 @@
+#if WINDOWS
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -34,3 +35,4 @@ namespace SecureFolderFS.Uno
         }
     }
 }
+#endif

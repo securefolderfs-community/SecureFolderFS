@@ -28,9 +28,8 @@
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
 
-    <!-- Entry Point -->
-    <DisableEmbeddedXbf>false</DisableEmbeddedXbf>
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <!-- Other -->
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 
   </PropertyGroup>
 
@@ -146,8 +145,9 @@
         <SelfContained>True</SelfContained>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
-        <!-- Other -->
-        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+        <!-- Entry Point -->
+        <DisableEmbeddedXbf>false</DisableEmbeddedXbf>
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
       </PropertyGroup>
 
       <!-- Define UNPACKAGED constant -->
