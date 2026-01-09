@@ -26,6 +26,9 @@ using SecureFolderFS.UI.Helpers;
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
     public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
+#if WINDOWS
+        , IRecipient<VaultSelectionRequestedMessage>
+#endif
     {
         private bool _isInitialized;
         private bool _isCompactMode; // WINDOWS only
@@ -55,6 +58,23 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
 #endif
         }
+
+#if WINDOWS
+        /// <inheritdoc/>
+        public void Receive(VaultSelectionRequestedMessage message)
+        {
+            if (ViewModel?.VaultListViewModel is not { } vaultListViewModel)
+                return;
+
+            // Find the vault item in the list
+            var vaultItem = vaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Equals(message.VaultModel));
+            if (vaultItem is not null)
+            {
+                // Select the vault item which will trigger navigation
+                vaultListViewModel.SelectedItem = vaultItem;
+            }
+        }
+#endif
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
@@ -141,6 +161,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
+#if WINDOWS
+            WeakReferenceMessenger.Default.Register<VaultSelectionRequestedMessage>(this);
+#endif
 
             await SetupNavigationAsync();
         }

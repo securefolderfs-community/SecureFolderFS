@@ -1,11 +1,14 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
@@ -16,6 +19,7 @@ using Uno.UI;
 using Windows.ApplicationModel;
 using H.NotifyIcon;
 using SecureFolderFS.Shared.Helpers;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace SecureFolderFS.Uno
 {
@@ -24,6 +28,14 @@ namespace SecureFolderFS.Uno
         public static App? Instance { get; private set; }
 
         public bool UseForceClose { get; set; }
+
+#if WINDOWS
+        /// <summary>
+        /// Gets the pending vault shortcut file path that was used to activate the app.
+        /// This is consumed during app initialization.
+        /// </summary>
+        public string? PendingVaultShortcutPath { get; set; }
+#endif
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -94,6 +106,48 @@ namespace SecureFolderFS.Uno
             // Activate MainWindow
             MainWindow.Activate();
         }
+
+#if WINDOWS
+        /// <summary>
+        /// Invoked when the application is activated by opening a file.
+        /// </summary>
+        protected override async void OnActivated(Windows.ApplicationModel.Activation.IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            if (args.Kind == Windows.ApplicationModel.Activation.ActivationKind.File 
+                && args is Windows.ApplicationModel.Activation.FileActivatedEventArgs fileArgs)
+            {
+                var file = fileArgs.Files.FirstOrDefault();
+                if (file is not null && file.Path.EndsWith(IVaultShortcutService.FILE_EXTENSION_WITH_DOT, StringComparison.OrdinalIgnoreCase))
+                {
+                    await HandleVaultShortcutActivationAsync(file.Path);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles vault shortcut file activation.
+        /// </summary>
+        /// <param name="filePath">The path to the .sfvault file.</param>
+        public async Task HandleVaultShortcutActivationAsync(string filePath)
+        {
+            // If services aren't initialized yet, store the path for later processing
+            if (ServiceProvider is null)
+            {
+                PendingVaultShortcutPath = filePath;
+                return;
+            }
+
+            var shortcutService = DI.Service<IVaultShortcutService>();
+            var shortcutData = await shortcutService.ReadFromFileAsync(filePath);
+            
+            if (shortcutData is not null)
+            {
+                WeakReferenceMessenger.Default.Send(new VaultShortcutActivatedMessage(shortcutData, filePath));
+            }
+        }
+#endif
 
         #region Window Configuration
 

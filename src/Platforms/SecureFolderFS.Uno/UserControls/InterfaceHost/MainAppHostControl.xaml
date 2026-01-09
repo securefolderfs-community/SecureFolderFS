@@ -5,6 +5,7 @@
     xmlns:anim="using:CommunityToolkit.WinUI.Animations"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:SecureFolderFS.Uno.Extensions"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Navigation"
@@ -256,6 +257,17 @@
                                 Text="Change icon">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70F;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Create shortcut file  -->
+                            <MenuFlyoutItem
+                                Command="{x:Bind CreateShortcutCommand, Mode=OneWay}"
+                                IsEnabled="{ext:OnPlatform Windows={StaticResource BooleanTrue},
+                                                           Default={StaticResource BooleanFalse}}"
+                                Text="{l:ResourceString Rid=CreateShortcut}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE71B;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 

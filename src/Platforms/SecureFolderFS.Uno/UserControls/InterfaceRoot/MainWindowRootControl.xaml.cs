@@ -27,6 +27,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
     [INotifyPropertyChanged]
     public sealed partial class MainWindowRootControl : UserControl
+#if WINDOWS
+        , IRecipient<VaultShortcutActivatedMessage>
+#endif
     {
         public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
 
@@ -50,7 +53,61 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             InitializeComponent();
             Context = SynchronizationContext.Current;
             ViewModel = new(new VaultCollectionModel());
+            
+#if WINDOWS
+            // Register for vault shortcut activation messages
+            WeakReferenceMessenger.Default.Register<VaultShortcutActivatedMessage>(this);
+#endif
         }
+
+#if WINDOWS
+        /// <inheritdoc/>
+        public void Receive(VaultShortcutActivatedMessage message)
+        {
+            // Handle the vault shortcut activation
+            HandleVaultShortcutActivation(message);
+        }
+
+        private void HandleVaultShortcutActivation(VaultShortcutActivatedMessage message)
+        {
+            if (ViewModel is null)
+                return;
+
+            // Ensure we're on the UI thread
+            if (Context is not null)
+            {
+                Context.Post(_ => ProcessVaultShortcut(message), null);
+            }
+            else
+            {
+                ProcessVaultShortcut(message);
+            }
+        }
+
+        private void ProcessVaultShortcut(VaultShortcutActivatedMessage message)
+        {
+            if (ViewModel is null)
+                return;
+
+            var shortcutData = message.ShortcutData;
+            
+            // Try to find existing vault by PersistableId
+            foreach (var vault in ViewModel.VaultCollectionModel)
+            {
+                if (vault.DataModel.PersistableId == shortcutData.PersistableId)
+                {
+                    // Vault found - send a message to select it in the UI
+                    // The MainAppHostControl will handle selecting this vault
+                    WeakReferenceMessenger.Default.Send(new VaultSelectionRequestedMessage(vault));
+                    return;
+                }
+            }
+
+            // Vault not found in the list
+            // TODO: Optionally try to add the vault using VaultPath
+            // For now, we'll just log or show a notification that the vault wasn't found
+        }
+#endif
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -99,7 +156,26 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 // Show no vaults screen
                 await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
+
+#if WINDOWS
+            // Process any pending vault shortcut activation
+            await ProcessPendingVaultShortcutAsync();
+#endif
         }
+
+#if WINDOWS
+        private async Task ProcessPendingVaultShortcutAsync()
+        {
+            if (App.Instance?.PendingVaultShortcutPath is { } pendingPath)
+            {
+                // Clear the pending path
+                App.Instance.PendingVaultShortcutPath = null;
+                
+                // Process the shortcut
+                await App.Instance.HandleVaultShortcutActivationAsync(pendingPath);
+            }
+        }
+#endif
 
         private void DebugButton_Click(object sender, RoutedEventArgs e)
         {

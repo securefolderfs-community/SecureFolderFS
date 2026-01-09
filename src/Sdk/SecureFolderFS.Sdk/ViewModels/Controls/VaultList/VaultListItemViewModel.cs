@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ using SecureFolderFS.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultShortcutService>]
     [Bindable(true)]
     public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
@@ -164,6 +165,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             if (VaultViewModel.VaultModel.VaultFolder is { } vaultFolder)
                 await FileExplorerService.TryOpenInFileExplorerAsync(vaultFolder, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task CreateShortcutAsync(CancellationToken cancellationToken)
+        {
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
+                return;
+
+            var shortcutData = VaultShortcutService.CreateShortcutData(
+                VaultViewModel.VaultModel.DataModel.PersistableId,
+                VaultViewModel.Title,
+                vaultFolder.Id);
+
+            var suggestedName = $"{VaultViewModel.Title}{IVaultShortcutService.FILE_EXTENSION_WITH_DOT}";
+            await using var dataStream = await VaultShortcutService.SerializeAsync(shortcutData, cancellationToken);
+
+            var filter = new Dictionary<string, string>
+            {
+                { "SecureFolderFS Vault Shortcut", IVaultShortcutService.FILE_EXTENSION_WITH_DOT }
+            };
+
+            await FileExplorerService.SaveFileAsync(suggestedName, dataStream, filter, cancellationToken);
         }
 
         private async Task UpdateIconAsync(CancellationToken cancellationToken)
