@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -56,8 +57,10 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, encryptingDiskStore), new RequestHandlerProvider(), null);
+            //var store = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
+            var rootFolder = new CryptoFolder(specifics.ContentFolder.Id, specifics.ContentFolder, specifics);
+            var store = new BackedDavStore(rootFolder, !specifics.Options.IsReadOnly);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, store), new RequestHandlerProvider(), null);
 
             return await MountAsync(
                 specifics,

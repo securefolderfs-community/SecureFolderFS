@@ -19,6 +19,7 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
@@ -36,6 +37,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
         /// <inheritdoc/>
         public EnumerationDepthMode DepthMode => EnumerationDepthMode.Rejected;
+
+        /// <inheritdoc/>
+        IFolder? IWrapper<IFolder>.Inner => null;
 
         public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, FileSystemSpecifics specifics)
         {

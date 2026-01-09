@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -11,6 +11,7 @@ using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
@@ -24,6 +25,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
         /// <inheritdoc/>
         public string Id => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
+
+        /// <inheritdoc/>
+        IFile? IWrapper<IFile>.Inner => null;
 
         public EncryptingDiskStoreFile(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
         {

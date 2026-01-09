@@ -30,7 +30,8 @@ namespace SecureFolderFS.Core.FileSystem.Storage.StorageProperties
             if (sizeProperty is null)
                 return null;
 
-            var plaintextSize = _specifics.Security.ContentCrypt.CalculatePlaintextSize(sizeProperty.Value);
+            var ciphertextSize = sizeProperty.Value - _specifics.Security.HeaderCrypt.HeaderCiphertextSize;
+            var plaintextSize = _specifics.Security.ContentCrypt.CalculatePlaintextSize(ciphertextSize);
             return new GenericProperty<long>(plaintextSize);
         }
 
