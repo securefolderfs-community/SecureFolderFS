@@ -12,8 +12,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     /// A base class for all widget view models.
     /// </summary>
     [Bindable(true)]
-    public abstract class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public abstract partial class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable, IViewable
     {
+        [ObservableProperty] private string? _Title;
+
         /// <summary>
         /// Gets the widget model interface used for manipulating widget data.
         /// </summary>

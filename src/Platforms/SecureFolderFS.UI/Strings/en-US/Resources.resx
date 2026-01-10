@@ -1025,4 +1025,13 @@
   <data name="VaultUnlocked" xml:space="preserve">
     <value>Vault is unlocked</value>
   </data>
+  <data name="AggregatedDataWidget" xml:space="preserve">
+      <value>Data widget</value>
+  </data>
+  <data name="GraphsWidget" xml:space="preserve">
+      <value>Graphs widget</value>
+  </data>
+  <data name="HealthWidget" xml:space="preserve">
+      <value>Health widget</value>
+  </data>
 </root>

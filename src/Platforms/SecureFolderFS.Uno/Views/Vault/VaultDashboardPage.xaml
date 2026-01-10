@@ -47,6 +47,22 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+        <Storyboard x:Key="ShowEmbedStoryboard" x:Name="ShowEmbedStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="EmbeddedContentControl"
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.2" />
+        </Storyboard>
+        <Storyboard x:Key="HideEmbedStoryboard" x:Name="HideEmbedStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="EmbeddedContentControl"
+                Storyboard.TargetProperty="Opacity"
+                From="1"
+                To="0"
+                Duration="0:0:0.2" />
+        </Storyboard>
     </Page.Resources>
 
     <Grid
@@ -63,6 +79,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!--  Back button  -->
@@ -99,6 +116,13 @@
                     <TranslateTransform />
                 </TextBlock.RenderTransform>
             </TextBlock>
+
+            <!--  Embedded Content  -->
+            <ContentControl
+                x:Name="EmbeddedContentControl"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Content="{x:Bind PageOptionsEmbed, Mode=OneWay}" />
         </Grid>
 
         <!--  Content  -->

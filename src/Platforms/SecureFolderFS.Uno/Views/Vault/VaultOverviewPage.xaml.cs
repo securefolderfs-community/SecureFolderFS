@@ -1,8 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,17 +15,21 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [INotifyPropertyChanged]
-    public sealed partial class VaultOverviewPage : Page
+    public sealed partial class VaultOverviewPage : Page, IEmbeddedControlContent
     {
         public VaultOverviewViewModel? ViewModel
         {
             get => DataContext.TryCast<VaultOverviewViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
+        
+        /// <inheritdoc/>
+        public object? EmbeddedContent { get; }
 
         public VaultOverviewPage()
         {
             InitializeComponent();
+            EmbeddedContent = Resources.Get("WidgetReorderButton");
         }
 
         /// <inheritdoc/>

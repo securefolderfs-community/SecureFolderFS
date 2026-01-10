@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,7 +19,6 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [INotifyPropertyChanged]
     public sealed partial class VaultDashboardPage : Page
     {
         private bool _isLoaded;
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         public VaultDashboardViewModel? ViewModel
         {
             get => DataContext.TryCast<VaultDashboardViewModel>();
-            set { DataContext = value; OnPropertyChanged(); }
+            set { DataContext = value; }
         }
 
         public VaultDashboardPage()
@@ -109,6 +109,56 @@ namespace SecureFolderFS.Uno.Views.Vault
                 HideBackButtonStoryboard.Stop();
                 GoBack.Visibility = Visibility.Collapsed;
             }
+
+            await Task.Delay(100);
+            if ((Navigation.Content as Frame)?.Content is not IEmbeddedControlContent embeddedContent)
+            {
+                await HideEmbedAsync();
+                return;
+            }
+
+            if (embeddedContent.EmbeddedContent is { } newEmbed)
+            {
+                // Hide existing embed
+                if (PageOptionsEmbed is not null)
+                    await HideEmbedAsync();
+                    
+                // Show new embed
+                PageOptionsEmbed = newEmbed;
+                await ShowEmbedAsync();
+            }
+            else
+            {
+                if (PageOptionsEmbed is not null)
+                {
+                    // Hide existing embed
+                    await HideEmbedAsync();
+                    PageOptionsEmbed = null;
+                }
+            }
         }
+
+        private async Task HideEmbedAsync()
+        {
+            EmbeddedContentControl.Visibility = Visibility.Visible;
+            await HideEmbedStoryboard.BeginAsync();
+            EmbeddedContentControl.Visibility = Visibility.Collapsed;
+            HideEmbedStoryboard.Stop();
+        }
+
+        private async Task ShowEmbedAsync()
+        {
+            EmbeddedContentControl.Visibility = Visibility.Visible;
+            await ShowEmbedStoryboard.BeginAsync();
+            ShowEmbedStoryboard.Stop();
+        }
+        
+        public object? PageOptionsEmbed
+        {
+            get => (object?)GetValue(PageOptionsEmbedProperty);
+            set => SetValue(PageOptionsEmbedProperty, value);
+        }
+        public static readonly DependencyProperty PageOptionsEmbedProperty =
+            DependencyProperty.Register(nameof(PageOptionsEmbed), typeof(object), typeof(VaultDashboardPage), new PropertyMetadata(null));
     }
 }

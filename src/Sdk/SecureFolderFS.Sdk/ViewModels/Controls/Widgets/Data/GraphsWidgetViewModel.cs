@@ -1,14 +1,15 @@
-﻿using ByteSizeLib;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 {
@@ -33,6 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             : base(widgetModel)
         {
             IsActive = true;
+            Title = "GraphsWidget".ToLocalized();
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;

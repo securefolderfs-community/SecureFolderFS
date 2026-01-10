@@ -1,11 +1,12 @@
-using ByteSizeLib;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 {
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         {
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.Graphs.GRAPH_UPDATE_INTERVAL_MS));
+            Title = "AggregatedDataWidget".ToLocalized();
         }
 
         /// <inheritdoc/>
