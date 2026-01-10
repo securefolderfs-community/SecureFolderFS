@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -114,26 +116,27 @@ namespace SecureFolderFS.Uno.Views.Vault
             if ((Navigation.Content as Frame)?.Content is not IEmbeddedControlContent embeddedContent)
             {
                 await HideEmbedAsync();
+                EmbeddedContentControl.Content = null;
                 return;
             }
 
             if (embeddedContent.EmbeddedContent is { } newEmbed)
             {
                 // Hide existing embed
-                if (PageOptionsEmbed is not null)
+                if (EmbeddedContentControl.Content is not null)
                     await HideEmbedAsync();
-                    
+
                 // Show new embed
-                PageOptionsEmbed = newEmbed;
+                EmbeddedContentControl.Content = newEmbed;
                 await ShowEmbedAsync();
             }
             else
             {
-                if (PageOptionsEmbed is not null)
+                if (EmbeddedContentControl.Content is not null)
                 {
                     // Hide existing embed
                     await HideEmbedAsync();
-                    PageOptionsEmbed = null;
+                    EmbeddedContentControl.Content = null;
                 }
             }
         }
@@ -152,13 +155,5 @@ namespace SecureFolderFS.Uno.Views.Vault
             await ShowEmbedStoryboard.BeginAsync();
             ShowEmbedStoryboard.Stop();
         }
-        
-        public object? PageOptionsEmbed
-        {
-            get => (object?)GetValue(PageOptionsEmbedProperty);
-            set => SetValue(PageOptionsEmbedProperty, value);
-        }
-        public static readonly DependencyProperty PageOptionsEmbedProperty =
-            DependencyProperty.Register(nameof(PageOptionsEmbed), typeof(object), typeof(VaultDashboardPage), new PropertyMetadata(null));
     }
 }

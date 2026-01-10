@@ -44,35 +44,36 @@
         </DataTemplate>
 
         <!--  Widget Reorder Button  -->
-        <Button
-            x:Key="WidgetReorderButton"
-            x:Name="WidgetReorderButton"
-            Width="36"
-            Height="36"
-            Padding="0"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Background="Transparent"
-            BorderThickness="0">
-            <FontIcon FontSize="16" Glyph="&#xECA5;" />
-            <Button.Flyout>
-                <Flyout>
-                    <ListView
-                        AllowDrop="True"
-                        CanDragItems="True"
-                        CanReorderItems="True"
-                        ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets, Mode=OneWay}"
-                        ReorderMode="Enabled"
-                        SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="vm:BaseWidgetViewModel">
-                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
+        <DataTemplate x:Key="WidgetReorderButtonTemplate">
+            <Button
+                x:Name="WidgetReorderButton"
+                Width="36"
+                Height="36"
+                Padding="0"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0">
+                <FontIcon FontSize="16" Glyph="&#xECA5;" />
+                <Button.Flyout>
+                    <Flyout>
+                        <ListView
+                            AllowDrop="True"
+                            CanDragItems="True"
+                            CanReorderItems="True"
+                            ItemsSource="{Binding WidgetsViewModel.Widgets}"
+                            ReorderMode="Enabled"
+                            SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:BaseWidgetViewModel">
+                                    <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </DataTemplate>
     </Page.Resources>
 
     <!--  Margins are to align the scrollbar to prevent overlap with content  -->

@@ -121,8 +121,7 @@
             <ContentControl
                 x:Name="EmbeddedContentControl"
                 Grid.Column="2"
-                VerticalAlignment="Center"
-                Content="{x:Bind PageOptionsEmbed, Mode=OneWay}" />
+                VerticalAlignment="Center" />
         </Grid>
 
         <!--  Content  -->

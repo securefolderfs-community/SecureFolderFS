@@ -24,12 +24,11 @@ namespace SecureFolderFS.Uno.Views.Vault
         }
         
         /// <inheritdoc/>
-        public object? EmbeddedContent { get; }
+        public object? EmbeddedContent { get => field ??= CreateEmbeddedContent(); }
 
         public VaultOverviewPage()
         {
             InitializeComponent();
-            EmbeddedContent = Resources.Get("WidgetReorderButton");
         }
 
         /// <inheritdoc/>
@@ -39,6 +38,20 @@ namespace SecureFolderFS.Uno.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
+        }
+
+        private DependencyObject? CreateEmbeddedContent()
+        {
+            if (Resources.TryGetValue("WidgetReorderButtonTemplate", out var resource) && resource is DataTemplate template)
+            {
+                var content = template.LoadContent();
+                if (content is FrameworkElement element)
+                    element.DataContext = ViewModel;
+
+                return content;
+            }
+
+            return null;
         }
     }
 }

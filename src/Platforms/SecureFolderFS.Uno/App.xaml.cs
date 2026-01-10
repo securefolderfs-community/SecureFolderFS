@@ -294,9 +294,10 @@ namespace SecureFolderFS.Uno
                 appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
+#else
+            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
             window.Title = title;
-            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
         }
 
         private static void EnsureMainWindow(Window window, MainViewModel mainViewModel)
