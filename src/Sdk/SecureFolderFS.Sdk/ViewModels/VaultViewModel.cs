@@ -49,6 +49,16 @@ namespace SecureFolderFS.Sdk.ViewModels
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
+        /// <inheritdoc/>
+        public void Receive(VaultLockedMessage message)
+        {
+            if (VaultModel.Equals(message.VaultModel))
+            {
+                _unlockedVaultViewModel = null;
+                IsUnlocked = false;
+            }
+        }
+
         [RelayCommand]
         public async Task SetNameAsync(string? newName, CancellationToken cancellationToken)
         {
@@ -128,13 +138,6 @@ namespace SecureFolderFS.Sdk.ViewModels
                 return;
 
             CanRename = !VaultModel.IsRemote || VaultModel.VaultFolder is not null;
-        }
-
-        /// <inheritdoc/>
-        public void Receive(VaultLockedMessage message)
-        {
-            if (VaultModel.Equals(message.VaultModel))
-                IsUnlocked = false;
         }
 
         /// <inheritdoc/>
