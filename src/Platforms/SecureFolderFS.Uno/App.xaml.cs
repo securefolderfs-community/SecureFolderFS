@@ -291,6 +291,7 @@ namespace SecureFolderFS.Uno
             // Enable early window configuration
             EnsureEarlyWindow(window, nameof(SecureFolderFS));
 
+#if WINDOWS
             // Get BoundsManager
             var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
 
@@ -301,6 +302,7 @@ namespace SecureFolderFS.Uno
             // Load saved window state
             if (!boundsManager.LoadWindowState(UI.Constants.MAIN_WINDOW_ID))
                 window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
+#endif
         }
 
         private static async void Window_Closed(object sender, WindowEventArgs args)
