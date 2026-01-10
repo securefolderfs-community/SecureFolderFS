@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.Extensions
             });
         }
 
-        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewFinder)
+        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewFinder, bool addViewIfMissing = false)
         {
             return await ForgetNavigateViewAsync(navigationService, view, () =>
             {
@@ -54,10 +54,10 @@ namespace SecureFolderFS.Sdk.Extensions
 
                 navigationService.Views.Remove(targetView);
                 return targetView;
-            }, navigationService.CurrentView is null || viewFinder(navigationService.CurrentView));
+            }, navigationService.CurrentView is null || viewFinder(navigationService.CurrentView), addViewIfMissing);
         }
 
-        private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true)
+        private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true, bool addViewIfMissing = false)
         {
             var navigated = false;
             IViewDesignation? currentView = null;
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 if (!shouldTriggerNavigation)
                 {
                     // Silently replace the removed view without triggering navigation
-                    if (currentView is not null)
+                    if (currentView is not null || addViewIfMissing)
                         navigationService.Views.Add(view);
 
                     return false;

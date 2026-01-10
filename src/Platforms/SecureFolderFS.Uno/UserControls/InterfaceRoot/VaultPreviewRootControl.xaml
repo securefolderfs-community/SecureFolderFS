@@ -3,26 +3,97 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.InterfaceRoot"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    mc:Ignorable="d">
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    mc:Ignorable="d not_win">
 
-    <Grid>
+    <!--  Root  -->
+    <Grid not_win:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-        <!--  Login  -->
-        <StackPanel Spacing="8">
-            <!--  TODO: Use the login view only when the vault is locked  -->
+        <!--  Titlebar  -->
+        <win:Grid Grid.Row="0">
+            <uc:TitleBarControl
+                x:Name="CustomTitleBar"
+                x:FieldModifier="public"
+                Canvas.ZIndex="10"
+                PrimaryTitle="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}" />
+        </win:Grid>
 
-            <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+        <Grid Grid.Row="1" Padding="24">
+            <!--  Login view  -->
+            <StackPanel
+                VerticalAlignment="Center"
+                Spacing="64"
+                Visibility="{x:Bind ViewModel.VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
 
-            <uc:LoginOptions
-                IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
-                RecoverAccessCommand="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
-                RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
-        </StackPanel>
+                <!--  Header  -->
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="26"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Opacity="0.6"
+                        Text="{l:ResourceString Rid=VaultLocked}" />
+                </StackPanel>
 
-        <!--  TODO: Upon unlock, hide the login view and show the vault title  -->
+                <StackPanel VerticalAlignment="Center" Spacing="8">
+                    <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                    <uc:LoginOptions
+                        IsReadOnly="{x:Bind ViewModel.IsReadOnlyLogin, Mode=TwoWay}"
+                        RecoverAccessCommand="{x:Bind ViewModel.RecoverAccessCommand, Mode=OneWay}"
+                        RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
+                </StackPanel>
+            </StackPanel>
+
+            <!--  Unlocked view  -->
+            <Grid Visibility="{x:Bind ViewModel.VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  Header  -->
+                <StackPanel
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    Spacing="6">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="26"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}" />
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Opacity="0.6"
+                        Text="{l:ResourceString Rid=VaultUnlocked}" />
+                </StackPanel>
+
+                <uc:VaultControls
+                    Grid.Row="1"
+                    VerticalAlignment="Bottom"
+                    IsReadOnly="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
+                    LockVaultCommand="{x:Bind ViewModel.LockVaultCommand, Mode=OneWay}"
+                    RevealFolderCommand="{x:Bind ViewModel.RevealFolderCommand, Mode=OneWay}" />
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

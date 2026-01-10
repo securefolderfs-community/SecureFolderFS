@@ -12,5 +12,6 @@
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <vc:IconSourceConverter x:Key="IconSourceConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
+    <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
 
 </ResourceDictionary>

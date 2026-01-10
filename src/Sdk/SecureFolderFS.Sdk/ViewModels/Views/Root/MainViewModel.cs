@@ -12,9 +12,9 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Root
+namespace SecureFolderFS.Sdk.ViewModels.Views.Root
 {
-    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>]
+    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>, Inject<INavigationService>(Name = "RootNavigationService", Visibility = "public")]
     [Bindable(true)]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {

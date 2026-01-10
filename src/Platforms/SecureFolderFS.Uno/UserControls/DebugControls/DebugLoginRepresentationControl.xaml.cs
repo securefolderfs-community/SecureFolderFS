@@ -1,4 +1,3 @@
-using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
@@ -16,16 +15,12 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
         public DebugLoginRepresentationControl()
         {
             InitializeComponent();
-
             _rootControl = App.Instance?.MainWindow?.Content as MainWindowRootControl;
         }
 
         private void RestartLoginView_Click(object sender, RoutedEventArgs e)
         {
-            if (_rootControl is null)
-                return;
-
-            if (_rootControl.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
+            if (_rootControl?.ViewModel?.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
                 return;
 
             if (mainHost.NavigationService.CurrentView is not VaultLoginViewModel vaultLogin)

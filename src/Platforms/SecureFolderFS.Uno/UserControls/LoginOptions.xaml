@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <HyperlinkButton
-        x:Name="LoginOptions"
+        x:Name="LoginOptionsButton"
         Padding="4,2"
         HorizontalAlignment="Center"
         Click="LoginOptions_Click"

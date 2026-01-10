@@ -25,6 +25,8 @@ namespace SecureFolderFS.Sdk.ViewModels
     [Bindable(true)]
     public sealed partial class VaultViewModel : ObservableObject, IViewable, IDisposable, IRecipient<VaultLockedMessage>
     {
+        private UnlockedVaultViewModel? _unlockedVaultViewModel;
+
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanRename;
         [ObservableProperty] private bool _IsUnlocked;
@@ -111,7 +113,12 @@ namespace SecureFolderFS.Sdk.ViewModels
             IsUnlocked = true;
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
-            return new(vaultFolder, storageRoot, this);
+            return _unlockedVaultViewModel = new(vaultFolder, storageRoot, this);
+        }
+
+        public UnlockedVaultViewModel GetUnlockedViewModel()
+        {
+            return _unlockedVaultViewModel ?? throw new UnauthorizedAccessException("The vault is not unlocked.");
         }
 
         private void VaultModel_StateChanged(object? sender, EventArgs e)

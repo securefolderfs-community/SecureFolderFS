@@ -6,13 +6,8 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
-    </Page.Resources>
 
     <ScrollViewer>
         <Grid Padding="32" HorizontalAlignment="Stretch">

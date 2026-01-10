@@ -64,9 +64,9 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/json">.sfvault</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>SecureFolderFS Vault Shortcut</uap:DisplayName>
+            <uap:DisplayName>SecureFolderFS Vault</uap:DisplayName>
             <uap:Logo>Assets\AppIcon\AppIcon.png</uap:Logo>
-            <uap:InfoTip>SecureFolderFS Vault Shortcut</uap:InfoTip>
+            <uap:InfoTip>SecureFolderFS Vault</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>

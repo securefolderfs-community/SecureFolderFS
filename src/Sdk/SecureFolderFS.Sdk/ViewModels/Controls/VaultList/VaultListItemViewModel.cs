@@ -163,7 +163,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             
             var filter = new Dictionary<string, string>
             {
-                { "SecureFolderFS Vault Shortcut", VaultService.ShortcutFileExtension }
+                { "SecureFolderFS Vault", VaultService.ShortcutFileExtension }
             };
 
             await FileExplorerService.SaveFileAsync(suggestedName, dataStream, filter, cancellationToken);

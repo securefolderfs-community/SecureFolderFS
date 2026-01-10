@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,9 +13,8 @@ using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Root;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
@@ -40,6 +40,8 @@ namespace SecureFolderFS.Uno
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public Window? MainWindow { get; private set; }
+
+        public SynchronizationContext? MainWindowSynchronizationContext { get; set; }
 
         public MainViewModel? MainViewModel { get; private set; }
 
@@ -106,7 +108,7 @@ namespace SecureFolderFS.Uno
             MainViewModel = new(new VaultCollectionModel());
 
             // Prepare MainWindow
-            EnsureEarlyWindow(MainWindow, MainViewModel);
+            EnsureMainWindow(MainWindow, MainViewModel);
 
             // Activate MainWindow
             MainWindow.Activate();
@@ -149,28 +151,63 @@ namespace SecureFolderFS.Uno
             await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
 
             var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
-            if (shortcutData is null)
+            if (shortcutData?.PersistableId is null || MainViewModel is null)
                 return;
 
-            var window = new Window();
-            var vaultPreviewViewModel = new VaultPreviewViewModel(null!);
-            window.Content = new VaultPreviewRootControl(vaultPreviewViewModel);
-            window.Show();
-            window.Activate();
+            // Find the vault in the collection by PersistableId
+            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId == shortcutData.PersistableId);
+            if (listItemViewModel is null)
+                return;
 
-            WeakReferenceMessenger.Default.Send(new VaultShortcutActivatedMessage(shortcutData, filePath));
+            var vaultViewModel = listItemViewModel.VaultViewModel;
+            await MainWindowSynchronizationContext.PostOrExecuteAsync(async _ =>
+            {
+                if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
+                    return;
+
+                // Create the preview window
+                var window = new Window();
+                window.Closed += PreviewWindow_Closed;
+
+                // Initialize preview view model
+                var vaultPreviewViewModel = !vaultViewModel.IsUnlocked
+                    ? new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
+                    : new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
+                    {
+                        UnlockedVaultViewModel = vaultViewModel.GetUnlockedViewModel()
+                    };
+
+                window.Content = new VaultPreviewRootControl(vaultPreviewViewModel);
+                EnsureEarlyWindow(window, $"{nameof(SecureFolderFS)} - {listItemViewModel.VaultViewModel.Title}");
+
+                // Get BoundsManager
+                var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
+
+                // Set minimum window size
+                boundsManager.MinWidth = 464;
+                boundsManager.MinHeight = 640;
+                window.AppWindow.MoveAndResize(new(100, 100, 464, 640));
+
+                // Initialize the login view model
+                await vaultPreviewViewModel.InitAsync();
+
+                window.Activate();
+            });
+
+            static void PreviewWindow_Closed(object sender, WindowEventArgs args)
+            {
+                if (sender is not Window window)
+                    return;
+                
+                window.Closed -= PreviewWindow_Closed;
+                (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
+            }
         }
 
         #region Window Configuration
 
-        private static void EnsureEarlyWindow(Window window, MainViewModel mainViewModel)
+        private static void EnsureEarlyWindow(Window window, string title)
         {
-            // Set window content
-            window.Content = new MainWindowRootControl(mainViewModel);
-
-            // Attach event for window closing
-            window.Closed += Window_Closed;
-
 #if WINDOWS
             var appWindow = window.AppWindow;
 
@@ -182,7 +219,7 @@ namespace SecureFolderFS.Uno
             window.SystemBackdrop = new MicaBackdrop();
 
             // Set title
-            appWindow.Title = nameof(SecureFolderFS);
+            appWindow.Title = title;
 
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -198,6 +235,22 @@ namespace SecureFolderFS.Uno
                 window.ExtendsContentIntoTitleBar = true;
                 window.SetTitleBar(rootControl.CustomTitleBar);
             }
+#else
+            window.Title = title;
+            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
+#endif
+        }
+
+        private static void EnsureMainWindow(Window window, MainViewModel mainViewModel)
+        {
+            // Set window content
+            window.Content = new MainWindowRootControl(mainViewModel);
+
+            // Attach event for window closing
+            window.Closed += Window_Closed;
+
+            // Enable early window configuration
+            EnsureEarlyWindow(window, nameof(SecureFolderFS));
 
             // Get BoundsManager
             var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
@@ -209,11 +262,6 @@ namespace SecureFolderFS.Uno
             // Load saved window state
             if (!boundsManager.LoadWindowState(UI.Constants.MAIN_WINDOW_ID))
                 window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
-
-#else
-            window.Title = nameof(SecureFolderFS);
-            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
-#endif
         }
 
         private static async void Window_Closed(object sender, WindowEventArgs args)
