@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
 {
     [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IFileExplorerService>]
     [Bindable(true)]
-    public sealed partial class VaultPreviewViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultLockedMessage>, IDisposable
+    public sealed partial class VaultPreviewViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>, IDisposable
     {
         private readonly INavigationService _vaultNavigation;
 
@@ -42,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
             if (!vaultViewModel.IsUnlocked && vaultViewModel.VaultModel.VaultFolder is { } vaultFolder)
                 LoginViewModel = new(vaultFolder, LoginViewType.Constrained);
 
+            WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
@@ -53,6 +54,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
             await LoginViewModel.InitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public void Receive(VaultUnlockedMessage message)
+        {
+            if (UnlockedVaultViewModel is not null)
+                return;
+
+            if (!message.VaultModel.Equals(VaultViewModel.VaultModel))
+                return;
+
+            UnlockedVaultViewModel = VaultViewModel.GetUnlockedViewModel();
         }
 
         /// <inheritdoc/>

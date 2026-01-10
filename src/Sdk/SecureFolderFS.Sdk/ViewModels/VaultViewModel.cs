@@ -111,9 +111,10 @@ namespace SecureFolderFS.Sdk.ViewModels
 
             // Notify that the vault has been unlocked
             IsUnlocked = true;
+            _unlockedVaultViewModel = new(vaultFolder, storageRoot, this);
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
-            return _unlockedVaultViewModel = new(vaultFolder, storageRoot, this);
+            return _unlockedVaultViewModel;
         }
 
         public UnlockedVaultViewModel GetUnlockedViewModel()

@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
@@ -95,6 +92,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 // Show no vaults screen
                 await ViewModel.RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(ViewModel.VaultListViewModel, ViewModel.RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
+
+            // Signal that the main window has finished initializing
+            App.Instance?.MainWindowInitialized.TrySetResult();
         }
 
         private void DebugButton_Click(object sender, RoutedEventArgs e)

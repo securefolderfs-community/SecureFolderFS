@@ -45,6 +45,11 @@ namespace SecureFolderFS.Uno
 
         public MainViewModel? MainViewModel { get; private set; }
 
+        /// <summary>
+        /// Gets a task that completes when the main window has finished initializing.
+        /// </summary>
+        public TaskCompletionSource MainWindowInitialized { get; } = new();
+
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
             new Platforms.Windows.Helpers.WindowsLifecycleHelper();
@@ -110,28 +115,56 @@ namespace SecureFolderFS.Uno
             // Prepare MainWindow
             EnsureMainWindow(MainWindow, MainViewModel);
 
-            // Activate MainWindow
-            MainWindow.Activate();
-
 #if WINDOWS
+            // Check if the app was launched via file activation (shortcut file)
+            var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
+            
+            // Activate MainWindow (required for initialization)
+            MainWindow.Activate();
+            
+            // If launched via shortcut file, hide the main window immediately
+            if (isShortcutActivation)
+                MainWindow.Hide(enableEfficiencyMode: false);
+
             // Process initial file activation if the app was launched via file association
             if (Program.InitialActivationArgs is { } initialArgs)
-            {
                 await OnActivatedAsync(initialArgs);
-            }
+#else
+            // Activate MainWindow
+            MainWindow.Activate();
 #endif
         }
+
+#if WINDOWS
+        /// <summary>
+        /// Checks if the activation arguments represent a vault shortcut file activation.
+        /// </summary>
+        private static bool IsShortcutFileActivation(AppActivationArguments? args)
+        {
+            if (args is null)
+                return false;
+
+            if (args.Kind != ExtendedActivationKind.File)
+                return false;
+
+            if (args.Data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+                return false;
+
+            var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+            return file is IStorageFile storageFile && 
+                   storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
+        }
+#endif
 
         /// <summary>
         /// Invoked when the application is activated by opening a file.
         /// </summary>
         public async Task OnActivatedAsync(AppActivationArguments args)
         {
-            // Do not remove this assignment
-            var kind = args.Kind;
-            var data = args.Data;
+            if (args.Kind != ExtendedActivationKind.File)
+                return;
 
-            if (kind != ExtendedActivationKind.File || data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+            if (args.Data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
                 return;
 
             var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
@@ -154,6 +187,9 @@ namespace SecureFolderFS.Uno
             if (shortcutData?.PersistableId is null || MainViewModel is null)
                 return;
 
+            // Wait for the main window to finish initializing (vault collection loaded, navigation set up)
+            await MainWindowInitialized.Task;
+
             // Find the vault in the collection by PersistableId
             var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId == shortcutData.PersistableId);
             if (listItemViewModel is null)
@@ -170,6 +206,7 @@ namespace SecureFolderFS.Uno
                 window.Closed += PreviewWindow_Closed;
 
                 // Initialize preview view model
+                var title = $"{nameof(SecureFolderFS)} - {listItemViewModel.VaultViewModel.Title}";
                 var vaultPreviewViewModel = !vaultViewModel.IsUnlocked
                     ? new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
                     : new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
@@ -178,8 +215,9 @@ namespace SecureFolderFS.Uno
                     };
 
                 window.Content = new VaultPreviewRootControl(vaultPreviewViewModel);
-                EnsureEarlyWindow(window, $"{nameof(SecureFolderFS)} - {listItemViewModel.VaultViewModel.Title}");
+                EnsureEarlyWindow(window, title);
 
+#if WINDOWS
                 // Get BoundsManager
                 var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
 
@@ -187,6 +225,7 @@ namespace SecureFolderFS.Uno
                 boundsManager.MinWidth = 464;
                 boundsManager.MinHeight = 640;
                 window.AppWindow.MoveAndResize(new(100, 100, 464, 640));
+#endif
 
                 // Initialize the login view model
                 await vaultPreviewViewModel.InitAsync();

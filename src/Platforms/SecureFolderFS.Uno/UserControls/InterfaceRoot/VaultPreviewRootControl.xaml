@@ -24,7 +24,7 @@
                 x:Name="CustomTitleBar"
                 x:FieldModifier="public"
                 Canvas.ZIndex="10"
-                PrimaryTitle="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay}" />
+                PrimaryTitle="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inversemode:none|SecureFolderFS - {0}'}" />
         </win:Grid>
 
         <Grid Grid.Row="1" Padding="24">
