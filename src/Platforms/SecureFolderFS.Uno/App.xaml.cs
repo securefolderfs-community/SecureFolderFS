@@ -27,6 +27,7 @@ using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using Microsoft.UI.Windowing;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace SecureFolderFS.Uno
@@ -247,37 +248,55 @@ namespace SecureFolderFS.Uno
 
         private static void EnsureEarlyWindow(Window window, string title)
         {
-#if WINDOWS
             var appWindow = window.AppWindow;
 
 #if !UNPACKAGED
             // Set icon
             appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
 #endif
+#if WINDOWS
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
+#endif
 
             // Set title
             appWindow.Title = title;
 
+            // Extend title bar
+            if (window.Content is MainWindowRootControl rootControl)
+            {
+                window.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                window.SetTitleBar(rootControl.CustomTitleBar);
+
+#if __UNO_SKIA_MACOS__
+                // Use native macOS APIs to configure the window
+                Platforms.Desktop.Helpers.MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+                
+                // Add left padding for traffic light buttons
+                var (leftPadding, _) = Platforms.Desktop.Helpers.MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+                rootControl.CustomTitleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
+#elif !WINDOWS
+                // For other non-Windows platforms, use OverlappedPresenter
+                if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+                {
+                    overlappedPresenter.SetBorderAndTitleBar(true, false);
+                    overlappedPresenter.IsMinimizable = true;
+                    overlappedPresenter.IsMaximizable = true;
+                }
+#endif
+            }
+
+#if WINDOWS
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
-                // Extend title bar
-                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-
                 // Set window buttons background to transparent
                 appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
-            else if (window.Content is MainWindowRootControl rootControl)
-            {
-                window.ExtendsContentIntoTitleBar = true;
-                window.SetTitleBar(rootControl.CustomTitleBar);
-            }
-#else
+#endif
             window.Title = title;
             global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
-#endif
         }
 
         private static void EnsureMainWindow(Window window, MainViewModel mainViewModel)

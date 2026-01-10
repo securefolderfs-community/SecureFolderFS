@@ -33,14 +33,13 @@
         </Grid.RowDefinitions>
 
         <!--  Titlebar  -->
-        <win:Grid Grid.Row="0">
+        <Grid Grid.Row="0" Canvas.ZIndex="10">
             <uc:TitleBarControl
                 x:Name="CustomTitleBar"
                 x:FieldModifier="public"
-                Canvas.ZIndex="10"
                 PrimaryTitle="SecureFolderFS"
                 SecondaryTitle="Beta5" />
-        </win:Grid>
+        </Grid>
 
         <!--  Main Content  -->
         <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">
@@ -108,6 +107,7 @@
             Grid.RowSpan="2"
             x:FieldModifier="public"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Canvas.ZIndex="9"
             Visibility="Collapsed" />
     </Grid>
 </UserControl>

@@ -1,11 +1,15 @@
 using System;
 using System.Runtime.InteropServices;
+
+#if WINDOWS
 using System.Text;
+#endif
 
 namespace SecureFolderFS.Uno.PInvoke
 {
     internal static partial class UnsafeNative
     {
+#if WINDOWS
         public const int CONNECT_TEMPORARY = 4;
         public const int RESOURCETYPE_DISK = 1;
 
@@ -34,8 +38,38 @@ namespace SecureFolderFS.Uno.PInvoke
             [In] uint wMsg,
             [In] IntPtr wParam,
             [In] IntPtr lParam);
+#endif
+        
+#if __UNO_SKIA_MACOS__
+        
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.Bool)] bool value);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr sel_registerName(string name);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_ulong(IntPtr receiver, IntPtr selector, ulong arg);
+        
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial CGRect objc_msgSend_CGRect(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_CGPoint(IntPtr receiver, IntPtr selector, CGPoint point);
+        
+#endif
     }
 
+#if WINDOWS
     [StructLayout(LayoutKind.Sequential)]
     internal class NETRESOURCE
     {
@@ -48,4 +82,25 @@ namespace SecureFolderFS.Uno.PInvoke
         public string lpComment = null!;
         public string lpProvider = null!;
     }
+#endif
+    
+#if __UNO_SKIA_MACOS__
+    
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CGPoint
+    {
+        public double X;
+        public double Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public  struct CGRect
+    {
+        public double X;
+        public double Y;
+        public double Width;
+        public double Height;
+    }
+    
+#endif
 }

@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+#if WINDOWS
+using System.Linq;
+using System.Text;
 using SecureFolderFS.Uno.PInvoke;
+#endif
 
 namespace SecureFolderFS.Uno.Helpers
 {
@@ -36,22 +38,21 @@ namespace SecureFolderFS.Uno.Helpers
 
         public static async Task<string?> GetMountPathForRemotePathAsync(string remotePath)
         {
-            if (OperatingSystem.IsWindows())
+#if WINDOWS
+            remotePath = remotePath.TrimEnd('\\');
+
+            var bufferSize = remotePath.Length + 1; // Null-terminated
+            var driveRemotePathBuilder = new StringBuilder(bufferSize);
+
+            foreach (var drive in DriveInfo.GetDrives().Select(item => $"{item.Name[0]}:"))
             {
-                remotePath = remotePath.TrimEnd('\\');
+                if (UnsafeNative.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferSize) == 0 && driveRemotePathBuilder.ToString() == remotePath)
+                    return drive;
 
-                var bufferSize = remotePath.Length + 1; // Null-terminated
-                var driveRemotePathBuilder = new StringBuilder(bufferSize);
-
-                foreach (var drive in DriveInfo.GetDrives().Select(item => $"{item.Name[0]}:"))
-                {
-                    if (UnsafeNative.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferSize) == 0 && driveRemotePathBuilder.ToString() == remotePath)
-                        return drive;
-
-                    driveRemotePathBuilder.Clear();
-                }
+                driveRemotePathBuilder.Clear();
             }
-            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
+#else
+            if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
                 var process = new Process()
                 {
@@ -81,6 +82,7 @@ namespace SecureFolderFS.Uno.Helpers
                     }
                 }
             }
+#endif
 
             return null;
         }
@@ -93,24 +95,23 @@ namespace SecureFolderFS.Uno.Helpers
             string remotePath,
             CancellationToken cancellationToken = default)
         {
-            if (OperatingSystem.IsWindows())
+#if WINDOWS
+            var netResource = new NETRESOURCE()
             {
-                var netResource = new NETRESOURCE()
-                {
-                    dwType = UnsafeNative.RESOURCETYPE_DISK,
-                    lpLocalName = mountPath,
-                    lpRemoteName = remotePath,
-                };
+                dwType = UnsafeNative.RESOURCETYPE_DISK,
+                lpLocalName = mountPath,
+                lpRemoteName = remotePath,
+            };
 
-                // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
-                // so it has to be run in another thread to prevent blocking the server from responding.
-                _ = Task.Run(() =>
-                {
-                    var error = UnsafeNative.WNetAddConnection2(netResource, null!, null!, UnsafeNative.CONNECT_TEMPORARY);
-                    _ = error;
-                }, cancellationToken);
-            }
-            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
+            // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
+            // so it has to be run in another thread to prevent blocking the server from responding.
+            _ = Task.Run(() =>
+            {
+                var error = UnsafeNative.WNetAddConnection2(netResource, null!, null!, UnsafeNative.CONNECT_TEMPORARY);
+                _ = error;
+            }, cancellationToken);
+#else
+            if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
                 var args = $"mount_webdav {remotePath} {mountPath}";
                 var process = new Process()
@@ -131,6 +132,7 @@ namespace SecureFolderFS.Uno.Helpers
                 var error = await process.StandardError.ReadToEndAsync(cancellationToken);
                 _ = error;
             }
+#endif
         }
     }
 }
