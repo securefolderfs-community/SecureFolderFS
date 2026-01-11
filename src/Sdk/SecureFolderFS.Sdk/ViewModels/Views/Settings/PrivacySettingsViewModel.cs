@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Attributes;
+﻿using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Shared;
@@ -9,7 +10,7 @@ using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    [Inject<ITelemetryService>, Inject<ISettingsService>]
+    [Inject<ITelemetryService>, Inject<ISettingsService>, Inject<IPrivacyService>]
     [Bindable(true)]
     public sealed partial class PrivacySettingsViewModel : BaseSettingsViewModel
     {
@@ -41,6 +42,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private async Task ClearTracesAsync(CancellationToken cancellationToken)
+        {
+            await PrivacyService.ClearTracesAsync(cancellationToken);
         }
 
         private async void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

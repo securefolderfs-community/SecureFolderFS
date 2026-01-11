@@ -168,7 +168,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             {
                 // Create an entry with the specified filename
                 var entry = archive.CreateEntry(Constants.FileNames.USER_SETTINGS_FILENAME, CompressionLevel.Optimal);
-                
+
                 await using var entryStream = await entry.OpenAsync(cancellationToken);
                 await using var settingsStream = await settingsFile.OpenReadAsync(cancellationToken);
                 await settingsStream.CopyToAsync(entryStream, cancellationToken);
@@ -185,7 +185,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             try
             {
                 await using var archive = new ZipArchive(dataStream, ZipArchiveMode.Read, leaveOpen: true);
-                
+
                 // Find the settings file in the archive
                 var entry = archive.GetEntry(Constants.FileNames.USER_SETTINGS_FILENAME);
                 if (entry is null)

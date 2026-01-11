@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.Helpers
     internal sealed class MauiThemeHelper : ThemeHelper
     {
         private static MauiThemeHelper? _Instance;
-        
+
         /// <summary>
         /// Gets the singleton instance of <see cref="MauiThemeHelper"/>.
         /// </summary>

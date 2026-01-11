@@ -24,13 +24,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var auth = await vaultReader.ReadAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
-            
+
             if (auth?.CiphertextKey is null)
             {
                 Report(Result.Failure(new ArgumentNullException(nameof(VaultProtectedKeyDataModel.CiphertextKey))));
                 return;
             }
-            
+
             try
             {
                 var keyMaterial = await AcquireAsync(VaultId, auth.CiphertextKey, cancellationToken);

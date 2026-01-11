@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.UserControls
                 {
                     if (bindable is not AccountBarControl accountBarControl)
                         return;
-                    
+
                     switch (newValue)
                     {
                         case GDriveAccountViewModel gDriveViewModel:

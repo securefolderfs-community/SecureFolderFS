@@ -195,7 +195,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 {
                     if (s is not MigratorV2_V3 migratorV2V3)
                         return;
-                    
+
                     if (e.NewValue is not IFolder vaultFolder)
                         return;
 

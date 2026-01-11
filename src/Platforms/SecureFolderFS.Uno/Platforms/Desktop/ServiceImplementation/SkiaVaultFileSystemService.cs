@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         {
             await Task.CompletedTask;
             yield return new SkiaWebDavFileSystem();
-            
+
 #if !__UNO_SKIA_MACOS__
             yield return new FuseFileSystem();
 #endif

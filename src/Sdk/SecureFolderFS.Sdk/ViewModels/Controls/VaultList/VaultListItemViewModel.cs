@@ -1,4 +1,4 @@
-﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
@@ -160,7 +160,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             var shortcutData = new VaultShortcutDataModel(VaultViewModel.VaultModel.DataModel.PersistableId, VaultViewModel.Title);
             var suggestedName = $"{VaultViewModel.Title}{VaultService.ShortcutFileExtension}";
             await using var dataStream = await StreamSerializer.Instance.SerializeAsync(shortcutData, cancellationToken);
-            
+
             var filter = new Dictionary<string, string>
             {
                 { "SecureFolderFS Vault", VaultService.ShortcutFileExtension }

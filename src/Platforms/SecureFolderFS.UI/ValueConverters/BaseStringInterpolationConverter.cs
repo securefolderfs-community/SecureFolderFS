@@ -12,10 +12,10 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (value is not string strValue)
                 return string.Empty;
-            
+
             if (parameter is not string formatStringParam)
                 return strValue;
-            
+
             var isInverse = formatStringParam.Contains("inversemode:", StringComparison.OrdinalIgnoreCase);
             formatStringParam = isInverse ? formatStringParam.Replace("inversemode:", string.Empty, StringComparison.OrdinalIgnoreCase) : formatStringParam;
 
@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 var rawPhrases = formatStringParam.Split(',');
                 if (rawPhrases.IsEmpty())
                     return strValue.ToLocalized();
-                
+
                 var phrases = new object[rawPhrases.Length];
                 for (var i = 0; i < rawPhrases.Length; i++)
                 {
@@ -36,7 +36,7 @@ namespace SecureFolderFS.UI.ValueConverters
                         ? text.ToLocalized()
                         : text;
                 }
-                
+
                 return SafetyHelpers.NoFailureResult(() => string.Format(strValue, phrases));
             }
             else

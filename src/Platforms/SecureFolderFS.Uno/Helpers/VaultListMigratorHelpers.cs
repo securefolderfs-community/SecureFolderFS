@@ -92,7 +92,7 @@ namespace SecureFolderFS.Uno.Helpers
     {
         public List<OldVaultDataModel>? SavedVaults { get; set; }
     }
-    
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
     file class OldVaultDataModel(string? PersistableId, string? VaultName, DateTime? LastAccessDate)

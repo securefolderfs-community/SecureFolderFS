@@ -76,7 +76,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
         {
             var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.mp4");
-    
+
             // Write stream to temp file using NSData for speed
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms).ConfigureAwait(false);

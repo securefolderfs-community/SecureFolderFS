@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId);
-            
+
             // Face ID, Touch ID
             if (AreBiometricsAvailable(out var biometryType))
                 yield return new IOSBiometricCreationViewModel(vaultFolder, vaultId, biometryType switch
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             using var context = new LAContext();
             var result = context.CanEvaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, out _);
             biometryType = context.BiometryType; 
-            
+
             return result;
         }
     }

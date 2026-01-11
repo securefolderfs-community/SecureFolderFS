@@ -47,7 +47,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public virtual async Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)
         {
             using var recoveryKey = KeyPair.CombineRecoveryKey(encodedRecoveryKey);
-            
+
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var recoveryRoutine = routines.RecoverVault();
             await recoveryRoutine.InitAsync(cancellationToken);

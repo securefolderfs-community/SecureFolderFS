@@ -71,10 +71,10 @@ namespace SecureFolderFS.Maui.UserControls.Options
                 {
                     if (bindable is not OptionsControl optionsControl)
                         return;
-                    
+
                     if (newValue is not bool bValue)
                         return;
-                    
+
                     optionsControl.SlotView.Opacity = bValue ? 0.8d : 1d;
                 });
 

@@ -38,6 +38,17 @@ namespace SecureFolderFS.Uno.PInvoke
             [In] uint wMsg,
             [In] IntPtr wParam,
             [In] IntPtr lParam);
+
+        /// <summary>
+        /// Adds a document to the Shell's list of recently used documents or clears the list.
+        /// When pv is IntPtr.Zero, the recent documents list is cleared.
+        /// </summary>
+        /// <param name="uFlags">The SHARD (Shell Add Recent Document) flag. Use SHARD_PIDL (0x00000001) to clear.</param>
+        /// <param name="pv">A pointer to the document path or PIDL. Pass IntPtr.Zero to clear the list.</param>
+        [DllImport("shell32.dll")]
+        public static extern void SHAddToRecentDocs(
+            [In] uint uFlags,
+            [In] IntPtr pv);
 #endif
         
 #if __UNO_SKIA_MACOS__
@@ -83,9 +94,9 @@ namespace SecureFolderFS.Uno.PInvoke
         public string lpProvider = null!;
     }
 #endif
-    
+
 #if __UNO_SKIA_MACOS__
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct CGPoint
     {
@@ -101,6 +112,6 @@ namespace SecureFolderFS.Uno.PInvoke
         public double Width;
         public double Height;
     }
-    
+
 #endif
 }

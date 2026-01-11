@@ -25,7 +25,7 @@ internal static class PopupExtensions
             return Task.CompletedTask;
 
         var completionSource = new TaskCompletionSource();
-        
+
         // Get the current content
         var originalContent = contentPage.Content;
         if (originalContent is null)
@@ -36,10 +36,10 @@ internal static class PopupExtensions
 
         // Create the overlay grid that will hold both original content and popup
         var overlayGrid = new Grid();
-        
+
         // Remove original content from page first
         contentPage.Content = null;
-        
+
         // Add original content to overlay grid
         overlayGrid.Children.Add(originalContent);
 
@@ -77,9 +77,9 @@ internal static class PopupExtensions
         popup.CascadeInputTransparent = false;
         popup.InputTransparent = false;
         popup.Content.InputTransparent = false;
-        
+
         popupContainer.Children.Add(popup);
-        
+
         overlayGrid.Children.Add(popupContainer);
 
         // Set the overlay grid as page content
@@ -87,13 +87,13 @@ internal static class PopupExtensions
 
         // Track if already closing to prevent double-close
         var isClosing = false;
-        
+
         // Event handlers that we need to unhook later
         TapGestureRecognizer? tapGesture = null;
         EventHandler<TappedEventArgs>? tappedHandler = null;
         EventHandler? closedHandler = null;
         EventHandler<NavigatedFromEventArgs>? navigatedFromHandler = null;
-        
+
         // Store the original back button behavior to restore later
         var originalBackButtonBehavior = Shell.GetBackButtonBehavior(contentPage);
 
@@ -101,24 +101,24 @@ internal static class PopupExtensions
         {
             if (isClosing)
                 return;
-            
+
             isClosing = true;
-            
+
             // Unhook all event handlers
             if (tapGesture is not null)
             {
                 if (tappedHandler is not null)
                     tapGesture.Tapped -= tappedHandler;
-                
+
                 dimBackground.GestureRecognizers.Remove(tapGesture);
             }
-            
+
             if (closedHandler is not null)
                 popup.Closed -= closedHandler;
-            
+
             if (navigatedFromHandler is not null)
                 contentPage.NavigatedFrom -= navigatedFromHandler;
-            
+
             // Restore the original back button behavior
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
 
@@ -134,24 +134,24 @@ internal static class PopupExtensions
         {
             if (isClosing)
                 return;
-            
+
             isClosing = true;
-            
+
             // Unhook all event handlers
             if (tapGesture is not null)
             {
                 if (tappedHandler is not null)
                     tapGesture.Tapped -= tappedHandler;
-                
+
                 dimBackground.GestureRecognizers.Remove(tapGesture);
             }
-            
+
             if (closedHandler is not null)
                 popup.Closed -= closedHandler;
-            
+
             if (navigatedFromHandler is not null)
                 contentPage.NavigatedFrom -= navigatedFromHandler;
-            
+
             // Restore the original back button behavior
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
 
@@ -180,18 +180,18 @@ internal static class PopupExtensions
         // Subscribe to the popup's Closed event
         closedHandler = (_, _) => _ = CloseOverlayAsync();
         popup.Closed += closedHandler;
-        
+
         // Handle page navigation (e.g., user taps NavigationBar back button)
         navigatedFromHandler = (_, _) => CleanupOverlay();
         contentPage.NavigatedFrom += navigatedFromHandler;
-        
+
         // Handle Android back button/gesture - close popup instead of navigating
         var backButtonBehavior = new BackButtonBehavior()
         {
             Command = new Command(() => _ = CloseOverlayAsync())
         };
         Shell.SetBackButtonBehavior(contentPage, backButtonBehavior);
-        
+
         // Fade in animations
         _ = Task.WhenAll(
             dimBackground.FadeToAsync(OverlayOpacity, FadeAnimationDuration, Easing.CubicIn),

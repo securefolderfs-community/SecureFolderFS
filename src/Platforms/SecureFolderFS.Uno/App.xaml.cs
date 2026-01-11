@@ -119,10 +119,10 @@ namespace SecureFolderFS.Uno
 #if WINDOWS
             // Check if the app was launched via file activation (shortcut file)
             var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
-            
+
             // Activate MainWindow (required for initialization)
             MainWindow.Activate();
-            
+
             // If launched via shortcut file, hide the main window immediately
             if (isShortcutActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
@@ -238,7 +238,7 @@ namespace SecureFolderFS.Uno
             {
                 if (sender is not Window window)
                     return;
-                
+
                 window.Closed -= PreviewWindow_Closed;
                 (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
             }
@@ -272,7 +272,7 @@ namespace SecureFolderFS.Uno
 #if __UNO_SKIA_MACOS__
                 // Use native macOS APIs to configure the window
                 Platforms.Desktop.Helpers.MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
-                
+
                 // Add left padding for traffic light buttons
                 var (leftPadding, _) = Platforms.Desktop.Helpers.MacOsTitleBarHelper.GetTrafficLightButtonsInset();
                 rootControl.CustomTitleBar.Margin = new Thickness(leftPadding, 0, 0, 0);

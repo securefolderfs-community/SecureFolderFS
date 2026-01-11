@@ -55,11 +55,11 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 KeyClass = SecKeyClass.Private,
                 TokenID = SecTokenID.SecureEnclave 
             };
-            
+
             // Remove the key from the keychain
             var status = SecKeyChain.Remove(query);
             _ = status;
-            
+
             return Task.CompletedTask;
         }
 
@@ -67,14 +67,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
-            
+
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             var privateKey = GetPrivateKey(alias);
             var context = new LAContext();
             var (ok, evalErr) = await EvaluateAsync(context, LAPolicy.DeviceOwnerAuthenticationWithBiometrics, "AuthenticateForCredentials".ToLocalized());
             if (!ok)
                 throw new CryptographicException(evalErr?.LocalizedDescription ?? "Authentication failed.");
-            
+
             privateKey ??= CreatePrivateKey(alias);
             var publicKey = privateKey.GetPublicKey() ?? throw new CryptographicException("Public key could not be retrieved.");;
             return Encrypt(publicKey, data);
@@ -84,12 +84,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
-            
+
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             var privateKey = GetPrivateKey(alias);
             if (privateKey is null)
                 throw new CryptographicException("Private key could not be found.");
-            
+
             return await DecryptAsync(privateKey, data);
         }
 
@@ -97,10 +97,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         {
             using var plaintext = NSData.FromArray(data);
             using var ciphertext = publicKey.CreateEncryptedData(ALGORITHM, plaintext, out var error);
-            
+
             if (ciphertext is null || error is not null)
                 throw new CryptographicException($"Could not encrypt the data. {error?.LocalizedDescription}");
-            
+
             var ciphertextBuffer = ciphertext.ToArray();
             return ManagedKey.TakeOwnership(ciphertextBuffer);
         }
@@ -111,7 +111,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             var plaintext = privateKey.CreateDecryptedData(ALGORITHM, ciphertext, out var error);
             if (plaintext is null || error is not null)
                 throw new CryptographicException($"Could not decrypt the data. {error?.LocalizedDescription}");
-            
+
             var plaintextBuffer = plaintext.ToArray();
             return ManagedKey.TakeOwnership(plaintextBuffer);
         }
@@ -120,7 +120,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         {
             if (!context.CanEvaluatePolicy(policy, out var canErr))
                 return (false, canErr);
-            
+
             var tcs = new TaskCompletionSource<(bool, NSError?)>();
             context.EvaluatePolicy(policy, reason, (success, evalErr) =>
             {
@@ -166,7 +166,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             // Query the keychain for a SecKey.
             var key = SecKeyChain.QueryAsConcreteType(query, out var result) as SecKey;
-            
+
             // Return the SecKey based on the success status
             return result == SecStatusCode.Success ? key : null;
         }

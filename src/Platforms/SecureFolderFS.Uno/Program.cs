@@ -22,10 +22,10 @@ namespace SecureFolderFS.Uno
 
             // Get the current activation arguments
             var activationArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
-            
+
             // Try to register as the main instance
             var mainInstance = AppInstance.FindOrRegisterForKey(UI.Constants.MAIN_INSTANCE_ID);
-            
+
             if (!mainInstance.IsCurrent)
             {
                 // Another instance is already running, redirect activation to it
