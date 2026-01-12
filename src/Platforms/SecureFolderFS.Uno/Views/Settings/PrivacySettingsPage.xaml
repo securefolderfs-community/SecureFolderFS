@@ -55,21 +55,6 @@
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Rid=DisableRecentAccess}"
-                BlockMode="Default"
-                Description="{l:ResourceString Rid=DisableRecentAccessDescription}">
-                <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xE81C;" />
-                </ucab:ActionBlockControl.Icon>
-                <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch
-                        MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Rid=DisableRecentAccess}"
-                        IsEnabled="False"
-                        IsOn="{x:Bind ViewModel.DisableRecentAccess, Mode=TwoWay}" />
-                </ucab:ActionBlockControl.ActionElement>
-            </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=AutoLock}"
                 BlockMode="Default"
                 Description="{l:ResourceString Rid=AutoLockDescription}">

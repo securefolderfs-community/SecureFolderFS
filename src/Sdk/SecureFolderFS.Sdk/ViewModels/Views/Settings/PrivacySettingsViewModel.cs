@@ -20,12 +20,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             UserSettings.PropertyChanged += UserSettings_PropertyChanged;
         }
 
-        public bool DisableRecentAccess
-        {
-            get => UserSettings.DisableRecentAccess;
-            set => UserSettings.DisableRecentAccess = value;
-        }
-
         public bool LockOnSystemLock
         {
             get => UserSettings.LockOnSystemLock;
