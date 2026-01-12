@@ -50,6 +50,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (pickedFolder is null)
                 return;
 
+            // Verify the picked folder is within the vault's content folder
+            var contentFolderId = _contentFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            var pickedFolderId = pickedFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            if (!pickedFolderId.StartsWith(contentFolderId, StringComparison.OrdinalIgnoreCase))
+                return;
+
             // Set IsProgressing status
             IsProgressing = true;
             Title = StatusTitle = "Scanning...";
