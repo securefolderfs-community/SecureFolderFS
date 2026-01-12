@@ -67,8 +67,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _contentFolder = await VaultHelpers.GetContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
             var folderScanner = new DeepFolderScanner(_contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
+            var fileContentValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FileContentValidator;
 
-            _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
+            _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator, fileContentValidator);
             _healthModel.IssueFound += HealthModel_IssueFound;
         }
 
@@ -76,7 +77,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             var folderScanner = new DeepFolderScanner(folder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
-            var healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
+            var fileContentValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FileContentValidator;
+            var healthModel = new HealthModel(folderScanner, new(this, this), structureValidator, fileContentValidator);
             healthModel.IssueFound += HealthModel_IssueFound;
             return healthModel;
         }
@@ -184,6 +186,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _cts?.TryCancel();
             _cts?.Dispose();
             FoundIssues.CollectionChanged -= FoundIssues_CollectionChanged;
+
             if (_healthModel is not null)
             {
                 _healthModel.IssueFound -= HealthModel_IssueFound;

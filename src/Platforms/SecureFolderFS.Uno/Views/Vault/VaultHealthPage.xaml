@@ -143,16 +143,50 @@
 
         <!--  Data Issue  -->
         <DataTemplate x:Key="FileDataIssueTemplate" x:DataType="vm2:HealthFileDataIssueViewModel">
-
-            <!--  TODO: Add a backup button  -->
             <ucab:ActionBlockControl
                 Title="{x:Bind Title, Mode=OneWay}"
                 BlockMode="Default"
                 Description="{x:Bind ErrorMessage, Mode=OneWay}"
                 ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xE74C;" />
+                    <Grid>
+                        <!--  Recoverable icon (warning)  -->
+                        <FontIcon Glyph="&#xE7BA;" Visibility="{x:Bind IsRecoverable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <!--  Irrecoverable icon (error/delete)  -->
+                        <FontIcon
+                            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                            Glyph="&#xE74D;"
+                            Visibility="{x:Bind IsRecoverable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                    </Grid>
                 </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <!--  Show chunk count for recoverable files  -->
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Opacity="0.7"
+                            Text="{x:Bind CorruptedChunks.Count, Mode=OneWay}"
+                            Visibility="{x:Bind IsRecoverable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Opacity="0.7"
+                            Text="chunks"
+                            Visibility="{x:Bind IsRecoverable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <!--  Show irrecoverable badge  -->
+                        <Border
+                            Padding="8,4"
+                            Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+                            CornerRadius="4"
+                            Visibility="{x:Bind IsRecoverable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                Text="Irrecoverable" />
+                        </Border>
+                    </StackPanel>
+                </ucab:ActionBlockControl.ActionElement>
                 <ucab:ActionBlockControl.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="{l:ResourceString Rid=CopyPath}">
