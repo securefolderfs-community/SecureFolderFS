@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
 
                     // YubiKey
-                    Core.Constants.Vault.Authentication.AUTH_HARDWARE_KEY => YubiKeyViewModel.IsSupported()
+                    Core.Constants.Vault.Authentication.AUTH_YUBIKEY => YubiKeyViewModel.IsSupported()
                             ? new YubiKeyLoginViewModel(vaultFolder, config.Uid)
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform. Please insert your YubiKey."),
 
