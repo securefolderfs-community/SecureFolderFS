@@ -187,6 +187,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
+            IssueFound = null;
             _scannedFiles.Clear();
             _scannedFolders.Clear();
         }

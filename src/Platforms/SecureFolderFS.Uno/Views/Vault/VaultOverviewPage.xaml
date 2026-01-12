@@ -22,6 +22,7 @@
                 IsProgressing="{x:Bind HealthReportViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                ScanFolderCommand="{x:Bind HealthViewModel.ScanFolderCommand, Mode=OneWay}"
                 Severity="{x:Bind HealthReportViewModel.HealthViewModel.Severity, Mode=OneWay}"
                 StartScanningCommand="{x:Bind HealthViewModel.StartScanningCommand, Mode=OneWay}"
                 StatusTitle="{x:Bind HealthViewModel.Title, Mode=OneWay}" />

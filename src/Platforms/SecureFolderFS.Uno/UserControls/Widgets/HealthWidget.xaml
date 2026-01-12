@@ -107,8 +107,16 @@
                         <MenuFlyoutItem
                             Command="{x:Bind StartScanningCommand, Mode=OneWay}"
                             CommandParameter="include_file_contents"
-                            IsEnabled="False"
-                            Text="Include file contents (slower)" />
+                            Text="Scan full vault (include file contents)" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ScanFolderCommand, Mode=OneWay}"
+                            CommandParameter=""
+                            Text="Scan a folder (structure only)" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ScanFolderCommand, Mode=OneWay}"
+                            CommandParameter="include_file_contents"
+                            Text="Scan a folder (include file contents)" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>

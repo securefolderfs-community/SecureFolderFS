@@ -243,15 +243,34 @@
                         IsIndeterminate="{x:Bind ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
                         Visibility="{x:Bind ViewModel.HealthViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                         Value="{x:Bind ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}" />
-                    <Button
+                    <SplitButton
                         Height="36"
                         Margin="0,-54,16,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Command="{x:Bind ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
                         CommandParameter="rescan"
                         Content="Start scanning"
-                        Visibility="{x:Bind ViewModel.HealthViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                        Visibility="{x:Bind ViewModel.HealthViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                        <SplitButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem
+                                    Command="{x:Bind ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
+                                    CommandParameter="include_file_contents"
+                                    Text="Scan full vault (include file contents)" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem
+                                    Command="{x:Bind ViewModel.HealthViewModel.ScanFolderCommand, Mode=OneWay}"
+                                    CommandParameter=""
+                                    Text="Scan a folder (structure only)" />
+                                <MenuFlyoutItem
+                                    Command="{x:Bind ViewModel.HealthViewModel.ScanFolderCommand, Mode=OneWay}"
+                                    CommandParameter="include_file_contents"
+                                    Text="Scan a folder (include file contents)" />
+                            </MenuFlyout>
+                        </SplitButton.Flyout>
+                    </SplitButton>
                 </Grid>
             </InfoBar>
             <ListView

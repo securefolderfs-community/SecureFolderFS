@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
@@ -24,11 +25,12 @@ using SecureFolderFS.Storage.Scanners;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    [Inject<IVaultHealthService>, Inject<IVaultService>]
+    [Inject<IVaultHealthService>, Inject<IVaultService>, Inject<IFileExplorerService>]
     public sealed partial class VaultHealthViewModel : ObservableObject, IProgress<double>, IProgress<TotalProgress>, INotifyStateChanged, IViewable, IAsyncInitialize, IDisposable
     {
         private CancellationTokenSource? _cts;
         private IHealthModel? _healthModel;
+        private IFolder? _contentFolder;
         private string? _lastScanMode;
         private readonly SynchronizationContext? _context;
         private readonly List<HealthIssueViewModel> _savedState;
@@ -62,12 +64,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var contentFolder = await VaultHelpers.GetContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
-            var folderScanner = new DeepFolderScanner(contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
+            _contentFolder = await VaultHelpers.GetContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
+            var folderScanner = new DeepFolderScanner(_contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
 
             _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
             _healthModel.IssueFound += HealthModel_IssueFound;
+        }
+
+        internal IHealthModel CreateHealthModel(IFolder folder)
+        {
+            var folderScanner = new DeepFolderScanner(folder, predicate: x => !VaultService.IsNameReserved(x.Name));
+            var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
+            var healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
+            healthModel.IssueFound += HealthModel_IssueFound;
+            return healthModel;
         }
 
         /// <inheritdoc/>
