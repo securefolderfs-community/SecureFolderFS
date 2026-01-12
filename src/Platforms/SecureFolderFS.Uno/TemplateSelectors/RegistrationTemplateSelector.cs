@@ -13,6 +13,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? WindowsHelloTemplate { get; set; }
 
+        public DataTemplate? YubiKeyTemplate { get; set; }
+
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
             return item switch
@@ -20,6 +22,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 PasswordCreationViewModel => PasswordTemplate,
                 KeyFileCreationViewModel => KeyFileTemplate,
                 WindowsHelloCreationViewModel => WindowsHelloTemplate,
+                YubiKeyCreationViewModel => YubiKeyTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

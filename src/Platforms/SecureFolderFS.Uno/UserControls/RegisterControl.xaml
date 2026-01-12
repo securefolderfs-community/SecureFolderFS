@@ -77,6 +77,36 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </win:DataTemplate>
+
+        <!--  YubiKey Template  -->
+        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm4:YubiKeyCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <local:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
+
+                <StackPanel Spacing="8">
+                    <!--  Title  -->
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=SetupYubiKey}" />
+
+                    <!--  Slot Selection  -->
+                    <CheckBox
+                        HorizontalAlignment="Center"
+                        Content="{l:ResourceString Rid=UseLongPress}"
+                        IsChecked="{x:Bind UseLongPress, Mode=TwoWay}" />
+                </StackPanel>
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Setup}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
     </UserControl.Resources>
 
     <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind CurrentViewModel, Mode=OneWay}">
@@ -84,7 +114,8 @@
             <ts:RegistrationTemplateSelector
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
-                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
+                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
+                YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />
         </ContentControl.ContentTemplateSelector>
     </ContentControl>
 </UserControl>

@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core
                 public const string AUTH_PASSWORD = "password";
                 public const string AUTH_KEYFILE = "key_file";
                 public const string AUTH_WINDOWS_HELLO = "windows_hello";
-                public const string AUTH_HARDWARE_KEY = "hardware_key";
+                public const string AUTH_YUBIKEY = "yubikey";
                 public const string AUTH_APPLE_BIOMETRIC = "apple_secure_enclave";
                 public const string AUTH_ANDROID_BIOMETRIC = "android_biometrics";
 

@@ -13,6 +13,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? KeyFileTemplate { get; set; }
 
         public DataTemplate? WindowsHelloTemplate { get; set; }
+        
+        public DataTemplate? YubiKeyTemplate { get; set; }
 
         public DataTemplate? MigrationTemplate { get; set; }
 
@@ -27,6 +29,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 PasswordLoginViewModel => PasswordTemplate,
                 KeyFileLoginViewModel => KeyFileTemplate,
                 WindowsHelloLoginViewModel => WindowsHelloTemplate,
+                YubiKeyLoginViewModel => YubiKeyTemplate,
                 MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,
                 UnsupportedViewModel => UnsupportedTemplate,

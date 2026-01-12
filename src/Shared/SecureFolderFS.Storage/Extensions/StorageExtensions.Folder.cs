@@ -65,6 +65,7 @@ namespace SecureFolderFS.Storage.Extensions
                 .TrimStart()
                 .TrimStart(Path.AltDirectorySeparatorChar)
                 .TrimStart(Path.DirectorySeparatorChar);
+
             return await from.GetItemByRelativePathAsync(relativePathWithoutRoot, cancellationToken);
         }
 
@@ -110,7 +111,7 @@ namespace SecureFolderFS.Storage.Extensions
         }
 
         /// <inheritdoc cref="IGetFirstByName.GetFirstByNameAsync"/>
-        public static async Task<IStorable?> TryGetFirstByNameAsync(this IFolder folder, string name, CancellationToken cancellationToken = default)
+        public static async Task<IStorableChild?> TryGetFirstByNameAsync(this IFolder folder, string name, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -123,7 +124,7 @@ namespace SecureFolderFS.Storage.Extensions
         }
 
         /// <inheritdoc cref="GetFileByNameAsync"/>
-        public static async Task<IFile?> TryGetFileByNameAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
+        public static async Task<IChildFile?> TryGetFileByNameAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -136,7 +137,7 @@ namespace SecureFolderFS.Storage.Extensions
         }
 
         /// <inheritdoc cref="GetFolderByNameAsync"/>
-        public static async Task<IFolder?> TryGetFolderByNameAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
+        public static async Task<IChildFolder?> TryGetFolderByNameAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
         {
             try
             {

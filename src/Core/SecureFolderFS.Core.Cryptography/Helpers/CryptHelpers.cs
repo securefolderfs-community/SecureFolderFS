@@ -10,18 +10,18 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
 {
     public static class CryptHelpers
     {
-        public static IKeyBytes GenerateChallenge(string vaultId)
+        public static IKeyBytes GenerateChallenge(string vaultId, int challengeSize = Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_128)
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
-            var challenge = new byte[Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH + encodedVaultIdLength];
+            var challenge = new byte[challengeSize + encodedVaultIdLength];
 
             // Fill the first CHALLENGE_KEY_PART_LENGTH bytes with secure random data
-            RandomNumberGenerator.Fill(challenge.AsSpan(0, Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH));
+            RandomNumberGenerator.Fill(challenge.AsSpan(0, challengeSize));
 
             // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us
             // to use the length of the string ID as part of the SecretKey length above
-            var written = Encoding.ASCII.GetBytes(vaultId, challenge.AsSpan(Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH));
+            var written = Encoding.ASCII.GetBytes(vaultId, challenge.AsSpan(challengeSize));
             if (written != encodedVaultIdLength)
                 throw new FormatException("The allocated buffer and vault ID written bytes amount were different.");
 

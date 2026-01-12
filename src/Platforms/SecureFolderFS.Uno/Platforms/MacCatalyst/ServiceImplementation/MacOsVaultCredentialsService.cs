@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
+using SecureFolderFS.Uno.ViewModels;
 
 namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 {
@@ -30,6 +31,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
                 {
                     Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
                     Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Core.Constants.Vault.Authentication.AUTH_HARDWARE_KEY => YubiKeyViewModel.IsSupported()
+                            ? new YubiKeyLoginViewModel(vaultFolder, config.Uid)
+                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform. Please insert your YubiKey."),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -44,6 +48,10 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId);
+
+            // YubiKey
+            if (YubiKeyViewModel.IsSupported())
+                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId);
 
             await Task.CompletedTask;
         }

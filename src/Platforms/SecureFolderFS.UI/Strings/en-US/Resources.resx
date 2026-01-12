@@ -1043,4 +1043,16 @@
   <data name="HealthWidget" xml:space="preserve">
       <value>Health widget</value>
   </data>
+  <data name="SetupYubiKey" xml:space="preserve">
+      <value>Setup YubiKey PIV authentication</value>
+  </data>
+  <data name="UseLongPress" xml:space="preserve">
+      <value>Use long press (Slot 2)</value>
+  </data>
+  <data name="YubiKey" xml:space="preserve">
+      <value>YubiKey</value>
+  </data>
+  <data name="LoginYubiKey" xml:space="preserve">
+      <value>Authenticate with YubiKey PIV</value>
+  </data>
 </root>

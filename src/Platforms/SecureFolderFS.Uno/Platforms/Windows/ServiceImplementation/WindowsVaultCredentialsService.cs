@@ -37,6 +37,11 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                             ? new WindowsHelloLoginViewModel(vaultFolder, config.Uid)
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
 
+                    // YubiKey
+                    Core.Constants.Vault.Authentication.AUTH_HARDWARE_KEY => YubiKeyViewModel.IsSupported()
+                            ? new YubiKeyLoginViewModel(vaultFolder, config.Uid)
+                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform. Please insert your YubiKey."),
+
                     // Key File
                     Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
 
@@ -55,6 +60,10 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             // Windows Hello
             if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
                 yield return new WindowsHelloCreationViewModel(vaultFolder, vaultId);
+
+            // YubiKey
+            if (YubiKeyViewModel.IsSupported())
+                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId);
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };

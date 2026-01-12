@@ -90,6 +90,29 @@
             </StackPanel>
         </DataTemplate>
 
+        <!--  YubiKey Template  -->
+        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm2:YubiKeyLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <uc:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
+
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{l:ResourceString Rid=LoginYubiKey}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Authenticate}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+
         <!--  Migration Template  -->
         <DataTemplate x:Key="MigrationTemplate" x:DataType="vm3:MigrationViewModel">
             <StackPanel Spacing="4">
@@ -170,7 +193,8 @@
                 MigrationTemplate="{StaticResource MigrationTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
                 UnsupportedTemplate="{StaticResource UnsupportedTemplate}"
-                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
+                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
+                YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />
         </ContentControl.ContentTemplateSelector>
         <ContentControl.ContentTransitions>
             <TransitionCollection>

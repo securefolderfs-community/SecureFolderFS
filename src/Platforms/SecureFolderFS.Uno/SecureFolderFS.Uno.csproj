@@ -40,6 +40,7 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
+    <PackageReference Include="Yubico.YubiKey" />
   </ItemGroup>
 
   <!-- Project References -->
