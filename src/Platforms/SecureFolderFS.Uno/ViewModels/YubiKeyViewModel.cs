@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.AppModels;
 using Yubico.YubiKey;
@@ -23,6 +24,8 @@ namespace SecureFolderFS.Uno.ViewModels
     [Bindable(true)]
     public abstract partial class YubiKeyViewModel : AuthenticationViewModel
     {
+        private readonly SynchronizationContext? _synchronizationContext;
+
         [ObservableProperty] private bool _IsAwaitingTouch;
         [ObservableProperty] private bool _UseLongPress = true;
         
@@ -45,8 +48,9 @@ namespace SecureFolderFS.Uno.ViewModels
         protected YubiKeyViewModel(IFolder vaultFolder, string vaultId)
             : base(Core.Constants.Vault.Authentication.AUTH_YUBIKEY)
         {
+            _synchronizationContext = SynchronizationContext.Current;
             Title = "YubiKey".ToLocalized();
-            Icon = new ImageGlyph("\uE8DA");
+            Icon = new ImageGlyph("\uEE7E");
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }
@@ -76,7 +80,7 @@ namespace SecureFolderFS.Uno.ViewModels
                     data, 
                     configureSlot: true, 
                     UseLongPress,
-                    () => IsAwaitingTouch = true,
+                    () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
                     cancellationToken);
             }
             finally
@@ -98,7 +102,7 @@ namespace SecureFolderFS.Uno.ViewModels
                     data, 
                     configureSlot: false, 
                     UseLongPress,
-                    () => IsAwaitingTouch = true,
+                    () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
                     cancellationToken);
             }
             finally
