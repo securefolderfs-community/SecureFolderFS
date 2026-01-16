@@ -14,13 +14,13 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            Command="{Binding ViewModel.OpenVaultCredentialsCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="Device Link credentials" />
+        <ToolbarItem
             Command="{Binding ViewModel.OpenSettingsCommand, Mode=OneWay}"
             Order="Secondary"
             Text="{l:ResourceString Rid=Settings}" />
-        <ToolbarItem
-            Command="{Binding ViewModel.OpenVaultCredentialsCommand, Mode=OneWay}"
-            Order="Secondary"
-            Text="Open vault credentials" />
     </ContentPage.ToolbarItems>
 
     <Grid>

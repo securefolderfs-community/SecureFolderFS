@@ -82,7 +82,7 @@ namespace SecureFolderFS.Maui.Views
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS
-            if (ToolbarItems.Count == 1)
+            if (ToolbarItems.Count == 2)
                 ToolbarItems.Insert(0, new()
                 {
                     Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
