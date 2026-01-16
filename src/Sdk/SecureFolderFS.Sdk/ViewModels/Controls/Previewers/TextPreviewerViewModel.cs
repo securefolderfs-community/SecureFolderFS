@@ -49,6 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             if (Text is null)
                 return;
 
+            //await Task.Delay(5000, cancellationToken);
             await Inner.WriteTextAsync(Text, cancellationToken);
             _persistedText = Text;
             WasModified = false;

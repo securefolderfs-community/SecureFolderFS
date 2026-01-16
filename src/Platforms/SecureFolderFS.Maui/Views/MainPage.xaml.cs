@@ -12,7 +12,17 @@ namespace SecureFolderFS.Maui.Views
 {
     public partial class MainPage : ContentPage
     {
-        public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
+        public MainHostViewModel? ViewModel
+        {
+            get
+            {
+                if (field is not null)
+                    return field;
+
+                var mainViewModel = Shell.Current.TryCast<AppShell>()!.MainViewModel;
+                return field ??= new(mainViewModel.VaultListViewModel, mainViewModel.VaultCollectionModel);
+            }
+        }
 
         public static MainPage? Instance { get; private set; }
 
@@ -20,13 +30,16 @@ namespace SecureFolderFS.Maui.Views
         {
             Instance = this;
             BindingContext = this;
-            _ = ViewModel.InitAsync();
+            _ = ViewModel?.InitAsync();
 
             InitializeComponent();
         }
 
         private async Task ItemTappedAsync(VaultListItemViewModel itemViewModel, View? view)
         {
+            if (ViewModel is null)
+                return;
+            
             if (view is not null)
                 view.IsEnabled = false;
 
@@ -61,6 +74,9 @@ namespace SecureFolderFS.Maui.Views
 
         private void MainPage_Loaded(object? sender, EventArgs e)
         {
+            if (ViewModel is null)
+                return;
+            
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);

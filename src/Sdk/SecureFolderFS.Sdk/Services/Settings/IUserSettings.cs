@@ -81,6 +81,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// </summary>
         bool DisableRecentAccess { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that enables or disables the Phone Link listening.
+        /// </summary>
+        bool EnablePhoneLink { get; set; }
+
         #endregion
 
         #region Import/Export

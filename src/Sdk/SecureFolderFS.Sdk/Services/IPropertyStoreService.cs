@@ -19,6 +19,16 @@ namespace SecureFolderFS.Sdk.Services
         IPropertyStore<string> SecurePropertyStore { get; }
 
         /// <summary>
+        /// Provides an in-memory implementation of a property store for temporary data management.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="InMemoryPropertyStore"/> class allows storage and retrieval of data using a key-value mechanism.
+        /// It operates entirely in memory, meaning all persistent data is lost when the application exits or the instance is disposed of.
+        /// This implementation is suitable for scenarios where lightweight, non-persistent data storage is required or for testing purposes only.
+        /// </remarks>
+        IPropertyStore<string> InMemoryPropertyStore { get; }
+
+        /// <summary>
         /// Gets a new <see cref="IDatabaseModel{TKey}"/> for storing data in a <paramref name="databaseFile"/>.
         /// </summary>
         /// <param name="databaseFile">The file where data will be stored and read from.</param>

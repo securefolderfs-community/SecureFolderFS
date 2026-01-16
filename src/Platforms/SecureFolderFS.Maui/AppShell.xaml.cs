@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;

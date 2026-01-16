@@ -17,6 +17,10 @@
             Command="{Binding ViewModel.OpenSettingsCommand, Mode=OneWay}"
             Order="Secondary"
             Text="{l:ResourceString Rid=Settings}" />
+        <ToolbarItem
+            Command="{Binding ViewModel.OpenVaultCredentialsCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="Open vault credentials" />
     </ContentPage.ToolbarItems>
 
     <Grid>
@@ -62,7 +66,7 @@
                                 BackgroundColor="Red"
                                 Command="{Binding RemoveVaultCommand, Mode=OneWay}"
                                 IsDestructive="True"
-                                IsEnabled="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                IsEnabled="{Binding VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Text="{l:ResourceString Rid=Remove}" />
                             <SwipeItem
                                 BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
@@ -82,14 +86,14 @@
 
                             <Grid
                                 Grid.Column="0"
-                                IsVisible="{Binding IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                IsVisible="{Binding VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
                             </Grid>
                             <Grid
                                 Grid.Column="0"
-                                IsVisible="{Binding IsUnlocked, Mode=OneWay}"
+                                IsVisible="{Binding VaultViewModel.IsUnlocked, Mode=OneWay}"
                                 VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material LockOpen}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino LockOpen}" OnPlatforms="iOS" />

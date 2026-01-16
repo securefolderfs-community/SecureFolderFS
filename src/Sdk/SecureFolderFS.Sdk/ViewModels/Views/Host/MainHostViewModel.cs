@@ -52,6 +52,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await SettingsService.TrySaveAsync();
         }
 
+        [RelayCommand]
+        private async Task OpenVaultCredentialsAsync()
+        {
+            using var viewModel = new PhoneLinkCredentialsOverlayViewModel();
+            _ = viewModel.InitAsync();
+
+            await OverlayService.ShowAsync(viewModel);
+        }
+
         private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)

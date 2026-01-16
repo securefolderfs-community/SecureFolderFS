@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj" />
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.PhoneLink\SecureFolderFS.Sdk.PhoneLink.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
   </ItemGroup>
 

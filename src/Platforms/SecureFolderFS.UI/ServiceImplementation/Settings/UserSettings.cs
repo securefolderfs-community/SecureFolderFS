@@ -126,6 +126,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             set => SetSetting(value);
         }
 
+        /// <inheritdoc/>
+        public bool EnablePhoneLink
+        {
+            get => GetSetting(static () => false);
+            set => SetSetting(value);
+        }
+
         #endregion
 
         protected virtual void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -144,6 +151,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
                 nameof(ReduceToBackground) => $"{nameof(ReduceToBackground)}: {ReduceToBackground}",
                 nameof(AreThumbnailsEnabled) => $"{nameof(AreThumbnailsEnabled)}: {AreThumbnailsEnabled}",
                 nameof(IsContentCacheEnabled) => $"{nameof(IsContentCacheEnabled)}: {IsContentCacheEnabled}",
+                nameof(EnablePhoneLink) => $"{nameof(EnablePhoneLink)}: {EnablePhoneLink}",
                 _ => null
             };
 

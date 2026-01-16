@@ -2,6 +2,7 @@ using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Maui.Views;
+using SecureFolderFS.Maui.Views.Modals;
 using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Vault;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
@@ -37,6 +38,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),
+                PhoneLinkCredentialsOverlayViewModel => new PhoneLinkCredentialsPage(navigation),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
