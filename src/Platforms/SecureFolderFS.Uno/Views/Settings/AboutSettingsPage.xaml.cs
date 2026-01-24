@@ -20,7 +20,8 @@ namespace SecureFolderFS.Uno.Views.Settings
     [INotifyPropertyChanged]
     public sealed partial class AboutSettingsPage : Page
     {
-        private bool _isBeingCopied;
+        private bool _isAppVersionBeingCopied;
+        private bool _isSystemVersionBeingCopied;
 
         public AboutSettingsViewModel? ViewModel
         {
@@ -41,29 +42,39 @@ namespace SecureFolderFS.Uno.Views.Settings
             base.OnNavigatedTo(e);
         }
 
-        private async Task StartChangeTextAnimation(UIElement initialText, UIElement copyLabel)
+        private async Task StartChangeTextAnimation(UIElement initialText, UIElement copyLabel, bool isBeingCopied, Action<bool> setFlag)
         {
             try
             {
-                if (_isBeingCopied)
+                if (isBeingCopied)
                     return;
 
-                _isBeingCopied = true;
-
+                setFlag(true);
                 initialText.Visibility = Visibility.Collapsed;
                 copyLabel.Visibility = Visibility.Visible;
 
                 await Task.Delay(750);
-                Storyboard.SetTarget(ChangeTextAnimation.Children[0], initialText);
+                
+                // Create a new storyboard instance for this specific animation
+                var fadeInAnimation = new DoubleAnimation()
+                {
+                    From = 0d,
+                    To = 1d,
+                    Duration = new Duration(TimeSpan.FromMilliseconds(250))
+                };
+                
+                var storyboard = new Storyboard();
+                storyboard.Children.Add(fadeInAnimation);
+                Storyboard.SetTarget(fadeInAnimation, initialText);
+                Storyboard.SetTargetProperty(fadeInAnimation, "Opacity");
 
                 copyLabel.Visibility = Visibility.Collapsed;
                 initialText.Visibility = Visibility.Visible;
+                initialText.Opacity = 0d;
 
-                await ChangeTextAnimation.BeginAsync();
-                ChangeTextAnimation.Stop();
-
-                initialText.Visibility = Visibility.Visible;
-                copyLabel.Visibility = Visibility.Collapsed;
+                await storyboard.BeginAsync();
+                storyboard.Stop();
+                initialText.Opacity = 1d;
             }
             catch (Exception ex)
             {
@@ -71,7 +82,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             }
             finally
             {
-                _isBeingCopied = false;
+                setFlag(false);
             }
         }
 
@@ -81,7 +92,11 @@ namespace SecureFolderFS.Uno.Views.Settings
                 return;
 
             await ViewModel.CopyAppVersionCommand.ExecuteAsync(default);
-            await StartChangeTextAnimation(CopyAppVersionGrid.Children[0], CopyAppVersionGrid.Children[1]);
+            await StartChangeTextAnimation(
+                CopyAppVersionGrid.Children[0], 
+                CopyAppVersionGrid.Children[1],
+                _isAppVersionBeingCopied,
+                v => _isAppVersionBeingCopied = v);
         }
 
         private async void CopySystemVersion_Click(object sender, RoutedEventArgs e)
@@ -90,7 +105,11 @@ namespace SecureFolderFS.Uno.Views.Settings
                 return;
 
             await ViewModel.CopySystemVersionCommand.ExecuteAsync(default);
-            await StartChangeTextAnimation(CopySystemVersionGrid.Children[0], CopySystemVersionGrid.Children[1]);
+            await StartChangeTextAnimation(
+                CopySystemVersionGrid.Children[0], 
+                CopySystemVersionGrid.Children[1],
+                _isSystemVersionBeingCopied,
+                v => _isSystemVersionBeingCopied = v);
         }
     }
 }

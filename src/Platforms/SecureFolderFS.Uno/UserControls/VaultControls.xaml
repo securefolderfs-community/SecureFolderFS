@@ -20,14 +20,16 @@
             Message="{l:ResourceString Rid=VaultReadOnlyMode}"
             Severity="Informational" />
 
-        <!--  Open in File Explorer  -->
+        <!--  Open in File Browser  -->
         <ucab:ActionBlockControl
             x:Name="OpenInFileExplorerBlock"
             Title="{l:ResourceString Rid=ViewVault}"
             x:Load="{x:Bind RevealFolderCommand, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind RevealFolderCommand, Mode=OneWay}"
-            Description="{l:ResourceString Rid=ViewVaultDescription}">
+            Description="{l:ResourceString Rid=ViewVaultDescription,
+                                           Converter={StaticResource StringInterpolationConverter},
+                                           ConverterParameter='MacOS{LOCALIZE|Finder}Windows{LOCALIZE|FileExplorer}Default{LOCALIZE|FileBrowser}'}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xEC50;" />
             </ucab:ActionBlockControl.Icon>

@@ -317,7 +317,7 @@
     <value>Open log location</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+      <value>Opens {0} where the log file is located</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
     <value>Open vault folder</value>
@@ -396,7 +396,7 @@
     <value>Privacy</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show in File Explorer</value>
+      <value>Show in {0}</value>
   </data>
   <data name="CreateShortcut" xml:space="preserve">
     <value>Create shortcut file</value>
@@ -417,7 +417,7 @@
     <value>Collect anonymous crash reports and usage data</value>
   </data>
   <data name="TelemetryInfoBarMessage" xml:space="preserve">
-    <value>Telemetry data is fully anonymous and helps us improve app stability and performance.</value>
+    <value>Telemetry data is anonymized and helps us improve app stability and performance.</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Theme</value>
@@ -474,7 +474,7 @@
     <value>View vault</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+      <value>Show this vault in {0}</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Website</value>
@@ -1054,5 +1054,11 @@
   </data>
   <data name="LoginYubiKey" xml:space="preserve">
       <value>Authenticate with YubiKey PIV</value>
+  </data>
+  <data name="Finder" xml:space="preserve">
+      <value>Finder</value>
+  </data>
+  <data name="FileExplorer" xml:space="preserve">
+      <value>File Explorer</value>
   </data>
 </root>

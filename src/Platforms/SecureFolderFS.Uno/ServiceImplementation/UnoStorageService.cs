@@ -16,7 +16,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default)
         {
+#if UNPACKAGED || DEBUG
+            return Task.FromResult<IFolder>(new SystemFolder(Path.Combine(Directory.GetCurrentDirectory(), UI.Constants.FileNames.SETTINGS_FOLDER_NAME)));
+#else
             return Task.FromResult<IFolder>(new SystemFolder(ApplicationData.Current.LocalFolder.Path));
+#endif
         }
 
         /// <inheritdoc/>

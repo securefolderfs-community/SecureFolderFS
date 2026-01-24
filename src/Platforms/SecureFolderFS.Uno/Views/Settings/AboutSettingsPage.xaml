@@ -11,16 +11,6 @@
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     mc:Ignorable="d not_win">
 
-    <Page.Resources>
-        <Storyboard x:Key="ChangeTextAnimation" x:Name="ChangeTextAnimation">
-            <DoubleAnimation
-                Storyboard.TargetProperty="Opacity"
-                From="0"
-                To="1"
-                Duration="0:0:0.40" />
-        </Storyboard>
-    </Page.Resources>
-
     <Grid RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
@@ -200,7 +190,9 @@
                 Title="{l:ResourceString Rid=OpenLogLocation}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand, Mode=OneWay}"
-                Description="{l:ResourceString Rid=OpenLogLocationDescription}">
+                Description="{l:ResourceString Rid=OpenLogLocationDescription,
+                                               Converter={StaticResource StringInterpolationConverter},
+                                               ConverterParameter='MacOS{LOCALIZE|Finder}Windows{LOCALIZE|FileExplorer}Default{LOCALIZE|FileBrowser}'}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE838;" />
                 </ucab:ActionBlockControl.Icon>

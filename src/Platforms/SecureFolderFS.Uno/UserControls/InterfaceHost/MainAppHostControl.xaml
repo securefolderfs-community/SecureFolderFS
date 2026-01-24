@@ -228,8 +228,8 @@
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout x:Name="ItemFlyout">
-                            <!--  Show in Explorer  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault}">
+                            <!--  Show in File Browser  -->
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='MacOS{LOCALIZE|Finder}Windows{LOCALIZE|FileExplorer}Default{LOCALIZE|FileBrowser}'}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>

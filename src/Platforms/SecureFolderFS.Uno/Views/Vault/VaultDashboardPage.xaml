@@ -89,7 +89,7 @@
                 Width="32"
                 Height="32"
                 Margin="0,0,16,0"
-                Padding="8"
+                Padding="4"
                 AutomationProperties.Name="{l:ResourceString Rid=Back}"
                 Background="Transparent"
                 BorderThickness="0"
