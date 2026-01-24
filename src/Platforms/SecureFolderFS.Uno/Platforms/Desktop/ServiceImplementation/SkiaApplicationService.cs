@@ -19,6 +19,16 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 #else
             "Skia X11 - Uno";
 #endif
+        
+        /// <inheritdoc/>
+        public override Version AppVersion
+        {
+            get
+            {
+                var packageVersion = Windows.ApplicationModel.Package.Current.Id.Version;
+                return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            }
+        }
 
         /// <inheritdoc/>
         public override string GetSystemVersion()
