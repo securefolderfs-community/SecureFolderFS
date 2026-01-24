@@ -13,10 +13,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         public static void SetDockIcon(string iconPath)
         {
             if (!File.Exists(iconPath))
-            {
-                Console.WriteLine($"Icon file not found: {iconPath}");
                 return;
-            }
 
             try
             {
@@ -35,21 +32,18 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                 // Create NSString for the path
                 var nsStringClass = UnsafeNative.objc_getClass("NSString");
                 var stringWithUTF8StringSelector = UnsafeNative.sel_registerName("stringWithUTF8String:");
-                var iconPathPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalAnsi(iconPath);
+                var iconPathPtr = System.Runtime.InteropServices.Marshal.StringToCoTaskMemUTF8(iconPath);
                 var nsString = UnsafeNative.objc_msgSend_IntPtr_IntPtr(nsStringClass, stringWithUTF8StringSelector, iconPathPtr);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(iconPathPtr);
+                System.Runtime.InteropServices.Marshal.FreeCoTaskMem(iconPathPtr);
                 
                 var imageWithPath = UnsafeNative.objc_msgSend_IntPtr_IntPtr(nsImage, initWithContentsOfFileSelector, nsString);
 
                 // Set the application icon
                 var setApplicationIconImageSelector = UnsafeNative.sel_registerName("setApplicationIconImage:");
                 UnsafeNative.objc_msgSend_IntPtr_IntPtr(sharedApplication, setApplicationIconImageSelector, imageWithPath);
-
-                Console.WriteLine($"Dock icon set successfully: {iconPath}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Failed to set dock icon: {ex.Message}");
             }
         }
 #endif
