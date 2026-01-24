@@ -79,6 +79,17 @@
       </PropertyGroup>
 
       <ItemGroup>
+        <None Include="Platforms\Desktop\Info.plist">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
+
+      <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">
+        <UnoMacOSAppIconFile>Assets/AppIcon/AppIcon.icns</UnoMacOSAppIconFile>
+        <UnoMacOSCustomInfoPlist>Platforms/Desktop/Info.plist</UnoMacOSCustomInfoPlist>
+      </PropertyGroup>
+
+      <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
 

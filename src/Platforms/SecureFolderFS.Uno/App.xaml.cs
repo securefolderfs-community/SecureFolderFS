@@ -272,6 +272,7 @@ namespace SecureFolderFS.Uno
 #if __UNO_SKIA_MACOS__
                 // Use native macOS APIs to configure the window
                 Platforms.Desktop.Helpers.MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+                Platforms.Desktop.Helpers.MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
 
                 // Add left padding for traffic light buttons
                 var (leftPadding, _) = Platforms.Desktop.Helpers.MacOsTitleBarHelper.GetTrafficLightButtonsInset();

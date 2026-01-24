@@ -1,10 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if WINDOWS
-using System.Text;
-#endif
-
 namespace SecureFolderFS.Uno.PInvoke
 {
     internal static partial class UnsafeNative
@@ -76,6 +72,15 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_CGPoint(IntPtr receiver, IntPtr selector, CGPoint point);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr objc_getClass(string className);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
         
 #endif
     }
@@ -105,7 +110,7 @@ namespace SecureFolderFS.Uno.PInvoke
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public  struct CGRect
+    public struct CGRect
     {
         public double X;
         public double Y;
