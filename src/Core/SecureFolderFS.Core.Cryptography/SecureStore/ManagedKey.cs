@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Security.Cryptography;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Cryptography.SecureStore
@@ -61,7 +62,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// <inheritdoc/>
         public void Dispose()
         {
-            Array.Clear(Key);
+            CryptographicOperations.ZeroMemory(Key);
         }
 
         /// <summary>

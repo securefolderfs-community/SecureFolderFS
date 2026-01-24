@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>CFBundleIconFile</key>
+		<string>AppIcon</string>
+		<key>CFBundleName</key>
+		<string>SecureFolderFS</string>
+		<key>CFBundleDisplayName</key>
+		<string>SecureFolderFS</string>
+		<key>CFBundleIdentifier</key>
+		<string>org.securefolderfs.SecureFolderFS</string>
+		<key>CFBundleVersion</key>
+		<string>1.0</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.0</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleExecutable</key>
+		<string>SecureFolderFS</string>
+		<key>LSMinimumSystemVersion</key>
+		<string>10.15</string>
+		<key>NSHighResolutionCapable</key>
+		<true/>
+		<key>NSSupportsAutomaticGraphicsSwitching</key>
+		<true/>
+	</dict>
+</plist>

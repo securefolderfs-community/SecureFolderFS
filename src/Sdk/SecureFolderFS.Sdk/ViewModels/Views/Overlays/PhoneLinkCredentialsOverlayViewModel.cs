@@ -12,7 +12,6 @@ using SecureFolderFS.Sdk.PhoneLink.ViewModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
