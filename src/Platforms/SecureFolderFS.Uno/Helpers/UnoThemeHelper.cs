@@ -49,12 +49,7 @@ namespace SecureFolderFS.Uno.Helpers
         protected override void UpdateTheme()
         {
             if (_rootContent is not null)
-            {
-                if (CurrentTheme == ThemeType.Default)
-                    _rootContent.RequestedTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                else
-                    _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
-            }
+                _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
 
 #if WINDOWS
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
