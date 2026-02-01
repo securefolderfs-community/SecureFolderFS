@@ -13,9 +13,7 @@
             x:Key="YubiKeyBlinkStoryboard"
             x:Name="YubiKeyBlinkStoryboard"
             RepeatBehavior="Forever">
-            <DoubleAnimationUsingKeyFrames
-                Storyboard.TargetName="YubiKeyLight"
-                Storyboard.TargetProperty="Opacity">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="YubiKeyLight" Storyboard.TargetProperty="Opacity">
                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
                 <LinearDoubleKeyFrame KeyTime="0:0:1.0" Value="0.4" />
                 <LinearDoubleKeyFrame KeyTime="0:0:2.0" Value="1" />
@@ -39,14 +37,14 @@
 
         <Rectangle
             x:Name="YubiKeyLight"
-            Width="32"
-            Height="32"
+            Width="40"
+            Height="40"
             Margin="0,-16,0,0"
             Loaded="YubiKeyLight_Loaded"
             Visibility="Collapsed">
             <Rectangle.Fill>
                 <RadialGradientBrush>
-                    <GradientStop Offset="0" Color="Lime" />
+                    <GradientStop Offset="0.2" Color="Lime" />
                     <GradientStop Offset="1" Color="Transparent" />
                 </RadialGradientBrush>
             </Rectangle.Fill>

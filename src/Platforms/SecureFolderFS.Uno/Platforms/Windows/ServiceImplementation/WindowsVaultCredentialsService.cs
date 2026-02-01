@@ -38,9 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
 
                     // YubiKey
-                    Core.Constants.Vault.Authentication.AUTH_YUBIKEY => YubiKeyViewModel.IsSupported()
-                            ? new YubiKeyLoginViewModel(vaultFolder, config.Uid)
-                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform. Please insert your YubiKey."),
+                    Core.Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uEE7E") },
 
                     // Key File
                     Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
@@ -63,7 +61,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
             // YubiKey
             if (YubiKeyViewModel.IsSupported())
-                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId);
+                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };

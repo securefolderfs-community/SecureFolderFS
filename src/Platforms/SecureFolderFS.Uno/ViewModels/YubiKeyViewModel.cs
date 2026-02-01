@@ -14,7 +14,6 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.UI.AppModels;
 using Yubico.YubiKey;
 using Yubico.YubiKey.Otp;
 
@@ -50,7 +49,6 @@ namespace SecureFolderFS.Uno.ViewModels
         {
             _synchronizationContext = SynchronizationContext.Current;
             Title = "YubiKey".ToLocalized();
-            Icon = new ImageGlyph("\uEE7E");
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }

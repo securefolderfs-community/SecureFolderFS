@@ -25,7 +25,7 @@ namespace SecureFolderFS.Uno.PInvoke
         [DllImport("Mpr.dll")]
         public static extern int WNetGetConnection(
             [In] string lpLocalName,
-            [Out] StringBuilder lpRemoteName,
+            [Out] System.Text.StringBuilder lpRemoteName,
             [In, Out] ref int lpnLength);
 
         [DllImport("user32.dll")]
