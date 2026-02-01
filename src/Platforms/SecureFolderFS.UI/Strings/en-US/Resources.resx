@@ -1061,4 +1061,22 @@
   <data name="FileExplorer" xml:space="preserve">
       <value>File Explorer</value>
   </data>
+  <data name="CorruptedFileChunks" xml:space="preserve">
+      <value>Corrupted file regions</value>
+  </data>
+  <data name="FileHasCorruptedChunks" xml:space="preserve">
+      <value>Parts of the file are corrupted and will be reset</value>
+  </data>
+  <data name="CorruptedChunks" xml:space="preserve">
+      <value>{0} corrupted region(s)</value>
+  </data>
+  <data name="DataLossImminent" xml:space="preserve">
+      <value>Data loss unpreventable</value>
+  </data>
+  <data name="IrrecoverableFile" xml:space="preserve">
+      <value>Irrecoverable file</value>
+  </data>
+  <data name="FileHeaderCorrupted" xml:space="preserve">
+      <value>File header is corrupted and the file will be deleted</value>
+  </data>
 </root>

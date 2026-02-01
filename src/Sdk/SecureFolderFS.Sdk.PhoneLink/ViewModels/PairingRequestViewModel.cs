@@ -6,13 +6,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.ViewModels
     [Bindable(true)]
     public sealed partial class PairingRequestViewModel : ObservableObject
     {
-        [ObservableProperty] private string _VaultName;
+        [ObservableProperty] private string _DesktopName;
         [ObservableProperty] private string _CredentialId;
         [ObservableProperty] private string _VerificationCode;
 
-        public PairingRequestViewModel(string vaultName, string credentialId, string verificationCode)
+        public PairingRequestViewModel(string desktopName, string credentialId, string verificationCode)
         {
-            VaultName = vaultName;
+            DesktopName = desktopName;
             CredentialId = credentialId;
             VerificationCode = verificationCode;
         }

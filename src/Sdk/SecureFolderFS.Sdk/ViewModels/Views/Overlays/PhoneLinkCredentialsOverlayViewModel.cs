@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         [ObservableProperty] private bool _IsAwaitingPairing;
         [ObservableProperty] private string? _VerificationCode;
-        [ObservableProperty] private string? _PendingVaultName;
+        [ObservableProperty] private string? _PendingDesktopName;
         [ObservableProperty] private string? _NewCredentialName;
         [ObservableProperty] private ObservableCollection<CredentialViewModel> _Credentials;
 
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 IsAwaitingPairing = true;
                 VerificationCode = info.VerificationCode;
-                PendingVaultName = info.VaultName;
+                PendingDesktopName = info.DesktopName;
             };
             _deviceLinkService.VerificationCodeReady += (_, code) => VerificationCode = code;
             _deviceLinkService.EnrollmentCompleted += (_, credential) => Credentials.Add(credential);

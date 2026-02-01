@@ -224,6 +224,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             using var reader = new BinaryReader(ms);
 
             reader.ReadByte(); // Skip message type
+            _pendingDesktopName = reader.ReadString(); // Read desktop name
             var keyLength = reader.ReadInt32();
             var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
 
@@ -246,7 +247,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             _pairingConfirmationTcs = new TaskCompletionSource<bool>();
 
             // Show the pairing request with verification code
-            PairingRequested?.Invoke(this, new PairingRequestViewModel("(awaiting desktop...)", string.Empty, verificationCode));
+            PairingRequested?.Invoke(this, new PairingRequestViewModel(_pendingDesktopName, string.Empty, verificationCode));
             VerificationCodeReady?.Invoke(this, verificationCode);
 
             // Wait for user confirmation on mobile (user confirms code matches)
@@ -290,7 +291,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             _pendingCredentialId = credentialId;
             _pendingVaultName = vaultName;
             _pendingPairingId = pairingId;
-            _pendingDesktopName = "Desktop"; // Could be parsed from connection request
 
             try
             {

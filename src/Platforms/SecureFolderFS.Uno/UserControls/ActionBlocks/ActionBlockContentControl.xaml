@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ContentPresenter
+        <ContentControl
             x:Name="BlockIcon"
             Grid.Row="0"
             Grid.RowSpan="2"
@@ -60,7 +60,7 @@
             TextTrimming="CharacterEllipsis"
             ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}" />
 
-        <ContentPresenter
+        <ContentControl
             x:Name="BlockCustomDescription"
             Grid.Row="1"
             Grid.Column="1"
@@ -78,14 +78,14 @@
             VerticalAlignment="Center"
             Orientation="Horizontal"
             Spacing="8">
-            <ContentPresenter
+            <ContentControl
                 x:Name="BlockActionElement"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 x:Load="{x:Bind ActionElement, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                 Content="{x:Bind ActionElement, Mode=OneWay}" />
 
-            <ContentPresenter
+            <ContentControl
                 x:Name="BlockAdditionalActionElement"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"

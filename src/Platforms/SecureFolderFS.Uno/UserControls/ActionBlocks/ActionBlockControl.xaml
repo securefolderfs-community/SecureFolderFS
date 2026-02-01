@@ -22,15 +22,14 @@
                 BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
                 CornerRadius="{ThemeResource ControlCornerRadius}"
-                DataContext="{Binding ElementName=ActionBlock}"
-                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay}">
+                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay, ElementName=ActionBlock}">
                 <local:ActionBlockContentControl
-                    Title="{Binding Title, Mode=OneWay}"
-                    ActionElement="{Binding ActionElement, Mode=OneWay}"
-                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
-                    CustomDescription="{Binding CustomDescription, Mode=OneWay}"
-                    Description="{Binding Description, Mode=OneWay}"
-                    Icon="{Binding Icon, Mode=OneWay}" />
+                    Title="{Binding Title, Mode=OneWay, ElementName=ActionBlock}"
+                    ActionElement="{Binding ActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                    CustomDescription="{Binding CustomDescription, Mode=OneWay, ElementName=ActionBlock}"
+                    Description="{Binding Description, Mode=OneWay, ElementName=ActionBlock}"
+                    Icon="{Binding Icon, Mode=OneWay, ElementName=ActionBlock}" />
             </Grid>
         </DataTemplate>
 
@@ -42,22 +41,21 @@
                 Padding="16"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                AutomationProperties.Name="{Binding Title, Mode=OneWay}"
+                AutomationProperties.Name="{Binding Title, Mode=OneWay, ElementName=ActionBlock}"
                 Background="{ThemeResource ExpanderHeaderBackground}"
                 BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
                 Click="Button_Click"
-                Command="{Binding ClickCommand, Mode=OneWay}"
+                Command="{Binding ClickCommand, Mode=OneWay, ElementName=ActionBlock}"
                 CornerRadius="{ThemeResource ControlCornerRadius}"
-                DataContext="{Binding ElementName=ActionBlock}"
-                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay}">
+                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay, ElementName=ActionBlock}">
                 <local:ActionBlockContentControl
-                    Title="{Binding Title, Mode=OneWay}"
-                    ActionElement="{Binding ActionElement, Mode=OneWay}"
-                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
-                    CustomDescription="{Binding CustomDescription, Mode=OneWay}"
-                    Description="{Binding Description, Mode=OneWay}"
-                    Icon="{Binding Icon, Mode=OneWay}" />
+                    Title="{Binding Title, Mode=OneWay, ElementName=ActionBlock}"
+                    ActionElement="{Binding ActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                    CustomDescription="{Binding CustomDescription, Mode=OneWay, ElementName=ActionBlock}"
+                    Description="{Binding Description, Mode=OneWay, ElementName=ActionBlock}"
+                    Icon="{Binding Icon, Mode=OneWay, ElementName=ActionBlock}" />
             </Button>
         </DataTemplate>
 
@@ -69,24 +67,23 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Center"
-                DataContext="{Binding ElementName=ActionBlock}"
                 Expanding="Expander_Expanding"
-                IsExpanded="{Binding IsExpanded, Mode=TwoWay}"
-                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay}">
+                IsExpanded="{Binding IsExpanded, Mode=TwoWay, ElementName=ActionBlock}"
+                ToolTipService.ToolTip="{Binding ToolTip, Mode=OneWay, ElementName=ActionBlock}">
                 <Expander.Header>
                     <local:ActionBlockContentControl
-                        Title="{Binding Title, Mode=OneWay}"
+                        Title="{Binding Title, Mode=OneWay, ElementName=ActionBlock}"
                         Height="70"
-                        ActionElement="{Binding ActionElement, Mode=OneWay}"
-                        AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
-                        CustomDescription="{Binding CustomDescription, Mode=OneWay}"
-                        Description="{Binding Description, Mode=OneWay}"
-                        Icon="{Binding Icon, Mode=OneWay}" />
+                        ActionElement="{Binding ActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                        AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay, ElementName=ActionBlock}"
+                        CustomDescription="{Binding CustomDescription, Mode=OneWay, ElementName=ActionBlock}"
+                        Description="{Binding Description, Mode=OneWay, ElementName=ActionBlock}"
+                        Icon="{Binding Icon, Mode=OneWay, ElementName=ActionBlock}" />
                 </Expander.Header>
                 <ContentControl
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
-                    Content="{Binding ExpanderContent, Mode=OneWay}" />
+                    Content="{Binding ExpanderContent, Mode=OneWay, ElementName=ActionBlock}" />
             </Expander>
         </DataTemplate>
     </UserControl.Resources>
