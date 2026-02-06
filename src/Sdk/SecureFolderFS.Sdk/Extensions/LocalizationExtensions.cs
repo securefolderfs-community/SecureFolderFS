@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
@@ -19,7 +20,11 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, ILocalizationService? localizationService = null)
         {
             localizationService = GetLocalizationService(localizationService);
-            return localizationService?.GetResource(resourceKey) ?? $"{{{resourceKey}}}";
+            var resource = localizationService?.GetResource(resourceKey);
+            if (string.IsNullOrEmpty(resource))
+                return $"{{{resourceKey}}}";
+
+            return resource.Replace("\\n", Environment.NewLine);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)

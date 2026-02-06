@@ -3,34 +3,30 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.UI.DataModels;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 {
     [Bindable(true)]
-    public sealed partial class DeviceLinkLoginViewModel : DeviceLinkViewModel
+    public sealed partial class DeviceLinkLoginViewModel(IFolder vaultFolder, string vaultId)
+        : DeviceLinkViewModel(vaultFolder, vaultId)
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-
+        
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
         
-        public DeviceLinkLoginViewModel(IFolder vaultFolder, string vaultId)
-            : base(vaultFolder, vaultId)
-        {
-        }
-
+        /// <inheritdoc/>
         protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<DeviceLinkVaultDataModel> GetDataModelAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        protected override Task<bool> ShowVerificationCodeAsync(string code)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

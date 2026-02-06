@@ -1079,4 +1079,22 @@
   <data name="FileHeaderCorrupted" xml:space="preserve">
       <value>File header is corrupted and the file will be deleted</value>
   </data>
+  <data name="DeviceLink" xml:space="preserve">
+      <value>Device Link</value>
+  </data>
+  <data name="DeviceLinkInstructions" xml:space="preserve">
+      <value>1. Click "More Options" (three dots) in SecureFolderFS mobile app\n2. Select "Device Link" option\n3. Toggle "Enable Device Link"\n4. Ensure both devices are on the same network</value>
+  </data>
+  <data name="SetupDeviceLink" xml:space="preserve">
+      <value>Setup Device Link authentication</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+      <value>Accept</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+      <value>Reject</value>
+  </data>
+  <data name="EnsureCodesMatch" xml:space="preserve">
+      <value>Ensure that codes match on both devices</value>
+  </data>
 </root>

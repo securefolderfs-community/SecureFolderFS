@@ -15,6 +15,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
@@ -49,7 +50,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -78,11 +79,11 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 throw new OperationCanceledException("The user did not save a file.");
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            return Result<IKeyBytes>.Success(secretKey.CreateCopy());
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -99,7 +100,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 throw new DataException("The key data was too short.");
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            return Result<IKeyBytes>.Success(secretKey.CreateCopy());
         }
     }
 }

@@ -8,13 +8,12 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class AuthenticationExtensions
     {
-        public static async Task<IResult<IKeyBytes>> TryCreateAsync(this IAuthenticator authenticator,
+        public static async Task<IResult<IKeyBytes>> TryEnrollAsync(this IAuthenticator authenticator,
             string id, byte[]? data, CancellationToken cancellationToken)
         {
             try
             {
-                var key = await authenticator.EnrollAsync(id, data, cancellationToken);
-                return Result<IKeyBytes>.Success(key);
+                return await authenticator.EnrollAsync(id, data, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -22,13 +21,12 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static async Task<IResult<IKeyBytes>> TrySignAsync(this IAuthenticator authenticator,
+        public static async Task<IResult<IKeyBytes>> TryAcquireAsync(this IAuthenticator authenticator,
             string id, byte[]? data, CancellationToken cancellationToken)
         {
             try
             {
-                var key = await authenticator.AcquireAsync(id, data, cancellationToken);
-                return Result<IKeyBytes>.Success(key);
+                return await authenticator.AcquireAsync(id, data, cancellationToken);
             }
             catch (Exception ex)
             {

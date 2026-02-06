@@ -6,6 +6,7 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -31,7 +32,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             try
             {
-                var ciphertextKey = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
+                var keyResult = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
+                if (!keyResult.TryGetValue(out var ciphertextKey))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial.CreateCopy(), tcs));
                 await tcs.Task;

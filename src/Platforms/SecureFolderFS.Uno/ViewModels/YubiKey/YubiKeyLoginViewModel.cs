@@ -6,9 +6,11 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.ViewModels.YubiKey
 {
     /// <inheritdoc cref="YubiKeyViewModel"/>
     [Bindable(true)]
@@ -38,11 +40,17 @@ namespace SecureFolderFS.Uno.ViewModels
             try
             {
                 // Generate key signature based on the YubiKey challenge-response
-                var key = await AcquireAsync(VaultId, auth.Challenge, cancellationToken);
-                var tcs = new TaskCompletionSource();
-
+                var keyResult = await AcquireAsync(VaultId, auth.Challenge, cancellationToken);
+                if (!keyResult.TryGetValue(out var key))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 // Report that credentials were provided
+                var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));
+
                 await tcs.Task;
             }
             catch (Exception ex)

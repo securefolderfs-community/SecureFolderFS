@@ -12,8 +12,9 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.AppModels;
 using Windows.Security.Credentials;
+using SecureFolderFS.Shared.Models;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.ViewModels.WindowsHello
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
     [Bindable(true)]
@@ -57,7 +58,7 @@ namespace SecureFolderFS.Uno.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -65,11 +66,12 @@ namespace SecureFolderFS.Uno.ViewModels
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to create the credential.");
 
-            return await MakeSignatureAsync(result.Credential, data, cancellationToken);
+            var signature = await MakeSignatureAsync(result.Credential, data, cancellationToken);
+            return Result<IKeyBytes>.Success(signature);
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -77,7 +79,8 @@ namespace SecureFolderFS.Uno.ViewModels
             if (result.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to open the credential.");
 
-            return await MakeSignatureAsync(result.Credential, data, cancellationToken);
+            var signature = await MakeSignatureAsync(result.Credential, data, cancellationToken);
+            return Result<IKeyBytes>.Success(signature);
         }
 
         protected static async Task<ManagedKey> MakeSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)

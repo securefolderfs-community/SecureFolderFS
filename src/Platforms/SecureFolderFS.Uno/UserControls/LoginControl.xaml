@@ -9,8 +9,9 @@
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vm="using:SecureFolderFS.UI.ViewModels.Authentication"
-    xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
-    xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
+    xmlns:vm2="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
+    xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
+    xmlns:vm4="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="ThisLoginControl"
     mc:Ignorable="d">
 
@@ -91,7 +92,7 @@
         </DataTemplate>
 
         <!--  YubiKey Template  -->
-        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm2:YubiKeyLoginViewModel">
+        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm3:YubiKeyLoginViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <uc:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
@@ -114,7 +115,7 @@
         </DataTemplate>
 
         <!--  Migration Template  -->
-        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm3:MigrationViewModel">
+        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm4:MigrationViewModel">
             <StackPanel Spacing="4">
                 <!--  Info  -->
                 <InfoBar
@@ -159,7 +160,7 @@
         </DataTemplate>
 
         <!--  Error Template  -->
-        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm4:ErrorViewModel">
             <uc:ErrorControl
                 Title="{l:ResourceString Rid=VaultLoadError}"
                 HorizontalAlignment="Stretch"
@@ -168,7 +169,7 @@
         </DataTemplate>
 
         <!--  Unsupported Template  -->
-        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm3:UnsupportedViewModel">
+        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm4:UnsupportedViewModel">
             <TextBlock
                 HorizontalAlignment="Center"
                 HorizontalTextAlignment="Center"

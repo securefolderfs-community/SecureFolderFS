@@ -45,15 +45,21 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
+            var passwordKey = TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet.");
+            var result = Result<IKeyBytes>.Success(passwordKey);
+            
+            return Task.FromResult<IResult<IKeyBytes>>(result);
         }
 
         /// <inheritdoc/>
-        public override Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
+            var passwordKey = TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet.");
+            var result = Result<IKeyBytes>.Success(passwordKey);
+            
+            return Task.FromResult<IResult<IKeyBytes>>(result);
         }
 
         /// <summary>

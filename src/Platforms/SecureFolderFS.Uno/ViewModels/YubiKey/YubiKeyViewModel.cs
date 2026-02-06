@@ -13,11 +13,12 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using Yubico.YubiKey;
 using Yubico.YubiKey.Otp;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.ViewModels.YubiKey
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
     [Bindable(true)]
@@ -67,19 +68,21 @@ namespace SecureFolderFS.Uno.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
-            
+
             try
             {
                 // During enrollment, configure the slot for HMAC-SHA1 challenge-response first
-                return await PerformChallengeResponseAsync(
-                    data, 
-                    configureSlot: true, 
+                var key = await PerformChallengeResponseAsync(
+                    data,
+                    configureSlot: true,
                     UseLongPress,
                     () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
                     cancellationToken);
+
+                return Result<IKeyBytes>.Success(key);
             }
             finally
             {
@@ -88,7 +91,7 @@ namespace SecureFolderFS.Uno.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             
@@ -96,12 +99,14 @@ namespace SecureFolderFS.Uno.ViewModels
             {
                 // During login, the slot should already be configured
                 // UseLongPress should be set from the saved configuration before calling this
-                return await PerformChallengeResponseAsync(
-                    data, 
-                    configureSlot: false, 
+                var key = await PerformChallengeResponseAsync(
+                    data,
+                    configureSlot: false,
                     UseLongPress,
                     () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
                     cancellationToken);
+                
+                return Result<IKeyBytes>.Success(key);
             }
             finally
             {

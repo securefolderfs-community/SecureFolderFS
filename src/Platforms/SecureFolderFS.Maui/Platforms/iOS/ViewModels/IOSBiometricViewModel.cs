@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using Security;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -64,7 +65,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -77,11 +78,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             privateKey ??= CreatePrivateKey(alias);
             var publicKey = privateKey.GetPublicKey() ?? throw new CryptographicException("Public key could not be retrieved.");;
-            return Encrypt(publicKey, data);
+            var encrypted = Encrypt(publicKey, data);
+
+            return Result<IKeyBytes>.Success(encrypted);
         }
         
         /// <inheritdoc/>
-        public override async Task<IKeyBytes> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -90,7 +93,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             if (privateKey is null)
                 throw new CryptographicException("Private key could not be found.");
 
-            return await DecryptAsync(privateKey, data);
+            var decrypted = await DecryptAsync(privateKey, data);
+            return Result<IKeyBytes>.Success(decrypted);
         }
 
         private static ManagedKey Encrypt(SecKey publicKey, byte[] data)

@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -33,7 +34,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             try
             {
-                var keyMaterial = await AcquireAsync(VaultId, auth.CiphertextKey, cancellationToken);
+                var keyResult = await AcquireAsync(VaultId, auth.CiphertextKey, cancellationToken);
+                if (!keyResult.TryGetValue(out var keyMaterial))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial, tcs));
                 await tcs.Task;

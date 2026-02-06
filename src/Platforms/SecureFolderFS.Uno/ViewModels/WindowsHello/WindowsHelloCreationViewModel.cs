@@ -8,10 +8,10 @@ using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.UI.Helpers;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.ViewModels.WindowsHello
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
@@ -38,7 +38,13 @@ namespace SecureFolderFS.Uno.ViewModels
 
             try
             {
-                var key = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
+                var keyResult = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
+                if (!keyResult.TryGetValue(out var key))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
 
