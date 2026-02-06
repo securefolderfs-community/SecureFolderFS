@@ -10,7 +10,9 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
-using SecureFolderFS.Uno.ViewModels;
+using SecureFolderFS.Uno.ViewModels.DeviceLink;
+using SecureFolderFS.Uno.ViewModels.WindowsHello;
+using SecureFolderFS.Uno.ViewModels.YubiKey;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
@@ -43,6 +45,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                     // Key File
                     Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
 
+                    // Device Link
+                    Core.Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uE8EA") },
+
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -65,6 +70,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };
+
+            // Device Link
+            yield return new DeviceLinkCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") };
         }
     }
 }
