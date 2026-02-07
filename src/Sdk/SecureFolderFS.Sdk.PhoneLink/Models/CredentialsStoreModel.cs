@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.PhoneLink.ViewModels;
@@ -68,7 +69,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             string vaultName,
             string desktopName,
             string pairingId,
-            byte[] sharedSecret)
+            byte[] challenge,
+            byte[] sessionSecret)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -76,21 +78,55 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             credential.VaultName = vaultName;
             credential.MachineName = desktopName;
             credential.PairingId = pairingId;
+            credential.Challenge = challenge;
 
-            // Generate and encrypt the signing key
-            credential.GenerateAndEncryptSigningKey(sharedSecret);
+            // Derive encryption key from session secret
+            var encryptionKey = DeriveEncryptionKey(sessionSecret, credentialId);
 
-            // Add to credentials list if not already there
-            if (!_credentials.Contains(credential))
+            try
             {
-                _credentials.Add(credential);
+                // Generate and encrypt the HMAC key
+                credential.GenerateAndEncryptHmacKey(encryptionKey);
+
+                // Add to credentials list if not already there
+                if (!_credentials.Contains(credential))
+                {
+                    _credentials.Add(credential);
+                }
+
+                // Store the encryption key securely (not the session secret)
+                await StoreEncryptionKeyAsync(pairingId, encryptionKey);
+
+                // Save updated credentials
+                await SaveAsync();
             }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(encryptionKey);
+            }
+        }
 
-            // Store the shared secret securely
-            await StoreSharedSecretAsync(pairingId, sharedSecret);
+        /// <summary>
+        /// Derives an encryption key from the session secret.
+        /// </summary>
+        private static byte[] DeriveEncryptionKey(byte[] sessionSecret, string credentialId)
+        {
+            return HKDF.DeriveKey(
+                HashAlgorithmName.SHA256,
+                sessionSecret,
+                32,
+                Encoding.UTF8.GetBytes(credentialId),
+                "PhoneLink-SigningKeyEncryption-v2"u8.ToArray());
+        }
 
-            // Save updated credentials
-            await SaveAsync();
+        /// <summary>
+        /// Stores an encryption key securely.
+        /// </summary>
+        private async Task StoreEncryptionKeyAsync(string pairingId, byte[] encryptionKey)
+        {
+            var encoded = Convert.ToBase64String(encryptionKey);
+            await _propertyStore.SetValueAsync(SECRETS_KEY_PREFIX + pairingId, encoded);
+            _secretsCache[pairingId] = (byte[])encryptionKey.Clone();
         }
 
         /// <summary>
@@ -110,9 +146,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         }
 
         /// <summary>
-        /// Gets the shared secret for a pairing.
+        /// Gets the encryption key for decrypting the signing key.
         /// </summary>
-        public async Task<byte[]?> GetSharedSecretAsync(string pairingId)
+        public async Task<byte[]?> GetEncryptionKeyAsync(string pairingId)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -122,28 +158,18 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
             try
             {
-                var encoded = await _propertyStore.GetValueAsync<string>(SECRETS_KEY_PREFIX + pairingId);
+                var encoded = await _propertyStore.GetValueAsync<string?>(SECRETS_KEY_PREFIX + pairingId);
                 if (string.IsNullOrEmpty(encoded))
                     return null;
 
-                var secret = Convert.FromBase64String(encoded);
-                _secretsCache[pairingId] = (byte[])secret.Clone();
-                return secret;
+                var key = Convert.FromBase64String(encoded);
+                _secretsCache[pairingId] = (byte[])key.Clone();
+                return key;
             }
             catch
             {
                 return null;
             }
-        }
-
-        /// <summary>
-        /// Stores a shared secret securely.
-        /// </summary>
-        private async Task StoreSharedSecretAsync(string pairingId, byte[] sharedSecret)
-        {
-            var encoded = Convert.ToBase64String(sharedSecret);
-            await _propertyStore.SetValueAsync(SECRETS_KEY_PREFIX + pairingId, encoded);
-            _secretsCache[pairingId] = (byte[])sharedSecret.Clone();
         }
 
         /// <summary>
@@ -157,7 +183,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             if (credential == null)
                 return;
 
-            // Remove shared secret
+            // Remove encryption key
             if (!string.IsNullOrEmpty(credential.PairingId))
             {
                 await _propertyStore.RemoveAsync(SECRETS_KEY_PREFIX + credential.PairingId);

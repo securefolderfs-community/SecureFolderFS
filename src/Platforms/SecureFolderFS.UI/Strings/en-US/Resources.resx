@@ -1094,7 +1094,13 @@
   <data name="Reject" xml:space="preserve">
       <value>Reject</value>
   </data>
-  <data name="EnsureCodesMatch" xml:space="preserve">
-      <value>Ensure that codes match on both devices</value>
+  <data name="LoginDeviceLink" xml:space="preserve">
+      <value>Authenticate with Device Link</value>
+  </data>
+  <data name="ConfirmBothCodesMatch" xml:space="preserve">
+      <value>Confirm that both codes match</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+      <value>Verification code</value>
   </data>
 </root>

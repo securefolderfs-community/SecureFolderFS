@@ -11,7 +11,8 @@
     xmlns:vm="using:SecureFolderFS.UI.ViewModels.Authentication"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
     xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
-    xmlns:vm4="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
+    xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
+    xmlns:vm5="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="ThisLoginControl"
     mc:Ignorable="d">
 
@@ -49,10 +50,7 @@
                     Glyph="&#xE8D7;" />
 
                 <!--  Title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{l:ResourceString Rid=LoginKeyFile}" />
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -75,10 +73,7 @@
                     Glyph="&#xEB68;" />
 
                 <!--  Title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{l:ResourceString Rid=LoginWindowsHello}" />
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -98,10 +93,37 @@
                 <uc:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
 
                 <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginYubiKey}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Authenticate}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Device Link Template  -->
+        <DataTemplate x:Key="DeviceLinkTemplate" x:DataType="vm4:DeviceLinkLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="38"
+                    Glyph="&#xE8EA;" />
+
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginDeviceLink}" />
+
+                <!--  Instructions  -->
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{l:ResourceString Rid=LoginYubiKey}" />
+                    FontSize="12"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Rid=DeviceLinkInstructions}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -115,7 +137,7 @@
         </DataTemplate>
 
         <!--  Migration Template  -->
-        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm4:MigrationViewModel">
+        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm5:MigrationViewModel">
             <StackPanel Spacing="4">
                 <!--  Info  -->
                 <InfoBar
@@ -160,7 +182,7 @@
         </DataTemplate>
 
         <!--  Error Template  -->
-        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm4:ErrorViewModel">
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm5:ErrorViewModel">
             <uc:ErrorControl
                 Title="{l:ResourceString Rid=VaultLoadError}"
                 HorizontalAlignment="Stretch"
@@ -169,7 +191,7 @@
         </DataTemplate>
 
         <!--  Unsupported Template  -->
-        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm4:UnsupportedViewModel">
+        <DataTemplate x:Key="UnsupportedTemplate" x:DataType="vm5:UnsupportedViewModel">
             <TextBlock
                 HorizontalAlignment="Center"
                 HorizontalTextAlignment="Center"
@@ -189,6 +211,7 @@
         IsTabStop="False">
         <ContentControl.ContentTemplateSelector>
             <ts:LoginTemplateSelector
+                DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 ErrorTemplate="{StaticResource ErrorTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 MigrationTemplate="{StaticResource MigrationTemplate}"

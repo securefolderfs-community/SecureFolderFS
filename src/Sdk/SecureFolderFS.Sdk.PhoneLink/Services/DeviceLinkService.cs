@@ -286,34 +286,52 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             }
 
             // Parse pairing confirmation
-            ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId);
+            ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
 
             _pendingCredentialId = credentialId;
             _pendingVaultName = vaultName;
             _pendingPairingId = pairingId;
 
+            // Create and enroll credential with persistent challenge
+            var credential = await CreateEnrolledCredentialAsync(credentialId, vaultName, pairingId, challenge);
+
+            // Get the encryption key to decrypt HMAC key for computing the initial HMAC
+            var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
+            if (encryptionKey == null)
+            {
+                await SendMessageAsync(stream, [(byte)MessageType.PairingRejected], cancellationToken);
+                CleanupSession();
+                return;
+            }
+
             try
             {
-                // Create and enroll credential (user already confirmed above)
-                var credential = await CreateEnrolledCredentialAsync(credentialId, vaultName, pairingId);
+                // Decrypt HMAC key so we can compute HMAC
+                credential.DecryptHmacKey(encryptionKey);
 
-                // Send pairing complete with signing public key
-                var completeMessage = CreatePairingComplete(credential.PublicSigningKey);
+                // Compute HMAC over the persistent challenge data
+                // HMAC is deterministic: same key + same data = same result every time
+                var challengeData = BuildChallengeData(credentialId, challenge);
+                var hmacResult = credential.ComputeHmac(challengeData);
+
+                // Send pairing complete with HMAC result (this replaces the signature)
+                var completeMessage = CreatePairingComplete(hmacResult);
                 await SendMessageAsync(stream, completeMessage, cancellationToken);
+
+                // Clear the decrypted key from memory
+                credential.ClearDecryptedKey();
 
                 // Notify UI that enrollment is complete
                 EnrollmentCompleted?.Invoke(this, credential);
             }
-            catch (Exception ex)
+            finally
             {
-                _ = ex;
-                await SendMessageAsync(stream, [(byte)MessageType.PairingRejected], cancellationToken);
-                CleanupSession();
+                CryptographicOperations.ZeroMemory(encryptionKey);
             }
         }
 
         private async Task<CredentialViewModel> CreateEnrolledCredentialAsync(
-            string credentialId, string vaultName, string pairingId)
+            string credentialId, string vaultName, string pairingId, byte[] challenge)
         {
             var credential = new CredentialViewModel()
             {
@@ -327,6 +345,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 vaultName,
                 _pendingDesktopName ?? "Desktop",
                 pairingId,
+                challenge,
                 _sharedSecret!);
 
             // Return the credential directly - it's been enrolled and added to the store
@@ -348,6 +367,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             var pairingId = reader.ReadString();
             var nonceLength = reader.ReadInt32();
             var desktopNonce = reader.ReadBytes(nonceLength);
+            var keyLength = reader.ReadInt32();
+            var desktopEcdhPublicKey = reader.ReadBytes(keyLength);;
 
             // Find credential by pairing ID
             var credential = _credentialStoreModel.GetByPairingId(pairingId);
@@ -357,34 +378,38 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 return;
             }
 
-            // Load shared secret
-            _sharedSecret = await _credentialStoreModel.GetSharedSecretAsync(pairingId);
-            if (_sharedSecret == null)
-            {
-                await SendAuthenticationRejectedAsync(stream, "Session error", cancellationToken);
-                return;
-            }
+            // Store credential for later use in auth request
+            _currentCredential = credential;
+
+            // Generate fresh ECDH keypair for this session (ephemeral)
+            _ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            var myPublicKey = _ecdhKeyPair.ExportSubjectPublicKeyInfo();
+
+            // Derive session secret using ECDH (transport security only)
+            _sharedSecret = SecureChannelModel.DeriveSharedSecret(_ecdhKeyPair, desktopEcdhPublicKey);
 
             // Generate our session nonce
             var mobileNonce = new byte[16];
             RandomNumberGenerator.Fill(mobileNonce);
 
-            // Derive session key
+            // Derive session key from ECDH secret + both nonces
             var combinedNonce = new byte[desktopNonce.Length + mobileNonce.Length];
             desktopNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, desktopNonce.Length);
 
             _secureChannel = new SecureChannelModel(_sharedSecret, combinedNonce);
 
-            // Send response
-            var response = CreateSecureSessionAccepted(mobileNonce);
+            // Send response with our ECDH public key
+            var response = CreateSecureSessionAccepted(mobileNonce, myPublicKey);
             await SendMessageAsync(stream, response, cancellationToken);
         }
+
+        private CredentialViewModel? _currentCredential;
 
         private async Task HandleSecureAuthRequestAsync(NetworkStream stream, byte[] message,
             CancellationToken cancellationToken)
         {
-            if (_secureChannel == null || _sharedSecret == null)
+            if (_secureChannel == null || _currentCredential == null)
             {
                 await SendAuthenticationRejectedAsync(stream, "No session", cancellationToken);
                 return;
@@ -396,65 +421,78 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 var encryptedPayload = message.AsSpan(1).ToArray();
                 var decryptedPayload = _secureChannel.Decrypt(encryptedPayload);
 
-                // Parse request
+                // Parse request (persistent challenge from desktop)
                 using var ms = new MemoryStream(decryptedPayload);
                 using var reader = new BinaryReader(ms);
 
                 var credentialId = reader.ReadString();
                 var challengeLength = reader.ReadInt32();
-                var challenge = reader.ReadBytes(challengeLength);
+                var persistentChallenge = reader.ReadBytes(challengeLength);
                 var timestamp = reader.ReadInt64();
-                var nonceLength = reader.ReadInt32();
-                var nonce = reader.ReadBytes(nonceLength);
 
-                // Validate timestamp
+                // Validate timestamp (for replay protection)
                 var requestTime = DateTimeOffset.FromUnixTimeSeconds(timestamp);
                 var age = DateTimeOffset.UtcNow - requestTime;
 
                 if (Math.Abs(age.TotalSeconds) > CHALLENGE_VALIDITY_SECONDS)
                 {
-                    await SendAuthenticationRejectedAsync(stream, "Challenge expired", cancellationToken);
+                    await SendAuthenticationRejectedAsync(stream, "Request expired", cancellationToken);
                     return;
                 }
 
-                // Find credential
-                var credential = _credentialStoreModel.GetByCredentialId(credentialId);
-                if (credential == null)
+                // Verify credential matches
+                if (_currentCredential.CredentialId != credentialId)
                 {
-                    await SendAuthenticationRejectedAsync(stream, "Credential not found", cancellationToken);
+                    await SendAuthenticationRejectedAsync(stream, "Credential mismatch", cancellationToken);
+                    return;
+                }
+
+                // Verify the persistent challenge matches what we have stored
+                var storedChallenge = _currentCredential.Challenge;
+                if (storedChallenge == null || !persistentChallenge.SequenceEqual(storedChallenge))
+                {
+                    await SendAuthenticationRejectedAsync(stream, "Challenge mismatch", cancellationToken);
                     return;
                 }
 
                 // Notify UI about auth request (could require biometric)
-                var authInfo = new AuthenticationRequestModel(credential.VaultName, credential.DisplayName);
+                var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.DisplayName);
                 AuthenticationRequested?.Invoke(this, authInfo);
 
-                // Decrypt signing key and sign
-                credential.DecryptSigningKey(_sharedSecret);
+                // Decrypt HMAC key using stored encryption key
+                var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(_currentCredential.PairingId);
+                if (encryptionKey == null)
+                {
+                    await SendAuthenticationRejectedAsync(stream, "Key error", cancellationToken);
+                    return;
+                }
 
                 try
                 {
-                    // Build data to sign: CID + challenge + timestamp + nonce
-                    var signedData = BuildSignedData(credentialId, challenge, timestamp, nonce);
-                    var signature = credential.SignData(signedData);
+                    _currentCredential.DecryptHmacKey(encryptionKey);
+
+                    // Compute HMAC over the challenge data
+                    // HMAC is deterministic: same key + same data = same result every time
+                    var challengeData = BuildChallengeData(credentialId, persistentChallenge);
+                    var hmacResult = _currentCredential.ComputeHmac(challengeData);
 
                     // Encrypt and send response
-                    var encryptedSignature = _secureChannel.Encrypt(signature);
-                    var response = new byte[KeyTraits.MESSAGE_BYTE_LENGTH + encryptedSignature.Length];
+                    var encryptedHmac = _secureChannel.Encrypt(hmacResult);
+                    var response = new byte[1 + encryptedHmac.Length];
                     response[0] = (byte)MessageType.SecureAuthResponse;
-                    encryptedSignature.CopyTo(response, KeyTraits.MESSAGE_BYTE_LENGTH);
+                    encryptedHmac.CopyTo(response, 1);
 
                     await SendMessageAsync(stream, response, cancellationToken);
                 }
                 finally
                 {
                     // Clear decrypted key from memory
-                    credential.ClearDecryptedKey();
+                    _currentCredential.ClearDecryptedKey();
+                    CryptographicOperations.ZeroMemory(encryptionKey);
                 }
             }
             catch (CryptographicException ex)
             {
-                _ = ex;
                 await SendAuthenticationRejectedAsync(stream, "Decryption failed", cancellationToken);
             }
         }
@@ -469,6 +507,23 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             writer.Write(reason);
 
             await SendMessageAsync(stream, ms.ToArray(), cancellationToken);
+        }
+
+        /// <summary>
+        /// Builds the data for HMAC computation.
+        /// Must match desktop's BuildChallengeData exactly.
+        /// HMAC is deterministic: same key + same data = same result.
+        /// </summary>
+        private static byte[] BuildChallengeData(string credentialId, byte[] persistentChallenge)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            // HMAC input: CID + persistent challenge
+            writer.Write(Encoding.UTF8.GetBytes(credentialId));
+            writer.Write(persistentChallenge);
+
+            return ms.ToArray();
         }
 
         private static byte[] BuildSignedData(string credentialId, byte[] challenge, long timestamp, byte[] nonce)
@@ -500,7 +555,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             return ms.ToArray();
         }
 
-        private static void ParsePairingConfirm(byte[] message, out string credentialId, out string vaultName, out string pairingId)
+        private static void ParsePairingConfirm(byte[] message, out string credentialId, out string vaultName, out string pairingId, out byte[] challenge)
         {
             using var ms = new MemoryStream(message);
             using var reader = new BinaryReader(ms);
@@ -509,21 +564,39 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             credentialId = reader.ReadString();
             vaultName = reader.ReadString();
             pairingId = reader.ReadString();
+            var challengeLength = reader.ReadInt32();
+            challenge = reader.ReadBytes(challengeLength);
         }
 
-        private static byte[] CreatePairingComplete(byte[] signingPublicKey)
+        private static byte[] BuildPersistentChallengeData(string credentialId, byte[] challenge)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            // Sign: CID + persistent challenge
+            // This is deterministic - same input always produces same signature
+            writer.Write(Encoding.UTF8.GetBytes(credentialId));
+            writer.Write(challenge);
+
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Creates pairing complete message with HMAC result.
+        /// </summary>
+        private static byte[] CreatePairingComplete(byte[] hmacResult)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             writer.Write((byte)MessageType.PairingComplete);
-            writer.Write(signingPublicKey.Length);
-            writer.Write(signingPublicKey);
+            writer.Write(hmacResult.Length);
+            writer.Write(hmacResult);
 
             return ms.ToArray();
         }
 
-        private static byte[] CreateSecureSessionAccepted(byte[] nonce)
+        private static byte[] CreateSecureSessionAccepted(byte[] nonce, byte[] ecdhPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -531,6 +604,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             writer.Write((byte)MessageType.SecureSessionAccepted);
             writer.Write(nonce.Length);
             writer.Write(nonce);
+            writer.Write(ecdhPublicKey.Length);
+            writer.Write(ecdhPublicKey);
 
             return ms.ToArray();
         }

@@ -26,11 +26,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Results
         /// </summary>
         public required string MobileDeviceName { get; init; }
 
-        /// <summary>
-        /// The mobile credential's signing public key.
-        /// </summary>
-        public required byte[] PublicSigningKey { get; init; }
-
         public DeviceLinkPairingResult(IKeyBytes value)
             : base(value)
         {

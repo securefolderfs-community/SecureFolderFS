@@ -146,7 +146,7 @@
                             HorizontalAlignment="Center"
                             FontSize="12"
                             Opacity="0.8"
-                            Text="{l:ResourceString Rid=EnsureCodesMatch}" />
+                            Text="{l:ResourceString Rid=ConfirmBothCodesMatch}" />
                     </StackPanel>
 
                     <Grid Grid.Row="1" ColumnSpacing="4">

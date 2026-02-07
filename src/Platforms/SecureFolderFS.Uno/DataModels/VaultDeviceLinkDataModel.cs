@@ -5,7 +5,7 @@ using SecureFolderFS.Core.DataModels;
 namespace SecureFolderFS.Uno.DataModels
 {
     [Serializable]
-    public sealed record VaultDeviceLinkDataModel : VaultCapabilityDataModel
+    public sealed record VaultDeviceLinkDataModel : VaultChallengeDataModel
     {
         /// <summary>
         /// Unique pairing identifier shared between desktop and mobile.
@@ -32,11 +32,11 @@ namespace SecureFolderFS.Uno.DataModels
         public required string? MobileDeviceName { get; set; }
 
         /// <summary>
-        /// The mobile credential's signing public key (Base64).
-        /// Used to verify challenge signatures.
+        /// The expected HMAC result from mobile (Base64).
+        /// Used to verify the mobile device has the correct HMAC key.
         /// </summary>
-        [JsonPropertyName("publicSigningKey")]
-        public byte[]? PublicSigningKey { get; set; }
+        [JsonPropertyName("expectedHmac")]
+        public required byte[] ExpectedHmac { get; init; }
 
         /// <summary>
         /// When the pairing was established.
@@ -48,6 +48,6 @@ namespace SecureFolderFS.Uno.DataModels
         /// Protocol version used during pairing.
         /// </summary>
         [JsonPropertyName("protocolVersion")]
-        public int ProtocolVersion { get; init; } = 2;
+        public int ProtocolVersion { get; init; } = 4;
     }
 }

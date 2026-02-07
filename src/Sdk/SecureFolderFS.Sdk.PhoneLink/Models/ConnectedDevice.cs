@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.PhoneLink.Enums;
 
 namespace SecureFolderFS.Sdk.PhoneLink.Models
 {
@@ -26,6 +27,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             await DeviceStream.WriteAsync(lengthBytes, cancellationToken);
             await DeviceStream.WriteAsync(message, cancellationToken);
             await DeviceStream.FlushAsync(cancellationToken);
+        }
+
+        public async Task SendMessageAsync(byte[] payload, MessageType type, CancellationToken cancellationToken)
+        {
+            var message = new byte[1 + payload.Length];
+            message[0] = (byte)type;
+            payload.CopyTo(message, 1);
+            await SendMessageAsync(message, cancellationToken);
         }
 
         public async Task<byte[]> ReceiveMessageAsync(CancellationToken cancellationToken)

@@ -3,7 +3,11 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Uno.DataModels;
 
 namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 {
@@ -18,9 +22,40 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
         
         /// <inheritdoc/>
-        protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var dataModel = await GetConfigurationAsync(cancellationToken);
+            
+            try
+            {
+                var keyResult = await AcquireAsync(VaultId, dataModel.Challenge, cancellationToken);
+                if (!keyResult.TryGetValue(out var key))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
+                // Report that credentials were provided
+                var tcs = new TaskCompletionSource();
+                CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));
+
+                await tcs.Task;
+            }
+            catch (Exception ex)
+            {
+                Report(Result.Failure(ex));
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override async Task<VaultDeviceLinkDataModel> GetConfigurationAsync(CancellationToken cancellationToken)
+        {
+            var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
+            var auth = await vaultReader.ReadAuthenticationAsync<VaultDeviceLinkDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (auth?.CredentialId is null || auth.MobileDeviceId is null || auth.ExpectedHmac is null || auth.Challenge is null)
+                throw new FormatException("Invalid device link configuration.");
+
+            return auth;
         }
 
         /// <inheritdoc/>

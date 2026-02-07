@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using SecureFolderFS.Sdk.PhoneLink.Enums;
 
 namespace SecureFolderFS.Sdk.PhoneLink.Models
@@ -22,6 +23,23 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             return ms.ToArray();
         }
 
+        /// <summary>
+        /// Creates auth request for challenge-sign model.
+        /// Sends the persistent challenge for mobile to sign.
+        /// </summary>
+        public static byte[] CreateSecureAuthRequest(string credentialId, byte[] persistentChallenge, long timestamp)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            writer.Write(credentialId);
+            writer.Write(persistentChallenge.Length);
+            writer.Write(persistentChallenge);
+            writer.Write(timestamp);
+
+            return ms.ToArray();
+        }
+
         public static byte[] CreatePairingRequest(string machineName, byte[] ecdhPublicKey)
         {
             using var ms = new MemoryStream();
@@ -35,7 +53,22 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             return ms.ToArray();
         }
 
-        public static byte[] CreatePairingConfirmMessage(string credentialId, string vaultName, string pairingId)
+        public static byte[] CreateSecureSessionRequest(string pairingId, byte[] nonce, byte[] ecdhPublicKey)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            writer.Write((byte)MessageType.SecureSessionRequest);
+            writer.Write(pairingId);
+            writer.Write(nonce.Length);
+            writer.Write(nonce);
+            writer.Write(ecdhPublicKey.Length);
+            writer.Write(ecdhPublicKey);
+
+            return ms.ToArray();
+        }
+
+        public static byte[] CreatePairingConfirmMessage(string credentialId, string vaultName, string pairingId, byte[] challenge)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -44,8 +77,24 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             writer.Write(credentialId);
             writer.Write(vaultName);
             writer.Write(pairingId);
+            writer.Write(challenge.Length);
+            writer.Write(challenge);
 
             return ms.ToArray();
+        }
+
+        public static void ParseSecureSessionAccepted(byte[] data, out byte[] nonce, out byte[] ecdhPublicKey)
+        {
+            using var ms = new MemoryStream(data);
+            using var reader = new BinaryReader(ms);
+
+            reader.ReadByte(); // Skip message type
+
+            var nonceLength = reader.ReadInt32();
+            nonce = reader.ReadBytes(nonceLength);
+
+            var keyLength = reader.ReadInt32();
+            ecdhPublicKey = reader.ReadBytes(keyLength);
         }
 
         public static byte[] ParsePairingResponse(byte[] data)
@@ -64,8 +113,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             using var reader = new BinaryReader(ms);
 
             reader.ReadByte(); // Skip message type
-            var keyLength = reader.ReadInt32();
-            return reader.ReadBytes(keyLength);
+            var hmacLength = reader.ReadInt32();
+            return reader.ReadBytes(hmacLength);
         }
 
         /// <summary>

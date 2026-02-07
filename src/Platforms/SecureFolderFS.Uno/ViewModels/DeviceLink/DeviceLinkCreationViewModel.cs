@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.PhoneLink.Results;
@@ -34,10 +35,9 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             try
             {
-                // TODO: Perhaps pass the ECDH key pair from the caller
-                //var ecdhKeyPair = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
+                using var challenge = CryptHelpers.GenerateChallenge(VaultId, Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_32);
 
-                var keyResult = await EnrollAsync(VaultId, null, cancellationToken);
+                var keyResult = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
                 if (!keyResult.TryGetValue(out var key) || keyResult is not DeviceLinkPairingResult pairingResult)
                 {
                     Report(keyResult);
@@ -48,12 +48,13 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 await vaultWriter.WriteAuthenticationAsync<VaultDeviceLinkDataModel>(
                     $"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
                     {
-                        Capability = "supportsECDH",
+                        Capability = "supportsChallenge|supportsEcdhTransport|supportsQuantum",
+                        Challenge = challenge.Key,
                         PairingId = pairingResult.PairingId,
                         CredentialId = pairingResult.CredentialId,
                         MobileDeviceId = pairingResult.MobileDeviceId,
                         MobileDeviceName = pairingResult.MobileDeviceName,
-                        PublicSigningKey = pairingResult.PublicSigningKey,
+                        ExpectedHmac = key.Key,
                         CreatedAt = DateTime.UtcNow
                     }, cancellationToken);
                 
@@ -77,6 +78,12 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             VerificationCode = code;
 
             return _verificationCodeTcs.Task;
+        }
+        
+        /// <inheritdoc/>
+        protected override Task<VaultDeviceLinkDataModel> GetConfigurationAsync(CancellationToken cancellationToken)
+        {
+            throw new NotSupportedException();
         }
         
         [RelayCommand]

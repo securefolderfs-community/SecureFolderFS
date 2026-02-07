@@ -38,7 +38,7 @@
                 x:Name="CustomTitleBar"
                 x:FieldModifier="public"
                 PrimaryTitle="SecureFolderFS"
-                SecondaryTitle="Beta5" />
+                SecondaryTitle="Release Candidate 1" />
         </Grid>
 
         <!--  Main Content  -->
