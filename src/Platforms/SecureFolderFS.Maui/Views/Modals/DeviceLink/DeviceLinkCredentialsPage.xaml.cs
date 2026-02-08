@@ -7,14 +7,14 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 
-namespace SecureFolderFS.Maui.Views.Modals
+namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
 {
-    public partial class PhoneLinkCredentialsPage : BaseModalPage, IOverlayControl
+    public partial class DeviceLinkCredentialsPage : BaseModalPage, IOverlayControl
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
         
-        public PhoneLinkCredentialsPage(INavigation sourceNavigation)
+        public DeviceLinkCredentialsPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = viewable as PhoneLinkCredentialsOverlayViewModel;
+            ViewModel = viewable as DeviceLinkCredentialsOverlayViewModel;
             OnPropertyChanged(nameof(ViewModel));
         }
 
@@ -60,12 +60,12 @@ namespace SecureFolderFS.Maui.Views.Modals
             _modalTcs.TrySetResult(Result.Success);
         }
         
-        public PhoneLinkCredentialsOverlayViewModel? ViewModel
+        public DeviceLinkCredentialsOverlayViewModel? ViewModel
         {
-            get => (PhoneLinkCredentialsOverlayViewModel?)GetValue(ViewModelProperty);
+            get => (DeviceLinkCredentialsOverlayViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(PhoneLinkCredentialsOverlayViewModel), typeof(PhoneLinkCredentialsPage));
+            BindableProperty.Create(nameof(ViewModel), typeof(DeviceLinkCredentialsOverlayViewModel), typeof(DeviceLinkCredentialsPage));
     }
 }

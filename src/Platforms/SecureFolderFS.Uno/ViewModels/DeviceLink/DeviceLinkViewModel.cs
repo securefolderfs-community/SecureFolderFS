@@ -136,16 +136,20 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             var dataModel = await GetConfigurationAsync(cancellationToken);
             using var deviceDiscovery = new DeviceDiscovery();
-            
+
+            var tries = 0;
             while (!cancellationToken.IsCancellationRequested)
             {
-                var devices = await deviceDiscovery.DiscoverDevicesAsync(3000, cancellationToken);
+                tries++;
+                var devices = await deviceDiscovery.DiscoverDevicesAsync(cancellationToken: cancellationToken);
                 var discoveredDevice = devices.FirstOrDefault(d => d.DeviceId == dataModel.MobileDeviceId);
 
                 if (discoveredDevice is not null)
                     return await AuthenticateMobileAsync(discoveredDevice, dataModel, cancellationToken);
 
                 await Task.Delay(2000, cancellationToken);
+                if (tries >= 3)
+                    break;
             }
 
             throw new TimeoutException("Timed out waiting for paired device.");

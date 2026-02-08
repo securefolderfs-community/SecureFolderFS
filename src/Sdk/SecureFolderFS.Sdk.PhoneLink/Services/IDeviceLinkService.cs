@@ -14,6 +14,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         event EventHandler<AuthenticationRequestModel>? AuthenticationRequested;
         event EventHandler<string>? VerificationCodeReady;
         event EventHandler? Disconnected;
+        event EventHandler? AuthenticationCompleted;
 
         bool IsListening { get; }
 

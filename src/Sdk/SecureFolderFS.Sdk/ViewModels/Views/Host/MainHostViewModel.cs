@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         [RelayCommand]
         private async Task OpenVaultCredentialsAsync()
         {
-            using var viewModel = new PhoneLinkCredentialsOverlayViewModel();
+            using var viewModel = new DeviceLinkCredentialsOverlayViewModel();
             _ = viewModel.InitAsync();
 
             await OverlayService.ShowAsync(viewModel);

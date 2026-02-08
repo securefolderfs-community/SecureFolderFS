@@ -57,6 +57,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         public event EventHandler? Disconnected;
 
         /// <inheritdoc/>
+        public event EventHandler? AuthenticationCompleted;
+
+        /// <inheritdoc/>
         public bool IsListening { get; private set; }
 
         /// <inheritdoc/>
@@ -95,6 +98,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         public void ConfirmPairingRequest(bool value)
         {
             _pairingConfirmationTcs?.TrySetResult(value);
+        }
+
+        /// <summary>
+        /// Call this from UI to confirm or reject an authentication request.
+        /// </summary>
+        public void ConfirmAuthentication(bool confirmed)
+        {
+            _authConfirmationTcs?.TrySetResult(confirmed);
         }
 
         private async Task ListenForDiscoveryAsync(CancellationToken cancellationToken)
@@ -168,12 +179,19 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
         private async Task HandleConnectionAsync(TcpClient client, CancellationToken cancellationToken)
         {
-            _currentClient = client;
+            // Store previous client if any - we only track current for cleanup purposes
+            var previousClient = Interlocked.Exchange(ref _currentClient, client);
+            try
+            {
+                // Close any previous connection that might still be open
+                previousClient?.Close();
+            }
+            catch { /* Ignore errors closing old connection */ }
 
             try
             {
                 await using var stream = client.GetStream();
-                while (!cancellationToken.IsCancellationRequested)
+                while (!cancellationToken.IsCancellationRequested && client.Connected)
                 {
                     var message = await ReceiveMessageAsync(stream, cancellationToken);
                     var messageType = (MessageType)message[0];
@@ -182,6 +200,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                     {
                         case MessageType.PairingRequest:
                             await HandlePairingRequestAsync(stream, message, cancellationToken);
+                            CleanupSessionState();
                             break;
 
                         case MessageType.SecureSessionRequest:
@@ -190,6 +209,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
                         case MessageType.SecureAuthRequest:
                             await HandleSecureAuthRequestAsync(stream, message, cancellationToken);
+                            CleanupSessionState();
                             break;
 
                         default:
@@ -208,7 +228,17 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             }
             finally
             {
-                _currentClient = null;
+                // Only clean up if this is still the current client
+                Interlocked.CompareExchange(ref _currentClient, null, client);
+
+                // Clean up the connection
+                try
+                {
+                    client.Close();
+                    client.Dispose();
+                }
+                catch { /* Ignore disposal errors */ }
+
                 CleanupSession();
                 Disconnected?.Invoke(this, EventArgs.Empty);
             }
@@ -405,6 +435,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         }
 
         private CredentialViewModel? _currentCredential;
+        private TaskCompletionSource<bool>? _authConfirmationTcs;
 
         private async Task HandleSecureAuthRequestAsync(NetworkStream stream, byte[] message,
             CancellationToken cancellationToken)
@@ -455,9 +486,20 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                     return;
                 }
 
+                // Create a TaskCompletionSource for user confirmation
+                _authConfirmationTcs = new TaskCompletionSource<bool>();
+                var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.MachineName, _currentCredential.DisplayName);
+
                 // Notify UI about auth request (could require biometric)
-                var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.DisplayName);
                 AuthenticationRequested?.Invoke(this, authInfo);
+
+                // Wait for user to accept or reject
+                var userConfirmed = await _authConfirmationTcs.Task;
+                if (!userConfirmed)
+                {
+                    await SendAuthenticationRejectedAsync(stream, "User rejected", cancellationToken);
+                    return;
+                }
 
                 // Decrypt HMAC key using stored encryption key
                 var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(_currentCredential.PairingId);
@@ -483,6 +525,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                     encryptedHmac.CopyTo(response, 1);
 
                     await SendMessageAsync(stream, response, cancellationToken);
+
+                    // Notify UI that authentication completed successfully
+                    AuthenticationCompleted?.Invoke(this, EventArgs.Empty);
                 }
                 finally
                 {
@@ -642,6 +687,20 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
         private void CleanupSession()
         {
+            CleanupSessionState();
+
+            _pendingCredentialId = null;
+            _pendingVaultName = null;
+            _pendingPairingId = null;
+            _pendingDesktopName = null;
+        }
+
+        /// <summary>
+        /// Cleans up cryptographic session state without clearing pending operation state.
+        /// Call this after a successful operation to prepare for the next one.
+        /// </summary>
+        private void CleanupSessionState()
+        {
             _secureChannel?.Dispose();
             _secureChannel = null;
 
@@ -654,10 +713,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 _sharedSecret = null;
             }
 
-            _pendingCredentialId = null;
-            _pendingVaultName = null;
-            _pendingPairingId = null;
             _pairingConfirmationTcs = null;
+            _authConfirmationTcs = null;
+            _currentCredential = null;
         }
 
         #endregion
@@ -677,6 +735,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             EnrollmentCompleted = null;
             VerificationCodeReady = null;
             AuthenticationRequested = null;
+            AuthenticationCompleted = null;
         }
     }
 }

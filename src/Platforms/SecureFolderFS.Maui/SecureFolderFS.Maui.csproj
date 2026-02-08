@@ -180,6 +180,14 @@
       <DependentUpon>IntroductionPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Modals\DeviceLink\DeviceLinkCredentialsPage.xaml.cs">
+      <DependentUpon>DeviceLinkCredentialsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Modals\DeviceLink\DeviceLinkRequestPage.xaml.cs">
+      <DependentUpon>DeviceLinkRequestPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -235,6 +243,16 @@
     <MauiXaml Update="Views\IntroductionPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="Views\Modals\DeviceLink\DeviceLinkCredentialsPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\DeviceLink\DeviceLinkRequestPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Images\Devices\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSecureFolderFSMauiHideInfoBar="True" /></VisualStudio></ProjectExtensions>

@@ -1103,4 +1103,16 @@
   <data name="VerificationCode" xml:space="preserve">
       <value>Verification code</value>
   </data>
+  <data name="DeviceLinkRequest" xml:space="preserve">
+      <value>Device Link request</value>
+  </data>
+  <data name="DeviceLinkIsRequestingCredentials" xml:space="preserve">
+      <value>This device is requesting to use your Device Link credentials to unlock a vault.</value>
+  </data>
+  <data name="DeviceLinkAcceptWarning" xml:space="preserve">
+      <value>Only accept if you initiated this request</value>
+  </data>
+  <data name="CredentialUsed" xml:space="preserve">
+      <value>Credential used: {0}</value>
+  </data>
 </root>

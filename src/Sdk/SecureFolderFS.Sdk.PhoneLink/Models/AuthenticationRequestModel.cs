@@ -7,11 +7,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
     public sealed partial class AuthenticationRequestModel : ObservableObject
     {
         [ObservableProperty] private string _VaultName;
+        [ObservableProperty] private string _DesktopName;
         [ObservableProperty] private string _CredentialName;
 
-        public AuthenticationRequestModel(string vaultName, string credentialName)
+        public AuthenticationRequestModel(string vaultName, string desktopName, string credentialName)
         {
             VaultName = vaultName;
+            DesktopName = desktopName;
             CredentialName = credentialName;
         }
     }
