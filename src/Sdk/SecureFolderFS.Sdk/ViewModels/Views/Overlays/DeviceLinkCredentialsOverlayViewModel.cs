@@ -91,7 +91,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private async Task StartListeningAsync()
         {
             _deviceLinkService = new DeviceLinkService(
-                "iPhone",
+                Environment.MachineName,
                 "SecureFolderFS Phone",
                 _credentialsStoreModel
             );

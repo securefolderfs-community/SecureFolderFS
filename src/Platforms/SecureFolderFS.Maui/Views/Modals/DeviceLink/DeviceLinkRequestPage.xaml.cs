@@ -100,12 +100,12 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
             // Phase 2: Key transfer animation - key moves left towards desktop
             _ = KeyPulseRing.ScaleToAsync(1.5, 200, Easing.CubicOut);
             await KeyPulseRing.FadeToAsync(0, 200, Easing.CubicIn);
-
-            // Notify the ViewModel to proceed with the authentication flow in parallel with the animation
-            await ViewModel.TryContinueAsync(cancellationToken);
             
             // Move left towards the desktop (negative X translation)
             await KeyTransferIndicator.TranslateToAsync(-120, 0, 400, Easing.CubicInOut);
+            
+            // Notify the ViewModel to proceed with the authentication flow in parallel with the animation
+            await ViewModel.TryContinueAsync(cancellationToken);
             
             // Phase 3: Success flash on desktop device
             _ = DesktopDevice.ScaleToAsync(1.1, 150, Easing.CubicOut);

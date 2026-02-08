@@ -17,14 +17,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
     {
         private readonly CredentialsStoreModel _credentialStoreModel;
         private readonly DeviceConnectionListener _connectionListener;
-        private CancellationTokenSource? _serviceCts;
         private TaskCompletionSource<bool>? _pairingConfirmationTcs;
+        private CancellationTokenSource? _serviceCts;
+        private bool _disposed;
+
+        // Secure Authentication/Secure Session
         private TaskCompletionSource<bool>? _authConfirmationTcs;
         private CredentialViewModel? _currentCredential;
-        private ECDiffieHellman? _ecdhKeyPair;
-        private byte[]? _sharedSecret;
         private SecureChannelModel? _secureChannel;
-        private bool _disposed;
 
         public DeviceLinkService(string deviceName, string deviceId, CredentialsStoreModel credentialStoreModel)
         {
@@ -150,14 +150,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
 
             // Generate our ECDH keypair
-            _ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var myPublicKey = _ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Derive shared secret BEFORE sending response (so we can show code immediately)
-            _sharedSecret = SecureChannelModel.DeriveSharedSecret(_ecdhKeyPair, desktopEcdhPublicKey);
+            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
 
             // Compute verification code
-            var verificationCode = SecureChannelModel.ComputeVerificationCode(_sharedSecret);
+            var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
 
             // Send our public key response
             var response = ProtocolSerializer.CreatePairingResponse(myPublicKey);
@@ -210,7 +210,19 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             ProtocolSerializer.ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
 
             // Create and enroll credential with persistent challenge
-            var credential = await CreateEnrolledCredentialAsync(credentialId, vaultName, desktopName, pairingId, challenge);
+            var credential = new CredentialViewModel()
+            {
+                DisplayName = vaultName,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _credentialStoreModel.EnrollCredentialAsync(
+                credential,
+                credentialId,
+                vaultName,
+                desktopName,
+                pairingId,
+                challenge,
+                sharedSecret);
 
             // Get the encryption key to decrypt HMAC key for computing the initial HMAC
             var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
@@ -247,28 +259,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             }
         }
 
-        private async Task<CredentialViewModel> CreateEnrolledCredentialAsync(
-            string credentialId, string vaultName, string desktopName, string pairingId, byte[] challenge)
-        {
-            var credential = new CredentialViewModel()
-            {
-                DisplayName = vaultName,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _credentialStoreModel.EnrollCredentialAsync(
-                credential,
-                credentialId,
-                vaultName,
-                desktopName ?? "Desktop",
-                pairingId,
-                challenge,
-                _sharedSecret!);
-
-            // Return the credential directly - it's been enrolled and added to the store
-            return credential;
-        }
-
         #endregion
 
         #region Secure Authentication
@@ -299,11 +289,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             _currentCredential = credential;
 
             // Generate fresh ECDH keypair for this session (ephemeral)
-            _ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var myPublicKey = _ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Derive session secret using ECDH (transport security only)
-            _sharedSecret = SecureChannelModel.DeriveSharedSecret(_ecdhKeyPair, desktopEcdhPublicKey);
+            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
 
             // Generate our session nonce
             var mobileNonce = new byte[16];
@@ -314,7 +304,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             desktopNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, desktopNonce.Length);
 
-            _secureChannel = new SecureChannelModel(_sharedSecret, combinedNonce);
+            _secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
 
             // Send response with our ECDH public key
             var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, myPublicKey);
@@ -450,20 +440,10 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             _secureChannel?.Dispose();
             _secureChannel = null;
 
-            _ecdhKeyPair?.Dispose();
-            _ecdhKeyPair = null;
-
-            if (_sharedSecret != null)
-            {
-                CryptographicOperations.ZeroMemory(_sharedSecret);
-                _sharedSecret = null;
-            }
-
             _pairingConfirmationTcs = null;
             _authConfirmationTcs = null;
             _currentCredential = null;
         }
-
 
         public void Dispose()
         {
