@@ -4,14 +4,21 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.PhoneLink.Enums;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.PhoneLink.Models
 {
     public sealed class ConnectedDevice : IDisposable
     {
         private readonly TcpClient _tcpClient;
+        private bool _disposed;
 
         public Stream DeviceStream { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the device is connected.
+        /// </summary>
+        public bool IsConnected => !_disposed && _tcpClient.Connected;
 
         private ConnectedDevice(TcpClient tcpClient, Stream deviceStream)
         {
@@ -21,6 +28,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
         public async Task SendMessageAsync(byte[] message, CancellationToken cancellationToken)
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             var lengthBytes = BitConverter.GetBytes(message.Length);
             await DeviceStream.WriteAsync(lengthBytes, cancellationToken);
             await DeviceStream.WriteAsync(message, cancellationToken);
@@ -37,12 +46,19 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
         public async Task<byte[]> ReceiveMessageAsync(CancellationToken cancellationToken)
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
             var lengthBytes = new byte[4];
             var bytesRead = await DeviceStream.ReadAsync(lengthBytes, cancellationToken);
+            if (bytesRead == 0)
+                throw new IOException("Connection closed by remote host.");
             if (bytesRead < 4)
                 throw new IOException("Connection closed unexpectedly.");
 
             var length = BitConverter.ToInt32(lengthBytes);
+            if (length <= 0 || length > 1024 * 1024) // Max 1MB message
+                throw new IOException($"Invalid message length: {length}");
+
             var message = new byte[length];
             var totalRead = 0;
 
@@ -61,13 +77,24 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         public static async Task<ConnectedDevice> ConnectAsync(DiscoveredDevice discoveredDevice, CancellationToken cancellationToken)
         {
             var tcpClient = new TcpClient();
-            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutCts.CancelAfter(Constants.CONNECTION_TIMEOUT_MS);
+            try
+            {
+                // Configure for low latency before connecting
+                tcpClient.NoDelay = true;
 
-            await tcpClient.ConnectAsync(discoveredDevice.IpAddress, discoveredDevice.Port, timeoutCts.Token);
-            var stream = tcpClient.GetStream();
+                using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                timeoutCts.CancelAfter(Constants.CONNECTION_TIMEOUT_MS);
 
-            return new ConnectedDevice(tcpClient, stream);
+                await tcpClient.ConnectAsync(discoveredDevice.IpAddress, discoveredDevice.Port, timeoutCts.Token);
+                var stream = tcpClient.GetStream();
+
+                return new ConnectedDevice(tcpClient, stream);
+            }
+            catch
+            {
+                tcpClient.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
@@ -83,8 +110,12 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// <inheritdoc/>
         public void Dispose()
         {
-            _tcpClient.Dispose();
-            DeviceStream.Dispose();
+            if (_disposed)
+                return;
+
+            _disposed = true;
+            SafetyHelpers.NoFailure(() => DeviceStream.Dispose());
+            SafetyHelpers.NoFailure(() => _tcpClient.Dispose());
         }
     }
 }

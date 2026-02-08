@@ -9,8 +9,8 @@ namespace SecureFolderFS.Sdk.PhoneLink
         public const int CHALLENGE_VALIDITY_SECONDS = 30;
         public const int COMMUNICATION_PORT = 41235;
         public const int DISCOVERY_PORT = 41234;
-        public const int DISCOVERY_TIMEOUT_MS = 5000;
-        public const int CONNECTION_TIMEOUT_MS = 10000;
+        public const int DISCOVERY_TIMEOUT_MS = 2000;
+        public const int CONNECTION_TIMEOUT_MS = 5000;
 
         public static class KeyTraits
         {

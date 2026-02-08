@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using SecureFolderFS.Sdk.PhoneLink.Enums;
 using SecureFolderFS.Sdk.PhoneLink.Models;
 using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Shared.Helpers;
 using static SecureFolderFS.Sdk.PhoneLink.Constants;
 
 namespace SecureFolderFS.Sdk.PhoneLink.Services
@@ -17,14 +18,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
     {
         private readonly CredentialsStoreModel _credentialStoreModel;
         private readonly DeviceConnectionListener _connectionListener;
-        private TaskCompletionSource<bool>? _pairingConfirmationTcs;
+        private readonly object _lock = new();
         private CancellationTokenSource? _serviceCts;
-        private bool _disposed;
-
-        // Secure Authentication/Secure Session
+        private TaskCompletionSource<bool>? _pairingConfirmationTcs;
         private TaskCompletionSource<bool>? _authConfirmationTcs;
         private CredentialViewModel? _currentCredential;
         private SecureChannelModel? _secureChannel;
+        private bool _disposed;
 
         public DeviceLinkService(string deviceName, string deviceId, CredentialsStoreModel credentialStoreModel)
         {
@@ -57,15 +57,26 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         /// <inheritdoc/>
         public Task StartListeningAsync(CancellationToken cancellationToken = default)
         {
-            _serviceCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            lock (_lock)
+            {
+                if (_disposed)
+                    return Task.CompletedTask;
+
+                SafetyHelpers.NoFailure(() => _serviceCts?.Dispose());
+                _serviceCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            }
+
             return _connectionListener.StartListeningAsync(_serviceCts.Token);
         }
 
         /// <inheritdoc/>
         public void StopListening()
         {
-            _serviceCts?.Cancel();
-            _connectionListener.StopListening();
+            lock (_lock)
+            {
+                SafetyHelpers.NoFailure(() => _serviceCts?.Cancel());
+                _connectionListener.StopListening();
+            }
         }
 
         /// <inheritdoc/>
@@ -84,54 +95,98 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
         private void OnConnectionAccepted(object? sender, ConnectedDevice device)
         {
-            var token = _serviceCts?.Token ?? CancellationToken.None;
-            _ = Task.Run(() => HandleConnectionAsync(device, token));
+            CancellationToken token;
+            lock (_lock)
+            {
+                if (_disposed || _serviceCts == null)
+                {
+                    device.Dispose();
+                    return;
+                }
+                token = _serviceCts.Token;
+            }
+
+            _ = HandleConnectionAsync(device, token);
         }
 
         private async Task HandleConnectionAsync(ConnectedDevice device, CancellationToken cancellationToken)
         {
             try
             {
-                while (!cancellationToken.IsCancellationRequested)
+                while (!cancellationToken.IsCancellationRequested && device.IsConnected)
                 {
-                    var message = await device.ReceiveMessageAsync(cancellationToken);
+                    byte[] message;
+                    try
+                    {
+                        message = await device.ReceiveMessageAsync(cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
+                    catch (IOException)
+                    {
+                        // Connection closed normally
+                        break;
+                    }
+
                     var messageType = (MessageType)message[0];
 
-                    switch (messageType)
+                    try
                     {
-                        case MessageType.PairingRequest:
-                            await HandlePairingRequestAsync(device, message, cancellationToken);
-                            CleanupSessionState();
-                            break;
+                        switch (messageType)
+                        {
+                            case MessageType.PairingRequest:
+                                await HandlePairingRequestAsync(device, message, cancellationToken);
+                                CleanupSessionState(); // Clean up after pairing completes
+                                break;
 
-                        case MessageType.SecureSessionRequest:
-                            await HandleSecureSessionRequestAsync(device, message, cancellationToken);
-                            break;
+                            case MessageType.SecureSessionRequest:
+                                await HandleSecureSessionRequestAsync(device, message, cancellationToken);
+                                // Don't clean up - session state needed for SecureAuthRequest
+                                break;
 
-                        case MessageType.SecureAuthRequest:
-                            await HandleSecureAuthRequestAsync(device, message, cancellationToken);
-                            CleanupSessionState();
-                            break;
+                            case MessageType.SecureAuthRequest:
+                                await HandleSecureAuthRequestAsync(device, message, cancellationToken);
+                                CleanupSessionState(); // Clean up after authentication completes
+                                break;
 
-                        default:
-                            Debugger.Break();
+                            default:
+                                Debug.WriteLine($"Unknown message type: {messageType}");
+                                break;
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
+                    catch (IOException)
+                    {
+                        // Connection closed during operation
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error handling message {messageType}: {ex.Message}");
+                        // Continue processing next message unless connection is broken
+                        if (!device.IsConnected)
                             break;
                     }
                 }
-            }
-            catch (IOException)
-            {
-                // Connection closed
-            }
-            catch (Exception ex)
-            {
-                _ = ex;
             }
             finally
             {
                 device.Dispose();
                 CleanupSessionState();
-                Disconnected?.Invoke(this, EventArgs.Empty);
+                SafetyHelpers.NoFailure(() => Disconnected?.Invoke(this, EventArgs.Empty));
             }
         }
 
@@ -150,112 +205,111 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
 
             // Generate our ECDH keypair
-            var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
             var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Derive shared secret BEFORE sending response (so we can show code immediately)
             var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
 
-            // Compute verification code
-            var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
-
-            // Send our public key response
-            var response = ProtocolSerializer.CreatePairingResponse(myPublicKey);
-            await device.SendMessageAsync(response, cancellationToken);
-
-            // Notify UI to display verification code and wait for user confirmation
-            // This happens BEFORE we receive PairingConfirm from desktop
-            _pairingConfirmationTcs = new TaskCompletionSource<bool>();
-
-            // Show the pairing request with verification code
-            PairingRequested?.Invoke(this, new PairingRequestViewModel(desktopName, string.Empty, verificationCode));
-            VerificationCodeReady?.Invoke(this, verificationCode);
-
-            // Wait for user confirmation on mobile (user confirms code matches)
-            var userConfirmed = await _pairingConfirmationTcs.Task;
-            if (!userConfirmed)
-            {
-                // We need to wait for desktop's message and reject it
-                try
-                {
-                    _ = await device.ReceiveMessageAsync(cancellationToken);
-                    await device.SendMessageAsync([(byte)MessageType.PairingRejected], cancellationToken);
-                }
-                catch (Exception)
-                {
-                    // Connection may have closed
-                }
-
-                CleanupSessionState();
-                return;
-            }
-
-            // Now wait for pairing confirmation from desktop (which includes vault info)
-            var confirmMessage = await device.ReceiveMessageAsync(cancellationToken);
-            var confirmType = (MessageType)confirmMessage[0];
-
-            if (confirmType == MessageType.PairingRejected)
-            {
-                CleanupSessionState();
-                return;
-            }
-
-            if (confirmType != MessageType.PairingConfirm)
-            {
-                CleanupSessionState();
-                return;
-            }
-
-            // Parse pairing confirmation
-            ProtocolSerializer.ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
-
-            // Create and enroll credential with persistent challenge
-            var credential = new CredentialViewModel()
-            {
-                DisplayName = vaultName,
-                CreatedAt = DateTime.UtcNow
-            };
-            await _credentialStoreModel.EnrollCredentialAsync(
-                credential,
-                credentialId,
-                vaultName,
-                desktopName,
-                pairingId,
-                challenge,
-                sharedSecret);
-
-            // Get the encryption key to decrypt HMAC key for computing the initial HMAC
-            var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
-            if (encryptionKey == null)
-            {
-                await device.SendMessageAsync([(byte)MessageType.PairingRejected], cancellationToken);
-                CleanupSessionState();
-                return;
-            }
-
             try
             {
-                // Decrypt HMAC key so we can compute HMAC
-                credential.DecryptHmacKey(encryptionKey);
+                // Compute verification code
+                var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
 
-                // Compute HMAC over the persistent challenge data
-                // HMAC is deterministic: same key + same data = same result every time
-                var challengeData = BuildChallengeData(credentialId, challenge);
-                var hmacResult = credential.ComputeHmac(challengeData);
+                // Send our public key response
+                var response = ProtocolSerializer.CreatePairingResponse(myPublicKey);
+                await device.SendMessageAsync(response, cancellationToken);
 
-                // Send pairing complete with HMAC result (this replaces the signature)
-                var completeMessage = ProtocolSerializer.CreatePairingComplete(hmacResult);
-                await device.SendMessageAsync(completeMessage, cancellationToken);
+                // Notify UI to display verification code and wait for user confirmation
+                _pairingConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-                // Clear the decrypted key from memory
-                credential.ClearDecryptedKey();
+                // Show the pairing request with verification code
+                PairingRequested?.Invoke(this, new PairingRequestViewModel(desktopName, string.Empty, verificationCode));
+                VerificationCodeReady?.Invoke(this, verificationCode);
 
-                // Notify UI that enrollment is complete
-                EnrollmentCompleted?.Invoke(this, credential);
+                // Wait for user confirmation on mobile (user confirms code matches)
+                bool userConfirmed;
+                using (cancellationToken.Register(() => _pairingConfirmationTcs.TrySetCanceled()))
+                {
+                    userConfirmed = await _pairingConfirmationTcs.Task;
+                }
+
+                if (!userConfirmed)
+                {
+                    // Wait for desktop's message and reject it
+                    await SafetyHelpers.NoFailureAsync(async () =>
+                    {
+                        using var rejectCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, rejectCts.Token);
+                        _ = await device.ReceiveMessageAsync(linkedCts.Token);
+                        await device.SendMessageAsync([(byte)MessageType.PairingRejected], linkedCts.Token);
+                    });
+                    return;
+                }
+
+                // Now wait for pairing confirmation from desktop (which includes vault info)
+                var confirmMessage = await device.ReceiveMessageAsync(cancellationToken);
+                var confirmType = (MessageType)confirmMessage[0];
+
+                if (confirmType == MessageType.PairingRejected)
+                    return;
+
+                if (confirmType != MessageType.PairingConfirm)
+                    return;
+
+                // Parse pairing confirmation
+                ProtocolSerializer.ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
+
+                // Create and enroll credential with persistent challenge
+                var credential = new CredentialViewModel()
+                {
+                    DisplayName = vaultName,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _credentialStoreModel.EnrollCredentialAsync(
+                    credential,
+                    credentialId,
+                    vaultName,
+                    desktopName,
+                    pairingId,
+                    challenge,
+                    sharedSecret);
+
+                // Get the encryption key to decrypt HMAC key for computing the initial HMAC
+                var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
+                if (encryptionKey == null)
+                {
+                    await device.SendMessageAsync([(byte)MessageType.PairingRejected], cancellationToken);
+                    return;
+                }
+
+                try
+                {
+                    // Decrypt HMAC key so we can compute HMAC
+                    credential.DecryptHmacKey(encryptionKey);
+
+                    // Compute HMAC over the persistent challenge data
+                    var challengeData = BuildChallengeData(credentialId, challenge);
+                    var hmacResult = credential.ComputeHmac(challengeData);
+
+                    // Send pairing complete with HMAC result
+                    var completeMessage = ProtocolSerializer.CreatePairingComplete(hmacResult);
+                    await device.SendMessageAsync(completeMessage, cancellationToken);
+
+                    // Clear the decrypted key from memory
+                    credential.ClearDecryptedKey();
+
+                    // Notify UI that enrollment is complete
+                    EnrollmentCompleted?.Invoke(this, credential);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(encryptionKey);
+                }
             }
             finally
             {
-                CryptographicOperations.ZeroMemory(encryptionKey);
+                CryptographicOperations.ZeroMemory(sharedSecret);
             }
         }
 
@@ -289,7 +343,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             _currentCredential = credential;
 
             // Generate fresh ECDH keypair for this session (ephemeral)
-            var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
             var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Derive session secret using ECDH (transport security only)
@@ -361,14 +415,19 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 }
 
                 // Create a TaskCompletionSource for user confirmation
-                _authConfirmationTcs = new TaskCompletionSource<bool>();
+                _authConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.MachineName, _currentCredential.DisplayName);
 
                 // Notify UI about auth request (could require biometric)
                 AuthenticationRequested?.Invoke(this, authInfo);
 
                 // Wait for user to accept or reject
-                var userConfirmed = await _authConfirmationTcs.Task;
+                bool userConfirmed;
+                using (cancellationToken.Register(() => _authConfirmationTcs.TrySetCanceled()))
+                {
+                    userConfirmed = await _authConfirmationTcs.Task;
+                }
+
                 if (!userConfirmed)
                 {
                     await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("User rejected"), cancellationToken);
@@ -388,7 +447,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                     _currentCredential.DecryptHmacKey(encryptionKey);
 
                     // Compute HMAC over the challenge data
-                    // HMAC is deterministic: same key + same data = same result every time
                     var challengeData = BuildChallengeData(credentialId, persistentChallenge);
                     var hmacResult = _currentCredential.ComputeHmac(challengeData);
 
@@ -408,21 +466,20 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             }
             catch (CryptographicException)
             {
-                await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("Decryption failed"), cancellationToken);
+                await SafetyHelpers.NoFailureAsync(async () =>
+                    await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("Decryption failed"), cancellationToken));
             }
         }
 
         /// <summary>
         /// Builds the data for HMAC computation.
         /// Must match desktop's BuildChallengeData exactly.
-        /// HMAC is deterministic: same key + same data = same result.
         /// </summary>
         private static byte[] BuildChallengeData(string credentialId, byte[] persistentChallenge)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
-            // HMAC input: CID + persistent challenge
             writer.Write(Encoding.UTF8.GetBytes(credentialId));
             writer.Write(persistentChallenge);
 
@@ -432,12 +489,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         #endregion
 
         /// <summary>
-        /// Cleans up cryptographic session state without clearing pending operation state.
-        /// Call this after a successful operation to prepare for the next one.
+        /// Cleans up cryptographic session state.
         /// </summary>
         private void CleanupSessionState()
         {
-            _secureChannel?.Dispose();
+            SafetyHelpers.NoFailure(() => _secureChannel?.Dispose());
             _secureChannel = null;
 
             _pairingConfirmationTcs = null;
@@ -447,15 +503,20 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
         public void Dispose()
         {
-            if (_disposed)
-                return;
+            lock (_lock)
+            {
+                if (_disposed)
+                    return;
 
-            _disposed = true;
+                _disposed = true;
+            }
+
             _connectionListener.ConnectionAccepted -= OnConnectionAccepted;
             StopListening();
             CleanupSessionState();
             _connectionListener.Dispose();
-            _serviceCts?.Dispose();
+
+            SafetyHelpers.NoFailure(() => _serviceCts?.Dispose());
 
             Disconnected = null;
             PairingRequested = null;

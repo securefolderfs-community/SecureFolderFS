@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Helpers;
 using static SecureFolderFS.Sdk.PhoneLink.Constants;
 
 namespace SecureFolderFS.Sdk.PhoneLink.Models
@@ -15,6 +16,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
     {
         private readonly string _deviceId;
         private readonly string _deviceName;
+        private readonly object _lock = new();
         private UdpClient? _udpClient;
         private TcpListener? _tcpListener;
         private ConnectedDevice? _currentConnection;
@@ -42,21 +44,28 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// </summary>
         public Task StartListeningAsync(CancellationToken cancellationToken = default)
         {
-            if (IsListening)
-                return Task.CompletedTask;
+            lock (_lock)
+            {
+                if (IsListening || _disposed)
+                    return Task.CompletedTask;
 
-            _listenerCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                _listenerCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            // Start UDP discovery responder
-            _udpClient = new UdpClient(DISCOVERY_PORT);
-            _ = Task.Run(() => ListenForDiscoveryAsync(_listenerCts.Token));
+                // Start UDP discovery responder with socket reuse
+                _udpClient = new UdpClient();
+                _udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, DISCOVERY_PORT));
+                _ = Task.Run(() => ListenForDiscoveryAsync(_listenerCts.Token));
 
-            // Start TCP listener
-            _tcpListener = new TcpListener(IPAddress.Any, COMMUNICATION_PORT);
-            _tcpListener.Start();
-            _ = Task.Run(() => AcceptConnectionsAsync(_listenerCts.Token));
+                // Start TCP listener with socket reuse and NoDelay for faster connections
+                _tcpListener = new TcpListener(IPAddress.Any, COMMUNICATION_PORT);
+                _tcpListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _tcpListener.Start();
+                _ = Task.Run(() => AcceptConnectionsAsync(_listenerCts.Token));
 
-            IsListening = true;
+                IsListening = true;
+            }
+
             return Task.CompletedTask;
         }
 
@@ -65,12 +74,19 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// </summary>
         public void StopListening()
         {
-            _listenerCts?.Cancel();
-            _udpClient?.Close();
-            _tcpListener?.Stop();
-            _currentConnection?.Dispose();
+            lock (_lock)
+            {
+                if (!IsListening)
+                    return;
 
-            IsListening = false;
+                IsListening = false;
+
+                SafetyHelpers.NoFailure(() => _listenerCts?.Cancel());
+                SafetyHelpers.NoFailure(() => _udpClient?.Close());
+                SafetyHelpers.NoFailure(() => _tcpListener?.Stop());
+
+                CloseCurrentConnection();
+            }
         }
 
         /// <summary>
@@ -79,70 +95,85 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         public void CloseCurrentConnection()
         {
             var connection = Interlocked.Exchange(ref _currentConnection, null);
-            try
-            {
-                connection?.Dispose();
-            }
-            catch
-            {
-                /* Ignore disposal errors */
-            }
+            SafetyHelpers.NoFailure(() => connection?.Dispose());
         }
 
         private async Task ListenForDiscoveryAsync(CancellationToken cancellationToken)
         {
-            try
+            while (!cancellationToken.IsCancellationRequested && !_disposed)
             {
-                while (!cancellationToken.IsCancellationRequested)
+                try
                 {
                     var result = await _udpClient!.ReceiveAsync(cancellationToken);
                     if (!ProtocolSerializer.ValidateDiscoveryRequest(result.Buffer))
                         continue;
 
-                    var response =
-                        ProtocolSerializer.CreateDiscoveryResponse(_deviceId, _deviceName, COMMUNICATION_PORT);
+                    var response = ProtocolSerializer.CreateDiscoveryResponse(_deviceId, _deviceName, COMMUNICATION_PORT);
                     await _udpClient.SendAsync(response, response.Length, result.RemoteEndPoint);
                 }
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception)
-            {
-                // Log or handle discovery errors if needed
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
+                catch (SocketException)
+                {
+                    // Socket error - wait a bit and continue if not cancelled
+                    if (!cancellationToken.IsCancellationRequested)
+                        await Task.Delay(100, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                }
+                catch (Exception)
+                {
+                    // Log or handle other discovery errors if needed
+                    if (!cancellationToken.IsCancellationRequested)
+                        await Task.Delay(100, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                }
             }
         }
 
         private async Task AcceptConnectionsAsync(CancellationToken cancellationToken)
         {
-            try
+            while (!cancellationToken.IsCancellationRequested && !_disposed)
             {
-                while (!cancellationToken.IsCancellationRequested)
+                try
                 {
                     var tcpClient = await _tcpListener!.AcceptTcpClientAsync(cancellationToken);
+
+                    // Configure for low latency
+                    tcpClient.NoDelay = true;
+
                     var connectedDevice = ConnectedDevice.FromTcpClient(tcpClient);
 
                     // Store and close previous connection if any
                     var previousConnection = Interlocked.Exchange(ref _currentConnection, connectedDevice);
-                    try
-                    {
-                        previousConnection?.Dispose();
-                    }
-                    catch
-                    {
-                        /* Ignore errors closing old connection */
-                    }
+                    SafetyHelpers.NoFailure(() => previousConnection?.Dispose());
 
                     // Notify subscribers about the new connection
                     ConnectionAccepted?.Invoke(this, connectedDevice);
                 }
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception)
-            {
-                // Log or handle connection errors if needed
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
+                catch (SocketException)
+                {
+                    // Socket error - wait a bit and continue if not cancelled
+                    if (!cancellationToken.IsCancellationRequested)
+                        await Task.Delay(100, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                }
+                catch (Exception)
+                {
+                    // Log or handle other connection errors if needed
+                    if (!cancellationToken.IsCancellationRequested)
+                        await Task.Delay(100, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                }
             }
         }
 
@@ -153,9 +184,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
             _disposed = true;
             StopListening();
-            _listenerCts?.Dispose();
-            _udpClient?.Dispose();
-            _tcpListener?.Stop();
+
+            SafetyHelpers.NoFailure(() => _listenerCts?.Dispose());
+            SafetyHelpers.NoFailure(() => _udpClient?.Dispose());
 
             ConnectionAccepted = null;
         }

@@ -17,9 +17,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
     {
         private readonly IPropertyStore<string> _propertyStore;
         private readonly IAsyncSerializer<Stream> _streamSerializer;
-
         private readonly List<CredentialViewModel> _credentials = [];
-        private readonly Dictionary<string, byte[]> _secretsCache = [];
         private bool _disposed;
 
         /// <summary>
@@ -126,7 +124,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         {
             var encoded = Convert.ToBase64String(encryptionKey);
             await _propertyStore.SetValueAsync(SECRETS_KEY_PREFIX + pairingId, encoded);
-            _secretsCache[pairingId] = (byte[])encryptionKey.Clone();
         }
 
         /// <summary>
@@ -152,19 +149,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
-            // Check cache
-            if (_secretsCache.TryGetValue(pairingId, out var cached))
-                return (byte[])cached.Clone();
-
             try
             {
                 var encoded = await _propertyStore.GetValueAsync<string?>(SECRETS_KEY_PREFIX + pairingId);
                 if (string.IsNullOrEmpty(encoded))
                     return null;
 
-                var key = Convert.FromBase64String(encoded);
-                _secretsCache[pairingId] = (byte[])key.Clone();
-                return key;
+                return Convert.FromBase64String(encoded);
             }
             catch
             {
@@ -185,10 +176,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
             // Remove encryption key
             if (!string.IsNullOrEmpty(credential.PairingId))
-            {
                 await _propertyStore.RemoveAsync(SECRETS_KEY_PREFIX + credential.PairingId);
-                _secretsCache.Remove(credential.PairingId);
-            }
 
             credential.Dispose();
             _credentials.Remove(credential);
@@ -204,11 +192,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             _disposed = true;
             _credentials.DisposeAll();
             _credentials.Clear();
-
-            foreach (var secret in _secretsCache.Values)
-                CryptographicOperations.ZeroMemory(secret);
-
-            _secretsCache.Clear();
         }
     }
 }
