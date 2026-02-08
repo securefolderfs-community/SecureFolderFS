@@ -10,13 +10,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
     public sealed class ConnectedDevice : IDisposable
     {
         private readonly TcpClient _tcpClient;
-        private readonly DiscoveredDevice _discoveredDevice;
 
         public Stream DeviceStream { get; }
 
-        private ConnectedDevice(DiscoveredDevice discoveredDevice, TcpClient tcpClient, Stream deviceStream)
+        private ConnectedDevice(TcpClient tcpClient, Stream deviceStream)
         {
-            _discoveredDevice = discoveredDevice;
             _tcpClient = tcpClient;
             DeviceStream = deviceStream;
         }
@@ -69,7 +67,17 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             await tcpClient.ConnectAsync(discoveredDevice.IpAddress, discoveredDevice.Port, timeoutCts.Token);
             var stream = tcpClient.GetStream();
 
-            return new ConnectedDevice(discoveredDevice, tcpClient, stream);
+            return new ConnectedDevice(tcpClient, stream);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ConnectedDevice"/> from an already accepted <see cref="TcpClient"/>.
+        /// </summary>
+        /// <param name="tcpClient">The accepted TCP client.</param>
+        /// <returns>A new <see cref="ConnectedDevice"/> instance.</returns>
+        public static ConnectedDevice FromTcpClient(TcpClient tcpClient)
+        {
+            return new ConnectedDevice(tcpClient, tcpClient.GetStream());
         }
 
         /// <inheritdoc/>
