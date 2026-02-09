@@ -24,6 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private DeviceLinkService? _deviceLinkService;
         private readonly CredentialsStoreModel _credentialsStoreModel;
         private readonly SynchronizationContext? _synchronizationContext;
+        private bool _isInitialized;
 
         [ObservableProperty] private bool _IsAwaitingPairing;
         [ObservableProperty] private string? _VerificationCode;
@@ -31,15 +32,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private string? _NewCredentialName;
         [ObservableProperty] private ObservableCollection<CredentialViewModel> _Credentials;
 
-        public bool EnablePhoneLink
+        public bool EnableDeviceLink
         {
-            get => SettingsService.UserSettings.EnablePhoneLink;
+            get => SettingsService.UserSettings.EnableDeviceLink;
             set
             {
-                if (SettingsService.UserSettings.EnablePhoneLink == value)
+                if (SettingsService.UserSettings.EnableDeviceLink == value)
                     return;
 
-                SettingsService.UserSettings.EnablePhoneLink = value;
+                SettingsService.UserSettings.EnableDeviceLink = value;
                 OnPropertyChanged();
                 OnEnablePhoneLinkChanged(value);
             }
@@ -50,13 +51,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             ServiceProvider = DI.Default;
             Credentials = new();
             _synchronizationContext = SynchronizationContext.Current;
-            _credentialsStoreModel = new(PropertyStoreService.InMemoryPropertyStore, StreamSerializer.Instance);
+            _credentialsStoreModel = new(PropertyStoreService.SecurePropertyStore, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            // Load saved credentials from the property store
+            await _credentialsStoreModel.InitAsync(cancellationToken);
+
+            // Populate the observable collection with loaded credentials
+            Credentials.Clear();
+            foreach (var credential in _credentialsStoreModel.Credentials)
+                Credentials.Add(credential);
+
+            _isInitialized = true;
+
+            // If DeviceLink is enabled, start listening
+            if (EnableDeviceLink)
+                await StartListeningAsync();
         }
 
         [RelayCommand]
@@ -82,10 +95,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void OnEnablePhoneLinkChanged(bool newValue)
         {
-            if (newValue)
-                _ = StartListeningAsync();
-            else
-                StopListening();
+            // Only start/stop listener if already initialized (prevents double-start during init)
+            if (_isInitialized)
+            {
+                if (newValue)
+                    _ = StartListeningAsync();
+                else
+                    StopListening();
+            }
+
+            _ = SettingsService.UserSettings.TrySaveAsync();
         }
 
         private async Task StartListeningAsync()

@@ -127,7 +127,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public bool EnablePhoneLink
+        public bool EnableDeviceLink
         {
             get => GetSetting(static () => false);
             set => SetSetting(value);
@@ -151,7 +151,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
                 nameof(ReduceToBackground) => $"{nameof(ReduceToBackground)}: {ReduceToBackground}",
                 nameof(AreThumbnailsEnabled) => $"{nameof(AreThumbnailsEnabled)}: {AreThumbnailsEnabled}",
                 nameof(IsContentCacheEnabled) => $"{nameof(IsContentCacheEnabled)}: {IsContentCacheEnabled}",
-                nameof(EnablePhoneLink) => $"{nameof(EnablePhoneLink)}: {EnablePhoneLink}",
+                nameof(EnableDeviceLink) => $"{nameof(EnableDeviceLink)}: {EnableDeviceLink}",
                 _ => null
             };
 

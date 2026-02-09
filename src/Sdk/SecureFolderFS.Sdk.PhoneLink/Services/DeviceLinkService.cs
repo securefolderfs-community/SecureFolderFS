@@ -195,6 +195,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         private async Task HandlePairingRequestAsync(ConnectedDevice device, byte[] message,
             CancellationToken cancellationToken)
         {
+            // Clean up any stale session state from previous operations
+            CleanupSessionState();
+
             // Parse desktop's ECDH public key
             using var ms = new MemoryStream(message);
             using var reader = new BinaryReader(ms);
@@ -320,6 +323,9 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         private async Task HandleSecureSessionRequestAsync(ConnectedDevice device, byte[] message,
             CancellationToken cancellationToken)
         {
+            // Clean up any stale session state from previous operations
+            CleanupSessionState();
+
             // Parse request
             using var ms = new MemoryStream(message);
             using var reader = new BinaryReader(ms);

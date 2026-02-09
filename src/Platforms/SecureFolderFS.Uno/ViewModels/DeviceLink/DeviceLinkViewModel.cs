@@ -78,7 +78,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             using var connectedDevice = await ConnectedDevice.ConnectAsync(discoveredDevice, cancellationToken);
             
             // Step 2: Generate ECDH key pair
-            var ecdhKeyPair = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
+            using var ecdhKeyPair = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
             var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
             
             // Step 3: Send pairing request
@@ -157,10 +157,10 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
         private async Task<DeviceLinkAuthenticationResult> AuthenticateMobileAsync(DiscoveredDevice device, VaultDeviceLinkDataModel dataModel, CancellationToken cancellationToken)
         {
-            var connectedDevice = await ConnectedDevice.ConnectAsync(device, cancellationToken);
+            using var connectedDevice = await ConnectedDevice.ConnectAsync(device, cancellationToken);
             
             // Generate fresh ECDH keypair for this session (transport security)
-            var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
+            using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
             var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Generate session nonce
@@ -188,7 +188,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             sessionNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, sessionNonce.Length);
 
-            var secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
+            using var secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
             
             // Step 3: Send authentication request with PERSISTENT CHALLENGE
             // The persistent challenge is the same every time - mobile signs it
