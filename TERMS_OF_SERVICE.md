@@ -1,6 +1,6 @@
 # Terms of Service
 
-###### Effective date: January 1st, 2026
+###### Effective date: March 1st, 2026
 
 These Terms of Service ("Terms") for SecureFolderFS ("we", "us", or "our") govern your use of the SecureFolderFS application and any related services (collectively, the "App" or "Services"), which include our desktop and mobile applications (the "Application", "SecureFolderFS", also, "App", or "Services").
 
