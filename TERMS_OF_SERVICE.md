@@ -9,9 +9,9 @@ By using our Services, you agree to be bound by these Terms. If you do not agree
 ## Description of the Services
 
 SecureFolderFS is a data encryption application that allows users to create, manage, and access encrypted vaults on their devices.
-- Encryption and decryption operations are performed within the App
-- We do not have access to your encrypted files, passwords, or recovery keys
-- SecureFolderFS is not a data recovery service
+- Encryption and decryption operations are performed within the App.
+- We do not have access to your encrypted files, passwords, or recovery keys.
+- SecureFolderFS is not a data recovery service.
 
 ## Eligibility
 
@@ -21,10 +21,10 @@ You must be legally capable of entering into a binding agreement under the laws 
 
 You acknowledge and agree that:
 - You are solely responsible for:
-  - maintaining the confidentiality of passwords, keys, and authentication methods
-  - creating and maintaining backups of your encrypted data
-- Loss of credentials and recovery keys may result in irreversible data loss
-- We cannot restore or bypass encryption under any circumstances
+  - maintaining the confidentiality of passwords, keys, and authentication methods,
+  - creating and maintaining backups of your encrypted data.
+- Loss of credentials and recovery keys may result in irreversible data loss.
+- We cannot restore or bypass encryption under any circumstances.
 
 ## Privacy and Data Protection
 
@@ -69,10 +69,10 @@ SecureFolderFS may allow you to connect to third-party or virtual storage provid
 You acknowledge and agree that:
 - These providers are independent third parties.
 - We do not control and are not responsible for:
-  - their availability
-  - their security practices
-  - data loss, corruption, or service interruptions
-- Your use of such providers is governed by their respective terms and policies
+  - their availability,
+  - their security practices,
+  - data loss, corruption, or service interruptions.
+- Your use of such providers is governed by their respective terms and policies.
 
 ## Name, Branding, and Attribution
 
@@ -81,11 +81,11 @@ You acknowledge and agree that:
 You may not:
 - distribute modified versions of the application under the name "SecureFolderFS",
 - present forks or derivative works as official or endorsed by the SecureFolderFS Project,
-- use SecureFolderFS branding in a way that causes confusion as to origin or affiliation
+- use SecureFolderFS branding in a way that causes confusion as to origin or affiliation.
 
 Forks and derivative works must:
-- use a distinct name
-- clearly indicate they are not affiliated with or endorsed by the SecureFolderFS Project
+- use a distinct name,
+- clearly indicate they are not affiliated with or endorsed by the SecureFolderFS Project.
 
 Nothing in these Terms restricts rights granted by the applicable open-source license; this section governs branding, attribution, and representation, not the source code itself.
 
