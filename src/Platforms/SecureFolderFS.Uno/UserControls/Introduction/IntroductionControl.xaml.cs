@@ -1,6 +1,9 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.System;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -14,7 +17,6 @@ using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -79,7 +81,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             ViewModel = (IntroductionOverlayViewModel)viewable;
             if (ViewModel is { SlidesCount: < 0 })
-                ViewModel.SlidesCount = 3;
+                ViewModel.SlidesCount = SlidesFlipView.Items.Count;
         }
 
         /// <inheritdoc/>
@@ -124,20 +126,33 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private void IntroductionControl_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (ViewModel is null)
+                return;
+            
             switch (e.Key)
             {
                 case VirtualKey.Right:
                 {
-                    ViewModel?.Next();
                     e.Handled = true;
+                    if (ViewModel.Next())
+                    {
+                        if (SlidesFlipView.Items[ViewModel.CurrentIndex] is not EndScreen endScreen)
+                            break;
+
+                        if (endScreen.FindChild<Button>() is not { } button)
+                            break;
+                        
+                        button.Focus(FocusState.Programmatic);
+                    }
 
                     break;
                 }
 
                 case VirtualKey.Left:
                 {
-                    ViewModel?.Previous();
                     e.Handled = true;
+                    ViewModel.Previous();
+                    SlidesFlipView.Items.FirstOrDefault()?.TryCast<WelcomeScreen>()?.Focus(FocusState.Programmatic);
 
                     break;
                 }

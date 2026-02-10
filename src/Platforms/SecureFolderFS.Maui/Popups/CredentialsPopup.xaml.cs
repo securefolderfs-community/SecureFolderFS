@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Popups
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            return CloseAsync();
+            return this.CloseOverlayAsync();
         }
 
         private void AvailableOptionsPanel_Loaded(object? sender, EventArgs e)

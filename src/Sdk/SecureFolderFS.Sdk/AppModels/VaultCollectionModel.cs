@@ -142,8 +142,11 @@ namespace SecureFolderFS.Sdk.AppModels
                 widgetList.Add(new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
 
 #if DEBUG
-            // TODO: Testing on desktop
-            widgetList.Insert(1, new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
+            if (!OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS())
+            {
+                // TODO: Testing on desktop
+                widgetList.Insert(1, new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
+            }
 #endif
 
             // Set widgets for vault

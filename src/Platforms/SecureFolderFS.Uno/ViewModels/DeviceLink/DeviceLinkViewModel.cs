@@ -14,6 +14,7 @@ using SecureFolderFS.Sdk.PhoneLink.Models;
 using SecureFolderFS.Sdk.PhoneLink.Results;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Uno.DataModels;
 
 namespace SecureFolderFS.Uno.ViewModels.DeviceLink
@@ -58,9 +59,16 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         }
         
         /// <inheritdoc/>
-        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        public override async Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (VaultFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (authenticationFile is null)
+                return;
+            
+            await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
         /// <inheritdoc/>

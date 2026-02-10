@@ -13,6 +13,11 @@ internal static class PopupExtensions
     private const double OverlayOpacity = 0.6;
     
     /// <summary>
+    /// Stores the close action for each popup that is currently shown as an overlay.
+    /// </summary>
+    private static readonly Dictionary<Popup, Func<Task>> _closeActions = new();
+    
+    /// <summary>
     /// Shows a popup as an overlay on top of the current page content with a fade animation.
     /// </summary>
     /// <param name="page">The page to show the popup on.</param>
@@ -91,8 +96,6 @@ internal static class PopupExtensions
         // Event handlers that we need to unhook later
         TapGestureRecognizer? tapGesture = null;
         EventHandler<TappedEventArgs>? tappedHandler = null;
-        EventHandler? closedHandler = null;
-        EventHandler<NavigatedFromEventArgs>? navigatedFromHandler = null;
 
         // Store the original back button behavior to restore later
         var originalBackButtonBehavior = Shell.GetBackButtonBehavior(contentPage);
@@ -103,6 +106,9 @@ internal static class PopupExtensions
                 return;
 
             isClosing = true;
+            
+            // Remove the close action from the dictionary
+            _closeActions.Remove(popup);
 
             // Unhook all event handlers
             if (tapGesture is not null)
@@ -112,12 +118,6 @@ internal static class PopupExtensions
 
                 dimBackground.GestureRecognizers.Remove(tapGesture);
             }
-
-            if (closedHandler is not null)
-                popup.Closed -= closedHandler;
-
-            if (navigatedFromHandler is not null)
-                contentPage.NavigatedFrom -= navigatedFromHandler;
 
             // Restore the original back button behavior
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
@@ -135,7 +135,11 @@ internal static class PopupExtensions
             if (isClosing)
                 return;
 
+            CleanupOverlay();
             isClosing = true;
+            
+            // Remove the close action from the dictionary
+            _closeActions.Remove(popup);
 
             // Unhook all event handlers
             if (tapGesture is not null)
@@ -145,12 +149,6 @@ internal static class PopupExtensions
 
                 dimBackground.GestureRecognizers.Remove(tapGesture);
             }
-
-            if (closedHandler is not null)
-                popup.Closed -= closedHandler;
-
-            if (navigatedFromHandler is not null)
-                contentPage.NavigatedFrom -= navigatedFromHandler;
 
             // Restore the original back button behavior
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
@@ -167,6 +165,9 @@ internal static class PopupExtensions
 
             completionSource.TrySetResult();
         }
+        
+        // Register the close action so it can be called from the extension method
+        _closeActions[popup] = CloseOverlayAsync;
 
         // Handle background tap for light dismiss
         if (dismissOnBackgroundTap)
@@ -176,14 +177,6 @@ internal static class PopupExtensions
             tapGesture.Tapped += tappedHandler;
             dimBackground.GestureRecognizers.Add(tapGesture);
         }
-
-        // Subscribe to the popup's Closed event
-        closedHandler = (_, _) => _ = CloseOverlayAsync();
-        popup.Closed += closedHandler;
-
-        // Handle page navigation (e.g., user taps NavigationBar back button)
-        navigatedFromHandler = (_, _) => CleanupOverlay();
-        contentPage.NavigatedFrom += navigatedFromHandler;
 
         // Handle Android back button/gesture - close popup instead of navigating
         var backButtonBehavior = new BackButtonBehavior()
@@ -214,5 +207,18 @@ internal static class PopupExtensions
             return Task.CompletedTask;
 
         return contentPage.OverlayPopupAsync(popup, dismissOnBackgroundTap);
+    }
+
+    /// <summary>
+    /// Closes a popup that was shown using <see cref="OverlayPopupAsync(Popup, bool)"/>.
+    /// </summary>
+    /// <param name="popup">The popup to close.</param>
+    /// <returns>A task that completes when the popup has been closed.</returns>
+    public static Task CloseOverlayAsync(this Popup popup)
+    {
+        if (_closeActions.TryGetValue(popup, out var closeAction))
+            return closeAction();
+        
+        return Task.CompletedTask;
     }
 }

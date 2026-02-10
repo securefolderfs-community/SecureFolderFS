@@ -2,11 +2,9 @@ using SecureFolderFS.Maui.Views.Vault;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
@@ -36,11 +34,17 @@ namespace SecureFolderFS.Maui
             var messageOverlay = new MessageOverlayViewModel()
             {
                 Title = "ClosedUnexpectedly".ToLocalized(nameof(SecureFolderFS)),
-                PrimaryText = "Close".ToLocalized(),
+                PrimaryText = "Copy".ToLocalized(),
+                SecondaryText = "Close".ToLocalized(),
                 Message = sessionException
             };
 
-            await overlayService.ShowAsync(messageOverlay);
+            var result = await overlayService.ShowAsync(messageOverlay);
+            if (!result.Positive())
+                return;
+
+            var clipboardService = DI.Service<IClipboardService>();
+            await clipboardService.SetTextAsync(sessionException);
         }
     }
 }

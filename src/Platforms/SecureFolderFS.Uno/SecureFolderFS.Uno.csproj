@@ -24,10 +24,10 @@
     <!-- Application Properties -->
     <AssemblyName>SecureFolderFS</AssemblyName>
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
-    <AssemblyVersion>0.7.2.0</AssemblyVersion>
-    <ApplicationDisplayVersion>0.7.2.0</ApplicationDisplayVersion>
-    <AssemblyVersion>0.7.2.0</AssemblyVersion>
-    <ApplicationVersion>720</ApplicationVersion>
+    <AssemblyVersion>0.8.0.0</AssemblyVersion>
+    <ApplicationDisplayVersion>0.8.0.0</ApplicationDisplayVersion>
+    <AssemblyVersion>0.8.0.0</AssemblyVersion>
+    <ApplicationVersion>800</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
 
     <!-- Other -->

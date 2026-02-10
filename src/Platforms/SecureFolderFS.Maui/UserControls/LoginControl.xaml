@@ -19,6 +19,7 @@
                 <VerticalStackLayout HorizontalOptions="Fill" Spacing="16">
                     <local:PasswordControl
                         HorizontalOptions="Fill"
+                        PasswordSubmittedCommand="{Binding ProvideCredentialsCommand}"
                         ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
                         UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
                     <local:ActivityButton

@@ -8,12 +8,10 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tui="using:CommunityToolkit.WinUI"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:IndexToProgressConverter x:Key="IndexToProgressConverter" />
         <!--  Fade In + Scale In Animation  -->
         <Storyboard x:Key="ShowOverlayStoryboard" x:Name="ShowOverlayStoryboard">
             <DoubleAnimation
@@ -128,6 +126,7 @@
             <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                 <!--  Views  -->
                 <local:WelcomeScreen />
+                <!--  Slide 1: Dashboard  -->
                 <ext:OnPlatform>
                     <ext:On Platform="Windows">
                         <local:FeatureSlide
@@ -140,6 +139,51 @@
                             Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
                             Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
                             ImageSource="Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 2: Authentication  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}"
+                            Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_authentication.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}"
+                            Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_authentication.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 3: Encryption  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingEncryptionTitle}"
+                            Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_encryption.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingEncryptionTitle}"
+                            Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_encryption.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 4: Virtual File System  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
+                            Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_filesystem.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
+                            Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_filesystem.png" />
                     </ext:On>
                 </ext:OnPlatform>
                 <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />

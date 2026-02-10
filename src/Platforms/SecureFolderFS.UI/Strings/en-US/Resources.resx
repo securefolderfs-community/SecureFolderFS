@@ -929,6 +929,24 @@
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
     <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
   </data>
+  <data name="OnboardingAuthenticationTitle" xml:space="preserve">
+    <value>Authenticate the way you want</value>
+  </data>
+  <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
+    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+  </data>
+  <data name="OnboardingEncryptionTitle" xml:space="preserve">
+    <value>Your files, always protected</value>
+  </data>
+  <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
+    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+  </data>
+  <data name="OnboardingFileSystemTitle" xml:space="preserve">
+    <value>Seamless virtual file system</value>
+  </data>
+  <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
+    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
+  </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
     <value>You're ready to go!</value>
   </data>
@@ -1114,5 +1132,11 @@
   </data>
   <data name="CredentialUsed" xml:space="preserve">
       <value>Credential used: {0}</value>
+  </data>
+  <data name="DeleteDeviceLinkCredential" xml:space="preserve">
+      <value>Delete Credential</value>
+  </data>
+  <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
+      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to unadd the authentication method in the desktop application first.</value>
   </data>
 </root>

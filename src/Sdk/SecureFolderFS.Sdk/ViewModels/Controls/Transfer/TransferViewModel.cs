@@ -114,10 +114,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             }
             else if (_cts is not null)
             {
-                CanCancel = false;
-                Title = "Cancelling".ToLocalized();
-                await _cts.CancelAsync();
-                await this.HideAsync();
+                try
+                {
+                    CanCancel = false;
+                    Title = "Cancelling".ToLocalized();
+                    await _cts.CancelAsync();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // CTS was already disposed, just hide
+                    await this.HideAsync();
+                }
             }
         }
     }

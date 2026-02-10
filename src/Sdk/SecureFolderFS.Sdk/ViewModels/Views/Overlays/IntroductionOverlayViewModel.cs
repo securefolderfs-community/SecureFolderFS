@@ -29,16 +29,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             TaskCompletion = new();
         }
 
-        public void Next()
+        public bool Next()
         {
-            if (CurrentIndex < SlidesCount - 1)
-                CurrentIndex++;
+            if (CurrentIndex >= SlidesCount - 1)
+                return false;
+
+            CurrentIndex++;
+            return true;
         }
 
-        public void Previous()
+        public bool Previous()
         {
-            if (CurrentIndex > 0)
-                CurrentIndex--;
+            if (CurrentIndex <= 0)
+                return false;
+
+            CurrentIndex--;
+            return true;
         }
 
         [RelayCommand]

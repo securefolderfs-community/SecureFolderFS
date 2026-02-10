@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.PhoneLink.Models;
 using SecureFolderFS.Sdk.PhoneLink.Services;
 using SecureFolderFS.Sdk.PhoneLink.ViewModels;
@@ -87,8 +88,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task DeleteCredentialAsync(CredentialViewModel credential)
+        private async Task DeleteCredentialAsync(CredentialViewModel? credential)
         {
+            if (string.IsNullOrEmpty(credential?.Id))
+                return;
+
+            var messageOverlay = new MessageOverlayViewModel()
+            {
+                Title = "DeleteDeviceLinkCredential".ToLocalized(),
+                Message = "DeleteDeviceLinkCredentialWarning".ToLocalized(credential.DisplayName),
+                PrimaryText = "Confirm".ToLocalized(),
+                SecondaryText = "Cancel".ToLocalized(),
+            };
+
+            var result = await OverlayService.ShowAsync(messageOverlay);
+            if (!result.Positive())
+                return;
+
             await _credentialsStoreModel.DeleteCredentialAsync(credential.Id);
             Credentials.Remove(credential);
         }

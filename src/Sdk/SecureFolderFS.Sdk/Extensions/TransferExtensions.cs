@@ -83,7 +83,8 @@ namespace SecureFolderFS.Sdk.Extensions
         public static async Task PerformOperationAsync(this TransferViewModel transferViewModel, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
         {
             var uiShown = false;
-            var showUiCts = new CancellationTokenSource();
+            var isCompleted = false;
+            using var showUiCts = new CancellationTokenSource();
 
             try
             {
@@ -91,7 +92,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 {
                     TransferType.Save => "Saving".ToLocalized(),
                     TransferType.Load => "Loading".ToLocalized(),
-                    _ => string.Empty,
+                    _ => string.Empty
                 };
                 transferViewModel.CanCancel = cancellationToken != CancellationToken.None;
                 transferViewModel.IsProgressing = true;
@@ -100,15 +101,14 @@ namespace SecureFolderFS.Sdk.Extensions
                 _ = ShowUiAfterDelayAsync(500, showUiCts.Token);
 
                 // Run the operation and wait for it to complete
-                var operationTask = operation(cancellationToken);
-                await operationTask;
+                await operation(cancellationToken);
 
                 // Cancel the delayed UI show if operation completed quickly
                 await showUiCts.CancelAsync();
                 if (uiShown)
                 {
                     transferViewModel.Title = "TransferDone".ToLocalized();
-                    await Task.Delay(300); // Allow user to see the "Done" message
+                    await Task.Delay(300, showUiCts.Token); // Allow user to see the "Done" message
                 }
             }
             catch (OperationCanceledException)
@@ -122,7 +122,7 @@ namespace SecureFolderFS.Sdk.Extensions
             }
             finally
             {
-                showUiCts.Dispose();
+                isCompleted = true;
                 await HideAsync(transferViewModel);
             }
 
@@ -133,6 +133,9 @@ namespace SecureFolderFS.Sdk.Extensions
                 try
                 {
                     await Task.Delay(delayMs, ct);
+                    if (isCompleted)
+                        return;
+
                     uiShown = true;
                     transferViewModel.IsVisible = true;
                 }

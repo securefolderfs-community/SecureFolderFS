@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Popups
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            return CloseAsync();
+            return this.CloseOverlayAsync();
         }
 
         public PropertiesOverlayViewModel? ViewModel
