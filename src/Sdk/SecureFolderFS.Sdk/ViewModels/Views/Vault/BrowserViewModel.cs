@@ -47,6 +47,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         public INavigator? OuterNavigator { get; }
 
+        /// <summary>
+        /// Gets the thumbnail cache for this browser instance.
+        /// </summary>
+        public ThumbnailCacheModel ThumbnailCache { get; }
+
         [Obsolete("Use FileSystemOptions instead.")]
         public IVFSRoot? StorageRoot { get; init; }
 
@@ -61,6 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;
             Options = options;
+            ThumbnailCache = new();
             Breadcrumbs = [ new(rootView?.Title, NavigateBreadcrumbCommand) ];
         }
 

@@ -13,6 +13,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -47,8 +48,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return;
 
             var typeHint = FileTypeHelper.GetTypeHint(File);
-            if (typeHint is TypeHint.Image or TypeHint.Media)
-                Thumbnail = await MediaService.TryGenerateThumbnailAsync(File, cancellationToken: cancellationToken);
+            if (typeHint is not (TypeHint.Image or TypeHint.Media))
+                return;
+
+            // Try to get from cache first
+            var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(File, cancellationToken);
+            if (cachedStream is not null)
+            {
+                Thumbnail = new StreamImageModel(cachedStream);
+                return;
+            }
+
+            // Generate new thumbnail
+            var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, typeHint, cancellationToken);
+            if (generatedThumbnail is null)
+                return;
+
+            // Cache the generated thumbnail
+            await BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
+
+            Thumbnail = generatedThumbnail;
         }
 
         /// <inheritdoc/>

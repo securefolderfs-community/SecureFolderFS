@@ -90,10 +90,7 @@ namespace SecureFolderFS.Storage.Extensions
                 return 0L;
 
             var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken).ConfigureAwait(false);
-            if (sizeProperty is null)
-                return 0L;
-
-            return sizeProperty.Value;
+            return sizeProperty?.Value ?? 0L;
         }
     }
 }
