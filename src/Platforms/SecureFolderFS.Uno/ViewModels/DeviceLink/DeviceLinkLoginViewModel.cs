@@ -24,10 +24,9 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var dataModel = await GetConfigurationAsync(cancellationToken);
-            
             try
             {
+                var dataModel = await GetConfigurationAsync(cancellationToken);
                 var keyResult = await AcquireAsync(VaultId, dataModel.Challenge, cancellationToken);
                 if (!keyResult.TryGetValue(out var key))
                 {
