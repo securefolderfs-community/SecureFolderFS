@@ -1,3 +1,4 @@
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Helpers
@@ -11,6 +12,11 @@ namespace SecureFolderFS.Maui.Helpers
         /// Gets the singleton instance of <see cref="MauiThemeHelper"/>.
         /// </summary>
         public static MauiThemeHelper Instance => _Instance ??= new();
+
+        /// <summary>
+        /// Gets the actual theme of the application as defined in <see cref="ThemeType"/>.
+        /// </summary>
+        public ThemeType ActualTheme => (ThemeType)Application.Current!.RequestedTheme;
 
         /// <inheritdoc/>
         protected override void UpdateTheme()

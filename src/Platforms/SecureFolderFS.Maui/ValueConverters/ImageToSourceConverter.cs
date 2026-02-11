@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 ImageIcon iconImage => new FontImageSource()
                 {
                     Glyph = GetDescription(iconImage.MauiIcon.Icon),
-                    Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                    Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                     {
                         ThemeType.Light => "QuarternaryLightColor",
                         _ => "QuarternaryDarkColor"

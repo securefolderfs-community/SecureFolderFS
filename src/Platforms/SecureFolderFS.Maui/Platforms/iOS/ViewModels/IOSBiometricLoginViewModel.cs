@@ -34,7 +34,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             try
             {
+                IsAuthenticated = false;
                 var keyResult = await AcquireAsync(VaultId, auth.CiphertextKey, cancellationToken);
+                IsAuthenticated = true;
+                
                 if (!keyResult.TryGetValue(out var keyMaterial))
                 {
                     Report(keyResult);

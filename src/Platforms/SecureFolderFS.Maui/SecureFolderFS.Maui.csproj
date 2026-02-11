@@ -127,9 +127,13 @@
     <PackageReference Include="Plugin.Maui.BottomSheet" />
     <PackageReference Include="Plugin.SegmentedControl.Maui" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.Skottie" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.GoogleDrive\SecureFolderFS.Sdk.GoogleDrive.csproj" />

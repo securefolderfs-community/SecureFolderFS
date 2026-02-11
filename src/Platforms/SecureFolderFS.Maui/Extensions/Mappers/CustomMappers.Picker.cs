@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                     : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
                 shape.Paint.StrokeWidth = 0;
                 shape.Paint.SetStyle(Paint.Style.FillAndStroke);
-                handler.PlatformView.SetTextColor((App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                handler.PlatformView.SetTextColor((App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "QuarternaryDarkColor",
                     _ => "QuarternaryLightColor"
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                     : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
 
                 // Set text color
-                uiTextField.TextColor = (App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                uiTextField.TextColor = (App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "PrimaryContrastingDarkColor",
                     _ => "PrimaryContrastingLightColor"

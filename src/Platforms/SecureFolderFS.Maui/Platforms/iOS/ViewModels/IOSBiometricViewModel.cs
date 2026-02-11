@@ -1,8 +1,9 @@
+using System.ComponentModel;
 using System.Security.Cryptography;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Foundation;
 using LocalAuthentication;
 using OwlCore.Storage;
-using SecureFolderFS.Core;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -13,10 +14,13 @@ using Security;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 {
-    internal abstract class IOSBiometricViewModel : AuthenticationViewModel
+    [Bindable(true)]
+    internal abstract partial class IOSBiometricViewModel : AuthenticationViewModel
     {
         private const string KEY_ALIAS_PREFIX = "securefolderfs_biometric_ios_";
         private const SecKeyAlgorithm ALGORITHM = SecKeyAlgorithm.EciesEncryptionStandardX963Sha256AesGcm;
+
+        [ObservableProperty] private bool _IsAuthenticated;
 
         /// <summary>
         /// Gets the unique ID of the vault.
@@ -35,7 +39,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         public IOSBiometricViewModel(IFolder vaultFolder, string vaultId, string title)
-            : base(Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
+            : base(Core.Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
         {
             Title = title;
             Description = "AuthenticateUsing".ToLocalized(Title);
