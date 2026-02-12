@@ -242,7 +242,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         protected static string GetMachineType()
         {
             if (OperatingSystem.IsWindows())
-                return "WindowsNT";
+                return "Windows";
             
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
                 return "MacOS";
