@@ -55,7 +55,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                         MobileDeviceId = pairingResult.MobileDeviceId,
                         MobileDeviceName = pairingResult.MobileDeviceName,
                         ExpectedHmac = key.Key,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTime.Now
                     }, cancellationToken);
                 
                 // Report that credentials were provided

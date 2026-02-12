@@ -42,6 +42,11 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         /// </summary>
         protected virtual string MachineName { get; }
 
+        /// <summary>
+        /// Gets the type of the machine, typically used to identify the kind of device for pairing processes.
+        /// </summary>
+        protected virtual string MachineType { get; }
+
         /// <inheritdoc/>
         public sealed override bool CanComplement { get; } = true;
 
@@ -53,6 +58,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             Title = "DeviceLink".ToLocalized();
             MachineName = Environment.MachineName;
+            MachineType = GetMachineType();
             VaultName = vaultFolder.Name;
             VaultFolder = vaultFolder;
             VaultId = vaultId;
@@ -76,7 +82,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             ArgumentNullException.ThrowIfNull(data);
             
-            using var deviceDiscovery = new DeviceDiscovery();
+            using var deviceDiscovery = new DeviceDiscovery(MachineName);
             var devices = await deviceDiscovery.DiscoverDevicesAsync(cancellationToken: cancellationToken);
             var discoveredDevice = devices.FirstOrDefault();
             if (discoveredDevice is null)
@@ -90,7 +96,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
             
             // Step 3: Send pairing request
-            var pairingRequest = ProtocolSerializer.CreatePairingRequest(MachineName, publicKey);
+            var pairingRequest = ProtocolSerializer.CreatePairingRequest(MachineName, MachineType, publicKey);
             await connectedDevice.SendMessageAsync(pairingRequest, cancellationToken);
 
             // Step 4: receive pairing response
@@ -143,7 +149,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             var dataModel = await GetConfigurationAsync(cancellationToken);
-            using var deviceDiscovery = new DeviceDiscovery();
+            using var deviceDiscovery = new DeviceDiscovery(MachineName);
 
             var tries = 0;
             while (!cancellationToken.IsCancellationRequested)
@@ -198,12 +204,9 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
             using var secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
             
-            // Step 3: Send authentication request with PERSISTENT CHALLENGE
-            // The persistent challenge is the same every time - mobile signs it
-            var persistentChallenge = dataModel.Challenge;
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            
-            var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, persistentChallenge, timestamp);
+            // Step 3: Send authentication request
+            var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp);
             var encryptedRequest = secureChannel.Encrypt(authRequest);
             await connectedDevice.SendMessageAsync(encryptedRequest, MessageType.SecureAuthRequest, cancellationToken);
 
@@ -234,6 +237,23 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             {
                 CredentialId = dataModel.CredentialId
             };
+        }
+
+        protected static string GetMachineType()
+        {
+            if (OperatingSystem.IsWindows())
+                return "WindowsNT";
+            
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+                return "MacOS";
+
+            if (OperatingSystem.IsAndroid())
+                return "Android";
+            
+            if (OperatingSystem.IsIOS())
+                return "iOS";
+            
+            return "Unknown";
         }
 
         /// <summary>

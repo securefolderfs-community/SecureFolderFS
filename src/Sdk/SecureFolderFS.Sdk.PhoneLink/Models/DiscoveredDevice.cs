@@ -35,7 +35,7 @@ public class DiscoveredDevice
     /// <summary>
     /// Time when the device was discovered.
     /// </summary>
-    public DateTime DiscoveredAt { get; init; } = DateTime.UtcNow;
+    public DateTime DiscoveredAt { get; init; } = DateTime.Now;
 
     public override string ToString() => $"{DeviceName} ({IpAddress}:{Port})";
 }

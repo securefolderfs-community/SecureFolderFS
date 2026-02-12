@@ -47,8 +47,7 @@
                         <Image
                             Aspect="AspectFit"
                             HeightRequest="72"
-                            Source="{AppThemeBinding Light='mbpro_light.png',
-                                                     Dark='mbpro_dark.png'}"
+                            Source="{Binding ViewModel.DesktopImage, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
                             WidthRequest="100" />
                     </Border>
 
@@ -107,8 +106,10 @@
                         <Image
                             Aspect="AspectFit"
                             HeightRequest="72"
-                            Source="{AppThemeBinding Light='iphone_light.png',
-                                                     Dark='iphone_dark.png'}"
+                            Source="{AppThemeBinding Light={OnPlatform Android='gpixel_light.png',
+                                                                       iOS='iphone_light.png'},
+                                                     Dark={OnPlatform Android='gpixel_dark.png',
+                                                                      iOS='iphone_dark.png'}}"
                             WidthRequest="40" />
                     </Border>
                 </Grid>

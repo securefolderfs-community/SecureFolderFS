@@ -8,12 +8,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
     {
         [ObservableProperty] private string _VaultName;
         [ObservableProperty] private string _DesktopName;
+        [ObservableProperty] private string _DesktopType;
         [ObservableProperty] private string _CredentialName;
 
-        public AuthenticationRequestModel(string vaultName, string desktopName, string credentialName)
+        public AuthenticationRequestModel(string vaultName, string desktopName, string desktopType, string credentialName)
         {
             VaultName = vaultName;
             DesktopName = desktopName;
+            DesktopType = desktopType;
             CredentialName = credentialName;
         }
     }

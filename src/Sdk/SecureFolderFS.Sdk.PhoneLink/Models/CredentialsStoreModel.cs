@@ -66,6 +66,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             string credentialId,
             string vaultName,
             string desktopName,
+            string desktopType,
             string pairingId,
             byte[] challenge,
             byte[] sessionSecret)
@@ -75,6 +76,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             credential.CredentialId = credentialId;
             credential.VaultName = vaultName;
             credential.MachineName = desktopName;
+            credential.MachineType = desktopType;
             credential.PairingId = pairingId;
             credential.Challenge = challenge;
 

@@ -192,8 +192,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
         #region Secure Pairing
 
-        private async Task HandlePairingRequestAsync(ConnectedDevice device, byte[] message,
-            CancellationToken cancellationToken)
+        private async Task HandlePairingRequestAsync(ConnectedDevice device, byte[] message, CancellationToken cancellationToken)
         {
             // Clean up any stale session state from previous operations
             CleanupSessionState();
@@ -203,7 +202,8 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             using var reader = new BinaryReader(ms);
 
             reader.ReadByte(); // Skip message type
-            var desktopName = reader.ReadString(); // Read desktop name
+            var desktopName = reader.ReadString();
+            var desktopType = reader.ReadString();
             var keyLength = reader.ReadInt32();
             var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
 
@@ -227,15 +227,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 _pairingConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
                 // Show the pairing request with verification code
-                PairingRequested?.Invoke(this, new PairingRequestViewModel(desktopName, string.Empty, verificationCode));
+                PairingRequested?.Invoke(this, new PairingRequestViewModel(desktopName, desktopType, string.Empty, verificationCode));
                 VerificationCodeReady?.Invoke(this, verificationCode);
 
                 // Wait for user confirmation on mobile (user confirms code matches)
                 bool userConfirmed;
-                using (cancellationToken.Register(() => _pairingConfirmationTcs.TrySetCanceled()))
-                {
+                await using (cancellationToken.Register(() => _pairingConfirmationTcs.TrySetCanceled()))
                     userConfirmed = await _pairingConfirmationTcs.Task;
-                }
 
                 if (!userConfirmed)
                 {
@@ -267,13 +265,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
                 var credential = new CredentialViewModel()
                 {
                     DisplayName = vaultName,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.Now
                 };
                 await _credentialStoreModel.EnrollCredentialAsync(
                     credential,
                     credentialId,
                     vaultName,
                     desktopName,
+                    desktopType,
                     pairingId,
                     challenge,
                     sharedSecret);
@@ -397,7 +396,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
                 // Validate timestamp (for replay protection)
                 var requestTime = DateTimeOffset.FromUnixTimeSeconds(timestamp);
-                var age = DateTimeOffset.UtcNow - requestTime;
+                var age = DateTimeOffset.Now - requestTime;
 
                 if (Math.Abs(age.TotalSeconds) > CHALLENGE_VALIDITY_SECONDS)
                 {
@@ -422,7 +421,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
                 // Create a TaskCompletionSource for user confirmation
                 _authConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.MachineName, _currentCredential.DisplayName);
+                var authInfo = new AuthenticationRequestModel(_currentCredential.VaultName, _currentCredential.MachineName, _currentCredential.MachineType, _currentCredential.DisplayName);
 
                 // Notify UI about auth request (could require biometric)
                 AuthenticationRequested?.Invoke(this, authInfo);

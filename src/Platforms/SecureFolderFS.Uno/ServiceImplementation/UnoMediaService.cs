@@ -24,6 +24,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoMediaService : IMediaService
     {
         /// <inheritdoc/>
+        public Task<IImage> GetImageFromResourceAsync(string resourceName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromException<IImage>(new NotSupportedException());
+        }
+
+        /// <inheritdoc/>
         public Task<IImage> GetImageFromUrlAsync(string url, CancellationToken cancellationToken = default)
         {
             return Task.FromException<IImage>(new NotSupportedException());

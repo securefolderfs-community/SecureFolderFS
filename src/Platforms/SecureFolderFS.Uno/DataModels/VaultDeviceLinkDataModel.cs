@@ -42,7 +42,7 @@ namespace SecureFolderFS.Uno.DataModels
         /// When the pairing was established.
         /// </summary>
         [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; init; } = DateTime.Now;
 
         /// <summary>
         /// Protocol version used during pairing.

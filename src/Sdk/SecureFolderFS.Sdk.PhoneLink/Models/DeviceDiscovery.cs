@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// </summary>
         public event EventHandler<DiscoveredDevice>? DeviceDiscovered;
 
-        public DeviceDiscovery(string desktopName = "SecureFolderFS Desktop")
+        public DeviceDiscovery(string desktopName)
         {
             _desktopName = desktopName;
         }

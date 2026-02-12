@@ -88,7 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task DeleteCredentialAsync(CredentialViewModel? credential)
+        private async Task DeleteCredentialAsync(CredentialViewModel? credential, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(credential?.Id))
                 return;
@@ -153,6 +153,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             await _synchronizationContext.PostOrExecuteAsync(async _ =>
             {
                 var overlayViewModel = new DeviceLinkRequestOverlayViewModel(deviceLinkService, e);
+                await overlayViewModel.InitAsync();
                 await OverlayService.ShowAsync(overlayViewModel);
             });
         }

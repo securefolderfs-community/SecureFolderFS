@@ -19,14 +19,14 @@ namespace SecureFolderFS.Maui.Prompts
             var page = Shell.Current.CurrentPage;
             if (ViewModel.SecondaryText is null)
             {
-                await page.DisplayAlert(
+                await page.DisplayAlertAsync(
                     ViewModel.Title,
                     ViewModel.Message,
                     ViewModel.PrimaryText);
                 return Result<DialogOption>.Success(DialogOption.Primary);
             }
 
-            var option = await page.DisplayAlert(
+            var option = await page.DisplayAlertAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 ViewModel.PrimaryText,

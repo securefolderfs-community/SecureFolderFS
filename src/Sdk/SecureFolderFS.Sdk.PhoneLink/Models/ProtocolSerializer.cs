@@ -106,13 +106,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
         #region Pairing
 
-        public static byte[] CreatePairingRequest(string machineName, byte[] ecdhPublicKey)
+        public static byte[] CreatePairingRequest(string machineName, string machineType, byte[] ecdhPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             writer.Write((byte)MessageType.PairingRequest);
             writer.Write(machineName);
+            writer.Write(machineType);
             writer.Write(ecdhPublicKey.Length);
             writer.Write(ecdhPublicKey);
 

@@ -38,22 +38,22 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_network_drive_macos.png", false) 
+                Icon = new ImageResourceFile("source_network_drive_macos.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_gdrive.png", false) 
+                Icon = new ImageResourceFile("source_gdrive.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.OneDrive", "OneDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_onedrive.png", false) 
+                Icon = new ImageResourceFile("source_onedrive.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.AmazonS3", "AmazonS3".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_aws_s3.png", false) 
+                Icon = new ImageResourceFile("source_aws_s3.png") 
             };
 
             await Task.CompletedTask;

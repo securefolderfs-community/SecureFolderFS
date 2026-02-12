@@ -1137,6 +1137,6 @@
       <value>Delete Credential</value>
   </data>
   <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
-      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to unadd the authentication method in the desktop application first.</value>
+      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
   </data>
 </root>

@@ -41,6 +41,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.ViewModels
         [JsonPropertyName("machineName")] [ObservableProperty] private string? _MachineName;
 
         /// <summary>
+        /// Type of the desktop device this credential is paired with.
+        /// </summary>
+        [JsonPropertyName("machineType")] [ObservableProperty] private string? _MachineType;
+
+        /// <summary>
         /// Unique pairing identifier shared with desktop.
         /// </summary>
         [JsonPropertyName("pairingId")] [ObservableProperty] private string? _PairingId;

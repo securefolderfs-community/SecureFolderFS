@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.AppModels
 
         public bool IsResource { get; }
 
-        public ImageResourceFile(string name, bool isResource)
+        public ImageResourceFile(string name, bool isResource = false)
         {
             Name = name;
             IsResource = isResource;
