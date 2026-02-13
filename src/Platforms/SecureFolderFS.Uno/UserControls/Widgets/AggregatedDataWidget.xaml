@@ -18,14 +18,14 @@
             <TextBlock Opacity="0.6" Text="{l:ResourceString Rid=TotalRead}" />
             <TextBlock
                 FontSize="22"
-                FontWeight="Bold"
+                FontWeight="SemiBold"
                 Text="{x:Bind TotalRead, Mode=OneWay}" />
         </StackPanel>
         <StackPanel Grid.Column="1">
             <TextBlock Opacity="0.6" Text="{l:ResourceString Rid=TotalWrite}" />
             <TextBlock
                 FontSize="22"
-                FontWeight="Bold"
+                FontWeight="SemiBold"
                 Text="{x:Bind TotalWrite, Mode=OneWay}" />
         </StackPanel>
     </Grid>

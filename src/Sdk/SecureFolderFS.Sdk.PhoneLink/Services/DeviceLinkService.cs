@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         public event EventHandler<PairingRequestViewModel>? PairingRequested;
 
         /// <inheritdoc/>
-        public event EventHandler<AuthenticationRequestModel>? AuthenticationRequested;
+        public event EventHandler<AuthenticationRequestViewModel>? AuthenticationRequested;
 
         /// <inheritdoc/>
         public event EventHandler<string>? VerificationCodeReady;
@@ -343,7 +343,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
             // Generate fresh ECDH keypair for this session (ephemeral)
             using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
             // Derive session secret using ECDH (transport security only)
             var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
@@ -360,7 +360,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
 
             // Send response with our ECDH public key
-            var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, myPublicKey);
+            var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, publicKey);
             await device.SendMessageAsync(response, cancellationToken);
         }
 
@@ -376,7 +376,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             try
             {
                 // Decrypt request
-                var encryptedPayload = message.AsSpan(1).ToArray();
+                var encryptedPayload = message.AsSpan(KeyTraits.MESSAGE_BYTE_LENGTH);
                 var decryptedPayload = session.SecureChannel.Decrypt(encryptedPayload);
 
                 // Parse request (persistent challenge from desktop)
@@ -415,7 +415,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
 
                 // Create a TaskCompletionSource for user confirmation
                 session.AuthConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var authInfo = new AuthenticationRequestModel(
+                var authInfo = new AuthenticationRequestViewModel(
                     session.CurrentCredential.VaultName,
                     session.CurrentCredential.MachineName,
                     session.CurrentCredential.MachineType,

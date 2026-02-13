@@ -1,6 +1,5 @@
 using System;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.Extensions
 {

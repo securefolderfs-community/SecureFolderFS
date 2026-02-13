@@ -243,13 +243,12 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 throw new InvalidOperationException("Unexpected response received during authentication.");
 
             // Decrypt response
-            var responsePayload = encryptedResponse.AsSpan(1).ToArray();
+            var responsePayload = encryptedResponse.AsSpan(Sdk.PhoneLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
             var decryptedHmac = secureChannel.Decrypt(responsePayload);
 
             // Step 5: Verify HMAC matches expected value
             var expectedHmac = dataModel.ExpectedHmac;
             var isValid = CryptographicOperations.FixedTimeEquals(decryptedHmac, expectedHmac);
-
             if (!isValid)
                 throw new CryptographicException("HMAC verification failed.");
             

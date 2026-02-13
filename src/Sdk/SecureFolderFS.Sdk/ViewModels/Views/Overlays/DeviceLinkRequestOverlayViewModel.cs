@@ -17,37 +17,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IMediaService>]
     public sealed partial class DeviceLinkRequestOverlayViewModel : OverlayViewModel, IAsyncInitialize, IStagingView
     {
-        private readonly AuthenticationRequestModel _requestModel;
+        private readonly AuthenticationRequestViewModel _requestViewModel;
 
         [ObservableProperty] private IImage? _DesktopImage;
         [ObservableProperty] private string? _CredentialName;
         [ObservableProperty] private string? _RemoteDeviceName;
 
-        public DeviceLinkRequestOverlayViewModel(AuthenticationRequestModel requestModel)
+        public DeviceLinkRequestOverlayViewModel(AuthenticationRequestViewModel requestViewModel)
         {
             ServiceProvider = DI.Default;
-            _requestModel = requestModel;
-            RemoteDeviceName = requestModel.DesktopName;
-            CredentialName = "CredentialUsed".ToLocalized(requestModel.CredentialName);
+            _requestViewModel = requestViewModel;
+            RemoteDeviceName = requestViewModel.DesktopName;
+            CredentialName = "CredentialUsed".ToLocalized(requestViewModel.CredentialName);
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            DesktopImage = await MediaService.GetImageFromResourceAsync($"{_requestModel.DesktopType}_Device", cancellationToken);
+            DesktopImage = await MediaService.GetImageFromResourceAsync($"{_requestViewModel.DesktopType}_Device", cancellationToken);
         }
 
         [RelayCommand]
         public Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
-            _requestModel.Confirm(true);
+            _requestViewModel.Confirm(true);
             return Task.FromResult<IResult>(Result.Success);
         }
 
         [RelayCommand]
         public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            _requestModel.Confirm(false);
+            _requestViewModel.Confirm(false);
             return Task.FromResult<IResult>(Result.Success);
         }
     }

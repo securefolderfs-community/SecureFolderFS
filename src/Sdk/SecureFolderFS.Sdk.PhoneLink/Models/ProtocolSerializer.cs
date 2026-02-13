@@ -166,6 +166,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             credentialId = reader.ReadString();
             vaultName = reader.ReadString();
             pairingId = reader.ReadString();
+
             var challengeLength = reader.ReadInt32();
             challenge = reader.ReadBytes(challengeLength);
         }
@@ -180,7 +181,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             return reader.ReadBytes(hmacLength);
         }
 
-        public static byte[] CreatePairingComplete(byte[] hmacResult)
+        public static byte[] CreatePairingComplete(ReadOnlySpan<byte> hmacResult)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -196,7 +197,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
         #region Secure Session
 
-        public static byte[] CreateSecureSessionRequest(string pairingId, byte[] nonce, byte[] ecdhPublicKey)
+        public static byte[] CreateSecureSessionRequest(string pairingId, ReadOnlySpan<byte> nonce, ReadOnlySpan<byte> ecdhPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -225,7 +226,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             ecdhPublicKey = reader.ReadBytes(keyLength);
         }
 
-        public static byte[] CreateSecureSessionAccepted(byte[] nonce, byte[] ecdhPublicKey)
+        public static byte[] CreateSecureSessionAccepted(ReadOnlySpan<byte> nonce, ReadOnlySpan<byte> ecdhPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -245,16 +246,16 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
         /// <summary>
         /// Creates auth request for challenge-sign model.
-        /// Sends the persistent challenge for mobile to sign.
+        /// Sends the challenge for mobile to sign.
         /// </summary>
-        public static byte[] CreateSecureAuthRequest(string credentialId, byte[] persistentChallenge, long timestamp)
+        public static byte[] CreateSecureAuthRequest(string credentialId, ReadOnlySpan<byte> challenge, long timestamp)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             writer.Write(credentialId);
-            writer.Write(persistentChallenge.Length);
-            writer.Write(persistentChallenge);
+            writer.Write(challenge.Length);
+            writer.Write(challenge);
             writer.Write(timestamp);
 
             return ms.ToArray();

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
     {
         event EventHandler<CredentialViewModel>? EnrollmentCompleted;
         event EventHandler<PairingRequestViewModel>? PairingRequested;
-        event EventHandler<AuthenticationRequestModel>? AuthenticationRequested;
+        event EventHandler<AuthenticationRequestViewModel>? AuthenticationRequested;
         event EventHandler<string>? VerificationCodeReady;
         event EventHandler? Disconnected;
         event EventHandler? AuthenticationCompleted;

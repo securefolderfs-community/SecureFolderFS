@@ -153,7 +153,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             await _deviceLinkService.StartListeningAsync();
         }
 
-        private async void DeviceLink_AuthenticationRequested(object? sender, AuthenticationRequestModel e)
+        private async void DeviceLink_AuthenticationRequested(object? sender, AuthenticationRequestViewModel e)
         {
             await _synchronizationContext.PostOrExecuteAsync(async _ =>
             {

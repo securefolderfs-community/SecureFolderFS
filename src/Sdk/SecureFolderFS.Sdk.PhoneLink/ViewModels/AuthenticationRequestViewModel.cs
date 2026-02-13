@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace SecureFolderFS.Sdk.PhoneLink.Models
 {
     [Bindable(true)]
-    public sealed partial class AuthenticationRequestModel : ObservableObject
+    public sealed partial class AuthenticationRequestViewModel : ObservableObject
     {
         [ObservableProperty] private string _VaultName;
         [ObservableProperty] private string _DesktopName;
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// </summary>
         public TaskCompletionSource<bool>? ConfirmationTcs { get; }
 
-        public AuthenticationRequestModel(string vaultName, string desktopName, string desktopType, string credentialName, TaskCompletionSource<bool>? confirmationTcs = null)
+        public AuthenticationRequestViewModel(string vaultName, string desktopName, string desktopType, string credentialName, TaskCompletionSource<bool>? confirmationTcs = null)
         {
             VaultName = vaultName;
             DesktopName = desktopName;
