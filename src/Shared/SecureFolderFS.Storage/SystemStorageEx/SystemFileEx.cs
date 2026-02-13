@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Storage.StorageProperties;
 using SecureFolderFS.Storage.SystemStorageEx.StorageProperties;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Storage.SystemStorageEx
 {

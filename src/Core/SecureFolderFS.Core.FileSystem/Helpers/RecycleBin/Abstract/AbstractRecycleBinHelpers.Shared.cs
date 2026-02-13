@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 : (IFile)item;
 
             // Read configuration file
-            await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
+            await using var configurationStream = await configurationFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
 
             // Deserialize configuration
             var deserialized = await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);

@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.StorageProperties;
 using System;
@@ -54,7 +55,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="string"/> that contains text found in the file.</returns>
         public static async Task<string> ReadAllTextAsync(this IFile file, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
-            await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             using var streamReader = new StreamReader(fileStream, encoding ?? Encoding.UTF8);
 
             return await streamReader.ReadToEndAsync(cancellationToken);
@@ -72,6 +73,36 @@ namespace SecureFolderFS.Storage.Extensions
             {
                 return null;
             }
+        }
+
+        /// <param name="shareMode">The <see cref="FileShare"/> value that informs what sharing permissions between consumers should be applied.</param>
+        /// <returns>If successful, returns a <see cref="Stream"/>; otherwise null.</returns>
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileShare shareMode, FileAccess access, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await file.OpenStreamAsync(access, shareMode, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        /// <param name="shareMode">The <see cref="FileShare"/> value that informs what sharing permissions between consumers should be applied.</param>
+        public static async Task<Stream> OpenStreamAsync(this IFile file, FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
+        {
+            if (file is SystemFile systemFile)
+                return systemFile.Info.Open(new FileStreamOptions()
+                {
+                    Access = accessMode,
+                    Share = shareMode,
+                    Options = FileOptions.Asynchronous
+                });
+
+            return await file.OpenStreamAsync(accessMode, cancellationToken);
         }
 
         /// <summary>

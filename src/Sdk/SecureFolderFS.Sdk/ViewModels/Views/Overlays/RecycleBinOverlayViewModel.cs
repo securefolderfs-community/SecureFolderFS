@@ -257,13 +257,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                     {
                         foreach (var newItem in e.NewItems.OfType<IStorable>())
                         {
+                            // Skip configuration files
+                            if (newItem.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                                continue;
+
                             // Skip if item already exists in collection
                             if (Items.Any(x => x.Inner.Id == newItem.Id))
                                 continue;
 
-                            // Skip configuration files
-                            if (newItem.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                                continue;
+                            await Task.Delay(200); // Delay to ensure the item is fully available
 
                             // Get the recycle bin item wrapper
                             await foreach (var item in _recycleBin.GetItemsAsync())
@@ -276,6 +278,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                             }
                         }
 
+                        // Update size bar after changes
+                        await UpdateSizesAsync(false);
                         break;
                     }
 
@@ -288,12 +292,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                                 Items.Remove(existingItem);
                         }
 
+                        // Update size bar after changes
+                        await UpdateSizesAsync(false);
                         break;
                     }
                 }
-
-                // Update size bar after changes
-                await UpdateSizesAsync(false);
             }
         }
 

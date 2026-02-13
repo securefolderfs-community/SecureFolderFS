@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                         var fileInfo = new FileInfo(file);
                         return localTotal + fileInfo.Length;
                     }
-                    catch
+                    catch (Exception)
                     {
                         // Ignore errors (e.g., access denied)
                         return localTotal;
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
         public static long GetOccupiedSize(FileSystemSpecifics specifics)
         {
             var configPath = Path.Combine(specifics.ContentFolder.Id, Constants.Names.RECYCLE_BIN_NAME, Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME);
-            using var configStream = specifics.Options.IsReadOnly ? File.OpenRead(configPath) : (!File.Exists(configPath) ? File.Create(configPath) : File.OpenRead(configPath));
+            using var configStream = File.Open(configPath, specifics.Options.IsReadOnly ? FileMode.Open : FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
             using var streamReader = new StreamReader(configStream);
 
             var text = streamReader.ReadToEnd();

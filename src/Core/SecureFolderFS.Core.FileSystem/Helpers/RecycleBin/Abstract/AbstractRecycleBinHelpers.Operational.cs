@@ -191,22 +191,23 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Create configuration file
             var configurationFile = await renamableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-            await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
+            await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
+            {
+                // Serialize configuration data model
+                await using var serializedStream = await streamSerializer.SerializeAsync(
+                    new RecycleBinItemDataModel()
+                    {
+                        OriginalName = item.Name,
+                        ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
+                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DeletionTimestamp = DateTime.Now,
+                        Size = sizeHint
+                    }, cancellationToken);
 
-            // Serialize configuration data model
-            await using var serializedStream = await streamSerializer.SerializeAsync(
-                new RecycleBinItemDataModel()
-                {
-                    OriginalName = item.Name,
-                    ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
-                    DirectoryId = directoryIdResult ? directoryId : [],
-                    DeletionTimestamp = DateTime.Now,
-                    Size = sizeHint
-                }, cancellationToken);
-
-            // Write to destination stream
-            await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-            await configurationStream.FlushAsync(cancellationToken);
+                // Write to destination stream
+                await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+                await configurationStream.FlushAsync(cancellationToken);
+            }
 
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())

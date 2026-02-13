@@ -68,22 +68,23 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             Directory.Move(ciphertextPath, destinationPath);
 
             // Create configuration file
-            using var configurationStream = File.Create($"{destinationPath}.json");
+            using (var configurationStream = File.Create($"{destinationPath}.json"))
+            {
+                // Serialize configuration data model
+                using var serializedStream = StreamSerializer.Instance.SerializeAsync(
+                    new RecycleBinItemDataModel()
+                    {
+                        OriginalName = Path.GetFileName(ciphertextPath),
+                        ParentPath = Path.GetDirectoryName(ciphertextPath)?.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty,
+                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DeletionTimestamp = DateTime.Now,
+                        Size = sizeHint
+                    }).ConfigureAwait(false).GetAwaiter().GetResult();
 
-            // Serialize configuration data model
-            using var serializedStream = StreamSerializer.Instance.SerializeAsync(
-                new RecycleBinItemDataModel()
-                {
-                    OriginalName = Path.GetFileName(ciphertextPath),
-                    ParentPath = Path.GetDirectoryName(ciphertextPath)?.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty,
-                    DirectoryId = directoryIdResult ? directoryId : [],
-                    DeletionTimestamp = DateTime.Now,
-                    Size = sizeHint
-                }).ConfigureAwait(false).GetAwaiter().GetResult();
-
-            // Write to destination stream
-            serializedStream.CopyTo(configurationStream);
-            serializedStream.Flush();
+                // Write to destination stream
+                serializedStream.CopyTo(configurationStream);
+                serializedStream.Flush();
+            }
 
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())
