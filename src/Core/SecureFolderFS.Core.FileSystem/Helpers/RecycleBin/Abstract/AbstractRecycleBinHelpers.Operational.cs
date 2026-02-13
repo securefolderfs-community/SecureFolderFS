@@ -109,21 +109,52 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
         }
 
+        /// <summary>
+        /// The threshold in seconds for detecting recently created files.
+        /// Files created within this threshold will be deleted immediately instead of recycled.
+        /// This helps work around macOS Finder behavior during copy operations.
+        /// </summary>
+        private const double RECENT_FILE_THRESHOLD_SECONDS = 5.0;
+
         public static async Task DeleteOrRecycleAsync(
             IModifiableFolder sourceFolder,
             IStorableChild item,
             FileSystemSpecifics specifics,
             IAsyncSerializer<Stream> streamSerializer,
             long sizeHint = -1L,
+            bool deleteImmediately = false,
             CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            if (!specifics.Options.IsRecycleBinEnabled())
+            if (!specifics.Options.IsRecycleBinEnabled() || deleteImmediately)
             {
                 await sourceFolder.DeleteAsync(item, cancellationToken);
                 return;
+            }
+
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            {
+                var parentFolder = await item.GetParentAsync(cancellationToken);
+                if (parentFolder is not null)
+                {
+                    var plaintextName = await AbstractPathHelpers.DecryptNameAsync(item.Name, parentFolder, specifics, cancellationToken) ?? string.Empty;
+                    if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
+                    {
+                        // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
+                        await sourceFolder.DeleteAsync(item, cancellationToken);
+                        return;
+                    }
+                }
+
+                // Check if the file was recently created (likely part of a copy operation)
+                // On macOS, Finder creates files and immediately deletes them during copy operations
+                if (await IsRecentlyCreatedAsync(item, cancellationToken))
+                {
+                    await sourceFolder.DeleteAsync(item, cancellationToken);
+                    return;
+                }
             }
 
             // Get recycle bin
@@ -183,6 +214,24 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
                 var newSize = occupiedSize + sizeHint;
                 await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
+            }
+        }
+
+        private static async Task<bool> IsRecentlyCreatedAsync(IStorable storable, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var dateCreated = await storable.GetDateCreatedAsync(cancellationToken);
+                if (dateCreated == DateTime.MinValue)
+                    return false;
+
+                var timeSinceCreation = DateTime.UtcNow - dateCreated.ToUniversalTime();
+                return timeSinceCreation.TotalSeconds <= RECENT_FILE_THRESHOLD_SECONDS;
+            }
+            catch
+            {
+                // If we can't determine creation time, assume it's not recent
+                return false;
             }
         }
     }

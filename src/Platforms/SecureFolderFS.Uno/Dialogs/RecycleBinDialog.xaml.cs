@@ -89,5 +89,13 @@ namespace SecureFolderFS.Uno.Dialogs
             await ViewModel.UpdateSizesAsync(_previousOption is null || _previousOption.Id == "-1");
             _previousOption = ViewModel.CurrentSizeOption;
         }
+
+        private void RecycleBinListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel is null || sender is not ListView listView)
+                return;
+
+            ViewModel.IsSelecting = listView.SelectedItems.Count > 0;
+        }
     }
 }

@@ -65,9 +65,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [RelayCommand]
         private async Task RestoreAsync(CancellationToken cancellationToken)
         {
-            var items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
-            if (items.IsEmpty())
-                items = [ this ];
+            RecycleBinItemViewModel[] items;
+            if (ApplicationService.IsDesktop)
+            {
+                items = [this];
+            }
+            else
+            {
+                items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
+                if (items.IsEmpty())
+                    items = [this];
+            }
 
             IFolderPicker folderPicker = ApplicationService.IsDesktop
                 ? DI.Service<IFileExplorerService>()
@@ -89,9 +97,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [RelayCommand]
         private async Task DeletePermanentlyAsync(CancellationToken cancellationToken)
         {
-            var items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
-            if (items.IsEmpty())
-                items = [ this ];
+            RecycleBinItemViewModel[] items;
+            if (ApplicationService.IsDesktop)
+            {
+                items = [this];
+            }
+            else
+            {
+                items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
+                if (items.IsEmpty())
+                    items = [this];
+            }
 
             foreach (var item in items)
             {

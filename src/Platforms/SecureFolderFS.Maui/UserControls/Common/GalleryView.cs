@@ -92,34 +92,6 @@ namespace SecureFolderFS.Maui.UserControls.Common
             HeightRequest = height;
         }
 
-        private async void Recognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
-        {
-            switch (e.StatusType)
-            {
-                case GestureStatus.Running:
-                {
-                    _translateX = e.TotalX;
-                    _container.TranslationX = _translateX;
-                    break;
-                }
-
-                case GestureStatus.Canceled:
-                case GestureStatus.Completed:
-                {
-                    var threshold = Width / 4;
-
-                    if (_translateX > threshold && _previousView != null)
-                        await SwipeToPreviousAsync();
-                    else if (_translateX < -threshold && _nextView != null)
-                        await SwipeToNextAsync();
-                    else
-                        await ResetPositionAsync();
-
-                    break;
-                }
-            }
-        }
-
         public async Task SwipeToPreviousAsync()
         {
             await _container.TranslateToAsync(Width, 0, 225U, Easing.CubicOut);
@@ -153,18 +125,46 @@ namespace SecureFolderFS.Maui.UserControls.Common
             NextRequested?.Invoke(this, EventArgs.Empty);
             RefreshLayout();
         }
-
-        private async Task ResetPositionAsync()
-        {
-            await _container.TranslateToAsync(0, 0, 225U, Easing.CubicOut);
-        }
-
+        
         /// <inheritdoc/>
         protected override void OnSizeAllocated(double width, double height)
         {
             base.OnSizeAllocated(width, height);
             _container.WidthRequest = width * 3;
             _container.TranslationX = 0;
+        }
+
+        private async Task ResetPositionAsync()
+        {
+            await _container.TranslateToAsync(0, 0, 225U, Easing.CubicOut);
+        }
+        
+        private async void Recognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Running:
+                {
+                    _translateX = e.TotalX;
+                    _container.TranslationX = _translateX;
+                    break;
+                }
+
+                case GestureStatus.Canceled:
+                case GestureStatus.Completed:
+                {
+                    var threshold = Width / 6;
+
+                    if (_translateX > threshold && _previousView != null)
+                        await SwipeToPreviousAsync();
+                    else if (_translateX < -threshold && _nextView != null)
+                        await SwipeToNextAsync();
+                    else
+                        await ResetPositionAsync();
+
+                    break;
+                }
+            }
         }
 
         /// <inheritdoc/>

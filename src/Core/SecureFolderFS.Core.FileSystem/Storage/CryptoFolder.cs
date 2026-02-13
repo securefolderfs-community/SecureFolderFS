@@ -112,7 +112,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             else
             {
                 // Delete or recycle the ciphertext item
-                await AbstractRecycleBinHelpers.DeleteOrRecycleAsync(modifiableFolder, ciphertextItem, specifics, StreamSerializer.Instance, sizeHint, cancellationToken);
+                await AbstractRecycleBinHelpers.DeleteOrRecycleAsync(modifiableFolder, ciphertextItem, specifics, StreamSerializer.Instance, sizeHint, cancellationToken: cancellationToken);
             }
 
             // Remove deleted directory from cache

@@ -205,9 +205,9 @@ namespace SecureFolderFS.UI.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromException<IFolderWatcher>(new NotSupportedException());
+            return await _recycleBin.GetFolderWatcherAsync(cancellationToken);
         }
     }
 }

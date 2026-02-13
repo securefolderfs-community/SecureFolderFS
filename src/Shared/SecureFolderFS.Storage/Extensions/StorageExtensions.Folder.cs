@@ -149,6 +149,19 @@ namespace SecureFolderFS.Storage.Extensions
             }
         }
 
+        /// <inheritdoc cref="IMutableFolder.GetFolderWatcherAsync"/>
+        public static async Task<IFolderWatcher?> TryGetFolderWatcherAsync(this IMutableFolder folder, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFolderWatcherAsync(cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)
         {
             if (folder is IStorableProperties storableProperties)

@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -24,10 +27,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
     [Inject<IRecycleBinService>, Inject<ISystemService>]
-    public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize
+    public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize, IDisposable
     {
+        private readonly SynchronizationContext? _synchronizationContext;
         private long _occupiedSize;
         private IRecycleBinFolder? _recycleBin;
+        private IFolderWatcher? _folderWatcher;
 
         [ObservableProperty] private bool _IsSelecting;
         [ObservableProperty] private bool _IsRecycleBinEnabled;
@@ -43,6 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
         {
             ServiceProvider = DI.Default;
+            _synchronizationContext = SynchronizationContext.Current;
             Items = new();
             Title = "RecycleBin".ToLocalized();
             SizeOptions = new();
@@ -90,6 +96,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
                 Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync(cancellationToken));
             }
+
+            // Dispose the old folder watcher if it exists
+            if (_folderWatcher is not null)
+            {
+                _folderWatcher.CollectionChanged -= FolderWatcher_CollectionChanged;
+                _folderWatcher.Dispose();
+            }
+
+            // Set up a folder watcher to dynamically update the collection
+            _folderWatcher = await _recycleBin.TryGetFolderWatcherAsync(cancellationToken);
+            if (_folderWatcher is not null)
+                _folderWatcher.CollectionChanged += FolderWatcher_CollectionChanged;
         }
 
         /// <summary>
@@ -160,6 +178,57 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             Items.UnselectAll();
         }
 
+        [RelayCommand]
+        private async Task RestoreSelectedAsync(IList<object>? selectedItems, CancellationToken cancellationToken)
+        {
+            if (_recycleBin is null || selectedItems is null || selectedItems.Count == 0)
+                return;
+
+            var items = selectedItems.OfType<RecycleBinItemViewModel>().ToArray();
+            if (items.Length == 0)
+                return;
+
+            var folderPicker = DI.Service<IFileExplorerService>();
+            if (await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken))
+            {
+                foreach (var item in items)
+                    Items.Remove(item);
+            }
+
+            ToggleSelectionCommand.Execute(false);
+            await UpdateSizesAsync(false, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task DeleteSelectedAsync(IList<object>? selectedItems, CancellationToken cancellationToken)
+        {
+            if (_recycleBin is null || selectedItems is null || selectedItems.Count == 0)
+                return;
+
+            var items = selectedItems.OfType<RecycleBinItemViewModel>().ToArray();
+            if (items.Length == 0)
+                return;
+
+            foreach (var item in items)
+            {
+                if (item.Inner is not IStorableChild innerChild)
+                    continue;
+
+                try
+                {
+                    await _recycleBin.DeleteAsync(innerChild, cancellationToken);
+                    Items.Remove(item);
+                }
+                catch (Exception ex)
+                {
+                    _ = ex;
+                }
+            }
+
+            ToggleSelectionCommand.Execute(false);
+            await UpdateSizesAsync(false, cancellationToken);
+        }
+
         private void UpdateSizeBar(PickerOptionViewModel? value)
         {
             if (value is not null && value.Id != "-1")
@@ -170,6 +239,72 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             }
             else
                 SpaceTakenText = null;
+        }
+
+        private async void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            await _synchronizationContext.PostOrExecuteAsync(async _ => await UpdateCollectionAsync());
+            return;
+
+            async Task UpdateCollectionAsync()
+            {
+                if (_recycleBin is null)
+                    return;
+
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add when e.NewItems is not null:
+                    {
+                        foreach (var newItem in e.NewItems.OfType<IStorable>())
+                        {
+                            // Skip if item already exists in collection
+                            if (Items.Any(x => x.Inner.Id == newItem.Id))
+                                continue;
+
+                            // Skip configuration files
+                            if (newItem.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                                continue;
+
+                            // Get the recycle bin item wrapper
+                            await foreach (var item in _recycleBin.GetItemsAsync())
+                            {
+                                if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.Inner.Id != newItem.Id)
+                                    continue;
+
+                                Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync());
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+
+                    case NotifyCollectionChangedAction.Remove when e.OldItems is not null:
+                    {
+                        foreach (var oldItem in e.OldItems.OfType<IStorable>())
+                        {
+                            var existingItem = Items.FirstOrDefault(x => x.Inner.Id == oldItem.Id);
+                            if (existingItem is not null)
+                                Items.Remove(existingItem);
+                        }
+
+                        break;
+                    }
+                }
+
+                // Update size bar after changes
+                await UpdateSizesAsync(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            if (_folderWatcher is not null)
+            {
+                _folderWatcher.CollectionChanged -= FolderWatcher_CollectionChanged;
+                _folderWatcher.Dispose();
+            }
         }
     }
 }

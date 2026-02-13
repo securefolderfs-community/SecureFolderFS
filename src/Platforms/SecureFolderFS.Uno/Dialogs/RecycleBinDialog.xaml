@@ -85,24 +85,55 @@
                 x:Name="ItemsView"
                 x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
                 Spacing="8">
-                <TextBlock
-                    FontSize="14"
-                    FontWeight="Semibold"
-                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
-                <ListView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" SelectionMode="Multiple">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        FontWeight="Semibold"
+                        Text="{l:ResourceString Rid=RecentlyDeleted}" />
+
+                    <StackPanel
+                        x:Name="SelectionActions"
+                        Grid.Column="1"
+                        x:Load="{x:Bind ViewModel.IsSelecting, Mode=OneWay}"
+                        Orientation="Horizontal"
+                        Spacing="4">
+                        <Button
+                            Command="{x:Bind ViewModel.RestoreSelectedCommand}"
+                            CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=Restore}" />
+                        <Button
+                            Command="{x:Bind ViewModel.DeleteSelectedCommand}"
+                            CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=DeleteImmediately}" />
+                    </StackPanel>
+                </Grid>
+
+                <ListView
+                    x:Name="RecycleBinListView"
+                    ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                    SelectionChanged="RecycleBinListView_SelectionChanged"
+                    SelectionMode="Multiple">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm2:RecycleBinItemViewModel">
                             <ucab:ActionBlockControl
+                                x:Name="Block"
                                 Title="{x:Bind Title, Mode=OneWay}"
                                 BlockMode="Default"
                                 Description="{x:Bind OriginalPath, Mode=OneWay}">
                                 <ucab:ActionBlockControl.ActionElement>
-                                    <Button>
+                                    <Button DataContext="{Binding DataContext, ElementName=Block}">
                                         <FontIcon Glyph="&#xE712;" />
                                         <Button.Flyout>
                                             <MenuFlyout>
-                                                <MenuFlyoutItem Command="{x:Bind RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
-                                                <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand}" Text="{l:ResourceString Rid=DeleteImmediately}" />
+                                                <MenuFlyoutItem Command="{x:Bind RestoreCommand, Mode=OneWay}" Text="{l:ResourceString Rid=Restore}" />
+                                                <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand, Mode=OneWay}" Text="{l:ResourceString Rid=DeleteImmediately}" />
                                             </MenuFlyout>
                                         </Button.Flyout>
                                     </Button>
