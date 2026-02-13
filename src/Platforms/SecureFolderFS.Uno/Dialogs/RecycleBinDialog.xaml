@@ -17,6 +17,58 @@
 
     <ContentDialog.Resources>
         <x:Double x:Key="ContentDialogMinWidth">600</x:Double>
+
+        <Style x:Key="RecycleBinItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+            <Setter Property="Background" Value="{ThemeResource ExpanderHeaderBackground}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter
+                            MinHeight="72"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Background="{ThemeResource ExpanderHeaderBackground}"
+                            BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+                            BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+                            CheckBoxBorderBrush="{ThemeResource ListViewItemCheckBoxBorderBrush}"
+                            CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                            CheckBoxCornerRadius="{ThemeResource ListViewItemCheckBoxCornerRadius}"
+                            CheckBoxDisabledBrush="{ThemeResource ListViewItemCheckBoxDisabledBrush}"
+                            CheckBoxPointerOverBorderBrush="{ThemeResource ListViewItemCheckBoxPointerOverBorderBrush}"
+                            CheckBoxPointerOverBrush="{ThemeResource ListViewItemCheckBoxPointerOverBrush}"
+                            CheckBoxPressedBorderBrush="{ThemeResource ListViewItemCheckBoxPressedBorderBrush}"
+                            CheckBoxPressedBrush="{ThemeResource ListViewItemCheckBoxPressedBrush}"
+                            CheckBoxSelectedBrush="{ThemeResource ListViewItemCheckBoxSelectedBrush}"
+                            CheckBoxSelectedDisabledBrush="{ThemeResource ListViewItemCheckBoxSelectedDisabledBrush}"
+                            CheckBoxSelectedPointerOverBrush="{ThemeResource ListViewItemCheckBoxSelectedPointerOverBrush}"
+                            CheckBoxSelectedPressedBrush="{ThemeResource ListViewItemCheckBoxSelectedPressedBrush}"
+                            CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                            CheckDisabledBrush="{ThemeResource ListViewItemCheckDisabledBrush}"
+                            CheckPressedBrush="{ThemeResource ListViewItemCheckPressedBrush}"
+                            ContentMargin="16,12"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            Control.IsTemplateFocusTarget="True"
+                            CornerRadius="{ThemeResource ControlCornerRadius}"
+                            DragBackground="{ThemeResource ListViewItemDragBackground}"
+                            DragForeground="{ThemeResource ListViewItemDragForeground}"
+                            FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                            FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                            PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                            PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                            PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                            SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                            SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                            SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                            SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                            SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </ContentDialog.Resources>
 
     <Grid RowSpacing="24">
@@ -40,10 +92,7 @@
                 <FontIcon Glyph="&#xE74D;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ExpanderContent>
-                <Grid
-                    Margin="0,-8"
-                    Padding="54,0,32,0"
-                    RowSpacing="12">
+                <Grid Margin="0,-8" Padding="52,0,32,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
@@ -76,15 +125,20 @@
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
+                        Margin="0,12,0,0"
                         VerticalAlignment="Center"
-                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                     <ProgressRing
                         Grid.Row="1"
                         Grid.Column="1"
                         Width="32"
                         Height="32"
+                        Margin="0,12,0,0"
                         VerticalAlignment="Center"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
                         IsIndeterminate="False"
+                        Visibility="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
@@ -124,18 +178,23 @@
                 <ListView
                     x:Name="RecycleBinListView"
                     Grid.Row="1"
+                    Margin="-4,0"
+                    ItemContainerStyle="{StaticResource RecycleBinItemStyle}"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                     SelectionChanged="RecycleBinListView_SelectionChanged"
                     SelectionMode="Multiple">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm2:RecycleBinItemViewModel">
-                            <ucab:ActionBlockControl
+                            <ucab:ActionBlockContentControl
                                 x:Name="Block"
                                 Title="{x:Bind Title, Mode=OneWay}"
-                                BlockMode="Default"
+                                Margin="-8,0,0,0"
                                 Description="{x:Bind OriginalPath, Mode=OneWay}">
-                                <ucab:ActionBlockControl.ActionElement>
-                                    <Button DataContext="{Binding DataContext, ElementName=Block}">
+                                <ucab:ActionBlockContentControl.ActionElement>
+                                    <Button
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        DataContext="{Binding DataContext, ElementName=Block}">
                                         <FontIcon Glyph="&#xE712;" />
                                         <Button.Flyout>
                                             <MenuFlyout>
@@ -144,8 +203,8 @@
                                             </MenuFlyout>
                                         </Button.Flyout>
                                     </Button>
-                                </ucab:ActionBlockControl.ActionElement>
-                            </ucab:ActionBlockControl>
+                                </ucab:ActionBlockContentControl.ActionElement>
+                            </ucab:ActionBlockContentControl>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

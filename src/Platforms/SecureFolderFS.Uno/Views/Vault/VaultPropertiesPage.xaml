@@ -28,7 +28,7 @@
                     <FontIcon Glyph="&#xE946;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
-                    <Grid Padding="54,0,32,0" ColumnSpacing="48">
+                    <Grid Padding="52,0,32,0" ColumnSpacing="48">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -101,7 +101,7 @@
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}"
                 Description="{l:ResourceString Rid=OpenRecycleBinDescription}"
-                Visibility="Collapsed">
+                Visibility="Visible">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE74D;" />
                 </ucab:ActionBlockControl.Icon>
