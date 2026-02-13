@@ -23,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class DeviceLinkCredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private DeviceLinkService? _deviceLinkService;
+        private PairingRequestViewModel? _pendingPairingRequest;
         private readonly CredentialsStoreModel _credentialsStoreModel;
         private readonly SynchronizationContext? _synchronizationContext;
         private bool _isInitialized;
@@ -76,14 +77,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private void AcceptPairing()
         {
-            _deviceLinkService?.ConfirmPairingRequest(true);
+            _pendingPairingRequest?.Confirm(true);
+            _pendingPairingRequest = null;
             IsAwaitingPairing = false;
         }
 
         [RelayCommand]
         private void RejectPairing()
         {
-            _deviceLinkService?.ConfirmPairingRequest(false);
+            _pendingPairingRequest?.Confirm(false);
+            _pendingPairingRequest = null;
             IsAwaitingPairing = false;
         }
 
@@ -133,6 +136,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             _deviceLinkService.PairingRequested += (_, info) =>
             {
+                _pendingPairingRequest = info;
                 IsAwaitingPairing = true;
                 VerificationCode = info.VerificationCode;
                 PendingDesktopName = info.DesktopName;
@@ -140,19 +144,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _deviceLinkService.AuthenticationRequested += DeviceLink_AuthenticationRequested;
             _deviceLinkService.VerificationCodeReady += (_, code) => VerificationCode = code;
             _deviceLinkService.EnrollmentCompleted += (_, credential) => Credentials.Add(credential);
-            _deviceLinkService.Disconnected += (_, _) => IsAwaitingPairing = false;
+            _deviceLinkService.Disconnected += (_, _) =>
+            {
+                _pendingPairingRequest = null;
+                IsAwaitingPairing = false;
+            };
 
             await _deviceLinkService.StartListeningAsync();
         }
 
         private async void DeviceLink_AuthenticationRequested(object? sender, AuthenticationRequestModel e)
         {
-            if (sender is not DeviceLinkService deviceLinkService)
-                return;
-
             await _synchronizationContext.PostOrExecuteAsync(async _ =>
             {
-                var overlayViewModel = new DeviceLinkRequestOverlayViewModel(deviceLinkService, e);
+                var overlayViewModel = new DeviceLinkRequestOverlayViewModel(e);
                 await overlayViewModel.InitAsync();
                 await OverlayService.ShowAsync(overlayViewModel);
             });

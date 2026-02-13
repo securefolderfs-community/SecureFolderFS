@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -148,22 +150,42 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         /// <inheritdoc/>
         public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
+            // Use shorter discovery timeout for faster retries
+            const int DISCOVERY_TIMEOUT_MS = 1500;
+            const int RETRY_DELAY_MS = 500;
+            const int MAX_TRIES = 5;
+            
             var dataModel = await GetConfigurationAsync(cancellationToken);
             using var deviceDiscovery = new DeviceDiscovery(MachineName);
 
-            var tries = 0;
-            while (!cancellationToken.IsCancellationRequested)
+            for (var tries = 0; tries < MAX_TRIES && !cancellationToken.IsCancellationRequested; tries++)
             {
-                tries++;
-                var devices = await deviceDiscovery.DiscoverDevicesAsync(cancellationToken: cancellationToken);
+                var devices = await deviceDiscovery.DiscoverDevicesAsync(DISCOVERY_TIMEOUT_MS, cancellationToken);
                 var discoveredDevice = devices.FirstOrDefault(d => d.DeviceId == dataModel.MobileDeviceId);
 
                 if (discoveredDevice is not null)
-                    return await AuthenticateMobileAsync(discoveredDevice, dataModel, cancellationToken);
+                {
+                    try
+                    {
+                        return await AuthenticateMobileAsync(discoveredDevice, dataModel, cancellationToken);
+                    }
+                    catch (IOException) when (tries < MAX_TRIES - 1)
+                    {
+                        // Connection failed, retry discovery
+                        await Task.Delay(RETRY_DELAY_MS, cancellationToken);
+                        continue;
+                    }
+                    catch (SocketException) when (tries < MAX_TRIES - 1)
+                    {
+                        // Connection failed, retry discovery
+                        await Task.Delay(RETRY_DELAY_MS, cancellationToken);
+                        continue;
+                    }
+                }
 
-                await Task.Delay(2000, cancellationToken);
-                if (tries >= 3)
-                    break;
+                // Short delay before retry
+                if (tries < MAX_TRIES - 1)
+                    await Task.Delay(RETRY_DELAY_MS, cancellationToken);
             }
 
             throw new TimeoutException("Timed out waiting for paired device.");
@@ -222,17 +244,16 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
             // Decrypt response
             var responsePayload = encryptedResponse.AsSpan(1).ToArray();
-            var decryptedResponse = secureChannel.Decrypt(responsePayload);
-            var receivedHmac = decryptedResponse;
+            var decryptedHmac = secureChannel.Decrypt(responsePayload);
 
             // Step 5: Verify HMAC matches expected value
             var expectedHmac = dataModel.ExpectedHmac;
-            var isValid = CryptographicOperations.FixedTimeEquals(receivedHmac, expectedHmac);
+            var isValid = CryptographicOperations.FixedTimeEquals(decryptedHmac, expectedHmac);
 
             if (!isValid)
                 throw new CryptographicException("HMAC verification failed.");
             
-            var managedHmac = ManagedKey.TakeOwnership(receivedHmac);
+            var managedHmac = ManagedKey.TakeOwnership(decryptedHmac);
             return new DeviceLinkAuthenticationResult(managedHmac)
             {
                 CredentialId = dataModel.CredentialId

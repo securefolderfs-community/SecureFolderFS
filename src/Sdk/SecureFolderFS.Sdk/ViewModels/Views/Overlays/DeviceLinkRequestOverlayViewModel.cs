@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.PhoneLink.Models;
-using SecureFolderFS.Sdk.PhoneLink.Services;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -18,17 +17,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IMediaService>]
     public sealed partial class DeviceLinkRequestOverlayViewModel : OverlayViewModel, IAsyncInitialize, IStagingView
     {
-        private readonly DeviceLinkService _deviceLinkService;
         private readonly AuthenticationRequestModel _requestModel;
 
         [ObservableProperty] private IImage? _DesktopImage;
         [ObservableProperty] private string? _CredentialName;
         [ObservableProperty] private string? _RemoteDeviceName;
 
-        public DeviceLinkRequestOverlayViewModel(DeviceLinkService deviceLinkService, AuthenticationRequestModel requestModel)
+        public DeviceLinkRequestOverlayViewModel(AuthenticationRequestModel requestModel)
         {
             ServiceProvider = DI.Default;
-            _deviceLinkService = deviceLinkService;
             _requestModel = requestModel;
             RemoteDeviceName = requestModel.DesktopName;
             CredentialName = "CredentialUsed".ToLocalized(requestModel.CredentialName);
@@ -43,14 +40,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         public Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
-            _deviceLinkService.ConfirmAuthentication(true);
+            _requestModel.Confirm(true);
             return Task.FromResult<IResult>(Result.Success);
         }
 
         [RelayCommand]
         public Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            _deviceLinkService.ConfirmAuthentication(false);
+            _requestModel.Confirm(false);
             return Task.FromResult<IResult>(Result.Success);
         }
     }

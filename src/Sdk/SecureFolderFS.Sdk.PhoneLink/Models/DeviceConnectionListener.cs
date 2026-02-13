@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +21,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         private readonly object _lock = new();
         private UdpClient? _udpClient;
         private TcpListener? _tcpListener;
-        private ConnectedDevice? _currentConnection;
         private CancellationTokenSource? _listenerCts;
         private bool _disposed;
 
@@ -27,6 +28,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         /// Event raised when a new connection is accepted.
         /// </summary>
         public event EventHandler<ConnectedDevice>? ConnectionAccepted;
+
+        /// <summary>
+        /// Event raised when the listener needs to be restarted (e.g., after network change).
+        /// </summary>
+        public event EventHandler? RestartRequested;
 
         /// <summary>
         /// Gets a value indicating whether the listener is currently active.
@@ -37,6 +43,45 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         {
             _deviceId = deviceId;
             _deviceName = deviceName;
+            NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+            NetworkChange.NetworkAddressChanged += OnNetworkAddressChanged;
+        }
+
+        private void OnNetworkAvailabilityChanged(object? sender, NetworkAvailabilityEventArgs e)
+        {
+            Debug.WriteLine($"Network availability changed: {e.IsAvailable}");
+            if (e.IsAvailable && !IsListening && !_disposed)
+            {
+                // Network became available and we're not listening - request restart
+                RestartRequested?.Invoke(this, EventArgs.Empty);
+            }
+            else if (!e.IsAvailable)
+            {
+                // Network lost - stop listening
+                StopListening();
+            }
+        }
+
+        private void OnNetworkAddressChanged(object? sender, EventArgs e)
+        {
+            Debug.WriteLine("Network address changed - restarting listener");
+            if (_disposed)
+                return;
+
+            // Network address changed (e.g., Wi-Fi switch) - restart listener
+            var wasListening = IsListening;
+            StopListening();
+
+            if (wasListening)
+            {
+                // Restart after a small delay to allow network to stabilize
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    if (!_disposed)
+                        RestartRequested?.Invoke(this, EventArgs.Empty);
+                });
+            }
         }
 
         /// <summary>
@@ -85,17 +130,13 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
                 SafetyHelpers.NoFailure(() => _udpClient?.Close());
                 SafetyHelpers.NoFailure(() => _tcpListener?.Stop());
 
-                CloseCurrentConnection();
-            }
-        }
+                SafetyHelpers.NoFailure(() => _listenerCts?.Dispose());
+                SafetyHelpers.NoFailure(() => _udpClient?.Dispose());
 
-        /// <summary>
-        /// Closes the current connection if any.
-        /// </summary>
-        public void CloseCurrentConnection()
-        {
-            var connection = Interlocked.Exchange(ref _currentConnection, null);
-            SafetyHelpers.NoFailure(() => connection?.Dispose());
+                _listenerCts = null;
+                _udpClient = null;
+                _tcpListener = null;
+            }
         }
 
         private async Task ListenForDiscoveryAsync(CancellationToken cancellationToken)
@@ -147,9 +188,6 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
 
                     var connectedDevice = ConnectedDevice.FromTcpClient(tcpClient);
 
-                    // Store and close previous connection if any
-                    var previousConnection = Interlocked.Exchange(ref _currentConnection, connectedDevice);
-                    SafetyHelpers.NoFailure(() => previousConnection?.Dispose());
 
                     // Notify subscribers about the new connection
                     ConnectionAccepted?.Invoke(this, connectedDevice);
@@ -183,12 +221,14 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
                 return;
 
             _disposed = true;
+
+            NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            NetworkChange.NetworkAddressChanged -= OnNetworkAddressChanged;
+
             StopListening();
 
-            SafetyHelpers.NoFailure(() => _listenerCts?.Dispose());
-            SafetyHelpers.NoFailure(() => _udpClient?.Dispose());
-
             ConnectionAccepted = null;
+            RestartRequested = null;
         }
     }
 }

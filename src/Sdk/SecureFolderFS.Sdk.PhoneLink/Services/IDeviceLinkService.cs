@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.PhoneLink.Models;
@@ -21,7 +20,5 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
         Task StartListeningAsync(CancellationToken cancellationToken = default);
 
         void StopListening();
-
-        void ConfirmPairingRequest(bool value);
     }
 }
