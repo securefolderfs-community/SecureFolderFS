@@ -7,9 +7,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.PhoneLink.Models;
-using SecureFolderFS.Sdk.PhoneLink.Services;
-using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Sdk.DeviceLink.Models;
+using SecureFolderFS.Sdk.DeviceLink.Services;
+using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
                 SettingsService.UserSettings.EnableDeviceLink = value;
                 OnPropertyChanged();
-                OnEnablePhoneLinkChanged(value);
+                OnEnableDeviceLinkChanged(value);
             }
         }
 
@@ -112,7 +112,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             Credentials.Remove(credential);
         }
 
-        private void OnEnablePhoneLinkChanged(bool newValue)
+        private void OnEnableDeviceLinkChanged(bool newValue)
         {
             // Only start/stop listener if already initialized (prevents double-start during init)
             if (_isInitialized)

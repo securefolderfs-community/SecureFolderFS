@@ -1,6 +1,6 @@
 using System;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models;
+namespace SecureFolderFS.Sdk.DeviceLink.Models;
 
 /// <summary>
 /// Represents a discovered mobile device.

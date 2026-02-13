@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SecureFolderFS.Sdk.PhoneLink.ViewModels
+namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
 {
     /// <summary>
     /// Represents a secure credential with an encrypted signing key.

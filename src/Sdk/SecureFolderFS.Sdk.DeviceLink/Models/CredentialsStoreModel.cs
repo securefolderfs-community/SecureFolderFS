@@ -6,12 +6,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using static SecureFolderFS.Sdk.PhoneLink.Constants;
+using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     public sealed class CredentialsStoreModel : IPersistable, IDisposable
     {
@@ -116,7 +116,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
                 sessionSecret,
                 32,
                 Encoding.UTF8.GetBytes(credentialId),
-                "PhoneLink-SigningKeyEncryption-v2"u8.ToArray());
+                "DeviceLink-SigningKeyEncryption-v2"u8.ToArray());
         }
 
         /// <summary>

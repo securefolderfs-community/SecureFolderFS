@@ -6,9 +6,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.Helpers;
-using static SecureFolderFS.Sdk.PhoneLink.Constants;
+using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     /// <summary>
     /// Handles both UDP discovery responses and TCP connection acceptance for the mobile device.

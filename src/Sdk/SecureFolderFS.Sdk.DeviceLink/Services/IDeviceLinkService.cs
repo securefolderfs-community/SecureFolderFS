@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.PhoneLink.Models;
-using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Sdk.DeviceLink.Models;
+using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Services
+namespace SecureFolderFS.Sdk.DeviceLink.Services
 {
     public interface IDeviceLinkService : IDisposable
     {

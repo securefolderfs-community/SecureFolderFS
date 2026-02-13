@@ -2,32 +2,32 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
 {
     [Bindable(true)]
-    public sealed partial class AuthenticationRequestViewModel : ObservableObject
+    public sealed partial class PairingRequestViewModel : ObservableObject
     {
-        [ObservableProperty] private string _VaultName;
         [ObservableProperty] private string _DesktopName;
         [ObservableProperty] private string _DesktopType;
-        [ObservableProperty] private string _CredentialName;
+        [ObservableProperty] private string _CredentialId;
+        [ObservableProperty] private string _VerificationCode;
 
         /// <summary>
-        /// The TaskCompletionSource to signal authentication confirmation result.
+        /// The TaskCompletionSource to signal pairing confirmation result.
         /// </summary>
         public TaskCompletionSource<bool>? ConfirmationTcs { get; }
 
-        public AuthenticationRequestViewModel(string vaultName, string desktopName, string desktopType, string credentialName, TaskCompletionSource<bool>? confirmationTcs = null)
+        public PairingRequestViewModel(string desktopName, string desktopType, string credentialId, string verificationCode, TaskCompletionSource<bool>? confirmationTcs = null)
         {
-            VaultName = vaultName;
             DesktopName = desktopName;
             DesktopType = desktopType;
-            CredentialName = credentialName;
+            CredentialId = credentialId;
+            VerificationCode = verificationCode;
             ConfirmationTcs = confirmationTcs;
         }
 
         /// <summary>
-        /// Confirms or rejects the authentication request.
+        /// Confirms or rejects the pairing request.
         /// </summary>
         /// <param name="confirmed">True to confirm, false to reject.</param>
         public void Confirm(bool confirmed)

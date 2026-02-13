@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.PhoneLink.Models;
+using SecureFolderFS.Sdk.DeviceLink.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;

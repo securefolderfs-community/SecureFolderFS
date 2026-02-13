@@ -11,9 +11,9 @@ using SecureFolderFS.Core;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.PhoneLink.Enums;
-using SecureFolderFS.Sdk.PhoneLink.Models;
-using SecureFolderFS.Sdk.PhoneLink.Results;
+using SecureFolderFS.Sdk.DeviceLink.Enums;
+using SecureFolderFS.Sdk.DeviceLink.Models;
+using SecureFolderFS.Sdk.DeviceLink.Results;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
@@ -243,7 +243,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 throw new InvalidOperationException("Unexpected response received during authentication.");
 
             // Decrypt response
-            var responsePayload = encryptedResponse.AsSpan(Sdk.PhoneLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
+            var responsePayload = encryptedResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
             var decryptedHmac = secureChannel.Decrypt(responsePayload);
 
             // Step 5: Verify HMAC matches expected value

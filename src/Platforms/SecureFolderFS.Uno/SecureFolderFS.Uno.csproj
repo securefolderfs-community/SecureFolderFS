@@ -48,7 +48,7 @@
   <!-- Project References -->
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
-    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.PhoneLink\SecureFolderFS.Sdk.PhoneLink.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />

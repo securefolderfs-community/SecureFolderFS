@@ -2,7 +2,7 @@ using System;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Results
+namespace SecureFolderFS.Sdk.DeviceLink.Results
 {
     public sealed class DeviceLinkPairingResult : Result<IKeyBytes>
     {

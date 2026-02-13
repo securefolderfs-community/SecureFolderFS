@@ -3,10 +3,10 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.PhoneLink.Enums;
+using SecureFolderFS.Sdk.DeviceLink.Enums;
 using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     public sealed class ConnectedDevice : IDisposable
     {

@@ -9,7 +9,7 @@ using SecureFolderFS.Core;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.PhoneLink.Results;
+using SecureFolderFS.Sdk.DeviceLink.Results;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Uno.DataModels;

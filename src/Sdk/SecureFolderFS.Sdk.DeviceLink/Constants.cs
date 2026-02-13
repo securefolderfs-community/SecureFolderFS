@@ -1,10 +1,10 @@
-namespace SecureFolderFS.Sdk.PhoneLink
+namespace SecureFolderFS.Sdk.DeviceLink
 {
     public static class Constants
     {
-        public static readonly byte[] DISCOVERY_MAGIC = "SFFS-PHONELINK"u8.ToArray();
-        public const string SECRETS_KEY_PREFIX = "PhoneLink_Secret_";
-        public const string DATA_SOURCE_PHONE_LINK = $"{nameof(SecureFolderFS)}.{nameof(PhoneLink)}";
+        public static readonly byte[] DISCOVERY_MAGIC = "SecureFolderFS-DeviceLink"u8.ToArray();
+        public const string SECRETS_KEY_PREFIX = "DeviceLink_Secret_";
+        public const string DATA_SOURCE_PHONE_LINK = $"{nameof(SecureFolderFS)}.{nameof(DeviceLink)}";
         public const byte PROTOCOL_VERSION = 1;
         public const int CHALLENGE_VALIDITY_SECONDS = 30;
         public const int COMMUNICATION_PORT = 41235;

@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     /// <summary>
     /// Holds per-connection session state to avoid conflicts between concurrent connections.

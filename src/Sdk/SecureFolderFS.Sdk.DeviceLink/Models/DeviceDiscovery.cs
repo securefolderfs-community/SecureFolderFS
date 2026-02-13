@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     /// <summary>
     /// Discovers mobile devices on the local network via UDP broadcast.

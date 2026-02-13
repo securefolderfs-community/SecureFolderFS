@@ -76,7 +76,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Core.WinFsp"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Cli", "src\Platforms\SecureFolderFS.Cli\SecureFolderFS.Cli.csproj", "{A9219707-C494-4D3B-8123-43652707B516}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.PhoneLink", "src\Sdk\SecureFolderFS.Sdk.PhoneLink\SecureFolderFS.Sdk.PhoneLink.csproj", "{85FE77EA-9F89-4F42-BD79-26C82F847DDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.DeviceLink", "src\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj", "{85FE77EA-9F89-4F42-BD79-26C82F847DDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

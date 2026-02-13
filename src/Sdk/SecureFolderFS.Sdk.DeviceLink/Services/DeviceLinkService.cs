@@ -5,13 +5,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.PhoneLink.Enums;
-using SecureFolderFS.Sdk.PhoneLink.Models;
-using SecureFolderFS.Sdk.PhoneLink.ViewModels;
+using SecureFolderFS.Sdk.DeviceLink.Enums;
+using SecureFolderFS.Sdk.DeviceLink.Models;
+using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Shared.Helpers;
-using static SecureFolderFS.Sdk.PhoneLink.Constants;
+using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Services
+namespace SecureFolderFS.Sdk.DeviceLink.Services
 {
     /// <inheritdoc cref="IDeviceLinkService"/>
     public sealed class DeviceLinkService : IDeviceLinkService
@@ -376,7 +376,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Services
             try
             {
                 // Decrypt request
-                var encryptedPayload = message.AsSpan(KeyTraits.MESSAGE_BYTE_LENGTH);
+                var encryptedPayload = message.AsSpan(Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
                 var decryptedPayload = session.SecureChannel.Decrypt(encryptedPayload);
 
                 // Parse request (persistent challenge from desktop)

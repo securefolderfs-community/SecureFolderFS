@@ -2,9 +2,9 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
-using static SecureFolderFS.Sdk.PhoneLink.Constants;
+using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     /// <summary>
     /// Provides an AES-256-GCM encrypted communication channel with replay protection.
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
                 sharedSecret,
                 32,
                 salt,
-                "PhoneLink-Encryption-v1"u8.ToArray());
+                "DeviceLink-Encryption-v1"u8.ToArray());
         }
 
         /// <summary>
@@ -48,23 +48,23 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         {
             ThrowIfDisposed();
 
-            using var aes = new AesGcm(_encryptionKey, KeyTraits.TAG_SIZE);
+            using var aes = new AesGcm(_encryptionKey, Constants.KeyTraits.TAG_SIZE);
 
             // Build nonce: 4 bytes sequence + 8 bytes random
-            Span<byte> nonce = stackalloc byte[KeyTraits.NONCE_SIZE];
+            Span<byte> nonce = stackalloc byte[Constants.KeyTraits.NONCE_SIZE];
             var sequence = (uint)Interlocked.Increment(ref _sendSequence);
             BitConverter.TryWriteBytes(nonce.Slice(0, 4), sequence);
             RandomNumberGenerator.Fill(nonce.Slice(4));
 
             var ciphertext = new byte[plaintext.Length];
-            Span<byte> tag = stackalloc byte[KeyTraits.TAG_SIZE];
+            Span<byte> tag = stackalloc byte[Constants.KeyTraits.TAG_SIZE];
 
             aes.Encrypt(nonce, plaintext, ciphertext, tag);
 
-            var output = new byte[KeyTraits.NONCE_SIZE + ciphertext.Length + KeyTraits.TAG_SIZE];
+            var output = new byte[Constants.KeyTraits.NONCE_SIZE + ciphertext.Length + Constants.KeyTraits.TAG_SIZE];
             nonce.CopyTo(output);
-            ciphertext.CopyTo(output, KeyTraits.NONCE_SIZE);
-            tag.CopyTo(output.AsSpan(KeyTraits.NONCE_SIZE + ciphertext.Length));
+            ciphertext.CopyTo(output, Constants.KeyTraits.NONCE_SIZE);
+            tag.CopyTo(output.AsSpan(Constants.KeyTraits.NONCE_SIZE + ciphertext.Length));
 
             return output;
         }
@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
         {
             ThrowIfDisposed();
 
-            if (encryptedData.Length < KeyTraits.NONCE_SIZE + KeyTraits.TAG_SIZE)
+            if (encryptedData.Length < Constants.KeyTraits.NONCE_SIZE + Constants.KeyTraits.TAG_SIZE)
                 throw new CryptographicException("Invalid encrypted data length");
 
             // Extract sequence number from nonce for replay check
@@ -87,11 +87,11 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
             if (!TryAcceptSequence(sequence))
                 throw new CryptographicException("Replay attack detected: duplicate or outdated sequence number");
 
-            using var aes = new AesGcm(_encryptionKey, KeyTraits.TAG_SIZE);
-            var nonce = encryptedData.Slice(0, KeyTraits.NONCE_SIZE);
-            var ciphertextLength = encryptedData.Length - KeyTraits.NONCE_SIZE - KeyTraits.TAG_SIZE;
-            var ciphertext = encryptedData.Slice(KeyTraits.NONCE_SIZE, ciphertextLength);
-            var tag = encryptedData.Slice(KeyTraits.NONCE_SIZE + ciphertextLength, KeyTraits.TAG_SIZE);
+            using var aes = new AesGcm(_encryptionKey, Constants.KeyTraits.TAG_SIZE);
+            var nonce = encryptedData.Slice(0, Constants.KeyTraits.NONCE_SIZE);
+            var ciphertextLength = encryptedData.Length - Constants.KeyTraits.NONCE_SIZE - Constants.KeyTraits.TAG_SIZE;
+            var ciphertext = encryptedData.Slice(Constants.KeyTraits.NONCE_SIZE, ciphertextLength);
+            var tag = encryptedData.Slice(Constants.KeyTraits.NONCE_SIZE + ciphertextLength, Constants.KeyTraits.TAG_SIZE);
 
             var plaintext = new byte[ciphertextLength];
             aes.Decrypt(nonce, ciphertext, tag, plaintext);
@@ -169,7 +169,7 @@ namespace SecureFolderFS.Sdk.PhoneLink.Models
                 sharedSecret,
                 hash,
                 ReadOnlySpan<byte>.Empty,
-                "PhoneLink-VerificationCode-v1"u8.ToArray());
+                "DeviceLink-VerificationCode-v1"u8.ToArray());
 
             var code = BitConverter.ToUInt32(hash) % 1000000;
             return code.ToString("D6");

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using SecureFolderFS.Sdk.PhoneLink.Enums;
-using static SecureFolderFS.Sdk.PhoneLink.Constants;
+using SecureFolderFS.Sdk.DeviceLink.Enums;
+using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
-namespace SecureFolderFS.Sdk.PhoneLink.Models
+namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     public static class ProtocolSerializer
     {

@@ -1,4 +1,4 @@
-namespace SecureFolderFS.Sdk.PhoneLink.Enums
+namespace SecureFolderFS.Sdk.DeviceLink.Enums
 {
     /// <summary>
     /// Message types for the Phone Link protocol.
