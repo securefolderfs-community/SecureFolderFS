@@ -23,6 +23,7 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
+    [Obsolete]
     internal sealed class EncryptingDiskStoreCollection : IDavFolder
     {
         private static readonly XElement s_xDavCollection = new XElement(WebDavNamespaces.DavNs + "collection");

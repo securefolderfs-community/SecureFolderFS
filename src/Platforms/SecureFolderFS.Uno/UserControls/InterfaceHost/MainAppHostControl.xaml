@@ -14,11 +14,6 @@
     Loaded="MainAppHostControl_Loaded"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-    </UserControl.Resources>
-
     <NavigationView
         x:Name="Sidebar"
         AllowDrop="True"

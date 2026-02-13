@@ -251,51 +251,57 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 if (_recycleBin is null)
                     return;
 
-                switch (e.Action)
+                try
                 {
-                    case NotifyCollectionChangedAction.Add when e.NewItems is not null:
+                    switch (e.Action)
                     {
-                        foreach (var newItem in e.NewItems.OfType<IStorable>())
+                        case NotifyCollectionChangedAction.Add when e.NewItems is not null:
                         {
-                            // Skip configuration files
-                            if (newItem.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                                continue;
-
-                            // Skip if item already exists in collection
-                            if (Items.Any(x => x.Inner.Id == newItem.Id))
-                                continue;
-
-                            await Task.Delay(200); // Delay to ensure the item is fully available
-
-                            // Get the recycle bin item wrapper
-                            await foreach (var item in _recycleBin.GetItemsAsync())
+                            foreach (var newItem in e.NewItems.OfType<IStorable>())
                             {
-                                if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.Inner.Id != newItem.Id)
+                                // Skip configuration files
+                                if (newItem.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                                     continue;
 
-                                Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync());
-                                break;
+                                // Skip if item already exists in collection
+                                if (Items.Any(x => x.Inner.Id == newItem.Id))
+                                    continue;
+
+                                await Task.Delay(200); // Delay to ensure the item is fully available
+
+                                // Get the recycle bin item wrapper
+                                await foreach (var item in _recycleBin.GetItemsAsync())
+                                {
+                                    if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.Inner.Id != newItem.Id)
+                                        continue;
+
+                                    Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync());
+                                    break;
+                                }
                             }
+
+                            // Update size bar after changes
+                            await UpdateSizesAsync(false);
+                            break;
                         }
 
-                        // Update size bar after changes
-                        await UpdateSizesAsync(false);
-                        break;
-                    }
-
-                    case NotifyCollectionChangedAction.Remove when e.OldItems is not null:
-                    {
-                        foreach (var oldItem in e.OldItems.OfType<IStorable>())
+                        case NotifyCollectionChangedAction.Remove when e.OldItems is not null:
                         {
-                            var existingItem = Items.FirstOrDefault(x => x.Inner.Id == oldItem.Id);
-                            if (existingItem is not null)
-                                Items.Remove(existingItem);
-                        }
+                            foreach (var oldItem in e.OldItems.OfType<IStorable>())
+                            {
+                                var existingItem = Items.FirstOrDefault(x => x.Inner.Id == oldItem.Id);
+                                if (existingItem is not null)
+                                    Items.Remove(existingItem);
+                            }
 
-                        // Update size bar after changes
-                        await UpdateSizesAsync(false);
-                        break;
+                            // Update size bar after changes
+                            await UpdateSizesAsync(false);
+                            break;
+                        }
                     }
+                }
+                catch (Exception)
+                {
                 }
             }
         }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
+    [Obsolete]
     internal sealed class EncryptingDiskStore : DiskStore
     {
         private readonly FileSystemSpecifics _specifics;

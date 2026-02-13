@@ -40,17 +40,26 @@
                 <FontIcon Glyph="&#xE74D;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ExpanderContent>
-                <Grid Margin="0,-8" Padding="54,0,32,0">
+                <Grid
+                    Margin="0,-8"
+                    Padding="54,0,32,0"
+                    RowSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
                     <TextBlock
+                        Grid.Row="0"
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         Text="{l:ResourceString Rid=MaximumSize}" />
                     <ComboBox
+                        Grid.Row="0"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         IsEnabled="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
@@ -63,6 +72,20 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}" />
+                    <ProgressRing
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="32"
+                        Height="32"
+                        VerticalAlignment="Center"
+                        IsIndeterminate="False"
+                        Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
         </ucab:ActionBlockControl>
@@ -81,42 +104,26 @@
                     Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
             </Grid>
 
-            <StackPanel
+            <Grid
                 x:Name="ItemsView"
                 x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                Spacing="8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontSize="14"
-                        FontWeight="Semibold"
-                        Text="{l:ResourceString Rid=RecentlyDeleted}" />
-
-                    <StackPanel
-                        x:Name="SelectionActions"
-                        Grid.Column="1"
-                        x:Load="{x:Bind ViewModel.IsSelecting, Mode=OneWay}"
-                        Orientation="Horizontal"
-                        Spacing="4">
-                        <Button
-                            Command="{x:Bind ViewModel.RestoreSelectedCommand}"
-                            CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
-                            Content="{l:ResourceString Rid=Restore}" />
-                        <Button
-                            Command="{x:Bind ViewModel.DeleteSelectedCommand}"
-                            CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
-                            Content="{l:ResourceString Rid=DeleteImmediately}" />
-                    </StackPanel>
-                </Grid>
+                <TextBlock
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    FontWeight="Semibold"
+                    Text="{l:ResourceString Rid=RecentlyDeleted}" />
 
                 <ListView
                     x:Name="RecycleBinListView"
+                    Grid.Row="1"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                     SelectionChanged="RecycleBinListView_SelectionChanged"
                     SelectionMode="Multiple">
@@ -143,14 +150,23 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <StackPanel x:Name="SizeBarPanel" x:Load="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                    <TextBlock
-                        FontSize="12"
-                        Opacity="0.8"
-                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}" />
-                    <ProgressBar Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
+                <StackPanel
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <Button
+                        Command="{x:Bind ViewModel.RestoreSelectedCommand}"
+                        CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                        Content="{l:ResourceString Rid=Restore}"
+                        IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
+                    <Button
+                        Command="{x:Bind ViewModel.DeleteSelectedCommand}"
+                        CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                        Content="{l:ResourceString Rid=DeleteImmediately}"
+                        IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </ContentDialog>

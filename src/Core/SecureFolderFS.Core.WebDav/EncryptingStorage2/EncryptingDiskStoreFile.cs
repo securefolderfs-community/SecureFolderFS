@@ -15,6 +15,7 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
+    [Obsolete]
     internal class EncryptingDiskStoreFile : IDavFile
     {
         private readonly FileSystemSpecifics _specifics;
