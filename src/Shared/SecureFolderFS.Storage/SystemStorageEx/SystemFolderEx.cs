@@ -15,7 +15,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
     /// <inheritdoc cref="SystemFolder"/>
     public class SystemFolderEx : SystemFolder, IRenamableFolder, IStorableProperties
     {
-        protected IBasicProperties? poperties;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public SystemFolderEx(string path)
@@ -145,8 +145,8 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         /// <inheritdoc/>
         public Task<IBasicProperties> GetPropertiesAsync()
         {
-            poperties ??= new SystemFolderExProperties(Info);
-            return Task.FromResult(poperties);
+            properties ??= new SystemFolderExProperties(Info);
+            return Task.FromResult(properties);
         }
     }
 }
