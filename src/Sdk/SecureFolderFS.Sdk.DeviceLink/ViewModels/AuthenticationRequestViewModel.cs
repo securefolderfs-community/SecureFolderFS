@@ -5,26 +5,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace SecureFolderFS.Sdk.DeviceLink.Models
 {
     [Bindable(true)]
-    public sealed partial class AuthenticationRequestViewModel : ObservableObject
+    public sealed partial class AuthenticationRequestViewModel(TaskCompletionSource<bool> confirmationTcs)
+        : ObservableObject
     {
-        [ObservableProperty] private string _VaultName;
-        [ObservableProperty] private string _DesktopName;
-        [ObservableProperty] private string _DesktopType;
-        [ObservableProperty] private string _CredentialName;
+        [ObservableProperty] private string? _VaultName;
+        [ObservableProperty] private string? _DesktopName;
+        [ObservableProperty] private string? _DesktopType;
+        [ObservableProperty] private string? _CredentialId;
+        [ObservableProperty] private string? _CredentialName;
 
         /// <summary>
         /// The TaskCompletionSource to signal authentication confirmation result.
         /// </summary>
-        public TaskCompletionSource<bool>? ConfirmationTcs { get; }
-
-        public AuthenticationRequestViewModel(string vaultName, string desktopName, string desktopType, string credentialName, TaskCompletionSource<bool>? confirmationTcs = null)
-        {
-            VaultName = vaultName;
-            DesktopName = desktopName;
-            DesktopType = desktopType;
-            CredentialName = credentialName;
-            ConfirmationTcs = confirmationTcs;
-        }
+        public TaskCompletionSource<bool> ConfirmationTcs { get; } = confirmationTcs;
 
         /// <summary>
         /// Confirms or rejects the authentication request.
@@ -32,7 +25,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// <param name="confirmed">True to confirm, false to reject.</param>
         public void Confirm(bool confirmed)
         {
-            ConfirmationTcs?.TrySetResult(confirmed);
+            ConfirmationTcs.TrySetResult(confirmed);
         }
     }
 }

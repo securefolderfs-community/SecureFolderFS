@@ -136,6 +136,7 @@
                             Text="{l:ResourceString Rid=DeviceLinkIsRequestingCredentials}" />
 
                         <Label
+                            Margin="0,8,0,0"
                             FontSize="14"
                             HorizontalOptions="Start"
                             LineBreakMode="TailTruncation"

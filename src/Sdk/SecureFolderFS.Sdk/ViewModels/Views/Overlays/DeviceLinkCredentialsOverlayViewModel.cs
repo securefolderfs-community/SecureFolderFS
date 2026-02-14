@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.DeviceLink.Models;
 using SecureFolderFS.Sdk.DeviceLink.Services;
 using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private string? _VerificationCode;
         [ObservableProperty] private string? _PendingDesktopName;
         [ObservableProperty] private string? _NewCredentialName;
-        [ObservableProperty] private ObservableCollection<CredentialViewModel> _Credentials;
+        [ObservableProperty] private ObservableCollection<DeviceLinkItemViewModel> _Credentials;
 
         public bool EnableDeviceLink
         {
@@ -65,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             // Populate the observable collection with loaded credentials
             Credentials.Clear();
             foreach (var credential in _credentialsStoreModel.Credentials)
-                Credentials.Add(credential);
+                Credentials.Add(new DeviceLinkItemViewModel(credential).WithInitAsync(cancellationToken));
 
             _isInitialized = true;
 
@@ -91,15 +92,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task DeleteCredentialAsync(CredentialViewModel? credential, CancellationToken cancellationToken)
+        private async Task DeleteCredentialAsync(DeviceLinkItemViewModel? credential, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(credential?.CredentialId))
+            if (string.IsNullOrEmpty(credential?.CredentialViewModel.CredentialId))
                 return;
 
             var messageOverlay = new MessageOverlayViewModel()
             {
                 Title = "DeleteDeviceLinkCredential".ToLocalized(),
-                Message = "DeleteDeviceLinkCredentialWarning".ToLocalized(credential.DisplayName),
+                Message = "DeleteDeviceLinkCredentialWarning".ToLocalized(credential.CredentialViewModel.DisplayName),
                 PrimaryText = "Confirm".ToLocalized(),
                 SecondaryText = "Cancel".ToLocalized(),
             };
@@ -108,7 +109,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (!result.Positive())
                 return;
 
-            await _credentialsStoreModel.DeleteCredentialAsync(credential.CredentialId);
+            await _credentialsStoreModel.DeleteCredentialAsync(credential.CredentialViewModel.CredentialId);
             Credentials.Remove(credential);
         }
 
@@ -143,7 +144,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             };
             _deviceLinkService.AuthenticationRequested += DeviceLink_AuthenticationRequested;
             _deviceLinkService.VerificationCodeReady += (_, code) => VerificationCode = code;
-            _deviceLinkService.EnrollmentCompleted += (_, credential) => Credentials.Add(credential);
+            _deviceLinkService.EnrollmentCompleted += (_, credential) => Credentials.Add(new DeviceLinkItemViewModel(credential).WithInitAsync());
             _deviceLinkService.Disconnected += (_, _) =>
             {
                 _pendingPairingRequest = null;

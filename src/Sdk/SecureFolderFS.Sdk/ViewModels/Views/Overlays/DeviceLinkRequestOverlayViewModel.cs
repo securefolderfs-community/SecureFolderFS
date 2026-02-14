@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             ServiceProvider = DI.Default;
             _requestViewModel = requestViewModel;
             RemoteDeviceName = requestViewModel.DesktopName;
-            CredentialName = "CredentialUsed".ToLocalized(requestViewModel.CredentialName);
+            CredentialName = "CredentialRequested".ToLocalized($"{requestViewModel.CredentialName} ({requestViewModel.CredentialId?.Substring(0, 8)})");
         }
 
         /// <inheritdoc/>

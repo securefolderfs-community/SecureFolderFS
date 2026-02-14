@@ -415,12 +415,14 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
 
                 // Create a TaskCompletionSource for user confirmation
                 session.AuthConfirmationTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var authInfo = new AuthenticationRequestViewModel(
-                    session.CurrentCredential.VaultName,
-                    session.CurrentCredential.MachineName,
-                    session.CurrentCredential.MachineType,
-                    session.CurrentCredential.DisplayName,
-                    session.AuthConfirmationTcs);
+                var authInfo = new AuthenticationRequestViewModel(session.AuthConfirmationTcs)
+                {
+                    VaultName = session.CurrentCredential.VaultName,
+                    DesktopName = session.CurrentCredential.MachineName,
+                    DesktopType = session.CurrentCredential.MachineType,
+                    CredentialId = session.CurrentCredential.CredentialId,
+                    CredentialName = session.CurrentCredential.DisplayName
+                };
 
                 // Notify UI about auth request (could require biometric)
                 AuthenticationRequested?.Invoke(this, authInfo);

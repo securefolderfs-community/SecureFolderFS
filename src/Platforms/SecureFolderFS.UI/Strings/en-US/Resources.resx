@@ -1130,8 +1130,8 @@
   <data name="DeviceLinkAcceptWarning" xml:space="preserve">
       <value>Only accept if you initiated this request</value>
   </data>
-  <data name="CredentialUsed" xml:space="preserve">
-      <value>Credential used: {0}</value>
+  <data name="CredentialRequested" xml:space="preserve">
+      <value>Credential requested: {0}</value>
   </data>
   <data name="DeleteDeviceLinkCredential" xml:space="preserve">
       <value>Delete Credential</value>

@@ -4,6 +4,7 @@
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters">
 
     <vc:FileIconConverter x:Key="FileIconConverter" />
+    <vc:SubstringConverter x:Key="SubstringConverter" />
     <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
