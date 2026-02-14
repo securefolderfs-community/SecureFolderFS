@@ -1,4 +1,5 @@
 using System.Globalization;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.Helpers;
 
@@ -15,6 +16,9 @@ namespace SecureFolderFS.Maui.ValueConverters
             if (parameter is not string strParam)
                 return false;
 
+            if (itemViewModel.Inner is IFolder && strParam.Equals("Folder", StringComparison.OrdinalIgnoreCase))
+                return true;
+                
             var typeHint = FileTypeHelper.GetTypeHint(itemViewModel.Inner);
             return strParam.Equals(typeHint.ToString(), StringComparison.OrdinalIgnoreCase);
         }

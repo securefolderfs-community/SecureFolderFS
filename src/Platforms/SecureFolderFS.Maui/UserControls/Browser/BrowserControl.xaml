@@ -65,6 +65,12 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
@@ -126,6 +132,12 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
@@ -193,6 +205,12 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
@@ -201,6 +219,13 @@
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
             <Grid>
+                <Grid.GestureRecognizers>
+                    <DropGestureRecognizer
+                        AllowDrop="True"
+                        DragLeave="CollectionDropGestureRecognizer_DragLeave"
+                        DragOver="CollectionDropGestureRecognizer_DragOver"
+                        Drop="CollectionDropGestureRecognizer_Drop" />
+                </Grid.GestureRecognizers>
                 <ContentView
                     Content="{Binding EmptyView, Mode=OneWay}"
                     HorizontalOptions="Fill"
