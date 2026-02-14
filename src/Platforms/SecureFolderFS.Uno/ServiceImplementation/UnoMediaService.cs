@@ -14,6 +14,7 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
+
 #if WINDOWS
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
