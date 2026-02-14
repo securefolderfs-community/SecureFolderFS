@@ -1,7 +1,7 @@
 namespace SecureFolderFS.Sdk.DeviceLink.Enums
 {
     /// <summary>
-    /// Message types for the Phone Link protocol.
+    /// Message types for the DeviceLink protocol.
     /// </summary>
     public enum MessageType : byte
     {

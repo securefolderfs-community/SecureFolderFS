@@ -22,6 +22,14 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(OptionsContainer));
+        
+        public string? Description
+        {
+            get => (string?)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
+        }
+        public static readonly BindableProperty DescriptionProperty =
+            BindableProperty.Create(nameof(Description), typeof(string), typeof(OptionsContainer));
 
         public object? InnerContent
         {

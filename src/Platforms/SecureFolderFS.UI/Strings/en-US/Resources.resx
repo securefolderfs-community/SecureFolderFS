@@ -1139,4 +1139,7 @@
   <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
       <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
   </data>
+  <data name="DeviceLinkDescription" xml:space="preserve">
+      <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
+  </data>
 </root>
