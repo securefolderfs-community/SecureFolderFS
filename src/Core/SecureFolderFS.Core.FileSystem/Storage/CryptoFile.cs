@@ -6,11 +6,13 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.FileShareOptions;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IFile"/>
-    public class CryptoFile : CryptoStorable<IFile>, IChildFile
+    public class CryptoFile : CryptoStorable<IFile>, IFileOpenShare, IChildFile
     {
         public CryptoFile(string plaintextId, IFile inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
@@ -28,6 +30,19 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 return CreatePlaintextStream(stream, null);
 
             await using var readingStream = await Inner.OpenReadAsync(cancellationToken);
+            return CreatePlaintextStream(stream, readingStream);
+        }
+
+        public async Task<Stream> OpenStreamAsync(FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
+        {
+            if (specifics.Options.IsReadOnly && accessMode.HasFlag(FileAccess.Write))
+                throw FileSystemExceptions.FileSystemReadOnly;
+
+            var stream = await Inner.OpenStreamAsync(accessMode, shareMode, cancellationToken);
+            if (stream.CanRead || stream is { CanSeek: true, Length: <= 0 })
+                return CreatePlaintextStream(stream, null);
+
+            var readingStream = await Inner.OpenStreamAsync(FileAccess.Read, shareMode, cancellationToken);
             return CreatePlaintextStream(stream, readingStream);
         }
 

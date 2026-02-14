@@ -5,11 +5,12 @@ using SecureFolderFS.Storage.SystemStorageEx.StorageProperties;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.FileShareOptions;
 
 namespace SecureFolderFS.Storage.SystemStorageEx
 {
     /// <inheritdoc cref="SystemFile"/>
-    public class SystemFileEx : SystemFile, IStorableProperties
+    public class SystemFileEx : SystemFile, IFileOpenShare, IStorableProperties
     {
         protected IBasicProperties? properties;
 
@@ -23,6 +24,18 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         public SystemFileEx(FileInfo info)
             : base(info)
         {
+        }
+
+        /// <inheritdoc/>
+        public async Task<Stream> OpenStreamAsync(FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+            return Info.Open(new FileStreamOptions()
+            {
+                Access = accessMode,
+                Share = shareMode,
+                Options = FileOptions.Asynchronous
+            });
         }
 
         /// <inheritdoc/>

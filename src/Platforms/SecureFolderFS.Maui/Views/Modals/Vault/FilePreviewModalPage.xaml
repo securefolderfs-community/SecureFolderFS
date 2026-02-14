@@ -126,7 +126,8 @@
             Closed="Closed_Clicked"
             IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
             IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}"
-            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}">
+            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}"
+            ShareCommand="{Binding ViewModel.ShareCommand}">
             <uc:CommandBarControl.InnerContent>
                 <uc:ContentPresentation
                     x:Name="Presentation"

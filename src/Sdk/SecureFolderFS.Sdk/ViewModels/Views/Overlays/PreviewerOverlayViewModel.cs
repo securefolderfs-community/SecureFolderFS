@@ -20,7 +20,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IShareService>]
     public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly BrowserItemViewModel _itemViewModel;
@@ -82,6 +82,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _ = propertiesOverlay.InitAsync(cancellationToken);
 
             await OverlayService.ShowAsync(propertiesOverlay);
+        }
+
+        [RelayCommand]
+        private async Task ShareAsync()
+        {
+            BasePreviewerViewModel? previewer = PreviewerViewModel as FilePreviewerViewModel;
+            if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
+                previewer = carouselPreviewer.Slides[carouselPreviewer.CurrentIndex];
+
+            if (previewer is not FilePreviewerViewModel filePreviewer)
+                return;
+
+            await ShareService.ShareFileAsync(filePreviewer.Inner);
         }
 
         /// <inheritdoc/>

@@ -6,6 +6,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 using Stream = System.IO.Stream;
@@ -49,14 +50,14 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
-            var stream = await file.OpenReadAsync(cancellationToken);
+            var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             return new ImageStream(stream);
         }
 
         /// <inheritdoc/>
         public virtual async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
         {
-            var stream = await file.OpenReadAsync(cancellationToken);
+            var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             return new AggregatedDisposable([stream]);
         }
 
@@ -64,7 +65,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         public virtual async Task<IDisposable> StreamPdfSourceAsync(IFile file, CancellationToken cancellationToken = default)
         {
             var classification = FileTypeHelper.GetClassification(file);
-            var stream = await file.OpenReadAsync(cancellationToken);
+            var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
 
             return new PdfStreamServer(stream, classification.MimeType);
         }

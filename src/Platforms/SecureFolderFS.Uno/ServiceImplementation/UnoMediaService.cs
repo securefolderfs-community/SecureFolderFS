@@ -11,6 +11,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
@@ -65,7 +66,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
-            await using var stream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             using var winrtStream = stream.AsRandomAccessStream();
 
             var bitmapImage = new BitmapImage();

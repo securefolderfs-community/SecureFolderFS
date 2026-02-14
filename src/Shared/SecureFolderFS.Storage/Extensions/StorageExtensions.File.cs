@@ -1,12 +1,12 @@
-﻿using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.StorageProperties;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.FileShareOptions;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -94,13 +94,8 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="shareMode">The <see cref="FileShare"/> value that informs what sharing permissions between consumers should be applied.</param>
         public static async Task<Stream> OpenStreamAsync(this IFile file, FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
         {
-            if (file is SystemFile systemFile)
-                return systemFile.Info.Open(new FileStreamOptions()
-                {
-                    Access = accessMode,
-                    Share = shareMode,
-                    Options = FileOptions.Asynchronous
-                });
+            if (file is IFileOpenShare fileOpenShare)
+                return await fileOpenShare.OpenStreamAsync(accessMode, shareMode, cancellationToken);
 
             return await file.OpenStreamAsync(accessMode, cancellationToken);
         }
