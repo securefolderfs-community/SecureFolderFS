@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task DeleteCredentialAsync(CredentialViewModel? credential, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(credential?.Id))
+            if (string.IsNullOrEmpty(credential?.CredentialId))
                 return;
 
             var messageOverlay = new MessageOverlayViewModel()
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (!result.Positive())
                 return;
 
-            await _credentialsStoreModel.DeleteCredentialAsync(credential.Id);
+            await _credentialsStoreModel.DeleteCredentialAsync(credential.CredentialId);
             Credentials.Remove(credential);
         }
 

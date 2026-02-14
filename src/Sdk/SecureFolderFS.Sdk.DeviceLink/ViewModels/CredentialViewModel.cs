@@ -17,8 +17,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
     {
         [JsonIgnore] private byte[]? _decryptedHmacKey;
         [JsonIgnore] private bool _disposed;
-
-        [JsonIgnore] private const int HmacKeySize = 32;
+        [JsonIgnore] private const int HMAC_KEY_SIZE = 32;
 
         /// <summary>
         /// The Credential ID (CID) that binds this credential to a desktop vault.
@@ -62,11 +61,6 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         [JsonPropertyName("challenge")] [ObservableProperty] private byte[]? _Challenge;
 
         /// <summary>
-        /// Unique ID for this credential record.
-        /// </summary>
-        public string? Id { get; set; }
-
-        /// <summary>
         /// The public signing key (exported after enrollment).
         /// </summary>
         [JsonPropertyName("c_hmacKey")]
@@ -100,7 +94,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
             ObjectDisposedException.ThrowIf(_disposed, this);
 
             // Generate new HMAC key (256-bit)
-            var hmacKey = new byte[HmacKeySize];
+            var hmacKey = new byte[HMAC_KEY_SIZE];
             RandomNumberGenerator.Fill(hmacKey);
 
             try

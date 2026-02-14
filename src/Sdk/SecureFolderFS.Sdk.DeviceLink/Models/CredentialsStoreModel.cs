@@ -168,11 +168,11 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// <summary>
         /// Deletes a credential.
         /// </summary>
-        public async Task DeleteCredentialAsync(string id)
+        public async Task DeleteCredentialAsync(string cid)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
-            var credential = _credentials.FirstOrDefault(c => c.Id == id);
+            var credential = _credentials.FirstOrDefault(c => c.CredentialId == cid);
             if (credential == null)
                 return;
 
