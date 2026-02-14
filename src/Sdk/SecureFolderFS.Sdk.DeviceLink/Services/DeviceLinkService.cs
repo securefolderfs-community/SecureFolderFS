@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
         public DeviceLinkService(string deviceName, string deviceId, CredentialsStoreModel credentialStoreModel)
         {
             _credentialStoreModel = credentialStoreModel;
-            _connectionListener = new DeviceConnectionListener(deviceId, deviceName);
+            _connectionListener = new DeviceConnectionListener(deviceId, deviceName, DeviceDiscovery.GetDeviceType());
             _connectionListener.ConnectionAccepted += OnConnectionAccepted;
             _connectionListener.RestartRequested += OnRestartRequested;
         }

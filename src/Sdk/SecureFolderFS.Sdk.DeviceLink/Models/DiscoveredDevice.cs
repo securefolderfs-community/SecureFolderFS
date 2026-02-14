@@ -18,6 +18,11 @@ public class DiscoveredDevice
     public required string DeviceName { get; init; }
 
     /// <summary>
+    /// The type of the device.
+    /// </summary>
+    public required string DeviceType { get; init; }
+
+    /// <summary>
     /// IP address of the device.
     /// </summary>
     public required string IpAddress { get; init; }
@@ -37,5 +42,6 @@ public class DiscoveredDevice
     /// </summary>
     public DateTime DiscoveredAt { get; init; } = DateTime.Now;
 
+    /// <inheritdoc/>
     public override string ToString() => $"{DeviceName} ({IpAddress}:{Port})";
 }

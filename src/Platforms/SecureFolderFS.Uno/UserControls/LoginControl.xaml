@@ -110,10 +110,10 @@
         <DataTemplate x:Key="DeviceLinkTemplate" x:DataType="vm4:DeviceLinkLoginViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
-                <FontIcon
+                <IconSourceElement
+                    Height="72"
                     HorizontalAlignment="Center"
-                    FontSize="38"
-                    Glyph="&#xE8EA;" />
+                    IconSource="{x:Bind Icon, Mode=OneWay, Converter={StaticResource IconSourceConverter}}" />
 
                 <!--  Title  -->
                 <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginDeviceLink}" />

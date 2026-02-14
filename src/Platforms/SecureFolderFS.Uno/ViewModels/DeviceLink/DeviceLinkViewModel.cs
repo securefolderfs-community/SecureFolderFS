@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             Title = "DeviceLink".ToLocalized();
             MachineName = Environment.MachineName;
-            MachineType = GetMachineType();
+            MachineType = DeviceDiscovery.GetDeviceType();
             VaultName = vaultFolder.Name;
             VaultFolder = vaultFolder;
             VaultId = vaultId;
@@ -143,7 +143,8 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 CredentialId = credentialId,
                 PairingId = pairingId,
                 MobileDeviceId = discoveredDevice.DeviceId,
-                MobileDeviceName = discoveredDevice.DeviceName
+                MobileDeviceName = discoveredDevice.DeviceName,
+                MobileDeviceType = discoveredDevice.DeviceType,
             };
         }
 
@@ -257,23 +258,6 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             {
                 CredentialId = dataModel.CredentialId
             };
-        }
-
-        protected static string GetMachineType()
-        {
-            if (OperatingSystem.IsWindows())
-                return "Windows";
-            
-            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
-                return "MacOS";
-
-            if (OperatingSystem.IsAndroid())
-                return "Android";
-            
-            if (OperatingSystem.IsIOS())
-                return "iOS";
-            
-            return "Unknown";
         }
 
         /// <summary>

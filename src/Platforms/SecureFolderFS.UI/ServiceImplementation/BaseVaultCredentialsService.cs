@@ -13,7 +13,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual IEnumerable<string> GetEncodingOptions()
         {
-            if (!OperatingSystem.IsIOS())
+            if (!OperatingSystem.IsIOS() && !OperatingSystem.IsMacOS() && !OperatingSystem.IsMacCatalyst())
                 yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE4K;
 
             yield return Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL;

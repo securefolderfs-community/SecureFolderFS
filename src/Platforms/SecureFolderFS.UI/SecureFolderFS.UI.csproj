@@ -29,6 +29,10 @@
     <None Remove="Assets\AppAssets\app_title.svg" />
     <None Remove="Assets\AppAssets\vault_dark.svg" />
     <None Remove="Assets\AppAssets\vault_light.svg" />
+    <None Remove="Assets\AppAssets\Devices\gpixel_dark.png" />
+    <None Remove="Assets\AppAssets\Devices\gpixel_light.png" />
+    <None Remove="Assets\AppAssets\Devices\iphone_dark.png" />
+    <None Remove="Assets\AppAssets\Devices\iphone_light.png" />
     <None Remove="Assets\AppAssets\Introduction\intro_light_dashboard.png" />
     <None Remove="Assets\AppAssets\Shields\error_shield.svg" />
     <None Remove="Assets\AppAssets\Shields\error_shield.png" />

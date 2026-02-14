@@ -18,6 +18,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
     {
         private readonly string _deviceId;
         private readonly string _deviceName;
+        private readonly string _deviceType;
         private readonly object _lock = new();
         private UdpClient? _udpClient;
         private TcpListener? _tcpListener;
@@ -39,10 +40,11 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// </summary>
         public bool IsListening { get; private set; }
 
-        public DeviceConnectionListener(string deviceId, string deviceName)
+        public DeviceConnectionListener(string deviceId, string deviceName, string deviceType)
         {
             _deviceId = deviceId;
             _deviceName = deviceName;
+            _deviceType = deviceType;
             NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
             NetworkChange.NetworkAddressChanged += OnNetworkAddressChanged;
         }
@@ -149,7 +151,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
                     if (!ProtocolSerializer.ValidateDiscoveryRequest(result.Buffer))
                         continue;
 
-                    var response = ProtocolSerializer.CreateDiscoveryResponse(_deviceId, _deviceName, COMMUNICATION_PORT);
+                    var response = ProtocolSerializer.CreateDiscoveryResponse(_deviceId, _deviceName, _deviceType, COMMUNICATION_PORT);
                     await _udpClient.SendAsync(response, response.Length, result.RemoteEndPoint);
                 }
                 catch (OperationCanceledException)

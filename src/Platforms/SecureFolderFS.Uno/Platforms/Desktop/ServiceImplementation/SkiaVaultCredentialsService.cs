@@ -7,6 +7,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
                     Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uEE7E") },
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
-                    Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uE8EA") },
+                    Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid).WithInitAsync(cancellationToken),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

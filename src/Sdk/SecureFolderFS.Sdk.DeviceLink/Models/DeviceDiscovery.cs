@@ -126,6 +126,27 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             SafetyHelpers.NoFailure(() => _discoveryCts?.Cancel());
         }
 
+        /// <summary>
+        /// Determines the type of device based on the operating system.
+        /// </summary>
+        /// <returns>A string representing the device type, such as "Windows", "MacOS", "Android", "iOS", or "Unknown".</returns>
+        public static string GetDeviceType()
+        {
+            if (OperatingSystem.IsWindows())
+                return "Windows";
+
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+                return "MacOS";
+
+            if (OperatingSystem.IsAndroid())
+                return "Android";
+
+            if (OperatingSystem.IsIOS())
+                return "iOS";
+
+            return "Unknown";
+        }
+
         public void Dispose()
         {
             if (_disposed)

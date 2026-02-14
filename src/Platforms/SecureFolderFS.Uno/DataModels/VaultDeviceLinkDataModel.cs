@@ -30,6 +30,12 @@ namespace SecureFolderFS.Uno.DataModels
         /// </summary>
         [JsonPropertyName("mobileDeviceName")]
         public required string? MobileDeviceName { get; set; }
+        
+        /// <summary>
+        /// The type of the mobile device.
+        /// </summary>
+        [JsonPropertyName("mobileDeviceType")]
+        public required string? MobileDeviceType { get; set; }
 
         /// <summary>
         /// The expected HMAC result from mobile (Base64).

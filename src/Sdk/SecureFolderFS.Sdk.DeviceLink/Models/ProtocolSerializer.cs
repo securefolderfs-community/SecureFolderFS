@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// <summary>
         /// Creates a discovery response packet.
         /// </summary>
-        public static byte[] CreateDiscoveryResponse(string deviceId, string deviceName, int communicationPort)
+        public static byte[] CreateDiscoveryResponse(string deviceId, string deviceName, string deviceType, int communicationPort)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -50,6 +50,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write((byte)MessageType.DiscoveryResponse);
             writer.Write(deviceId);
             writer.Write(deviceName);
+            writer.Write(deviceType);
             writer.Write(communicationPort);
 
             // Include empty public key placeholder (actual signing key comes after pairing)
@@ -83,6 +84,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
 
                 var deviceId = reader.ReadString();
                 var deviceName = reader.ReadString();
+                var deviceType = reader.ReadString();
                 var port = reader.ReadInt32();
                 var publicKeyLength = reader.ReadInt32();
                 var publicKey = publicKeyLength > 0 ? reader.ReadBytes(publicKeyLength) : null;
@@ -91,6 +93,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
                 {
                     DeviceId = deviceId,
                     DeviceName = deviceName,
+                    DeviceType = deviceType,
                     IpAddress = senderIp,
                     Port = port,
                     PublicKey = publicKey

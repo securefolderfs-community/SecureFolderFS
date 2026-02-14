@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 using static SecureFolderFS.Sdk.Constants.DataSources;
@@ -38,22 +39,22 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_network_drive_macos.png") 
+                Icon = new ImageResource("source_network_drive_macos.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_gdrive.png") 
+                Icon = new ImageResource("source_gdrive.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.OneDrive", "OneDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_onedrive.png") 
+                Icon = new ImageResource("source_onedrive.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.AmazonS3", "AmazonS3".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_aws_s3.png") 
+                Icon = new ImageResource("source_aws_s3.png") 
             };
 
             await Task.CompletedTask;

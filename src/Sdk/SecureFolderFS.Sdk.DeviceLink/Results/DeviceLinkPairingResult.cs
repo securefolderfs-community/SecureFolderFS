@@ -26,6 +26,11 @@ namespace SecureFolderFS.Sdk.DeviceLink.Results
         /// </summary>
         public required string MobileDeviceName { get; init; }
 
+        /// <summary>
+        /// The type of the mobile device.
+        /// </summary>
+        public required string MobileDeviceType { get; init; }
+
         public DeviceLinkPairingResult(IKeyBytes value)
             : base(value)
         {

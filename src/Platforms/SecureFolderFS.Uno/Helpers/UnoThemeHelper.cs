@@ -1,11 +1,9 @@
+using Windows.UI.ViewManagement;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
-using Windows.UI;
-using Windows.UI.ViewManagement;
 
 namespace SecureFolderFS.Uno.Helpers
 {
@@ -26,6 +24,21 @@ namespace SecureFolderFS.Uno.Helpers
         /// Gets the current theme represented by <see cref="ElementTheme"/>.
         /// </summary>
         public ElementTheme CurrentElementTheme => (ElementTheme)(int)CurrentTheme;
+
+        /// <inheritdoc/>
+        public override ThemeType ActualTheme
+        {
+            get
+            {
+                if (CurrentTheme != ThemeType.Default)
+                    return CurrentTheme;
+
+                if (_rootContent is null)
+                    return ThemeType.Dark;
+
+                return (ThemeType)_rootContent.ActualTheme;
+            }
+        }
 
         /// <inheritdoc/>
         public override ThemeType CurrentTheme

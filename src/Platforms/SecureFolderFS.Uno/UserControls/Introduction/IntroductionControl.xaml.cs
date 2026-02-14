@@ -109,12 +109,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
         {
             var htmlString = Constants.Introduction.BACKGROUND_WEBVIEW
-                .Replace("c_bg", UnoThemeHelper.Instance.CurrentTheme switch
+                .Replace("c_bg", UnoThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Light => "vec3(0.80, 0.86, 0.92)",
                     _ => "vec3(0.00, 0.08, 0.15)"
                 })
-                .Replace("c_wave", UnoThemeHelper.Instance.CurrentTheme switch
+                .Replace("c_wave", UnoThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Light => "vec3(0.10, 0.42, 0.75)",
                     _ => "vec3(0.090, 0.569, 1.0)"

@@ -10,9 +10,10 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
-
 #if WINDOWS
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
@@ -26,7 +27,32 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public Task<IImage> GetImageFromResourceAsync(string resourceName, CancellationToken cancellationToken = default)
         {
-            return Task.FromException<IImage>(new NotSupportedException());
+            return Task.FromResult<IImage>(resourceName switch
+            {
+                "Android_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
+                {
+#if WINDOWS && !HAS_UNO
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_light.png"
+#else
+                    ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/gpixel_dark.png",
+                    _ => "ms-appx:///Assets/AppAssets/Devices/gpixel_light.png"
+#endif
+                }),
+
+                "iOS_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
+                {
+#if WINDOWS && !HAS_UNO
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_light.png"
+#else
+                    ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/iphone_dark.png",
+                    _ => "ms-appx:///Assets/AppAssets/Devices/iphone_light.png"
+#endif
+                }),
+
+                _ => new ImageResource(resourceName, true)
+            });
         }
 
         /// <inheritdoc/>

@@ -94,7 +94,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             ThemePicker.Items.Add("ThemeSystemDefault".ToLocalized());
             ThemePicker.Items.Add("ThemeLight".ToLocalized());
             ThemePicker.Items.Add("ThemeDark".ToLocalized());
-            ThemePicker.SelectedIndex = (int)MauiThemeHelper.Instance.CurrentTheme;
+            ThemePicker.SelectedIndex = (int)MauiThemeHelper.Instance.ActualTheme;
         }
 
         /// <inheritdoc/>

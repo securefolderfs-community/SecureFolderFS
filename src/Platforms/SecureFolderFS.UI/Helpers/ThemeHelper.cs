@@ -26,6 +26,11 @@ namespace SecureFolderFS.UI.Helpers
             get => _CurrentTheme;
             protected set => SetProperty(ref _CurrentTheme, value);
         }
+        
+        /// <summary>
+        /// Gets the actual theme of the application as defined in <see cref="ThemeType"/>.
+        /// </summary>
+        public abstract ThemeType ActualTheme { get; }
 
         /// <summary>
         /// Updates the application's theme to specified <paramref name="themeType"/>.

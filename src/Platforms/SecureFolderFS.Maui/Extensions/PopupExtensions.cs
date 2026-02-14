@@ -51,7 +51,7 @@ internal static class PopupExtensions
         // Create the dimming background
         var dimBackground = new BoxView()
         {
-            Color = MauiThemeHelper.Instance.CurrentTheme == ThemeType.Light ? Colors.Black : Colors.DimGray,
+            Color = MauiThemeHelper.Instance.ActualTheme == ThemeType.Light ? Colors.Black : Colors.DimGray,
             Opacity = 0,
             InputTransparent = false
         };

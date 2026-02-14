@@ -21,21 +21,21 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             await Task.CompletedTask;
             return resourceName switch
             {
-                "Windows_Device" => new ImageResourceFile(MauiThemeHelper.Instance.ActualTheme switch
+                "Windows_Device" => new ImageResource(MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Light => "surface3_light.png",
                     ThemeType.Dark => "surface3_dark.png"
                 }),
 
-                "MacOS_Device" => new ImageResourceFile(MauiThemeHelper.Instance.ActualTheme switch
+                "MacOS_Device" => new ImageResource(MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Light => "mbpro_light.png",
                     ThemeType.Dark => "mbpro_dark.png"
                 }),
 
-                "Linux_Device" or "Unknown_Device" => new ImageResourceFile("generic_laptop.png"),
+                "Linux_Device" or "Unknown_Device" => new ImageResource("generic_laptop.png"),
 
-                _ => new ImageResourceFile(resourceName, true)
+                _ => new ImageResource(resourceName, true)
             };
         }
 

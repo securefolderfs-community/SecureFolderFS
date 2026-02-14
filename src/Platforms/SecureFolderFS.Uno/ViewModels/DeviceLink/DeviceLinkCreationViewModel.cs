@@ -54,6 +54,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                         CredentialId = pairingResult.CredentialId,
                         MobileDeviceId = pairingResult.MobileDeviceId,
                         MobileDeviceName = pairingResult.MobileDeviceName,
+                        MobileDeviceType = pairingResult.MobileDeviceType,
                         ExpectedHmac = key.Key,
                         CreatedAt = DateTime.Now
                     }, cancellationToken);

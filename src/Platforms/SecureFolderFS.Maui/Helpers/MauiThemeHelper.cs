@@ -13,10 +13,8 @@ namespace SecureFolderFS.Maui.Helpers
         /// </summary>
         public static MauiThemeHelper Instance => _Instance ??= new();
 
-        /// <summary>
-        /// Gets the actual theme of the application as defined in <see cref="ThemeType"/>.
-        /// </summary>
-        public ThemeType ActualTheme => (ThemeType)Application.Current!.RequestedTheme;
+        /// <inheritdoc/>
+        public override ThemeType ActualTheme => (ThemeType)Application.Current!.RequestedTheme;
 
         /// <inheritdoc/>
         protected override void UpdateTheme()

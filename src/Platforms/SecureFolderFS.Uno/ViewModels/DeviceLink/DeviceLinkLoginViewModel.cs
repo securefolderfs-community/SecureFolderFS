@@ -2,24 +2,45 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.Uno.DataModels;
 
 namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 {
     [Bindable(true)]
     public sealed partial class DeviceLinkLoginViewModel(IFolder vaultFolder, string vaultId)
-        : DeviceLinkViewModel(vaultFolder, vaultId)
+        : DeviceLinkViewModel(vaultFolder, vaultId), IAsyncInitialize
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
         
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
+
+        /// <inheritdoc/>
+        public async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var dataModel = await GetConfigurationAsync(cancellationToken);
+                var mediaService = DI.Service<IMediaService>();
+
+                Icon = await mediaService.GetImageFromResourceAsync($"{dataModel.MobileDeviceType}_Device", cancellationToken);
+            }
+            catch (Exception)
+            {
+                Icon = new ImageGlyph("\uE8EA");
+            }
+        }
         
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
