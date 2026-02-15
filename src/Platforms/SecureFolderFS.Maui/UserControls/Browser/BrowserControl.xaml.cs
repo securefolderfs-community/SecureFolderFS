@@ -274,12 +274,26 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         var (url, isFolder) = await tcs.Task;
                         if (url is not null)
                         {
-                            // File URL - can be accessed directly
-                            var pathExtension = Path.GetExtension(url.Path!);
-                            var suggestedExtension = Path.GetExtension(suggestedName);
-                            var actualName = suggestedName;
-                            if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(pathExtension))
-                                actualName = suggestedName + pathExtension;
+                            // Get the actual filename from the URL path - this should include the correct extension
+                            var fileNameFromPath = Path.GetFileName(url.Path!);
+                            
+                            // Use the filename from path if available (it has the correct extension),
+                            // otherwise fall back to suggestedName with extension appended
+                            string actualName;
+                            if (!string.IsNullOrEmpty(fileNameFromPath) && !string.IsNullOrEmpty(Path.GetExtension(fileNameFromPath)))
+                            {
+                                // URL path has filename with extension - use it directly
+                                actualName = fileNameFromPath;
+                            }
+                            else
+                            {
+                                // Fall back to suggested name, appending extension from path if needed
+                                var pathExtension = Path.GetExtension(url.Path!);
+                                var suggestedExtension = Path.GetExtension(suggestedName);
+                                actualName = string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(pathExtension)
+                                    ? suggestedName + pathExtension
+                                    : suggestedName;
+                            }
 
                             if (isFolder)
                             {

@@ -15,9 +15,9 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
     [Bindable(true)]
     public sealed partial class CredentialViewModel : ObservableObject, IDisposable
     {
+        [JsonIgnore] private const int HMAC_KEY_SIZE = 32;
         [JsonIgnore] private byte[]? _decryptedHmacKey;
         [JsonIgnore] private bool _disposed;
-        [JsonIgnore] private const int HMAC_KEY_SIZE = 32;
 
         /// <summary>
         /// The Credential ID (CID) that binds this credential to a desktop vault.
@@ -79,12 +79,6 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         public byte[]? EncryptionTag { get; set; }
 
         /// <summary>
-        /// Whether this credential has been enrolled (has signing key).
-        /// </summary>
-        [JsonIgnore]
-        public bool IsEnrolled => EncryptedHmacKey is not null && EncryptedHmacKey.Length > 0;
-
-        /// <summary>
         /// Generates a new HMAC key and encrypts it with the encryption key.
         /// Called during enrollment.
         /// </summary>
@@ -131,8 +125,10 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         public void DecryptHmacKey(byte[] encryptionKey)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
+            ArgumentNullException.ThrowIfNull(EncryptionNonce);
+            ArgumentNullException.ThrowIfNull(EncryptionTag);
 
-            if (EncryptedHmacKey.Length == 0)
+            if (EncryptedHmacKey is null or { Length: 0 })
                 throw new InvalidOperationException("No encrypted HMAC key available");
 
             try
@@ -158,9 +154,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         public byte[] ComputeHmac(byte[] data)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-
-            if (_decryptedHmacKey == null)
-                throw new InvalidOperationException("HMAC key not available. Call DecryptHmacKey first.");
+            ArgumentNullException.ThrowIfNull(_decryptedHmacKey);
 
             return HMACSHA256.HashData(_decryptedHmacKey, data);
         }
@@ -171,22 +165,23 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         /// </summary>
         public void ClearDecryptedKey()
         {
-            if (_decryptedHmacKey != null)
-            {
-                CryptographicOperations.ZeroMemory(_decryptedHmacKey);
-                _decryptedHmacKey = null;
-            }
+            if (_decryptedHmacKey is null)
+                return;
+
+            CryptographicOperations.ZeroMemory(_decryptedHmacKey);
+            _decryptedHmacKey = null;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (_disposed) return;
-            _disposed = true;
+            if (_disposed)
+                return;
 
+            _disposed = true;
             ClearDecryptedKey();
 
-            if (EncryptedHmacKey.Length > 0)
+            if (EncryptedHmacKey is { Length: > 0 })
                 CryptographicOperations.ZeroMemory(EncryptedHmacKey);
 
             if (Challenge is { Length: > 0 })

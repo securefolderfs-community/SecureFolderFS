@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            Icon = await MediaService.GetImageFromResourceAsync($"{CredentialViewModel.MachineType}_Device", cancellationToken);
+            Icon = await MediaService.GetImageFromResourceAsync($"{CredentialViewModel.DesktopType}_Device", cancellationToken);
         }
     }
 }
