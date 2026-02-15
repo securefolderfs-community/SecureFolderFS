@@ -267,19 +267,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         UniformTypeIdentifiers.UTTypes.Movie.Identifier
                     };
 
-                    string? matchedGalleryTypeIdentifier = null;
-                    foreach (var typeId in galleryTypeIdentifiers)
-                    {
-                        if (itemProvider.HasItemConformingTo(typeId))
-                        {
-                            matchedGalleryTypeIdentifier = typeId;
-                            break;
-                        }
-                    }
-
                     // Check if this is a Gallery item by seeing if it does NOT have a FileUrl representation
                     // Files app items have FileUrl, Gallery items don't
+                    var matchedGalleryTypeIdentifier = galleryTypeIdentifiers.FirstOrDefault(typeId => itemProvider.HasItemConformingTo(typeId));
                     var hasFileUrl = itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier);
+
                     if (matchedGalleryTypeIdentifier is not null && !hasFileUrl)
                     {
                         // This is a Gallery/Photos app item - load as data representation
