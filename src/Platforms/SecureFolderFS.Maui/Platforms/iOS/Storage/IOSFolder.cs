@@ -9,7 +9,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName
+    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName, ICreateCopyOf
     {
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
@@ -149,6 +149,53 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         }
 
         /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken, CreateCopyOfDelegate fallback)
+        {
+            // Check if the file is an IOSFile. If not, use the fallback.
+            if (fileToCopy is not IOSFile iosFile)
+                return await fallback(this, fileToCopy, overwrite, cancellationToken);
+
+            try
+            {
+                permissionRoot.StartAccessingSecurityScopedResource();
+                var newPath = Path.Combine(Id, fileToCopy.Name);
+                var newUrl = new NSUrl(newPath, false);
+
+                if (NSFileManager.DefaultManager.FileExists(newPath))
+                {
+                    if (!overwrite)
+                        throw new FileAlreadyExistsException(fileToCopy.Name);
+
+                    NSFileManager.DefaultManager.Remove(newUrl, out _);
+                }
+
+                // If the source and destination are the same, there's no need to copy.
+                if (iosFile.Id == newPath)
+                    return iosFile;
+
+                // Start security access for the source file's url
+                var sourceAccessStarted = iosFile.Inner.StartAccessingSecurityScopedResource();
+                try
+                {
+                    if (!NSFileManager.DefaultManager.Copy(iosFile.Inner, newUrl, out var error))
+                        throw new NSErrorException(error);
+
+                    return new IOSFile(newUrl, this, permissionRoot);
+                }
+                finally
+                {
+                    if (sourceAccessStarted)
+                        iosFile.Inner.StopAccessingSecurityScopedResource();
+                }
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {
             try
@@ -166,7 +213,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 
                 // Ensure the destination doesn't already exist
                 if (NSFileManager.DefaultManager.FileExists(newPath))
-                    throw new IOException($"A file or folder with the name '{newName}' already exists.");
+                    throw new FileAlreadyExistsException(newName);
 
                 if (!NSFileManager.DefaultManager.Move(originalUrl, newUrl, out var error))
                     throw new NSErrorException(error);

@@ -10,10 +10,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 
-#if IOS || MACCATALYST
-using SecureFolderFS.Maui.Platforms.iOS.Storage;
-#endif
-
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl : ContentView
@@ -199,7 +195,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             {
                 transferViewModel.TransferType = TransferType.Move;
                 using var cts = transferViewModel.GetCancellation();
-
                 await transferViewModel.TransferAsync([ itemToMove ], async (item, reporter, token) =>
                 {
                     // Move
@@ -242,114 +237,209 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (browserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
-            // Get storable items from platform-specific drop data
-            var storableItems = new List<IStorable>();
-
 #if IOS || MACCATALYST
             // Get items from PlatformArgs on iOS/macOS
-            if (dropEventArgs.PlatformArgs?.DropSession is UIKit.IUIDropSession dropSession)
+            if (dropEventArgs.PlatformArgs?.DropSession is { } dropSession)
             {
-                var tcs = new TaskCompletionSource<List<Foundation.NSUrl>>();
-                var urlList = new List<Foundation.NSUrl>();
                 var itemCount = dropSession.Items.Length;
-                var processedCount = 0;
-
                 if (itemCount == 0)
                     return;
+
+                // Collect all items to process - either as file URLs or as data streams
+                var itemsToProcess = new List<(string Name, Func<CancellationToken, Task<Stream?>> DataLoader, bool IsFolder)>();
 
                 foreach (var dragItem in dropSession.Items)
                 {
                     var itemProvider = dragItem.ItemProvider;
-                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.Item.Identifier))
-                    {
-                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.Item.Identifier, null, (item, error) =>
-                        {
-                            if (item is Foundation.NSUrl url)
-                            {
-                                lock (urlList)
-                                {
-                                    urlList.Add(url);
-                                }
-                            }
+                    var suggestedName = itemProvider.SuggestedName ?? "Unknown";
 
-                            if (Interlocked.Increment(ref processedCount) == itemCount)
-                                tcs.TrySetResult(urlList);
-                        });
-                    }
-                    else if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier))
+                    // First, try to load as a file URL (works for Files app)
+                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier))
                     {
-                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier, null, (item, error) =>
+                        var tcs = new TaskCompletionSource<(Foundation.NSUrl? Url, bool IsFolder)>();
+                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier, null, (item, _) =>
                         {
-                            if (item is Foundation.NSUrl url)
+                            if (item is Foundation.NSUrl { Path: not null } itemUrl)
                             {
-                                lock (urlList)
-                                {
-                                    urlList.Add(url);
-                                }
+                                var isDir = false;
+                                var isDirectory = Foundation.NSFileManager.DefaultManager.FileExists(itemUrl.Path, ref isDir) && isDir;
+                                tcs.TrySetResult((itemUrl, isDirectory));
                             }
-
-                            if (Interlocked.Increment(ref processedCount) == itemCount)
-                                tcs.TrySetResult(urlList);
+                            else
+                            {
+                                tcs.TrySetResult((null, false));
+                            }
                         });
+
+                        var (url, isFolder) = await tcs.Task;
+                        if (url is not null)
+                        {
+                            // File URL - can be accessed directly
+                            var pathExtension = Path.GetExtension(url.Path!);
+                            var suggestedExtension = Path.GetExtension(suggestedName);
+                            var actualName = suggestedName;
+                            if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(pathExtension))
+                                actualName = suggestedName + pathExtension;
+
+                            if (isFolder)
+                            {
+                                itemsToProcess.Add((actualName, _ => Task.FromResult<Stream?>(null), true));
+                            }
+                            else
+                            {
+                                var capturedUrl = url;
+                                itemsToProcess.Add((actualName, async ct =>
+                                {
+                                    var accessStarted = capturedUrl.StartAccessingSecurityScopedResource();
+                                    try
+                                    {
+                                        if (capturedUrl.Path is not null && File.Exists(capturedUrl.Path))
+                                        {
+                                            var ms = new MemoryStream();
+                                            await using var fs = File.OpenRead(capturedUrl.Path);
+                                            await fs.CopyToAsync(ms, ct);
+                                            ms.Position = 0;
+                                            return ms;
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        if (accessStarted)
+                                            capturedUrl.StopAccessingSecurityScopedResource();
+                                    }
+                                    return null;
+                                }, false));
+                            }
+                            continue;
+                        }
                     }
-                    else
+
+                    // Fall back to loading as data (works for Gallery/Photos app)
+                    // Try common image/video types first, then generic data
+                    var typeIdentifiers = new[]
                     {
-                        if (Interlocked.Increment(ref processedCount) == itemCount)
-                            tcs.TrySetResult(urlList);
+                        UniformTypeIdentifiers.UTTypes.Jpeg.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Png.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Heic.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Gif.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier,
+                        UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Image.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Movie.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Data.Identifier
+                    };
+
+                    string? matchedTypeIdentifier = null;
+                    foreach (var typeId in typeIdentifiers)
+                    {
+                        if (itemProvider.HasItemConformingTo(typeId))
+                        {
+                            matchedTypeIdentifier = typeId;
+                            break;
+                        }
+                    }
+
+                    if (matchedTypeIdentifier is not null)
+                    {
+                        var capturedTypeId = matchedTypeIdentifier;
+                        var capturedProvider = itemProvider;
+                        
+                        // Determine extension from type identifier
+                        var extension = GetExtensionFromTypeIdentifier(capturedTypeId);
+                        var suggestedExtension = Path.GetExtension(suggestedName);
+                        var actualName = suggestedName;
+                        if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(extension))
+                            actualName = suggestedName + extension;
+
+                        itemsToProcess.Add((actualName, async _ =>
+                        {
+                            var dataTcs = new TaskCompletionSource<Foundation.NSData?>();
+                            var utType = UniformTypeIdentifiers.UTType.CreateFromIdentifier(capturedTypeId);
+                            if (utType is null)
+                                return null;
+                                
+                            capturedProvider.LoadDataRepresentation(utType, (data, _) =>
+                            {
+                                dataTcs.TrySetResult(data);
+                            });
+
+                            var data = await dataTcs.Task;
+                            return data?.AsStream();
+                        }, false));
                     }
                 }
 
-                // Wait for all items to be loaded
-                var urls = await tcs.Task;
-                foreach (var url in urls)
-                {
-                    if (url.Path is null)
-                        continue;
+                if (itemsToProcess.Count == 0)
+                    return;
 
-                    var isDir = false;
-                    var isDirectory = Foundation.NSFileManager.DefaultManager.FileExists(url.Path, ref isDir) && isDir;
-                    if (isDirectory)
-                        storableItems.Add(new IOSFolder(url));
-                    else
-                        storableItems.Add(new IOSFile(url));
+                try
+                {
+                    transferViewModel.TransferType = TransferType.Copy;
+                    using var cts = transferViewModel.GetCancellation();
+
+                    await transferViewModel.TransferAsync(itemsToProcess, async (item, reporter, token) =>
+                    {
+                        token.ThrowIfCancellationRequested();
+
+                        if (item.IsFolder)
+                        {
+                            // Create folder
+                            var createdFolder = await destinationFolder.CreateFolderAsync(item.Name, false, token);
+                            destinationFolderViewModel.Items.Insert(
+                                new FolderViewModel(createdFolder, browserViewModel, destinationFolderViewModel),
+                                browserViewModel.Layouts.GetSorter());
+                        }
+                        else
+                        {
+                            // Load data and create file
+                            await using var dataStream = await item.DataLoader(token);
+                            if (dataStream is null)
+                                return;
+
+                            var createdFile = await destinationFolder.CreateFileAsync(item.Name, false, token);
+                            await using var destinationStream = await createdFile.OpenStreamAsync(FileAccess.Write, token);
+                            await dataStream.CopyToAsync(destinationStream, token);
+                            reporter.Report(createdFile);
+
+                            destinationFolderViewModel.Items.Insert(
+                                new FileViewModel(createdFile, browserViewModel, destinationFolderViewModel),
+                                browserViewModel.Layouts.GetSorter());
+                        }
+                    }, cts.Token);
+                }
+                catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+                {
+                    _ = ex;
+                    // TODO: Report error
+                }
+                finally
+                {
+                    await transferViewModel.HideAsync();
                 }
             }
 #elif ANDROID
             // TODO: Implement Android drag-and-drop from external apps
 #endif
-
-            if (storableItems.Count == 0)
-                return;
-
-            try
-            {
-                transferViewModel.TransferType = TransferType.Copy;
-                using var cts = transferViewModel.GetCancellation();
-
-                await transferViewModel.TransferAsync(storableItems, async (item, reporter, token) =>
-                {
-                    // Copy
-                    var copiedItem = await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, token);
-
-                    // Add to destination
-                    destinationFolderViewModel.Items.Insert(copiedItem switch
-                    {
-                        IFile file => new FileViewModel(file, browserViewModel, destinationFolderViewModel),
-                        IFolder folder => new FolderViewModel(folder, browserViewModel, destinationFolderViewModel),
-                        _ => throw new ArgumentOutOfRangeException(nameof(copiedItem))
-                    }, browserViewModel.Layouts.GetSorter());
-                }, cts.Token);
-            }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
-            {
-                _ = ex;
-                // TODO: Report error
-            }
-            finally
-            {
-                await transferViewModel.HideAsync();
-            }
         }
+
+#if IOS || MACCATALYST
+        private static string GetExtensionFromTypeIdentifier(string typeIdentifier)
+        {
+            return typeIdentifier switch
+            {
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Jpeg.Identifier => ".jpg",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Png.Identifier => ".png",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Heic.Identifier => ".heic",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Gif.Identifier => ".gif",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier => ".mp4",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier => ".mov",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Tiff.Identifier => ".tiff",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Bmp.Identifier => ".bmp",
+                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Pdf.Identifier => ".pdf",
+                _ => string.Empty
+            };
+        }
+#endif
 
         public object? EmptyView
         {

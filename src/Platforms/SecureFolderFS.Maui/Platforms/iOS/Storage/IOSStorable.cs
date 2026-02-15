@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         public virtual string Id { get; }
 
         /// <inheritdoc/>
-        public virtual string Name { get; }
+        public virtual string Name { get; protected set; }
 
         /// <inheritdoc/>
         public string? BookmarkId { get; protected set; }

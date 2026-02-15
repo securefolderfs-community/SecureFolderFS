@@ -80,6 +80,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 "Vault V3" => "nn9oKIELbkAl3XevD/dhVhnBQcfkDA5wfLnY+aAUoK8=@@@w3jNIbmsDwThbNkuGqpVdCvCiU7RQHQtkEqGfBPqDRc=",
                 "Plaintext Vault" => "lZbz5sWmeYDyyebm3LgPmvApNPsiyphj6zW4YZ2NuG8=@@@mEp3pOlUSXr0Yr47B+Se4M3ZXN8wPU/BlgFkLSpULiQ=",
                 "TestFolder" => "AT690eDQi71F2pvBMOTW9tYaavdZxI5hF+in8GgVW+U=@@@zIMim+84MPoubryk2Ne9A8S5cXE18MOzLyET7yI6p/E=",
+                "My Vault" => "R5blf8KbjkbPLjPvzFkZW3GPYDpNvzh1/QNhgmjQXrw=@@@BC4WxRPrXnaDSeu6jDioW4DYtKQzNlg0r7wyivxnZno=",
                 _ => null
             };
 

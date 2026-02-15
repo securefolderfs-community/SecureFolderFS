@@ -73,8 +73,8 @@ namespace SecureFolderFS.Storage.Extensions
             }
 
             // TODO: If the destination folder supports optimized moving, use it
-            // if (destinationFolder is IMoveFrom fastPath)
-            //     return await fastPath.MoveFromAsync(folderToMove, source, overwrite, cancellationToken,
+            // if (destinationFolder is IMoveFrom moveFrom)
+            //     return await moveFrom.MoveFromAsync(folderToMove, source, overwrite, cancellationToken,
             //         fallback: MoveFromFallbackAsync);
 
             // Perform a manual move (fallback)

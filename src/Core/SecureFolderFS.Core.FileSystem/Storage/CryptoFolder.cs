@@ -13,12 +13,14 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IRenamableFolder, IRecyclableFolder
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IRenamableFolder, IRecyclableFolder, ICreateCopyOf
     {
         public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
@@ -155,6 +157,60 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
             return (IChildFile)Wrap(file, name);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken,
+            CreateCopyOfDelegate fallback)
+        {
+            if (Inner is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
+
+            if (fileToCopy is not IChildFile fileToCopyChild || Inner is not IRenamableFolder renamableFolder || Inner is not ICreateCopyOf createCopyOf)
+                return await fallback(this, fileToCopy, overwrite, cancellationToken);
+
+            // Get destination name and check if it already exists
+            var destinationCiphertextName = await AbstractPathHelpers.EncryptNameAsync(fileToCopy.Name, Inner, specifics, cancellationToken);
+            if (await Inner.TryGetFirstByNameAsync(destinationCiphertextName, cancellationToken) is { } existingItem)
+            {
+                if (!overwrite)
+                    throw new FileAlreadyExistsException(fileToCopy.Name);
+
+                await modifiableFolder.DeleteAsync(existingItem, cancellationToken);
+            }
+
+            if (await fileToCopyChild.GetParentAsync(cancellationToken) is IWrapper<IFolder> { Inner: { } shallowInnerParentOfFileToCopy})
+            {
+                // We're copying other CryptoStorable
+
+                // Get the internal ciphertext file to copy
+                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(fileToCopy.Name, shallowInnerParentOfFileToCopy, specifics, cancellationToken);
+                var ciphertextItem = await shallowInnerParentOfFileToCopy.GetFileByNameAsync(ciphertextName, cancellationToken);
+
+                // Copy and rename the file
+                var copiedCiphertextFile = await createCopyOf.CreateCopyOfAsync(ciphertextItem, overwrite, cancellationToken, fallback);
+                var renamedCiphertextFile = (IChildFile)await renamableFolder.RenameAsync(copiedCiphertextFile, destinationCiphertextName, cancellationToken);
+
+                return (IChildFile)Wrap(renamedCiphertextFile, fileToCopy.Name);
+            }
+            else
+            {
+                // We're copying a file assumed to be from a different storage source
+
+                // Copy the file and recreate the actual encrypted file
+                var copiedPlaintextFile = await createCopyOf.CreateCopyOfAsync(fileToCopy, overwrite, cancellationToken, fallback);
+                var createdCiphertextFile = await CreateFileAsync(fileToCopy.Name, overwrite, cancellationToken);
+
+                // Copy and encrypt the contents
+                await using var copiedPlaintextFileStream = await copiedPlaintextFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+                await using var createdCiphertextFileStream = await createdCiphertextFile.OpenStreamAsync(FileAccess.Write, cancellationToken);
+                await copiedPlaintextFileStream.CopyToAsync(createdCiphertextFileStream, cancellationToken);
+
+                // Delete the old plaintext file
+                await modifiableFolder.DeleteAsync(copiedPlaintextFile, cancellationToken);
+
+                return (IChildFile)Wrap(createdCiphertextFile, fileToCopy.Name);
+            }
         }
 
         /// <inheritdoc/>

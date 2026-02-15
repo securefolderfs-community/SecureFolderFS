@@ -25,10 +25,10 @@ namespace SecureFolderFS.Sdk.Extensions
             transferViewModel.IsProgressing = false;
         }
 
-        public static async Task TransferAsync<TStorable>(
+        public static async Task TransferAsync<TTransferred>(
             this TransferViewModel transferViewModel,
-            IEnumerable<TStorable> items,
-            Func<TStorable, IProgress<IStorable>, CancellationToken, Task> callback,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, IProgress<IStorable>, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
         {
             var collection = items.ToOrAsCollection();
@@ -55,12 +55,12 @@ namespace SecureFolderFS.Sdk.Extensions
             await transferViewModel.HideAsync();
         }
 
-        public static async Task TransferAsync<TStorable>(
+        public static async Task TransferAsync<TTransferred>(
             this TransferViewModel transferViewModel,
-            IEnumerable<TStorable> items,
-            Func<TStorable, CancellationToken, Task> callback,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
-            where TStorable : IStorable
+            where TTransferred : IStorable
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;

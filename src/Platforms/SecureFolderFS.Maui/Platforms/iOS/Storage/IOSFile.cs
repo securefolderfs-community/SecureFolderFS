@@ -9,9 +9,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
     /// <inheritdoc cref="IChildFile"/>
     internal sealed class IOSFile : IOSStorable, IFileOpenShare, IChildFile
     {
-        public IOSFile(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
+        public IOSFile(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null, string? suggestedName = null)
             : base(url, parent, permissionRoot, bookmarkId)
         {
+            Name = !string.IsNullOrEmpty(suggestedName) ? suggestedName : Name;
         }
 
         /// <inheritdoc/>
