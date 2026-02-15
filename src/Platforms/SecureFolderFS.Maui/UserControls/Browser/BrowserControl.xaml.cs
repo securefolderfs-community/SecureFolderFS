@@ -253,11 +253,70 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     var itemProvider = dragItem.ItemProvider;
                     var suggestedName = itemProvider.SuggestedName ?? "Unknown";
 
-                    // First, try to load as a file URL (works for Files app)
-                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier))
+                    // First, check for Gallery/Photos app items (specific image/video types loaded as data)
+                    // These need to be checked first because UTTypes.Item would also match them
+                    var galleryTypeIdentifiers = new[]
+                    {
+                        UniformTypeIdentifiers.UTTypes.Jpeg.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Png.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Heic.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Gif.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier,
+                        UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Image.Identifier,
+                        UniformTypeIdentifiers.UTTypes.Movie.Identifier
+                    };
+
+                    string? matchedGalleryTypeIdentifier = null;
+                    foreach (var typeId in galleryTypeIdentifiers)
+                    {
+                        if (itemProvider.HasItemConformingTo(typeId))
+                        {
+                            matchedGalleryTypeIdentifier = typeId;
+                            break;
+                        }
+                    }
+
+                    // Check if this is a Gallery item by seeing if it does NOT have a FileUrl representation
+                    // Files app items have FileUrl, Gallery items don't
+                    var hasFileUrl = itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier);
+                    if (matchedGalleryTypeIdentifier is not null && !hasFileUrl)
+                    {
+                        // This is a Gallery/Photos app item - load as data representation
+                        var capturedTypeId = matchedGalleryTypeIdentifier;
+                        var capturedProvider = itemProvider;
+                        
+                        // Determine extension from type identifier
+                        var extension = GetExtensionFromTypeIdentifier(capturedTypeId);
+                        var suggestedExtension = Path.GetExtension(suggestedName);
+                        var actualName = suggestedName;
+                        if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(extension))
+                            actualName = suggestedName + extension;
+
+                        itemsToProcess.Add((actualName, async _ =>
+                        {
+                            var dataTcs = new TaskCompletionSource<Foundation.NSData?>();
+                            var utType = UniformTypeIdentifiers.UTType.CreateFromIdentifier(capturedTypeId);
+                            if (utType is null)
+                                return null;
+                                
+                            capturedProvider.LoadDataRepresentation(utType, (data, _) =>
+                            {
+                                dataTcs.TrySetResult(data);
+                            });
+
+                            var data = await dataTcs.Task;
+                            return data?.AsStream();
+                        }, false));
+                        
+                        continue;
+                    }
+
+                    // Second, try to load as a file URL (works for Files app)
+                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.Item.Identifier))
                     {
                         var tcs = new TaskCompletionSource<(Foundation.NSUrl? Url, bool IsFolder)>();
-                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier, null, (item, _) =>
+                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.Item.Identifier, null, (item, _) =>
                         {
                             if (item is Foundation.NSUrl { Path: not null } itemUrl)
                             {
@@ -328,51 +387,14 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         }
                     }
 
-                    // Fall back to loading as data (works for Gallery/Photos app)
-                    // Try common image/video types first, then generic data
-                    var typeIdentifiers = new[]
+                    // Fall back to loading as generic data
+                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.Data.Identifier))
                     {
-                        UniformTypeIdentifiers.UTTypes.Jpeg.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Png.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Heic.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Gif.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier,
-                        UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Image.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Movie.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Data.Identifier
-                    };
-
-                    string? matchedTypeIdentifier = null;
-                    foreach (var typeId in typeIdentifiers)
-                    {
-                        if (itemProvider.HasItemConformingTo(typeId))
-                        {
-                            matchedTypeIdentifier = typeId;
-                            break;
-                        }
-                    }
-
-                    if (matchedTypeIdentifier is not null)
-                    {
-                        var capturedTypeId = matchedTypeIdentifier;
                         var capturedProvider = itemProvider;
-                        
-                        // Determine extension from type identifier
-                        var extension = GetExtensionFromTypeIdentifier(capturedTypeId);
-                        var suggestedExtension = Path.GetExtension(suggestedName);
-                        var actualName = suggestedName;
-                        if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(extension))
-                            actualName = suggestedName + extension;
-
-                        itemsToProcess.Add((actualName, async _ =>
+                        itemsToProcess.Add((suggestedName, async _ =>
                         {
                             var dataTcs = new TaskCompletionSource<Foundation.NSData?>();
-                            var utType = UniformTypeIdentifiers.UTType.CreateFromIdentifier(capturedTypeId);
-                            if (utType is null)
-                                return null;
-                                
-                            capturedProvider.LoadDataRepresentation(utType, (data, _) =>
+                            capturedProvider.LoadDataRepresentation(UniformTypeIdentifiers.UTTypes.Data, (data, _) =>
                             {
                                 dataTcs.TrySetResult(data);
                             });
