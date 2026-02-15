@@ -109,14 +109,14 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
 
         #region Pairing
 
-        public static byte[] CreatePairingRequest(string machineName, string machineType, byte[] ecdhPublicKey)
+        public static byte[] CreatePairingRequest(string desktopName, string desktopType, byte[] ecdhPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             writer.Write((byte)MessageType.PairingRequest);
-            writer.Write(machineName);
-            writer.Write(machineType);
+            writer.Write(desktopName);
+            writer.Write(desktopType);
             writer.Write(ecdhPublicKey.Length);
             writer.Write(ecdhPublicKey);
 

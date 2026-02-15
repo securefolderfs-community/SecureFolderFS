@@ -37,12 +37,12 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         /// <summary>
         /// Name of the desktop device this credential is paired with.
         /// </summary>
-        [JsonPropertyName("machineName")] [ObservableProperty] private string? _MachineName;
+        [JsonPropertyName("machineName")] [ObservableProperty] private string? _DesktopName;
 
         /// <summary>
         /// Type of the desktop device this credential is paired with.
         /// </summary>
-        [JsonPropertyName("machineType")] [ObservableProperty] private string? _MachineType;
+        [JsonPropertyName("machineType")] [ObservableProperty] private string? _DesktopType;
 
         /// <summary>
         /// Unique pairing identifier shared with desktop.

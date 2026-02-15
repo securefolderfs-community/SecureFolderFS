@@ -418,8 +418,8 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                 var authInfo = new AuthenticationRequestViewModel(session.AuthConfirmationTcs)
                 {
                     VaultName = session.CurrentCredential.VaultName,
-                    DesktopName = session.CurrentCredential.MachineName,
-                    DesktopType = session.CurrentCredential.MachineType,
+                    DesktopName = session.CurrentCredential.DesktopName,
+                    DesktopType = session.CurrentCredential.DesktopType,
                     CredentialId = session.CurrentCredential.CredentialId,
                     CredentialName = session.CurrentCredential.DisplayName
                 };

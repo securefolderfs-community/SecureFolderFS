@@ -75,8 +75,8 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
 
             credential.CredentialId = credentialId;
             credential.VaultName = vaultName;
-            credential.MachineName = desktopName;
-            credential.MachineType = desktopType;
+            credential.DesktopName = desktopName;
+            credential.DesktopType = desktopType;
             credential.PairingId = pairingId;
             credential.Challenge = challenge;
 

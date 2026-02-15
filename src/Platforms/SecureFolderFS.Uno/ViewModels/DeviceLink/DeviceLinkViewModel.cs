@@ -40,14 +40,14 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         protected virtual string VaultName { get; }
 
         /// <summary>
-        /// Gets the name of the current machine.
+        /// Gets the name of the desktop machine.
         /// </summary>
-        protected virtual string MachineName { get; }
+        protected virtual string DesktopName { get; }
 
         /// <summary>
-        /// Gets the type of the machine, typically used to identify the kind of device for pairing processes.
+        /// Gets the type of the desktop machine, typically used to identify the kind of device for pairing processes.
         /// </summary>
-        protected virtual string MachineType { get; }
+        protected virtual string DesktopType { get; }
 
         /// <inheritdoc/>
         public sealed override bool CanComplement { get; } = true;
@@ -59,8 +59,8 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             : base(Constants.Vault.Authentication.AUTH_DEVICE_LINK)
         {
             Title = "DeviceLink".ToLocalized();
-            MachineName = Environment.MachineName;
-            MachineType = DeviceDiscovery.GetDeviceType();
+            DesktopName = Environment.MachineName;
+            DesktopType = DeviceDiscovery.GetDeviceType();
             VaultName = vaultFolder.Name;
             VaultFolder = vaultFolder;
             VaultId = vaultId;
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             ArgumentNullException.ThrowIfNull(data);
             
-            using var deviceDiscovery = new DeviceDiscovery(MachineName);
+            using var deviceDiscovery = new DeviceDiscovery(DesktopName);
             var devices = await deviceDiscovery.DiscoverDevicesAsync(cancellationToken: cancellationToken);
             var discoveredDevice = devices.FirstOrDefault();
             if (discoveredDevice is null)
@@ -98,7 +98,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
             
             // Step 3: Send pairing request
-            var pairingRequest = ProtocolSerializer.CreatePairingRequest(MachineName, MachineType, publicKey);
+            var pairingRequest = ProtocolSerializer.CreatePairingRequest(DesktopName, DesktopType, publicKey);
             await connectedDevice.SendMessageAsync(pairingRequest, cancellationToken);
 
             // Step 4: receive pairing response
@@ -157,7 +157,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             const int MAX_TRIES = 5;
             
             var dataModel = await GetConfigurationAsync(cancellationToken);
-            using var deviceDiscovery = new DeviceDiscovery(MachineName);
+            using var deviceDiscovery = new DeviceDiscovery(DesktopName);
 
             for (var tries = 0; tries < MAX_TRIES && !cancellationToken.IsCancellationRequested; tries++)
             {
