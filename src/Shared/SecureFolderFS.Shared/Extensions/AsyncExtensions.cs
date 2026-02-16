@@ -33,6 +33,15 @@ namespace SecureFolderFS.Shared.Extensions
             return default;
         }
 
+        public static async ValueTask<bool> AnyAsyncImpl<T>(this IAsyncEnumerable<T> source,
+            CancellationToken cancellationToken = default)
+        {
+            await foreach (var item in source.WithCancellation(cancellationToken))
+                return true;
+
+            return false;
+        }
+
         public static async IAsyncEnumerable<TResult> SelectAsyncImpl<TSource, TResult>(
             this IAsyncEnumerable<TSource> source,
             Func<TSource, TResult> selector,
