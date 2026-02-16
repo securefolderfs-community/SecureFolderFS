@@ -3,6 +3,9 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.DataModels;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 {
@@ -52,13 +55,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
         {
             var configPath = Path.Combine(specifics.ContentFolder.Id, Constants.Names.RECYCLE_BIN_NAME, Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME);
             using var configStream = File.Open(configPath, specifics.Options.IsReadOnly ? FileMode.Open : FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
-            using var streamReader = new StreamReader(configStream);
 
-            var text = streamReader.ReadToEnd();
-            if (!long.TryParse(text, out var value))
+            var deserialized = StreamSerializer.Instance.TryDeserializeAsync<Stream, RecycleBinDataModel>(configStream).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (deserialized is null)
                 return 0L;
 
-            return Math.Max(0L, value);
+            return Math.Max(0L, deserialized.OccupiedSize);
         }
 
         public static void SetOccupiedSize(FileSystemSpecifics specifics, long value)
@@ -68,10 +70,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
             var configPath = Path.Combine(specifics.ContentFolder.Id, Constants.Names.RECYCLE_BIN_NAME, Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME);
             using var configStream = !File.Exists(configPath) ? File.Create(configPath) : File.OpenWrite(configPath);
-            using var streamWriter = new StreamWriter(configStream);
+            using var serialized = StreamSerializer.Instance.SerializeAsync(new RecycleBinDataModel()
+            {
+                OccupiedSize = Math.Max(0L, value)
+            }).ConfigureAwait(false).GetAwaiter().GetResult();
 
-            var text = Math.Max(0L, value).ToString();
-            streamWriter.Write(text);
+            serialized.CopyTo(configStream);
+            configStream.Flush();
         }
     }
 }

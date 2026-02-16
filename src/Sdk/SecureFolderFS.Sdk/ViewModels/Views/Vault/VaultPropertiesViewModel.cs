@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<IVaultService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
-    public sealed partial class VaultPropertiesViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize
+    public sealed partial class VaultPropertiesViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize, IDisposable
     {
         private readonly INavigator _innerNavigator;
         private readonly INavigator _outerNavigator;
@@ -36,10 +36,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
 
+        /// <summary>
+        /// Gets the recycle bin overlay view model.
+        /// </summary>
+        public RecycleBinOverlayViewModel RecycleBinOverlayViewModel { get; }
+
         public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator innerNavigator, INavigator outerNavigator)
         {
             ServiceProvider = DI.Default;
             UnlockedVaultViewModel = unlockedVaultViewModel;
+            RecycleBinOverlayViewModel = new(UnlockedVaultViewModel, outerNavigator);
             Title = "VaultProperties".ToLocalized();
             _innerNavigator = innerNavigator;
             _outerNavigator = outerNavigator;
@@ -54,7 +60,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
 
-            await UpdateSecurityTextAsync(cancellationToken);
+            _ = UpdateSecurityTextAsync(cancellationToken);
+            _ = RecycleBinOverlayViewModel.InitAsync(cancellationToken);
         }
 
         [RelayCommand]
@@ -101,10 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ViewRecycleBinAsync(CancellationToken cancellationToken)
         {
-            using var recycleOverlay = new RecycleBinOverlayViewModel(UnlockedVaultViewModel, _outerNavigator);
-            _ = recycleOverlay.InitAsync(cancellationToken);
-
-            await OverlayService.ShowAsync(recycleOverlay);
+            await OverlayService.ShowAsync(RecycleBinOverlayViewModel);
         }
 
         [RelayCommand]
@@ -129,6 +133,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 SecurityText = "AuthenticationUnavailable".ToLocalized();
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            RecycleBinOverlayViewModel.Dispose();
         }
     }
 }

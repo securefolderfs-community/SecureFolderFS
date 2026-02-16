@@ -6,6 +6,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -18,8 +19,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
             recycleBinConfig ??= await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
 
-            var text = await recycleBinConfig.ReadAllTextAsync(null, cancellationToken);
-            return !long.TryParse(text, out var value) ? 0L : Math.Max(0L, value);
+            await using var configStream = await recycleBinConfig.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            var deserialized = await StreamSerializer.Instance.TryDeserializeAsync<Stream, RecycleBinDataModel>(configStream, cancellationToken);
+            if (deserialized is null)
+                return 0L;
+
+            return Math.Max(0L, deserialized.OccupiedSize);
         }
 
         public static async Task SetOccupiedSizeAsync(IModifiableFolder recycleBin, long value, CancellationToken cancellationToken = default)
@@ -27,7 +32,14 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
             recycleBinConfig ??= await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, false, cancellationToken);
 
-            await recycleBinConfig.WriteAllTextAsync(Math.Max(0L, value).ToString(), null, cancellationToken);
+            await using var configStream = await recycleBinConfig.OpenWriteAsync(cancellationToken);
+            await using var serialized = await StreamSerializer.Instance.SerializeAsync(new RecycleBinDataModel()
+            {
+                OccupiedSize = Math.Max(0L, value)
+            }, cancellationToken);
+
+            await serialized.CopyToAsync(configStream, cancellationToken);
+            await configStream.FlushAsync(cancellationToken);
         }
 
         public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)

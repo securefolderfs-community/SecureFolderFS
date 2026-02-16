@@ -98,7 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (_propertiesViewModel is null)
             {
                 _propertiesViewModel = new(_unlockedVaultViewModel, _dashboardNavigator, _vaultNavigation);
-                _ = _propertiesViewModel.InitAsync(cancellationToken);
+                await _propertiesViewModel.InitAsync(cancellationToken);
             }
 
             await _dashboardNavigator.NavigateAsync(_propertiesViewModel);

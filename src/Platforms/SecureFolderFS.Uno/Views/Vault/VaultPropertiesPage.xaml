@@ -105,6 +105,12 @@
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE74D;" />
                 </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <InfoBadge
+                        x:Name="NumberBadge"
+                        x:Load="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        Value="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay}" />
+                </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>
     </ScrollViewer>

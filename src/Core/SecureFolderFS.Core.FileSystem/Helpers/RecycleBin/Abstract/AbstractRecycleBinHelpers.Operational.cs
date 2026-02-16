@@ -114,7 +114,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         /// Files created within this threshold will be deleted immediately instead of recycled.
         /// This helps work around macOS Finder behavior during copy operations.
         /// </summary>
-        private const double RECENT_FILE_THRESHOLD_SECONDS = 5.0;
+        private const int RECENT_FILE_THRESHOLD_MS = 3000;
 
         public static async Task DeleteOrRecycleAsync(
             IModifiableFolder sourceFolder,
@@ -226,8 +226,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 if (dateCreated == DateTime.MinValue)
                     return false;
 
-                var timeSinceCreation = DateTime.UtcNow - dateCreated.ToUniversalTime();
-                return timeSinceCreation.TotalSeconds <= RECENT_FILE_THRESHOLD_SECONDS;
+                var dateCreatedUtc = dateCreated.ToUniversalTime();
+                var timeSinceCreation = DateTime.UtcNow - dateCreatedUtc;
+                return timeSinceCreation.Seconds <= RECENT_FILE_THRESHOLD_MS / 1000;
             }
             catch
             {
