@@ -6,6 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tbv="using:WinUI.TableView"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Storage"
@@ -16,59 +17,7 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <x:Double x:Key="ContentDialogMinWidth">600</x:Double>
-
-        <Style x:Key="RecycleBinItemStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Margin" Value="0,0,0,2" />
-            <Setter Property="Background" Value="{ThemeResource ExpanderHeaderBackground}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter
-                            MinHeight="72"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Background="{ThemeResource ExpanderHeaderBackground}"
-                            BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
-                            BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
-                            CheckBoxBorderBrush="{ThemeResource ListViewItemCheckBoxBorderBrush}"
-                            CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                            CheckBoxCornerRadius="{ThemeResource ListViewItemCheckBoxCornerRadius}"
-                            CheckBoxDisabledBrush="{ThemeResource ListViewItemCheckBoxDisabledBrush}"
-                            CheckBoxPointerOverBorderBrush="{ThemeResource ListViewItemCheckBoxPointerOverBorderBrush}"
-                            CheckBoxPointerOverBrush="{ThemeResource ListViewItemCheckBoxPointerOverBrush}"
-                            CheckBoxPressedBorderBrush="{ThemeResource ListViewItemCheckBoxPressedBorderBrush}"
-                            CheckBoxPressedBrush="{ThemeResource ListViewItemCheckBoxPressedBrush}"
-                            CheckBoxSelectedBrush="{ThemeResource ListViewItemCheckBoxSelectedBrush}"
-                            CheckBoxSelectedDisabledBrush="{ThemeResource ListViewItemCheckBoxSelectedDisabledBrush}"
-                            CheckBoxSelectedPointerOverBrush="{ThemeResource ListViewItemCheckBoxSelectedPointerOverBrush}"
-                            CheckBoxSelectedPressedBrush="{ThemeResource ListViewItemCheckBoxSelectedPressedBrush}"
-                            CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                            CheckDisabledBrush="{ThemeResource ListViewItemCheckDisabledBrush}"
-                            CheckPressedBrush="{ThemeResource ListViewItemCheckPressedBrush}"
-                            ContentMargin="16,12"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{ThemeResource ControlCornerRadius}"
-                            DragBackground="{ThemeResource ListViewItemDragBackground}"
-                            DragForeground="{ThemeResource ListViewItemDragForeground}"
-                            FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                            FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                            PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                            PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                            PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                            SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                            SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                            SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                            SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                            SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <x:Double x:Key="ContentDialogMinWidth">900</x:Double>
     </ContentDialog.Resources>
 
     <Grid RowSpacing="24">
@@ -175,39 +124,31 @@
                     FontWeight="Semibold"
                     Text="{l:ResourceString Rid=RecentlyDeleted}" />
 
-                <ListView
-                    x:Name="RecycleBinListView"
+                <tbv:TableView
+                    x:Name="RecycleBinTableView"
                     Grid.Row="1"
                     Margin="-4,0"
-                    ItemContainerStyle="{StaticResource RecycleBinItemStyle}"
+                    AutoGenerateColumns="False"
+                    BeginningEdit="RecycleBinTableView_BeginningEdit"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-                    SelectionChanged="RecycleBinListView_SelectionChanged"
+                    SelectionChanged="RecycleBinTableView_SelectionChanged"
                     SelectionMode="Multiple">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="vm2:RecycleBinItemViewModel">
-                            <ucab:ActionBlockContentControl
-                                x:Name="Block"
-                                Title="{x:Bind Title, Mode=OneWay}"
-                                Margin="-8,0,0,0"
-                                Description="{x:Bind OriginalPath, Mode=OneWay}">
-                                <ucab:ActionBlockContentControl.ActionElement>
-                                    <Button
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        DataContext="{Binding DataContext, ElementName=Block}">
-                                        <FontIcon Glyph="&#xE712;" />
-                                        <Button.Flyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Command="{x:Bind RestoreCommand, Mode=OneWay}" Text="{l:ResourceString Rid=Restore}" />
-                                                <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand, Mode=OneWay}" Text="{l:ResourceString Rid=DeleteImmediately}" />
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                </ucab:ActionBlockContentControl.ActionElement>
-                            </ucab:ActionBlockContentControl>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    <tbv:TableView.Columns>
+                        <tbv:TableViewTextColumn
+                            Width="*"
+                            Binding="{Binding Title}"
+                            Header="Name" />
+                        <tbv:TableViewTextColumn
+                            Width="160"
+                            Binding="{Binding DeletionTimestamp, Converter={StaticResource DateTimeToStringConverter}}"
+                            Header="Deleted at"
+                            ToolTipService.ToolTip="{Binding DeletionTimestamp}" />
+                        <tbv:TableViewTextColumn
+                            Width="2*"
+                            Binding="{Binding OriginalPath}"
+                            Header="Original Path" />
+                    </tbv:TableView.Columns>
+                </tbv:TableView>
 
                 <StackPanel
                     Grid.Row="2"
@@ -216,12 +157,12 @@
                     Spacing="4">
                     <Button
                         Command="{x:Bind ViewModel.RestoreSelectedCommand}"
-                        CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
                         Content="{l:ResourceString Rid=Restore}"
                         IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                     <Button
                         Command="{x:Bind ViewModel.DeleteSelectedCommand}"
-                        CommandParameter="{x:Bind RecycleBinListView.SelectedItems, Mode=OneWay}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
                         Content="{l:ResourceString Rid=DeleteImmediately}"
                         IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                 </StackPanel>

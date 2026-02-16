@@ -42,6 +42,7 @@
     <PackageVersion Include="Vanara.PInvoke.Shell32" Version="4.1.2" />
     <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.6.5" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
+    <PackageVersion Include="WinUI.TableView" Version="1.4.0" />
     <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.1" />
     <PackageVersion Include="Yubico.YubiKey" Version="1.15.1" />
   </ItemGroup>

@@ -9,6 +9,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
+using WinUI.TableView;
 
 // To learn more about WinUI, the WinUI project structure,D
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -90,12 +91,17 @@ namespace SecureFolderFS.Uno.Dialogs
             _previousOption = ViewModel.CurrentSizeOption;
         }
 
-        private void RecycleBinListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RecycleBinTableView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel is null || sender is not ListView listView)
+            if (ViewModel is null || sender is not TableView listView)
                 return;
 
             ViewModel.IsSelecting = listView.SelectedItems.Count > 0;
+        }
+
+        private void RecycleBinTableView_BeginningEdit(object? sender, TableViewBeginningEditEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
