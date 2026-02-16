@@ -159,7 +159,8 @@ namespace SecureFolderFS.UI.AppModels
                 {
                     Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
                     Name = plaintextName ?? item.Name,
-                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default
+                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default,
+                    Size = dataModel.Size ?? -1L
                 };
             }
         }

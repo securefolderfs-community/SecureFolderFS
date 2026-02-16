@@ -1142,4 +1142,10 @@
   <data name="DeviceLinkDescription" xml:space="preserve">
       <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
   </data>
+  <data name="DeletedAt" xml:space="preserve">
+      <value>Deleted at</value>
+  </data>
+  <data name="OriginalLocation" xml:space="preserve">
+      <value>Original location</value>
+  </data>
 </root>

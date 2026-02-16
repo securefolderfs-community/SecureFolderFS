@@ -127,7 +127,6 @@
                 <tbv:TableView
                     x:Name="RecycleBinTableView"
                     Grid.Row="1"
-                    Margin="-4,0"
                     AutoGenerateColumns="False"
                     BeginningEdit="RecycleBinTableView_BeginningEdit"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
@@ -137,16 +136,19 @@
                         <tbv:TableViewTextColumn
                             Width="*"
                             Binding="{Binding Title}"
-                            Header="Name" />
+                            Header="{l:ResourceString Rid=Name}" />
                         <tbv:TableViewTextColumn
-                            Width="160"
+                            Width="136"
                             Binding="{Binding DeletionTimestamp, Converter={StaticResource DateTimeToStringConverter}}"
-                            Header="Deleted at"
-                            ToolTipService.ToolTip="{Binding DeletionTimestamp}" />
+                            Header="{l:ResourceString Rid=DeletedAt}" />
                         <tbv:TableViewTextColumn
                             Width="2*"
                             Binding="{Binding OriginalPath}"
-                            Header="Original Path" />
+                            Header="{l:ResourceString Rid=OriginalLocation}" />
+                        <tbv:TableViewTextColumn
+                            Width="80"
+                            Binding="{Binding Size}"
+                            Header="{l:ResourceString Rid=Size}" />
                     </tbv:TableView.Columns>
                 </tbv:TableView>
 

@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
     {
         private readonly IRecycleBinFolder _recycleBin;
 
+        [ObservableProperty] private string? _Size;
         [ObservableProperty] private string? _OriginalPath;
         [ObservableProperty] private DateTime? _DeletionTimestamp;
         [ObservableProperty] private RecycleBinOverlayViewModel _OverlayViewModel;
@@ -42,6 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             OverlayViewModel = overlayViewModel;
             Inner = recycleBinItem.Inner;
             Title = recycleBinItem.Name;
+            Size = recycleBinItem.Size < 0L ? "NaN" : recycleBinItem.Size.ToString();
             OriginalPath = recycleBinItem.Id;
             DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;

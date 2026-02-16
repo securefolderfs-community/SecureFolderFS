@@ -13,5 +13,10 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Gets the timestamp indicating when the item was deleted.
         /// </summary>
         DateTime DeletionTimestamp { get; }
+
+        /// <summary>
+        /// Gets the size of the item in bytes. If the size is unknown, the value is -1.
+        /// </summary>
+        long Size { get; }
     }
 }
