@@ -82,7 +82,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // interface to be added to retrieve a view model from a current view (IWrapper<INotifyPropertyChanged?>)
 
             // Navigate away
-            await _vaultNavigation.ForgetNavigateSpecificViewAsync(loginPageViewModel, x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
+            await _vaultNavigation.ForgetNavigateSpecificViewAsync(loginPageViewModel, x =>
+            {
+                if (x is BrowserViewModel)
+                    return true;
+
+                return (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel) ?? false;
+            });
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));
         }
 

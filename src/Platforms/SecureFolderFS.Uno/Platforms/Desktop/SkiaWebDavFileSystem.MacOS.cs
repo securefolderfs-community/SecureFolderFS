@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             webDavWrapper.StartFileSystem();
 
             Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
+            return new WebDavVFSFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
         }
 #endif
     }

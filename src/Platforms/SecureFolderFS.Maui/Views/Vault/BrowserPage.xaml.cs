@@ -118,6 +118,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is not null)
                 ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
 
+            if (ViewModel?.OuterNavigator is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+
             // OnAppearing is called elsewhere in navigation logic.
             base.OnAppearing();
         }

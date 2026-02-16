@@ -13,6 +13,8 @@ namespace SecureFolderFS.Maui.Views
 {
     public partial class MainPage : ContentPage
     {
+        public static MainPage? Instance { get; private set; }
+        
         public MainHostViewModel? ViewModel
         {
             get
@@ -25,8 +27,6 @@ namespace SecureFolderFS.Maui.Views
             }
         }
 
-        public static MainPage? Instance { get; private set; }
-
         public MainPage()
         {
             Instance = this;
@@ -34,6 +34,15 @@ namespace SecureFolderFS.Maui.Views
             _ = ViewModel?.InitAsync();
 
             InitializeComponent();
+        }
+        
+        /// <inheritdoc/>
+        protected override void OnAppearing()
+        {
+            if (ViewModel?.NavigationService is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+            
+            base.OnAppearing();
         }
 
         private async Task ItemTappedAsync(VaultListItemViewModel itemViewModel, View? view)

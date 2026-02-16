@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -26,6 +27,15 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverviewViewModel));
             OnPropertyChanged(nameof(PropertiesViewModel));
+        }
+
+        /// <inheritdoc/>
+        protected override void OnAppearing()
+        {
+            if (ViewModel?.VaultNavigation is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+            
+            base.OnAppearing();
         }
 
         public VaultDashboardViewModel? ViewModel

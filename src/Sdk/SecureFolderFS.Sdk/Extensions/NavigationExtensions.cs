@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
@@ -44,17 +45,25 @@ namespace SecureFolderFS.Sdk.Extensions
             });
         }
 
-        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewFinder, bool addViewIfMissing = false)
+        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewForgetter, bool addViewIfMissing = false)
         {
             return await ForgetNavigateViewAsync(navigationService, view, () =>
             {
-                var targetView = navigationService.Views.FirstOrDefault(viewFinder);
-                if (targetView is null)
+                var targetViews = navigationService.Views.Where(viewForgetter).ToArray();
+                if (targetViews.IsEmpty())
                     return null;
 
-                navigationService.Views.Remove(targetView);
-                return targetView;
-            }, navigationService.CurrentView is null || viewFinder(navigationService.CurrentView), addViewIfMissing);
+                // Remove all items
+                foreach (var item in targetViews)
+                {
+                    (item as IDisposable)?.Dispose();
+                    navigationService.Views.Remove(item);
+                }
+
+                // Return the first view of the removed views.
+                // It doesn't matter which one it is, since ForgetNavigateViewAsync only replaces the removed view
+                return targetViews.FirstOrDefault();
+            }, navigationService.CurrentView is null || viewForgetter(navigationService.CurrentView), addViewIfMissing);
         }
 
         private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true, bool addViewIfMissing = false)

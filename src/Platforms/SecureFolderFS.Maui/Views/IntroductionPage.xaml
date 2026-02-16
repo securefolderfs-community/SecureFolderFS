@@ -109,11 +109,19 @@
             Opacity="0">
             <Ellipse
                 Margin="0,-70,0,50"
-                Fill="#106bbf"
                 HeightRequest="550"
                 Opacity="0.7"
                 VerticalOptions="Start"
-                WidthRequest="1000" />
+                WidthRequest="1000">
+
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Offset="0.1" Color="{AppThemeBinding Light='#025DFF', Dark='#106bbf'}" />
+                        <GradientStop Offset="0.6" Color="#106bbf" />
+                        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
         </Grid>
 
         <!--  Foreground  -->

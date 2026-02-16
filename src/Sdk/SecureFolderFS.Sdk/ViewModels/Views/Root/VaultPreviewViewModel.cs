@@ -139,7 +139,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
                 // Navigate to dashboard
                 await _vaultNavigation.ForgetNavigateSpecificViewAsync(
                     dashboardViewModel,
-                    viewFinder: x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(VaultViewModel.VaultModel) ?? false,
+                    viewForgetter: x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(VaultViewModel.VaultModel) ?? false,
                     addViewIfMissing: true);
 
                 // Show vault tutorial
