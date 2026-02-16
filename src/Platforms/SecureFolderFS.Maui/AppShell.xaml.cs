@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
@@ -26,25 +27,31 @@ namespace SecureFolderFS.Maui
 
         private async void AppShell_Loaded(object? sender, EventArgs e)
         {
-            var sessionException = ExceptionHelpers.RetrieveSessionFile(App.Instance.ApplicationLifecycle.AppDirectory);
-            if (sessionException is null)
-                return;
-
-            var overlayService = DI.Service<IOverlayService>();
-            var messageOverlay = new MessageOverlayViewModel()
+            await SafetyHelpers.NoFailureAsync(async () =>
             {
-                Title = "ClosedUnexpectedly".ToLocalized(nameof(SecureFolderFS)),
-                PrimaryText = "Copy".ToLocalized(),
-                SecondaryText = "Close".ToLocalized(),
-                Message = sessionException
-            };
+                var sessionException = ExceptionHelpers.RetrieveSessionFile(App.Instance.ApplicationLifecycle.AppDirectory);
+                if (sessionException is null)
+                    return;
 
-            var result = await overlayService.ShowAsync(messageOverlay);
-            if (!result.Positive())
-                return;
+                var overlayService = DI.Service<IOverlayService>();
+                var messageOverlay = new MessageOverlayViewModel()
+                {
+                    Title = "ClosedUnexpectedly".ToLocalized(nameof(SecureFolderFS)),
+                    PrimaryText = "Copy".ToLocalized(),
+                    SecondaryText = "Close".ToLocalized(),
+                    Message = sessionException
+                };
 
-            var clipboardService = DI.Service<IClipboardService>();
-            await clipboardService.SetTextAsync(sessionException);
+                var result = await overlayService.ShowAsync(messageOverlay);
+                if (!result.Positive())
+                    return;
+
+                var clipboardService = DI.Service<IClipboardService>();
+                await clipboardService.SetTextAsync(sessionException);
+            });
+            
+            // Initialize DeviceLink
+            await SafetyHelpers.NoFailureAsync(async () => await DeviceLinkCredentialsOverlayViewModel.Instance.InitAsync());
         }
     }
 }

@@ -22,43 +22,79 @@ namespace SecureFolderFS.Sdk.DeviceLink.ViewModels
         /// <summary>
         /// The Credential ID (CID) that binds this credential to a desktop vault.
         /// </summary>
-        [JsonPropertyName("cid")] [ObservableProperty] private string? _CredentialId;
+        [JsonPropertyName("cid")]
+        public string? CredentialId
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// Human-readable name for this credential.
         /// </summary>
-        [JsonPropertyName("displayName")] [ObservableProperty] private string? _DisplayName;
+        [JsonPropertyName("displayName")]
+        public string? DisplayName
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// Name of the vault this credential is bound to.
         /// </summary>
-        [JsonPropertyName("vaultName")] [ObservableProperty] private string? _VaultName;
+        [JsonPropertyName("vaultName")]
+        public string? VaultName
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// Name of the desktop device this credential is paired with.
         /// </summary>
-        [JsonPropertyName("machineName")] [ObservableProperty] private string? _DesktopName;
+        [JsonPropertyName("desktopName")]
+        public string? DesktopName
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// Type of the desktop device this credential is paired with.
         /// </summary>
-        [JsonPropertyName("machineType")] [ObservableProperty] private string? _DesktopType;
+        [JsonPropertyName("desktopType")]
+        public string? DesktopType
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// Unique pairing identifier shared with desktop.
         /// </summary>
-        [JsonPropertyName("pairingId")] [ObservableProperty] private string? _PairingId;
+        [JsonPropertyName("pairingId")]
+        public string? PairingId
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// When this credential was created/enrolled.
         /// </summary>
-        [JsonPropertyName("creationDate")] [ObservableProperty] private DateTime? _CreatedAt;
+        [JsonPropertyName("creationDate")]
+        public DateTime? CreatedAt
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
         /// <summary>
         /// The persistent challenge that must be signed during authentication.
         /// This is stored during enrollment and verified during each authentication.
         /// </summary>
-        [JsonPropertyName("challenge")] [ObservableProperty] private byte[]? _Challenge;
+        [JsonPropertyName("challenge")]
+        public byte[]? Challenge { get; set; }
 
         /// <summary>
         /// The public signing key (exported after enrollment).

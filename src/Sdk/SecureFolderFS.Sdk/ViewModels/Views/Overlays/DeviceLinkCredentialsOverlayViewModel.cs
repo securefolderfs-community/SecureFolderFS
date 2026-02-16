@@ -35,6 +35,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private string? _NewCredentialName;
         [ObservableProperty] private ObservableCollection<DeviceLinkItemViewModel> _Credentials;
 
+        public static DeviceLinkCredentialsOverlayViewModel Instance { get; } = new();
+
         public bool EnableDeviceLink
         {
             get => SettingsService.UserSettings.EnableDeviceLink;
@@ -49,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             }
         }
 
-        public DeviceLinkCredentialsOverlayViewModel()
+        private DeviceLinkCredentialsOverlayViewModel()
         {
             ServiceProvider = DI.Default;
             Credentials = new();

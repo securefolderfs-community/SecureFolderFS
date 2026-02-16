@@ -1,6 +1,8 @@
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Maui.Platforms.iOS.Helpers;
+using SecureFolderFS.Maui.Platforms.iOS.Templates;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
@@ -17,7 +19,7 @@ namespace SecureFolderFS.Maui
 #if ANDROID
             new Platforms.Android.Helpers.AndroidLifecycleHelper();
 #elif IOS
-            new Platforms.iOS.Helpers.IOSLifecycleHelper();
+            new IOSLifecycleHelper();
 #else
             null;
 #endif
@@ -34,7 +36,7 @@ namespace SecureFolderFS.Maui
             Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
 #elif IOS
             // Load IOS-specific resource dictionaries
-            Resources.MergedDictionaries.Add(new Platforms.iOS.Templates.IOSDataTemplates());
+            Resources.MergedDictionaries.Add(new IOSDataTemplates());
 #endif
 
             // Configure mappers
