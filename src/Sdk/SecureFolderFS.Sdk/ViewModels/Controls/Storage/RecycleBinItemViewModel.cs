@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -43,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             OverlayViewModel = overlayViewModel;
             Inner = recycleBinItem.Inner;
             Title = recycleBinItem.Name;
-            Size = recycleBinItem.Size < 0L ? "NaN" : recycleBinItem.Size.ToString();
+            Size = recycleBinItem.Size < 0L ? "NaN" : ByteSize.FromBytes(recycleBinItem.Size).ToString().Replace(" ", string.Empty);
             OriginalPath = recycleBinItem.Id;
             DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;

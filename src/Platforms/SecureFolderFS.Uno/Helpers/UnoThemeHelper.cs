@@ -5,6 +5,11 @@ using Microsoft.UI.Xaml;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
 
+#if WINDOWS
+using Windows.UI;
+using Microsoft.UI.Xaml.Media;
+#endif
+
 namespace SecureFolderFS.Uno.Helpers
 {
     /// <inheritdoc cref="ThemeHelper"/>

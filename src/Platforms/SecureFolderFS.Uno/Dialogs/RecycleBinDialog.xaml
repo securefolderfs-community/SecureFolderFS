@@ -127,14 +127,21 @@
                 <tbv:TableView
                     x:Name="RecycleBinTableView"
                     Grid.Row="1"
+                    Padding="0,0,12,0"
+                    AlternateRowBackground="{ThemeResource ControlFillColorTertiaryBrush}"
                     AutoGenerateColumns="False"
                     BeginningEdit="RecycleBinTableView_BeginningEdit"
+                    CanFilterColumns="False"
+                    GridLinesVisibility="Horizontal"
+                    IsReadOnly="True"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                     SelectionChanged="RecycleBinTableView_SelectionChanged"
-                    SelectionMode="Multiple">
+                    SelectionMode="Multiple"
+                    SelectionUnit="Row">
                     <tbv:TableView.Columns>
                         <tbv:TableViewTextColumn
                             Width="*"
+                            MinWidth="232"
                             Binding="{Binding Title}"
                             Header="{l:ResourceString Rid=Name}" />
                         <tbv:TableViewTextColumn
@@ -143,10 +150,11 @@
                             Header="{l:ResourceString Rid=DeletedAt}" />
                         <tbv:TableViewTextColumn
                             Width="2*"
+                            MinWidth="400"
                             Binding="{Binding OriginalPath}"
                             Header="{l:ResourceString Rid=OriginalLocation}" />
                         <tbv:TableViewTextColumn
-                            Width="80"
+                            Width="112"
                             Binding="{Binding Size}"
                             Header="{l:ResourceString Rid=Size}" />
                     </tbv:TableView.Columns>

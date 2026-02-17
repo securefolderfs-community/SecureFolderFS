@@ -106,10 +106,12 @@
                     <FontIcon Glyph="&#xE74D;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <InfoBadge
-                        x:Name="NumberBadge"
-                        x:Load="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                        Value="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay}" />
+                    <Grid>
+                        <InfoBadge
+                            x:Name="NumberBadge"
+                            x:Load="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                            Value="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay}" />
+                    </Grid>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>
