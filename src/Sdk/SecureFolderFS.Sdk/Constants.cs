@@ -64,6 +64,7 @@
         public static class DataSources
         {
             public const string DATA_SOURCE_PICKER = $"{nameof(SecureFolderFS)}.Picker";
+            public const string DEFAULT_FILE_SYSTEM = "WEBDAV";
         }
     }
 }

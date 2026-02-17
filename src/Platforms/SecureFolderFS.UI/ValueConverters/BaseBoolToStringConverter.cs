@@ -14,14 +14,19 @@ namespace SecureFolderFS.UI.ValueConverters
             if (parameter is not string formatString)
                 return bValue.ToString();
 
-            // Example:
-            // If false, localize using "StringRes" resource. If true, don't localize, just use "Some string"
+            // Examples:
             // false:localize|StringRes:true:none|Some string
+            // true:none|Some string:false:localize|StringRes
 
             var valueSplit = formatString.Split(':');
-            var splitOption = bValue ? valueSplit[3].Split('|') : valueSplit[1].Split('|');
 
-            return splitOption[0].Equals("localize", StringComparison.OrdinalIgnoreCase) ? splitOption[1].ToLocalized() : splitOption[1];
+            // Determine order by reading the first label
+            var firstIsTrue = valueSplit[0].Equals("true", StringComparison.OrdinalIgnoreCase);
+            var splitOption = (bValue == firstIsTrue) ? valueSplit[1].Split('|') : valueSplit[3].Split('|');
+
+            return splitOption[0].Equals("localize", StringComparison.OrdinalIgnoreCase)
+                ? splitOption[1].ToLocalized()
+                : splitOption[1];
         }
 
         /// <inheritdoc/>

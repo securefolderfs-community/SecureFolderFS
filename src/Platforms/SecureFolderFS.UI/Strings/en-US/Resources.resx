@@ -1148,4 +1148,22 @@
   <data name="OriginalLocation" xml:space="preserve">
       <value>Original location</value>
   </data>
+  <data name="Install" xml:space="preserve">
+      <value>Install</value>
+  </data>
+  <data name="FileSystemOffersImprovedExperience" xml:space="preserve">
+      <value>Improved user experience, reliability, and performance</value>
+  </data>
+  <data name="DefaultFileSystem" xml:space="preserve">
+      <value>The default file system</value>
+  </data>
+  <data name="BuiltinFileSystem" xml:space="preserve">
+      <value>One of the built-in file systems</value>
+  </data>
+  <data name="DokanyDescription" xml:space="preserve">
+      <value>Dokany offers better integration and reliability</value>
+  </data>
+  <data name="WinFspDescription" xml:space="preserve">
+      <value>WinFsp offers better performance and reliability</value>
+  </data>
 </root>

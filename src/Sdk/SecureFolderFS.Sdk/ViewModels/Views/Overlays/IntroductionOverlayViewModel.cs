@@ -1,20 +1,21 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Components;
+using SecureFolderFS.Storage.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    [Inject<IOverlayService>, Inject<ISettingsService>]
+    [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultFileSystemService>]
     [Bindable(true)]
     public sealed partial class IntroductionOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
@@ -32,13 +33,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             ServiceProvider = DI.Default;
             SlidesCount = slidesCount;
             CurrentStep = $"1/{slidesCount}";
+            FileSystems = new();
             TaskCompletion = new();
         }
 
         /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            var installations = await VaultFileSystemService.GetFileSystemInstallationsAsync(cancellationToken).ToArrayAsyncImpl(cancellationToken);
+            await foreach (var item in VaultFileSystemService.GetFileSystemsAsync(cancellationToken))
+            {
+                var status = await item.GetStatusAsync(cancellationToken);
+                if (status == FileSystemAvailability.Available)
+                {
+                    FileSystems.Add(new FileSystemItemViewModel(item)
+                    {
+                        IsDefault = item.Id == Constants.DataSources.DEFAULT_FILE_SYSTEM
+                    });
+                }
+                else
+                {
+                    var installation = installations.FirstOrDefault(x => x.Id == item.Id);
+                    if (installation is not null)
+                        FileSystems.Add(installation);
+                }
+            }
         }
 
         public bool Next()

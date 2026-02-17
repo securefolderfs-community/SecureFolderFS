@@ -20,20 +20,37 @@
             Stretch="UniformToFill"
             Visibility="{x:Bind ImageSource, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <StackPanel
+        <Grid
             Grid.Column="1"
             Padding="24"
-            Spacing="8">
+            RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
             <TextBlock
+                Grid.Row="0"
                 FontSize="22"
                 FontWeight="SemiBold"
                 Text="{x:Bind Title, Mode=OneWay}"
                 TextWrapping="WrapWholeWords" />
 
             <TextBlock
+                Grid.Row="1"
                 Opacity="0.8"
                 Text="{x:Bind Description, Mode=OneWay}"
                 TextWrapping="WrapWholeWords" />
-        </StackPanel>
+
+            <ContentControl
+                Grid.Row="2"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                Content="{x:Bind Slot, Mode=OneWay}"
+                Visibility="{x:Bind Slot, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+        </Grid>
     </Grid>
 </UserControl>

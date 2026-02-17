@@ -16,11 +16,34 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="FileSystemTemplate" x:DataType="vm:FileSystemItemViewModel">
-            <Grid />
+            <ucab:ActionBlockControl Title="{x:Bind Title, Mode=OneWay}" Description="{x:Bind IsDefault, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:LOCALIZE|DefaultFileSystem:false:LOCALIZE|BuiltinFileSystem'}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE8CE;" />
+                </ucab:ActionBlockControl.Icon>
+            </ucab:ActionBlockControl>
         </DataTemplate>
 
         <DataTemplate x:Key="InstallationTemplate" x:DataType="vm:ItemInstallationViewModel">
-            <Grid />
+            <ucab:ActionBlockControl Title="{x:Bind Title, Mode=OneWay}" Description="{l:ResourceString Rid=FileSystemOffersImprovedExperience}">
+                <ucab:ActionBlockControl.Icon>
+                    <IconSourceElement IconSource="{x:Bind Icon, Mode=OneWay, Converter={StaticResource IconSourceConverter}}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Grid Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                        <HyperlinkButton
+                            Command="{x:Bind InstallCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=Install}"
+                            Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                        <ProgressRing
+                            Width="32"
+                            Height="32"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            IsIndeterminate="{x:Bind IsIndeterminate, Mode=OneWay}"
+                            Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Value="{x:Bind CurrentProgress, Mode=OneWay}" />
+                    </Grid>
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
         </DataTemplate>
 
         <!--  Fade In + Scale In Animation  -->
@@ -189,6 +212,7 @@
                     ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_filesystem.png">
                     <local:FeatureSlide.Slot>
                         <ListView
+                            Margin="0,128,0,0"
                             ItemsSource="{x:Bind ViewModel.FileSystems, Mode=OneWay}"
                             SelectionChanged="Selector_SelectionChanged"
                             SelectionMode="Extended">
