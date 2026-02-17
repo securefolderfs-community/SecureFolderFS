@@ -1,27 +1,29 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
-using System.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
 {
     /// <summary>
     /// Represents a picker option with a <see cref="IViewable.Title"/> property and a unique ID.
     /// </summary>
     [Bindable(true)]
-    public sealed class PickerOptionViewModel(string id, string? title = null) : ObservableObject, IViewable
+    public partial class PickerOptionViewModel : SelectableItemViewModel
     {
         /// <summary>
         /// Gets the unique ID associated with this option.
         /// </summary>
-        public string Id { get; } = id;
+        public virtual string Id { get; }
 
-        /// <inheritdoc/>
-        public string Title { get; } = title ?? id;
+        public PickerOptionViewModel(string id, string? title = null)
+        {
+            Id = id;
+            Title = title;
+        }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return Title;
+            return Title ?? string.Empty;
         }
     }
 }

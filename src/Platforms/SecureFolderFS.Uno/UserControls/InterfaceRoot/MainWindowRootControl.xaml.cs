@@ -6,8 +6,11 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
@@ -81,6 +84,17 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             // Initialize theme
             await UnoThemeHelper.Instance.InitAsync();
+            
+            // Show introduction
+            var settingsService = DI.Service<ISettingsService>();
+            if (!settingsService.AppSettings.WasIntroduced || true)
+            {
+                var overlayService = DI.Service<IOverlayService>();
+                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                
+                settingsService.AppSettings.WasIntroduced = true;
+                await settingsService.AppSettings.SaveAsync();
+            }
 
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
             {

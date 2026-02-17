@@ -7,11 +7,22 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:tui="using:CommunityToolkit.WinUI"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
     PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <DataTemplate x:Key="FileSystemTemplate" x:DataType="vm:FileSystemItemViewModel">
+            <Grid />
+        </DataTemplate>
+
+        <DataTemplate x:Key="InstallationTemplate" x:DataType="vm:ItemInstallationViewModel">
+            <Grid />
+        </DataTemplate>
+
         <!--  Fade In + Scale In Animation  -->
         <Storyboard x:Key="ShowOverlayStoryboard" x:Name="ShowOverlayStoryboard">
             <DoubleAnimation
@@ -172,20 +183,21 @@
                     </ext:On>
                 </ext:OnPlatform>
                 <!--  Slide 4: Virtual File System  -->
-                <ext:OnPlatform>
-                    <ext:On Platform="Windows">
-                        <local:FeatureSlide
-                            Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
-                            Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
-                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_filesystem.png" />
-                    </ext:On>
-                    <ext:On Platform="Default">
-                        <local:FeatureSlide
-                            Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
-                            Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
-                            ImageSource="Assets/AppAssets/Introduction/intro_light_filesystem.png" />
-                    </ext:On>
-                </ext:OnPlatform>
+                <local:FeatureSlide
+                    Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
+                    Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
+                    ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_filesystem.png">
+                    <local:FeatureSlide.Slot>
+                        <ListView
+                            ItemsSource="{x:Bind ViewModel.FileSystems, Mode=OneWay}"
+                            SelectionChanged="Selector_SelectionChanged"
+                            SelectionMode="Extended">
+                            <ListView.ItemTemplateSelector>
+                                <ts:FileSystemItemTemplateSelector FileSystemTemplate="{StaticResource FileSystemTemplate}" InstallationTemplate="{StaticResource InstallationTemplate}" />
+                            </ListView.ItemTemplateSelector>
+                        </ListView>
+                    </local:FeatureSlide.Slot>
+                </local:FeatureSlide>
                 <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
             </FlipView>
         </Grid>

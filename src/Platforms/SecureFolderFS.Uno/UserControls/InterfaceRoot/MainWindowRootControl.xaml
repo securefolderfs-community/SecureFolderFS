@@ -32,14 +32,24 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <!--  Overlay Container  -->
+        <Grid
+            x:Name="OverlayContainer"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            x:FieldModifier="public"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Canvas.ZIndex="8"
+            Visibility="Collapsed" />
+
         <!--  Titlebar  -->
-        <Grid Grid.Row="0" Canvas.ZIndex="10">
-            <uc:TitleBarControl
-                x:Name="CustomTitleBar"
-                x:FieldModifier="public"
-                PrimaryTitle="SecureFolderFS"
-                SecondaryTitle="Release Candidate 1" />
-        </Grid>
+        <uc:TitleBarControl
+            x:Name="CustomTitleBar"
+            Grid.Row="0"
+            x:FieldModifier="public"
+            Canvas.ZIndex="10"
+            PrimaryTitle="SecureFolderFS"
+            SecondaryTitle="Release Candidate 1" />
 
         <!--  Main Content  -->
         <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">
@@ -99,15 +109,5 @@
                 </hni:TaskbarIcon.ContextFlyout>
             </hni:TaskbarIcon>
         </win:Border>
-
-        <!--  Overlay Container  -->
-        <Grid
-            x:Name="OverlayContainer"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            x:FieldModifier="public"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            Canvas.ZIndex="9"
-            Visibility="Collapsed" />
     </Grid>
 </UserControl>

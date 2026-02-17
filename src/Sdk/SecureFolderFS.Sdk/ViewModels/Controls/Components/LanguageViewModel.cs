@@ -1,25 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Shared.ComponentModel;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
 {
     /// <summary>
     /// Represents a language view model.
     /// </summary>
     [Bindable(true)]
-    public sealed partial class LanguageViewModel : ObservableObject, IViewable
+    public sealed partial class LanguageViewModel : PickerOptionViewModel, IViewable
     {
         /// <summary>
         /// Gets the <see cref="CultureInfo"/> of the language.
         /// </summary>
         public CultureInfo CultureInfo { get; }
-
-        /// <inheritdoc cref="IViewable.Title"/>
-        [ObservableProperty] private string? _Title;
 
         public LanguageViewModel(CultureInfo cultureInfo)
             : this(cultureInfo, FormatName(cultureInfo))
@@ -27,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         public LanguageViewModel(CultureInfo cultureInfo, string title)
+            : base(cultureInfo.LCID.ToString(), title)
         {
             CultureInfo = cultureInfo;
             Title = title;

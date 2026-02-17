@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels.Sorters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
 
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             ]);
             ViewOptions = new([
                 new(nameof(BrowserViewType.ListView), "ListViewLayout".ToLocalized()),
-                new(nameof(Enums.BrowserViewType.ColumnView), "ColumnViewLayout".ToLocalized()),
+                new(nameof(BrowserViewType.ColumnView), "ColumnViewLayout".ToLocalized()),
                 new("GridView", "GridViewLayout".ToLocalized()),
                 new("GalleryView", "GalleryViewLayout".ToLocalized())
             ]);

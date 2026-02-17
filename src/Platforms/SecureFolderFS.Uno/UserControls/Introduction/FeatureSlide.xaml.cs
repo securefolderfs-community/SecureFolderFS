@@ -37,5 +37,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
         public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(FeatureSlide), new PropertyMetadata(null));
+
+        public FrameworkElement? Slot
+        {
+            get => (FrameworkElement?)GetValue(SlotProperty);
+            set => SetValue(SlotProperty, value);
+        }
+        public static readonly DependencyProperty SlotProperty =
+            DependencyProperty.Register(nameof(Slot), typeof(FrameworkElement), typeof(FeatureSlide), new PropertyMetadata(null));
     }
 }

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault

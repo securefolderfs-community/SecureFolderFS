@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
@@ -54,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenOnboardingAsync()
         {
-            return OverlayService.ShowAsync(new IntroductionOverlayViewModel());
+            return OverlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
         }
 
         [RelayCommand]

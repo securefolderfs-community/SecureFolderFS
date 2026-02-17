@@ -17,7 +17,8 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Source="{x:Bind ImageSource, Mode=OneWay}"
-            Stretch="UniformToFill" />
+            Stretch="UniformToFill"
+            Visibility="{x:Bind ImageSource, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
 
         <StackPanel
             Grid.Column="1"

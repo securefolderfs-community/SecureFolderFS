@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.DeviceLink.Services;
 using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;

@@ -9,7 +9,7 @@
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
     mc:Ignorable="d">
 
     <Page.Resources>

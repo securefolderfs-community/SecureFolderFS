@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using static SecureFolderFS.Storage.Constants.Sizes;
 
 namespace SecureFolderFS.Sdk.Helpers
