@@ -85,6 +85,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             return true;
         }
 
+        partial void OnSelectedFileSystemChanged(PickerOptionViewModel? value)
+        {
+            if (value is null)
+                return;
+
+            SettingsService.UserSettings.PreferredFileSystemId = value.Id;
+            _ = SettingsService.TrySaveAsync();
+        }
+
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
