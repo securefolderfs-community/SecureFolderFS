@@ -20,8 +20,8 @@ using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.WebDav
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public abstract class WebDavFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public abstract class WebDavFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;

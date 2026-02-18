@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.Uno.ViewModels;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
@@ -28,18 +26,6 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 #if !__UNO_SKIA_MACOS__
             yield return new FuseFileSystem();
 #endif
-        }
-
-        /// <inheritdoc/>
-        public override async IAsyncEnumerable<ItemInstallationViewModel> GetFileSystemInstallationsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var dokany = new DokanyInstallationViewModel();
-            await dokany.InitAsync(cancellationToken);
-            yield return dokany;
-            
-            var winFsp = new WinFspInstallationViewModel();
-            await winFsp.InitAsync(cancellationToken);
-            yield return winFsp;
         }
 
         /// <inheritdoc/>

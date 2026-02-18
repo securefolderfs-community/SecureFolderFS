@@ -9,7 +9,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="1.2*" />
+            <ColumnDefinition Width="1.4*" />
         </Grid.ColumnDefinitions>
 
         <Image

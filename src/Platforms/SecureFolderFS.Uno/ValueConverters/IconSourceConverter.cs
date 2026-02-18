@@ -16,12 +16,7 @@ namespace SecureFolderFS.Uno.ValueConverters
             return value switch
             {
                 ImageBitmap bitmap => new ImageIconSource() { ImageSource = bitmap.Source },
-                ImageResource resource => resource.Name switch
-                {
-                    "Dokany" => new BitmapIconSource() { UriSource = new Uri("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"), ShowAsMonochrome = false },
-                    "WinFsp" => new BitmapIconSource() { UriSource = new Uri("ms-appx:///Assets/AppAssets/FileSystems/winfsp.png"), ShowAsMonochrome = false },
-                    _ => new BitmapIconSource() { UriSource = new Uri(resource.Name), ShowAsMonochrome = false }
-                },
+                ImageResource resource => new BitmapIconSource() { UriSource = new Uri(resource.Name), ShowAsMonochrome = false },
                 ImageGlyph glyph => glyph switch
                 {
                     { FontFamily: not null } => new FontIconSource() { Glyph = glyph.Glyph, FontFamily = new FontFamily(glyph.FontFamily) },

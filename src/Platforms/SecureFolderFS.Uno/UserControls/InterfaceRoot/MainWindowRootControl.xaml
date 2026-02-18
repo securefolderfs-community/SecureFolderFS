@@ -39,7 +39,7 @@
             Grid.RowSpan="2"
             x:FieldModifier="public"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            Canvas.ZIndex="8"
+            Canvas.ZIndex="9"
             Visibility="Collapsed" />
 
         <!--  Titlebar  -->

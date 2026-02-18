@@ -9,12 +9,14 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.Platforms.Windows.ViewModels
 {
-    public sealed partial class WinFspInstallationViewModel() : ItemInstallationViewModel("WINFSP", "WinFsp")
+    /// <inheritdoc cref="ItemInstallationViewModel"/>
+    public sealed partial class WinFspInstallationViewModel() : ItemInstallationViewModel(Core.WinFsp.Constants.FileSystem.FS_ID, Core.WinFsp.Constants.FileSystem.FS_NAME)
     {
         private const string OWNER = "winfsp";
         private const string REPO = "winfsp";
@@ -23,7 +25,7 @@ namespace SecureFolderFS.Uno.ViewModels
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var mediaService = DI.Service<IMediaService>();
-            Icon = await mediaService.GetImageFromResourceAsync("WinFsp", cancellationToken);
+            Icon = await mediaService.GetImageFromResourceAsync(Id, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -45,6 +47,10 @@ namespace SecureFolderFS.Uno.ViewModels
                 await installerFolder.DeleteAsync(downloadedFile, cancellationToken);
                 IsInstalled = true;
             }
+            catch (Exception ex)
+            {
+                Report(Result.Failure(ex));
+            }
             finally
             {
                 IsProgressing = false;
@@ -52,10 +58,10 @@ namespace SecureFolderFS.Uno.ViewModels
             }
         }
 
-        private async Task<(string downloadUrl, string fileName)> GetInstallerAssetAsync(CancellationToken cancellationToken)
+        private static async Task<(string downloadUrl, string fileName)> GetInstallerAssetAsync(CancellationToken cancellationToken)
         {
             var github = new GitHubClient(new ProductHeaderValue(Constants.GitHub.REPOSITORY_OWNER));
-            var release = await github.Repository.Release.Get(OWNER, REPO, "v2.1").WaitAsync(cancellationToken);
+            var release = await github.Repository.Release.Get(OWNER, REPO, Core.WinFsp.Constants.FileSystem.VERSION_TAG).WaitAsync(cancellationToken);
 
             ReleaseAsset? asset = null;
             foreach (var item in release.Assets)

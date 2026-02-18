@@ -27,7 +27,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
         private Grid? _overlayContainer;
-        private TitleBarControl? _customTitleBar;
 
         public IntroductionOverlayViewModel? ViewModel
         {
@@ -49,10 +48,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (ViewModel.TaskCompletion.Task.IsCompleted)
                 return ViewModel.TaskCompletion.Task.Result;
 
-            if (App.Instance?.MainWindow?.Content is not MainWindowRootControl { OverlayContainer: var overlayContainer, CustomTitleBar: var customTitleBar })
+            if (App.Instance?.MainWindow?.Content is not MainWindowRootControl { OverlayContainer: var overlayContainer })
                 return Result.Failure(null);
 
-            _customTitleBar = customTitleBar;
             _overlayContainer = overlayContainer;
             if (_overlayContainer is null)
                 return Result.Failure(null);
@@ -64,9 +62,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             // Set the visibility of the overlay container
             _overlayContainer.Visibility = Visibility.Visible;
             RootGrid.Opacity = 0;
-
-            if (_customTitleBar is not null)
-                _customTitleBar.Opacity = 0d;
 
             // Play the show animation
             await ShowOverlayStoryboard.BeginAsync();
@@ -96,9 +91,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             // Hide and clean up the overlay container
             if (_overlayContainer is not null)
             {
-                if (_customTitleBar is not null)
-                    _customTitleBar.Opacity = 1d;
-
                 _overlayContainer.Children.Remove(this);
                 _overlayContainer.Visibility = Visibility.Collapsed;
                 _overlayContainer = null;
@@ -164,15 +156,28 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             if (ViewModel is null)
                 return;
+
+            if (sender is not ListView listView)
+                return;
             
             foreach (var item in ViewModel.FileSystems)
                 item.IsSelected = false;
             
             var selectedItem = e.AddedItems.FirstOrDefault();
-            if (selectedItem is ItemInstallationViewModel installationViewModel)
+            if (selectedItem is ItemInstallationViewModel installation)
             {
-                installationViewModel.IsSelected = installationViewModel.IsInstalled;
-                ViewModel.SelectedFileSystem = installationViewModel.IsInstalled ? installationViewModel : null;
+                if (installation.IsInstalled)
+                {
+                    installation.IsSelected = true;
+                    ViewModel.SelectedFileSystem = installation;
+                }
+                else
+                {
+                    var oldSelected = e.RemovedItems.FirstOrDefault()?.TryCast<PickerOptionViewModel>();
+                    oldSelected?.IsSelected = true;
+                    ViewModel.SelectedFileSystem = oldSelected;
+                    listView.SelectedItem = oldSelected;
+                }
             }
             else if (selectedItem is PickerOptionViewModel itemViewModel)
             {

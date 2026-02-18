@@ -16,9 +16,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseVaultFileSystemService : IVaultFileSystemService
     {
         /// <inheritdoc/>
-        public Task<IFileSystem> GetLocalFileSystemAsync(CancellationToken cancellationToken)
+        public Task<IFileSystemInfo> GetLocalFileSystemAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IFileSystem>(new LocalFileSystem());
+            return Task.FromResult<IFileSystemInfo>(new LocalFileSystem());
         }
 
         /// <inheritdoc/>
@@ -29,7 +29,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
         
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
+        public abstract IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync(CancellationToken cancellationToken);
 
         /// <inheritdoc/>
         public abstract IAsyncEnumerable<BaseDataSourceWizardViewModel> GetSourcesAsync(IVaultCollectionModel vaultCollectionModel, NewVaultMode mode, CancellationToken cancellationToken = default);

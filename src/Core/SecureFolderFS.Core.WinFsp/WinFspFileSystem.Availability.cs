@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WinFsp
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed partial class WinFspFileSystem
     {
         /// <inheritdoc/>

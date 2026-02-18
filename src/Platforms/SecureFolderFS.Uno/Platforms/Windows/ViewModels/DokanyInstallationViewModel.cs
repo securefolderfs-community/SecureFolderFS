@@ -7,24 +7,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
 using OwlCore.Storage;
-using SecureFolderFS.UI;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.SystemStorageEx;
+using SecureFolderFS.UI;
 
-namespace SecureFolderFS.Uno.ViewModels
+namespace SecureFolderFS.Uno.Platforms.Windows.ViewModels
 {
-    public sealed partial class DokanyInstallationViewModel() : ItemInstallationViewModel("DOKANY", "Dokany")
+    /// <inheritdoc cref="ItemInstallationViewModel"/>
+    public sealed partial class DokanyInstallationViewModel() : ItemInstallationViewModel(Core.Dokany.Constants.FileSystem.FS_ID, Core.Dokany.Constants.FileSystem.FS_NAME)
     {
         private const string OWNER = "dokan-dev";
         private const string REPO = "dokany";
 
         /// <inheritdoc/>
+        public override event EventHandler<EventArgs>? StateChanged;
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var mediaService = DI.Service<IMediaService>();
-            Icon = await mediaService.GetImageFromResourceAsync("Dokany", cancellationToken);
+            Icon = await mediaService.GetImageFromResourceAsync(Id, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -47,6 +52,10 @@ namespace SecureFolderFS.Uno.ViewModels
                 await installerFolder.DeleteAsync(downloadedFile, cancellationToken);
                 IsInstalled = true;
             }
+            catch (Exception ex)
+            {
+                Report(Result.Failure(ex));
+            }
             finally
             {
                 IsProgressing = false;
@@ -54,10 +63,10 @@ namespace SecureFolderFS.Uno.ViewModels
             }
         }
 
-        private async Task<(string downloadUrl, string fileName)> GetInstallerAssetAsync(CancellationToken cancellationToken)
+        private static async Task<(string downloadUrl, string fileName)> GetInstallerAssetAsync(CancellationToken cancellationToken)
         {
             var github = new GitHubClient(new ProductHeaderValue(Constants.GitHub.REPOSITORY_OWNER));
-            var release = await github.Repository.Release.Get(OWNER, REPO, "v2.3.1.1000").WaitAsync(cancellationToken);
+            var release = await github.Repository.Release.Get(OWNER, REPO, Core.Dokany.Constants.FileSystem.VERSION_TAG).WaitAsync(cancellationToken);
             var archTag = RuntimeInformation.ProcessArchitecture switch
             {
                 Architecture.X64 => "x64",

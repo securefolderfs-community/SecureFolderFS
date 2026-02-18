@@ -16,18 +16,18 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A new local file system instance.</returns>
-        Task<IFileSystem> GetLocalFileSystemAsync(CancellationToken cancellationToken = default);
+        Task<IFileSystemInfo> GetLocalFileSystemAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all file systems that are supported by the app.
         /// </summary>
         /// <remarks>
         /// Returned file systems that are available may not be supported on this device.
-        /// Use <see cref="IFileSystem.GetStatusAsync"/> to check if a given file system is supported.
+        /// Use <see cref="IFileSystemInfo.GetStatusAsync"/> to check if a given file system is supported.
         /// </remarks>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>An <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
-        IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken = default);
+        /// <returns>An <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfo"/> of available file systems.</returns>
+        IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves the available file systems that can be installed on this device.

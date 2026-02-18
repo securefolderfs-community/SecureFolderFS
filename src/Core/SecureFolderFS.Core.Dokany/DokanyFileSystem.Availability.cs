@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed partial class DokanyFileSystem
     {
         /// <inheritdoc/>
