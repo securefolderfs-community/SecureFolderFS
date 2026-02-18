@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -78,24 +79,16 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
                 ViewModel.CanContinue = CurrentViewModel.CanContinue;
         }
 
-        private async void SegmentButton_Click(object sender, RoutedEventArgs e)
+        private async void SegmentedControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel is null || sender is not Button { Tag: string tag } button)
+            if (sender is not Segmented { SelectedValue: SegmentedItem { Tag: string tag } })
                 return;
 
-            // Apply styles
-            _lastClickedButton ??= CreateNewButton;
-            _lastClickedButton.Style = (Style?)App.Instance?.Resources["DefaultButtonStyle"];
-
             // Change type
-            ViewModel.Mode = tag == "CREATE" ? NewVaultMode.CreateNew : NewVaultMode.AddExisting;
+            ViewModel!.Mode = tag == "CREATE" ? NewVaultMode.CreateNew : NewVaultMode.AddExisting;
             CurrentViewModel = ViewModel.Mode == NewVaultMode.CreateNew ? _createNewViewModel : _addExistingViewModel;
             if (CurrentViewModel is not null)
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
-
-            // Apply styles
-            button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];
-            _lastClickedButton = button;
         }
     }
 }

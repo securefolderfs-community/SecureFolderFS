@@ -5,6 +5,7 @@
     <PackageVersion Include="AcrylicView.Maui" Version="3.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
     <PackageVersion Include="ContextMenuContainer" Version="1.2.3" />
     <PackageVersion Include="H.NotifyIcon.Uno.WinUI" Version="2.3.0" />

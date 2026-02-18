@@ -38,6 +38,7 @@
   <!-- Package References -->
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
     <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
