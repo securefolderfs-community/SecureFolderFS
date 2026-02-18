@@ -68,6 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             // Get and populate available size options
             var deviceFreeSpace = await SafetyHelpers.NoFailureAsync(async () => await SystemService.GetAvailableFreeSpaceAsync(rootFolder, cancellationToken));
             var sizeOptions = RecycleBinHelpers.GetSizeOptions(deviceFreeSpace);
+            SizeOptions.Clear();
             SizeOptions.AddMultiple(sizeOptions);
 
             // Choose the saved size option
@@ -90,6 +91,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             // We can only determine that the recycle bin is enabled if it exists
             IsRecycleBinEnabled = UnlockedVaultViewModel.StorageRoot.Options.IsRecycleBinEnabled();
+            Items.Clear();
             await foreach (var item in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (item is not IRecycleBinItem recycleBinItem)
@@ -156,6 +158,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)
         {
             UpdateSizeBar(value);
+        }
+
+        [RelayCommand]
+        private async Task RefreshAsync(CancellationToken cancellationToken)
+        {
+            await InitAsync(cancellationToken);
         }
 
         [RelayCommand]

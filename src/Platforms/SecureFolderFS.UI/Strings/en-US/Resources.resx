@@ -1166,4 +1166,7 @@
   <data name="WinFspDescription" xml:space="preserve">
       <value>WinFsp offers better performance and reliability</value>
   </data>
+  <data name="Refresh" xml:space="preserve">
+      <value>Refresh</value>
+  </data>
 </root>

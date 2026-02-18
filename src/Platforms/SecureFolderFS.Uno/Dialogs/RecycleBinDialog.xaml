@@ -96,15 +96,20 @@
             x:Name="RecycleBinContentsView"
             Grid.Row="1"
             x:Load="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-            <Grid
+            <StackPanel
                 x:Name="EmptyView"
                 Padding="0,8,0,16"
-                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}">
+                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                Spacing="16">
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
                     Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
-            </Grid>
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.RefreshCommand}"
+                    Content="{l:ResourceString Rid=Refresh}" />
+            </StackPanel>
 
             <Grid
                 x:Name="ItemsView"
@@ -139,8 +144,7 @@
                     SelectionUnit="Row">
                     <tbv:TableView.Columns>
                         <tbv:TableViewTextColumn
-                            Width="*"
-                            MinWidth="232"
+                            Width="232"
                             Binding="{Binding Title}"
                             Header="{l:ResourceString Rid=Name}" />
                         <tbv:TableViewTextColumn
@@ -148,8 +152,7 @@
                             Binding="{Binding DeletionTimestamp, Converter={StaticResource DateTimeToStringConverter}}"
                             Header="{l:ResourceString Rid=DeletedAt}" />
                         <tbv:TableViewTextColumn
-                            Width="2*"
-                            MinWidth="400"
+                            Width="400"
                             Binding="{Binding OriginalPath}"
                             Header="{l:ResourceString Rid=OriginalLocation}" />
                         <tbv:TableViewTextColumn
@@ -164,6 +167,7 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="4">
+                    <Button Command="{x:Bind ViewModel.RefreshCommand}" Content="{l:ResourceString Rid=Refresh}" />
                     <Button
                         Command="{x:Bind ViewModel.RestoreSelectedCommand}"
                         CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"

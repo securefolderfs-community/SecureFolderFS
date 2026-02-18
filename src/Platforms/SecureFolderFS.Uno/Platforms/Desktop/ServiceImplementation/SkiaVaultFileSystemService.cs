@@ -18,7 +18,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
     internal sealed class SkiaVaultFileSystemService : BaseVaultFileSystemService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<IFileSystem> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+        public override async IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             yield return new SkiaWebDavFileSystem();
