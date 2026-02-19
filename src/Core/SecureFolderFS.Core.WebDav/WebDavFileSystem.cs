@@ -1,22 +1,21 @@
-﻿using NWebDav.Server;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using NWebDav.Server;
 using NWebDav.Server.Dispatching;
 using NWebDav.Server.Storage;
-using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.WebDav
 {
