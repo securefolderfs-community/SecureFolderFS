@@ -155,7 +155,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
+            {
                 SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.DataModel.PersistableId;
+                _ = SettingsService.AppSettings.TrySaveAsync();
+            }
         }
     }
 }

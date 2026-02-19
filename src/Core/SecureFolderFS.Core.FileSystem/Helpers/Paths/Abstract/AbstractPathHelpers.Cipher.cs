@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             return Path.Combine(specifics.ContentFolder.Id, finalPath);
         }
 
-        public static async Task<IStorableChild?> GetCiphertextItemAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        public static async Task<IStorableChild?> GetCiphertextItemAsync(IStorableChild plaintextStorable, IFolder virtualizedRoot, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
             if (specifics.Security.NameCrypt is null)
                 return plaintextStorable;
@@ -49,6 +49,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             while (await currentStorable.GetParentAsync(cancellationToken).ConfigureAwait(false) is IChildFolder currentParent)
             {
+                // If the parent is deeper than the virtualized root, we can stop
+                if (!currentParent.Id.Contains(virtualizedRoot.Id))
+                    break;
+
                 folderChain.Insert(0, currentParent);
                 currentStorable = currentParent;
             }

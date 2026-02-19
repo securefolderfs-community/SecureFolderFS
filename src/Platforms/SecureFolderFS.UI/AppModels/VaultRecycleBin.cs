@@ -127,7 +127,7 @@ namespace SecureFolderFS.UI.AppModels
                     return null;
 
                 // Return the equivalent ciphertext implementation
-                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _specifics, cancellationToken) as IModifiableFolder;
+                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.VirtualizedRoot, _specifics, cancellationToken) as IModifiableFolder;
             }
         }
 
