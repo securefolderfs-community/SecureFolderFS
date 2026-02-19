@@ -14,13 +14,14 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IRenamableFolder, IRecyclableFolder, ICreateCopyOf
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IMoveRenamedFrom, IRenamableFolder, IRecyclableFolder, ICreateCopyOf
     {
         public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
@@ -214,6 +215,44 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         }
 
         /// <inheritdoc/>
+        public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken,
+            MoveFromDelegate fallback)
+        {
+            return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken, (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName,
+            CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            if (Inner is not IModifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
+
+            if (source is not IChildFolder sourceFolder)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            if (Inner is not IMoveRenamedFrom moveRenamedFrom)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            // Get the ciphertext representation of the source folder
+            var ciphertextSource = await GetCiphertextRepresentationAsync(sourceFolder, cancellationToken);
+            if (ciphertextSource is not IModifiableFolder ciphertextSourceModifiableFolder)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            // Get the ciphertext representation of the file to move
+            var existingCiphertextName = await AbstractPathHelpers.EncryptNameAsync(fileToMove.Name, ciphertextSource, specifics, cancellationToken);
+            var ciphertextFileToMove = await ciphertextSource.TryGetFileByNameAsync(existingCiphertextName, cancellationToken);
+            if (ciphertextFileToMove is null)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            // Encrypt the new name
+            var newCiphertextName = await AbstractPathHelpers.EncryptNameAsync(newName, Inner, specifics, cancellationToken);
+
+            // Move the ciphertext file
+            return await moveRenamedFrom.MoveFromAsync(ciphertextFileToMove, ciphertextSourceModifiableFolder, overwrite, newCiphertextName, cancellationToken, fallback);
+        }
+
+        /// <inheritdoc/>
         public override async Task<IBasicProperties> GetPropertiesAsync()
         {
             if (Inner is not IStorableProperties storableProperties)
@@ -223,6 +262,32 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             properties ??= new CryptoFolderProperties(innerProperties);
 
             return properties;
+        }
+
+        private async Task<TStorable?> GetCiphertextRepresentationAsync<TStorable>(TStorable item, CancellationToken cancellationToken)
+            where TStorable : class, IStorableChild
+        {
+            var parentFolder = await item.GetParentAsync(cancellationToken);
+            if (parentFolder is null)
+            {
+                // We're at the root
+                if (item is not IWrapper<IFolder> folderWrapper)
+                    return null;
+
+                if (folderWrapper.GetWrapperBelow<IFolder, CryptoFolder>() is not { Inner: var ciphertextRoot })
+                    return null;
+
+                return ciphertextRoot as TStorable;
+            }
+
+            if (parentFolder is not IWrapper<IFolder> parentFolderWrapper)
+                return null;
+
+            if (parentFolderWrapper.GetWrapperBelow<IFolder, CryptoFolder>() is not { Inner: var ciphertextParent })
+                return null;
+
+            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, parentFolder, specifics, cancellationToken);
+            return await ciphertextParent.TryGetFirstByNameAsync(ciphertextName, cancellationToken) as TStorable;
         }
     }
 }
