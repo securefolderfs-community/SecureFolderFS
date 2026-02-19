@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml;
@@ -73,19 +74,22 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
                 newValue.PropertyChanged += CurrentViewModel_PropertyChanged;
         }
 
-        private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (ViewModel is not null && CurrentViewModel is not null && e.PropertyName == nameof(IOverlayControls.CanContinue))
-                ViewModel.CanContinue = CurrentViewModel.CanContinue;
+                ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
         }
 
         private async void SegmentedControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ViewModel is null)
+                return;
+
             if (sender is not Segmented { SelectedValue: SegmentedItem { Tag: string tag } })
                 return;
 
             // Change type
-            ViewModel!.Mode = tag == "CREATE" ? NewVaultMode.CreateNew : NewVaultMode.AddExisting;
+            ViewModel.Mode = tag == "CREATE" ? NewVaultMode.CreateNew : NewVaultMode.AddExisting;
             CurrentViewModel = ViewModel.Mode == NewVaultMode.CreateNew ? _createNewViewModel : _addExistingViewModel;
             if (CurrentViewModel is not null)
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();

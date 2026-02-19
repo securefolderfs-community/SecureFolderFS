@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tuc="clr-namespace:CommunityToolkit.WinUI.Controls;assembly=CommunityToolkit.WinUI.Controls.Segmented"
+    xmlns:tuc="using:CommunityToolkit.WinUI.Controls"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Wizard"
     Width="464"
