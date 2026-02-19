@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
@@ -160,6 +161,18 @@ namespace SecureFolderFS.Storage.Extensions
             {
                 return null;
             }
+        }
+
+        /// <inheritdoc cref="IRecyclableFolder.DeleteAsync(IStorableChild, long, bool, CancellationToken)"/>
+        public static async Task DeleteAsync(this IModifiableFolder modifiableFolder, IStorableChild item, long sizeHint = -1L, bool deleteImmediately = false, CancellationToken cancellationToken = default)
+        {
+            if (modifiableFolder is IRecyclableFolder recyclableFolder)
+            {
+                await recyclableFolder.DeleteAsync(item, sizeHint, deleteImmediately, cancellationToken);
+                return;
+            }
+
+            await modifiableFolder.DeleteAsync(item, cancellationToken);
         }
 
         public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)

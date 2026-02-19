@@ -44,7 +44,7 @@ namespace SecureFolderFS.Shared.Extensions
         public static IWrapper<T> GetWrapperBelow<T, TAbove>(this IWrapper<T> wrapper)
         {
             var aboveWrapper = GetWrapperAt<T, TAbove>(wrapper);
-            if (aboveWrapper is IWrapper<T> belowWrapper)
+            if (aboveWrapper is { Inner: IWrapper<T> belowWrapper })
                 return belowWrapper;
 
             throw new InvalidOperationException($"Could not find wrapper below level {typeof(TAbove).Name}.");

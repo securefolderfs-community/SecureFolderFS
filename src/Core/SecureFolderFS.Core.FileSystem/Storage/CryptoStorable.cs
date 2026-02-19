@@ -10,7 +10,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IStorable"/>
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IStorableProperties
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability> , IStorableChild, IStorableProperties
         where TCapability : IStorable
     {
         protected readonly CryptoFolder? parent;
@@ -70,6 +70,14 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public abstract Task<IBasicProperties> GetPropertiesAsync();
 
+        /// <summary>
+        /// Wraps an <see cref="IFile"/> instance, associating the file with additional metadata
+        /// and creating a cryptographic representation of the file.
+        /// </summary>
+        /// <param name="file">The file to wrap.</param>
+        /// <param name="objects">An array of objects used to provide additional context for the wrapping operation.
+        /// The first object must be the plaintext name of the file as a <see cref="string"/>.</param>
+        /// <returns>An <see cref="IWrapper{IFile}"/> instance that represents the wrapped file with cryptographic integration.</returns>
         protected virtual IWrapper<IFile> Wrap(IFile file, params object[] objects)
         {
             if (objects[0] is not string plaintextName)
@@ -79,6 +87,12 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             return new CryptoFile(plaintextId, file, specifics, this as CryptoFolder);
         }
 
+        /// <summary>
+        /// Wraps the specified folder with additional capabilities and properties, enabling customization and enhanced functionality.
+        /// </summary>
+        /// <param name="folder">The folder to wrap.</param>
+        /// <param name="objects">Additional arguments providing metadata or properties, with the first argument expected to be the plaintext name of the folder.</param>
+        /// <returns>A wrapped instance of the folder with applied enhancements.</returns>
         protected virtual IWrapper<IFolder> Wrap(IFolder folder, params object[] objects)
         {
             if (objects[0] is not string plaintextName)

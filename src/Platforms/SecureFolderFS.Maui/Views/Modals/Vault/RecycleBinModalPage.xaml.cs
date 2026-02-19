@@ -1,6 +1,6 @@
 using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;

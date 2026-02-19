@@ -108,17 +108,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// Encrypts the provided <paramref name="plaintextName"/>.
         /// </summary>
         /// <param name="plaintextName">The name to encrypt.</param>
-        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="ciphertextParentFolder">The ciphertext parent folder.</param>
         /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
-        public static async Task<string> EncryptNameAsync(string plaintextName, IFolder parentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        public static async Task<string> EncryptNameAsync(string plaintextName, IFolder ciphertextParentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             if (specifics.Security.NameCrypt is null)
                 return plaintextName;
 
             var directoryId = AllocateDirectoryId(specifics.Security, plaintextName);
-            var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
+            var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, directoryId, cancellationToken);
 
             return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }
@@ -127,11 +127,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// Decrypts the provided <paramref name="ciphertextName"/>.
         /// </summary>
         /// <param name="ciphertextName">The name to decrypt.</param>
-        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <param name="ciphertextParentFolder">The ciphertext parent folder.</param>
         /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a decrypted name.</returns>
-        public static async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        public static async Task<string?> DecryptNameAsync(string ciphertextName, IFolder ciphertextParentFolder, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                     return ciphertextName;
 
                 var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
-                var result = await GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken);
+                var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, directoryId, cancellationToken);
 
                 return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
             }

@@ -108,6 +108,14 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         }
 
         /// <inheritdoc/>
+        public override async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName, CancellationToken cancellationToken,
+            CreateRenamedCopyOfDelegate fallback)
+        {
+            var file = await base.CreateCopyOfAsync(fileToCopy, overwrite, newName, cancellationToken, fallback);
+            return new SystemFileEx(file.Id);
+        }
+
+        /// <inheritdoc/>
         public override async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken, MoveFromDelegate fallback)
         {
             var file = await base.MoveFromAsync(fileToMove, source, overwrite, cancellationToken, fallback);

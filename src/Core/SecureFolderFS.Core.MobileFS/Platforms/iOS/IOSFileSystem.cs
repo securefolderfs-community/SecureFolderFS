@@ -6,12 +6,11 @@ using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed class IOSFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed class IOSFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.IOS.FileSystem.FS_ID;

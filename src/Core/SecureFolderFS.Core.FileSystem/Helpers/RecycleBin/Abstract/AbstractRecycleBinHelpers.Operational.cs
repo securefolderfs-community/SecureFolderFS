@@ -15,6 +15,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static partial class AbstractRecycleBinHelpers
     {
+        /// <summary>
+        /// The threshold in seconds for detecting recently created files.
+        /// Files created within this threshold will be deleted immediately instead of recycled.
+        /// This helps work around macOS Finder behavior during copy operations.
+        /// </summary>
+        private const int RECENT_FILE_THRESHOLD_MS = 3000;
+
         public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
@@ -109,16 +116,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
         }
 
-        /// <summary>
-        /// The threshold in seconds for detecting recently created files.
-        /// Files created within this threshold will be deleted immediately instead of recycled.
-        /// This helps work around macOS Finder behavior during copy operations.
-        /// </summary>
-        private const int RECENT_FILE_THRESHOLD_MS = 3000;
-
         public static async Task DeleteOrRecycleAsync(
-            IModifiableFolder sourceFolder,
-            IStorableChild item,
+            IModifiableFolder ciphertextSourceFolder,
+            IStorableChild ciphertextItem,
             FileSystemSpecifics specifics,
             IAsyncSerializer<Stream> streamSerializer,
             long sizeHint = -1L,
@@ -130,29 +130,29 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             if (!specifics.Options.IsRecycleBinEnabled() || deleteImmediately)
             {
-                await sourceFolder.DeleteAsync(item, cancellationToken);
+                await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                 return;
             }
 
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
-                var parentFolder = await item.GetParentAsync(cancellationToken);
+                var parentFolder = await ciphertextItem.GetParentAsync(cancellationToken);
                 if (parentFolder is not null)
                 {
-                    var plaintextName = await AbstractPathHelpers.DecryptNameAsync(item.Name, parentFolder, specifics, cancellationToken) ?? string.Empty;
+                    var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, parentFolder, specifics, cancellationToken) ?? string.Empty;
                     if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
                     {
                         // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
-                        await sourceFolder.DeleteAsync(item, cancellationToken);
+                        await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                         return;
                     }
                 }
 
                 // Check if the file was recently created (likely part of a copy operation)
                 // On macOS, Finder creates files and immediately deletes them during copy operations
-                if (await IsRecentlyCreatedAsync(item, cancellationToken))
+                if (await IsRecentlyCreatedAsync(ciphertextItem, cancellationToken))
                 {
-                    await sourceFolder.DeleteAsync(item, cancellationToken);
+                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                     return;
                 }
             }
@@ -164,7 +164,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             if (sizeHint < 0L && specifics.Options.RecycleBinSize > 0L)
             {
-                sizeHint = item switch
+                sizeHint = ciphertextItem switch
                 {
                     IFile file => await file.GetSizeAsync(cancellationToken),
                     IFolder folder => await folder.GetSizeAsync(cancellationToken),
@@ -175,18 +175,18 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
                 if (availableSize < sizeHint)
                 {
-                    await sourceFolder.DeleteAsync(item, cancellationToken);
+                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                     return;
                 }
             }
 
             // Get source Directory ID
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, sourceFolder.Id);
-            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(sourceFolder, specifics, directoryId, cancellationToken);
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextSourceFolder.Id);
+            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(ciphertextSourceFolder, specifics, directoryId, cancellationToken);
 
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
-            var movedItem = await renamableRecycleBin.MoveStorableFromAsync(item, sourceFolder, false, cancellationToken);
+            var movedItem = await renamableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, cancellationToken);
             _ = await renamableRecycleBin.RenameAsync(movedItem, guid, cancellationToken);
 
             // Create configuration file
@@ -197,8 +197,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 await using var serializedStream = await streamSerializer.SerializeAsync(
                     new RecycleBinItemDataModel()
                     {
-                        OriginalName = item.Name,
-                        ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
+                        OriginalName = ciphertextItem.Name,
+                        ParentPath = ciphertextSourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
                         DirectoryId = directoryIdResult ? directoryId : [],
                         DeletionTimestamp = DateTime.Now,
                         Size = sizeHint

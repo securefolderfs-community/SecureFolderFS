@@ -11,8 +11,8 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 using static SecureFolderFS.Sdk.Ftp.Constants;
 
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSVaultFileSystemService : BaseVaultFileSystemService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<IFileSystem> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+        public override async IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             yield return new IOSFileSystem();
