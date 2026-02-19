@@ -262,7 +262,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     using var cts = TransferViewModel.GetCancellation(cancellationToken);
                     await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
                     {
-                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, reporter, token);
+                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, item.Name, reporter, token);
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 

@@ -21,6 +21,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="destinationFolder">The folder where the copy is created.</param>
         /// <param name="itemToCopy">The storable to be copied into this folder.</param>
         /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
         /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
         public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorable
@@ -28,15 +29,21 @@ namespace SecureFolderFS.Storage.Extensions
             return itemToCopy switch
             {
                 IFile fileToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(fileToCopy, overwrite, cancellationToken),
-                IFolder folderToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(folderToCopy, overwrite, cancellationToken),
+                IFolder folderToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(folderToCopy, overwrite, folderToCopy.Name, reporter, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToCopy))
             };
         }
 
-        /// <inheritdoc cref="CreateCopyOfAsync(IModifiableFolder,IFolder,bool,IProgress{IStorable},CancellationToken)"/>
-        public static Task<IModifiableFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, CancellationToken cancellationToken = default)
+        /// <inheritdoc cref="CreateCopyOfAsync(IModifiableFolder,IFolder,bool,string,IProgress{IStorable},CancellationToken)"/>
+        public static Task<IChildFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, CancellationToken cancellationToken = default)
         {
-            return CreateCopyOfAsync(destinationFolder, folderToCopy, overwrite, null, cancellationToken);
+            return CreateCopyOfAsync(destinationFolder, folderToCopy, overwrite, folderToCopy.Name, cancellationToken);
+        }
+
+        /// <inheritdoc cref="CreateCopyOfAsync(IModifiableFolder,IFolder,bool,string,IProgress{IStorable},CancellationToken)"/>
+        public static Task<IChildFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, string newName, CancellationToken cancellationToken = default)
+        {
+            return CreateCopyOfAsync(destinationFolder, folderToCopy, overwrite, newName, null, cancellationToken);
         }
 
         /// <summary>
@@ -45,29 +52,30 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="destinationFolder">The folder where the copy is created.</param>
         /// <param name="folderToCopy">The folder to be copied into this folder.</param>
         /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="newName">The new name of the created folder.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
         /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-        public static async Task<IModifiableFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
+        public static async Task<IChildFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, string newName, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // TODO: Support fast-path
-
             // Create the corresponding folder in the destination
-            var copiedFolder = (IModifiableFolder)await destinationFolder.CreateFolderAsync(folderToCopy.Name, overwrite, cancellationToken);
+            var copiedFolder = await destinationFolder.CreateFolderAsync(newName, overwrite, cancellationToken);
+            if (copiedFolder is not IModifiableFolder modifiableCopiedFolder)
+                throw new UnauthorizedAccessException("The created folder is not modifiable.");
+
             reporter?.Report(copiedFolder);
 
             // Iterate through all items in the source folder
             await foreach (var item in folderToCopy.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
                 switch (item)
                 {
                     case IFile file:
                     {
                         // Copy the file to the destination folder
-                        var copiedFile = await copiedFolder.CreateCopyOfAsync(file, overwrite, cancellationToken);
+                        var copiedFile = await modifiableCopiedFolder.CreateCopyOfAsync(file, overwrite, cancellationToken);
                         reporter?.Report(copiedFile);
 
                         break;
@@ -76,7 +84,7 @@ namespace SecureFolderFS.Storage.Extensions
                     case IFolder subFolder:
                     {
                         // Recursively copy the subfolder
-                        await copiedFolder.CreateCopyOfAsync(subFolder, overwrite, reporter, cancellationToken);
+                        await modifiableCopiedFolder.CreateCopyOfAsync(subFolder, overwrite, subFolder.Name, reporter, cancellationToken);
                         break;
                     }
                 }

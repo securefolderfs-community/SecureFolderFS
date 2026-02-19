@@ -109,7 +109,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (deleteImmediately)
             {
                 // Delete the ciphertext item
-                await modifiableFolder.DeleteAsync(item, cancellationToken);
+                await modifiableFolder.DeleteAsync(ciphertextItem, cancellationToken);
             }
             else
             {
@@ -269,7 +269,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (parentFolderWrapper.GetWrapperAt<IFolder, CryptoFolder>() is not { Inner: var ciphertextParent })
                 return null;
 
-            var ciphertextName2 = await AbstractPathHelpers.EncryptNameAsync(item.Name, parentFolder, specifics, cancellationToken);
+            var ciphertextName2 = await AbstractPathHelpers.EncryptNameAsync(item.Name, ciphertextParent, specifics, cancellationToken);
             return await ciphertextParent.TryGetFirstByNameAsync(ciphertextName2, cancellationToken) as TStorable;
         }
     }
