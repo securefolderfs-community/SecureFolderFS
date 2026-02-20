@@ -2,6 +2,7 @@ using System.Windows.Input;
 using APES.UI.XF;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -9,6 +10,12 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI;
+
+#if IOS || MACCATALYST
+using Foundation;
+using UniformTypeIdentifiers;
+#endif
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -20,7 +27,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         public BrowserControl()
         {
-            _deferredInitialization = new(UI.Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
+            _deferredInitialization = new(Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
@@ -52,7 +59,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Create a brand new CollectionView
             var newCollectionView = new CollectionView
             {
-                ItemsLayout = CreateItemsLayout(ViewType),
+                ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType),
                 ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
                 ItemTemplate = itemTemplate,
                 EmptyView = emptyView,
@@ -89,23 +96,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             EnqueueVisibleItemsForThumbnails();
         }
 
-        private static IItemsLayout CreateItemsLayout(BrowserViewType viewType)
-        {
-            return viewType switch
-            {
-                BrowserViewType.SmallGridView => new GridItemsLayout(4, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
-                BrowserViewType.MediumGridView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
-                BrowserViewType.LargeGridView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
-
-                BrowserViewType.SmallGalleryView => new GridItemsLayout(7, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
-                BrowserViewType.MediumGalleryView => new GridItemsLayout(5, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
-                BrowserViewType.LargeGalleryView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
-
-                BrowserViewType.ColumnView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical),
-                _ => new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
-            };
-        }
-
         private void EnqueueVisibleItemsForThumbnails()
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
@@ -119,6 +109,30 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     _deferredInitialization.Enqueue(item);
                 }
             }
+        }
+        
+        private void TryEnqueueThumbnail(object? sender)
+        {
+            if (!_settingsService.UserSettings.AreThumbnailsEnabled)
+                return;
+
+            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
+                return;
+
+            if (fileViewModel.Thumbnail is not null)
+                return;
+
+            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
+            _deferredInitialization.Enqueue(fileViewModel);
+        }
+        
+        private static IValueConverter? GetConverter(string key)
+        {
+            // Try local resources first, then app resources
+            if (Application.Current?.Resources.TryGetValue(key, out var converter) == true)
+                return converter as IValueConverter;
+            
+            return null;
         }
 
         private void RefreshView_Refreshing(object? sender, EventArgs e)
@@ -155,20 +169,20 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Also handle BindingContextChanged for virtualized/recycled items on iOS
             TryEnqueueThumbnail(sender);
         }
-
-        private void TryEnqueueThumbnail(object? sender)
+        
+        private void ItemsCollectionView_Loaded(object? sender, EventArgs e)
         {
-            if (!_settingsService.UserSettings.AreThumbnailsEnabled)
-                return;
+            _collectionView = sender as CollectionView;
+            
+            // Set initial ItemsLayout since we removed the binding from XAML
+            _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+        }
 
-            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
-                return;
-
-            if (fileViewModel.Thumbnail is not null)
-                return;
-
-            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
-            _deferredInitialization.Enqueue(fileViewModel);
+        private void ItemsCollectionView_SizeChanged(object? sender, EventArgs e)
+        {
+            // Force layout recalculation when the collection view size changes
+            // This helps ensure proper item sizing after orientation changes
+            _collectionView?.InvalidateMeasure();
         }
 
         private void DragGestureRecognizer_DragStarting(object? sender, DragStartingEventArgs e)
@@ -365,20 +379,20 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     // These need to be checked first because UTTypes.Item would also match them
                     var galleryTypeIdentifiers = new[]
                     {
-                        UniformTypeIdentifiers.UTTypes.Jpeg.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Png.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Heic.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Gif.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier,
-                        UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Image.Identifier,
-                        UniformTypeIdentifiers.UTTypes.Movie.Identifier
+                        UTTypes.Jpeg.Identifier,
+                        UTTypes.Png.Identifier,
+                        UTTypes.Heic.Identifier,
+                        UTTypes.Gif.Identifier,
+                        UTTypes.Mpeg4Movie.Identifier,
+                        UTTypes.QuickTimeMovie.Identifier,
+                        UTTypes.Image.Identifier,
+                        UTTypes.Movie.Identifier
                     };
 
                     // Check if this is a Gallery item by seeing if it does NOT have a FileUrl representation
                     // Files app items have FileUrl, Gallery items don't
                     var matchedGalleryTypeIdentifier = galleryTypeIdentifiers.FirstOrDefault(typeId => itemProvider.HasItemConformingTo(typeId));
-                    var hasFileUrl = itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.FileUrl.Identifier);
+                    var hasFileUrl = itemProvider.HasItemConformingTo(UTTypes.FileUrl.Identifier);
 
                     if (matchedGalleryTypeIdentifier is not null && !hasFileUrl)
                     {
@@ -395,8 +409,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
                         itemsToProcess.Add((actualName, async _ =>
                         {
-                            var dataTcs = new TaskCompletionSource<Foundation.NSData?>();
-                            var utType = UniformTypeIdentifiers.UTType.CreateFromIdentifier(capturedTypeId);
+                            var dataTcs = new TaskCompletionSource<NSData?>();
+                            var utType = UTType.CreateFromIdentifier(capturedTypeId);
                             if (utType is null)
                                 return null;
                                 
@@ -413,15 +427,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     }
 
                     // Second, try to load as a file URL (works for Files app)
-                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.Item.Identifier))
+                    if (itemProvider.HasItemConformingTo(UTTypes.Item.Identifier))
                     {
-                        var tcs = new TaskCompletionSource<(Foundation.NSUrl? Url, bool IsFolder)>();
-                        itemProvider.LoadItem(UniformTypeIdentifiers.UTTypes.Item.Identifier, null, (item, _) =>
+                        var tcs = new TaskCompletionSource<(NSUrl? Url, bool IsFolder)>();
+                        itemProvider.LoadItem(UTTypes.Item.Identifier, null, (item, _) =>
                         {
-                            if (item is Foundation.NSUrl { Path: not null } itemUrl)
+                            if (item is NSUrl { Path: not null } itemUrl)
                             {
                                 var isDir = false;
-                                var isDirectory = Foundation.NSFileManager.DefaultManager.FileExists(itemUrl.Path, ref isDir) && isDir;
+                                var isDirectory = NSFileManager.DefaultManager.FileExists(itemUrl.Path, ref isDir) && isDir;
                                 tcs.TrySetResult((itemUrl, isDirectory));
                             }
                             else
@@ -488,13 +502,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     }
 
                     // Fall back to loading as generic data
-                    if (itemProvider.HasItemConformingTo(UniformTypeIdentifiers.UTTypes.Data.Identifier))
+                    if (itemProvider.HasItemConformingTo(UTTypes.Data.Identifier))
                     {
                         var capturedProvider = itemProvider;
                         itemsToProcess.Add((suggestedName, async _ =>
                         {
-                            var dataTcs = new TaskCompletionSource<Foundation.NSData?>();
-                            capturedProvider.LoadDataRepresentation(UniformTypeIdentifiers.UTTypes.Data, (data, _) =>
+                            var dataTcs = new TaskCompletionSource<NSData?>();
+                            capturedProvider.LoadDataRepresentation(UTTypes.Data, (data, _) =>
                             {
                                 dataTcs.TrySetResult(data);
                             });
@@ -563,46 +577,19 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             return typeIdentifier switch
             {
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Jpeg.Identifier => ".jpg",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Png.Identifier => ".png",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Heic.Identifier => ".heic",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Gif.Identifier => ".gif",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Mpeg4Movie.Identifier => ".mp4",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.QuickTimeMovie.Identifier => ".mov",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Tiff.Identifier => ".tiff",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Bmp.Identifier => ".bmp",
-                _ when typeIdentifier == UniformTypeIdentifiers.UTTypes.Pdf.Identifier => ".pdf",
+                _ when typeIdentifier == UTTypes.Jpeg.Identifier => ".jpg",
+                _ when typeIdentifier == UTTypes.Png.Identifier => ".png",
+                _ when typeIdentifier == UTTypes.Heic.Identifier => ".heic",
+                _ when typeIdentifier == UTTypes.Gif.Identifier => ".gif",
+                _ when typeIdentifier == UTTypes.Mpeg4Movie.Identifier => ".mp4",
+                _ when typeIdentifier == UTTypes.QuickTimeMovie.Identifier => ".mov",
+                _ when typeIdentifier == UTTypes.Tiff.Identifier => ".tiff",
+                _ when typeIdentifier == UTTypes.Bmp.Identifier => ".bmp",
+                _ when typeIdentifier == UTTypes.Pdf.Identifier => ".pdf",
                 _ => string.Empty
             };
         }
 #endif
-
-        private void ItemsCollectionView_Loaded(object? sender, EventArgs e)
-        {
-            _collectionView = sender as CollectionView;
-            
-            // Set initial ItemsLayout since we removed the binding from XAML
-            if (_collectionView is not null)
-            {
-                _collectionView.ItemsLayout = CreateItemsLayout(ViewType);
-            }
-        }
-
-        private void ItemsCollectionView_SizeChanged(object? sender, EventArgs e)
-        {
-            // Force layout recalculation when the collection view size changes
-            // This helps ensure proper item sizing after orientation changes
-            _collectionView?.InvalidateMeasure();
-        }
-
-        private static IValueConverter? GetConverter(string key)
-        {
-            // Try local resources first, then app resources
-            if (Application.Current?.Resources.TryGetValue(key, out var converter) == true)
-                return converter as IValueConverter;
-            
-            return null;
-        }
 
         public object? EmptyView
         {

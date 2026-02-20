@@ -22,7 +22,7 @@
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand}"
             Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|SelectItems:true:LOCALIZE|Cancel'}" />
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.ChangeViewOptionsCommand}"
             Order="Secondary"
@@ -39,18 +39,28 @@
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>
-        <VerticalStackLayout VerticalOptions="Center">
+        <Grid>
             <Label
                 FontAttributes="Bold"
-                FontSize="20"
-                Text="{Binding ViewModel.Title, Mode=OneWay}"
-                TextColor="#FFFFFF" />
-            <Label
-                FontSize="14"
-                Opacity="0.6"
-                Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
-                TextColor="#FFFFFF" />
-        </VerticalStackLayout>
+                FontSize="18"
+                HorizontalOptions="Center"
+                IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                Text="{l:ResourceString Rid=SelectItems}"
+                TextColor="#FFFFFF"
+                VerticalOptions="Center" />
+            <VerticalStackLayout IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    Text="{Binding ViewModel.Title, Mode=OneWay}"
+                    TextColor="#FFFFFF" />
+                <Label
+                    FontSize="14"
+                    Opacity="0.6"
+                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
+                    TextColor="#FFFFFF" />
+            </VerticalStackLayout>
+        </Grid>
     </Shell.TitleView>
 
     <Grid>

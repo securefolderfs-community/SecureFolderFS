@@ -11,6 +11,17 @@ namespace SecureFolderFS.Maui.ValueConverters
             if (value is not BrowserViewType viewType)
                 return null;
 
+            return ConvertLayout(viewType);
+        }
+
+        /// <inheritdoc/>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ItemsLayout ConvertLayout(BrowserViewType viewType)
+        {
             return viewType switch
             {
                 BrowserViewType.SmallGridView => new GridItemsLayout(4, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
@@ -24,12 +35,6 @@ namespace SecureFolderFS.Maui.ValueConverters
                 BrowserViewType.ColumnView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical),
                 _ => new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
             };
-        }
-
-        /// <inheritdoc/>
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

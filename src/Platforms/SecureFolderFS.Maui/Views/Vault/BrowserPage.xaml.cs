@@ -125,14 +125,11 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Also update the initial layout
             Browser.IsVisible = false;
             var synchronizationContext = SynchronizationContext.Current;
-            _ = Task.Delay(300).ContinueWith(async _ =>
+            _ = Task.Delay(300).ContinueWith(async _ => await synchronizationContext.PostOrExecuteAsync(async _ =>
             {
-                await synchronizationContext.PostOrExecuteAsync(async _ =>
-                {
-                    await Browser.ReloadCollectionViewAsync();
-                    Browser.IsVisible = true;
-                });
-            });
+                await Browser.ReloadCollectionViewAsync();
+                Browser.IsVisible = true;
+            }));
             
             base.OnAppearing();
         }

@@ -16,9 +16,8 @@
     <ContentView.Resources>
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
-        <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
-        <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 
+        <!--  ListItem  -->
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
@@ -78,6 +77,7 @@
             </apesui:ContextMenuContainer>
         </DataTemplate>
 
+        <!--  GridItem  -->
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
@@ -117,7 +117,7 @@
                                 VerticalOptions="Center" />
                             <Label
                                 Grid.Row="1"
-                                FontSize="15"
+                                FontSize="12"
                                 HorizontalOptions="Center"
                                 LineBreakMode="TailTruncation"
                                 Text="{Binding Title, Mode=OneWay}"
@@ -146,6 +146,7 @@
             </apesui:ContextMenuContainer>
         </DataTemplate>
 
+        <!--  GalleryItem  -->
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
@@ -170,6 +171,13 @@
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                             HorizontalOptions="Fill"
+                            VerticalOptions="Fill" />
+
+                        <Grid
+                            Background="{StaticResource PrimaryContrastingLightColor}"
+                            HorizontalOptions="Fill"
+                            IsVisible="{Binding IsSelected, Mode=OneWay}"
+                            Opacity="0.3"
                             VerticalOptions="Fill" />
 
                         <!--  Video Icon Grid  -->
@@ -197,12 +205,25 @@
                             </Grid>
                         </Border>
 
-                        <CheckBox
-                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                        <Grid
+                            Margin="0,0,4,4"
                             HorizontalOptions="End"
-                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
-                            VerticalOptions="End" />
+                            VerticalOptions="End">
+                            <OnPlatform x:TypeArguments="View">
+                                <On Platform="iOS">
+                                    <Ellipse
+                                        Fill="{StaticResource BackgroundFillPrimaryLightColor}"
+                                        HeightRequest="22"
+                                        IsVisible="{Binding IsSelected, Mode=OneWay}"
+                                        WidthRequest="22" />
+                                </On>
+                            </OnPlatform>
+
+                            <CheckBox
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                IsVisible="{Binding IsSelected, Mode=OneWay}" />
+                        </Grid>
                     </Grid>
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>

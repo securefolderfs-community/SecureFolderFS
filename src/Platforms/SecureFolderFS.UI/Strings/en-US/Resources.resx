@@ -867,7 +867,7 @@
     <value>{0} has closed unexpectedly</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-    <value>Select</value>
+    <value>Select Items</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Done</value>
