@@ -42,12 +42,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 return;
             }
 
-            Title = $"{TransferType switch
+            Title = TransferType switch
             {
-                TransferType.Copy => "Copying",
-                TransferType.Move => "Moving",
-                _ => string.Empty,
-            }} {GetItemsCount(value)} item(s)";
+                TransferType.Copy => "CopyingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Move => "MovingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Delete => "DeletingItems".ToLocalized(GetItemsCount(value)),
+                _ => "Loading".ToLocalized()
+            };
 
             return;
 

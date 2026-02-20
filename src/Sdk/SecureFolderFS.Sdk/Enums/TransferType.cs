@@ -5,7 +5,8 @@ namespace SecureFolderFS.Sdk.Enums
         Copy = 0,
         Move = 1,
         Select = 2,
-        Save = 4,
-        Load = 8
+        Delete = 4,
+        Save = 8,
+        Load = 16
     }
 }

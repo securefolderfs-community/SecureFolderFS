@@ -19,7 +19,7 @@
     x:DataType="local:RecycleBinModalPage">
 
     <md:BaseModalPage.Resources>
-        <vc:DoubleFloatingNormalizationConverter x:Key="DoubleFloatingNormalizationConverter" />
+        <vc:PercentageToWidthConverter x:Key="PercentageToWidthConverter" />
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ToolbarItems>
@@ -102,26 +102,26 @@
                         </Grid>
 
                         <!--  Segmented track replaces the plain ProgressBar  -->
-                        <Grid ColumnSpacing="3" HeightRequest="6">
-                            <Grid.ColumnDefinitions>
-                                <!--  Filled portion  -->
-                                <ColumnDefinition Width="{Binding ViewModel.PercentageTaken, Mode=OneWay, Converter={StaticResource DoubleFloatingNormalizationConverter}, ConverterParameter='0.01'}" />
-                                <!--  Remaining portion  -->
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
+                        <Grid HeightRequest="6">
+                            <!--  Track  -->
                             <Border
-                                Grid.Column="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                                  Dark={StaticResource PrimaryDarkColor}}"
-                                StrokeShape="RoundRectangle 3"
-                                StrokeThickness="0" />
-                            <Border
-                                Grid.Column="1"
+                                x:Name="ProgressTrack"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource ElevatedFillSecondaryLightColor},
                                                                   Dark={StaticResource ElevatedFillSecondaryDarkColor}}"
+                                HeightRequest="6"
+                                HorizontalOptions="Fill"
+                                SizeChanged="ProgressTrack_OnSizeChanged"
                                 StrokeShape="RoundRectangle 3"
                                 StrokeThickness="0" />
+                            <!--  Fill  -->
+                            <Border
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                  Dark={StaticResource PrimaryDarkColor}}"
+                                HeightRequest="6"
+                                HorizontalOptions="Start"
+                                StrokeShape="RoundRectangle 3"
+                                StrokeThickness="0"
+                                WidthRequest="{Binding ViewModel.PercentageTaken, Mode=OneWay, Converter={StaticResource PercentageToWidthConverter}, ConverterParameter={x:Reference ProgressTrack}}" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

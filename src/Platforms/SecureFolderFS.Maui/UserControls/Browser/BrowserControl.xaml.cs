@@ -73,7 +73,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             container.Children.Remove(_collectionView);
 
             // Create a brand new CollectionView
-            var newCollectionView = new CollectionView
+            var newCollectionView = new CollectionView()
             {
                 ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType),
                 ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,

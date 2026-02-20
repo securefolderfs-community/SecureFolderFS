@@ -1178,4 +1178,25 @@
   <data name="ClearSelection" xml:space="preserve">
       <value>Clear selection</value>
   </data>
+  <data name="CopyingItems" xml:space="preserve">
+      <value>Copying {0} item(s)</value>
+  </data>
+  <data name="MovingItems" xml:space="preserve">
+      <value>Moving {0} item(s)</value>
+  </data>
+  <data name="DeletingItems" xml:space="preserve">
+      <value>Deleting {0} item(s)</value>
+  </data>
+  <data name="NotEnoughSpace" xml:space="preserve">
+      <value>Not enough space</value>
+  </data>
+  <data name="ItemDeletionTitle" xml:space="preserve">
+      <value>Deleting item(s)</value>
+  </data>
+  <data name="ItemDeletionDescription" xml:space="preserve">
+      <value>Are you sure you want to permanently delete {0} item(s)?</value>
+  </data>
+  <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
+      <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+  </data>
 </root>
