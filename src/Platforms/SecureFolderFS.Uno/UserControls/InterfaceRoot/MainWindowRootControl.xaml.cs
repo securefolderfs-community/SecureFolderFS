@@ -199,7 +199,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 #if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
 #endif
-            window.EnableHotReload();
+            window.UseStudio();
             window.Activate();
 #endif
         }

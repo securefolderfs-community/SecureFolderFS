@@ -86,7 +86,7 @@ namespace SecureFolderFS.Uno
         {
             MainWindow ??= new Window();
 #if DEBUG
-            MainWindow.EnableHotReload();
+            MainWindow.UseStudio();
 #endif
 
             // Do not repeat app initialization when the Window already has content,
