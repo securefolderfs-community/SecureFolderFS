@@ -16,12 +16,109 @@ namespace SecureFolderFS.Maui.UserControls.Browser
     {
         private readonly DeferredInitialization<IFolder> _deferredInitialization;
         private readonly ISettingsService _settingsService;
+        private CollectionView? _collectionView;
 
         public BrowserControl()
         {
             _deferredInitialization = new(UI.Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Forces a complete recreation of the CollectionView to work around MAUI layout glitches
+        /// when changing ItemsLayout dynamically.
+        /// </summary>
+        public async Task ReloadCollectionViewAsync()
+        {
+            if (_collectionView is null)
+                return;
+
+            // Find the parent container
+            var container = CollectionViewContainer;
+            if (container is null)
+                return;
+
+            // Fade out
+            await _collectionView.FadeToAsync(0, 100);
+
+            // Store references to templates and empty view before removing
+            var itemTemplate = _collectionView.ItemTemplate;
+            var emptyView = _collectionView.EmptyView;
+
+            // Remove the old CollectionView
+            container.Children.Remove(_collectionView);
+
+            // Create a brand new CollectionView
+            var newCollectionView = new CollectionView
+            {
+                ItemsLayout = CreateItemsLayout(ViewType),
+                ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                ItemTemplate = itemTemplate,
+                EmptyView = emptyView,
+                Opacity = 0
+            };
+
+            // Set up bindings
+            newCollectionView.SetBinding(ItemsView.ItemsSourceProperty,
+                new Binding(nameof(ItemsSource), mode: BindingMode.OneWay, source: this));
+            newCollectionView.SetBinding(IsVisibleProperty,
+                new Binding($"{nameof(ItemsSource)}.Count", mode: BindingMode.OneWay, source: this,
+                    converter: GetConverter("CountToBoolConverter")));
+            newCollectionView.SetBinding(SelectableItemsView.SelectionModeProperty,
+                new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
+                    converter: GetConverter("BoolSelectionModeConverter")));
+
+            // Wire up the events
+            newCollectionView.Loaded += ItemsCollectionView_Loaded;
+            newCollectionView.SizeChanged += ItemsCollectionView_SizeChanged;
+
+            // Add the new CollectionView to the container
+            container.Children.Add(newCollectionView);
+
+            // Update our reference
+            _collectionView = newCollectionView;
+
+            // Wait for layout
+            await Task.Delay(50);
+
+            // Fade in
+            await _collectionView.FadeToAsync(1, 100);
+
+            // Re-trigger thumbnail loading for visible items
+            EnqueueVisibleItemsForThumbnails();
+        }
+
+        private static IItemsLayout CreateItemsLayout(BrowserViewType viewType)
+        {
+            return viewType switch
+            {
+                BrowserViewType.SmallGridView => new GridItemsLayout(4, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
+                BrowserViewType.MediumGridView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
+                BrowserViewType.LargeGridView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 8d, HorizontalItemSpacing = 8d },
+
+                BrowserViewType.SmallGalleryView => new GridItemsLayout(7, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
+                BrowserViewType.MediumGalleryView => new GridItemsLayout(5, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
+                BrowserViewType.LargeGalleryView => new GridItemsLayout(3, ItemsLayoutOrientation.Vertical) { VerticalItemSpacing = 2d, HorizontalItemSpacing = 2d },
+
+                BrowserViewType.ColumnView => new GridItemsLayout(2, ItemsLayoutOrientation.Vertical),
+                _ => new LinearItemsLayout(ItemsLayoutOrientation.Vertical)
+            };
+        }
+
+        private void EnqueueVisibleItemsForThumbnails()
+        {
+            if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
+                return;
+
+            foreach (var item in ItemsSource.OfType<FileViewModel>().Where(f => f.Thumbnail is null))
+            {
+                if (item.ParentFolder?.Folder is { } folder)
+                {
+                    _deferredInitialization.SetContext(folder);
+                    _deferredInitialization.Enqueue(item);
+                }
+            }
         }
 
         private void RefreshView_Refreshing(object? sender, EventArgs e)
@@ -49,6 +146,17 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
 
         private void ItemContainer_Loaded(object? sender, EventArgs e)
+        {
+            TryEnqueueThumbnail(sender);
+        }
+
+        private void ItemContainer_BindingContextChanged(object? sender, EventArgs e)
+        {
+            // Also handle BindingContextChanged for virtualized/recycled items on iOS
+            TryEnqueueThumbnail(sender);
+        }
+
+        private void TryEnqueueThumbnail(object? sender)
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
@@ -468,6 +576,33 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             };
         }
 #endif
+
+        private void ItemsCollectionView_Loaded(object? sender, EventArgs e)
+        {
+            _collectionView = sender as CollectionView;
+            
+            // Set initial ItemsLayout since we removed the binding from XAML
+            if (_collectionView is not null)
+            {
+                _collectionView.ItemsLayout = CreateItemsLayout(ViewType);
+            }
+        }
+
+        private void ItemsCollectionView_SizeChanged(object? sender, EventArgs e)
+        {
+            // Force layout recalculation when the collection view size changes
+            // This helps ensure proper item sizing after orientation changes
+            _collectionView?.InvalidateMeasure();
+        }
+
+        private static IValueConverter? GetConverter(string key)
+        {
+            // Try local resources first, then app resources
+            if (Application.Current?.Resources.TryGetValue(key, out var converter) == true)
+                return converter as IValueConverter;
+            
+            return null;
+        }
 
         public object? EmptyView
         {

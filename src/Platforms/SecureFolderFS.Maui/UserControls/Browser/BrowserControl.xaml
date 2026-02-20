@@ -20,7 +20,10 @@
         <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
+                Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
                     <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
@@ -79,6 +82,7 @@
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
                 Padding="16"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
@@ -145,7 +149,7 @@
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
-                Padding="1,0"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
@@ -165,10 +169,8 @@
                         Style="{StaticResource SelectableItemGridStyle}">
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}" />
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill" />
 
                         <!--  Video Icon Grid  -->
                         <Border
@@ -218,7 +220,7 @@
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
-            <Grid>
+            <Grid x:Name="CollectionViewContainer">
                 <Grid.GestureRecognizers>
                     <DropGestureRecognizer
                         AllowDrop="True"
@@ -233,11 +235,13 @@
                     VerticalOptions="Fill" />
 
                 <CollectionView
+                    x:Name="ItemsCollectionView"
                     IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                    ItemSizingStrategy="MeasureFirstItem"
-                    ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
+                    ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding ItemsSource, Mode=OneWay}"
-                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+                    Loaded="ItemsCollectionView_Loaded"
+                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}"
+                    SizeChanged="ItemsCollectionView_SizeChanged">
                     <CollectionView.ItemTemplate>
                         <ts:BrowserViewItemTemplateSelector
                             GalleryItemTemplate="{StaticResource GalleryItemTemplate}"

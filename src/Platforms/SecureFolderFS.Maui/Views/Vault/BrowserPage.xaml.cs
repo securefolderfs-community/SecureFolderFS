@@ -167,9 +167,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (e.PropertyName != nameof(LayoutsViewModel.BrowserViewType))
                 return;
 
-            Browser.ItemsSource = null;
-            await Task.Delay(100);
-            Browser.SetBinding(BrowserControl.ItemsSourceProperty, $"{nameof(ViewModel)}.{nameof(BrowserViewModel.CurrentFolder)}.{nameof(FolderViewModel.Items)}");
+            // Force a complete recreation of the CollectionView to avoid MAUI layout glitches
+            // when changing ItemsLayout dynamically
+            await Browser.ReloadCollectionViewAsync();
         }
 
         public BrowserViewModel? ViewModel
