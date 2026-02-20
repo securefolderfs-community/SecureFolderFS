@@ -1169,4 +1169,13 @@
   <data name="Refresh" xml:space="preserve">
       <value>Refresh</value>
   </data>
+  <data name="StorageUsed" xml:space="preserve">
+      <value>Storage used</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+      <value>Select all</value>
+  </data>
+  <data name="ClearSelection" xml:space="preserve">
+      <value>Clear selection</value>
+  </data>
 </root>
