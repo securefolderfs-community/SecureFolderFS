@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Core;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
@@ -22,10 +24,6 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
 using Uno.UI;
-#if WINDOWS
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages;
-#endif
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -181,6 +179,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (ctrl && e.Key == VirtualKey.Q && (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()))
             {
                 e.Handled = true;
+                foreach (var item in ViewModel.VaultCollectionModel)
+                    WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
+                
                 App.Instance?.UseForceClose = true;
                 Application.Current.Exit();
             }
