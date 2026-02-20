@@ -1,3 +1,4 @@
+using System.Globalization;
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
@@ -5,6 +6,7 @@ using SecureFolderFS.Maui.Platforms.iOS.Helpers;
 using SecureFolderFS.Maui.Platforms.iOS.Templates;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
@@ -67,6 +69,27 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
+            
+            // Determine app language
+            await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                if (!Preferences.Default.ContainsKey("IsAppLanguageDetected"))
+                {
+                    // Check the current system language and find it in AppLanguages
+                    // If it doesn't exist, use en-US
+                    var localizationService = DI.Service<ILocalizationService>();
+                    var systemCulture = CultureInfo.CurrentUICulture;
+                    var appLanguages = localizationService.AppLanguages;
+                    var matchedLanguage = appLanguages.FirstOrDefault(lang => lang.Name.Equals(systemCulture.Name, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.TwoLetterISOLanguageName.Equals(systemCulture.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.Name.Equals("en-US", StringComparison.OrdinalIgnoreCase));
+
+                    if (matchedLanguage is not null)
+                        await localizationService.SetCultureAsync(matchedLanguage);
+                    
+                    Preferences.Default.Set("IsAppLanguageDetected", true);
+                }
+            });
 
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();

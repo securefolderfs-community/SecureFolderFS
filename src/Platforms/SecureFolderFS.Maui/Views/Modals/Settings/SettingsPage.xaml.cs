@@ -107,9 +107,12 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
         [RelayCommand]
         private async Task ShowIntroductionAsync()
         {
+            if (AboutViewModel is null)
+                return;
+            
             await _sourceNavigation.PopAsync();
             await Task.Delay(500);
-            await _sourceNavigation.PushModalAsync(new IntroductionPage(), true);
+            await AboutViewModel.OpenOnboardingCommand.ExecuteAsync(null);
         }
 
         private async void ThemePicker_SelectedIndexChanged(object? sender, EventArgs e)

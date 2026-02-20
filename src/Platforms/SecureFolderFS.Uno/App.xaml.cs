@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -105,6 +106,27 @@ namespace SecureFolderFS.Uno
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
+            
+            // Determine app language
+            await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("IsAppLanguageDetected"))
+                {
+                    // Check the current system language and find it in AppLanguages
+                    // If it doesn't exist, use en-US
+                    var localizationService = DI.Service<ILocalizationService>();
+                    var systemCulture = CultureInfo.CurrentUICulture;
+                    var appLanguages = localizationService.AppLanguages;
+                    var matchedLanguage = appLanguages.FirstOrDefault(lang => lang.Name.Equals(systemCulture.Name, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.TwoLetterISOLanguageName.Equals(systemCulture.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.Name.Equals("en-US", StringComparison.OrdinalIgnoreCase));
+
+                    if (matchedLanguage is not null)
+                        await localizationService.SetCultureAsync(matchedLanguage);
+                    
+                    ApplicationData.Current.LocalSettings.Values["IsAppLanguageDetected"] = true;
+                }
+            });
 
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();

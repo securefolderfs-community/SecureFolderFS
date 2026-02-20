@@ -29,6 +29,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 SettingsOverlayViewModel => new SettingsPage(navigation),
                 PreviewerOverlayViewModel => new FilePreviewModalPage(navigation),
                 RecycleBinOverlayViewModel => new RecycleBinModalPage(navigation),
+                IntroductionOverlayViewModel => new IntroductionPage(navigation),
                 LayoutsViewModel => new ViewOptionsSheetFragment(),
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),

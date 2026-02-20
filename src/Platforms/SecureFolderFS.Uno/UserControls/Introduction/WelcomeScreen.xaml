@@ -59,7 +59,15 @@
             Opacity="0.8"
             TextAlignment="Center"
             TextWrapping="Wrap">
-            By continuing, you agree to our&#x0020;<Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">Privacy Policy</Hyperlink>
-            &#x0020;and&#x0020;<Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md">Terms of Service</Hyperlink></TextBlock>
+            <Run Text="{l:ResourceString Rid=IntroPrefix}" />
+            <Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">
+                <Run Text="{l:ResourceString Rid=PrivacyPolicy}" />
+            </Hyperlink>
+            <Run Text="{l:ResourceString Rid=IntroMiddle}" />
+            <Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md">
+                <Run Text="{l:ResourceString Rid=TermsOfService}" />
+            </Hyperlink>
+            <Run Text="{l:ResourceString Rid=IntroSuffix}" />
+        </TextBlock>
     </Grid>
 </UserControl>

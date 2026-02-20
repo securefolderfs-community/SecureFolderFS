@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
@@ -27,6 +28,16 @@ namespace SecureFolderFS.Maui
 
         private async void AppShell_Loaded(object? sender, EventArgs e)
         {
+            var settingsService = DI.Service<ISettingsService>();
+            if (!settingsService.AppSettings.WasIntroduced)
+            {
+                var overlayService = DI.Service<IOverlayService>();
+                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                
+                settingsService.AppSettings.WasIntroduced = true;
+                await settingsService.AppSettings.TrySaveAsync();
+            }
+            
             await SafetyHelpers.NoFailureAsync(async () =>
             {
                 var sessionException = ExceptionHelpers.RetrieveSessionFile(App.Instance.ApplicationLifecycle.AppDirectory);

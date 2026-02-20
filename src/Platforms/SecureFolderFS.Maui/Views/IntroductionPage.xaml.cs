@@ -1,17 +1,48 @@
+using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Maui.UserControls.Common;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Utils;
+using Application = Microsoft.Maui.Controls.Application;
 
 namespace SecureFolderFS.Maui.Views
 {
-    public partial class IntroductionPage : ContentPage
+    public partial class IntroductionPage : ContentPage, IOverlayControl
     {
+        private readonly INavigation _sourceNavigation;
+        private readonly TaskCompletionSource<IResult> _modalTcs;
         private int _currentIndex;
         
-        public IntroductionPage()
+        public IntroductionPage(INavigation sourceNavigation)
         {
+            _sourceNavigation = sourceNavigation;
+            _modalTcs = new();
+            BindingContext = this;
+            
             InitializeComponent();
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IResult> ShowAsync()
+        {
+            await _sourceNavigation.PushModalAsync(this);
+            return await _modalTcs.Task;
+        }
+
+        /// <inheritdoc/>
+        public void SetView(IViewable viewable)
+        {
+            _ = viewable;
+        }
+
+        /// <inheritdoc/>
+        public async Task HideAsync()
+        {
+            await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
         
         /// <inheritdoc/>
@@ -84,6 +115,18 @@ namespace SecureFolderFS.Maui.Views
             }
 
             await GalleryView.SwipeToNextAsync();
+        }
+        
+        private void PrivacyPolicy_Tapped(object? sender, TappedEventArgs e)
+        {
+            var applicationService = DI.Service<IApplicationService>();
+            applicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
+        }
+        
+        private void TermsOfService_Tapped(object? sender, TappedEventArgs e)
+        {
+            var applicationService = DI.Service<IApplicationService>();
+            applicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md"));
         }
     }
 }

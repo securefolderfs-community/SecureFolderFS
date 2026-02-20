@@ -335,7 +335,7 @@
     <value>Print</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Privacy Policy</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>View the privacy policy statement</value>
@@ -1198,5 +1198,17 @@
   </data>
   <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
       <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+  </data>
+  <data name="IntroPrefix" xml:space="preserve">
+      <value>By continuing, you agree to our </value>
+  </data>
+  <data name="IntroMiddle" xml:space="preserve">
+      <value> and </value>
+  </data>
+  <data name="IntroSuffix" xml:space="preserve">
+      <value>.</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+      <value>Terms of Service</value>
   </data>
 </root>

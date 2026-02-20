@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             var containerWidth = parameter switch
             {
-                VisualElement el => el.Width,
+                VisualElement ve => ve.Width,
                 double d => d,
                 _ => -1d
             };
