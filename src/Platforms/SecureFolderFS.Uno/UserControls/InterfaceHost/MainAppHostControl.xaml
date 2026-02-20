@@ -8,7 +8,6 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Navigation"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.VaultList"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Loaded="MainAppHostControl_Loaded"

@@ -15,6 +15,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -116,14 +117,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             App.Instance?.MainWindowInitialized.TrySetResult();
         }
         
-        private async void MainWindowRootControl_KeyDown(object sender, KeyRoutedEventArgs e)
+        private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (XamlRoot is null)
                 return;
             
-            var focused = FocusManager.GetFocusedElement(XamlRoot);
-            if (focused is TextBox or PasswordBox or AutoSuggestBox or NumberBox or RichEditBox)
-                return;
+            var focusedElement = FocusManager.GetFocusedElement(XamlRoot);
+            var isOccupied = focusedElement is TextBox or PasswordBox or AutoSuggestBox or NumberBox or RichEditBox;
             
             bool ctrl;
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
@@ -135,6 +135,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             {
                 if (ctrl && e.Key == VirtualKey.L)
                 {
+                    if (isOccupied)
+                        return;
+                    
                     var overlayService = DI.Service<IOverlayService>();
                     if (mainHostViewModel.VaultListViewModel.SelectedItem is { VaultViewModel.IsUnlocked: true } selectedItem)
                     {
@@ -151,6 +154,10 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 var keyInt = (int)e.Key;
                 if (ctrl && keyInt is >= 49 and <= 57)
                 {
+                    // Only ignore focused inputs when not on the login page
+                    if (isOccupied && mainHostViewModel.NavigationService.CurrentView is not VaultLoginViewModel)
+                        return;
+                    
                     var itemViewModel = mainHostViewModel.VaultListViewModel.Items.ElementAtOrDefault(keyInt - 49);
                     if (itemViewModel is not null)
                         mainHostViewModel.VaultListViewModel.SelectedItem = itemViewModel;
@@ -159,6 +166,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                     return;
                 }
             }
+            
+            if (isOccupied)
+                return;
             
             if (ctrl && e.Key == (VirtualKey)188) // 188 - Comma
             {

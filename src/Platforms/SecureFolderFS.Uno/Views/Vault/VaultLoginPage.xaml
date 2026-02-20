@@ -43,7 +43,11 @@
 
                 <!--  Login  -->
                 <StackPanel Spacing="8">
-                    <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                    <uc:LoginControl
+                        x:Name="LoginControl"
+                        CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}"
+                        Loaded="LoginControl_Loaded"
+                        ProvideContinuationButton="True" />
 
                     <uc:LoginOptions
                         IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
