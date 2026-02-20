@@ -1,4 +1,6 @@
 using System.Globalization;
+using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
@@ -9,14 +11,42 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             if (parameter is not string strParam)
                 return null;
-
-            switch (strParam.ToLower())
+            
+            var isDark = MauiThemeHelper.Instance.ActualTheme == ThemeType.Dark;
+            switch (strParam.ToLowerInvariant())
             {
                 case "fontattributes":
-                    if (value is not bool bValue)
+                {
+                    if (value is not bool bFontValue)
                         return FontAttributes.None;
 
-                    return bValue ? FontAttributes.Bold : FontAttributes.None;
+                    return bFontValue ? FontAttributes.Bold : FontAttributes.None;
+                }
+
+                case "background":
+                {
+                    return value is not true
+                        ? Colors.Transparent
+                        : App.Current.Resources[isDark ? "SecondaryDarkColor" : "SecondaryLightColor"];
+                }
+
+                case "textcolor":
+                {
+                    if (value is not bool bTextValue)
+                        return App.Current.Resources[isDark ? "TertiaryDarkColor" : "TertiaryLightColor"];
+
+                    return bTextValue
+                        ? App.Current.Resources[isDark ? "PrimaryDarkColor" : "PrimaryLightColor"]
+                        : App.Current.Resources[isDark ? "QuarternaryDarkColor" : "QuarternaryLightColor"];
+                }
+
+                case "labelopacity":
+                {
+                    if (value is not bool bOpacityValue)
+                        return 1.0;
+
+                    return bOpacityValue ? 1.0 : 0.75;
+                }
             }
 
             return null;

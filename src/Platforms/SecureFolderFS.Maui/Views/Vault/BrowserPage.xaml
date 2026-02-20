@@ -71,7 +71,7 @@
 
         <uc:BreadcrumbBar
             Grid.Row="0"
-            Margin="56,4,0,4"
+            Margin="16,4"
             HeightRequest="32"
             ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
 

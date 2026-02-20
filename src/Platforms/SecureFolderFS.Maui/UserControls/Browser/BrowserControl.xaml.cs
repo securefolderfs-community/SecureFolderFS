@@ -23,6 +23,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
     {
         private readonly DeferredInitialization<IFolder> _deferredInitialization;
         private readonly ISettingsService _settingsService;
+        private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
 
         public BrowserControl()
@@ -33,11 +34,26 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
 
         /// <summary>
-        /// Forces a complete recreation of the CollectionView to work around MAUI layout glitches
+        /// Determines if the CollectionView can be reloaded.
+        /// </summary>
+        /// <returns>Returns true if reloading is possible; otherwise, false.</returns>
+        public bool CanReloadCollection()
+        {
+            return _skipCollectionViewLayoutPass == 0;
+        }
+
+        /// <summary>
+        /// Forces complete recreation of the CollectionView to work around MAUI layout glitches
         /// when changing ItemsLayout dynamically.
         /// </summary>
         public async Task ReloadCollectionViewAsync()
         {
+            if (_skipCollectionViewLayoutPass > 0)
+            {
+                _skipCollectionViewLayoutPass--;
+                return;
+            }
+            
             if (_collectionView is null)
                 return;
 
@@ -154,6 +170,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             else
             {
                 view.IsEnabled = false;
+                if (itemViewModel is not FolderViewModel)
+                    _skipCollectionViewLayoutPass++;
+                
                 await itemViewModel.OpenCommand.ExecuteAsync(null);
                 view.IsEnabled = true;
             }

@@ -114,7 +114,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         }
 
         /// <inheritdoc/>
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             if (ViewModel is not null)
                 ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
@@ -123,14 +123,17 @@ namespace SecureFolderFS.Maui.Views.Vault
                 navigationService.SetCurrentViewInternal(ViewModel);
 
             // Also update the initial layout
-            Browser.IsVisible = false;
-            var synchronizationContext = SynchronizationContext.Current;
-            _ = Task.Delay(300).ContinueWith(async _ => await synchronizationContext.PostOrExecuteAsync(async _ =>
+            if (Browser.CanReloadCollection())
             {
-                await Browser.ReloadCollectionViewAsync();
-                Browser.IsVisible = true;
-            }));
-            
+                Browser.IsVisible = false;
+                var synchronizationContext = SynchronizationContext.Current;
+                _ = Task.Delay(300).ContinueWith(async _ => await synchronizationContext.PostOrExecuteAsync(async _ =>
+                {
+                    await Browser.ReloadCollectionViewAsync();
+                    Browser.IsVisible = true;
+                }));
+            }
+
             base.OnAppearing();
         }
 
