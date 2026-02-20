@@ -51,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (typeHint is not (TypeHint.Image or TypeHint.Media))
                 return;
 
-            // Try to get from cache first
+            // Try to get from the cache first
             var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(File, cancellationToken);
             if (cachedStream is not null)
             {

@@ -2,6 +2,8 @@ using System.Globalization;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -37,10 +39,31 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 switch (image)
                 {
+                    case StreamImageModel { Stream.CanRead: true } streamImageModel:
+                    {
+                        streamImageModel.Stream.TrySetPositionOrAdvance(0L);
+                        return new Image()
+                        {
+                            Source = new StreamImageSource()
+                            {
+                                Stream = _ => Task.FromResult(streamImageModel.Stream)
+                            },
+                            Aspect = Aspect.AspectFill,
+                            HorizontalOptions = LayoutOptions.Fill,
+                            VerticalOptions = LayoutOptions.Fill
+                        };
+                    }
+                    
                     case ImageStream { Stream.CanRead: true } imageStream:
                     {
-                        imageStream.Stream.Position = 0L;
-                        return new Image() { Source = imageStream.Source, Aspect = Aspect.AspectFill };
+                        imageStream.Stream.TrySetPositionOrAdvance(0L);
+                        return new Image()
+                        {
+                            Source = imageStream.Source,
+                            Aspect = Aspect.AspectFill,
+                            HorizontalOptions = LayoutOptions.Fill,
+                            VerticalOptions = LayoutOptions.Fill
+                        };
                     }
 
                     default: return null; // TODO: Add more IImage implementations
