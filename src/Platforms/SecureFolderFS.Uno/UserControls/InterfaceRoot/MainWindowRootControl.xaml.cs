@@ -158,11 +158,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                     if (isOccupied && mainHostViewModel.NavigationService.CurrentView is not VaultLoginViewModel)
                         return;
                     
+                    e.Handled = true;
                     var itemViewModel = mainHostViewModel.VaultListViewModel.Items.ElementAtOrDefault(keyInt - 49);
                     if (itemViewModel is not null)
                         mainHostViewModel.VaultListViewModel.SelectedItem = itemViewModel;
                 
-                    e.Handled = true;
                     return;
                 }
             }
