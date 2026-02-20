@@ -1,10 +1,15 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.System;
+using Windows.UI.Core;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
@@ -109,6 +114,66 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             // Signal that the main window has finished initializing
             App.Instance?.MainWindowInitialized.TrySetResult();
+        }
+        
+        private async void MainWindowRootControl_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (XamlRoot is null)
+                return;
+            
+            var focused = FocusManager.GetFocusedElement(XamlRoot);
+            if (focused is TextBox or PasswordBox or AutoSuggestBox or NumberBox or RichEditBox)
+                return;
+            
+            bool ctrl;
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+                ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftWindows).HasFlag(CoreVirtualKeyStates.Down);
+            else
+                ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (Navigation.MainContent.Content is MainHostViewModel mainHostViewModel)
+            {
+                if (ctrl && e.Key == VirtualKey.L)
+                {
+                    var overlayService = DI.Service<IOverlayService>();
+                    if (mainHostViewModel.VaultListViewModel.SelectedItem is { VaultViewModel.IsUnlocked: true } selectedItem)
+                    {
+                        e.Handled = true;
+                        if (overlayService.CurrentView is CredentialsOverlayViewModel or WizardOverlayViewModel)
+                            return;
+                        
+                        await overlayService.CloseAllAsync();
+                        selectedItem.RequestLockCommand.Execute(null);
+                        return;
+                    }
+                }
+                
+                var keyInt = (int)e.Key;
+                if (ctrl && keyInt is >= 49 and <= 57)
+                {
+                    var itemViewModel = mainHostViewModel.VaultListViewModel.Items.ElementAtOrDefault(keyInt - 49);
+                    if (itemViewModel is not null)
+                        mainHostViewModel.VaultListViewModel.SelectedItem = itemViewModel;
+                
+                    e.Handled = true;
+                    return;
+                }
+            }
+            
+            if (ctrl && e.Key == (VirtualKey)188) // 188 - Comma
+            {
+                e.Handled = true;
+                var overlayService = DI.Service<IOverlayService>();
+                await overlayService.ShowAsync(SettingsOverlayViewModel.Instance);
+                return;
+            }
+
+            if (ctrl && e.Key == VirtualKey.Q && (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()))
+            {
+                e.Handled = true;
+                App.Instance?.UseForceClose = true;
+                Application.Current.Exit();
+            }
         }
 
         private void DebugButton_Click(object sender, RoutedEventArgs e)

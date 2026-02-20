@@ -17,7 +17,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     /// <inheritdoc cref="IOverlayService"/>
     public sealed class UnoDialogService : BaseOverlayService
     {
-        private readonly List<IOverlayControl> _overlays = new();
+        private readonly List<(IViewable, IOverlayControl)> _overlays = new();
 
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)
@@ -52,35 +52,54 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public override async Task<IResult> ShowAsync(IViewable viewable)
         {
-            if (_overlays.IsEmpty())
+            try
             {
-                var overlay = GetOverlay(viewable);
-                overlay.SetView(viewable);
+                if (_overlays.IsEmpty())
+                {
+                    var overlay = GetOverlay(viewable);
+                    overlay.SetView(viewable);
+                    CurrentView = viewable;
 
-                return await ShowOverlayAsync(overlay);
+                    return await ShowOverlayAsync(viewable, overlay);
+                }
+                else
+                {
+                    var (lastViewable, lastControl) = _overlays.Last();
+                    await lastControl.HideAsync();
+
+                    var overlay = GetOverlay(viewable);
+                    overlay.SetView(viewable);
+                    CurrentView = viewable;
+                    var result = await ShowOverlayAsync(viewable, overlay);
+
+                    CurrentView = lastViewable;
+                    await ShowOverlayAsync(lastViewable, lastControl);
+
+                    return result;
+                }
             }
-            else
+            finally
             {
-                var last = _overlays.Last();
-                await last.HideAsync();
-
-                var overlay = GetOverlay(viewable);
-                overlay.SetView(viewable);
-
-                var result = await ShowOverlayAsync(overlay);
-                await ShowOverlayAsync(last);
-
-                return result;
+                CurrentView = null;
             }
 
-            async Task<IResult> ShowOverlayAsync(IOverlayControl overlay)
+            async Task<IResult> ShowOverlayAsync(IViewable viewableToShow, IOverlayControl overlay)
             {
-                _overlays.Add(overlay);
+                _overlays.Add((viewableToShow, overlay));
                 var result = await overlay.ShowAsync();
-                _overlays.Remove(overlay);
+                _overlays.Remove((viewableToShow, overlay));
 
                 return result;
             }
+        }
+
+        /// <inheritdoc/>
+        public override async Task CloseAllAsync()
+        {
+            foreach (var (_, overlay) in _overlays.ToArray().Reverse())
+                await overlay.HideAsync();
+
+            _overlays.Clear();
         }
     }
 }

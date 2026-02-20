@@ -16,6 +16,7 @@
 
     <NavigationView
         x:Name="Sidebar"
+        x:FieldModifier="public"
         AllowDrop="True"
         DisplayModeChanged="Sidebar_DisplayModeChanged"
         DragOver="Sidebar_DragOver"
