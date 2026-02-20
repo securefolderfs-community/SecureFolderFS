@@ -45,14 +45,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await _systemMonitorModel.InitAsync(cancellationToken);
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenSettingsAsync()
         {
             await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenVaultCredentialsAsync()
         {
             await OverlayService.ShowAsync(DeviceLinkCredentialsOverlayViewModel.Instance);
