@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views.Vault
@@ -113,7 +114,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         }
 
         /// <inheritdoc/>
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             if (ViewModel is not null)
                 ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
@@ -121,7 +122,18 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel?.OuterNavigator is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
 
-            // OnAppearing is called elsewhere in navigation logic.
+            // Also update the initial layout
+            Browser.IsVisible = false;
+            var synchronizationContext = SynchronizationContext.Current;
+            _ = Task.Delay(300).ContinueWith(async _ =>
+            {
+                await synchronizationContext.PostOrExecuteAsync(async _ =>
+                {
+                    await Browser.ReloadCollectionViewAsync();
+                    Browser.IsVisible = true;
+                });
+            });
+            
             base.OnAppearing();
         }
 
