@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            _contentFolder = await VaultHelpers.GetContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
+            _contentFolder = await VaultHelpers.GetOrCreateContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
             var folderScanner = new DeepFolderScanner(_contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
             var fileContentValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FileContentValidator;
