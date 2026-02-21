@@ -28,12 +28,12 @@ namespace SecureFolderFS.Sdk.AppModels
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
             SettingsService.UserSettings.PropertyChanged += UserSettings_PropertyChanged;
-            AttachEvents();
+            AttachOrDetachEvents();
 
             return Task.CompletedTask;
         }
 
-        private void AttachEvents()
+        private void AttachOrDetachEvents()
         {
             if (SettingsService.UserSettings.LockOnSystemLock)
                 SystemService.DeviceLocked += SystemService_DesktopLocked;
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (e.PropertyName != nameof(IUserSettings.LockOnSystemLock))
                 return;
 
-            AttachEvents();
+            AttachOrDetachEvents();
         }
 
         /// <inheritdoc/>

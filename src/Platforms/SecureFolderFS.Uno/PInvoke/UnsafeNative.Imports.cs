@@ -49,6 +49,33 @@ namespace SecureFolderFS.Uno.PInvoke
         
 #if __UNO_SKIA_MACOS__
         
+        public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
+        
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr CFNotificationCenterGetDistributedCenter();
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr CFStringCreateWithCString(IntPtr allocator, string str, uint encoding);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial void CFNotificationCenterAddObserver(
+            IntPtr center,
+            IntPtr observer,
+            IntPtr callback,
+            IntPtr name,
+            IntPtr obj,
+            uint suspensionBehavior);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial void CFNotificationCenterRemoveObserver(
+            IntPtr center,
+            IntPtr observer,
+            IntPtr name,
+            IntPtr obj);
+        
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
 
@@ -101,22 +128,20 @@ namespace SecureFolderFS.Uno.PInvoke
 #endif
 
 #if __UNO_SKIA_MACOS__
-
     [StructLayout(LayoutKind.Sequential)]
-    public struct CGPoint
+    internal struct CGPoint
     {
         public double X;
         public double Y;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct CGRect
+    internal struct CGRect
     {
         public double X;
         public double Y;
         public double Width;
         public double Height;
     }
-
 #endif
 }
