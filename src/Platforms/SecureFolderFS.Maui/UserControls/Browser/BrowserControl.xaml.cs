@@ -117,14 +117,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
                 return;
 
-            foreach (var item in ItemsSource.OfType<FileViewModel>().Where(f => f.Thumbnail is null))
-            {
-                if (item.ParentFolder?.Folder is { } folder)
-                {
-                    _deferredInitialization.SetContext(folder);
-                    _deferredInitialization.Enqueue(item);
-                }
-            }
+            if (ItemsSource.FirstOrDefault() is not { ParentFolder.Folder: { } folder})
+                return;
+            
+            _deferredInitialization.SetContext(folder);
+            foreach (var item in ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail))
+                _deferredInitialization.Enqueue(item);
         }
         
         private void TryEnqueueThumbnail(object? sender)

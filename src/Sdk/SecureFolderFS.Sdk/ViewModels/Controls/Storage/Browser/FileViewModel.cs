@@ -29,6 +29,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// </summary>
         public IFile File { get; protected set; }
 
+        /// <summary>
+        /// Gets the classification of the file.
+        /// </summary>
+        public TypeClassification Classification { get; protected set; }
+
+        /// <summary>
+        /// Gets a value indicating whether a thumbnail can be loaded for the associated file.
+        /// </summary>
+        public virtual bool CanLoadThumbnail => Thumbnail is null && Classification.TypeHint is TypeHint.Image or TypeHint.Media;
+
         public FileViewModel(IFile file, BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
             : base(browserViewModel, parentFolder)
         {
@@ -37,6 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             Title = !SettingsService.UserSettings.AreFileExtensionsEnabled
                 ? Path.GetFileNameWithoutExtension(file.Name)
                 : file.Name;
+            Classification = FileTypeHelper.GetClassification(file);
         }
 
         /// <inheritdoc/>
@@ -47,8 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (!SettingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            var typeHint = FileTypeHelper.GetTypeHint(File);
-            if (typeHint is not (TypeHint.Image or TypeHint.Media))
+            if (!CanLoadThumbnail)
                 return;
 
             // Try to get from the cache first
@@ -59,8 +69,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return;
             }
 
-            // Generate new thumbnail
-            var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, typeHint, cancellationToken);
+            // Generate a new thumbnail
+            var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, Classification.TypeHint, cancellationToken);
             if (generatedThumbnail is null)
                 return;
 
@@ -74,6 +84,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         protected override void UpdateStorable(IStorable storable)
         {
             File = (IFile)storable;
+            Classification = FileTypeHelper.GetClassification(storable);
         }
 
         /// <inheritdoc/>
