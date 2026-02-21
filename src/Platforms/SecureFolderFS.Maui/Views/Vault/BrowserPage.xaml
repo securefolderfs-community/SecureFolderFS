@@ -51,11 +51,11 @@
             <VerticalStackLayout IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="20"
+                    FontSize="18"
                     Text="{Binding ViewModel.Title, Mode=OneWay}"
                     TextColor="#FFFFFF" />
                 <Label
-                    FontSize="14"
+                    FontSize="12"
                     Opacity="0.6"
                     Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
                     TextColor="#FFFFFF" />

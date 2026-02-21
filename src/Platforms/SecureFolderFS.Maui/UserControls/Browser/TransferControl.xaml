@@ -3,12 +3,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
-    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
-    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     x:Name="ThisControl">
 
-    <Grid x:Name="RootPanel" IsVisible="False">
+    <Grid
+        x:Name="RootPanel"
+        Margin="0,0,0,32"
+        IsVisible="False">
         <Grid.Shadow>
             <Shadow
                 Brush="{StaticResource CardFillPrimaryDarkColor}"
@@ -18,14 +18,17 @@
 
         <Border
             Margin="16"
-            Padding="16,12"
+            Padding="16,8,8,8"
             x:DataType="local:TransferControl"
-            Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
+            Background="{StaticResource ThemeCardFillPrimaryColorBrush}"
             BindingContext="{x:Reference ThisControl}"
-            HeightRequest="72">
+            HeightRequest="56">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+            </Border.GestureRecognizers>
 
             <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
@@ -33,7 +36,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="8">
                     <ActivityIndicator
                         HeightRequest="32"
                         IsRunning="{Binding IsProgressing, Mode=OneWay}"
@@ -46,41 +49,13 @@
                         VerticalOptions="Center" />
                 </HorizontalStackLayout>
 
-                <OnPlatform x:TypeArguments="View">
-                    <On Platform="Android">
-                        <HorizontalStackLayout Grid.Column="1" Spacing="4">
-                            <Button
-                                Padding="12"
-                                mi:MauiIcon.Value="{mi_material:Material Icon=Close}"
-                                Command="{Binding CancelCommand, Mode=OneWay}"
-                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                                Style="{StaticResource TransparentButtonStyle}"
-                                WidthRequest="{Binding Height, Mode=OneWay, Source={x:RelativeSource Mode=Self}}" />
-                            <Button
-                                Command="{Binding PrimaryCommand, Mode=OneWay}"
-                                IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
-                        </HorizontalStackLayout>
-                    </On>
-                    <On Platform="iOS">
-                        <HorizontalStackLayout Grid.Column="1" Spacing="4">
-                            <Button
-                                Padding="12"
-                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=Xmark}"
-                                Command="{Binding CancelCommand, Mode=OneWay}"
-                                IsEnabled="{Binding CanCancel, Mode=OneWay}"
-                                Style="{StaticResource TransparentButtonStyle}"
-                                WidthRequest="{Binding Height, Mode=OneWay, Source={x:RelativeSource Mode=Self}}" />
-                            <Button
-                                Padding="16,8"
-                                Command="{Binding PrimaryCommand, Mode=OneWay}"
-                                IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Text="{Binding PrimaryButtonText, Mode=OneWay}" />
-                        </HorizontalStackLayout>
-                    </On>
-                </OnPlatform>
+                <Button
+                    Grid.Column="1"
+                    Padding="16,8"
+                    Command="{Binding PrimaryCommand, Mode=OneWay}"
+                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{Binding PrimaryButtonText, Mode=OneWay}" />
             </Grid>
         </Border>
     </Grid>

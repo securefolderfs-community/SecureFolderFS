@@ -95,6 +95,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             finally
             {
                 IsPickingFolder = false;
+                if (_tcs?.TrySetCanceled(CancellationToken.None) ?? false)
+                    await this.HideAsync();
             }
         }
 

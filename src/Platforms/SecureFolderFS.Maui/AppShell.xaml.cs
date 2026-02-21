@@ -13,8 +13,6 @@ namespace SecureFolderFS.Maui
 {
     public partial class AppShell : Shell
     {
-        public MainViewModel MainViewModel { get; } = new(new VaultCollectionModel());
-
         public AppShell()
         {
             InitializeComponent();

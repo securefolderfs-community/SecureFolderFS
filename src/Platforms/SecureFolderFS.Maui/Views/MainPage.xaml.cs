@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Views
                 if (field is not null)
                     return field;
 
-                var mainViewModel = Shell.Current.TryCast<AppShell>()!.MainViewModel;
+                var mainViewModel = App.Instance.MainViewModel;
                 return field ??= new(mainViewModel.VaultListViewModel, mainViewModel.VaultCollectionModel);
             }
         }

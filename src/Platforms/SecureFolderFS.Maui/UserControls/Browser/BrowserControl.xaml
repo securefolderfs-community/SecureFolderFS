@@ -25,13 +25,26 @@
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
@@ -86,13 +99,26 @@
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
@@ -154,13 +180,26 @@
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
@@ -249,6 +288,13 @@
                         DragOver="CollectionDropGestureRecognizer_DragOver"
                         Drop="CollectionDropGestureRecognizer_Drop" />
                 </Grid.GestureRecognizers>
+                <FlyoutBase.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Item1" />
+                        <MenuFlyoutItem Text="Item2" />
+                    </MenuFlyout>
+                </FlyoutBase.ContextFlyout>
+
                 <ContentView
                     Content="{Binding EmptyView, Mode=OneWay}"
                     HorizontalOptions="Fill"

@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using Application = Microsoft.Maui.Controls.Application;
 
@@ -43,6 +44,13 @@ namespace SecureFolderFS.Maui.Views
         public async Task HideAsync()
         {
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
+        }
+        
+        /// <inheritdoc/>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _modalTcs.TrySetResult(Result.Success);
         }
         
         /// <inheritdoc/>

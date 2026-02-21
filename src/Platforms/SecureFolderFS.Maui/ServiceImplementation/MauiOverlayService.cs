@@ -21,8 +21,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)
         {
-            // TODO: Check if it's better to use Shell.Current.TryCast<AppShell>().CurrentPage
-            var navigation = MainPage.Instance!.Navigation;
+            var navigation = Shell.Current.Navigation;
             return viewable switch
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),

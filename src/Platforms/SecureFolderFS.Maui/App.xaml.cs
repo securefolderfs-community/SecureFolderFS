@@ -4,8 +4,12 @@ using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Maui.Platforms.iOS.Helpers;
 using SecureFolderFS.Maui.Platforms.iOS.Templates;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
@@ -14,6 +18,8 @@ namespace SecureFolderFS.Maui
     public partial class App : Application
     {
         public static App Instance => (App)Current!;
+
+        public MainViewModel MainViewModel { get; } = new(new VaultCollectionModel());
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -94,15 +100,15 @@ namespace SecureFolderFS.Maui
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();
-
-            // Create and initialize AppShell
-            var appShell = new AppShell();
-            await appShell.MainViewModel.InitAsync().ConfigureAwait(false);
-
+            
+            // Initialize MainViewModel
+            await MainViewModel.InitAsync();
+            
             // Initialize ThemeHelper
             await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
 
-            return appShell;
+            // Create new AppShell
+            return new AppShell();
         }
 
         /// <inheritdoc/>

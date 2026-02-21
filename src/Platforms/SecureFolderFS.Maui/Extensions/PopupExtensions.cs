@@ -16,7 +16,7 @@ internal static class PopupExtensions
     /// Stores the close action for each popup that is currently shown as an overlay.
     /// </summary>
     private static readonly Dictionary<Popup, Func<Task>> _closeActions = new();
-    
+
     /// <summary>
     /// Shows a popup as an overlay on top of the current page content with a fade animation.
     /// </summary>
@@ -30,23 +30,32 @@ internal static class PopupExtensions
             return Task.CompletedTask;
 
         var completionSource = new TaskCompletionSource();
-
-        // Get the current content
         var originalContent = contentPage.Content;
-        if (originalContent is null)
+        if (originalContent is null || popup.Content is null)
         {
             completionSource.SetResult();
             return completionSource.Task;
         }
 
-        // Create the overlay grid that will hold both original content and popup
-        var overlayGrid = new Grid();
+        // If the root is already a Grid, inject directly into it to avoid reparenting
+        // the existing content (which would reset view state like TransferControl visibility).
+        // Otherwise, wrap in a new Grid.
+        Grid rootGrid;
+        bool injectedIntoExisting;
 
-        // Remove original content from page first
-        contentPage.Content = null;
-
-        // Add original content to overlay grid
-        overlayGrid.Children.Add(originalContent);
+        if (originalContent is Grid existingGrid)
+        {
+            rootGrid = existingGrid;
+            injectedIntoExisting = true;
+        }
+        else
+        {
+            rootGrid = new Grid();
+            contentPage.Content = null;
+            rootGrid.Children.Add(originalContent);
+            contentPage.Content = rootGrid;
+            injectedIntoExisting = false;
+        }
 
         // Create the dimming background
         var dimBackground = new BoxView()
@@ -55,18 +64,11 @@ internal static class PopupExtensions
             Opacity = 0,
             InputTransparent = false
         };
-        overlayGrid.Children.Add(dimBackground);
+        // Span all rows/columns in case rootGrid has row/column definitions
+        Grid.SetRowSpan(dimBackground, 99);
+        Grid.SetColumnSpan(dimBackground, 99);
 
-        // Get the popup's content and detach it from the popup
-        if (popup.Content is null)
-        {
-            // Restore original content if popup has no content
-            contentPage.Content = originalContent;
-            completionSource.SetResult();
-            return completionSource.Task;
-        }
-
-        // Create a container for the popup content with centering
+        // Create popup container
         var popupContainer = new Grid()
         {
             HorizontalOptions = LayoutOptions.Fill,
@@ -75,101 +77,62 @@ internal static class PopupExtensions
             CascadeInputTransparent = false,
             Opacity = 0
         };
+        Grid.SetRowSpan(popupContainer, 99);
+        Grid.SetColumnSpan(popupContainer, 99);
 
-        // Add the popup content to the container
         popup.HorizontalOptions = LayoutOptions.Fill;
         popup.VerticalOptions = LayoutOptions.Center;
         popup.CascadeInputTransparent = false;
         popup.InputTransparent = false;
         popup.Content.InputTransparent = false;
-
         popupContainer.Children.Add(popup);
 
-        overlayGrid.Children.Add(popupContainer);
+        rootGrid.Children.Add(dimBackground);
+        rootGrid.Children.Add(popupContainer);
 
-        // Set the overlay grid as page content
-        contentPage.Content = overlayGrid;
-
-        // Track if already closing to prevent double-close
         var isClosing = false;
-
-        // Event handlers that we need to unhook later
         TapGestureRecognizer? tapGesture = null;
         EventHandler<TappedEventArgs>? tappedHandler = null;
-
-        // Store the original back button behavior to restore later
         var originalBackButtonBehavior = Shell.GetBackButtonBehavior(contentPage);
 
-        void CleanupOverlay()
-        {
-            if (isClosing)
-                return;
-
-            isClosing = true;
-            
-            // Remove the close action from the dictionary
-            _closeActions.Remove(popup);
-
-            // Unhook all event handlers
-            if (tapGesture is not null)
-            {
-                if (tappedHandler is not null)
-                    tapGesture.Tapped -= tappedHandler;
-
-                dimBackground.GestureRecognizers.Remove(tapGesture);
-            }
-
-            // Restore the original back button behavior
-            Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
-
-            // Remove overlay and restore original content
-            overlayGrid.Children.Clear();
-            contentPage.Content = originalContent;
-
-            completionSource.TrySetResult();
-        }
-
-        // Define the close action with animation
         async Task CloseOverlayAsync()
         {
             if (isClosing)
                 return;
 
-            CleanupOverlay();
             isClosing = true;
-            
-            // Remove the close action from the dictionary
             _closeActions.Remove(popup);
 
-            // Unhook all event handlers
             if (tapGesture is not null)
             {
                 if (tappedHandler is not null)
                     tapGesture.Tapped -= tappedHandler;
-
                 dimBackground.GestureRecognizers.Remove(tapGesture);
             }
 
-            // Restore the original back button behavior
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
 
-            // Fade out animations
             await Task.WhenAll(
                 dimBackground.FadeToAsync(0, FadeAnimationDuration, Easing.CubicOut),
                 popupContainer.FadeToAsync(0, FadeAnimationDuration, Easing.CubicOut)
             );
 
-            // Remove overlay and restore original content
-            overlayGrid.Children.Clear();
-            contentPage.Content = originalContent;
+            // Only remove the overlay layers — never touch the original content
+            rootGrid.Children.Remove(dimBackground);
+            rootGrid.Children.Remove(popupContainer);
+
+            // If we wrapped in a new grid, unwrap
+            if (!injectedIntoExisting)
+            {
+                contentPage.Content = null;
+                rootGrid.Children.Remove(originalContent);
+                contentPage.Content = originalContent;
+            }
 
             completionSource.TrySetResult();
         }
-        
-        // Register the close action so it can be called from the extension method
-        _closeActions[popup] = CloseOverlayAsync;
 
-        // Handle background tap for light dismiss
+        _closeActions[popup] = CloseOverlayAsync;
         if (dismissOnBackgroundTap)
         {
             tapGesture = new TapGestureRecognizer();
@@ -178,14 +141,11 @@ internal static class PopupExtensions
             dimBackground.GestureRecognizers.Add(tapGesture);
         }
 
-        // Handle Android back button/gesture - close popup instead of navigating
-        var backButtonBehavior = new BackButtonBehavior()
+        Shell.SetBackButtonBehavior(contentPage, new BackButtonBehavior()
         {
             Command = new Command(() => _ = CloseOverlayAsync())
-        };
-        Shell.SetBackButtonBehavior(contentPage, backButtonBehavior);
+        });
 
-        // Fade in animations
         _ = Task.WhenAll(
             dimBackground.FadeToAsync(OverlayOpacity, FadeAnimationDuration, Easing.CubicIn),
             popupContainer.FadeToAsync(1, FadeAnimationDuration, Easing.CubicIn)
