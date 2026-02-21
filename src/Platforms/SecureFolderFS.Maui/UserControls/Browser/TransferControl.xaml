@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="ThisControl">
 
     <Grid
@@ -36,18 +37,26 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                    <ActivityIndicator
-                        HeightRequest="32"
-                        IsRunning="{Binding IsProgressing, Mode=OneWay}"
-                        IsVisible="{Binding IsProgressing, Mode=OneWay}"
-                        VerticalOptions="Center"
-                        WidthRequest="32" />
-                    <Label
-                        FontSize="16"
-                        Text="{Binding Title, Mode=OneWay}"
-                        VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                <uc:AnimatedRevealLayout
+                    Grid.Column="0"
+                    IsShown="{Binding IsProgressing, Mode=OneWay}"
+                    RevealSide="Left"
+                    Spacing="8"
+                    VerticalOptions="Center">
+                    <uc:AnimatedRevealLayout.RevealContent>
+                        <ActivityIndicator
+                            HeightRequest="32"
+                            IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                            VerticalOptions="Center"
+                            WidthRequest="32" />
+                    </uc:AnimatedRevealLayout.RevealContent>
+                    <uc:AnimatedRevealLayout.MainContent>
+                        <Label
+                            FontSize="16"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </uc:AnimatedRevealLayout.MainContent>
+                </uc:AnimatedRevealLayout>
 
                 <Button
                     Grid.Column="1"
