@@ -1214,4 +1214,19 @@
   <data name="SelectLocationOfVault" xml:space="preserve">
       <value>Select a location of your vault</value>
   </data>
+  <data name="CoreMemoryProtectionEnabled" xml:space="preserve">
+      <value>Core Memory Protection is enabled</value>
+  </data>
+  <data name="EnrolledCredentials" xml:space="preserve">
+      <value>Enrolled credentials</value>
+  </data>
+  <data name="PendingPairingRequest" xml:space="preserve">
+      <value>Pending pairing request</value>
+  </data>
+  <data name="DeviceRequestingToPair" xml:space="preserve">
+      <value>{0} is requesting to pair to create credentials</value>
+  </data>
+  <data name="EnableDeviceLink" xml:space="preserve">
+      <value>Enable Device Link</value>
+  </data>
 </root>

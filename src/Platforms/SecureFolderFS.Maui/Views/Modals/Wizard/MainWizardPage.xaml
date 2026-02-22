@@ -25,12 +25,11 @@
                 Opacity="0.55"
                 Text="Choose an option to add a new vault" />
 
-            <VerticalStackLayout Spacing="10">
+            <VerticalStackLayout Spacing="8">
 
                 <!--  Add Existing  -->
                 <Border
-                    BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
-                                                      Dark={StaticResource SecondaryDarkColor}}"
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
                     HeightRequest="80"
                     StrokeThickness="0">
                     <Border.StrokeShape>
@@ -71,22 +70,22 @@
                             FontAttributes="Bold"
                             FontSize="16"
                             Text="{l:ResourceString Rid=AddExisting}"
-                            TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
-                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
                             VerticalOptions="Center" />
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_material:Material ChevronRight}"
-                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
                             IconSize="18"
                             OnPlatforms="Android"
                             VerticalOptions="Center" />
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_cupertino:Cupertino ChevronRight}"
-                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
                             IconSize="18"
                             OnPlatforms="iOS"
                             VerticalOptions="Center" />
@@ -98,8 +97,7 @@
 
                 <!--  Create New  -->
                 <Border
-                    BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
-                                                      Dark={StaticResource SecondaryDarkColor}}"
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
                     HeightRequest="80"
                     StrokeThickness="0">
                     <Border.StrokeShape>
@@ -141,22 +139,22 @@
                             FontAttributes="Bold"
                             FontSize="16"
                             Text="{l:ResourceString Rid=CreateNew}"
-                            TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
-                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
                             VerticalOptions="Center" />
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_material:Material ChevronRight}"
-                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
                             IconSize="18"
                             OnPlatforms="Android"
                             VerticalOptions="Center" />
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_cupertino:Cupertino ChevronRight}"
-                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
                             IconSize="18"
                             OnPlatforms="iOS"
                             VerticalOptions="Center" />

@@ -104,7 +104,7 @@
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity="0.8"
-                Text="Core Memory Protection is enabled" />
+                Text="{l:ResourceString Rid=CoreMemoryProtectionEnabled}" />
         </StackPanel>
     </Grid>
 </Page>

@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             var fileExplorerService = DI.Service<IFileExplorerService>();
             yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel)
             {
-                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2 })
+                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2, IconColor = Colors.White })
             };
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)

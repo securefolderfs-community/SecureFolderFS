@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
 
             try
             {
-                var keyResult = await EnrollAsync(config.Uid, null, cancellationToken);
+                var keyResult = await AcquireAsync(config.Uid, null, cancellationToken);
                 if (!keyResult.TryGetValue(out var key))
                 {
                     Report(keyResult);

@@ -13,10 +13,11 @@
     x:Name="ThisLoginControl">
 
     <ContentView.Resources>
+
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <ContentView HorizontalOptions="Fill">
-                <VerticalStackLayout HorizontalOptions="Fill" Spacing="16">
+                <VerticalStackLayout HorizontalOptions="Fill" Spacing="12">
                     <local:PasswordControl
                         HorizontalOptions="Fill"
                         PasswordSubmittedCommand="{Binding ProvideCredentialsCommand}"
@@ -37,34 +38,63 @@
         <!--  Key File Template  -->
         <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileLoginViewModel">
             <ContentView>
-                <VerticalStackLayout Spacing="24">
-                    <!--  Logo  -->
-                    <Grid>
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_material:Material Key}"
-                            IconSize="60"
-                            OnPlatforms="Android" />
-                        <mi:MauiIcon
-                            HorizontalOptions="Center"
-                            Icon="{mi_cupertino:Cupertino Doc}"
-                            IconSize="60"
-                            OnPlatforms="iOS" />
-                    </Grid>
+                <VerticalStackLayout Spacing="16">
 
-                    <!--  Title  -->
-                    <Label
-                        HorizontalOptions="Center"
-                        Opacity="0.6"
-                        Text="{l:ResourceString Rid=LoginKeyFile}" />
+                    <!--  Icon + description card  -->
+                    <Border
+                        Padding="20,18"
+                        Background="{StaticResource ThemeSecondaryColorBrush}"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="12">
+                            <Border
+                                Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                                HeightRequest="48"
+                                HorizontalOptions="Center"
+                                StrokeThickness="0"
+                                WidthRequest="48">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_material:Material Key}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="Android"
+                                        VerticalOptions="Center" />
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_cupertino:Cupertino Doc}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="iOS"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                            <Label
+                                FontSize="14"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=LoginKeyFile}" />
+                        </VerticalStackLayout>
+                    </Border>
 
-                    <!--  Authenticate  -->
+                    <!--  Authenticate button  -->
                     <local:ActivityButton
                         ButtonStyle="{StaticResource AccentButtonStyle}"
                         Command="{Binding ProvideCredentialsCommand}"
                         FontAttributes="Bold"
+                        HorizontalOptions="Fill"
                         IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
                         Text="{l:ResourceString Rid=Authenticate}" />
+
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>

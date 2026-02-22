@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SourceSelectionWizardPage"
@@ -24,9 +27,8 @@
             <!--  Primary source (Device Storage)  -->
             <Border
                 Grid.Row="0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
-                                                  Dark={StaticResource SecondaryDarkColor}}"
-                HeightRequest="64"
+                Background="{StaticResource ThemeSecondaryColorBrush}"
+                HeightRequest="72"
                 IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                 StrokeThickness="0">
                 <Border.StrokeShape>
@@ -34,22 +36,55 @@
                 </Border.StrokeShape>
                 <Grid
                     Padding="18,0"
-                    ColumnDefinitions="Auto,*"
-                    ColumnSpacing="12">
-                    <Image
+                    ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="14">
+
+                    <!--  Icon plate  -->
+                    <Border
                         Grid.Column="0"
-                        HeightRequest="28"
-                        Source="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                          Dark={StaticResource PrimaryDarkColor}}"
+                        HeightRequest="40"
+                        StrokeThickness="0"
                         VerticalOptions="Center"
-                        WidthRequest="28" />
+                        WidthRequest="40">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Image
+                            HeightRequest="22"
+                            HorizontalOptions="Center"
+                            Source="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                            VerticalOptions="Center"
+                            WidthRequest="22" />
+                    </Border>
+
                     <Label
                         Grid.Column="1"
                         FontAttributes="Bold"
                         FontSize="16"
                         Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}"
-                        TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
-                                                    Dark={StaticResource PrimaryDarkColor}}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}"
                         VerticalOptions="Center" />
+
+                    <mi:MauiIcon
+                        Grid.Column="2"
+                        Icon="{mi_material:Material ChevronRight}"
+                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconSize="18"
+                        OnPlatforms="Android"
+                        VerticalOptions="Center" />
+                    <mi:MauiIcon
+                        Grid.Column="2"
+                        Icon="{mi_cupertino:Cupertino ChevronRight}"
+                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconSize="18"
+                        OnPlatforms="iOS"
+                        VerticalOptions="Center" />
+
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}" CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}" />
                     </Grid.GestureRecognizers>
@@ -68,8 +103,7 @@
                         <Border
                             Margin="0"
                             Padding="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
-                                                              Dark={StaticResource SecondaryDarkColor}}"
+                            Background="{StaticResource ThemeSecondaryColorBrush}"
                             StrokeThickness="0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="14" />
@@ -88,8 +122,8 @@
                                     FontSize="14"
                                     HorizontalOptions="Center"
                                     Text="{Binding DataSourceName, Mode=OneWay}"
-                                    TextColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
-                                                                Dark={StaticResource PrimaryDarkColor}}" />
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>

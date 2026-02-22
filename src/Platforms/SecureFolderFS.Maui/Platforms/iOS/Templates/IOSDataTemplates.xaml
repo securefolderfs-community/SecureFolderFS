@@ -11,39 +11,71 @@
     <!--  IOS Biometrics Login Template  -->
     <DataTemplate x:Key="IOSBiometricsLoginTemplate" x:DataType="ios_vm:IOSBiometricLoginViewModel">
         <ContentView>
-            <VerticalStackLayout Spacing="24">
-                <Grid>
-                    <!--  Lottie animation  -->
-                    <uc:SkottieView
-                        HeightRequest="48"
-                        HorizontalOptions="Center"
-                        IsVisible="{Binding IsAuthenticated, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                        RepeatAnimation="True"
-                        Source="faceid_awaiting_profile.lottie"
-                        VerticalOptions="Center"
-                        WidthRequest="48" />
+            <VerticalStackLayout Spacing="16">
 
-                    <!--  Checkmark  -->
-                    <mi:MauiIcon
-                        HorizontalOptions="Center"
-                        Icon="{mi_cupertino:Cupertino CheckmarkCircle}"
-                        IconColor="LimeGreen"
-                        IconSize="48"
-                        IsVisible="{Binding IsAuthenticated, Mode=OneWay}"
-                        VerticalOptions="Center" />
-                </Grid>
+                <!--  Icon + description card  -->
+                <Border
+                    Padding="20,18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                                      Dark={StaticResource SecondaryDarkColor}}"
+                    StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
 
-                <!--  Title  -->
-                <Label
-                    HorizontalOptions="Center"
-                    Opacity="0.6"
-                    Text="{Binding Description, Mode=OneWay}" />
+                        <!--  Icon plate  -->
+                        <Border
+                            BackgroundColor="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor},
+                                                              Dark={StaticResource ElevatedFillPrimaryDarkColor}}"
+                            HeightRequest="48"
+                            HorizontalOptions="Center"
+                            StrokeThickness="0"
+                            WidthRequest="48">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
 
-                <!--  Authenticate  -->
+                            <Grid>
+                                <!--  Lottie animation (awaiting)  -->
+                                <uc:SkottieView
+                                    HeightRequest="28"
+                                    HorizontalOptions="Center"
+                                    IsVisible="{Binding IsAuthenticated, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                    RepeatAnimation="True"
+                                    Source="faceid_awaiting_profile.lottie"
+                                    VerticalOptions="Center"
+                                    WidthRequest="28" />
+
+                                <!--  Checkmark (authenticated)  -->
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_cupertino:Cupertino CheckmarkCircle}"
+                                    IconColor="LimeGreen"
+                                    IconSize="28"
+                                    IsVisible="{Binding IsAuthenticated, Mode=OneWay}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+
+                        <Label
+                            FontSize="14"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.6"
+                            Text="{Binding Description, Mode=OneWay}" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--  Authenticate button  -->
                 <Button
                     Command="{Binding ProvideCredentialsCommand}"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Fill"
                     Style="{StaticResource AccentButtonStyle}"
                     Text="{l:ResourceString Rid=Authenticate}" />
+
             </VerticalStackLayout>
         </ContentView>
     </DataTemplate>
