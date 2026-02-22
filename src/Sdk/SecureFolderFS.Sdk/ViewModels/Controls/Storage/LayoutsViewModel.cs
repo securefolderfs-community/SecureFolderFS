@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             IsAscending = true;
             CurrentSortOption = SortOptions[0];
             CurrentSizeOption = SizeOptions[1];
-            CurrentViewOption = ViewOptions[0];
+            CurrentViewOption = ViewOptions[2];
             Title = "ViewOptions".ToLocalized();
         }
 

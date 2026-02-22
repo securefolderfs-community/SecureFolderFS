@@ -94,7 +94,6 @@
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
-                Padding="16"
                 BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
@@ -122,7 +121,7 @@
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
-                    <Border Margin="-8">
+                    <Border>
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8" />
                         </Border.StrokeShape>
@@ -288,12 +287,22 @@
                         DragOver="CollectionDropGestureRecognizer_DragOver"
                         Drop="CollectionDropGestureRecognizer_Drop" />
                 </Grid.GestureRecognizers>
-                <FlyoutBase.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="Item1" />
-                        <MenuFlyoutItem Text="Item2" />
-                    </MenuFlyout>
-                </FlyoutBase.ContextFlyout>
+
+                <Grid
+                    x:Name="SelectionRectangleCanvas"
+                    HorizontalOptions="Fill"
+                    InputTransparent="True"
+                    IsVisible="False"
+                    VerticalOptions="Fill"
+                    ZIndex="5">
+                    <Grid
+                        x:Name="SelectionRectangleView"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                          Dark={StaticResource PrimaryDarkColor}}"
+                        HorizontalOptions="Start"
+                        Opacity="0.3"
+                        VerticalOptions="Start" />
+                </Grid>
 
                 <ContentView
                     Content="{Binding EmptyView, Mode=OneWay}"
@@ -308,7 +317,8 @@
                     ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                     Loaded="ItemsCollectionView_Loaded"
                     SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}"
-                    SizeChanged="ItemsCollectionView_SizeChanged">
+                    SizeChanged="ItemsCollectionView_SizeChanged"
+                    ZIndex="0">
                     <CollectionView.ItemTemplate>
                         <ts:BrowserViewItemTemplateSelector
                             GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
