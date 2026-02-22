@@ -118,7 +118,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
                 return;
 
-            if (fileViewModel.Thumbnail is not null)
+            if (!fileViewModel.CanLoadThumbnail)
                 return;
 
             _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);

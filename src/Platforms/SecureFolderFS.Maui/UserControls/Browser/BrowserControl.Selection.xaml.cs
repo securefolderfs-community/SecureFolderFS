@@ -1,7 +1,5 @@
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
-using Microsoft.Maui;               // For IVisualTreeElement
-using Microsoft.Maui.Controls;      // For ScrollView
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -11,8 +9,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private readonly SwipeSelectionManager _swipeSelectionManager = new();
         private Point _swipeOriginCenterPoint;
         private Point? _swipeStartPan;
-
-        // Cached reference to the internal ScrollView of the CollectionView
         private ScrollView? _scrollView;
 
         private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)

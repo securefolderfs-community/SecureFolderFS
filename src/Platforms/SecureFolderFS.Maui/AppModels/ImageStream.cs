@@ -1,5 +1,6 @@
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Streams;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.AppModels
@@ -31,8 +32,8 @@ namespace SecureFolderFS.Maui.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (Stream is OnDemandDisposableStream onDemandDisposableStream)
-                onDemandDisposableStream.ForceClose();
+            if (Stream is NonDisposableStream nonDisposableStream)
+                nonDisposableStream.ForceClose();
             else
                 Stream.Dispose();
         }

@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Streams;
 using SecureFolderFS.UI;
 using UIKit;
 
@@ -66,11 +66,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             // Compress to JPEG
             using var jpegData = resizedImage.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
-            var ms = new OnDemandDisposableStream();
-            await jpegData.AsStream().CopyToAsync(ms).ConfigureAwait(false);
-            ms.Position = 0;
+            if (jpegData is null)
+                throw new FormatException("Failed to convert image to JPEG.");
+            
+            var memoryStream = new MemoryStream();
+            await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
+            memoryStream.Position = 0L;
 
-            return new ImageStream(ms);
+            return new ImageStream(new NonDisposableStream(memoryStream));
         }
 
         private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
@@ -95,15 +98,18 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 var actualTime = new CMTime((long)captureTime.TotalSeconds, 1);
                 var imageRef = generator.CopyCGImageAtTime(actualTime, out var _, out var error);
                 if (imageRef is null || error != null)
-                    throw new Exception($"Failed to generate thumbnail: {error?.LocalizedDescription}");
+                    throw new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}");
 
                 using var image = UIImage.FromImage(imageRef);
                 using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
-                var outStream = new OnDemandDisposableStream();
-                await jpegData.AsStream().CopyToAsync(outStream).ConfigureAwait(false);
-                outStream.Position = 0;
+                if (jpegData is null)
+                    throw new FormatException("Failed to convert image to JPEG.");
+                
+                var memoryStream = new MemoryStream();
+                await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
+                memoryStream.Position = 0L;
 
-                return new ImageStream(outStream);
+                return new ImageStream(new NonDisposableStream(memoryStream));
             }
             finally
             {
