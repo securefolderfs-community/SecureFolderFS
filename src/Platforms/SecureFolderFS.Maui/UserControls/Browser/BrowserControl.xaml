@@ -288,22 +288,6 @@
                         Drop="CollectionDropGestureRecognizer_Drop" />
                 </Grid.GestureRecognizers>
 
-                <Grid
-                    x:Name="SelectionRectangleCanvas"
-                    HorizontalOptions="Fill"
-                    InputTransparent="True"
-                    IsVisible="False"
-                    VerticalOptions="Fill"
-                    ZIndex="5">
-                    <Grid
-                        x:Name="SelectionRectangleView"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                          Dark={StaticResource PrimaryDarkColor}}"
-                        HorizontalOptions="Start"
-                        Opacity="0.3"
-                        VerticalOptions="Start" />
-                </Grid>
-
                 <ContentView
                     Content="{Binding EmptyView, Mode=OneWay}"
                     HorizontalOptions="Fill"
@@ -338,5 +322,21 @@
                 </CollectionView>
             </Grid>
         </RefreshView>
+
+        <Grid
+            x:Name="SelectionRectangleCanvas"
+            HorizontalOptions="Fill"
+            InputTransparent="True"
+            IsVisible="False"
+            VerticalOptions="Fill"
+            ZIndex="5">
+            <Grid
+                x:Name="SelectionRectangleView"
+                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                  Dark={StaticResource PrimaryDarkColor}}"
+                HorizontalOptions="Start"
+                Opacity="0.3"
+                VerticalOptions="Start" />
+        </Grid>
     </Grid>
 </ContentView>

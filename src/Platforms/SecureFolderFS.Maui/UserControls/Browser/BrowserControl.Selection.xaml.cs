@@ -1,5 +1,7 @@
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using Microsoft.Maui;               // For IVisualTreeElement
+using Microsoft.Maui.Controls;      // For ScrollView
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -7,15 +9,17 @@ namespace SecureFolderFS.Maui.UserControls.Browser
     {
         private const double SWIPE_SELECTION_MIN_HORIZONTAL_THRESHOLD = 10.0d;
         private readonly SwipeSelectionManager _swipeSelectionManager = new();
-        private Point _swipeOriginCenterPoint; // Center of origin cell - for hit-testing
-        private Point? _swipeStartPan; // pan coordinates at the very first Running event
+        private Point _swipeOriginCenterPoint;
+        private Point? _swipeStartPan;
+
+        // Cached reference to the internal ScrollView of the CollectionView
+        private ScrollView? _scrollView;
 
         private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
             if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel } view)
                 return;
 
-            // Ignore taps that are part of a swipe-select gesture
             if (_swipeSelectionManager.IsActive)
                 return;
 
@@ -34,7 +38,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         internal void ItemContainer_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
-            // Only active while in selection mode
             if (!IsSelecting)
             {
                 _swipeSelectionManager.End();
@@ -47,7 +50,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             switch (e.StatusType)
             {
                 case GestureStatus.Started:
-                    // Don't begin yet — wait until we confirm horizontal intent in Running
+                    // Wait for horizontal intent in Running
                     break;
 
                 case GestureStatus.Running:
@@ -89,11 +92,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             var originCol = originIndex % columns;
             var originRow = originIndex / columns;
 
-            // Center of the origin item in canvas coordinates (including padding)
-            _swipeOriginCenterPoint = new Point(
-                offsetX + originCol * (itemWidth + hSpacing) + itemWidth / 2.0,
-                offsetY + originRow * (itemHeight + vSpacing) + itemHeight / 2.0);
+            // Get current scroll offset
+            double scrollY = GetCurrentScrollY();
 
+            // Center of origin item in CANVAS coordinates (screen coordinates):
+            // content Y → canvas Y = contentY - scrollY
+            double canvasX = offsetX + originCol * (itemWidth + hSpacing) + itemWidth / 2.0;
+            double canvasY = offsetY + originRow * (itemHeight + vSpacing) + itemHeight / 2.0 - scrollY;
+
+            _swipeOriginCenterPoint = new Point(canvasX, canvasY);
             _swipeStartPan = new Point(totalX, totalY);
             SelectionRectangleCanvas.IsVisible = true;
         }
@@ -108,28 +115,43 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             var deltaX = totalX - _swipeStartPan.Value.X;
             var deltaY = totalY - _swipeStartPan.Value.Y;
+
             var startPoint = _swipeOriginCenterPoint;
             var currentPoint = new Point(startPoint.X + deltaX, startPoint.Y + deltaY);
-            
-            var hitRect = new Rect(
+
+            // Hit rectangle in CANVAS coordinates
+            var hitRectCanvas = new Rect(
                 Math.Min(startPoint.X, currentPoint.X),
                 Math.Min(startPoint.Y, currentPoint.Y),
                 Math.Abs(currentPoint.X - startPoint.X),
                 Math.Abs(currentPoint.Y - startPoint.Y));
 
-            PositionSelectionRectangle(hitRect);
+            PositionSelectionRectangle(hitRectCanvas);
+
+            // Get current scroll offset again (it might have changed during the gesture)
+            double scrollY = GetCurrentScrollY();
+
+            // Transform hit rectangle into CONTENT coordinates by adding scroll offset
+            var hitRectContent = new Rect(
+                hitRectCanvas.X,
+                hitRectCanvas.Y + scrollY,
+                hitRectCanvas.Width,
+                hitRectCanvas.Height);
+
             _swipeSelectionManager.UpdateFromRectangle(ItemsSource, item =>
             {
                 var index = ItemsSource.IndexOf(item);
                 var col = index % columns;
                 var row = index / columns;
+
+                // Item rectangle in CONTENT coordinates (as before)
                 var itemRect = new Rect(
                     offsetX + col * (itemWidth + hSpacing),
                     offsetY + row * (itemHeight + vSpacing),
                     itemWidth,
                     itemHeight);
 
-                return hitRect.IntersectsWith(itemRect);
+                return hitRectContent.IntersectsWith(itemRect);
             });
         }
 
@@ -146,7 +168,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             SelectionRectangleView.HeightRequest = rect.Height;
         }
 
-        /// <summary>Extracts layout metrics shared by Begin and Update</summary>
         private void GetItemLayout(View originView, out int columns, out double itemWidth, out double itemHeight,
             out double hSpacing, out double vSpacing, out double contentOffsetX, out double contentOffsetY)
         {
@@ -164,29 +185,77 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             else
                 columns = 1;
 
-            // Available width = total width minus horizontal margins AND horizontal padding
             var availableWidth = _collectionView.Width - _collectionView.Margin.Left - _collectionView.Margin.Right;
-
             itemWidth = (availableWidth - hSpacing * (columns - 1)) / columns;
             itemHeight = columns == 1 ? originView.Height : itemWidth;
         }
 
-        /// <summary>
-        /// Attaches a PanGestureRecognizer to the item container (if not already present)
-        /// and records the rendered view on the view model so hit-testing can find it.
-        /// </summary>
+        /// <summary>Retrieves the current vertical scroll offset of the CollectionView.</summary>
+        private double GetCurrentScrollY()
+        {
+            if (_collectionView == null)
+                return 0;
+
+            // Lazy‑load the internal ScrollView
+            if (_scrollView == null)
+            {
+                _scrollView = GetInternalScrollView(_collectionView);
+            }
+
+            return _scrollView?.ScrollY ?? 0;
+        }
+
+        /// <summary>Finds the internal ScrollView of a CollectionView via the visual tree.</summary>
+        private static ScrollView? GetInternalScrollView(CollectionView collectionView)
+        {
+            if (collectionView is not IVisualTreeElement vte)
+                return null;
+
+            // Search the first‑level children – in practice the ScrollView is a direct child.
+            foreach (var child in vte.GetVisualChildren())
+            {
+                if (child is ScrollView sv)
+                    return sv;
+            }
+            return null;
+        }
+
         private void RegisterItemContainerPanGesture(object? sender)
         {
             if (sender is not View { BindingContext: BrowserItemViewModel } view)
                 return;
+            UpdateItemContainerPanGesture(view);
+        }
 
-            // Avoid adding duplicate recognizers on recycled cells
-            if (view.GestureRecognizers.OfType<PanGestureRecognizer>().Any())
+        internal void UpdateAllItemContainerPanGestures()
+        {
+            if (_collectionView is null)
                 return;
 
-            var pan = new PanGestureRecognizer();
-            pan.PanUpdated += ItemContainer_PanUpdated;
-            view.GestureRecognizers.Add(pan);
+            foreach (var view in _collectionView.GetVisualTreeDescendants().OfType<View>().Where(v => v.BindingContext is BrowserItemViewModel))
+                UpdateItemContainerPanGesture(view);
+        }
+
+        private void UpdateItemContainerPanGesture(View view)
+        {
+            var existing = view.GestureRecognizers.OfType<PanGestureRecognizer>().FirstOrDefault();
+            if (IsSelecting)
+            {
+                if (existing is not null)
+                    return;
+
+                var pan = new PanGestureRecognizer();
+                pan.PanUpdated += ItemContainer_PanUpdated;
+                view.GestureRecognizers.Add(pan);
+            }
+            else
+            {
+                if (existing is null)
+                    return;
+
+                existing.PanUpdated -= ItemContainer_PanUpdated;
+                view.GestureRecognizers.Remove(existing);
+            }
         }
     }
 }
