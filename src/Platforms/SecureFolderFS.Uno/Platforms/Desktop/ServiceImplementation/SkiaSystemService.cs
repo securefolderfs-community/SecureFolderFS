@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -7,22 +8,34 @@ using SecureFolderFS.Sdk.Services;
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="ISystemService"/>
-    internal sealed class SkiaSystemService : ISystemService
+    internal sealed partial class SkiaSystemService : ISystemService
     {
         private EventHandler? _deviceLocked;
-
+        
+#if !__UNO_SKIA_MACOS__
         /// <inheritdoc/>
-        public event EventHandler? DeviceLocked // TODO: Implement on Linux and MacOS
+        public event EventHandler? DeviceLocked
         {
             add => _deviceLocked += value;
             remove => _deviceLocked -= value;
         }
+#endif
 
         /// <inheritdoc/>
         public Task<long> GetAvailableFreeSpaceAsync(IFolder storageRoot, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement size calculation
-            return Task.FromResult<long>(0);
+            try
+            {
+                var drive = new DriveInfo("/");
+                if (!drive.IsReady)
+                    return Task.FromResult(0L);
+
+                return Task.FromResult(drive.AvailableFreeSpace);
+            }
+            catch (Exception)
+            {
+                return Task.FromResult(0L);
+            }
         }
     }
 }

@@ -6,12 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
-    </UserControl.Resources>
 
     <Grid>
         <Grid

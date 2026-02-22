@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
@@ -47,6 +48,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         public INavigator? OuterNavigator { get; }
 
+        /// <summary>
+        /// Gets the thumbnail cache for this browser instance.
+        /// </summary>
+        public ThumbnailCacheModel ThumbnailCache { get; }
+
         [Obsolete("Use FileSystemOptions instead.")]
         public IVFSRoot? StorageRoot { get; init; }
 
@@ -61,6 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             OuterNavigator = outerNavigator;
             BaseFolder = baseFolder;
             Options = options;
+            ThumbnailCache = new();
             Breadcrumbs = [ new(rootView?.Title, NavigateBreadcrumbCommand) ];
         }
 
@@ -95,8 +102,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 TransferViewModel.IsPickingFolder = true;
                 await OuterNavigator.NavigateAsync(this);
 
-                var cts = TransferViewModel.GetCancellation();
+                using var cts = TransferViewModel.GetCancellation(cancellationToken);
                 return await TransferViewModel.PickFolderAsync(new TransferOptions(TransferType.Select), false, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return null;
             }
             finally
             {
@@ -231,7 +242,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                         return;
 
                     TransferViewModel.TransferType = TransferType.Copy;
-                    using var cts = TransferViewModel.GetCancellation();
+                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
                     await TransferViewModel.TransferAsync([ file ], async (item, token) =>
                     {
                         var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, token);
@@ -248,10 +259,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                         return;
 
                     TransferViewModel.TransferType = TransferType.Copy;
-                    using var cts = TransferViewModel.GetCancellation();
+                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
                     await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
                     {
-                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, reporter, token);
+                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, item.Name, reporter, token);
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 

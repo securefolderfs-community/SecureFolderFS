@@ -25,14 +25,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         private readonly UIDocument _document;
         private readonly NSUrl _securityScopedAncestorUrl;
 
-        internal IOSSecurityScopedStream(NSUrl url, NSUrl securityScopedAncestorUrl, FileAccess access)
+        internal IOSSecurityScopedStream(NSUrl url, NSUrl securityScopedAncestorUrl, FileAccess access, FileShare share = FileShare.None)
         {
             _document = new UIDocument(url);
             var path = _document.FileUrl.Path!;
             _url = url;
             _securityScopedAncestorUrl = securityScopedAncestorUrl;
             _securityScopedAncestorUrl.StartAccessingSecurityScopedResource();
-            _stream = File.Open(path, FileMode.Open, access);
+            _stream = File.Open(path, FileMode.Open, access, share);
         }
 
         /// <inheritdoc/>

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 ImageIcon iconImage => new FontImageSource()
                 {
                     Glyph = GetDescription(iconImage.MauiIcon.Icon),
-                    Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                    Color = ((Color?)iconImage.MauiIcon.IconColor ?? App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                     {
                         ThemeType.Light => "QuarternaryLightColor",
                         _ => "QuarternaryDarkColor"
@@ -26,9 +27,9 @@ namespace SecureFolderFS.Maui.ValueConverters
                 },
                 Uri uriImage => ImageSource.FromUri(uriImage),
                 ImageRemoteUrl remoteUrlImage => ImageSource.FromUri(new Uri(remoteUrlImage.Url)),
-                ImageResourceFile resourceFileImage => resourceFileImage.IsResource
-                    ? ImageSource.FromResource(resourceFileImage.Name)
-                    : ImageSource.FromFile(resourceFileImage.Name),
+                ImageResource resourceImage => resourceImage.IsResource
+                    ? ImageSource.FromResource(resourceImage.Name)
+                    : ImageSource.FromFile(resourceImage.Name),
                 _ => null
             };
         }

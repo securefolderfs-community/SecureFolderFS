@@ -21,6 +21,42 @@
             <uc:IntroductionSlide.Slot>
                 <Image HeightRequest="300" Source="{AppThemeBinding Light='intro_light_apple_devices.png', Dark='intro_dark_apple_devices.png'}" />
             </uc:IntroductionSlide.Slot>
+            <uc:IntroductionSlide.SlotBelow>
+                <Label
+                    Margin="0,16,0,0"
+                    FontSize="10"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    Opacity="0.6">
+
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{l:ResourceString Rid=IntroPrefix}" />
+                            <Span
+                                Text="{l:ResourceString Rid=PrivacyPolicy}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="PrivacyPolicy_Tapped" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                            <Span Text="{l:ResourceString Rid=IntroMiddle}" />
+                            <Span
+                                Text="{l:ResourceString Rid=TermsOfService}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TermsOfService_Tapped" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                            <Span Text="{l:ResourceString Rid=IntroSuffix}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </uc:IntroductionSlide.SlotBelow>
         </uc:IntroductionSlide>
         <uc:IntroductionSlide
             x:Key="Slide1"
@@ -109,11 +145,19 @@
             Opacity="0">
             <Ellipse
                 Margin="0,-70,0,50"
-                Fill="#106bbf"
                 HeightRequest="550"
                 Opacity="0.7"
                 VerticalOptions="Start"
-                WidthRequest="1000" />
+                WidthRequest="1000">
+
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Offset="0.1" Color="{AppThemeBinding Light='#025DFF', Dark='#106bbf'}" />
+                        <GradientStop Offset="0.6" Color="#106bbf" />
+                        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
         </Grid>
 
         <!--  Foreground  -->
@@ -122,7 +166,7 @@
                 x:Name="ForegroundView"
                 Opacity="0"
                 RowDefinitions="*,Auto"
-                RowSpacing="64">
+                RowSpacing="32">
                 <ucc:GalleryView
                     x:Name="GalleryView"
                     Grid.Row="0"
@@ -132,7 +176,8 @@
                     Grid.Row="1"
                     Margin="16,0,16,16"
                     Clicked="Continue_Clicked"
-                    Text="{l:ResourceString Rid=Continue}" />
+                    Text="{l:ResourceString Rid=Continue}"
+                    VerticalOptions="End" />
             </Grid>
         </av:AcrylicView>
     </Grid>

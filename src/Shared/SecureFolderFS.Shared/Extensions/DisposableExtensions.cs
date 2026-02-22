@@ -28,7 +28,7 @@ namespace SecureFolderFS.Shared.Extensions
                     break;
 
                 case IAsyncDisposable asyncDisposable:
-                    _ = asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                    asyncDisposable.DisposeAsync().AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
                     break;
             }
         }

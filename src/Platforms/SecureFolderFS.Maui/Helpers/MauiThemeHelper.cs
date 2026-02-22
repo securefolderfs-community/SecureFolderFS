@@ -1,3 +1,4 @@
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Helpers
@@ -6,11 +7,14 @@ namespace SecureFolderFS.Maui.Helpers
     internal sealed class MauiThemeHelper : ThemeHelper
     {
         private static MauiThemeHelper? _Instance;
-        
+
         /// <summary>
         /// Gets the singleton instance of <see cref="MauiThemeHelper"/>.
         /// </summary>
         public static MauiThemeHelper Instance => _Instance ??= new();
+
+        /// <inheritdoc/>
+        public override ThemeType ActualTheme => (ThemeType)Application.Current!.RequestedTheme;
 
         /// <inheritdoc/>
         protected override void UpdateTheme()

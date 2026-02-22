@@ -6,12 +6,12 @@
 
 
     <!--  Application Colors  -->
-    <Color x:Key="PrimaryLightColor">#1791ff</Color>
+    <Color x:Key="PrimaryLightColor">#106bbf</Color>
     <Color x:Key="SecondaryLightColor">#D3E5F9</Color>
     <Color x:Key="TertiaryLightColor">#7EA9C1</Color>
     <Color x:Key="QuarternaryLightColor">#1E4F7A</Color>
 
-    <Color x:Key="PrimaryDarkColor">#106bbf</Color>
+    <Color x:Key="PrimaryDarkColor">#1791ff</Color>
     <Color x:Key="SecondaryDarkColor">#333f4d</Color>
     <Color x:Key="TertiaryDarkColor">#1E4F7A</Color>
     <Color x:Key="QuarternaryDarkColor">#7EA9C1</Color>

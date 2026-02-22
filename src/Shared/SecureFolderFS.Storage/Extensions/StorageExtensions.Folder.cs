@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
@@ -65,6 +66,7 @@ namespace SecureFolderFS.Storage.Extensions
                 .TrimStart()
                 .TrimStart(Path.AltDirectorySeparatorChar)
                 .TrimStart(Path.DirectorySeparatorChar);
+
             return await from.GetItemByRelativePathAsync(relativePathWithoutRoot, cancellationToken);
         }
 
@@ -110,7 +112,7 @@ namespace SecureFolderFS.Storage.Extensions
         }
 
         /// <inheritdoc cref="IGetFirstByName.GetFirstByNameAsync"/>
-        public static async Task<IStorable?> TryGetFirstByNameAsync(this IFolder folder, string name, CancellationToken cancellationToken = default)
+        public static async Task<IStorableChild?> TryGetFirstByNameAsync(this IFolder folder, string name, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -120,6 +122,57 @@ namespace SecureFolderFS.Storage.Extensions
             {
                 return null;
             }
+        }
+
+        /// <inheritdoc cref="GetFileByNameAsync"/>
+        public static async Task<IChildFile?> TryGetFileByNameAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFileByNameAsync(fileName, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="GetFolderByNameAsync"/>
+        public static async Task<IChildFolder?> TryGetFolderByNameAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFolderByNameAsync(folderName, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="IMutableFolder.GetFolderWatcherAsync"/>
+        public static async Task<IFolderWatcher?> TryGetFolderWatcherAsync(this IMutableFolder folder, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await folder.GetFolderWatcherAsync(cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc cref="IRecyclableFolder.DeleteAsync(IStorableChild, long, bool, CancellationToken)"/>
+        public static async Task DeleteAsync(this IModifiableFolder modifiableFolder, IStorableChild item, long sizeHint = -1L, bool deleteImmediately = false, CancellationToken cancellationToken = default)
+        {
+            if (modifiableFolder is IRecyclableFolder recyclableFolder)
+            {
+                await recyclableFolder.DeleteAsync(item, sizeHint, deleteImmediately, cancellationToken);
+                return;
+            }
+
+            await modifiableFolder.DeleteAsync(item, cancellationToken);
         }
 
         public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)

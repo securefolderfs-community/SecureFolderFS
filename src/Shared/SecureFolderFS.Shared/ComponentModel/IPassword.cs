@@ -6,7 +6,7 @@ namespace SecureFolderFS.Shared.ComponentModel
     /// <summary>
     /// Represents a password that can be cleared.
     /// </summary>
-    public interface IPassword : IKey
+    public interface IPassword : IKeyBytes
     {
         /// <summary>
         /// Gets the number of characters in the password.

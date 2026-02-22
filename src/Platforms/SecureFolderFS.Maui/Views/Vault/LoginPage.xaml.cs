@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -7,6 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
+using StoreKit;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
@@ -16,6 +18,14 @@ namespace SecureFolderFS.Maui.Views.Vault
         {
             BindingContext = this;
             InitializeComponent();
+        }
+
+        protected override void OnAppearing()
+        {
+            if (ViewModel?.VaultNavigation is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+            
+            base.OnAppearing();
         }
 
         /// <inheritdoc/>

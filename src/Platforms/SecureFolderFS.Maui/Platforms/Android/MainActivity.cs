@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Views;
 using AndroidX.Activity;
 using Microsoft.Maui.Platform;
 using SecureFolderFS.Maui.Helpers;
@@ -14,6 +15,7 @@ namespace SecureFolderFS.Maui
         Theme = "@style/Maui.SplashTheme",
         Exported = true,
         MainLauncher = true,
+        WindowSoftInputMode = SoftInput.AdjustResize,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density,
         ResizeableActivity = true,
         LaunchMode = LaunchMode.SingleTask)]

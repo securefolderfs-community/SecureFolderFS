@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tuc="using:CommunityToolkit.WinUI.Controls"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Wizard"
     Width="464"
     mc:Ignorable="d">
@@ -26,33 +25,14 @@
     </Page.Resources>
 
     <StackPanel Spacing="16">
-        <!--<tuc:Segmented
+        <tuc:Segmented
             x:Name="SegmentedControl"
             HorizontalAlignment="Center"
             SelectedIndex="0"
-            SelectionChanged="Segmented_SelectionChanged">
+            SelectionChanged="SegmentedControl_SelectionChanged">
             <tuc:SegmentedItem Content="{l:ResourceString Rid=AddExisting}" Tag="EXISTING" />
             <tuc:SegmentedItem Content="{l:ResourceString Rid=CreateNew}" Tag="CREATE" />
-        </tuc:Segmented>-->
-        <StackPanel
-            HorizontalAlignment="Center"
-            Orientation="Horizontal"
-            Spacing="2">
-            <Button
-                x:Name="CreateNewButton"
-                Height="28"
-                Padding="12,0"
-                Click="SegmentButton_Click"
-                Content="{l:ResourceString Rid=CreateNew}"
-                Style="{ThemeResource AccentButtonStyle}"
-                Tag="CREATE" />
-            <Button
-                Height="28"
-                Padding="12,0"
-                Click="SegmentButton_Click"
-                Content="{l:ResourceString Rid=AddExisting}"
-                Tag="EXISTING" />
-        </StackPanel>
+        </tuc:Segmented>
 
         <ContentControl
             HorizontalContentAlignment="Stretch"

@@ -8,6 +8,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
     /// <inheritdoc cref="IOverlayService"/>
     public abstract class BaseOverlayService : IOverlayService
     {
+        private IOverlayControl? _currentOverlay;
+        
         /// <inheritdoc/>
         public IViewable? CurrentView { get; protected set; }
 
@@ -18,17 +20,25 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             try
             {
-                var overlay = GetOverlay(viewable);
-                overlay.SetView(viewable);
+                _currentOverlay = GetOverlay(viewable);
+                _currentOverlay.SetView(viewable);
                 CurrentView = viewable;
 
                 // Show overlay
-                return await overlay.ShowAsync();
+                return await _currentOverlay.ShowAsync();
             }
             finally
             {
                 CurrentView = previousView;
+                _currentOverlay = null;
             }
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task CloseAllAsync()
+        {
+            if (_currentOverlay is not null)
+                await _currentOverlay.HideAsync();
         }
 
         protected abstract IOverlayControl GetOverlay(IViewable viewable);

@@ -21,14 +21,14 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             transferViewModel.IsPickingFolder = false;
             transferViewModel.IsVisible = false;
-            await Task.Delay(400);
+            await Task.Delay(350);
             transferViewModel.IsProgressing = false;
         }
 
-        public static async Task TransferAsync<TStorable>(
+        public static async Task TransferAsync<TTransferred>(
             this TransferViewModel transferViewModel,
-            IEnumerable<TStorable> items,
-            Func<TStorable, IProgress<IStorable>, CancellationToken, Task> callback,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, IProgress<IStorable>, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
         {
             var collection = items.ToOrAsCollection();
@@ -55,12 +55,12 @@ namespace SecureFolderFS.Sdk.Extensions
             await transferViewModel.HideAsync();
         }
 
-        public static async Task TransferAsync<TStorable>(
+        public static async Task TransferAsync<TTransferred>(
             this TransferViewModel transferViewModel,
-            IEnumerable<TStorable> items,
-            Func<TStorable, CancellationToken, Task> callback,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
-            where TStorable : IStorable
+            where TTransferred : IStorable
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
@@ -78,6 +78,72 @@ namespace SecureFolderFS.Sdk.Extensions
 
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
+        }
+
+        public static async Task PerformOperationAsync(this TransferViewModel transferViewModel, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
+        {
+            var uiShown = false;
+            var isCompleted = false;
+            using var showUiCts = new CancellationTokenSource();
+
+            try
+            {
+                transferViewModel.Title = transferViewModel.TransferType switch
+                {
+                    TransferType.Save => "Saving".ToLocalized(),
+                    TransferType.Load => "Loading".ToLocalized(),
+                    _ => string.Empty
+                };
+                transferViewModel.CanCancel = cancellationToken != CancellationToken.None;
+                transferViewModel.IsProgressing = true;
+
+                // Start a task that will show the UI after a delay if the operation is still running
+                _ = ShowUiAfterDelayAsync(500, showUiCts.Token);
+
+                // Run the operation and wait for it to complete
+                await operation(cancellationToken);
+
+                // Cancel the delayed UI show if operation completed quickly
+                await showUiCts.CancelAsync();
+                if (uiShown)
+                {
+                    transferViewModel.Title = "TransferDone".ToLocalized();
+                    await Task.Delay(300, showUiCts.Token); // Allow user to see the "Done" message
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                await showUiCts.CancelAsync();
+                if (uiShown)
+                {
+                    transferViewModel.CanCancel = false;
+                    transferViewModel.Title = "Cancelling".ToLocalized();
+                }
+            }
+            finally
+            {
+                isCompleted = true;
+                await HideAsync(transferViewModel);
+            }
+
+            return;
+
+            async Task ShowUiAfterDelayAsync(int delayMs, CancellationToken ct)
+            {
+                try
+                {
+                    await Task.Delay(delayMs, ct);
+                    if (isCompleted)
+                        return;
+
+                    uiShown = true;
+                    transferViewModel.IsVisible = true;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Operation completed before delay, don't show UI
+                }
+            }
         }
     }
 }

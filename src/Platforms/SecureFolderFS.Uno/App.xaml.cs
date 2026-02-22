@@ -1,21 +1,35 @@
 using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.AppLifecycle;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.ApplicationModel;
-using H.NotifyIcon;
-using SecureFolderFS.Shared.Helpers;
+using Windows.Storage;
+using Microsoft.UI.Windowing;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 
 namespace SecureFolderFS.Uno
 {
@@ -28,6 +42,15 @@ namespace SecureFolderFS.Uno
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public Window? MainWindow { get; private set; }
+
+        public SynchronizationContext? MainWindowSynchronizationContext { get; set; }
+
+        public MainViewModel? MainViewModel { get; private set; }
+
+        /// <summary>
+        /// Gets a task that completes when the main window has finished initializing.
+        /// </summary>
+        public TaskCompletionSource MainWindowInitialized { get; } = new();
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
@@ -62,9 +85,9 @@ namespace SecureFolderFS.Uno
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            MainWindow = new Window();
+            MainWindow ??= new Window();
 #if DEBUG
-            MainWindow.EnableHotReload();
+            MainWindow.UseStudio();
 #endif
 
             // Do not repeat app initialization when the Window already has content,
@@ -83,56 +106,233 @@ namespace SecureFolderFS.Uno
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
+            
+            // Determine app language
+            await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("IsAppLanguageDetected"))
+                {
+                    // Check the current system language and find it in AppLanguages
+                    // If it doesn't exist, use en-US
+                    var localizationService = DI.Service<ILocalizationService>();
+                    var systemCulture = CultureInfo.CurrentUICulture;
+                    var appLanguages = localizationService.AppLanguages;
+                    var matchedLanguage = appLanguages.FirstOrDefault(lang => lang.Name.Equals(systemCulture.Name, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.TwoLetterISOLanguageName.Equals(systemCulture.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.Name.Equals("en-US", StringComparison.OrdinalIgnoreCase));
+
+                    if (matchedLanguage is not null)
+                        await localizationService.SetCultureAsync(matchedLanguage);
+                    
+                    ApplicationData.Current.LocalSettings.Values["IsAppLanguageDetected"] = true;
+                }
+            });
 
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();
 
-            // Prepare MainWindow
-            EnsureEarlyWindow(MainWindow);
+            // Initialize MainViewModel
+            MainViewModel = new(new VaultCollectionModel());
 
+            // Prepare MainWindow
+            EnsureMainWindow(MainWindow, MainViewModel);
+
+#if WINDOWS
+            // Check if the app was launched via file activation (shortcut file)
+            var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
+
+            // Activate MainWindow (required for initialization)
+            MainWindow.Activate();
+
+            // If launched via shortcut file, hide the main window immediately
+            if (isShortcutActivation)
+                MainWindow.Hide(enableEfficiencyMode: false);
+
+            // Process initial file activation if the app was launched via file association
+            if (Program.InitialActivationArgs is { } initialArgs)
+                await OnActivatedAsync(initialArgs);
+#else
             // Activate MainWindow
             MainWindow.Activate();
+#endif
+        }
+
+#if WINDOWS
+        /// <summary>
+        /// Checks if the activation arguments represent a vault shortcut file activation.
+        /// </summary>
+        private static bool IsShortcutFileActivation(AppActivationArguments? args)
+        {
+            if (args is null)
+                return false;
+
+            if (args.Kind != ExtendedActivationKind.File)
+                return false;
+
+            if (args.Data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+                return false;
+
+            var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+            return file is IStorageFile storageFile && 
+                   storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
+        }
+#endif
+
+        /// <summary>
+        /// Invoked when the application is activated by opening a file.
+        /// </summary>
+        public async Task OnActivatedAsync(AppActivationArguments args)
+        {
+            if (args.Kind != ExtendedActivationKind.File)
+                return;
+
+            if (args.Data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+                return;
+
+            var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+            if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            await HandleVaultShortcutActivationAsync(storageFile.Path);
+        }
+
+        /// <summary>
+        /// Handles vault shortcut file activation.
+        /// </summary>
+        /// <param name="filePath">The path to the extension file.</param>
+        public async Task HandleVaultShortcutActivationAsync(string filePath)
+        {
+            var shortcutFile = new SystemFileEx(filePath);
+            await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
+
+            var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
+            if (shortcutData?.PersistableId is null || MainViewModel is null)
+                return;
+
+            // Wait for the main window to finish initializing (vault collection loaded, navigation set up)
+            await MainWindowInitialized.Task;
+
+            // Find the vault in the collection by PersistableId
+            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId == shortcutData.PersistableId);
+            if (listItemViewModel is null)
+                return;
+
+            var vaultViewModel = listItemViewModel.VaultViewModel;
+            await MainWindowSynchronizationContext.PostOrExecuteAsync(async _ =>
+            {
+                if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
+                    return;
+
+                // Create the preview window
+                var window = new Window();
+                window.Closed += PreviewWindow_Closed;
+
+                // Initialize preview view model
+                var title = $"{nameof(SecureFolderFS)} - {listItemViewModel.VaultViewModel.Title}";
+                var vaultPreviewViewModel = !vaultViewModel.IsUnlocked
+                    ? new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
+                    : new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
+                    {
+                        UnlockedVaultViewModel = vaultViewModel.GetUnlockedViewModel()
+                    };
+
+                window.Content = new VaultPreviewRootControl(vaultPreviewViewModel);
+                EnsureEarlyWindow(window, title);
+
+#if WINDOWS
+                // Get BoundsManager
+                var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
+
+                // Set minimum window size
+                boundsManager.MinWidth = 464;
+                boundsManager.MinHeight = 640;
+                window.AppWindow.MoveAndResize(new(100, 100, 464, 640));
+#endif
+
+                // Initialize the login view model
+                await vaultPreviewViewModel.InitAsync();
+
+                window.Activate();
+            });
+
+            static void PreviewWindow_Closed(object sender, WindowEventArgs args)
+            {
+                if (sender is not Window window)
+                    return;
+
+                window.Closed -= PreviewWindow_Closed;
+                (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
+            }
         }
 
         #region Window Configuration
 
-        private static void EnsureEarlyWindow(Window window)
+        private static void EnsureEarlyWindow(Window window, string title)
         {
-            // Set window content
-            window.Content = new MainWindowRootControl();
-
-            // Attach event for window closing
-            window.Closed += Window_Closed;
-
-#if WINDOWS
             var appWindow = window.AppWindow;
 
 #if !UNPACKAGED
             // Set icon
             appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
 #endif
+#if WINDOWS
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
+#endif
 
             // Set title
-            appWindow.Title = nameof(SecureFolderFS);
+            appWindow.Title = title;
 
+            // Extend title bar
+            if (window.Content is MainWindowRootControl rootControl)
+            {
+                window.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                window.SetTitleBar(rootControl.CustomTitleBar);
+
+#if __UNO_SKIA_MACOS__
+                // Use native macOS APIs to configure the window
+                Platforms.Desktop.Helpers.MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+                Platforms.Desktop.Helpers.MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
+
+                // Add left padding for traffic light buttons
+                var (leftPadding, _) = Platforms.Desktop.Helpers.MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+                rootControl.CustomTitleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
+#elif !WINDOWS
+                // For other non-Windows platforms, use OverlappedPresenter
+                if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+                {
+                    overlappedPresenter.SetBorderAndTitleBar(true, false);
+                    overlappedPresenter.IsMinimizable = true;
+                    overlappedPresenter.IsMaximizable = true;
+                }
+#endif
+            }
+
+#if WINDOWS
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
-                // Extend title bar
-                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-
                 // Set window buttons background to transparent
                 appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
-            else if (window.Content is MainWindowRootControl rootControl)
-            {
-                window.ExtendsContentIntoTitleBar = true;
-                window.SetTitleBar(rootControl.CustomTitleBar);
-            }
+#endif
+            window.Title = title;
+        }
 
+        private static void EnsureMainWindow(Window window, MainViewModel mainViewModel)
+        {
+            // Set window content
+            window.Content = new MainWindowRootControl(mainViewModel);
+
+            // Attach event for window closing
+            window.Closed += Window_Closed;
+
+            // Enable early window configuration
+            EnsureEarlyWindow(window, nameof(SecureFolderFS));
+
+#if WINDOWS
             // Get BoundsManager
             var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
 
@@ -143,10 +343,6 @@ namespace SecureFolderFS.Uno
             // Load saved window state
             if (!boundsManager.LoadWindowState(UI.Constants.MAIN_WINDOW_ID))
                 window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
-
-#else
-            window.Title = nameof(SecureFolderFS);
-            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
         }
 

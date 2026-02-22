@@ -1,14 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
@@ -18,6 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         private readonly INavigator _dashboardNavigator;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private readonly SynchronizationContext? _synchronizationContext;
+        private readonly CollectionReorderHelper<BaseWidgetViewModel> _reorderHelper;
 
         public IWidgetsCollectionModel WidgetsCollectionModel { get; }
 
@@ -28,8 +32,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             _synchronizationContext = SynchronizationContext.Current;
+            _reorderHelper = new();
             WidgetsCollectionModel = widgetsCollectionModel;
             Widgets = new();
+
+            // Subscribe to collection changes to persist reordering
+            Widgets.CollectionChanged += Widgets_CollectionChanged;
+            _reorderHelper.Reordered += ReorderHelper_Reordered;
         }
 
         /// <inheritdoc/>
@@ -54,27 +63,69 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             });
         }
 
+        private void Widgets_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                {
+                    if (e.NewItems?.Cast<BaseWidgetViewModel>().FirstOrDefault() is { } widget)
+                        _reorderHelper.RegisterAdd(widget);
+
+                    break;
+                }
+
+                case NotifyCollectionChangedAction.Remove:
+                {
+                    if (e.OldItems?.Cast<BaseWidgetViewModel>().FirstOrDefault() is { } widget)
+                        _reorderHelper.RegisterRemove(widget);
+
+                    break;
+                }
+            }
+        }
+
+        private async void ReorderHelper_Reordered(object? sender, BaseWidgetViewModel e)
+        {
+            await PersistWidgetOrderAsync();
+        }
+
+        private async Task PersistWidgetOrderAsync()
+        {
+            try
+            {
+                // Get the current order from the ObservableCollection
+                var orderedWidgets = Widgets.Select(w => w.WidgetModel).ToArray();
+
+                // Update the underlying collection model
+                WidgetsCollectionModel.UpdateOrder(orderedWidgets);
+
+                // Persist the changes
+                await WidgetsCollectionModel.SaveAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         private BaseWidgetViewModel? GetWidgetForModel(IWidgetModel widgetModel)
         {
-            switch (widgetModel.WidgetId)
+            return widgetModel.WidgetId switch
             {
-                case Constants.Widgets.HEALTH_WIDGET_ID:
-                    return new HealthWidgetViewModel(_unlockedVaultViewModel, _dashboardNavigator, widgetModel);
-
-                case Constants.Widgets.GRAPHS_WIDGET_ID:
-                    return new GraphsWidgetViewModel(_unlockedVaultViewModel, widgetModel);
-
-                case Constants.Widgets.AGGREGATED_DATA_WIDGET_ID:
-                    return new AggregatedDataWidgetViewModel(_unlockedVaultViewModel, widgetModel);
-
-                default:
-                    return null;
-            }
+                Constants.Widgets.HEALTH_WIDGET_ID => new HealthWidgetViewModel(_unlockedVaultViewModel, _dashboardNavigator, widgetModel),
+                Constants.Widgets.GRAPHS_WIDGET_ID => new GraphsWidgetViewModel(_unlockedVaultViewModel, widgetModel),
+                Constants.Widgets.AGGREGATED_DATA_WIDGET_ID => new AggregatedDataWidgetViewModel(_unlockedVaultViewModel, widgetModel),
+                _ => null
+            };
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
+            _reorderHelper.Reordered -= ReorderHelper_Reordered;
+            _reorderHelper.Dispose();
+
+            Widgets.CollectionChanged -= Widgets_CollectionChanged;
             Widgets.DisposeAll();
         }
     }

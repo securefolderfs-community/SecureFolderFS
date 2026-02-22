@@ -25,6 +25,18 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 return;
             }
 
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            {
+                var plaintextPath = NativePathHelpers.GetPlaintextPath(ciphertextPath, specifics);
+                var plaintextName = Path.GetFileName(plaintextPath) ?? string.Empty;
+                if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
+                {
+                    // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
+                    DeleteImmediately(ciphertextPath, storableType);
+                    return;
+                }
+            }
+
             var recycleBinPath = Path.Combine(specifics.ContentFolder.Id, Constants.Names.RECYCLE_BIN_NAME);
             _ = Directory.CreateDirectory(recycleBinPath);
 
@@ -56,22 +68,23 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             Directory.Move(ciphertextPath, destinationPath);
 
             // Create configuration file
-            using var configurationStream = File.Create($"{destinationPath}.json");
+            using (var configurationStream = File.Create($"{destinationPath}.json"))
+            {
+                // Serialize configuration data model
+                using var serializedStream = StreamSerializer.Instance.SerializeAsync(
+                    new RecycleBinItemDataModel()
+                    {
+                        OriginalName = Path.GetFileName(ciphertextPath),
+                        ParentPath = Path.GetDirectoryName(ciphertextPath)?.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty,
+                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DeletionTimestamp = DateTime.Now,
+                        Size = sizeHint
+                    }).ConfigureAwait(false).GetAwaiter().GetResult();
 
-            // Serialize configuration data model
-            using var serializedStream = StreamSerializer.Instance.SerializeAsync(
-                new RecycleBinItemDataModel()
-                {
-                    OriginalName = Path.GetFileName(ciphertextPath),
-                    ParentPath = Path.GetDirectoryName(ciphertextPath)?.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty,
-                    DirectoryId = directoryIdResult ? directoryId : [],
-                    DeletionTimestamp = DateTime.Now,
-                    Size = sizeHint
-                }).ConfigureAwait(false).GetAwaiter().GetResult();
-
-            // Write to destination stream
-            serializedStream.CopyTo(configurationStream);
-            serializedStream.Flush();
+                // Write to destination stream
+                serializedStream.CopyTo(configurationStream);
+                serializedStream.Flush();
+            }
 
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())

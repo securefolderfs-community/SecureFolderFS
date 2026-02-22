@@ -7,12 +7,20 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
-    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Components;assembly=SecureFolderFS.Sdk"
     x:Name="ThisControl">
 
     <ContentView.Resources>
-        <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
         <vc:BreadcrumbConverter x:Key="BreadcrumbConverter" />
+
+        <!--  Pill background for the active (leading) item  -->
+        <Style x:Key="BreadcrumbPillStyle" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 20" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SecondaryLightColor}, Dark={StaticResource SecondaryDarkColor}}" />
+        </Style>
     </ContentView.Resources>
 
     <CollectionView
@@ -24,31 +32,42 @@
         VerticalOptions="Center">
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="vm:BreadcrumbItemViewModel">
-                <HorizontalStackLayout>
-                    <Label
-                        FontAttributes="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='FontAttributes'}"
-                        FontSize="15"
-                        Text="{Binding Title, Mode=OneWay}"
-                        VerticalOptions="Center" />
+                <HorizontalStackLayout
+                    Padding="0,4"
+                    Spacing="0"
+                    VerticalOptions="Center">
 
-                    <OnPlatform x:TypeArguments="View">
-                        <On Platform="Android">
-                            <mi:MauiIcon
-                                Margin="12,0"
-                                Icon="{mi_material:Material ChevronRight}"
-                                IconSize="15"
-                                Opacity="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}, ConverterParameter='invert'}"
-                                VerticalOptions="Center" />
-                        </On>
-                        <On Platform="iOS">
-                            <mi:MauiIcon
-                                Margin="12,0,10,0"
-                                Icon="{mi_cupertino:Cupertino ChevronRight}"
-                                IconSize="15"
-                                Opacity="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}, ConverterParameter='invert'}"
-                                VerticalOptions="Center" />
-                        </On>
-                    </OnPlatform>
+                    <!--  Breadcrumb label, wrapped in a pill when it's the leading (current) item  -->
+                    <Border BackgroundColor="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='Background'}" Style="{StaticResource BreadcrumbPillStyle}">
+                        <Label
+                            FontAttributes="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='FontAttributes'}"
+                            FontSize="14"
+                            Opacity="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='LabelOpacity'}"
+                            Text="{Binding Title, Mode=OneWay}"
+                            TextColor="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='TextColor'}"
+                            VerticalOptions="Center" />
+                    </Border>
+
+                    <!--  Separator chevron, hidden on the last (leading) item  -->
+                    <Grid
+                        Margin="-4,0,4,0"
+                        Opacity="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}, ConverterParameter='invert'}"
+                        VerticalOptions="Center">
+                        <mi:MauiIcon
+                            Icon="{mi_material:Material ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconSize="14"
+                            OnPlatforms="Android"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Icon="{mi_cupertino:Cupertino ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                        Dark={StaticResource TertiaryDarkColor}}"
+                            IconSize="14"
+                            OnPlatforms="iOS"
+                            VerticalOptions="Center" />
+                    </Grid>
 
                     <HorizontalStackLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding Command, Mode=OneWay}" CommandParameter="{Binding}" />
@@ -57,7 +76,7 @@
             </DataTemplate>
         </CollectionView.ItemTemplate>
         <CollectionView.ItemsLayout>
-            <LinearItemsLayout Orientation="Horizontal" />
+            <LinearItemsLayout ItemSpacing="0" Orientation="Horizontal" />
         </CollectionView.ItemsLayout>
     </CollectionView>
 </ContentView>

@@ -30,7 +30,7 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">28.0</SupportedOSPlatformVersion>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -125,13 +125,22 @@
     <PackageReference Include="Microsoft.Maui.Core" />
     <PackageReference Include="Microsoft.Maui.Essentials" />
     <PackageReference Include="Plugin.Maui.BottomSheet" />
+    <PackageReference Include="Plugin.SegmentedControl.Maui" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.Skottie" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj" />
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core.MobileFS\SecureFolderFS.Core.MobileFS.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.GoogleDrive\SecureFolderFS.Sdk.GoogleDrive.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
   </ItemGroup>
 
@@ -174,6 +183,14 @@
     </Compile>
     <Compile Update="Views\IntroductionPage.xaml.cs">
       <DependentUpon>IntroductionPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Modals\DeviceLink\DeviceLinkCredentialsPage.xaml.cs">
+      <DependentUpon>DeviceLinkCredentialsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Modals\DeviceLink\DeviceLinkRequestPage.xaml.cs">
+      <DependentUpon>DeviceLinkRequestPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -231,6 +248,16 @@
     <MauiXaml Update="Views\IntroductionPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="Views\Modals\DeviceLink\DeviceLinkCredentialsPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\Modals\DeviceLink\DeviceLinkRequestPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Images\Devices\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSecureFolderFSMauiHideInfoBar="True" /></VisualStudio></ProjectExtensions>

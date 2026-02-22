@@ -1,8 +1,16 @@
+using System.Globalization;
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Maui.Platforms.iOS.Helpers;
+using SecureFolderFS.Maui.Platforms.iOS.Templates;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
@@ -11,13 +19,15 @@ namespace SecureFolderFS.Maui
     {
         public static App Instance => (App)Current!;
 
+        public MainViewModel MainViewModel { get; } = new(new VaultCollectionModel());
+
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if ANDROID
             new Platforms.Android.Helpers.AndroidLifecycleHelper();
 #elif IOS
-            new Platforms.iOS.Helpers.IOSLifecycleHelper();
+            new IOSLifecycleHelper();
 #else
             null;
 #endif
@@ -34,7 +44,7 @@ namespace SecureFolderFS.Maui
             Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
 #elif IOS
             // Load IOS-specific resource dictionaries
-            Resources.MergedDictionaries.Add(new Platforms.iOS.Templates.IOSDataTemplates());
+            Resources.MergedDictionaries.Add(new IOSDataTemplates());
 #endif
 
             // Configure mappers
@@ -65,19 +75,40 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
+            
+            // Determine app language
+            await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                if (!Preferences.Default.ContainsKey("IsAppLanguageDetected"))
+                {
+                    // Check the current system language and find it in AppLanguages
+                    // If it doesn't exist, use en-US
+                    var localizationService = DI.Service<ILocalizationService>();
+                    var systemCulture = CultureInfo.CurrentUICulture;
+                    var appLanguages = localizationService.AppLanguages;
+                    var matchedLanguage = appLanguages.FirstOrDefault(lang => lang.Name.Equals(systemCulture.Name, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.TwoLetterISOLanguageName.Equals(systemCulture.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase))
+                                          ?? appLanguages.FirstOrDefault(lang => lang.Name.Equals("en-US", StringComparison.OrdinalIgnoreCase));
+
+                    if (matchedLanguage is not null)
+                        await localizationService.SetCultureAsync(matchedLanguage);
+                    
+                    Preferences.Default.Set("IsAppLanguageDetected", true);
+                }
+            });
 
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();
-
-            // Create and initialize AppShell
-            var appShell = new AppShell();
-            await appShell.MainViewModel.InitAsync().ConfigureAwait(false);
-
+            
+            // Initialize MainViewModel
+            await MainViewModel.InitAsync();
+            
             // Initialize ThemeHelper
             await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
 
-            return appShell;
+            // Create new AppShell
+            return new AppShell();
         }
 
         /// <inheritdoc/>

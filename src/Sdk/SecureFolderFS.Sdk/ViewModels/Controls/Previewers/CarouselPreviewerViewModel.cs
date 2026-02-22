@@ -58,6 +58,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             };
         }
 
+        partial void OnCurrentIndexChanged(int value)
+        {
+            var item = Slides.ElementAtOrDefault(value);
+            if (item is not null)
+                Title = item.Title;
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {

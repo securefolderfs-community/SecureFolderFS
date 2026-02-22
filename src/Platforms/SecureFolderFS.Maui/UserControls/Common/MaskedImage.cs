@@ -123,14 +123,14 @@ namespace SecureFolderFS.Maui.UserControls.Common
 
                 case Aspect.AspectFit:
                 {
-                    
+
                     if (imgAspect > containerAspect)
                     {
                         // Image is wider
                         var width = container.Width;
                         var height = width / imgAspect;
                         var y = container.Y + (container.Height - height) / 2;
-                        
+
                         return new RectF(container.X, y, width, height);
                     }
                     else
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                         var height = container.Height;
                         var width = height * imgAspect;
                         var x = container.X + (container.Width - width) / 2;
-                        
+
                         return new RectF(x, container.Y, width, height);
                     }
                 }
@@ -153,7 +153,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                         var height = container.Height;
                         var width = height * imgAspect;
                         var x = container.X + (container.Width - width) / 2;
-                        
+
                         return new RectF(x, container.Y, width, height);
                     }
                     else
@@ -162,7 +162,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                         var width = container.Width;
                         var height = width / imgAspect;
                         var y = container.Y + (container.Height - height) / 2;
-                        
+
                         return new RectF(container.X, y, width, height);
                     }
                 }

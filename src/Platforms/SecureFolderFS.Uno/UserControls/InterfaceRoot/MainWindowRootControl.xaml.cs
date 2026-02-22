@@ -1,18 +1,23 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+using Windows.System;
+using Windows.UI.Core;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.AppModels;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -25,13 +30,8 @@ using Uno.UI;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
-    [INotifyPropertyChanged]
     public sealed partial class MainWindowRootControl : UserControl
     {
-        public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
-
-        public SynchronizationContext? Context { get; }
-
         public bool IsDebugging { get; } =
 #if DEBUG
             Debugger.IsAttached;
@@ -45,11 +45,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             set => DataContext = value;
         }
 
-        public MainWindowRootControl()
+        public MainWindowRootControl(MainViewModel mainViewModel)
         {
             InitializeComponent();
-            Context = SynchronizationContext.Current;
-            ViewModel = new(new VaultCollectionModel());
+            App.Instance.MainWindowSynchronizationContext = SynchronizationContext.Current;
+            ViewModel = mainViewModel;
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (OperatingSystem.IsMacCatalyst())
                 RootGrid.Margin = new(0, 37, 0, 0);
 
-            RootNavigationService.SetupNavigation(Navigation);
+            ViewModel.RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
 
@@ -88,16 +88,102 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             // Initialize theme
             await UnoThemeHelper.Instance.InitAsync();
+            
+            // Show introduction
+            var settingsService = DI.Service<ISettingsService>();
+            if (!settingsService.AppSettings.WasIntroduced)
+            {
+                var overlayService = DI.Service<IOverlayService>();
+                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                
+                settingsService.AppSettings.WasIntroduced = true;
+                await settingsService.AppSettings.SaveAsync();
+            }
 
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
             {
                 // Show main app screen
-                await RootNavigationService.TryNavigateAsync(() => new MainHostViewModel(ViewModel.VaultCollectionModel), false);
+                await ViewModel.RootNavigationService.TryNavigateAsync(() => new MainHostViewModel(ViewModel.VaultListViewModel, ViewModel.VaultCollectionModel), false);
             }
             else // Doesn't have vaults
             {
                 // Show no vaults screen
-                await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
+                await ViewModel.RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(ViewModel.VaultListViewModel, ViewModel.RootNavigationService, ViewModel.VaultCollectionModel), false);
+            }
+
+            // Signal that the main window has finished initializing
+            App.Instance?.MainWindowInitialized.TrySetResult();
+        }
+        
+        private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (XamlRoot is null)
+                return;
+            
+            var focusedElement = FocusManager.GetFocusedElement(XamlRoot);
+            var isOccupied = focusedElement is TextBox or PasswordBox or AutoSuggestBox or NumberBox or RichEditBox;
+            
+            bool ctrl;
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+                ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftWindows).HasFlag(CoreVirtualKeyStates.Down);
+            else
+                ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+
+            if (Navigation.MainContent.Content is MainHostViewModel mainHostViewModel)
+            {
+                if (ctrl && e.Key == VirtualKey.L)
+                {
+                    if (isOccupied)
+                        return;
+                    
+                    var overlayService = DI.Service<IOverlayService>();
+                    if (mainHostViewModel.VaultListViewModel.SelectedItem is { VaultViewModel.IsUnlocked: true } selectedItem)
+                    {
+                        e.Handled = true;
+                        if (overlayService.CurrentView is CredentialsOverlayViewModel or WizardOverlayViewModel)
+                            return;
+                        
+                        await overlayService.CloseAllAsync();
+                        selectedItem.RequestLockCommand.Execute(null);
+                        return;
+                    }
+                }
+                
+                var keyInt = (int)e.Key;
+                if (ctrl && keyInt is >= 49 and <= 57)
+                {
+                    // Only ignore focused inputs when not on the login page
+                    if (isOccupied && mainHostViewModel.NavigationService.CurrentView is not VaultLoginViewModel)
+                        return;
+                    
+                    e.Handled = true;
+                    var itemViewModel = mainHostViewModel.VaultListViewModel.Items.ElementAtOrDefault(keyInt - 49);
+                    if (itemViewModel is not null)
+                        mainHostViewModel.VaultListViewModel.SelectedItem = itemViewModel;
+                
+                    return;
+                }
+            }
+            
+            if (isOccupied)
+                return;
+            
+            if (ctrl && e.Key == (VirtualKey)188) // 188 - Comma
+            {
+                e.Handled = true;
+                var overlayService = DI.Service<IOverlayService>();
+                await overlayService.ShowAsync(SettingsOverlayViewModel.Instance);
+                return;
+            }
+
+            if (ctrl && e.Key == VirtualKey.Q && (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()))
+            {
+                e.Handled = true;
+                foreach (var item in ViewModel.VaultCollectionModel)
+                    WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
+                
+                App.Instance?.UseForceClose = true;
+                Application.Current.Exit();
             }
         }
 
@@ -114,7 +200,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 #if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
 #endif
-            window.EnableHotReload();
+            window.UseStudio();
             window.Activate();
 #endif
         }
@@ -141,11 +227,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MenuLockAll_Click(object sender, RoutedEventArgs e)
         {
+#if WINDOWS
             if (ViewModel is null)
                 return;
 
             foreach (var item in ViewModel.VaultCollectionModel)
                 WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
+#endif
         }
     }
 }

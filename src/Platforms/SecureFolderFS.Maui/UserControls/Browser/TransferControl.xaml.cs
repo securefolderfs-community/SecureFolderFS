@@ -4,9 +4,62 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class TransferControl : ContentView
     {
+        private const double BOUNCE_LIMIT = -16d;
+        private const double HIDE_TRANSLATION = 200d;
+        private const double DISMISS_THRESHOLD = 40d;
+        private bool _isDismissing;
+
         public TransferControl()
         {
             InitializeComponent();
+        }
+
+        private async void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+        {
+            if (_isDismissing)
+                return;
+
+            switch (e.StatusType)
+            {
+                case GestureStatus.Running:
+                {
+                    var translation = e.TotalY;
+                    RootPanel.TranslationY = translation < 0
+                        ? Math.Max(translation / 4d, BOUNCE_LIMIT)
+                        : translation;
+                    break;
+                }
+
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                {
+                    if (RootPanel.TranslationY >= DISMISS_THRESHOLD)
+                    {
+                        _isDismissing = true;
+
+                        // Animate out from the current dragged position
+                        var currentY = RootPanel.TranslationY;
+                        var remainingDistance = HIDE_TRANSLATION - currentY;
+                        var duration = (uint)Math.Max(300d * (remainingDistance / HIDE_TRANSLATION), 150d);
+                        await RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
+
+                        // Clean up visual state
+                        RootPanel.IsVisible = false;
+                        RootPanel.TranslationY = 0d;
+
+                        _isDismissing = false;
+
+                        // Tell the caller - they will set IsShown=false, which the guard will skip animating.
+                        // This also ensures the backing value is actually false, so the next IsShown=true fires propertyChanged.
+                        CancelCommand?.Execute(null);
+                    }
+                    else
+                    {
+                        await RootPanel.TranslateToAsync(0, 0, 250U, Easing.SpringOut);
+                    }
+                    break;
+                }
+            }
         }
 
         public bool IsShown
@@ -15,26 +68,34 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             set => SetValue(IsShownProperty, value);
         }
         public static readonly BindableProperty IsShownProperty =
-            BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(TransferControl), false, propertyChanged:
-                static async (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(TransferControl), false,
+                propertyChanged: static async (bindable, _, newValue) =>
                 {
-                    if (newValue is not bool bValue)
+                    if (newValue is not bool bValue || bindable is not TransferControl tc)
                         return;
 
-                    if (bindable is not TransferControl transferControl)
+                    if (tc._isDismissing)
+                    {
+                        // Gesture already handled the animation; just ensure a clean state
+                        tc.RootPanel.IsVisible = false;
+                        tc.RootPanel.TranslationY = 0d;
                         return;
+                    }
 
                     if (bValue)
                     {
-                        transferControl.RootPanel.TranslationY = 200d;
-                        transferControl.RootPanel.IsVisible = true;
-                        await transferControl.RootPanel.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+                        tc.RootPanel.TranslationY = HIDE_TRANSLATION;
+                        tc.RootPanel.IsVisible = true;
+                        await tc.RootPanel.TranslateToAsync(0, 0, 350U, Easing.CubicInOut);
                     }
                     else
                     {
-                        transferControl.RootPanel.TranslationY = 0d;
-                        await transferControl.RootPanel.TranslateTo(0, 200, 350U, Easing.CubicInOut);
-                        transferControl.RootPanel.IsVisible = false;
+                        var currentY = tc.RootPanel.TranslationY;
+                        var remainingDistance = HIDE_TRANSLATION - currentY;
+                        var duration = (uint)Math.Max(350d * (remainingDistance / HIDE_TRANSLATION), 150d);
+                        await tc.RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
+                        tc.RootPanel.IsVisible = false;
+                        tc.RootPanel.TranslationY = 0d;
                     }
                 });
 

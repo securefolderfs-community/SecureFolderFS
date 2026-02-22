@@ -1,19 +1,22 @@
-﻿using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
-using SecureFolderFS.Storage.Renamable;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
+using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
+using SecureFolderFS.Storage.SystemStorageEx.StorageProperties;
 
 namespace SecureFolderFS.Storage.SystemStorageEx
 {
     /// <inheritdoc cref="SystemFolder"/>
-    public class SystemFolderEx : SystemFolder, IRenamableFolder
+    public class SystemFolderEx : SystemFolder, IRenamableFolder, IStorableProperties
     {
+        protected IBasicProperties? properties;
+
         /// <inheritdoc/>
         public SystemFolderEx(string path)
             : base(path)
@@ -52,7 +55,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         {
             await foreach (var item in base.GetItemsAsync(type, cancellationToken))
             {
-                if (SpecialNames.IllegalNames.Contains(item.Name, StringComparer.OrdinalIgnoreCase))
+                if (Constants.SpecialNames.IllegalNames.Contains(item.Name, StringComparer.OrdinalIgnoreCase))
                     continue;
 
                 yield return item switch
@@ -105,9 +108,25 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         }
 
         /// <inheritdoc/>
+        public override async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName, CancellationToken cancellationToken,
+            CreateRenamedCopyOfDelegate fallback)
+        {
+            var file = await base.CreateCopyOfAsync(fileToCopy, overwrite, newName, cancellationToken, fallback);
+            return new SystemFileEx(file.Id);
+        }
+
+        /// <inheritdoc/>
         public override async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken, MoveFromDelegate fallback)
         {
             var file = await base.MoveFromAsync(fileToMove, source, overwrite, cancellationToken, fallback);
+            return new SystemFileEx(file.Id);
+        }
+
+        /// <inheritdoc/>
+        public override async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName,
+            CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            var file = await base.MoveFromAsync(fileToMove, source, overwrite, newName, cancellationToken, fallback);
             return new SystemFileEx(file.Id);
         }
 
@@ -135,8 +154,15 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         /// <inheritdoc/>
         public override Task<IFolder?> GetRootAsync(CancellationToken cancellationToken = default)
         {
-            var root = new DirectoryInfo(Path).Root;
+            var root = Info.Root;
             return Task.FromResult<IFolder?>(new SystemFolderEx(root));
+        }
+
+        /// <inheritdoc/>
+        public Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new SystemFolderExProperties(Info);
+            return Task.FromResult(properties);
         }
     }
 }

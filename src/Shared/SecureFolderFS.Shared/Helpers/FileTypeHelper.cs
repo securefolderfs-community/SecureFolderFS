@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.Helpers
             var mimeType = GetMimeType(storable.Id);
             var extension = Path.GetExtension(storable.Id);
             var typeHint = GetTypeFromMime(mimeType);
-            typeHint = typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(Path.GetExtension(storable.Id)) : typeHint;
+            typeHint = typeHint == TypeHint.Unclassified ? GetTypeHintFromExtension(extension) : typeHint;
 
             return new(mimeType, typeHint, extension);
         }
@@ -39,6 +39,7 @@ namespace SecureFolderFS.Shared.Helpers
 
         public static TypeHint GetTypeFromMime(string mimeType)
         {
+            mimeType = mimeType.ToLowerInvariant();
             return Image()
                    ?? Plaintext()
                    ?? Document()

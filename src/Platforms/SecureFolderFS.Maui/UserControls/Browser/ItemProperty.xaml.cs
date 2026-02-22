@@ -8,6 +8,14 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             InitializeComponent();
         }
+        
+        public bool IsLastItem
+        {
+            get => (bool)GetValue(IsLastItemProperty);
+            set => SetValue(IsLastItemProperty, value);
+        }
+        public static readonly BindableProperty IsLastItemProperty =
+            BindableProperty.Create(nameof(IsLastItem), typeof(bool), typeof(ItemProperty), false);
 
         public string? Title
         {

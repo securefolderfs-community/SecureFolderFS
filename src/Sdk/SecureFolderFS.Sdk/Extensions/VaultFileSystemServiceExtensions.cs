@@ -10,11 +10,11 @@ namespace SecureFolderFS.Sdk.Extensions
 {
     public static class VaultFileSystemServiceExtensions
     {
-        public static async Task<IFileSystem> GetBestFileSystemAsync(this IVaultFileSystemService vaultFileSystemService, CancellationToken cancellationToken = default)
+        public static async Task<IFileSystemInfo> GetBestFileSystemAsync(this IVaultFileSystemService vaultFileSystemService, CancellationToken cancellationToken = default)
         {
             var settingsService = DI.Service<ISettingsService>();
 
-            IFileSystem? lastBest = null;
+            IFileSystemInfo? lastBest = null;
             await foreach (var item in vaultFileSystemService.GetFileSystemsAsync(cancellationToken))
             {
                 if (item.Id == settingsService.UserSettings.PreferredFileSystemId)

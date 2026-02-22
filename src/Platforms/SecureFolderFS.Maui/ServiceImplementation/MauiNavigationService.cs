@@ -58,9 +58,10 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             }
         }
 
-        internal void SetCurrentViewInternal(IViewDesignation? viewDesignation)
+        internal void SetCurrentViewInternal(IViewDesignation? viewDesignation, int indexInNavigation = -1)
         {
             CurrentView = viewDesignation;
+            IndexInNavigation = indexInNavigation == -1 ? IndexInNavigation : indexInNavigation;
         }
     }
 }

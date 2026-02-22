@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                     : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
                 shape.Paint.StrokeWidth = 0;
                 shape.Paint.SetStyle(Paint.Style.FillAndStroke);
-                handler.PlatformView.SetTextColor((App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                handler.PlatformView.SetTextColor((App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "QuarternaryDarkColor",
                     _ => "QuarternaryLightColor"
@@ -44,22 +44,22 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 handler.PlatformView.SetPadding(32, 24, 32, 24);
 #elif IOS || MACCATALYST
                 var uiTextField = handler.PlatformView;
-                
+
                 // Remove border
                 uiTextField.BorderStyle = UITextBorderStyle.None;
-                
+
                 // Set background color
                 uiTextField.BackgroundColor = modernPicker.IsTransparent
                     ? UIColor.Clear
                     : (App.Instance.Resources["ThemeSecondaryColorBrush"] as SolidColorBrush)!.Color.ToPlatform();
-                
+
                 // Set text color
-                uiTextField.TextColor = (App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                uiTextField.TextColor = (App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "PrimaryContrastingDarkColor",
                     _ => "PrimaryContrastingLightColor"
                 }] as Color)!.ToPlatform();
-                
+
                 // Add the chevron icon on the right
                 var chevronConfig = UIImageSymbolConfiguration.Create(UIImageSymbolScale.Small);
                 var chevronImage = UIImage.GetSystemImage("chevron.up.chevron.down", chevronConfig);
@@ -68,12 +68,12 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                     ContentMode = UIViewContentMode.ScaleAspectFit,
                     TintColor = uiTextField.TextColor
                 };
-                
+
                 // Create a container for the chevron with padding
                 var rightView = new UIView(new CGRect(0, 0, 30, 20));
                 chevronImageView.Frame = new CGRect(6, 2, 16, 16);
                 rightView.AddSubview(chevronImageView);
-                
+
                 uiTextField.RightView = rightView;
                 uiTextField.RightViewMode = UITextFieldViewMode.Always;
 #else

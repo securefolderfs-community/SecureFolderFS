@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             })), Items);
 
             // Apply adaptive layout
-            if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled)
+            if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
                 ApplyAdaptiveLayout();
         }
 
@@ -72,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         public virtual void OnAppearing()
         {
             // Apply adaptive layout when back to a folder
-            if (!Items.IsEmpty() && SettingsService.UserSettings.IsAdaptiveLayoutEnabled)
+            if (!Items.IsEmpty() && SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
                 ApplyAdaptiveLayout();
         }
 

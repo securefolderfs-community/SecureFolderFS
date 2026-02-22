@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -28,13 +29,22 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(PropertiesViewModel));
         }
 
+        /// <inheritdoc/>
+        protected override void OnAppearing()
+        {
+            if (ViewModel?.VaultNavigation is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+            
+            base.OnAppearing();
+        }
+
         public VaultDashboardViewModel? ViewModel
         {
             get => (VaultDashboardViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultDashboardViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultDashboardViewModel), typeof(OverviewPage));
 
         public VaultOverviewViewModel? OverviewViewModel
         {
@@ -42,7 +52,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(OverviewViewModelProperty, value);
         }
         public static readonly BindableProperty OverviewViewModelProperty =
-            BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage));
 
         public VaultPropertiesViewModel? PropertiesViewModel
         {
@@ -50,6 +60,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(PropertiesViewModelProperty, value);
         }
         public static readonly BindableProperty PropertiesViewModelProperty =
-            BindableProperty.Create(nameof(PropertiesViewModel), typeof(VaultPropertiesViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(PropertiesViewModel), typeof(VaultPropertiesViewModel), typeof(OverviewPage));
     }
 }

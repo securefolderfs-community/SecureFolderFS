@@ -8,24 +8,40 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label
-            Grid.Row="0"
-            FontAttributes="Bold"
-            FontSize="17"
-            IsVisible="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
-            Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        <VerticalStackLayout Grid.Row="0">
+            <Label
+                FontAttributes="Bold"
+                FontSize="17"
+                IsVisible="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+                Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
+
+            <Label
+                FontSize="12"
+                IsVisible="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+                Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+        </VerticalStackLayout>
 
         <Border
+            x:Name="ContainerBorder"
             Grid.Row="1"
             Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
             StrokeThickness="0">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-
             <ContentView Content="{Binding InnerContent, Mode=OneWay, Source={x:Reference ThisControl}}" />
         </Border>
+
+        <Label
+            Grid.Row="2"
+            Margin="16,0"
+            FontSize="13"
+            IsVisible="{Binding Description, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+            LineBreakMode="WordWrap"
+            Opacity="0.8"
+            Text="{Binding Description, Mode=OneWay, Source={x:Reference ThisControl}}" />
     </Grid>
 </ContentView>

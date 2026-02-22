@@ -62,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task AuthenticateMigrationAsync(IKey? credentials, CancellationToken cancellationToken)
+        private async Task AuthenticateMigrationAsync(IKeyBytes? credentials, CancellationToken cancellationToken)
         {
             if (_vaultMigrator is null || credentials is null)
                 return;
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 // Check if configuring a new password was requested
                 if (!string.IsNullOrEmpty(overlayViewModel.OptionalNewPassword))
                 {
-                    if (_vaultMigrator is not IProgress<IKey> credentialsReporter)
+                    if (_vaultMigrator is not IProgress<IKeyBytes> credentialsReporter)
                         return;
 
                     using var password = new DisposablePassword(overlayViewModel.OptionalNewPassword);

@@ -24,15 +24,11 @@ namespace SecureFolderFS.Sdk.Ftp
             var ftpStream = accessMode switch
             {
                 FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
-                FileAccess.Write => await ftpClient.OpenWrite(Id, token: cancellationToken),
+                FileAccess.Write => await ftpClient.OpenWrite(Id, FtpDataType.Binary, false, token: cancellationToken),
                 _ => throw new NotSupportedException($"The {nameof(FileAccess)} '{accessMode}' is not supported on an FTP stream."),
             };
 
-            var fileSize = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
-            if (fileSize < 0L)
-                throw new UnauthorizedAccessException("Cannot read the file size.");
-
-            return new LengthSupportedFtpStream(ftpStream, fileSize);
+            return ftpStream;
         }
     }
 }

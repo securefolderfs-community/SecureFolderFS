@@ -66,15 +66,15 @@ namespace SecureFolderFS.Maui.UserControls.Options
             set => SetValue(ApplySlotOpacityProperty, value);
         }
         public static readonly BindableProperty ApplySlotOpacityProperty =
-            BindableProperty.Create(nameof(ApplySlotOpacity), typeof(bool), typeof(OptionsControl), true, propertyChanged:
-                static (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(ApplySlotOpacity), typeof(bool), typeof(OptionsControl), true,
+                propertyChanged: static (bindable, _, newValue) =>
                 {
                     if (bindable is not OptionsControl optionsControl)
                         return;
-                    
+
                     if (newValue is not bool bValue)
                         return;
-                    
+
                     optionsControl.SlotView.Opacity = bValue ? 0.8d : 1d;
                 });
 
@@ -84,8 +84,8 @@ namespace SecureFolderFS.Maui.UserControls.Options
             set => SetValue(SlotTextProperty, value);
         }
         public static readonly BindableProperty SlotTextProperty =
-            BindableProperty.Create(nameof(SlotText), typeof(string), typeof(OptionsControl), propertyChanged:
-                static (bindable, _, newValue) => SetSlotText(bindable, newValue));
+            BindableProperty.Create(nameof(SlotText), typeof(string), typeof(OptionsControl),
+                propertyChanged: static (bindable, _, newValue) => SetSlotText(bindable, newValue));
 
         public ICommand? Command
         {

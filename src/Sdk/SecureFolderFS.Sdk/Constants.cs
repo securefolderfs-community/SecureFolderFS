@@ -2,6 +2,12 @@
 {
     public static class Constants
     {
+        public static class Settings
+        {
+            public const string EXPORTED_ARCHIVE_FILENAME = $"{nameof(SecureFolderFS)} Settings";
+            public const string EXPORTED_ARCHIVE_EXTENSION = ".appsettings";
+        }
+
         public static class Widgets
         {
             public const string HEALTH_WIDGET_ID = "health_widget";
@@ -46,13 +52,6 @@
                 """;
         }
 
-        public static class Sizes
-        {
-            public const long KILOBYTE = 1024;
-            public const long MEGABYTE = KILOBYTE * 1024;
-            public const long GIGABYTE = MEGABYTE * 1024;
-        }
-
         public static class IntegrationPermissions
         {
             public const string ENUMERATE_VAULTS = "enumerate_vaults"; // List all added vaults and get basic info
@@ -65,6 +64,7 @@
         public static class DataSources
         {
             public const string DATA_SOURCE_PICKER = $"{nameof(SecureFolderFS)}.Picker";
+            public const string DEFAULT_FILE_SYSTEM = "WEBDAV";
         }
     }
 }

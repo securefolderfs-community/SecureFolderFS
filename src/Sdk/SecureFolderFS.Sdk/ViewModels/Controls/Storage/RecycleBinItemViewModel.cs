@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
     {
         private readonly IRecycleBinFolder _recycleBin;
 
+        [ObservableProperty] private string? _Size;
         [ObservableProperty] private string? _OriginalPath;
         [ObservableProperty] private DateTime? _DeletionTimestamp;
         [ObservableProperty] private RecycleBinOverlayViewModel _OverlayViewModel;
@@ -42,6 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             OverlayViewModel = overlayViewModel;
             Inner = recycleBinItem.Inner;
             Title = recycleBinItem.Name;
+            Size = recycleBinItem.Size < 0L ? "NaN" : ByteSize.FromBytes(recycleBinItem.Size).ToString().Replace(" ", string.Empty);
             OriginalPath = recycleBinItem.Id;
             DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;
@@ -65,9 +68,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [RelayCommand]
         private async Task RestoreAsync(CancellationToken cancellationToken)
         {
-            var items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
-            if (items.IsEmpty())
-                items = [ this ];
+            RecycleBinItemViewModel[] items;
+            if (ApplicationService.IsDesktop)
+            {
+                items = [this];
+            }
+            else
+            {
+                items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
+                if (items.IsEmpty())
+                    items = [this];
+            }
 
             IFolderPicker folderPicker = ApplicationService.IsDesktop
                 ? DI.Service<IFileExplorerService>()
@@ -89,9 +100,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [RelayCommand]
         private async Task DeletePermanentlyAsync(CancellationToken cancellationToken)
         {
-            var items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
-            if (items.IsEmpty())
-                items = [ this ];
+            RecycleBinItemViewModel[] items;
+            if (ApplicationService.IsDesktop)
+            {
+                items = [this];
+            }
+            else
+            {
+                items = OverlayViewModel.IsSelecting ? OverlayViewModel.Items.GetSelectedItems().ToArray() : [];
+                if (items.IsEmpty())
+                    items = [this];
+            }
 
             foreach (var item in items)
             {

@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SourceSelectionWizardPage"
@@ -21,24 +24,74 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <VerticalStackLayout
+            <!--  Primary source (Device Storage)  -->
+            <Border
                 Grid.Row="0"
+                Background="{StaticResource ThemeSecondaryColorBrush}"
+                HeightRequest="72"
                 IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                Spacing="16">
+                StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <Grid
+                    Padding="18,0"
+                    ColumnDefinitions="Auto,*,Auto"
+                    ColumnSpacing="14">
 
-                <Button
-                    Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}"
-                    CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}"
-                    FontSize="17"
-                    HeightRequest="64"
-                    ImageSource="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
-                    Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}" />
-                <BoxView
-                    Margin="16,0"
-                    Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
-                    HeightRequest="1" />
-            </VerticalStackLayout>
+                    <!--  Icon plate  -->
+                    <Border
+                        Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                          Dark={StaticResource PrimaryDarkColor}}"
+                        HeightRequest="40"
+                        StrokeThickness="0"
+                        VerticalOptions="Center"
+                        WidthRequest="40">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Image
+                            HeightRequest="22"
+                            HorizontalOptions="Center"
+                            Source="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                            VerticalOptions="Center"
+                            WidthRequest="22" />
+                    </Border>
 
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                    Dark={StaticResource PrimaryContrastingDarkColor}}"
+                        VerticalOptions="Center" />
+
+                    <mi:MauiIcon
+                        Grid.Column="2"
+                        Icon="{mi_material:Material ChevronRight}"
+                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconSize="18"
+                        OnPlatforms="Android"
+                        VerticalOptions="Center" />
+                    <mi:MauiIcon
+                        Grid.Column="2"
+                        Icon="{mi_cupertino:Cupertino ChevronRight}"
+                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
+                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconSize="18"
+                        OnPlatforms="iOS"
+                        VerticalOptions="Center" />
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}" CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+            </Border>
+
+            <!--  Cloud / remote sources grid  -->
             <CollectionView
                 Grid.Row="1"
                 ItemSizingStrategy="MeasureFirstItem"
@@ -47,27 +100,40 @@
                 SelectionMode="Single">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
-                        <Border Padding="16" Background="{StaticResource ThemeSecondaryColorBrush}">
+                        <Border
+                            Margin="0"
+                            Padding="0"
+                            Background="{StaticResource ThemeSecondaryColorBrush}"
+                            StrokeThickness="0">
                             <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="12" />
+                                <RoundRectangle CornerRadius="14" />
                             </Border.StrokeShape>
-                            <VerticalStackLayout Spacing="16">
-                                <Image HeightRequest="48" Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
-                                <Label
-                                    FontSize="17"
+                            <VerticalStackLayout
+                                Padding="16,20"
+                                Spacing="12"
+                                VerticalOptions="Center">
+                                <Image
+                                    HeightRequest="44"
                                     HorizontalOptions="Center"
-                                    Text="{Binding DataSourceName, Mode=OneWay}" />
+                                    Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                                    WidthRequest="44" />
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="14"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding DataSourceName, Mode=OneWay}"
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout
-                        HorizontalItemSpacing="8"
+                        HorizontalItemSpacing="10"
                         Orientation="Vertical"
                         Span="2"
-                        VerticalItemSpacing="8" />
+                        VerticalItemSpacing="10" />
                 </CollectionView.ItemsLayout>
             </CollectionView>
         </Grid>

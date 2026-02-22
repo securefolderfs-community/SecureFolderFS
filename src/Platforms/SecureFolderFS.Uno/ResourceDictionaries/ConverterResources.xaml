@@ -7,9 +7,14 @@
     <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
     <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+    <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
+    <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <vc:IconSourceConverter x:Key="IconSourceConverter" />
+    <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
+    <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
+    <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
 
 </ResourceDictionary>

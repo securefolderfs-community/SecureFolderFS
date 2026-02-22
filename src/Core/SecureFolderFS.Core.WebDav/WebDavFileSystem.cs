@@ -1,27 +1,26 @@
-﻿using NWebDav.Server;
-using NWebDav.Server.Dispatching;
-using NWebDav.Server.Storage;
-using NWebDav.Server.Stores;
-using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Extensions;
-using SecureFolderFS.Core.WebDav.AppModels;
-using SecureFolderFS.Core.WebDav.EncryptingStorage2;
-using SecureFolderFS.Core.WebDav.Helpers;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Storage.Enums;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using NWebDav.Server;
+using NWebDav.Server.Dispatching;
+using NWebDav.Server.Storage;
+using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Storage;
+using SecureFolderFS.Core.WebDav.AppModels;
+using SecureFolderFS.Core.WebDav.Helpers;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.WebDav
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public abstract class WebDavFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public abstract class WebDavFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;
@@ -56,8 +55,10 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, encryptingDiskStore), new RequestHandlerProvider(), null);
+            //var store = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
+            var rootFolder = new CryptoFolder(specifics.ContentFolder.Id, specifics.ContentFolder, specifics);
+            var store = new BackedDavStore(rootFolder, !specifics.Options.IsReadOnly);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, store), new RequestHandlerProvider(), null);
 
             return await MountAsync(
                 specifics,

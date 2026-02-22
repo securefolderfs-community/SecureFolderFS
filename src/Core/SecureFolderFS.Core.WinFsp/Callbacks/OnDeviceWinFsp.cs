@@ -507,7 +507,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     dirHandle.DirectoryInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
                     dirHandle.DirectoryInfo.Attributes = (FileAttributes)FileAttributes;
                     FileInfo = dirHandle.GetFileInfo();
-                    
+
                     break;
                 }
 
@@ -902,7 +902,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
                     var directoryIdPath = Path.Combine(pathToDelete, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                     _specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
-                 
+
                     break;
                 }
             }

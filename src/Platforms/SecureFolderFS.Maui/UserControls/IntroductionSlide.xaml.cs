@@ -30,5 +30,13 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty SlotProperty =
             BindableProperty.Create(nameof(Slot), typeof(object), typeof(IntroductionSlide));
+        
+        public object? SlotBelow
+        {
+            get => (object?)GetValue(SlotBelowProperty);
+            set => SetValue(SlotBelowProperty, value);
+        }
+        public static readonly BindableProperty SlotBelowProperty =
+            BindableProperty.Create(nameof(SlotBelow), typeof(object), typeof(IntroductionSlide));
     }
 }

@@ -29,7 +29,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var keyPair = specifics.Security.KeyPair;
             var vaultReader = new VaultReader(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
             var vaultWriter = new VaultWriter(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
 
@@ -41,8 +40,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 
-            // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(newConfigDataModel, keyPair.MacKey, newConfigDataModel.PayloadMac);
+            // First, we need to fill in the PayloadMac of the content
+            specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+            });
 
             // Update the new configuration
             await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);

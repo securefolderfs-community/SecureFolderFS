@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Health;
+using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
@@ -39,6 +40,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     _ => GetDefault(aggregate)
                 },
                 FormatException => new HealthNameIssueViewModel(storable, result, "InvalidItemName".ToLocalized()) { ErrorMessage = "GenerateNewName".ToLocalized() },
+                FileHeaderCorruptedException => new HealthFileDataIssueViewModel(storable, result, "IrrecoverableFile".ToLocalized(), isRecoverable: false) { ErrorMessage = "FileHeaderCorrupted".ToLocalized() },
+                FileChunksCorruptedException chunksEx => new HealthFileDataIssueViewModel(storable, result, "CorruptedFileChunks".ToLocalized(), chunksEx.CorruptedChunks, isRecoverable: true) { ErrorMessage = "FileHasCorruptedChunks".ToLocalized(chunksEx.CorruptedChunks.Count) },
                 CryptographicException => new HealthFileDataIssueViewModel(storable, result, "InvalidFileContents".ToLocalized()) { ErrorMessage = "RegenerateFileContents".ToLocalized() },
                 { } ex => GetDefault(ex)
             };
@@ -90,8 +93,17 @@ namespace SecureFolderFS.UI.ServiceImplementation
                             specificsWrapper.Inner.Security,
                             cancellationToken),
 
-                        // TODO: Implement repair for HealthFileDataIssueViewModel
-                        HealthFileDataIssueViewModel dataIssue => Result.Failure(null),
+                        // File data issue - repair chunks or delete irrecoverable file
+                        HealthFileDataIssueViewModel { IsRecoverable: true, File: not null } dataIssue => await HealthHelpers.RepairFileChunksAsync(
+                            dataIssue.File,
+                            specificsWrapper.Inner.Security,
+                            dataIssue.CorruptedChunks,
+                            cancellationToken),
+
+                        // Irrecoverable file - delete it
+                        HealthFileDataIssueViewModel { IsRecoverable: false, File: not null } dataIssue => await HealthHelpers.DeleteIrrecoverableFileAsync(
+                            dataIssue.File,
+                            cancellationToken),
 
                         // Default
                         _ => null

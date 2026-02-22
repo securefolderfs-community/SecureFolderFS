@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             return Task.CompletedTask;
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
             // Check Plus version
@@ -155,7 +155,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
+            {
                 SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.DataModel.PersistableId;
+                _ = SettingsService.AppSettings.TrySaveAsync();
+            }
         }
     }
 }

@@ -16,20 +16,35 @@
     <ContentView.Resources>
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
-        <vc:ViewTypeToItemsLayoutConverter x:Key="ViewTypeToItemsLayoutConverter" />
-        <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 
+        <!--  ListItem  -->
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
-            <apesui:ContextMenuContainer x:Name="ItemContainer" Loaded="ItemContainer_Loaded">
+            <apesui:ContextMenuContainer
+                x:Name="ItemContainer"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
+                Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
@@ -65,28 +80,48 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
 
+        <!--  GridItem  -->
         <DataTemplate x:Key="GridItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
-                Padding="16"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
-                    <Border Margin="-8">
+                    <Border>
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8" />
                         </Border.StrokeShape>
@@ -107,7 +142,7 @@
                                 VerticalOptions="Center" />
                             <Label
                                 Grid.Row="1"
-                                FontSize="15"
+                                FontSize="12"
                                 HorizontalOptions="Center"
                                 LineBreakMode="TailTruncation"
                                 Text="{Binding Title, Mode=OneWay}"
@@ -126,24 +161,44 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
 
+        <!--  GalleryItem  -->
         <DataTemplate x:Key="GalleryItemTemplate" x:DataType="vm:BrowserItemViewModel">
             <apesui:ContextMenuContainer
                 x:Name="ItemContainer"
-                Padding="1,0"
+                BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
-                    <apesui:ContextMenuItem Command="{Binding RenameCommand}" Text="{l:ResourceString Rid=Rename}" />
-                    <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="{l:ResourceString Rid=Export}" />
-                    <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="{l:ResourceString Rid=Move}" />
-                    <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="{l:ResourceString Rid=Copy}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding RenameCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Rename}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding MoveCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <apesui:ContextMenuItem
+                        Command="{Binding CopyCommand}"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="{l:ResourceString Rid=Copy}" />
                     <apesui:ContextMenuItem
                         Command="{Binding DeleteCommand}"
                         IsDestructive="True"
+                        IsEnabled="{Binding ParentFolder.BrowserViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
@@ -153,10 +208,15 @@
                         Style="{StaticResource SelectableItemGridStyle}">
                         <ContentView
                             Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            WidthRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='7,5,3'}" />
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill" />
+
+                        <Grid
+                            Background="{StaticResource PrimaryContrastingLightColor}"
+                            HorizontalOptions="Fill"
+                            IsVisible="{Binding IsSelected, Mode=OneWay}"
+                            Opacity="0.3"
+                            VerticalOptions="Fill" />
 
                         <!--  Video Icon Grid  -->
                         <Border
@@ -183,16 +243,35 @@
                             </Grid>
                         </Border>
 
-                        <CheckBox
-                            Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                        <Grid
+                            Margin="0,0,4,4"
                             HorizontalOptions="End"
-                            IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
-                            VerticalOptions="End" />
+                            VerticalOptions="End">
+                            <OnPlatform x:TypeArguments="View">
+                                <On Platform="iOS">
+                                    <Ellipse
+                                        Fill="{StaticResource BackgroundFillPrimaryLightColor}"
+                                        HeightRequest="22"
+                                        IsVisible="{Binding IsSelected, Mode=OneWay}"
+                                        WidthRequest="22" />
+                                </On>
+                            </OnPlatform>
+
+                            <CheckBox
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                IsVisible="{Binding IsSelected, Mode=OneWay}" />
+                        </Grid>
                     </Grid>
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
+                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DropGestureRecognizer
+                        AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
+                        DragLeave="DropGestureRecognizer_DragLeave"
+                        DragOver="DropGestureRecognizer_DragOver"
+                        Drop="DropGestureRecognizer_Drop" />
                 </apesui:ContextMenuContainer.GestureRecognizers>
             </apesui:ContextMenuContainer>
         </DataTemplate>
@@ -200,7 +279,15 @@
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
         <RefreshView Refreshing="RefreshView_Refreshing">
-            <Grid>
+            <Grid x:Name="CollectionViewContainer">
+                <Grid.GestureRecognizers>
+                    <DropGestureRecognizer
+                        AllowDrop="True"
+                        DragLeave="CollectionDropGestureRecognizer_DragLeave"
+                        DragOver="CollectionDropGestureRecognizer_DragOver"
+                        Drop="CollectionDropGestureRecognizer_Drop" />
+                </Grid.GestureRecognizers>
+
                 <ContentView
                     Content="{Binding EmptyView, Mode=OneWay}"
                     HorizontalOptions="Fill"
@@ -208,11 +295,14 @@
                     VerticalOptions="Fill" />
 
                 <CollectionView
+                    x:Name="ItemsCollectionView"
                     IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                    ItemSizingStrategy="MeasureFirstItem"
-                    ItemsLayout="{Binding ViewType, Mode=OneWay, Converter={StaticResource ViewTypeToItemsLayoutConverter}}"
+                    ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding ItemsSource, Mode=OneWay}"
-                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}">
+                    Loaded="ItemsCollectionView_Loaded"
+                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}"
+                    SizeChanged="ItemsCollectionView_SizeChanged"
+                    ZIndex="0">
                     <CollectionView.ItemTemplate>
                         <ts:BrowserViewItemTemplateSelector
                             GalleryItemTemplate="{StaticResource GalleryItemTemplate}"
@@ -232,5 +322,21 @@
                 </CollectionView>
             </Grid>
         </RefreshView>
+
+        <Grid
+            x:Name="SelectionRectangleCanvas"
+            HorizontalOptions="Fill"
+            InputTransparent="True"
+            IsVisible="False"
+            VerticalOptions="Fill"
+            ZIndex="5">
+            <Grid
+                x:Name="SelectionRectangleView"
+                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                  Dark={StaticResource PrimaryDarkColor}}"
+                HorizontalOptions="Start"
+                Opacity="0.3"
+                VerticalOptions="Start" />
+        </Grid>
     </Grid>
 </ContentView>

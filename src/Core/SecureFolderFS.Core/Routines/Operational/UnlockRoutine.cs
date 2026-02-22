@@ -6,6 +6,8 @@ using SecureFolderFS.Core.VaultAccess;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Routines.Operational
 {
@@ -15,8 +17,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private SecretKey? _dekKey;
-        private SecretKey? _macKey;
+        private SecureKey? _dekKey;
+        private SecureKey? _macKey;
 
         public UnlockRoutine(VaultReader vaultReader)
         {
@@ -31,15 +33,16 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetCredentials(IKeyUsage passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             // Derive keystore
-            var (dekKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
-            _dekKey = dekKey;
-            _macKey = macKey;
+            var derived = passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel));
+
+            _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+            _macKey = SecureKey.TakeOwnership(derived.macKey);
         }
 
         /// <inheritdoc/>
@@ -53,11 +56,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             using (_dekKey)
             using (_macKey)
             {
-                // Create MAC key copy for the validator that can be disposed here
-                using var macKeyCopy = _macKey.CreateCopy();
-
                 // Check if the payload has not been tampered with
-                var validator = new ConfigurationValidator(macKeyCopy);
+                var validator = new ConfigurationValidator(_macKey);
                 await validator.ValidateAsync(_configDataModel, cancellationToken);
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes

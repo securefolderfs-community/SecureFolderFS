@@ -34,23 +34,30 @@
                 <uc:PanRouter.RouterContent>
                     <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
                         <vlc:MediaPlayerElement.PlaybackControls>
-                            <vlc:PlaybackControls
-                                AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"
-                                BackgroundColor="Transparent"
-                                ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"
-                                Foreground="#ffffff"
-                                IsTracksButtonVisible="False"
-                                LockButtonStyle="{StaticResource VideoLockButtonStyle}"
-                                MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                            Dark={StaticResource PrimaryDarkColor}}"
-                                PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
-                                RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"
-                                RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
-                                SeekBarStyle="{StaticResource VideoSeekBarStyle}"
-                                SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
-                                UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
+                            <vlc:PlaybackControls />
                         </vlc:MediaPlayerElement.PlaybackControls>
                     </vlc:MediaPlayerElement>
+
+
+                    <!-- <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded"> -->
+                    <!--     <vlc:MediaPlayerElement.PlaybackControls> -->
+                    <!--  <vlc:PlaybackControls  -->
+                    <!--  AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"  -->
+                    <!--  BackgroundColor="Transparent"  -->
+                    <!--  ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
+                    <!--  Foreground="#ffffff"  -->
+                    <!--  IsTracksButtonVisible="False"  -->
+                    <!--  LockButtonStyle="{StaticResource VideoLockButtonStyle}"  -->
+                    <!--  MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},  -->
+                    <!--  Dark={StaticResource PrimaryDarkColor}}"  -->
+                    <!--  PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"  -->
+                    <!--  RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
+                    <!--  RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"  -->
+                    <!--  SeekBarStyle="{StaticResource VideoSeekBarStyle}"  -->
+                    <!--  SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"  -->
+                    <!--  UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />  -->
+                    <!--     </vlc:MediaPlayerElement.PlaybackControls> -->
+                    <!-- </vlc:MediaPlayerElement> -->
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
@@ -119,7 +126,8 @@
             Closed="Closed_Clicked"
             IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
             IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}"
-            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}">
+            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}"
+            ShareCommand="{Binding ViewModel.ShareCommand}">
             <uc:CommandBarControl.InnerContent>
                 <uc:ContentPresentation
                     x:Name="Presentation"

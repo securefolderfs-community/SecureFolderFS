@@ -5,103 +5,196 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Settings"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
-    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Components;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
     Title="{l:ResourceString Rid=Settings}"
     x:DataType="local:SettingsPage">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            Spacing="16">
-            <!--  General  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsGeneral}">
-                <uco:OptionsContainer.InnerContent>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=Language}">
-                            <uco:OptionsControl.Slot>
-                                <ucc:ModernPicker
-                                    BindingContext="{x:Reference ThisPage}"
-                                    HorizontalTextAlignment="End"
-                                    IsTransparent="True"
-                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
-                                    ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
-                                    SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=Theme}">
-                            <uco:OptionsControl.Slot>
-                                <ucc:ModernPicker
-                                    x:Name="ThemePicker"
-                                    HorizontalTextAlignment="End"
-                                    IsTransparent="True"
-                                    MinimumWidthRequest="164"
-                                    SelectedIndexChanged="ThemePicker_SelectedIndexChanged" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=AutoLock}" ApplySlotOpacity="False">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=Telemetry}"
-                            ApplySlotOpacity="False"
-                            IsSeparatorVisible="False">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                    </VerticalStackLayout>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
+        <ScrollView>
+            <VerticalStackLayout
+                Margin="{OnPlatform iOS='0,16,0,0'}"
+                Padding="16,0"
+                Spacing="16">
 
-            <!--  File Browser  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=FileBrowser}">
-                <uco:OptionsContainer.InnerContent>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}" ApplySlotOpacity="False">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding PreferencesViewModel.AreFileExtensionsEnabled, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=EnableAdaptiveLayout}" ApplySlotOpacity="False">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding PreferencesViewModel.IsAdaptiveLayoutEnabled, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=EnableFileThumbnails}"
-                            ApplySlotOpacity="False"
-                            IsSeparatorVisible="False">
-                            <uco:OptionsControl.Slot>
-                                <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />
-                            </uco:OptionsControl.Slot>
-                        </uco:OptionsControl>
+                <!--  Hero card  -->
+                <Border
+                    Padding="20,20"
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Border
+                            Background="{StaticResource ThemePrimaryColorBrush}"
+                            HeightRequest="56"
+                            HorizontalOptions="Center"
+                            StrokeThickness="0"
+                            WidthRequest="56">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="14" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_material:Material Settings}"
+                                    IconColor="White"
+                                    IconSize="28"
+                                    OnPlatforms="Android"
+                                    VerticalOptions="Center" />
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_cupertino:Cupertino Gear}"
+                                    IconColor="White"
+                                    IconSize="28"
+                                    OnPlatforms="iOS"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="17"
+                            HorizontalOptions="Center"
+                            Text="{l:ResourceString Rid=Settings}" />
+                        <Label
+                            FontSize="13"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.55"
+                            Text="Manage your preferences, appearance, and privacy options for SecureFolderFS." />
                     </VerticalStackLayout>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
+                </Border>
 
-            <!--  About  -->
-            <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsAbout}">
-                <uco:OptionsContainer.InnerContent>
-                    <VerticalStackLayout>
-                        <uco:OptionsControl Title="{l:ResourceString Rid=ViewOnboarding}" Command="{Binding ShowIntroductionCommand, Mode=OneWay}" />
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=Version}"
-                            Command="{Binding AboutViewModel.CopyAppVersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
-                            SlotText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
-                        <uco:OptionsControl
-                            Title="{l:ResourceString Rid=SystemVersion}"
-                            Command="{Binding AboutViewModel.CopySystemVersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
-                            IsSeparatorVisible="False"
-                            SlotText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
-                    </VerticalStackLayout>
-                </uco:OptionsContainer.InnerContent>
-            </uco:OptionsContainer>
-        </VerticalStackLayout>
+                <!--  General  -->
+                <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsGeneral}">
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=Language}">
+                                <uco:OptionsControl.Slot>
+                                    <ucc:ModernPicker
+                                        BindingContext="{x:Reference ThisPage}"
+                                        HorizontalTextAlignment="End"
+                                        IsTransparent="True"
+                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
+                                        ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
+                                        SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=Theme}">
+                                <uco:OptionsControl.Slot>
+                                    <ucc:ModernPicker
+                                        x:Name="ThemePicker"
+                                        HorizontalTextAlignment="End"
+                                        IsTransparent="True"
+                                        MinimumWidthRequest="164"
+                                        SelectedIndexChanged="ThemePicker_SelectedIndexChanged" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=AutoLock}" ApplySlotOpacity="False">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=Telemetry}"
+                                ApplySlotOpacity="False"
+                                IsSeparatorVisible="False">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+
+                <!--  File Browser  -->
+                <uco:OptionsContainer Title="{l:ResourceString Rid=FileBrowser}">
+                    <uco:OptionsContainer.InnerContent>
+                        <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableFileExtensions}" ApplySlotOpacity="False">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding PreferencesViewModel.AreFileExtensionsEnabled, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=EnableAdaptiveLayout}" ApplySlotOpacity="False">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding PreferencesViewModel.IsAdaptiveLayoutEnabled, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=EnableFileThumbnails}"
+                                ApplySlotOpacity="False"
+                                IsSeparatorVisible="False">
+                                <uco:OptionsControl.Slot>
+                                    <Switch IsToggled="{Binding PreferencesViewModel.AreThumbnailsEnabled, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
+                        </VerticalStackLayout>
+                    </uco:OptionsContainer.InnerContent>
+                </uco:OptionsContainer>
+
+                <!--  About  -->
+                <VerticalStackLayout Spacing="8">
+                    <uco:OptionsContainer Title="{l:ResourceString Rid=SettingsAbout}">
+                        <uco:OptionsContainer.InnerContent>
+                            <VerticalStackLayout>
+                                <uco:OptionsControl Title="{l:ResourceString Rid=ViewOnboarding}" Command="{Binding ShowIntroductionCommand, Mode=OneWay}" />
+                                <uco:OptionsControl
+                                    Title="{l:ResourceString Rid=Version}"
+                                    Command="{Binding AboutViewModel.CopyAppVersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                                    SlotText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
+                                <uco:OptionsControl
+                                    Title="{l:ResourceString Rid=SystemVersion}"
+                                    Command="{Binding AboutViewModel.CopySystemVersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                                    IsSeparatorVisible="False"
+                                    SlotText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
+                            </VerticalStackLayout>
+                        </uco:OptionsContainer.InnerContent>
+                    </uco:OptionsContainer>
+
+                    <!--  Core Memory Protection badge  -->
+                    <Border
+                        Padding="12,8"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor},
+                                                          Dark={StaticResource ElevatedFillPrimaryDarkColor}}"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <HorizontalStackLayout Spacing="8">
+                            <OnPlatform x:TypeArguments="View">
+                                <On Platform="Android">
+                                    <mi:MauiIcon
+                                        Icon="{mi_material:Material Memory}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="16"
+                                        VerticalOptions="Center" />
+                                </On>
+                                <On Platform="iOS">
+                                    <mi:MauiIcon
+                                        Icon="{mi_cupertino:Cupertino SquareStack3dUp}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="16"
+                                        VerticalOptions="Center" />
+                                </On>
+                            </OnPlatform>
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=CoreMemoryProtectionEnabled}"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

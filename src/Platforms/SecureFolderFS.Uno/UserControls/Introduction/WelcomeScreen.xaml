@@ -3,39 +3,71 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="using:SecureFolderFS.Uno.Extensions"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid RowSpacing="48">
+    <Grid Padding="32" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Image
-            Width="56"
-            Height="56"
+        <ext:OnPlatform
+            Grid.Row="0"
+            Margin="0,0,0,16"
             HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
+            VerticalAlignment="Bottom">
+            <ext:On Platform="Windows">
+                <Image
+                    Width="56"
+                    Height="56"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
+            </ext:On>
+            <ext:On Platform="Default">
+                <Image
+                    Width="56"
+                    Height="56"
+                    Source="/Assets/AppAssets/app_icon.png" />
+            </ext:On>
+        </ext:OnPlatform>
 
-        <TextBlock
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            FontSize="25"
-            FontWeight="Bold"
-            Text="Welcome to SecureFolderFS!" />
+        <StackPanel Grid.Row="1">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="25"
+                FontWeight="Bold"
+                Text="{l:ResourceString Rid=WelcomeTo,
+                                        Converter={StaticResource StringInterpolationConverter},
+                                        ConverterParameter='none|SecureFolderFS'}" />
+
+            <TextBlock
+                Padding="80,0"
+                FontSize="14"
+                Opacity="0.8"
+                Text="{l:ResourceString Rid=OnboardingWelcomeSubtitle}"
+                TextAlignment="Center"
+                TextWrapping="WrapWholeWords" />
+        </StackPanel>
 
         <TextBlock
             Grid.Row="2"
-            Margin="0,-32,0,0"
-            Padding="80,0,80,0"
-            FontSize="14"
+            HorizontalAlignment="Center"
+            FontSize="12"
             Opacity="0.8"
-            Text="Thank you for trying out SecureFolderFS. To help get you started, this presentation will guide you through the app's core concepts and most notable features."
             TextAlignment="Center"
-            TextWrapping="WrapWholeWords" />
+            TextWrapping="Wrap">
+            <Run Text="{l:ResourceString Rid=IntroPrefix}" />
+            <Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">
+                <Run Text="{l:ResourceString Rid=PrivacyPolicy}" />
+            </Hyperlink>
+            <Run Text="{l:ResourceString Rid=IntroMiddle}" />
+            <Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md">
+                <Run Text="{l:ResourceString Rid=TermsOfService}" />
+            </Hyperlink>
+            <Run Text="{l:ResourceString Rid=IntroSuffix}" />
+        </TextBlock>
     </Grid>
 </UserControl>

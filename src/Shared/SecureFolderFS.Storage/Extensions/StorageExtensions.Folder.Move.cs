@@ -1,5 +1,5 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -31,15 +31,21 @@ namespace SecureFolderFS.Storage.Extensions
             return itemToMove switch
             {
                 IChildFile fileToMove => (TStorable)await destinationFolder.MoveFromAsync(fileToMove, source, overwrite, cancellationToken),
-                IChildFolder folderToMove => (TStorable)await destinationFolder.MoveFromAsync(folderToMove, source, overwrite, reporter, cancellationToken),
+                IModifiableFolder folderToMove => (TStorable)await destinationFolder.MoveFromAsync(folderToMove, source, overwrite, folderToMove.Name, reporter, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToMove))
             };
         }
 
-        /// <inheritdoc cref="MoveFromAsync(IModifiableFolder,IChildFolder,IModifiableFolder,bool,IProgress{IStorable},CancellationToken)"/>
-        public static Task<IModifiableFolder> MoveFromAsync(this IModifiableFolder destinationFolder, IChildFolder folderToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
+        /// <inheritdoc cref="MoveFromAsync(IModifiableFolder,IModifiableFolder,IModifiableFolder,bool,string,IProgress{IStorable},CancellationToken)"/>
+        public static Task<IChildFolder> MoveFromAsync(this IModifiableFolder destinationFolder, IModifiableFolder folderToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
         {
-            return MoveFromAsync(destinationFolder, folderToMove, source, overwrite, null, cancellationToken);
+            return MoveFromAsync(destinationFolder, folderToMove, source, overwrite, folderToMove.Name, null, cancellationToken);
+        }
+
+        /// <inheritdoc cref="MoveFromAsync(IModifiableFolder,IModifiableFolder,IModifiableFolder,bool,string,IProgress{IStorable},CancellationToken)"/>
+        public static Task<IChildFolder> MoveFromAsync(this IModifiableFolder destinationFolder, IModifiableFolder folderToMove, IModifiableFolder source, bool overwrite, string newName, CancellationToken cancellationToken = default)
+        {
+            return MoveFromAsync(destinationFolder, folderToMove, source, overwrite, newName, null, cancellationToken);
         }
 
         /// <summary>
@@ -49,47 +55,58 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="folderToMove">The folder being moved into this folder.</param>
         /// <param name="source">The folder that <paramref name="folderToMove"/> is being moved from.</param>
         /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="newName">The new name of the created folder.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
         /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-        public static async Task<IModifiableFolder> MoveFromAsync(this IModifiableFolder destinationFolder, IChildFolder folderToMove, IModifiableFolder source, bool overwrite, IProgress<IStorable>? reporter = null, CancellationToken cancellationToken = default)
+        public static async Task<IChildFolder> MoveFromAsync(this IModifiableFolder destinationFolder,
+            IModifiableFolder folderToMove, IModifiableFolder source, bool overwrite, string newName,
+            IProgress<IStorable>? reporter = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Check if a folder with the same name already exists in the destination
-            if (!overwrite)
+            // Create the corresponding folder in the destination
+            var movedFolder = await destinationFolder.CreateFolderAsync(newName, overwrite, cancellationToken);
+            if (movedFolder is not IModifiableFolder modifiableMovedFolder)
+                throw new UnauthorizedAccessException("The created folder is not modifiable.");
+
+            reporter?.Report(movedFolder);
+
+            var stack = new Stack<(IModifiableFolder FolderToMove, IModifiableFolder Destination)>();
+            stack.Push((folderToMove, modifiableMovedFolder));
+
+            while (stack.Count > 0)
             {
-                try
+                var (currentFolder, currentDestination) = stack.Pop();
+                await foreach (var item in currentFolder.GetItemsAsync(StorableType.All, cancellationToken))
                 {
-                    var existing = await destinationFolder.GetFirstByNameAsync(folderToMove.Name, cancellationToken);
-                    if (existing is not null)
-                        throw new FileAlreadyExistsException(folderToMove.Name);
-                }
-                catch (FileNotFoundException)
-                {
-                }
-                catch (DirectoryNotFoundException)
-                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    switch (item)
+                    {
+                        case IChildFile file:
+                        {
+                            var movedFile = await currentDestination.MoveFromAsync(file, currentFolder, overwrite, cancellationToken);
+                            reporter?.Report(movedFile);
+                            break;
+                        }
+
+                        case IModifiableFolder subFolder:
+                        {
+                            var createdSubFolder = await currentDestination.CreateFolderAsync(subFolder.Name, overwrite, cancellationToken);
+                            if (createdSubFolder is not IModifiableFolder modifiableCreatedSubFolder)
+                                throw new UnauthorizedAccessException("The created folder is not modifiable.");
+
+                            reporter?.Report(createdSubFolder);
+                            stack.Push((subFolder, modifiableCreatedSubFolder));
+                            break;
+                        }
+                    }
                 }
             }
 
-            // TODO: If the destination folder supports optimized moving, use it
-            // if (destinationFolder is IMoveFrom fastPath)
-            //     return await fastPath.MoveFromAsync(folderToMove, source, overwrite, cancellationToken,
-            //         fallback: MoveFromFallbackAsync);
+            if (folderToMove is IChildFolder childFolderToMove)
+                await source.DeleteAsync(childFolderToMove, deleteImmediately: true, cancellationToken: cancellationToken);
 
-            // Perform a manual move (fallback)
-            return await MoveFromFallbackAsync(destinationFolder, folderToMove, source, overwrite, reporter, cancellationToken);
-
-            async Task<IModifiableFolder> MoveFromFallbackAsync(IModifiableFolder destinationFolder, IChildFolder folderToMove, IModifiableFolder source, bool overwrite, IProgress<IStorable>? reporter = null, CancellationToken cancellationToken = default)
-            {
-                // Create a copy of the folder in the destination
-                var movedFolder = await destinationFolder.CreateCopyOfAsync(folderToMove, overwrite, reporter, cancellationToken);
-
-                // Delete the original folder
-                await source.DeleteAsync(folderToMove, cancellationToken);
-
-                return movedFolder;
-            }
+            return movedFolder;
         }
     }
 }

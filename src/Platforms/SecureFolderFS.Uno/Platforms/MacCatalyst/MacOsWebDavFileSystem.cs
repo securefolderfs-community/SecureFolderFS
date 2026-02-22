@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst
 
             Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
             await Task.CompletedTask;
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
+            return new WebDavVFSRoot(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
 #else
             throw new PlatformNotSupportedException();
 #endif

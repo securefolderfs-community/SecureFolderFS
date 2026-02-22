@@ -80,6 +80,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                     break;
                 }
 
+#if WINDOWS
                 case Core.Dokany.Constants.FileSystem.FS_ID:
                 case Core.WinFsp.Constants.FileSystem.FS_ID:
                 {
@@ -112,6 +113,7 @@ namespace SecureFolderFS.Uno.Views.Settings
 
                     break;
                 }
+#endif
 
                 default:
                     ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;

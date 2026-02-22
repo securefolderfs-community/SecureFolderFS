@@ -10,7 +10,7 @@ using SecureFolderFS.Storage.Extensions;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Bindable(true)]
-    public sealed partial class TextPreviewerViewModel : FilePreviewerViewModel, IPersistable
+    public sealed partial class TextPreviewerViewModel : FilePreviewerViewModel, IChangeTracker, IPersistable
     {
         private string? _persistedText;
 
@@ -49,6 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             if (Text is null)
                 return;
 
+            //await Task.Delay(5000, cancellationToken);
             await Inner.WriteTextAsync(Text, cancellationToken);
             _persistedText = Text;
             WasModified = false;

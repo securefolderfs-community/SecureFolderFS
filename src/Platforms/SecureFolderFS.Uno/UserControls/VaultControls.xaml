@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.VaultControls"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:local="using:SecureFolderFS.Uno.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="4">
+
+        <!--  Vault read-only InfoBar  -->
+        <InfoBar
+            x:Name="ReadOnlyInfoBar"
+            x:Load="{x:Bind IsReadOnly, Mode=OneWay}"
+            IsClosable="False"
+            IsOpen="True"
+            Message="{l:ResourceString Rid=VaultReadOnlyMode}"
+            Severity="Informational" />
+
+        <!--  Open in File Browser  -->
+        <ucab:ActionBlockControl
+            x:Name="OpenInFileExplorerBlock"
+            Title="{l:ResourceString Rid=ViewVault}"
+            x:Load="{x:Bind RevealFolderCommand, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            BlockMode="Clickable"
+            ClickCommand="{x:Bind RevealFolderCommand, Mode=OneWay}"
+            Description="{l:ResourceString Rid=ViewVaultDescription,
+                                           Converter={StaticResource StringInterpolationConverter},
+                                           ConverterParameter='MacOS{LOCALIZE|Finder}Windows{LOCALIZE|FileExplorer}Default{LOCALIZE|FileBrowser}'}">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xEC50;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+
+        <!--  Vault properties  -->
+        <ucab:ActionBlockControl
+            x:Name="PropertiesBlock"
+            Title="{l:ResourceString Rid=VaultProperties}"
+            x:Load="{x:Bind OpenPropertiesCommand, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            BlockMode="Clickable"
+            ClickCommand="{x:Bind OpenPropertiesCommand, Mode=OneWay}"
+            Description="{l:ResourceString Rid=VaultPropertiesDescription}">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE946;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <FontIcon FontSize="14" Glyph="&#xE76C;" />
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+
+        <!--  Lock vault  -->
+        <ucab:ActionBlockControl
+            x:Name="LockVaultBlock"
+            Title="{l:ResourceString Rid=LockVault}"
+            x:Load="{x:Bind LockVaultCommand, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            BlockMode="Clickable"
+            ClickCommand="{x:Bind LockVaultCommand, Mode=OneWay}"
+            Description="{l:ResourceString Rid=LockVaultDescription}">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE72E;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <FontIcon FontSize="14" Glyph="&#xE7E8;" />
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+    </StackPanel>
+</UserControl>

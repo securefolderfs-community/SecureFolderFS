@@ -21,6 +21,9 @@ namespace SecureFolderFS.UI.AppModels
         public required DateTime DeletionTimestamp { get; init; }
 
         /// <inheritdoc/>
+        public required long Size { get; init; }
+
+        /// <inheritdoc/>
         public IStorableChild Inner { get; }
 
         public RecycleBinItem(IStorableChild inner, IRecycleBinFolder? recycleBin)

@@ -1,21 +1,17 @@
 using System.Windows.Input;
-using OwlCore.Storage;
-using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared;
+using SecureFolderFS.UI;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl : ContentView
     {
-        private readonly DeferredInitialization<IFolder> _deferredInitialization;
-        private readonly ISettingsService _settingsService;
-
         public BrowserControl()
         {
-            _deferredInitialization = new(UI.Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
+            _deferredInitialization = new(Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
@@ -27,36 +23,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             RefreshCommand?.Execute(null);
             refreshView.IsRefreshing = false;
-        }
-
-        private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
-        {
-            if (e.Parameter is not View { BindingContext: BrowserItemViewModel itemViewModel } view)
-                return;
-
-            if (IsSelecting)
-                itemViewModel.IsSelected = !itemViewModel.IsSelected;
-            else
-            {
-                view.IsEnabled = false;
-                await itemViewModel.OpenCommand.ExecuteAsync(null);
-                view.IsEnabled = true;
-            }
-        }
-
-        private void ItemContainer_Loaded(object? sender, EventArgs e)
-        {
-            if (!_settingsService.UserSettings.AreThumbnailsEnabled)
-                return;
-
-            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
-                return;
-
-            if (fileViewModel.Thumbnail is not null)
-                return;
-
-            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
-            _deferredInitialization.Enqueue(fileViewModel);
         }
 
         public object? EmptyView
@@ -73,7 +39,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             set => SetValue(IsSelectingProperty, value);
         }
         public static readonly BindableProperty IsSelectingProperty =
-            BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false);
+            BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false,
+                propertyChanged: static (bindable, _, _) =>
+                {
+                    if (bindable is BrowserControl control)
+                        control.UpdateAllItemContainerPanGestures();
+                });
 
         public ICommand? RefreshCommand
         {

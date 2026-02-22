@@ -4,12 +4,16 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
+using SecureFolderFS.Uno.ViewModels.DeviceLink;
+using SecureFolderFS.Uno.ViewModels.YubiKey;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
@@ -26,8 +30,10 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             {
                 yield return item switch
                 {
-                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
-                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
+                    Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uEE7E") },
+                    Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
+                    Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid).WithInitAsync(cancellationToken),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -38,10 +44,17 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new PasswordCreationViewModel();
-
+            yield return new PasswordCreationViewModel() { Icon = new ImageGlyph("\uE8AC") };
+            
+            // YubiKey
+            if (YubiKeyViewModel.IsSupported())
+                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            
             // Key File
-            yield return new KeyFileCreationViewModel(vaultId);
+            yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };
+            
+            // Device Link
+            yield return new DeviceLinkCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") };
 
             await Task.CompletedTask;
         }

@@ -1,9 +1,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels.Sorters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
 
@@ -37,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             ]);
             ViewOptions = new([
                 new(nameof(BrowserViewType.ListView), "ListViewLayout".ToLocalized()),
-                new(nameof(Enums.BrowserViewType.ColumnView), "ColumnViewLayout".ToLocalized()),
+                new(nameof(BrowserViewType.ColumnView), "ColumnViewLayout".ToLocalized()),
                 new("GridView", "GridViewLayout".ToLocalized()),
                 new("GalleryView", "GalleryViewLayout".ToLocalized())
             ]);
@@ -45,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             IsAscending = true;
             CurrentSortOption = SortOptions[0];
             CurrentSizeOption = SizeOptions[1];
-            CurrentViewOption = ViewOptions[0];
+            CurrentViewOption = ViewOptions[2];
             Title = "ViewOptions".ToLocalized();
         }
 
@@ -73,15 +76,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                     break;
             }
 
-            SetLayoutSizeOption(CurrentSizeOption);
+            UpdateLayoutSizeOption(CurrentSizeOption);
         }
 
         partial void OnCurrentSizeOptionChanged(PickerOptionViewModel? value)
         {
-            SetLayoutSizeOption(value);
+            UpdateLayoutSizeOption(value);
         }
 
-        private bool SetLayoutSizeOption(PickerOptionViewModel? value)
+        [RelayCommand]
+        private void SetLayoutSizeOption(object? value)
+        {
+            CurrentSizeOption = value switch
+            {
+                int index => SizeOptions.ElementAtOrDefault(index),
+                string strValue => strValue.ToLowerInvariant() switch
+                {
+                    "small" => SizeOptions[0],
+                    "medium" => SizeOptions[1],
+                    "large" => SizeOptions[2],
+                    _ => CurrentSizeOption
+                },
+                _ => CurrentSizeOption
+            };
+        }
+
+        private bool UpdateLayoutSizeOption(PickerOptionViewModel? value)
         {
             switch (CurrentViewOption?.Id)
             {

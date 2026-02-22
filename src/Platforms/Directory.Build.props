@@ -62,7 +62,7 @@
     <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
       <PropertyGroup>
         <IsMacCatalyst>true</IsMacCatalyst>
-        <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
       </PropertyGroup>
     </When>
     <When Condition="$(TargetFramework.Contains('windows10'))">

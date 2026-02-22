@@ -21,6 +21,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             {
                 0 => typeof(DebugAppControlPage),
                 1 => typeof(DebugFileSystemLogPage),
+                2 => typeof(DebugPhoneLinkPage),
                 _ => throw new ArgumentOutOfRangeException(nameof(tag))
             };
 

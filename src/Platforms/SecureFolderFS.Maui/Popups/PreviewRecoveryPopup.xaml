@@ -9,10 +9,8 @@
     x:Name="ThisPopup"
     Margin="0"
     Padding="0"
-    Background="Transparent"
     BackgroundColor="Transparent"
-    BindingContext="{x:Reference ThisPopup}"
-    HorizontalOptions="FillAndExpand">
+    BindingContext="{x:Reference ThisPopup}">
 
     <tv:Popup.Shadow>
         <Shadow Offset="0,0" />
@@ -30,7 +28,12 @@
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <Border Padding="16" Background="{StaticResource ThemeBackgroundFillColorBrush}">
+    <Border
+        Margin="16,0"
+        Padding="16"
+        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+        HorizontalOptions="Fill"
+        VerticalOptions="Center">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="12" />
         </Border.StrokeShape>
@@ -45,11 +48,11 @@
                 Grid.Row="0"
                 FontAttributes="Bold"
                 FontSize="24"
-                Text="{Binding ViewModel.Title, Mode=OneWay}" />
+                Text="{Binding ViewModel.Title, Mode=OneWay, Source={x:Reference ThisPopup}}" />
 
             <uc:ContentPresentation
                 Grid.Row="1"
-                Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
+                Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay, Source={x:Reference ThisPopup}}"
                 VerticalOptions="Center">
                 <uc:ContentPresentation.TemplateSelector>
                     <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />

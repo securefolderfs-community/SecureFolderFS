@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.GoogleDrive.Storage.StorageProperties;
 using SecureFolderFS.Sdk.GoogleDrive.Streams;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
@@ -24,16 +26,17 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         /// <inheritdoc/>
         public virtual async Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
-            var request = DriveService.Files.Get(DetachedId);
-            request.Fields = "size";
-            var file = await request.ExecuteAsync(cancellationToken);
-            var size = file.Size ?? 0L;
-
             switch (accessMode)
             {
                 case FileAccess.Read:
                 {
-                    return new GoogleDriveReadStream(DriveService, DetachedId, size);
+                    var request = DriveService.Files.Get(DetachedId);
+                    request.Fields = "size";
+                    var file = await request.ExecuteAsync(cancellationToken);
+                    var size = file.Size ?? 0L;
+
+                    // Reuse the request object for the stream to avoid creating another one
+                    return new GoogleDriveReadStream(request, size);
                 }
 
                 case FileAccess.Write:
@@ -44,6 +47,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 default:
                     throw new NotSupportedException($"Access mode {accessMode} is not supported.");
             }
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new GDriveFileProperties(this, DriveService);
+            return Task.FromResult(properties);
         }
     }
 }

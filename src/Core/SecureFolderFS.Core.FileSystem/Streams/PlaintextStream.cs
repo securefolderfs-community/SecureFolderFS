@@ -143,12 +143,12 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 // Write gap
                 var gapLength = Position - Length;
 
-                // Generate weak noise
-                var weakNoise = new byte[gapLength];
-                Random.Shared.NextBytes(weakNoise);
+                // Generate cryptographically secure random bytes for gap filling
+                var secureNoise = new byte[gapLength];
+                RandomNumberGenerator.Fill(secureNoise);
 
-                // Write contents of weak noise array
-                WriteInternal(weakNoise, Length);
+                // Write contents of secure noise array
+                WriteInternal(secureNoise, Length);
             }
             else
             {

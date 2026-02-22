@@ -33,6 +33,31 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            // await VaultWidgets.InitAsync(cancellationToken);
+            // VaultWidgets already loaded by VaultCollectionModel // TODO: Load here as well because we shouldn't rely on the implementation
+
+            // Clear previous widgets
+            _widgets.Clear();
+
+            var widgets = VaultWidgets.GetForVault(_id);
+            if (widgets is null)
+                return Task.CompletedTask;
+
+            foreach (var item in widgets)
+                _widgets.Add(new WidgetModel(item.WidgetId, VaultWidgets, item));
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            return VaultWidgets.SaveAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public bool AddWidget(string widgetId)
         {
             var widgets = VaultWidgets.GetForVault(_id) ?? new List<WidgetDataModel>();
@@ -78,34 +103,23 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public void UpdateOrder(IList<IWidgetModel> orderedWidgets)
+        {
+            // Create a new list of widgets
+            var orderedWidgetIds = orderedWidgets.Select(w => w.DataModel).ToList();
+
+            // Update VaultWidgets with the new order
+            VaultWidgets.SetForVault(_id, orderedWidgetIds);
+
+            // Update the cache to match the new order
+            _widgets.Clear();
+            _widgets.AddRange(orderedWidgets);
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<IWidgetModel> GetWidgets()
         {
             return _widgets;
-        }
-
-        /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            // await VaultWidgets.InitAsync(cancellationToken);
-            // VaultWidgets already loaded by VaultCollectionModel // TODO: Load here as well because we shouldn't rely on the implementation
-
-            // Clear previous widgets
-            _widgets.Clear();
-
-            var widgets = VaultWidgets.GetForVault(_id);
-            if (widgets is null)
-                return Task.CompletedTask;
-
-            foreach (var item in widgets)
-                _widgets.Add(new WidgetModel(item.WidgetId, VaultWidgets, item));
-
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task SaveAsync(CancellationToken cancellationToken = default)
-        {
-            return VaultWidgets.SaveAsync(cancellationToken);
         }
     }
 }

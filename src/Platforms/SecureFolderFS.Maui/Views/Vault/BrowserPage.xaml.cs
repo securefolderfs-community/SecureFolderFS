@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views.Vault
@@ -118,7 +119,21 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is not null)
                 ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
 
-            // OnAppearing is called elsewhere in navigation logic.
+            if (ViewModel?.OuterNavigator is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+
+            // Also update the initial layout
+            if (Browser.CanReloadCollection())
+            {
+                Browser.IsVisible = false;
+                var synchronizationContext = SynchronizationContext.Current;
+                _ = Task.Delay(300).ContinueWith(async _ => await synchronizationContext.PostOrExecuteAsync(async _ =>
+                {
+                    await Browser.ReloadCollectionViewAsync();
+                    Browser.IsVisible = true;
+                }));
+            }
+
             base.OnAppearing();
         }
 
@@ -150,12 +165,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is null)
                 return;
 
-            await Browser.FadeTo(0.0d, 150U);
+            await Browser.FadeToAsync(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
 
             _ = Task.Delay(40).ContinueWith(async _ =>
             {
-                await Browser.FadeTo(1.0d, 150U);
+                await Browser.FadeToAsync(1.0d, 150U);
             }).Unwrap();
         }
 
@@ -164,9 +179,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (e.PropertyName != nameof(LayoutsViewModel.BrowserViewType))
                 return;
 
-            Browser.ItemsSource = null;
-            await Task.Delay(100);
-            Browser.SetBinding(BrowserControl.ItemsSourceProperty, $"{nameof(ViewModel)}.{nameof(BrowserViewModel.CurrentFolder)}.{nameof(FolderViewModel.Items)}");
+            // Force a complete recreation of the CollectionView to avoid MAUI layout glitches
+            // when changing ItemsLayout dynamically
+            await Browser.ReloadCollectionViewAsync();
         }
 
         public BrowserViewModel? ViewModel

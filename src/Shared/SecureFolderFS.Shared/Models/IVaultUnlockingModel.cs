@@ -19,7 +19,7 @@ namespace SecureFolderFS.Shared.Models
         /// <param name="credentials">The credentials required to unlock the vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the unlock contract represented by <see cref="IDisposable"/>.</returns>
-        Task<IDisposable> UnlockAsync(IKey credentials, CancellationToken cancellationToken = default);
+        Task<IDisposable> UnlockAsync(IKeyBytes credentials, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Recovers the specified vault using the provided <paramref name="encodedRecoveryKey"/>.

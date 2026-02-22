@@ -47,6 +47,14 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         public static readonly DependencyProperty StartScanningCommandProperty =
             DependencyProperty.Register(nameof(StartScanningCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
 
+        public ICommand? ScanFolderCommand
+        {
+            get => (ICommand?)GetValue(ScanFolderCommandProperty);
+            set => SetValue(ScanFolderCommandProperty, value);
+        }
+        public static readonly DependencyProperty ScanFolderCommandProperty =
+            DependencyProperty.Register(nameof(ScanFolderCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
+
         public ICommand? OpenVaultHealthCommand
         {
             get => (ICommand?)GetValue(OpenVaultHealthCommandProperty);

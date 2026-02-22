@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -155,6 +155,12 @@
   </data>
   <data name="Changelog" xml:space="preserve">
     <value>Release notes</value>
+  </data>
+  <data name="ClearTraces" xml:space="preserve">
+    <value>Clear traces</value>
+  </data>
+  <data name="ClearTracesDescription" xml:space="preserve">
+    <value>Wipes data from caches and recently accessed list</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
     <value>Awesome!</value>
@@ -311,7 +317,7 @@
     <value>Open log location</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+      <value>Opens {0} where the log file is located</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
     <value>Open vault folder</value>
@@ -329,7 +335,7 @@
     <value>Print</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Privacy Policy</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>View the privacy policy statement</value>
@@ -390,7 +396,10 @@
     <value>Privacy</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show in File Explorer</value>
+      <value>Show in {0}</value>
+  </data>
+  <data name="CreateShortcut" xml:space="preserve">
+    <value>Create shortcut file</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Social</value>
@@ -406,6 +415,9 @@
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
     <value>Collect anonymous crash reports and usage data</value>
+  </data>
+  <data name="TelemetryInfoBarMessage" xml:space="preserve">
+    <value>Telemetry data is anonymized and helps us improve app stability and performance.</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Theme</value>
@@ -462,7 +474,7 @@
     <value>View vault</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+      <value>Show this vault in {0}</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Website</value>
@@ -855,7 +867,7 @@
     <value>{0} has closed unexpectedly</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-    <value>Select</value>
+    <value>Select Items</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Done</value>
@@ -916,6 +928,24 @@
   </data>
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
     <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+  </data>
+  <data name="OnboardingAuthenticationTitle" xml:space="preserve">
+    <value>Authenticate the way you want</value>
+  </data>
+  <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
+    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+  </data>
+  <data name="OnboardingEncryptionTitle" xml:space="preserve">
+    <value>Your files, always protected</value>
+  </data>
+  <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
+    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+  </data>
+  <data name="OnboardingFileSystemTitle" xml:space="preserve">
+    <value>Seamless virtual file system</value>
+  </data>
+  <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
+    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
     <value>You're ready to go!</value>
@@ -978,10 +1008,10 @@
     <value>Items in this directory will lose their original name</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-      <value>Welcome, {0}</value>
+    <value>Welcome, {0}</value>
   </data>
   <data name="Connect" xml:space="preserve">
-      <value>Connect</value>
+    <value>Connect</value>
   </data>
   <data name="WinFspNotDetected" xml:space="preserve">
     <value>WinFsp has not been detected. Please install WinFsp (v{0}) to continue.</value>
@@ -990,6 +1020,213 @@
     <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
   </data>
   <data name="ChooseNewName" xml:space="preserve">
-      <value>Choose a new name</value>
+    <value>Choose a new name</value>
+  </data>
+  <data name="ViewOnboardingDescription" xml:space="preserve">
+    <value>Show the onboarding screen</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Cancelling" xml:space="preserve">
+    <value>Cancelling</value>
+  </data>
+  <data name="SizeOptions" xml:space="preserve">
+    <value>Size options</value>
+  </data>
+  <data name="OperationTimedOut" xml:space="preserve">
+    <value>Operation timed out</value>
+  </data>
+  <data name="DateYesterday" xml:space="preserve">
+    <value>Yesterday, {0}</value>
+  </data>
+  <data name="DateWeekAgo" xml:space="preserve">
+    <value>Last week</value>
+  </data>
+  <data name="DateDaysAgo" xml:space="preserve">
+    <value>{0} days ago</value>
+  </data>
+  <data name="VaultUnlocked" xml:space="preserve">
+    <value>Vault is unlocked</value>
+  </data>
+  <data name="AggregatedDataWidget" xml:space="preserve">
+      <value>Data widget</value>
+  </data>
+  <data name="GraphsWidget" xml:space="preserve">
+      <value>Graphs widget</value>
+  </data>
+  <data name="HealthWidget" xml:space="preserve">
+      <value>Health widget</value>
+  </data>
+  <data name="SetupYubiKey" xml:space="preserve">
+      <value>Setup YubiKey PIV authentication</value>
+  </data>
+  <data name="UseLongPress" xml:space="preserve">
+      <value>Use long press (Slot 2)</value>
+  </data>
+  <data name="YubiKey" xml:space="preserve">
+      <value>YubiKey</value>
+  </data>
+  <data name="LoginYubiKey" xml:space="preserve">
+      <value>Authenticate with YubiKey PIV</value>
+  </data>
+  <data name="Finder" xml:space="preserve">
+      <value>Finder</value>
+  </data>
+  <data name="FileExplorer" xml:space="preserve">
+      <value>File Explorer</value>
+  </data>
+  <data name="CorruptedFileChunks" xml:space="preserve">
+      <value>Corrupted file regions</value>
+  </data>
+  <data name="FileHasCorruptedChunks" xml:space="preserve">
+      <value>Parts of the file are corrupted and will be reset</value>
+  </data>
+  <data name="CorruptedChunks" xml:space="preserve">
+      <value>{0} corrupted region(s)</value>
+  </data>
+  <data name="DataLossImminent" xml:space="preserve">
+      <value>Data loss unpreventable</value>
+  </data>
+  <data name="IrrecoverableFile" xml:space="preserve">
+      <value>Irrecoverable file</value>
+  </data>
+  <data name="FileHeaderCorrupted" xml:space="preserve">
+      <value>File header is corrupted and the file will be deleted</value>
+  </data>
+  <data name="DeviceLink" xml:space="preserve">
+      <value>Device Link</value>
+  </data>
+  <data name="DeviceLinkInstructions" xml:space="preserve">
+      <value>1. Click "More Options" (three dots) in SecureFolderFS mobile app\n2. Select "Device Link" option\n3. Toggle "Enable Device Link"\n4. Ensure both devices are on the same network</value>
+  </data>
+  <data name="SetupDeviceLink" xml:space="preserve">
+      <value>Setup Device Link authentication</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+      <value>Accept</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+      <value>Reject</value>
+  </data>
+  <data name="LoginDeviceLink" xml:space="preserve">
+      <value>Authenticate with Device Link</value>
+  </data>
+  <data name="ConfirmBothCodesMatch" xml:space="preserve">
+      <value>Confirm that both codes match</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+      <value>Verification code</value>
+  </data>
+  <data name="DeviceLinkRequest" xml:space="preserve">
+      <value>Device Link request</value>
+  </data>
+  <data name="DeviceLinkIsRequestingCredentials" xml:space="preserve">
+      <value>This device is requesting to use your Device Link credentials to unlock a vault.</value>
+  </data>
+  <data name="DeviceLinkAcceptWarning" xml:space="preserve">
+      <value>Only accept if you initiated this request</value>
+  </data>
+  <data name="CredentialRequested" xml:space="preserve">
+      <value>Credential requested: {0}</value>
+  </data>
+  <data name="DeleteDeviceLinkCredential" xml:space="preserve">
+      <value>Delete Credential</value>
+  </data>
+  <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
+      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
+  </data>
+  <data name="DeviceLinkDescription" xml:space="preserve">
+      <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
+  </data>
+  <data name="DeletedAt" xml:space="preserve">
+      <value>Deleted at</value>
+  </data>
+  <data name="OriginalLocation" xml:space="preserve">
+      <value>Original location</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+      <value>Install</value>
+  </data>
+  <data name="FileSystemOffersImprovedExperience" xml:space="preserve">
+      <value>Improved user experience, reliability, and performance</value>
+  </data>
+  <data name="DefaultFileSystem" xml:space="preserve">
+      <value>The default file system</value>
+  </data>
+  <data name="BuiltinFileSystem" xml:space="preserve">
+      <value>One of the built-in file systems</value>
+  </data>
+  <data name="DokanyDescription" xml:space="preserve">
+      <value>Dokany offers better integration and reliability</value>
+  </data>
+  <data name="WinFspDescription" xml:space="preserve">
+      <value>WinFsp offers better performance and reliability</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+      <value>Refresh</value>
+  </data>
+  <data name="StorageUsed" xml:space="preserve">
+      <value>Storage used</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+      <value>Select all</value>
+  </data>
+  <data name="ClearSelection" xml:space="preserve">
+      <value>Clear selection</value>
+  </data>
+  <data name="CopyingItems" xml:space="preserve">
+      <value>Copying {0} item(s)</value>
+  </data>
+  <data name="MovingItems" xml:space="preserve">
+      <value>Moving {0} item(s)</value>
+  </data>
+  <data name="DeletingItems" xml:space="preserve">
+      <value>Deleting {0} item(s)</value>
+  </data>
+  <data name="NotEnoughSpace" xml:space="preserve">
+      <value>Not enough space</value>
+  </data>
+  <data name="ItemDeletionTitle" xml:space="preserve">
+      <value>Deleting item(s)</value>
+  </data>
+  <data name="ItemDeletionDescription" xml:space="preserve">
+      <value>Are you sure you want to permanently delete {0} item(s)?</value>
+  </data>
+  <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
+      <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+  </data>
+  <data name="IntroPrefix" xml:space="preserve">
+      <value>By continuing, you agree to our </value>
+  </data>
+  <data name="IntroMiddle" xml:space="preserve">
+      <value> and </value>
+  </data>
+  <data name="IntroSuffix" xml:space="preserve">
+      <value>.</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+      <value>Terms of Service</value>
+  </data>
+  <data name="SelectLocationOfVault" xml:space="preserve">
+      <value>Select a location of your vault</value>
+  </data>
+  <data name="CoreMemoryProtectionEnabled" xml:space="preserve">
+      <value>Core Memory Protection is enabled</value>
+  </data>
+  <data name="EnrolledCredentials" xml:space="preserve">
+      <value>Enrolled credentials</value>
+  </data>
+  <data name="PendingPairingRequest" xml:space="preserve">
+      <value>Pending pairing request</value>
+  </data>
+  <data name="DeviceRequestingToPair" xml:space="preserve">
+      <value>{0} is requesting to pair to create credentials</value>
+  </data>
+  <data name="EnableDeviceLink" xml:space="preserve">
+      <value>Enable Device Link</value>
   </data>
 </root>

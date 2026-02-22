@@ -23,5 +23,11 @@ namespace SecureFolderFS.Sdk.Services
         /// The return value may contain additional information about the chosen option.
         /// </remarks>
         Task<IResult> ShowAsync(IViewable viewable);
+
+        /// <summary>
+        /// Closes all currently displayed overlays.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task CloseAllAsync();
     }
 }

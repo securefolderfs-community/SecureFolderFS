@@ -9,7 +9,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName
+    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName, ICreateRenamedCopyOf, IMoveRenamedFrom
     {
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                     uri =>
                     {
                         var content = NSFileManager.DefaultManager.GetDirectoryContent(uri, null, NSDirectoryEnumerationOptions.None, out var error2);
-                        if (error2 is null)
+                        if (content is not null)
                         {
                             var items = content.Select(x => NewStorage(x, this, permissionRoot)).ToArray();
                             tcs.TrySetResult(items);
@@ -149,6 +149,115 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         }
 
         /// <inheritdoc/>
+        public Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken, CreateCopyOfDelegate fallback)
+        {
+            return CreateCopyOfAsync(fileToCopy, overwrite, fileToCopy.Name, cancellationToken, (mf, f, ov, _, ct) => fallback(mf, f, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName, CancellationToken cancellationToken,
+            CreateRenamedCopyOfDelegate fallback)
+        {
+            // Check if the file is an IOSFile. If not, use the fallback.
+            if (fileToCopy is not IOSFile iosFile)
+                return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
+
+            try
+            {
+                permissionRoot.StartAccessingSecurityScopedResource();
+                var newPath = Path.Combine(Id, newName);
+                var newUrl = new NSUrl(newPath, false);
+                
+                // If the source and destination are the same, there's no need to copy.
+                if (iosFile.Id == newPath)
+                    return iosFile;
+
+                if (NSFileManager.DefaultManager.FileExists(newPath))
+                {
+                    if (!overwrite)
+                        throw new FileAlreadyExistsException(newName);
+
+                    NSFileManager.DefaultManager.Remove(newUrl, out _);
+                }
+
+                // Start security access for the source file's url
+                var sourceAccessStarted = iosFile.Inner.StartAccessingSecurityScopedResource();
+                try
+                {
+                    if (!NSFileManager.DefaultManager.Copy(iosFile.Inner, newUrl, out var error))
+                        throw new NSErrorException(error);
+
+                    return new IOSFile(newUrl, this, permissionRoot);
+                }
+                finally
+                {
+                    if (sourceAccessStarted)
+                        iosFile.Inner.StopAccessingSecurityScopedResource();
+                }
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+        
+        /// <inheritdoc/>
+        public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken,
+            MoveFromDelegate fallback)
+        {
+            return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken, (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName,
+            CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            // Check if the file is an IOSFile. If not, use the fallback.
+            if (fileToMove is not IOSFile iosFile)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            try
+            {
+                permissionRoot.StartAccessingSecurityScopedResource();
+                var newPath = Path.Combine(Id, newName);
+                var newUrl = new NSUrl(newPath, false);
+                
+                // If the source and destination are the same, there's no need to move.
+                if (iosFile.Id == newPath)
+                    return iosFile;
+
+                if (NSFileManager.DefaultManager.FileExists(newPath))
+                {
+                    if (!overwrite)
+                        throw new FileAlreadyExistsException(newName);
+
+                    NSFileManager.DefaultManager.Remove(newUrl, out _);
+                }
+
+                // Start security access for the source file's url
+                var sourceAccessStarted = iosFile.Inner.StartAccessingSecurityScopedResource();
+                try
+                {
+                    if (!NSFileManager.DefaultManager.Move(iosFile.Inner, newUrl, out var error))
+                        throw new NSErrorException(error);
+
+                    return new IOSFile(newUrl, this, permissionRoot);
+                }
+                finally
+                {
+                    if (sourceAccessStarted)
+                        iosFile.Inner.StopAccessingSecurityScopedResource();
+                }
+            }
+            finally
+            {
+                permissionRoot.StopAccessingSecurityScopedResource();
+                await Task.CompletedTask;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {
             try
@@ -166,7 +275,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 
                 // Ensure the destination doesn't already exist
                 if (NSFileManager.DefaultManager.FileExists(newPath))
-                    throw new IOException($"A file or folder with the name '{newName}' already exists.");
+                    throw new FileAlreadyExistsException(newName);
 
                 if (!NSFileManager.DefaultManager.Move(originalUrl, newUrl, out var error))
                     throw new NSErrorException(error);

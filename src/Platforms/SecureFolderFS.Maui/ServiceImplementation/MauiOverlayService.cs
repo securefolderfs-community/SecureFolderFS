@@ -2,6 +2,7 @@ using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Maui.Views;
+using SecureFolderFS.Maui.Views.Modals.DeviceLink;
 using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Vault;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
@@ -20,14 +21,14 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)
         {
-            // TODO: Check if it's better to use Shell.Current.TryCast<AppShell>().CurrentPage
-            var navigation = MainPage.Instance!.Navigation;
+            var navigation = Shell.Current.Navigation;
             return viewable switch
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
                 PreviewerOverlayViewModel => new FilePreviewModalPage(navigation),
                 RecycleBinOverlayViewModel => new RecycleBinModalPage(navigation),
+                IntroductionOverlayViewModel => new IntroductionPage(navigation),
                 LayoutsViewModel => new ViewOptionsSheetFragment(),
                 RenameOverlayViewModel => new RenamePrompt(),
                 NewItemOverlayViewModel => new NewItemPrompt(),
@@ -37,6 +38,8 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),
+                DeviceLinkRequestOverlayViewModel => new DeviceLinkRequestPage(navigation),
+                DeviceLinkCredentialsOverlayViewModel => new DeviceLinkCredentialsPage(navigation),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };

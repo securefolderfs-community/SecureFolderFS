@@ -16,6 +16,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,7 +54,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 return;
 
             RestartLoginProcess();
-            var passwordControl = (LoginControl.LoginContentControl.ContentTemplateRoot as FrameworkElement)?.FindChild<PasswordControl>();
+            var passwordControl = LoginControl.LoginContentControl.GetContentControlRoot()?.FindChild<PasswordControl>();
             if (passwordControl is not null && !value.Successful)
                 passwordControl.ShowInvalidPasswordMessage = true;
         }
@@ -195,7 +196,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
                 {
                     if (s is not MigratorV2_V3 migratorV2V3)
                         return;
-                    
+
                     if (e.NewValue is not IFolder vaultFolder)
                         return;
 

@@ -1,10 +1,13 @@
+using System.Security.Cryptography;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.Extensions;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 {
@@ -24,11 +27,21 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            using var keyMaterial = VaultHelpers.GenerateSecureKey(Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
+            using var keyMaterial = new ManagedKey(Constants.KeyTraits.ECIES_SHA256_AESGCM_STDX963_KEY_LENGTH);
+            RandomNumberGenerator.Fill(keyMaterial.Key);
 
             try
             {
-                var ciphertextKey = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
+                IsAuthenticated = false;
+                var keyResult = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
+                IsAuthenticated = true;
+                
+                if (!keyResult.TryGetValue(out var ciphertextKey))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial.CreateCopy(), tcs));
                 await tcs.Task;
@@ -38,7 +51,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 await vaultWriter.WriteAuthenticationAsync<VaultProtectedKeyDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
                 {
                     Capability = "supportsKeyProtection",
-                    CiphertextKey = ciphertextKey.ToArray()
+                    CiphertextKey = ciphertextKey.Key
                 }, cancellationToken);
             }
             catch (Exception ex)

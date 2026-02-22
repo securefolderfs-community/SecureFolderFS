@@ -84,10 +84,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             try
             {
-                // Disable selection, if called with selected items
+                // Disable selection if called with selected items
                 BrowserViewModel.IsSelecting = false;
 
-                using var cts = transferViewModel.GetCancellation();
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
                 var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Move), false, cts.Token);
                 if (destination is not IModifiableFolder destinationFolder)
                     return;
@@ -147,7 +147,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 // Disable selection, if called with selected items
                 BrowserViewModel.IsSelecting = false;
 
-                using var cts = transferViewModel.GetCancellation();
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
                 var destination = await transferViewModel.PickFolderAsync(new TransferOptions(TransferType.Copy), false, cts.Token);
                 if (destination is not IModifiableFolder modifiableDestination)
                     return;
@@ -237,7 +237,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (ParentFolder is null)
                 return;
 
-            // TODO: If moving to trash, show TransferViewModel (with try..catch..finally), otherwise don't show anything
+            if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+
             var items = BrowserViewModel.IsSelecting ? ParentFolder.Items.GetSelectedItems().ToArray() : [];
             if (items.IsEmpty())
                 items = [ this ];
@@ -245,72 +247,112 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Disable selection, if called with selected items
             BrowserViewModel.IsSelecting = false;
 
-            if (BrowserViewModel.Options.IsRecycleBinEnabled() && BrowserViewModel.StorageRoot is not null)
+            try
             {
-                if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
-                    return;
+                transferViewModel.TransferType = TransferType.Delete;
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
 
-                var recycleBin = await RecycleBinService.TryGetOrCreateRecycleBinAsync(BrowserViewModel.StorageRoot, cancellationToken);
-                if (recycleBin is null)
-                    return;
-
-                var sizes = new List<long>();
-                foreach (var item in items)
+                if (BrowserViewModel.Options.IsRecycleBinEnabled() && BrowserViewModel.StorageRoot is not null)
                 {
-                    sizes.Add(item.Inner switch
-                    {
-                        IFile file => await file.GetSizeAsync(cancellationToken),
-                        IFolder folder => await folder.GetSizeAsync(cancellationToken),
-                        _ => 0L
-                    });
-                }
+                    if (ParentFolder?.Folder is not IRecyclableFolder recyclableFolder)
+                        return;
 
-                if (BrowserViewModel.Options.IsRecycleBinUnlimited())
-                {
-                    for (var i = 0; i < items.Length; i++)
+                    var recycleBin = await RecycleBinService.TryGetOrCreateRecycleBinAsync(BrowserViewModel.StorageRoot, cts.Token);
+                    if (recycleBin is null)
+                        return;
+
+                    var sizes = new List<long>();
+                    foreach (var item in items)
                     {
-                        var item = items[i];
-                        await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
-                        ParentFolder?.Items.RemoveAndGet(item)?.Dispose();
+                        sizes.Add(item.Inner switch
+                        {
+                            IFile file => await file.GetSizeAsync(cts.Token),
+                            IFolder folder => await folder.GetSizeAsync(cts.Token),
+                            _ => 0L
+                        });
+                    }
+
+                    if (BrowserViewModel.Options.IsRecycleBinUnlimited())
+                    {
+                        await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, token) =>
+                        {
+                            var idx = Array.IndexOf(items, item);
+                            await recyclableFolder.DeleteAsync(item, sizes[idx], false, token);
+
+                            var itemToRemove = ParentFolder.Items.FirstOrDefault(x => x.Inner.Id == item.Id);
+                            if (itemToRemove is not null)
+                                ParentFolder.Items.RemoveAndGet(itemToRemove)?.Dispose();
+                        }, cts.Token);
+                    }
+                    else
+                    {
+                        var occupiedSize = await recycleBin.GetSizeAsync(cts.Token);
+                        var availableSize = BrowserViewModel.Options.RecycleBinSize - occupiedSize;
+                        var permanently = availableSize < sizes.Sum();
+
+                        if (permanently)
+                        {
+                            var messageOverlay = new MessageOverlayViewModel()
+                            {
+                                Title = "NotEnoughSpace".ToLocalized(),
+                                Message = "ItemsExceedRecycleBinSize".ToLocalized(items.Length),
+                                PrimaryText = "Delete".ToLocalized(),
+                                SecondaryText = "Cancel".ToLocalized()
+                            };
+
+                            var result = await OverlayService.ShowAsync(messageOverlay);
+                            if (!result.Positive())
+                                return;
+                        }
+
+                        var idx = 0;
+                        await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, token) =>
+                        {
+                            await recyclableFolder.DeleteAsync(item, sizes[idx], permanently, token);
+
+                            var itemToRemove = ParentFolder.Items.FirstOrDefault(x => x.Inner.Id == item.Id);
+                            if (itemToRemove is not null)
+                                ParentFolder.Items.RemoveAndGet(itemToRemove)?.Dispose();
+
+                            idx++;
+                        }, cts.Token);
                     }
                 }
                 else
                 {
-                    var occupiedSize = await recycleBin.GetSizeAsync(cancellationToken);
-                    var availableSize = BrowserViewModel.Options.RecycleBinSize - occupiedSize;
-                    if (availableSize < sizes.Sum())
+                    if (ParentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                        return;
+
+                    var messageOverlay = new MessageOverlayViewModel()
                     {
-                        // TODO: Show an overlay telling the user there's not enough space and the items will be deleted permanently
-                        for (var i = 0; i < items.Length; i++)
-                        {
-                            var item = items[i];
-                            await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], true, cancellationToken);
-                            ParentFolder.Items.RemoveAndGet(item)?.Dispose();
-                        }
-                    }
-                    else
+                        Title = "ItemDeletionTitle".ToLocalized(),
+                        Message = "ItemDeletionDescription".ToLocalized(items.Length),
+                        PrimaryText = "Delete".ToLocalized(),
+                        SecondaryText = "Cancel".ToLocalized()
+                    };
+
+                    var result = await OverlayService.ShowAsync(messageOverlay);
+                    if (!result.Positive())
+                        return;
+
+                    await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, token) =>
                     {
-                        for (var i = 0; i < items.Length; i++)
-                        {
-                            var item = items[i];
-                            await recyclableFolder.DeleteAsync((IStorableChild)item.Inner, sizes[i], false, cancellationToken);
-                            ParentFolder.Items.RemoveAndGet(item)?.Dispose();
-                        }
-                    }
+                        await modifiableFolder.DeleteAsync(item, deleteImmediately: true, cancellationToken: token);
+
+                        var itemToRemove = ParentFolder.Items.FirstOrDefault(x => x.Inner.Id == item.Id);
+                        if (itemToRemove is not null)
+                            ParentFolder.Items.RemoveAndGet(itemToRemove)?.Dispose();
+                    }, cts.Token);
                 }
             }
-            else
+            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
             {
-                if (ParentFolder?.Folder is not IModifiableFolder modifiableFolder)
-                    return;
-
-                // TODO: Show an overlay to ask the user **when deleting permanently**
-
-                foreach (var item in items)
-                {
-                    await modifiableFolder.DeleteAsync((IStorableChild)item.Inner, cancellationToken);
-                    ParentFolder.Items.RemoveAndGet(item)?.Dispose();
-                }
+                _ = ex;
+                // TODO: Report error
+            }
+            finally
+            {
+                await transferViewModel.HideAsync();
             }
         }
 
@@ -332,7 +374,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return;
 
             transferViewModel.TransferType = TransferType.Move;
-            using var cts = transferViewModel.GetCancellation();
+            using var cts = transferViewModel.GetCancellation(cancellationToken);
             await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
             {
                 // Copy and delete

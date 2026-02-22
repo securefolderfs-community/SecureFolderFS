@@ -1,5 +1,6 @@
 using Foundation;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.iOS.Storage;
 using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
@@ -19,12 +20,18 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("Invalid storage root path.", nameof(storageRoot));
 
-            var fileManager = NSFileManager.DefaultManager;
-            var attributes = fileManager.GetFileSystemAttributes(path, out var error);
-            if (attributes is null || error is not null)
-                throw new IOException($"Unable to get file system attributes for path: {path}. Error: {error.LocalizedDescription}.");
+            if (storageRoot is IOSStorable)
+            {
+                var fileManager = NSFileManager.DefaultManager;
+                var attributes = fileManager.GetFileSystemAttributes(path, out var error);
+                if (attributes is null || error is not null)
+                    throw new IOException(
+                        $"Unable to get file system attributes for path: {path}. Error: {error.LocalizedDescription}.");
 
-            return (long)attributes.FreeSize;
+                return (long)attributes.FreeSize;
+            }
+
+            throw new NotSupportedException("Unsupported storage root type.");
 #else
             await Task.CompletedTask;
             throw new PlatformNotSupportedException("Only implemented on iOS.");

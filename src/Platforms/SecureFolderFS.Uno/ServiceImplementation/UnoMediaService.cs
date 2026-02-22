@@ -10,6 +10,9 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
 
@@ -24,6 +27,47 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoMediaService : IMediaService
     {
         /// <inheritdoc/>
+        public Task<IImage> GetImageFromResourceAsync(string resourceName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IImage>(resourceName switch
+            {
+                "Android_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
+                {
+#if WINDOWS && !HAS_UNO
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_light.png"
+#else
+                    ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/gpixel_dark.png",
+                    _ => "ms-appx:///Assets/AppAssets/Devices/gpixel_light.png"
+#endif
+                }),
+
+                "iOS_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
+                {
+#if WINDOWS && !HAS_UNO
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_light.png"
+#else
+                    ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/iphone_dark.png",
+                    _ => "ms-appx:///Assets/AppAssets/Devices/iphone_light.png"
+#endif
+                }),
+
+#if WINDOWS && !HAS_UNO
+                "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),
+                "WINFSP" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/winfsp.png"),
+                "WEBDAV" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/webdav.png"),
+#else
+                "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),
+                "WINFSP" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/winfsp.png"),
+                "WEBDAV" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/webdav.png"),
+#endif
+
+                _ => new ImageResource(resourceName, true)
+            });
+        }
+
+        /// <inheritdoc/>
         public Task<IImage> GetImageFromUrlAsync(string url, CancellationToken cancellationToken = default)
         {
             return Task.FromException<IImage>(new NotSupportedException());
@@ -32,7 +76,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
-            await using var stream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             using var winrtStream = stream.AsRandomAccessStream();
 
             var bitmapImage = new BitmapImage();

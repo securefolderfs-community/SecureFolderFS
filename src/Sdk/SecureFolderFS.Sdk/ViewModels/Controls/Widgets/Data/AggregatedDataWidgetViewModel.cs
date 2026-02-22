@@ -1,11 +1,12 @@
-using ByteSizeLib;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 {
@@ -14,6 +15,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
     {
         private readonly IFileSystemStatistics _fileSystemStatistics;
         private readonly PeriodicTimer _periodicTimer;
+        private IDisposable? _bytesReadSubscription;
+        private IDisposable? _bytesWrittenSubscription;
         private ulong _pendingBytesRead;
         private ulong _pendingBytesWritten;
         private ByteSize _bytesRead;
@@ -27,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         {
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.Graphs.GRAPH_UPDATE_INTERVAL_MS));
+            Title = "AggregatedDataWidget".ToLocalized();
         }
 
         /// <inheritdoc/>
@@ -37,16 +41,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             TotalRead = "0B";
             TotalWrite = "0B";
 
-            _fileSystemStatistics.BytesRead = new Progress<long>(x =>
+            // Subscribe to statistics if it supports subscription
+            if (_fileSystemStatistics is IFileSystemStatisticsSubscriber subscriber)
             {
-                if (x > 0)
-                    _pendingBytesRead += (ulong)x;
-            });
-            _fileSystemStatistics.BytesWritten = new Progress<long>(x =>
-            {
-                if (x > 0)
-                    _pendingBytesWritten += (ulong)x;
-            });
+                _bytesReadSubscription = subscriber.SubscribeToBytesRead(new Progress<long>(x =>
+                {
+                    if (x > 0)
+                        _pendingBytesRead += (ulong)x;
+                }));
+
+                _bytesWrittenSubscription = subscriber.SubscribeToBytesWritten(new Progress<long>(x =>
+                {
+                    if (x > 0)
+                        _pendingBytesWritten += (ulong)x;
+                }));
+            }
 
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
@@ -77,8 +86,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _fileSystemStatistics.BytesRead = null;
-            _fileSystemStatistics.BytesWritten = null;
+            _bytesReadSubscription?.Dispose();
+            _bytesWrittenSubscription?.Dispose();
             _periodicTimer.Dispose();
         }
     }

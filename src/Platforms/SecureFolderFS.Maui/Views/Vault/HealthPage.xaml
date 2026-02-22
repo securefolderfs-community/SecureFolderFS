@@ -91,8 +91,7 @@
                     <apesui:ContextMenuItem
                         Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
                         CommandParameter="include_file_contents"
-                        IsEnabled="False"
-                        Text="Include file contents (slower)" />
+                        Text="Scan full vault (include file contents)" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
                     <uc:ProgressiveButton

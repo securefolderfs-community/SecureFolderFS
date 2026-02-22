@@ -16,6 +16,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
     {
         /// <inheritdoc/>
         public abstract IPropertyStore<string> SecurePropertyStore { get; }
+        
+        /// <inheritdoc/>
+        public virtual IPropertyStore<string> InMemoryPropertyStore { get; } = new InMemoryPropertyStore();
 
         /// <inheritdoc/>
         public virtual IDatabaseModel<string> GetDatabaseModel(IFile databaseFile)

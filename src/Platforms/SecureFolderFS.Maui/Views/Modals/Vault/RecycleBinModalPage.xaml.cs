@@ -1,6 +1,6 @@
 using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -84,6 +84,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (sender is not Switch toggleSwitch)
                 return;
 
+            if (!toggleSwitch.IsEnabled)
+                return;
+
             try
             {
                 toggleSwitch.IsEnabled = false;
@@ -117,6 +120,17 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             if (ViewModel?.IsSelecting ?? false)
                 itemViewModel.IsSelected = !itemViewModel.IsSelected;
+        }
+        
+        private void ProgressTrack_OnSizeChanged(object? sender, EventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+            
+            // Nudge the binding to re-evaluate with the now-known width
+            var current = ViewModel.PercentageTaken;
+            ViewModel.PercentageTaken = -1;
+            ViewModel.PercentageTaken = current;
         }
 
         public RecycleBinOverlayViewModel? ViewModel

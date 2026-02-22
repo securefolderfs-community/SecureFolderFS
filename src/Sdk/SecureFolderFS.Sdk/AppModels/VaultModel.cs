@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
     [Inject<IVaultPersistenceService>]
     public sealed partial class VaultModel : IVaultModel
     {
-        private readonly IRemoteResource<IFolder>? _remoteVault;
+        public IRemoteResource<IFolder>? Inner { get; }
 
         /// <inheritdoc/>
         public bool IsRemote { get; }
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.AppModels
             ServiceProvider = DI.Default;
             IsRemote = true;
             VaultFolder = folder;
-            _remoteVault = remoteVault;
+            Inner = remoteVault;
             DataModel = dataModel;
         }
 
@@ -60,11 +60,11 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultFolder is not null)
                 return VaultFolder;
 
-            ArgumentNullException.ThrowIfNull(_remoteVault);
+            ArgumentNullException.ThrowIfNull(Inner);
             ArgumentNullException.ThrowIfNull(DataModel.PersistableId);
 
             // Connect to remote vault
-            var rootFolder = await _remoteVault.ConnectAsync(cancellationToken);
+            var rootFolder = await Inner.ConnectAsync(cancellationToken);
 
             // Try getting by relative path (crawl by name)
             VaultFolder = await rootFolder.TryGetItemByRelativePathOrSelfAsync(DataModel.PersistableId, cancellationToken) as IFolder;
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
             }
 
-            _remoteVault?.Dispose();
+            Inner?.Dispose();
         }
 
         /// <inheritdoc/>
@@ -111,8 +111,8 @@ namespace SecureFolderFS.Sdk.AppModels
                 StateChanged?.Invoke(this, new VaultChangedEventArgs(false));
             }
 
-            if (_remoteVault is not null)
-                await _remoteVault.DisposeAsync();
+            if (Inner is not null)
+                await Inner.DisposeAsync();
         }
     }
 }

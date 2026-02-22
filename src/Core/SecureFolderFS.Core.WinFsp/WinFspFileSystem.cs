@@ -20,8 +20,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WinFsp
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed partial class WinFspFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed partial class WinFspFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;

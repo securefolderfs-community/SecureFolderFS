@@ -13,13 +13,13 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             InitializeComponent();
         }
 
-        public IconElement Icon
+        public FrameworkElement Icon
         {
-            get => (IconElement)GetValue(IconProperty);
+            get => (FrameworkElement)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockContentControl), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(Icon), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(defaultValue: null));
 
         public string? Title
         {

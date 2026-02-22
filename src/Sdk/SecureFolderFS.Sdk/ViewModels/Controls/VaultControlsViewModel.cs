@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
@@ -14,7 +9,10 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -84,7 +82,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // interface to be added to retrieve a view model from a current view (IWrapper<INotifyPropertyChanged?>)
 
             // Navigate away
-            await _vaultNavigation.ForgetNavigateSpecificViewAsync(loginPageViewModel, x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
+            await _vaultNavigation.ForgetNavigateSpecificViewAsync(loginPageViewModel, x =>
+            {
+                if (x is BrowserViewModel)
+                    return true;
+
+                return (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel) ?? false;
+            });
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));
         }
 

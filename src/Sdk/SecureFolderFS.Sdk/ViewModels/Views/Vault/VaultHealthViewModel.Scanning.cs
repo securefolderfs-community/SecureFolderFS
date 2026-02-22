@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading;
@@ -34,7 +35,56 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             // Begin scanning
             await Task.Delay(10);
-            _ = Task.Run(() => ScanAsync(includeFileContents, _cts?.Token ?? default));
+            _ = Task.Run(async () => await ScanAsync(_healthModel, includeFileContents, _cts?.Token ?? default));
+            await Task.Yield();
+        }
+
+        [RelayCommand]
+        private async Task ScanFolderAsync(string? mode)
+        {
+            if (_contentFolder is null)
+                return;
+
+            // Prompt user to pick a folder
+            var pickedFolder = await FileExplorerService.PickFolderAsync(null, false);
+            if (pickedFolder is null)
+                return;
+
+            // Verify the picked folder is within the vault's content folder
+            var contentFolderId = _contentFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            var pickedFolderId = pickedFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            if (!pickedFolderId.StartsWith(contentFolderId, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Set IsProgressing status
+            IsProgressing = true;
+            Title = StatusTitle = "Scanning...";
+
+            // Save last scan state
+            _savedState.AddMultiple(FoundIssues);
+            FoundIssues.Clear();
+
+            // Store scan mode
+            _lastScanMode = mode;
+
+            var includeFileContents = mode?.Contains("include_file_contents", StringComparison.OrdinalIgnoreCase) ?? false;
+
+            // Create a health model for the specific folder
+            var folderHealthModel = CreateHealthModel(pickedFolder);
+
+            // Begin scanning
+            await Task.Delay(10);
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await ScanAsync(folderHealthModel, includeFileContents, _cts?.Token ?? default);
+                }
+                finally
+                {
+                    folderHealthModel.Dispose();
+                }
+            });
             await Task.Yield();
         }
 
@@ -51,14 +101,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             StateChanged?.Invoke(this, new ScanningFinishedEventArgs(true));
         }
 
-        private async Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken)
+        private async Task ScanAsync(IHealthModel healthModel, bool includeFileContents, CancellationToken cancellationToken)
         {
-            if (_healthModel is null)
-                return;
-
             // Begin scanning
             StateChanged?.Invoke(this, new ScanningStartedEventArgs());
-            await _healthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
+            await healthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
 
             // Finish scanning
             EndScanning();

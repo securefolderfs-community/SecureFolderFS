@@ -10,8 +10,9 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 using static SecureFolderFS.Sdk.Ftp.Constants;
 
@@ -21,7 +22,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSVaultFileSystemService : BaseVaultFileSystemService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<IFileSystem> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+        public override async IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             yield return new IOSFileSystem();
@@ -33,27 +34,27 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             var fileExplorerService = DI.Service<IFileExplorerService>();
             yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel)
             {
-                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2 })
+                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2, IconColor = Colors.White })
             };
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_network_drive_macos.png", false) 
+                Icon = new ImageResource("source_network_drive_macos.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_gdrive.png", false) 
+                Icon = new ImageResource("source_gdrive.png") 
             };
-            
+
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.OneDrive", "OneDrive".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_onedrive.png", false) 
+                Icon = new ImageResource("source_onedrive.png") 
             };
-            
+
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.AmazonS3", "AmazonS3".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResourceFile("source_aws_s3.png", false) 
+                Icon = new ImageResource("source_aws_s3.png") 
             };
 
             await Task.CompletedTask;

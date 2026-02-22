@@ -127,7 +127,7 @@ namespace SecureFolderFS.UI.AppModels
                     return null;
 
                 // Return the equivalent ciphertext implementation
-                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _specifics, cancellationToken) as IModifiableFolder;
+                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.VirtualizedRoot, _specifics, cancellationToken) as IModifiableFolder;
             }
         }
 
@@ -159,7 +159,8 @@ namespace SecureFolderFS.UI.AppModels
                 {
                     Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
                     Name = plaintextName ?? item.Name,
-                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default
+                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default,
+                    Size = dataModel.Size ?? -1L
                 };
             }
         }
@@ -205,9 +206,9 @@ namespace SecureFolderFS.UI.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromException<IFolderWatcher>(new NotSupportedException());
+            return await _recycleBin.GetFolderWatcherAsync(cancellationToken);
         }
     }
 }

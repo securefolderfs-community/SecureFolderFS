@@ -1,6 +1,8 @@
 // Some parts of the following code were used from https://github.com/dotnet/maui/issues/20772#issuecomment-2030914069
 
+#if ANDROID
 using Microsoft.Maui.Platform;
+#endif
 
 namespace SecureFolderFS.Maui.AppModels
 {
@@ -21,7 +23,6 @@ namespace SecureFolderFS.Maui.AppModels
             view.GetLocationOnScreen(currentLocation);
             totalX += sender.Handler.MauiContext.Context.FromPixels(currentLocation[0] - startingLocation[0]);
             totalY += sender.Handler.MauiContext.Context.FromPixels(currentLocation[1] - startingLocation[1]);
-
 #endif
             PanUpdated?.Invoke(sender, new PanUpdatedEventArgs(GestureStatus.Running, gestureId, totalX, totalY));
         }

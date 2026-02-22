@@ -34,7 +34,7 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
             InitializeComponent();
 
             _rootControl = App.Instance?.MainWindow?.Content as MainWindowRootControl;
-            _rootNavigationControl = (_rootControl?.RootNavigationService as INavigationControlContract)?.Navigator;
+            _rootNavigationControl = (_rootControl?.ViewModel?.RootNavigationService as INavigationControlContract)?.Navigator;
             ResetView();
         }
 
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
             if (_rootControl is null)
                 return;
 
-            if (_rootControl.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
+            if (_rootControl.ViewModel?.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
                 return;
 
             if (mainHost.NavigationService.CurrentView is not VaultDashboardViewModel vaultDashboard)

@@ -7,11 +7,13 @@ using SecureFolderFS.Core.WinFsp;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
+using SecureFolderFS.Uno.Platforms.Windows.ViewModels;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
@@ -20,15 +22,24 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     public sealed class WindowsVaultFileSystemService : BaseVaultFileSystemService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<IFileSystem> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+        public override async IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             yield return new WindowsWebDavFileSystem();
-            yield return new DokanyFileSystem();
-
-#if DEBUG
             yield return new WinFspFileSystem();
-#endif
+            yield return new DokanyFileSystem();
+        }
+
+        /// <inheritdoc/>
+        public override async IAsyncEnumerable<ItemInstallationViewModel> GetFileSystemInstallationsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var dokany = new DokanyInstallationViewModel();
+            await dokany.InitAsync(cancellationToken);
+            yield return dokany;
+
+            var winFsp = new WinFspInstallationViewModel();
+            await winFsp.InitAsync(cancellationToken);
+            yield return winFsp;
         }
 
         /// <inheritdoc/>

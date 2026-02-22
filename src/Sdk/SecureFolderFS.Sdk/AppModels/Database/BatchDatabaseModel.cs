@@ -209,11 +209,15 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             _databaseFolder ??= (IModifiableFolder?)await _settingsFolder.CreateFolderAsync(_folderName, false, cancellationToken);
         }
 
-        public sealed record SettingValue(Type Type, object? Data, bool WasModified = true)
+        public sealed record SettingValue(Type Type, object? Data, bool WasModified = true) : IChangeTracker
         {
-            public object? Data { get; set; } = Data;
-
+            /// <inheritdoc/>
             public bool WasModified { get; set; } = WasModified;
+
+            /// <summary>
+            /// Gets or sets the data associated with a setting.
+            /// </summary>
+            public object? Data { get; set; } = Data;
         }
     }
 }

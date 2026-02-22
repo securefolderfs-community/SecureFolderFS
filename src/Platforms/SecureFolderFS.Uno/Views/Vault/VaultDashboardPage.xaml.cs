@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -8,6 +10,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,7 +21,6 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [INotifyPropertyChanged]
     public sealed partial class VaultDashboardPage : Page
     {
         private bool _isLoaded;
@@ -26,7 +28,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         public VaultDashboardViewModel? ViewModel
         {
             get => DataContext.TryCast<VaultDashboardViewModel>();
-            set { DataContext = value; OnPropertyChanged(); }
+            set { DataContext = value; }
         }
 
         public VaultDashboardPage()
@@ -109,6 +111,49 @@ namespace SecureFolderFS.Uno.Views.Vault
                 HideBackButtonStoryboard.Stop();
                 GoBack.Visibility = Visibility.Collapsed;
             }
+
+            await Task.Delay(100);
+            if ((Navigation.Content as Frame)?.Content is not IEmbeddedControlContent embeddedContent)
+            {
+                await HideEmbedAsync();
+                EmbeddedContentControl.Content = null;
+                return;
+            }
+
+            if (embeddedContent.EmbeddedContent is { } newEmbed)
+            {
+                // Hide existing embed
+                if (EmbeddedContentControl.Content is not null)
+                    await HideEmbedAsync();
+
+                // Show new embed
+                EmbeddedContentControl.Content = newEmbed;
+                await ShowEmbedAsync();
+            }
+            else
+            {
+                if (EmbeddedContentControl.Content is not null)
+                {
+                    // Hide existing embed
+                    await HideEmbedAsync();
+                    EmbeddedContentControl.Content = null;
+                }
+            }
+        }
+
+        private async Task HideEmbedAsync()
+        {
+            EmbeddedContentControl.Visibility = Visibility.Visible;
+            await HideEmbedStoryboard.BeginAsync();
+            EmbeddedContentControl.Visibility = Visibility.Collapsed;
+            HideEmbedStoryboard.Stop();
+        }
+
+        private async Task ShowEmbedAsync()
+        {
+            EmbeddedContentControl.Visibility = Visibility.Visible;
+            await ShowEmbedStoryboard.BeginAsync();
+            ShowEmbedStoryboard.Stop();
         }
     }
 }
