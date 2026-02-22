@@ -2,47 +2,53 @@
     x:Class="SecureFolderFS.Maui.UserControls.Browser.ItemProperty"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
-    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     x:Name="ThisControl">
 
-    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-        <Label
-            Grid.Row="0"
-            Grid.Column="0"
-            FontAttributes="Bold"
-            FontSize="17"
-            Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
-        <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+    <VerticalStackLayout Spacing="0">
 
         <Grid
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="1"
-            HorizontalOptions="End">
+            Padding="0,10"
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="12"
+            VerticalOptions="Center">
 
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <ImageButton
-                        mi:MauiIcon.Value="{mi_material:Material Icon=ContentCopy,
-                                                                 IconSize=20,
-                                                                 IconColor={StaticResource QuarternaryLightColor}}"
-                        Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
-                        CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
-                </On>
-                <On Platform="iOS">
-                    <ImageButton
-                        mi:MauiIcon.Value="{mi_cupertino:Cupertino Icon=DoconClipboard,
-                                                                   IconSize=20}"
-                        Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
-                        CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}" />
-                </On>
-            </OnPlatform>
+            <!--  Title + Subtitle  -->
+            <VerticalStackLayout
+                Grid.Column="0"
+                Spacing="2"
+                VerticalOptions="Center">
+                <Label
+                    FontSize="12"
+                    Opacity="0.5"
+                    Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    TextTransform="Uppercase" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="15"
+                    LineBreakMode="TailTruncation"
+                    Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+            </VerticalStackLayout>
+
+            <!--  Copy button  -->
+            <Button
+                Grid.Column="1"
+                Command="{Binding Command, Mode=OneWay, Source={x:Reference ThisControl}}"
+                CommandParameter="{Binding CommandParameter, Mode=OneWay, Source={x:Reference ThisControl}}"
+                HorizontalOptions="End"
+                Style="{OnPlatform Android={StaticResource DefaultButtonStyle},
+                                   iOS={StaticResource NoBackgroundButtonStyle}}"
+                Text="{l:ResourceString Rid=Copy}"
+                VerticalOptions="Center" />
         </Grid>
-    </Grid>
 
+        <!--  Row divider, hidden on the last item  -->
+        <BoxView
+            HeightRequest="1"
+            IsVisible="{Binding IsLastItem, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource BoolInvertConverter}}"
+            Opacity="0.4"
+            Color="{AppThemeBinding Light={StaticResource BorderLightColor},
+                                    Dark={StaticResource BorderDarkColor}}" />
+
+    </VerticalStackLayout>
 </ContentView>

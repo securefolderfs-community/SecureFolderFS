@@ -12,75 +12,117 @@
     BindingContext="{x:Reference ThisPopup}">
 
     <tv:Popup.Shadow>
-        <Shadow Offset="0,0" />
+        <Shadow
+            Opacity="0.2"
+            Radius="24"
+            Offset="0,4" />
     </tv:Popup.Shadow>
 
     <Border
-        Margin="16,0"
-        Padding="16"
-        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+        Margin="20,0"
+        Padding="0"
+        Background="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
+                                     Dark={StaticResource ElevatedFillPrimaryDarkColor}}"
         HorizontalOptions="Fill"
+        StrokeThickness="0"
         VerticalOptions="Center">
         <Border.StrokeShape>
-            <RoundRectangle CornerRadius="12" />
+            <RoundRectangle CornerRadius="16" />
         </Border.StrokeShape>
 
-        <VerticalStackLayout Spacing="16">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
-                <Border Grid.Column="0" StrokeThickness="0">
+        <VerticalStackLayout Spacing="0">
+
+            <!--  Header  -->
+            <Grid
+                Padding="16,16,12,16"
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="14">
+
+                <!--  Icon plate  -->
+                <Border
+                    Grid.Column="0"
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    HeightRequest="56"
+                    StrokeThickness="0"
+                    WidthRequest="56">
                     <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="4" />
+                        <RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
                     <ContentView
                         x:Name="ImageView"
                         BindingContext="{Binding ViewModel}"
                         Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
-                        HeightRequest="64"
+                        HeightRequest="36"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        WidthRequest="64" />
+                        WidthRequest="36" />
                 </Border>
 
-                <Label
+                <!--  Title + type hint  -->
+                <VerticalStackLayout
                     Grid.Column="1"
-                    FontAttributes="Bold"
-                    FontSize="22"
-                    Text="{Binding ViewModel.Title, Mode=OneWay}"
-                    VerticalOptions="Center" />
+                    Spacing="2"
+                    VerticalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="17"
+                        LineBreakMode="TailTruncation"
+                        Text="{Binding ViewModel.Title, Mode=OneWay}" />
+                    <Label
+                        FontSize="13"
+                        Opacity="0.5"
+                        Text="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+                </VerticalStackLayout>
             </Grid>
 
-            <!--  Item Type  -->
-            <uc:ItemProperty
-                Title="{l:ResourceString Rid=ItemType}"
-                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                CommandParameter="ItemType"
-                Subtitle="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
+            <!--  Divider  -->
+            <BoxView
+                HeightRequest="1"
+                Opacity="0.5"
+                Color="{AppThemeBinding Light={StaticResource BorderLightColor},
+                                        Dark={StaticResource BorderDarkColor}}" />
 
-            <!--  Size  -->
-            <uc:ItemProperty
-                Title="{l:ResourceString Rid=Size}"
-                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                CommandParameter="Size"
-                IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
+            <!--  Properties list  -->
+            <VerticalStackLayout Padding="16,12,16,16" Spacing="0">
 
-            <!--  Date Created  -->
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="iOS">
-                    <uc:ItemProperty
-                        Title="{l:ResourceString Rid=DateCreated}"
-                        Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                        CommandParameter="DateCreated"
-                        Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
-                </On>
-            </OnPlatform>
+                <!--  Item Type  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=ItemType}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="ItemType"
+                    IsLastItem="False"
+                    Subtitle="{Binding ViewModel.FileTypeText, Mode=OneWay}" />
 
-            <!--  Date Modified  -->
-            <uc:ItemProperty
-                Title="{l:ResourceString Rid=DateModified}"
-                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                CommandParameter="DateModified"
-                Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+                <!--  Size  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=Size}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="Size"
+                    IsLastItem="False"
+                    IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
+
+                <!--  Date Created (iOS only)  -->
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="iOS">
+                        <uc:ItemProperty
+                            Title="{l:ResourceString Rid=DateCreated}"
+                            Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                            CommandParameter="DateCreated"
+                            IsLastItem="False"
+                            Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
+                    </On>
+                </OnPlatform>
+
+                <!--  Date Modified  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=DateModified}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="DateModified"
+                    IsLastItem="True"
+                    Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </Border>
 </tv:Popup>
