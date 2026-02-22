@@ -21,39 +21,75 @@
             Spacing="32"
             VerticalOptions="Center">
 
-            <Grid>
-                <mi:MauiIcon
-                    HorizontalOptions="Center"
-                    Icon="{mi_material:Material Icon=Check,
-                                                IconSize=80}"
-                    OnPlatforms="Android" />
-                <mi:MauiIcon
-                    HorizontalOptions="Center"
-                    Icon="{mi_cupertino:Cupertino Icon=TrayArrowDownFill,
-                                                  IconSize=80}"
-                    OnPlatforms="iOS" />
-            </Grid>
+            <!--  Icon plate  -->
+            <Border
+                BackgroundColor="{AppThemeBinding Light={StaticResource SecondaryLightColor},
+                                                  Dark={StaticResource SecondaryDarkColor}}"
+                HeightRequest="96"
+                HorizontalOptions="Center"
+                StrokeThickness="0"
+                WidthRequest="96">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24" />
+                </Border.StrokeShape>
+                <Grid>
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_material:Material Icon=Check,
+                                                    IconSize=48}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
+                        OnPlatforms="Android"
+                        VerticalOptions="Center" />
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_cupertino:Cupertino Icon=TrayArrowDownFill,
+                                                      IconSize=48}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
+                        OnPlatforms="iOS"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
 
-            <VerticalStackLayout Spacing="4">
+            <!--  Vault name + message  -->
+            <VerticalStackLayout Spacing="6">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="32"
+                    FontSize="28"
                     HorizontalOptions="Center"
                     Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
                 <Label
                     FontSize="14"
                     HorizontalOptions="Center"
-                    Opacity="0.8"
+                    Opacity="0.5"
                     Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
 
+            <!--  CTA button (iOS)  -->
             <OnPlatform x:TypeArguments="View">
                 <On Platform="iOS">
-                    <Button
-                        Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
-                        Style="{StaticResource NoBackgroundButtonStyle}"
-                        Text="{l:ResourceString Rid=GoToVaults}"
-                        VerticalOptions="End" />
+                    <Border
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                          Dark={StaticResource PrimaryDarkColor}}"
+                        HeightRequest="50"
+                        HorizontalOptions="Center"
+                        MinimumWidthRequest="180"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="Center"
+                            Text="{l:ResourceString Rid=GoToVaults}"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}" />
+                        </Border.GestureRecognizers>
+                    </Border>
                 </On>
             </OnPlatform>
         </VerticalStackLayout>

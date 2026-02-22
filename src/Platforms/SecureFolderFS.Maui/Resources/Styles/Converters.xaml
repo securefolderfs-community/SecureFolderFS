@@ -10,6 +10,7 @@
     <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
+    <vc:NullToOpacityConverter x:Key="NullToOpacityConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />

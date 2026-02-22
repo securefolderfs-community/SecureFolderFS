@@ -1211,4 +1211,7 @@
   <data name="TermsOfService" xml:space="preserve">
       <value>Terms of Service</value>
   </data>
+  <data name="SelectLocationOfVault" xml:space="preserve">
+      <value>Select a location of your vault</value>
+  </data>
 </root>
