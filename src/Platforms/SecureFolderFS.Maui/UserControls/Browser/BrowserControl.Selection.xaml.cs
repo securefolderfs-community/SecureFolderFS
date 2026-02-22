@@ -106,42 +106,31 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             GetItemLayout(originView, out var columns, out var itemWidth, out var itemHeight,
                 out var hSpacing, out var vSpacing, out var offsetX, out var offsetY);
 
-            // Delta from the moment the swipe was confirmed
             var deltaX = totalX - _swipeStartPan.Value.X;
             var deltaY = totalY - _swipeStartPan.Value.Y;
-
-            // Current finger position = start point + delta
             var startPoint = _swipeOriginCenterPoint;
             var currentPoint = new Point(startPoint.X + deltaX, startPoint.Y + deltaY);
+            
+            var hitRect = new Rect(
+                Math.Min(startPoint.X, currentPoint.X),
+                Math.Min(startPoint.Y, currentPoint.Y),
+                Math.Abs(currentPoint.X - startPoint.X),
+                Math.Abs(currentPoint.Y - startPoint.Y));
 
-            // Rectangle bounds in canvas coordinates
-            var rectX = Math.Min(startPoint.X, currentPoint.X);
-            var rectY = Math.Min(startPoint.Y, currentPoint.Y);
-            var rectW = Math.Abs(currentPoint.X - startPoint.X);
-            var rectH = Math.Abs(currentPoint.Y - startPoint.Y);
-
-            PositionSelectionRectangle(new Rect(rectX, rectY, rectW, rectH));
-
-            // Hit-testing – build item rectangles with padding offset
-            for (var i = 0; i < ItemsSource.Count; i++)
+            PositionSelectionRectangle(hitRect);
+            _swipeSelectionManager.UpdateFromRectangle(ItemsSource, item =>
             {
-                var col = i % columns;
-                var row = i / columns;
+                var index = ItemsSource.IndexOf(item);
+                var col = index % columns;
+                var row = index / columns;
                 var itemRect = new Rect(
                     offsetX + col * (itemWidth + hSpacing),
                     offsetY + row * (itemHeight + vSpacing),
                     itemWidth,
                     itemHeight);
 
-                var hitRect = new Rect(
-                    Math.Min(startPoint.X, currentPoint.X),
-                    Math.Min(startPoint.Y, currentPoint.Y),
-                    Math.Abs(currentPoint.X - startPoint.X),
-                    Math.Abs(currentPoint.Y - startPoint.Y));
-
-                if (hitRect.IntersectsWith(itemRect))
-                    _swipeSelectionManager.Update(ItemsSource[i]);
-            }
+                return hitRect.IntersectsWith(itemRect);
+            });
         }
 
         private void EndSelectionRectangle()

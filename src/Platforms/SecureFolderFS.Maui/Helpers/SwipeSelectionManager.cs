@@ -10,6 +10,7 @@ namespace SecureFolderFS.Maui.Helpers
         private bool _isActive;
         private bool _selectionIntent; // true = select, false = deselect
         private readonly HashSet<string> _processedItemIds = new();
+        private readonly HashSet<string> _currentlyInsideIds = new();
 
         /// <summary>Whether a swipe gesture is currently in progress.</summary>
         public bool IsActive => _isActive;
@@ -25,6 +26,31 @@ namespace SecureFolderFS.Maui.Helpers
             _selectionIntent = !item.IsSelected; // flip from the current state
             _processedItemIds.Clear();
             Apply(item);
+        }
+        
+        public void UpdateFromRectangle(IList<BrowserItemViewModel> allItems, Func<BrowserItemViewModel, bool> isInsideRect)
+        {
+            if (!_isActive)
+                return;
+
+            foreach (var item in allItems)
+            {
+                var inside = isInsideRect(item);
+                var id = item.Inner.Id;
+
+                if (inside && !_currentlyInsideIds.Contains(id))
+                {
+                    // Entered rectangle — apply intent
+                    item.IsSelected = _selectionIntent;
+                    _currentlyInsideIds.Add(id);
+                }
+                else if (!inside && _currentlyInsideIds.Contains(id))
+                {
+                    // Left rectangle — revert to original state
+                    item.IsSelected = !_selectionIntent;
+                    _currentlyInsideIds.Remove(id);
+                }
+            }
         }
 
         /// <summary>
@@ -45,6 +71,7 @@ namespace SecureFolderFS.Maui.Helpers
         {
             _isActive = false;
             _processedItemIds.Clear();
+            _currentlyInsideIds.Clear();
         }
 
         private void Apply(BrowserItemViewModel item)
