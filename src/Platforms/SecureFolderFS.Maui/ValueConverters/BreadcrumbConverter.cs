@@ -11,7 +11,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             if (parameter is not string strParam)
                 return null;
-            
+
             var isDark = MauiThemeHelper.Instance.ActualTheme == ThemeType.Dark;
             switch (strParam.ToLowerInvariant())
             {

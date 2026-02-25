@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
         [ObservableProperty] private bool _IsAwaitingTouch;
         [ObservableProperty] private bool _UseLongPress = true;
-        
+
         /// <summary>
         /// Gets the unique ID of the vault.
         /// </summary>
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
             var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
             if (authenticationFile is null)
                 return;
-            
+
             await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
         public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
-            
+
             try
             {
                 // During login, the slot should already be configured
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
                     UseLongPress,
                     () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
                     cancellationToken);
-                
+
                 return Result<IKeyBytes>.Success(key);
             }
             finally
@@ -165,7 +165,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
                 // Perform challenge-response
                 var response = ChallengeResponse(otpSession, slot, challengeBytes, touchNotifier);
-                
+
                 if (response is null)
                     throw new InvalidOperationException("Challenge-response failed. Ensure the YubiKey slot is configured for HMAC-SHA1.");
 
@@ -303,7 +303,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Gets diagnostic information about the YubiKey's OTP slot configuration.
         /// </summary>
@@ -314,7 +314,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
             {
                 var device = GetYubiKeyDevice();
                 using var otpSession = new OtpSession(device);
-                
+
                 return $"YubiKey: {device.SerialNumber}\n" +
                        $"Firmware: {device.FirmwareVersion}\n" +
                        $"Slot 1 (ShortPress) configured: {otpSession.IsShortPressConfigured}\n" +

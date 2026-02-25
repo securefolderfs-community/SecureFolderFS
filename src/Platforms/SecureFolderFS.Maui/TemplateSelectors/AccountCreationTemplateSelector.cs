@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
     internal sealed class AccountCreationTemplateSelector : DataTemplateSelector
     {
         public DataTemplate? FtpAccountTemplate { get; set; }
-        
+
         public DataTemplate? GoogleDriveAccountTemplate { get; set; }
 
         /// <inheritdoc/>

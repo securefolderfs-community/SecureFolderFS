@@ -95,10 +95,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             {
                 using var stream = file.OpenStreamAsync(FileAccess.Read, FileShare.Read).ConfigureAwait(false).GetAwaiter().GetResult();
                 using var memoryStream = new MemoryStream();
-                
+
                 stream.CopyTo(memoryStream);
                 _cachedData = NSData.FromArray(memoryStream.ToArray());
-                
+
                 return _cachedData;
             }
             catch (Exception)
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 return new NSData();
             }
         }
-        
+
         private static string GetUtiFromMimeType(string mimeType)
         {
             return mimeType switch
@@ -127,7 +127,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 _ => "public.data"
             };
         }
-        
+
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {

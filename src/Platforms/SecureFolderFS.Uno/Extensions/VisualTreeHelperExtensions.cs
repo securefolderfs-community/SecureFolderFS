@@ -26,11 +26,11 @@ namespace SecureFolderFS.Uno.Extensions
                 var presenter = contentControl.FindChild<ContentPresenter>();
                 return presenter?.ContentTemplateRoot as FrameworkElement;
             }
-            
+
             return contentTemplateRoot as FrameworkElement;
 #endif
         }
-        
+
         public static T? GetParent<T>(this DependencyObject obj)
         {
             return (T?)GetParent(obj, typeof(T));

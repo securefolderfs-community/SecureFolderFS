@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.DataModels
         /// </summary>
         [JsonPropertyName("pairingId")]
         public required string? PairingId { get; set; }
-        
+
         /// <summary>
         /// The Credential ID (CID) that binds this vault to a mobile credential.
         /// </summary>
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Uno.DataModels
         /// </summary>
         [JsonPropertyName("mobileDeviceName")]
         public required string? MobileDeviceName { get; set; }
-        
+
         /// <summary>
         /// The type of the mobile device.
         /// </summary>

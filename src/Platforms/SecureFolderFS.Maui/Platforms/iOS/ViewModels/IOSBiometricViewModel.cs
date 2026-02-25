@@ -86,7 +86,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             return Result<IKeyBytes>.Success(encrypted);
         }
-        
+
         /// <inheritdoc/>
         public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
@@ -123,7 +123,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             var plaintextBuffer = plaintext.ToArray();
             return ManagedKey.TakeOwnership(plaintextBuffer);
         }
-        
+
         private static async Task<(bool ok, NSError? error)> EvaluateAsync(LAContext context, LAPolicy policy, string reason)
         {
             if (!context.CanEvaluatePolicy(policy, out var canErr))
@@ -161,7 +161,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 
             return key;
         }
-        
+
         private static SecKey? GetPrivateKey(string alias)
         {
             var applicationTag = NSData.FromString(alias, NSStringEncoding.UTF8);

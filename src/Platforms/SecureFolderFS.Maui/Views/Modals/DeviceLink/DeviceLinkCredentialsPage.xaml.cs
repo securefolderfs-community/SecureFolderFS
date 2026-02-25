@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        
+
         public DeviceLinkCredentialsPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
             BindingContext = this;
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
 
             return await _modalTcs.Task;
         }
-        
+
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
@@ -52,14 +52,14 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
         {
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
-        
+
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
         }
-        
+
         public DeviceLinkCredentialsOverlayViewModel? ViewModel
         {
             get => (DeviceLinkCredentialsOverlayViewModel?)GetValue(ViewModelProperty);

@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 #else
             "Skia X11 - Uno";
 #endif
-        
+
         /// <inheritdoc/>
         public override Version AppVersion
         {

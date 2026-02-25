@@ -9,9 +9,9 @@ namespace SecureFolderFS.Maui.Extensions;
 /// </summary>
 internal static class PopupExtensions
 {
-    private const uint FadeAnimationDuration = 300;
-    private const double OverlayOpacity = 0.6;
-    
+    private const uint FADE_ANIMATION_MS = 300;
+    private const double OVERLAY_OPACITY = 0.6d;
+
     /// <summary>
     /// Stores the close action for each popup that is currently shown as an overlay.
     /// </summary>
@@ -113,8 +113,8 @@ internal static class PopupExtensions
             Shell.SetBackButtonBehavior(contentPage, originalBackButtonBehavior);
 
             await Task.WhenAll(
-                dimBackground.FadeToAsync(0, FadeAnimationDuration, Easing.CubicOut),
-                popupContainer.FadeToAsync(0, FadeAnimationDuration, Easing.CubicOut)
+                dimBackground.FadeToAsync(0, FADE_ANIMATION_MS, Easing.CubicOut),
+                popupContainer.FadeToAsync(0, FADE_ANIMATION_MS, Easing.CubicOut)
             );
 
             // Only remove the overlay layers — never touch the original content
@@ -147,8 +147,8 @@ internal static class PopupExtensions
         });
 
         _ = Task.WhenAll(
-            dimBackground.FadeToAsync(OverlayOpacity, FadeAnimationDuration, Easing.CubicIn),
-            popupContainer.FadeToAsync(1, FadeAnimationDuration, Easing.CubicIn)
+            dimBackground.FadeToAsync(OVERLAY_OPACITY, FADE_ANIMATION_MS, Easing.CubicIn),
+            popupContainer.FadeToAsync(1, FADE_ANIMATION_MS, Easing.CubicIn)
         );
 
         return completionSource.Task;
@@ -178,7 +178,7 @@ internal static class PopupExtensions
     {
         if (_closeActions.TryGetValue(popup, out var closeAction))
             return closeAction();
-        
+
         return Task.CompletedTask;
     }
 }

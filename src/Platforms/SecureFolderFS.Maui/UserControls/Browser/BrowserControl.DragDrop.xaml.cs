@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             e.Data.Properties["DraggedItem"] = itemViewModel;
         }
-        
+
         private void DropGestureRecognizer_DragOver(object? sender, DragEventArgs e)
         {
             if (sender is not DropGestureRecognizer { Parent: View view })
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             view.BackgroundColor = Colors.Transparent;
         }
-        
+
         private async void DropGestureRecognizer_Drop(object? sender, DropEventArgs e)
         {
             if (sender is not ContextMenuContainer { BindingContext: FolderViewModel folderViewModel })
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             // No visual feedback needed for collection drop
         }
-        
+
         private async void CollectionDropGestureRecognizer_Drop(object? sender, DropEventArgs e)
         {
             // Handle internal drag-and-drop (from within the app)
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 // Get the current folder from the BrowserViewModel
                 var browserViewModel = draggedItem.BrowserViewModel;
                 var currentFolder = browserViewModel.CurrentFolder;
-                
+
                 if (currentFolder is null)
                     return;
 
@@ -229,7 +229,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         // This is a Gallery/Photos app item - load as data representation
                         var capturedTypeId = matchedGalleryTypeIdentifier;
                         var capturedProvider = itemProvider;
-                        
+
                         // Determine extension from type identifier
                         var extension = GetExtensionFromTypeIdentifier(capturedTypeId);
                         var suggestedExtension = Path.GetExtension(suggestedName);
@@ -243,7 +243,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                             var utType = UTType.CreateFromIdentifier(capturedTypeId);
                             if (utType is null)
                                 return null;
-                                
+
                             capturedProvider.LoadDataRepresentation(utType, (data, _) =>
                             {
                                 dataTcs.TrySetResult(data);
@@ -252,7 +252,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                             var data = await dataTcs.Task;
                             return data?.AsStream();
                         }, false));
-                        
+
                         continue;
                     }
 
@@ -279,7 +279,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         {
                             // Get the actual filename from the URL path - this should include the correct extension
                             var fileNameFromPath = Path.GetFileName(url.Path!);
-                            
+
                             // Use the filename from path if available (it has the correct extension),
                             // otherwise fall back to suggestedName with extension appended
                             string actualName;
@@ -401,7 +401,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // TODO: Implement Android drag-and-drop from external apps
 #endif
         }
-        
+
 #if IOS || MACCATALYST
         private static string GetExtensionFromTypeIdentifier(string typeIdentifier)
         {

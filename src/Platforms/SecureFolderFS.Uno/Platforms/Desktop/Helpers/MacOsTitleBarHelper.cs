@@ -17,7 +17,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 
         // NSWindowTitleVisibility values
         private const long NSWindowTitleHidden = 1;
-        
+
         /// <summary>
         /// Configures the window to extend content into the title bar while preserving
         /// the native macOS window chrome (traffic light buttons and rounded corners).
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         {
             return (64, 0);
         }
-        
+
         private static IntPtr GetNativeWindowHandle(Window window)
         {
 #if __UNO_SKIA_MACOS__

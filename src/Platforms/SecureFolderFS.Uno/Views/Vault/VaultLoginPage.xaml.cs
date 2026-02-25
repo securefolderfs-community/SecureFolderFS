@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             base.OnNavigatedTo(e);
         }
-        
+
         private async void LoginControl_Loaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(300); // Wait for the UI to update

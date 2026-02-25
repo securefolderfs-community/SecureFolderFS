@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         private IntPtr _notificationCenter;
         private IntPtr _notificationNameRef;
         private UnsafeNative.LockCallback? _lockCallback;
-        
+
         /// <inheritdoc/>
         public event EventHandler? DeviceLocked
         {

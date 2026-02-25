@@ -63,7 +63,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             await Task.CompletedTask;
         }
-        
+
         private static bool AreBiometricsAvailable(out LABiometryType biometryType)
         {
             using var context = new LAContext();

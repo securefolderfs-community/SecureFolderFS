@@ -11,7 +11,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             : base(vaultFolder, vaultId, title)
         {
         }
-        
+
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
@@ -37,13 +37,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 IsAuthenticated = false;
                 var keyResult = await AcquireAsync(VaultId, auth.CiphertextKey, cancellationToken);
                 IsAuthenticated = true;
-                
+
                 if (!keyResult.TryGetValue(out var keyMaterial))
                 {
                     Report(keyResult);
                     return;
                 }
-                
+
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial, tcs));
                 await tcs.Task;

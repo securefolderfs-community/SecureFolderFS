@@ -164,7 +164,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             await NavigateAsync(nextViewModel);
         }
-        
+
         private async Task<IVaultModel?> FromDataSourceAsync(BaseDataSourceWizardViewModel dataSource)
         {
             var folder = await dataSource.GetFolderAsync();

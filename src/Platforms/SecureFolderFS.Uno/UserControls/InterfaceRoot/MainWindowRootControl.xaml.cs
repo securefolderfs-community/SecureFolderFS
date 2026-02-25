@@ -88,14 +88,14 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             // Initialize theme
             await UnoThemeHelper.Instance.InitAsync();
-            
+
             // Show introduction
             var settingsService = DI.Service<ISettingsService>();
             if (!settingsService.AppSettings.WasIntroduced)
             {
                 var overlayService = DI.Service<IOverlayService>();
                 await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
-                
+
                 settingsService.AppSettings.WasIntroduced = true;
                 await settingsService.AppSettings.SaveAsync();
             }
@@ -114,15 +114,15 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             // Signal that the main window has finished initializing
             App.Instance?.MainWindowInitialized.TrySetResult();
         }
-        
+
         private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (XamlRoot is null)
                 return;
-            
+
             var focusedElement = FocusManager.GetFocusedElement(XamlRoot);
             var isOccupied = focusedElement is TextBox or PasswordBox or AutoSuggestBox or NumberBox or RichEditBox;
-            
+
             bool ctrl;
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
                 ctrl = InputKeyboardSource.GetKeyStateForCurrentThread(VirtualKey.LeftWindows).HasFlag(CoreVirtualKeyStates.Down);
@@ -135,39 +135,39 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 {
                     if (isOccupied)
                         return;
-                    
+
                     var overlayService = DI.Service<IOverlayService>();
                     if (mainHostViewModel.VaultListViewModel.SelectedItem is { VaultViewModel.IsUnlocked: true } selectedItem)
                     {
                         e.Handled = true;
                         if (overlayService.CurrentView is CredentialsOverlayViewModel or WizardOverlayViewModel)
                             return;
-                        
+
                         await overlayService.CloseAllAsync();
                         selectedItem.RequestLockCommand.Execute(null);
                         return;
                     }
                 }
-                
+
                 var keyInt = (int)e.Key;
                 if (ctrl && keyInt is >= 49 and <= 57)
                 {
                     // Only ignore focused inputs when not on the login page
                     if (isOccupied && mainHostViewModel.NavigationService.CurrentView is not VaultLoginViewModel)
                         return;
-                    
+
                     e.Handled = true;
                     var itemViewModel = mainHostViewModel.VaultListViewModel.Items.ElementAtOrDefault(keyInt - 49);
                     if (itemViewModel is not null)
                         mainHostViewModel.VaultListViewModel.SelectedItem = itemViewModel;
-                
+
                     return;
                 }
             }
-            
+
             if (isOccupied)
                 return;
-            
+
             if (ctrl && e.Key == (VirtualKey)188) // 188 - Comma
             {
                 e.Handled = true;
@@ -181,7 +181,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 e.Handled = true;
                 foreach (var item in ViewModel.VaultCollectionModel)
                     WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
-                
+
                 App.Instance?.UseForceClose = true;
                 Application.Current.Exit();
             }

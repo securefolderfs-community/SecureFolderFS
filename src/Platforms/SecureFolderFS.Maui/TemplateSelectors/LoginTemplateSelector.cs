@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? KeyFileTemplate { get; set; }
 
         public DataTemplate? ErrorTemplate { get; set; }
-        
+
         public DataTemplate? UnsupportedTemplate { get; set; }
 
 #if ANDROID

@@ -68,7 +68,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             using var jpegData = resizedImage.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
             if (jpegData is null)
                 throw new FormatException("Failed to convert image to JPEG.");
-            
+
             var memoryStream = new MemoryStream();
             await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
@@ -104,7 +104,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
                 if (jpegData is null)
                     throw new FormatException("Failed to convert image to JPEG.");
-                
+
                 var memoryStream = new MemoryStream();
                 await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
                 memoryStream.Position = 0L;

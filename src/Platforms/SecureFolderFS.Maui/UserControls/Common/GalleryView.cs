@@ -125,7 +125,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             NextRequested?.Invoke(this, EventArgs.Empty);
             RefreshLayout();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnSizeAllocated(double width, double height)
         {
@@ -138,7 +138,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
         {
             await _container.TranslateToAsync(0, 0, 225U, Easing.CubicOut);
         }
-        
+
         private async void Recognizer_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             switch (e.StatusType)

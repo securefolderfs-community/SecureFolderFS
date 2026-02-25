@@ -8,7 +8,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             InitializeComponent();
         }
-        
+
         public bool IsLastItem
         {
             get => (bool)GetValue(IsLastItemProperty);

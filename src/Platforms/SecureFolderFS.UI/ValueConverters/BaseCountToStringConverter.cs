@@ -40,7 +40,7 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             throw new NotImplementedException();
         }
-        
+
         private static bool MatchesCondition(string condition, int count)
         {
             // Supported: exact number (e.g. "0"), ">N", ">=N", "<N", "<=N"

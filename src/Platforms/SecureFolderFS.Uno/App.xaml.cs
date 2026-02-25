@@ -62,7 +62,7 @@ namespace SecureFolderFS.Uno
 #else
             true ? throw new PlatformNotSupportedException() : null;
 #endif
-        
+
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Uno
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            
+
             // Determine app language
             await SafetyHelpers.NoFailureAsync(async () =>
             {
@@ -123,7 +123,7 @@ namespace SecureFolderFS.Uno
 
                     if (matchedLanguage is not null)
                         await localizationService.SetCultureAsync(matchedLanguage);
-                    
+
                     ApplicationData.Current.LocalSettings.Values["IsAppLanguageDetected"] = true;
                 }
             });

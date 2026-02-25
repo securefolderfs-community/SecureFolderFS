@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public IDisposable? AccountViewModel
         {
             get => (IDisposable?)GetValue(AccountViewModelProperty);

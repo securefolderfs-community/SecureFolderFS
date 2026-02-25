@@ -21,15 +21,15 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         : DeviceLinkViewModel(vaultFolder, vaultId)
     {
         private TaskCompletionSource<bool>? _verificationCodeTcs;
-        
+
         [ObservableProperty] private string? _VerificationCode;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
-        
+
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                         ExpectedHmac = key.Key,
                         CreatedAt = DateTime.Now
                     }, cancellationToken);
-                
+
                 // Report that credentials were provided
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
@@ -80,20 +80,20 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
             return _verificationCodeTcs.Task;
         }
-        
+
         /// <inheritdoc/>
         protected override Task<VaultDeviceLinkDataModel> GetConfigurationAsync(CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
         }
-        
+
         [RelayCommand]
         private void ConfirmVerificationCode()
         {
             VerificationCode = null;
             _verificationCodeTcs?.TrySetResult(true);
         }
-        
+
         [RelayCommand]
         private void RejectVerificationCode()
         {

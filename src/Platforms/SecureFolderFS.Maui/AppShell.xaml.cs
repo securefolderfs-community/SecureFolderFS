@@ -31,11 +31,11 @@ namespace SecureFolderFS.Maui
             {
                 var overlayService = DI.Service<IOverlayService>();
                 await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
-                
+
                 settingsService.AppSettings.WasIntroduced = true;
                 await settingsService.AppSettings.TrySaveAsync();
             }
-            
+
             await SafetyHelpers.NoFailureAsync(async () =>
             {
                 var sessionException = ExceptionHelpers.RetrieveSessionFile(App.Instance.ApplicationLifecycle.AppDirectory);
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Maui
                 var clipboardService = DI.Service<IClipboardService>();
                 await clipboardService.SetTextAsync(sessionException);
             });
-            
+
             // Initialize DeviceLink
             await SafetyHelpers.NoFailureAsync(async () => await DeviceLinkCredentialsOverlayViewModel.Instance.InitAsync());
         }

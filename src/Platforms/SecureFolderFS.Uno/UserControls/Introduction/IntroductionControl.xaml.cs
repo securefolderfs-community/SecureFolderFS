@@ -98,7 +98,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             ViewModel?.TaskCompletion.SetResult(Result.Success);
         }
-        
+
         private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
         {
             var htmlString = Constants.Introduction.BACKGROUND_WEBVIEW
@@ -121,7 +121,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             if (ViewModel is null)
                 return;
-            
+
             switch (e.Key)
             {
                 case VirtualKey.Right:
@@ -134,7 +134,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
                         if (endScreen.FindChild<Button>() is not { } button)
                             break;
-                        
+
                         button.Focus(FocusState.Programmatic);
                     }
 
@@ -159,10 +159,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             if (sender is not ListView listView)
                 return;
-            
+
             foreach (var item in ViewModel.FileSystems)
                 item.IsSelected = false;
-            
+
             var selectedItem = e.AddedItems.FirstOrDefault();
             if (selectedItem is ItemInstallationViewModel installation)
             {

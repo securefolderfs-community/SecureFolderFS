@@ -6,7 +6,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             InitializeComponent();
         }
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(IntroductionSlide));
-        
+
         public string? Subtitle
         {
             get => (string?)GetValue(SubtitleProperty);
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(IntroductionSlide));
-        
+
         public object? Slot
         {
             get => (object?)GetValue(SlotProperty);
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty SlotProperty =
             BindableProperty.Create(nameof(Slot), typeof(object), typeof(IntroductionSlide));
-        
+
         public object? SlotBelow
         {
             get => (object?)GetValue(SlotBelowProperty);

@@ -11,7 +11,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
     internal sealed partial class SkiaSystemService : ISystemService
     {
         private EventHandler? _deviceLocked;
-        
+
 #if !__UNO_SKIA_MACOS__
         /// <inheritdoc/>
         public event EventHandler? DeviceLocked

@@ -45,14 +45,14 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         {
             // Password
             yield return new PasswordCreationViewModel() { Icon = new ImageGlyph("\uE8AC") };
-            
+
             // YubiKey
             if (YubiKeyViewModel.IsSupported())
                 yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
-            
+
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };
-            
+
             // Device Link
             yield return new DeviceLinkCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") };
 

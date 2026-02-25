@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 
             return Task.FromResult<Stream>(iosStream);
         }
-        
+
         /// <inheritdoc/>
         public Task<Stream> OpenStreamAsync(FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
         {

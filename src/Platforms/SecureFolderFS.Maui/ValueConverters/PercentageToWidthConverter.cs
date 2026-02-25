@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 double d => d,
                 _ => -1d
             };
-            
+
             if (containerWidth <= 0)
                 return 0d;
 

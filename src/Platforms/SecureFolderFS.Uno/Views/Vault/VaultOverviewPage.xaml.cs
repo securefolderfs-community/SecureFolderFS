@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             get => DataContext.TryCast<VaultOverviewViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
-        
+
         /// <inheritdoc/>
         public object? EmbeddedContent { get => field ??= CreateEmbeddedContent(); }
 

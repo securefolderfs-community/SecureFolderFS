@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty ConnectCommandProperty =
             BindableProperty.Create(nameof(ConnectCommand), typeof(ICommand), typeof(VaultLocatorControl));
-        
+
         public ICommand? CancelConnectionCommand
         {
             get => (ICommand?)GetValue(CancelConnectionCommandProperty);

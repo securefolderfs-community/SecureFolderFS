@@ -60,7 +60,7 @@ namespace SecureFolderFS.Maui.UserControls
         {
             _isPlaying = false;
             _stopwatch.Reset();
-            
+
             StopTimer();
             CanvasView.InvalidateSurface();
         }

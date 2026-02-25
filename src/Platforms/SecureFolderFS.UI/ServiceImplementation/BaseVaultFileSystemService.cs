@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             await Task.CompletedTask;
             yield break;
         }
-        
+
         /// <inheritdoc/>
         public abstract IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync(CancellationToken cancellationToken);
 

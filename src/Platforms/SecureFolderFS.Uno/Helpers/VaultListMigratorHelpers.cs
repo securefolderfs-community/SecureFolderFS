@@ -32,19 +32,19 @@ namespace SecureFolderFS.Uno.Helpers
                 return null;
             }
         }
-        
+
         public static bool IsMigrated()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             return (localSettings.Values["vaults_migrated_one"] as bool?) ?? false;
         }
-        
+
         public static void SetMigrated(bool value = true)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["vaults_migrated_one"] = value;
         }
-        
+
         public static async Task TryMigrateVaultsAsync(IFile settingsFile, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken)
         {
             try

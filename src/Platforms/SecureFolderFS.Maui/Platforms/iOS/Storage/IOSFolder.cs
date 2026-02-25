@@ -167,7 +167,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 permissionRoot.StartAccessingSecurityScopedResource();
                 var newPath = Path.Combine(Id, newName);
                 var newUrl = new NSUrl(newPath, false);
-                
+
                 // If the source and destination are the same, there's no need to copy.
                 if (iosFile.Id == newPath)
                     return iosFile;
@@ -201,14 +201,14 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 await Task.CompletedTask;
             }
         }
-        
+
         /// <inheritdoc/>
         public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken,
             MoveFromDelegate fallback)
         {
             return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken, (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
         }
-        
+
         /// <inheritdoc/>
         public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName,
             CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
@@ -222,7 +222,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 permissionRoot.StartAccessingSecurityScopedResource();
                 var newPath = Path.Combine(Id, newName);
                 var newUrl = new NSUrl(newPath, false);
-                
+
                 // If the source and destination are the same, there's no need to move.
                 if (iosFile.Id == newPath)
                     return iosFile;

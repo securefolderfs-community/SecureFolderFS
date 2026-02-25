@@ -58,7 +58,7 @@ namespace SecureFolderFS.UI
                                                                  FolderType = Generic
                                                                  """;
         }
-        
+
         public static class Introduction
         {
             public const string BACKGROUND_WEBVIEW = """

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? WindowsHelloTemplate { get; set; }
 
         public DataTemplate? YubiKeyTemplate { get; set; }
-        
+
         public DataTemplate? DeviceLinkTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)

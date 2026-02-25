@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             if (itemViewModel.Inner is IFolder && strParam.Equals("Folder", StringComparison.OrdinalIgnoreCase))
                 return true;
-                
+
             var typeHint = FileTypeHelper.GetTypeHint(itemViewModel.Inner);
             return strParam.Equals(typeHint.ToString(), StringComparison.OrdinalIgnoreCase);
         }

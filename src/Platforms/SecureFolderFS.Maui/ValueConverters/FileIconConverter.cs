@@ -53,7 +53,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                             VerticalOptions = LayoutOptions.Fill
                         };
                     }
-                    
+
                     case ImageStream { Stream.CanRead: true } imageStream:
                     {
                         imageStream.Stream.TrySetPositionOrAdvance(0L);

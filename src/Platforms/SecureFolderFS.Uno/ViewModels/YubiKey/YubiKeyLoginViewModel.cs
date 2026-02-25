@@ -39,14 +39,14 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
             try
             {
-                // Generate key signature based on the YubiKey challenge-response
+                // Generate a key signature based on the YubiKey challenge-response
                 var keyResult = await AcquireAsync(VaultId, auth.Challenge, cancellationToken);
                 if (!keyResult.TryGetValue(out var key))
                 {
                     Report(keyResult);
                     return;
                 }
-                
+
                 // Report that credentials were provided
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));

@@ -19,7 +19,7 @@ namespace SecureFolderFS.UI.ValueConverters
 
             // Parse platform-specific parameters
             var platformParam = ParsePlatformParameter(formatStringParam);
-            
+
             var isInverse = platformParam.Contains("inversemode:", StringComparison.OrdinalIgnoreCase);
             platformParam = isInverse ? platformParam.Replace("inversemode:", string.Empty, StringComparison.OrdinalIgnoreCase) : platformParam;
 
@@ -122,7 +122,7 @@ namespace SecureFolderFS.UI.ValueConverters
             // If no platform sections found or no match, return the original parameter
             return parameter;
         }
-        
+
         /// <summary>
         /// Gets the current platform identifier (e.g., "Windows", "MacOS", "Linux")
         /// </summary>
@@ -130,13 +130,13 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (OperatingSystem.IsMacOS())
                 return "MacOS";
-            
+
             if (OperatingSystem.IsWindows())
                 return "Windows";
-            
+
             if (OperatingSystem.IsLinux())
                 return "Linux";
-            
+
             return "Unknown";
         }
     }

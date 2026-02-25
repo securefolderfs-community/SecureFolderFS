@@ -49,10 +49,10 @@ namespace SecureFolderFS.Uno.UserControls
                 {
                     if (s is not YubiKeyControl yubiKeyControl)
                         return;
-                    
+
                     if (e.NewValue is not bool isBlinking)
                         return;
-                    
+
                     yubiKeyControl.UpdateBlinkingState(isBlinking);
                 }));
     }

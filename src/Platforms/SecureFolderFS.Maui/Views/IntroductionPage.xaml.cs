@@ -17,16 +17,16 @@ namespace SecureFolderFS.Maui.Views
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
         private int _currentIndex;
-        
+
         public IntroductionPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
             BindingContext = this;
-            
+
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -45,14 +45,14 @@ namespace SecureFolderFS.Maui.Views
         {
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
-        
+
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
         }
-        
+
         /// <inheritdoc/>
         protected override async void OnAppearing()
         {
@@ -113,7 +113,7 @@ namespace SecureFolderFS.Maui.Views
             galleryView.RefreshLayout();
             UpdateButtonStyle();
         }
-        
+
         private async void Continue_Clicked(object? sender, EventArgs e)
         {
             if (_currentIndex >= 3)
@@ -124,13 +124,13 @@ namespace SecureFolderFS.Maui.Views
 
             await GalleryView.SwipeToNextAsync();
         }
-        
+
         private void PrivacyPolicy_Tapped(object? sender, TappedEventArgs e)
         {
             var applicationService = DI.Service<IApplicationService>();
             applicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
         }
-        
+
         private void TermsOfService_Tapped(object? sender, TappedEventArgs e)
         {
             var applicationService = DI.Service<IApplicationService>();

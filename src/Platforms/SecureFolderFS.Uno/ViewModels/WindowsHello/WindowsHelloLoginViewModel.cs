@@ -8,6 +8,7 @@ using SecureFolderFS.Core;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Uno.ViewModels.WindowsHello
@@ -36,30 +37,19 @@ namespace SecureFolderFS.Uno.ViewModels.WindowsHello
 
             try
             {
-                // Ask for credentials
-                var result = await KeyCredentialManager.OpenAsync(VaultId).AsTask(cancellationToken);
-                if (result.Status != KeyCredentialStatus.Success)
+                // Retrieve the signature
+                var keyResult = await AcquireAsync(VaultId, auth.Challenge, cancellationToken);
+                if (!keyResult.TryGetValue(out var key))
                 {
-                    Report(Result.Failure(new InvalidOperationException("Failed to open the credential.")));
+                    Report(keyResult);
                     return;
                 }
 
-                // Generate key signature based on the user credentials
-                var key = await MakeSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
+                // Report that credentials were provided
                 var tcs = new TaskCompletionSource();
-
-                // Compile new challenge in preparation
-                // TODO: Important When doing the signing operation, check payload MAC
-                // TODO: Do something to avoid triggering the Windows Hello dialog twice
-                //using var newChallenge = GenerateChallenge(config.Id);
-                //using var newSignedChallenge = await CreateSignatureAsync(result.Credential, newChallenge.Key, cancellationToken);
-
-                // Report that credentials were provided and new provision needs to be applied
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));
-                await tcs.Task;
 
-                // TODO: Provision is currently disabled since it opens the Windows Hello dialog for the second time
-                //StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));
+                await tcs.Task;
             }
             catch (InvalidOperationException ex)
             {

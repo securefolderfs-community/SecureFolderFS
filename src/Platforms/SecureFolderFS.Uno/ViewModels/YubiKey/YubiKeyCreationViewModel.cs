@@ -46,7 +46,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
                     Report(keyResult);
                     return;
                 }
-                
+
                 // Report that credentials were provided
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));

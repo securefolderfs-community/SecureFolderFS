@@ -49,7 +49,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         {
             var passwordKey = TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet.");
             var result = Result<IKeyBytes>.Success(passwordKey);
-            
+
             return Task.FromResult<IResult<IKeyBytes>>(result);
         }
 
@@ -58,7 +58,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         {
             var passwordKey = TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet.");
             var result = Result<IKeyBytes>.Success(passwordKey);
-            
+
             return Task.FromResult<IResult<IKeyBytes>>(result);
         }
 

@@ -75,7 +75,7 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            
+
             // Determine app language
             await SafetyHelpers.NoFailureAsync(async () =>
             {
@@ -92,7 +92,7 @@ namespace SecureFolderFS.Maui
 
                     if (matchedLanguage is not null)
                         await localizationService.SetCultureAsync(matchedLanguage);
-                    
+
                     Preferences.Default.Set("IsAppLanguageDetected", true);
                 }
             });
@@ -100,10 +100,10 @@ namespace SecureFolderFS.Maui
             // Initialize Telemetry
             var telemetryService = DI.Service<ITelemetryService>();
             await telemetryService.EnableTelemetryAsync();
-            
+
             // Initialize MainViewModel
             await MainViewModel.InitAsync();
-            
+
             // Initialize ThemeHelper
             await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
 

@@ -1,7 +1,7 @@
 <Project ToolsVersion="15.0">
   <ItemGroup>
-    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="5.0.0" />
-    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="5.0.0" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="6.0.0" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="6.0.0" />
     <PackageVersion Include="AcrylicView.Maui" Version="3.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />

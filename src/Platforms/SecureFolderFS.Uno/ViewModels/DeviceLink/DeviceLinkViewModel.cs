@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         /// Gets the unique ID of the vault.
         /// </summary>
         protected string VaultId { get; }
-        
+
         /// <summary>
         /// Gets the associated folder of the vault.
         /// </summary>
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
-        
+
         public DeviceLinkViewModel(IFolder vaultFolder, string vaultId)
             : base(Constants.Vault.Authentication.AUTH_DEVICE_LINK)
         {
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             VaultFolder = vaultFolder;
             VaultId = vaultId;
         }
-        
+
         /// <inheritdoc/>
         public override async Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
             if (authenticationFile is null)
                 return;
-            
+
             await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
@@ -83,7 +83,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
-            
+
             using var deviceDiscovery = new DeviceDiscovery(DesktopName);
             var devices = await deviceDiscovery.DiscoverDevicesAsync(cancellationToken: cancellationToken);
             var discoveredDevice = devices.FirstOrDefault();
@@ -92,11 +92,11 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
             // Step 1: Connect to device
             using var connectedDevice = await ConnectedDevice.ConnectAsync(discoveredDevice, cancellationToken);
-            
+
             // Step 2: Generate ECDH key pair
             using var ecdhKeyPair = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
             var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
-            
+
             // Step 3: Send pairing request
             var pairingRequest = ProtocolSerializer.CreatePairingRequest(DesktopName, DesktopType, publicKey);
             await connectedDevice.SendMessageAsync(pairingRequest, cancellationToken);
@@ -104,20 +104,20 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             // Step 4: receive pairing response
             var response = await connectedDevice.ReceiveMessageAsync(cancellationToken);
             var messageType = (MessageType)response[0];
-            
+
             if (messageType == MessageType.PairingRejected)
                 throw new UnauthorizedAccessException("Device link pairing was rejected by the remote device.");
-            
+
             if (messageType != MessageType.PairingResponse)
                 throw new InvalidOperationException("Unexpected response received during device link enrollment.");
-            
+
             // Step 5: Derive session secret
             var mobileEcdhPublicKey = ProtocolSerializer.ParsePairingResponse(response);
             var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, mobileEcdhPublicKey);
 
             // Step 6: Compute and display verification code
             var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
-            
+
             // Step 7: User confirms the code matches
             var codeConfirmed = await ShowVerificationCodeAsync(verificationCode);
             if (!codeConfirmed)
@@ -126,17 +126,17 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             // Step 8: Generate CID, PairingID
             var pairingId = Guid.NewGuid().ToString();
             var credentialId = Guid.NewGuid().ToString();
-            
+
             var confirmationMessage = ProtocolSerializer.CreatePairingConfirmMessage(credentialId, VaultName, pairingId, data);
             await connectedDevice.SendMessageAsync(confirmationMessage, cancellationToken);
-            
+
             // Step 9: Receive pairing complete with initial HMAC
             var completeResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
-            
+
             messageType = (MessageType)completeResponse[0];
             if (messageType != MessageType.PairingComplete)
                 throw new InvalidOperationException("Unexpected response received during device link enrollment.");
-            
+
             var initialHmac = ProtocolSerializer.ParsePairingComplete(completeResponse);
             return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(initialHmac))
             {
@@ -155,7 +155,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             const int DISCOVERY_TIMEOUT_MS = 1500;
             const int RETRY_DELAY_MS = 500;
             const int MAX_TRIES = 5;
-            
+
             var dataModel = await GetConfigurationAsync(cancellationToken);
             using var deviceDiscovery = new DeviceDiscovery(DesktopName);
 
@@ -195,7 +195,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         private async Task<DeviceLinkAuthenticationResult> AuthenticateMobileAsync(DiscoveredDevice device, VaultDeviceLinkDataModel dataModel, CancellationToken cancellationToken)
         {
             using var connectedDevice = await ConnectedDevice.ConnectAsync(device, cancellationToken);
-            
+
             // Generate fresh ECDH keypair for this session (transport security)
             using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
             var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
@@ -226,7 +226,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             mobileNonce.CopyTo(combinedNonce, sessionNonce.Length);
 
             using var secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
-            
+
             // Step 3: Send authentication request
             var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp);
@@ -252,7 +252,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             var isValid = CryptographicOperations.FixedTimeEquals(decryptedHmac, expectedHmac);
             if (!isValid)
                 throw new CryptographicException("HMAC verification failed.");
-            
+
             var managedHmac = ManagedKey.TakeOwnership(decryptedHmac);
             return new DeviceLinkAuthenticationResult(managedHmac)
             {

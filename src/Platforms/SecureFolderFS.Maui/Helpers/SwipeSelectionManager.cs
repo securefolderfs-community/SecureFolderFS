@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.Helpers
             _processedItemIds.Clear();
             Apply(item);
         }
-        
+
         public void UpdateFromRectangle(IList<BrowserItemViewModel> allItems, Func<BrowserItemViewModel, bool> isInsideRect)
         {
             if (!_isActive)

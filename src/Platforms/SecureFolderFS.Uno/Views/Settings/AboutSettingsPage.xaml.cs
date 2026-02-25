@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                 copyLabel.Visibility = Visibility.Visible;
 
                 await Task.Delay(750);
-                
+
                 // Create a new storyboard instance for this specific animation
                 var fadeInAnimation = new DoubleAnimation()
                 {
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                     To = 1d,
                     Duration = new Duration(TimeSpan.FromMilliseconds(250))
                 };
-                
+
                 var storyboard = new Storyboard();
                 storyboard.Children.Add(fadeInAnimation);
                 Storyboard.SetTarget(fadeInAnimation, initialText);

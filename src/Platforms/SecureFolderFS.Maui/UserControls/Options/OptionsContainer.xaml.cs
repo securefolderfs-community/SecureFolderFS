@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(OptionsContainer));
-        
+
         public string? Subtitle
         {
             get => (string?)GetValue(SubtitleProperty);
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(OptionsContainer));
-        
+
         public string? Description
         {
             get => (string?)GetValue(DescriptionProperty);
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty InnerContentProperty =
             BindableProperty.Create(nameof(InnerContent), typeof(object), typeof(OptionsContainer));
-        
+
         public bool IsTransparent
         {
             get => (bool)GetValue(IsTransparentProperty);

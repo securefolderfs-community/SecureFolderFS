@@ -9,7 +9,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseOverlayService : IOverlayService
     {
         private IOverlayControl? _currentOverlay;
-        
+
         /// <inheritdoc/>
         public IViewable? CurrentView { get; protected set; }
 

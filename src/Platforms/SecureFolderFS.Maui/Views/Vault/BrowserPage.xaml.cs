@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         {
             if (ViewModel is null)
                 return false;
-            
+
             if (view is not FolderViewModel folderViewModel)
                 return false;
 

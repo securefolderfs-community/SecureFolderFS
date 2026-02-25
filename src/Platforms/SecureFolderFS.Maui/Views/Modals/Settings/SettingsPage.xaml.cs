@@ -109,7 +109,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
         {
             if (AboutViewModel is null)
                 return;
-            
+
             await _sourceNavigation.PopAsync();
             await Task.Delay(500);
             await AboutViewModel.OpenOnboardingCommand.ExecuteAsync(null);

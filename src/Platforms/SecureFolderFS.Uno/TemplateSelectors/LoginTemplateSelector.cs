@@ -15,15 +15,15 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? KeyFileTemplate { get; set; }
 
         public DataTemplate? WindowsHelloTemplate { get; set; }
-        
+
         public DataTemplate? YubiKeyTemplate { get; set; }
-        
+
         public DataTemplate? DeviceLinkTemplate { get; set; }
 
         public DataTemplate? MigrationTemplate { get; set; }
 
         public DataTemplate? ErrorTemplate { get; set; }
-        
+
         public DataTemplate? UnsupportedTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)

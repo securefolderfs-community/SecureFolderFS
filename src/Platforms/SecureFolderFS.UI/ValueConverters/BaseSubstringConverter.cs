@@ -9,7 +9,7 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (parameter is not string strParam)
                 return null;
-            
+
             var text = value as string;
             if (string.IsNullOrEmpty(text))
                 return text;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 // Basic safety check for string length
                 if (startIndex >= text.Length)
                     return string.Empty;
-                
+
                 if (startIndex + length > text.Length)
                     length = text.Length - startIndex;
 

@@ -33,7 +33,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                     Report(keyResult);
                     return;
                 }
-                
+
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
                 await tcs.Task;

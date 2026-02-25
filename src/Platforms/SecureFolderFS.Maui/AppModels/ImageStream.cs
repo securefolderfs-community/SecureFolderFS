@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.AppModels
         {
             var savedPosition = Stream.Position;
             await Stream.CopyToAsync(destination, cancellationToken);
-            
+
             if (Stream.CanSeek)
                 Stream.Position = savedPosition;
         }

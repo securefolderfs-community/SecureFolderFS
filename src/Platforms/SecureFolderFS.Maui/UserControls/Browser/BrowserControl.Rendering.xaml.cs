@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private readonly ISettingsService _settingsService;
         private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
-        
+
         /// <summary>
         /// Determines if the CollectionView can be reloaded.
         /// </summary>
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 _skipCollectionViewLayoutPass--;
                 return;
             }
-            
+
             if (_collectionView is null)
                 return;
 
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Re-trigger thumbnail loading for visible items
             EnqueueVisibleItemsForThumbnails();
         }
-        
+
         private void EnqueueVisibleItemsForThumbnails()
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
@@ -104,12 +104,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             if (ItemsSource.FirstOrDefault() is not { ParentFolder.Folder: { } folder})
                 return;
-            
+
             _deferredInitialization.SetContext(folder);
             foreach (var item in ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail))
                 _deferredInitialization.Enqueue(item);
         }
-        
+
         private void TryEnqueueThumbnail(object? sender)
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
@@ -124,16 +124,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
             _deferredInitialization.Enqueue(fileViewModel);
         }
-        
+
         private static IValueConverter? GetConverter(string key)
         {
             // Try local resources first, then app resources
             if (Application.Current?.Resources.TryGetValue(key, out var converter) == true)
                 return converter as IValueConverter;
-            
+
             return null;
         }
-        
+
         private void ItemContainer_Loaded(object? sender, EventArgs e)
         {
             TryEnqueueThumbnail(sender);
@@ -145,11 +145,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Also handle BindingContextChanged for virtualized/recycled items on iOS
             TryEnqueueThumbnail(sender);
         }
-        
+
         private void ItemsCollectionView_Loaded(object? sender, EventArgs e)
         {
             _collectionView = sender as CollectionView;
-            
+
             // Set initial ItemsLayout since we removed the binding from XAML
             _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
         }

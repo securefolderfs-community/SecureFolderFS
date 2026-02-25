@@ -15,10 +15,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
-        
+
         public IOSBiometricCreationViewModel(IFolder vaultFolder, string vaultId, string title)
             : base(vaultFolder, vaultId, title)
         {
@@ -35,13 +35,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 IsAuthenticated = false;
                 var keyResult = await EnrollAsync(VaultId, keyMaterial.Key, cancellationToken);
                 IsAuthenticated = true;
-                
+
                 if (!keyResult.TryGetValue(out var ciphertextKey))
                 {
                     Report(keyResult);
                     return;
                 }
-                
+
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(keyMaterial.CreateCopy(), tcs));
                 await tcs.Task;

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
-        
+
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 Icon = new ImageGlyph("\uE8EA");
             }
         }
-        
+
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                     Report(keyResult);
                     return;
                 }
-                
+
                 // Report that credentials were provided
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));

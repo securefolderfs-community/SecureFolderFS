@@ -14,14 +14,14 @@ namespace SecureFolderFS.UI.DataModels
         [JsonPropertyName("credentialId")]
         [DefaultValue(null)]
         public required string? CredentialId { get; init; }
-        
+
         /// <summary>
         /// Gets or sets the unique identifier of the endpoint device.
         /// </summary>
         [JsonPropertyName("endpointDeviceId")]
         [DefaultValue(null)]
         public string? EndpointDeviceId { get; set; }
-        
+
         /// <summary>
         /// The mobile credential's signing public key (Base64).
         /// Used to verify challenge signatures.

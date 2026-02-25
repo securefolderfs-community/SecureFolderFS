@@ -17,12 +17,12 @@ namespace SecureFolderFS.UI.ViewModels.Health
         /// Gets or sets whether this file can be repaired (chunks can be zeroed out).
         /// </summary>
         [ObservableProperty] private bool _IsRecoverable;
-        
+
         /// <summary>
         /// Gets or sets the text representation of corrupted chunks.
         /// </summary>
         [ObservableProperty] private string? _CorruptedChunksText;
-        
+
         public IFile? File => Inner as IFile;
 
         /// <summary>

@@ -59,7 +59,7 @@ namespace SecureFolderFS.Maui.UserControls.Options
         }
         public static readonly BindableProperty SlotProperty =
             BindableProperty.Create(nameof(Slot), typeof(object), typeof(OptionsControl));
-        
+
         public bool ApplySlotOpacity
         {
             get => (bool)GetValue(ApplySlotOpacityProperty);

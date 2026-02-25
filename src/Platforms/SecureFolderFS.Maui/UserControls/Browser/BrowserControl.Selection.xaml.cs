@@ -75,7 +75,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     break;
             }
         }
-        
+
         private void BeginSelectionRectangle(View originView, BrowserItemViewModel originItem, double totalX, double totalY)
         {
             if (_collectionView is null || ItemsSource is null)

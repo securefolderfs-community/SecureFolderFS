@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.Extensions
         /// Linux platform.
         /// </summary>
         Linux,
-        
+
         /// <summary>
         /// The default platform when no specific platform matches.
         /// </summary>

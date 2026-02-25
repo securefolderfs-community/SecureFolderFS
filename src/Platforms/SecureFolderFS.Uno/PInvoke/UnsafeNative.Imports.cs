@@ -46,11 +46,11 @@ namespace SecureFolderFS.Uno.PInvoke
             [In] uint uFlags,
             [In] IntPtr pv);
 #endif
-        
+
 #if __UNO_SKIA_MACOS__
-        
+
         public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
-        
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
 
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Uno.PInvoke
             IntPtr observer,
             IntPtr name,
             IntPtr obj);
-        
+
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
 
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr_ulong(IntPtr receiver, IntPtr selector, ulong arg);
-        
+
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial CGRect objc_msgSend_CGRect(IntPtr receiver, IntPtr selector);
 
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
-        
+
 #endif
     }
 

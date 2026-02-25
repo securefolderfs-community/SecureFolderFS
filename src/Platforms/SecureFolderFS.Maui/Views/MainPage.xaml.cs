@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.Views
     public partial class MainPage : ContentPage
     {
         public static MainPage? Instance { get; private set; }
-        
+
         public MainHostViewModel? ViewModel
         {
             get
@@ -35,13 +35,13 @@ namespace SecureFolderFS.Maui.Views
 
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
             if (ViewModel?.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
-            
+
             base.OnAppearing();
         }
 
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Maui.Views
         {
             if (ViewModel is null)
                 return;
-            
+
             if (view is not null)
                 view.IsEnabled = false;
 
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Maui.Views
         {
             if (ViewModel is null)
                 return;
-            
+
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);

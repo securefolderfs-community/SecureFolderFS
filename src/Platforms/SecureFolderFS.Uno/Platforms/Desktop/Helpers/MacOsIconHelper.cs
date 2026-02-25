@@ -26,16 +26,16 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                 var nsImageClass = UnsafeNative.objc_getClass("NSImage");
                 var allocSelector = UnsafeNative.sel_registerName("alloc");
                 var initWithContentsOfFileSelector = UnsafeNative.sel_registerName("initWithContentsOfFile:");
-                
+
                 var nsImage = UnsafeNative.objc_msgSend_IntPtr(nsImageClass, allocSelector);
-                
+
                 // Create NSString for the path
                 var nsStringClass = UnsafeNative.objc_getClass("NSString");
                 var stringWithUTF8StringSelector = UnsafeNative.sel_registerName("stringWithUTF8String:");
                 var iconPathPtr = System.Runtime.InteropServices.Marshal.StringToCoTaskMemUTF8(iconPath);
                 var nsString = UnsafeNative.objc_msgSend_IntPtr_IntPtr(nsStringClass, stringWithUTF8StringSelector, iconPathPtr);
                 System.Runtime.InteropServices.Marshal.FreeCoTaskMem(iconPathPtr);
-                
+
                 var imageWithPath = UnsafeNative.objc_msgSend_IntPtr_IntPtr(nsImage, initWithContentsOfFileSelector, nsString);
 
                 // Set the application icon

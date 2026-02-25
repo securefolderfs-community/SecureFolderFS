@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         {
             if (ViewModel?.VaultNavigation is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
-            
+
             base.OnAppearing();
         }
 

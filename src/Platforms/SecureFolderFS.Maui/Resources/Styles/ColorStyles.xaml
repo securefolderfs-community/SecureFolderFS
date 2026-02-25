@@ -28,7 +28,7 @@
     <!--  Background Colors  -->
     <Color x:Key="BackgroundFillPrimaryLightColor">#FFFFFF</Color>
     <Color x:Key="BackgroundFillSecondaryLightColor">#E8EBFD</Color>
-    <Color x:Key="BackgroundFillPrimaryDarkColor">#181C1A</Color>
+    <Color x:Key="BackgroundFillPrimaryDarkColor">#1F2024</Color>
     <Color x:Key="BackgroundFillSecondaryDarkColor">#1C1C1E</Color>
 
     <Color x:Key="ShimFillPrimaryLightColor">#DDE7E7E9</Color>
