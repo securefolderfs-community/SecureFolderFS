@@ -99,7 +99,6 @@
     <!-- Images -->
     <MauiImage Include="Resources\Images\*" />
     <MauiImage Include="Resources\Images\*\*" />
-    <MauiImage Update="Resources\Images\cupertino_ellipsis.svg" Resize="True" BaseSize="24,24" />
 
     <!-- Custom Fonts -->
     <MauiFont Include="Resources\Fonts\*" />

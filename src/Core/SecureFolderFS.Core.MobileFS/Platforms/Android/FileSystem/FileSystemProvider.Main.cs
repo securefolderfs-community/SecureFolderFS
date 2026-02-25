@@ -11,6 +11,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
@@ -171,7 +172,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parent is not IFolder folder)
                 return matrix;
 
-            var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            var items = folder.GetItemsAsync().ToArrayAsyncImpl().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
                 AddDocumentAsync(matrix, item, null).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -248,7 +249,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     return Path.Combine(targetParentDocumentId, movedFile.Name);
                 }
 
-                case IChildFolder folder:
+                case IModifiableFolder folder:
                 {
                     var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
                     return Path.Combine(targetParentDocumentId, movedFolder.Name);

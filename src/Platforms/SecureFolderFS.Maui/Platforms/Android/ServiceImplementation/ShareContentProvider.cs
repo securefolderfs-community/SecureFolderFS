@@ -1,11 +1,10 @@
-using Android.App;
 using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using Java.IO;
 using OwlCore.Storage;
-using Application = Android.App.Application;
+using SecureFolderFS.Shared.Helpers;
+using Uri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {
@@ -54,7 +53,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public override bool OnCreate() => true;
 
         /// <inheritdoc/>
-        public override ParcelFileDescriptor? OpenFile(global::Android.Net.Uri uri, string mode)
+        public override ParcelFileDescriptor? OpenFile(Uri uri, string mode)
         {
             var fileId = uri.PathSegments?.FirstOrDefault();
             if (fileId is null)
@@ -80,9 +79,13 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             {
                 try
                 {
-                    await using var outputStream = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide);
                     await using var fileStream = await file.OpenReadAsync();
-                    await fileStream.CopyToAsync(outputStream);
+                    using var outputStream = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide);
+                    
+                    int bytesRead;
+                    var buffer = new byte[8192];
+                    while ((bytesRead = await fileStream.ReadAsync(buffer)) > 0)
+                        await outputStream.WriteAsync(buffer, 0, bytesRead);
                 }
                 catch
                 {
@@ -99,7 +102,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override ICursor? Query(global::Android.Net.Uri uri, string[]? projection, string? selection, string[]? selectionArgs, string? sortOrder)
+        public override ICursor? Query(Uri uri, string[]? projection, string? selection, string[]? selectionArgs, string? sortOrder)
         {
             var fileId = uri.PathSegments?.FirstOrDefault();
             if (fileId is null)
@@ -139,7 +142,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override string? GetType(global::Android.Net.Uri uri)
+        public override string? GetType(Uri uri)
         {
             var fileId = uri.PathSegments?.FirstOrDefault();
             if (fileId is null)
@@ -152,17 +155,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     return "application/octet-stream";
             }
 
-            return Shared.Helpers.FileTypeHelper.GetMimeType(file) ?? "application/octet-stream";
+            return FileTypeHelper.GetMimeType(file.Name);
         }
 
         /// <inheritdoc/>
-        public override global::Android.Net.Uri? Insert(global::Android.Net.Uri uri, ContentValues? values) => null;
+        public override Uri? Insert(Uri uri, ContentValues? values) => null;
 
         /// <inheritdoc/>
-        public override int Delete(global::Android.Net.Uri uri, string? selection, string[]? selectionArgs) => 0;
+        public override int Delete(Uri uri, string? selection, string[]? selectionArgs) => 0;
 
         /// <inheritdoc/>
-        public override int Update(global::Android.Net.Uri uri, ContentValues? values, string? selection, string[]? selectionArgs) => 0;
+        public override int Update(Uri uri, ContentValues? values, string? selection, string[]? selectionArgs) => 0;
     }
 }
 

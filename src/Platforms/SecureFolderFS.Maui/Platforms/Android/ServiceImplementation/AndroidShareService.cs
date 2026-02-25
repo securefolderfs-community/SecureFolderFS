@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var contentUri = Uri.Parse($"content://{authority}/{fileId}/{file.Name}");
 
             // Determine MIME type
-            var mimeType = FileTypeHelper.GetMimeType(file) ?? "application/octet-stream";
+            var mimeType = FileTypeHelper.GetMimeType(file.Name);
 
             // Create share intent
             var intent = new Intent(Intent.ActionSend);

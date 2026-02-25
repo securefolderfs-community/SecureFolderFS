@@ -2,16 +2,20 @@ using System.Globalization;
 using APES.UI.XF;
 using SecureFolderFS.Maui.Extensions.Mappers;
 using SecureFolderFS.Maui.Helpers;
-using SecureFolderFS.Maui.Platforms.iOS.Helpers;
-using SecureFolderFS.Maui.Platforms.iOS.Templates;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Helpers;
+
+#if IOS || MACCATALYST
+using SecureFolderFS.Maui.Platforms.iOS.Helpers;
+using SecureFolderFS.Maui.Platforms.iOS.Templates;
+#elif ANDROID
+using SecureFolderFS.Maui.Platforms.Android.Helpers;
+using SecureFolderFS.Maui.Platforms.Android.Templates;
+#endif
 
 namespace SecureFolderFS.Maui
 {
@@ -25,7 +29,7 @@ namespace SecureFolderFS.Maui
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if ANDROID
-            new Platforms.Android.Helpers.AndroidLifecycleHelper();
+            new AndroidLifecycleHelper();
 #elif IOS
             new IOSLifecycleHelper();
 #else
@@ -41,7 +45,7 @@ namespace SecureFolderFS.Maui
 
 #if ANDROID
             // Load Android-specific resource dictionaries
-            Resources.MergedDictionaries.Add(new Platforms.Android.Templates.AndroidDataTemplates());
+            Resources.MergedDictionaries.Add(new AndroidDataTemplates());
 #elif IOS
             // Load IOS-specific resource dictionaries
             Resources.MergedDictionaries.Add(new IOSDataTemplates());

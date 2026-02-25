@@ -66,7 +66,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 activity.ContentResolver?.TakePersistableUriPermission(Inner,
                     ActivityFlags.GrantWriteUriPermission | ActivityFlags.GrantReadUriPermission);
 
-                BookmarkId = $"{Constants.STORABLE_BOOKMARK_RID}{Id}";
+                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{Id}";
             }
             catch (Exception ex)
             {

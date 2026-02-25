@@ -1,6 +1,6 @@
 using Android.Graphics;
 using Android.Media;
-using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Streams;
 using ExifInterface = AndroidX.ExifInterface.Media.ExifInterface;
 using Stream = System.IO.Stream;
 
@@ -105,11 +105,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
         public static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
         {
             const int IMAGE_THUMBNAIL_QUALITY = 80;
-            var ms = new OnDemandDisposableStream();
-            await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg, IMAGE_THUMBNAIL_QUALITY, ms).ConfigureAwait(false);
-            ms.Position = 0;
+
+            var memoryStream = new MemoryStream();
+            await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg!, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
+            memoryStream.Position = 0L;
             bitmap.Recycle();
-            return ms;
+
+            return new NonDisposableStream(memoryStream);
         }
     }
 }

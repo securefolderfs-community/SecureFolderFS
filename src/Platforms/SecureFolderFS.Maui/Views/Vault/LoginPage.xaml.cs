@@ -8,7 +8,6 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
-using StoreKit;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {

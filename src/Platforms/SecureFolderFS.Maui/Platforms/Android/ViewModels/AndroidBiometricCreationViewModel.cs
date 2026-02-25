@@ -1,10 +1,11 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var challenge = VaultHelpers.GenerateChallenge(VaultId);
+            using var challenge = CryptHelpers.GenerateChallenge(VaultId);
 
             // Write authentication data to the vault
             await vaultWriter.WriteAuthenticationAsync<VaultChallengeDataModel>($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
@@ -31,10 +32,15 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 
             try
             {
-                var key = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
+                var keyResult = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
+                if (!keyResult.TryGetValue(out var key))
+                {
+                    Report(keyResult);
+                    return;
+                }
+                
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
-
                 await tcs.Task;
             }
             catch (Exception ex)
