@@ -136,7 +136,7 @@
             Grid.Row="1"
             Margin="0,0,0,-36"
             Padding="16,16,16,48"
-            Background="{StaticResource ThemeBackgroundFillColorBrush}"
+            Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}"
             IsVisible="{Binding ViewModel.CanResolve, Mode=OneWay}"
             Spacing="8">
             <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=RepairAll}" />

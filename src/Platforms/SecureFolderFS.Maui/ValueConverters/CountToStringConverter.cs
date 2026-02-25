@@ -1,23 +1,21 @@
 using System.Globalization;
+using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
-    internal sealed class FolderItemsCountToStringConverter : IValueConverter
+    /// <inheritdoc cref="BaseCountToStringConverter"/>
+    internal sealed class CountToStringConverter : BaseCountToStringConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not int intValue)
-                return null;
-
-            // TODO: Localize text (use different strings for singular and plural forms)
-            return $"{intValue} elements"; 
+            return TryConvert(value, targetType, parameter);
         }
 
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return TryConvertBack(value, targetType, parameter);
         }
     }
 }

@@ -1229,4 +1229,13 @@
   <data name="EnableDeviceLink" xml:space="preserve">
       <value>Enable Device Link</value>
   </data>
+  <data name="ItemsSelected" xml:space="preserve">
+      <value>{0} item(s) selected</value>
+  </data>
+  <data name="ElementsCount" xml:space="preserve">
+      <value>{0} element(s)</value>
+  </data>
+  <data name="FoundIssuesCount" xml:space="preserve">
+      <value>Found {0} issue(s)</value>
+  </data>
 </root>

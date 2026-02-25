@@ -11,10 +11,9 @@
     Title="{OnPlatform iOS={Binding ViewModel.Title,
                                     Mode=OneWay}}"
     x:DataType="local:BrowserPage"
-    Background="{StaticResource ThemeBackgroundFillColorBrush}">
+    Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}">
 
     <ContentPage.Resources>
-        <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
         <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>
 
@@ -45,7 +44,7 @@
                 FontSize="18"
                 HorizontalOptions="Center"
                 IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay}"
-                Text="{l:ResourceString Rid=SelectItems}"
+                Text="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(0:LOCALIZE|SelectItems)|(>0:LOCALIZE|ItemsSelected)'}"
                 TextColor="#FFFFFF"
                 VerticalOptions="Center" />
             <VerticalStackLayout IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
@@ -57,7 +56,7 @@
                 <Label
                     FontSize="12"
                     Opacity="0.6"
-                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
+                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|ElementsCount)'}"
                     TextColor="#FFFFFF" />
             </VerticalStackLayout>
         </Grid>

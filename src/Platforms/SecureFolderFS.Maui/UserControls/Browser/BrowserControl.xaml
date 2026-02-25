@@ -60,7 +60,7 @@
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
                             <CheckBox
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                 IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <ContentView
@@ -151,7 +151,7 @@
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
                                 HorizontalOptions="Center"
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                 IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
@@ -258,7 +258,7 @@
                             </OnPlatform>
 
                             <CheckBox
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillColorBrush}}"
+                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                 IsVisible="{Binding IsSelected, Mode=OneWay}" />
                         </Grid>
@@ -310,7 +310,7 @@
                             ListItemTemplate="{StaticResource ListItemTemplate}" />
                     </CollectionView.ItemTemplate>
                     <CollectionView.EmptyView>
-                        <Grid Background="{StaticResource ThemeBackgroundFillColorBrush}">
+                        <Grid Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}">
                             <ActivityIndicator
                                 Margin="0,0,0,64"
                                 HorizontalOptions="Center"

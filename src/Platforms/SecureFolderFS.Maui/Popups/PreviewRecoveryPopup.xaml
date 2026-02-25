@@ -31,7 +31,7 @@
     <Border
         Margin="16,0"
         Padding="16"
-        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+        Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}"
         HorizontalOptions="Fill"
         VerticalOptions="Center">
         <Border.StrokeShape>

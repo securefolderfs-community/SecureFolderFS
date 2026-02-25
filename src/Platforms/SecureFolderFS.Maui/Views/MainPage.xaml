@@ -60,7 +60,7 @@
             SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
-                    <SwipeView Background="{StaticResource ThemeBackgroundFillColorBrush}" HeightRequest="64">
+                    <SwipeView Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}" HeightRequest="64">
                         <SwipeView.RightItems>
                             <SwipeItem
                                 BackgroundColor="Red"

@@ -56,6 +56,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <param name="storable">The new storable object to use.</param>
         protected abstract void UpdateStorable(IStorable storable);
 
+        /// <inheritdoc/>
+        protected override void IsSelectedChanged(bool newValue)
+        {
+            if (newValue)
+                ParentFolder?.SelectedItems.Add(this);
+            else
+                ParentFolder?.SelectedItems.Remove(this);
+        }
+
         [RelayCommand]
         protected virtual async Task OpenPropertiesAsync(CancellationToken cancellationToken)
         {

@@ -2,7 +2,7 @@
 
     <Style ApplyToDerivedTypes="True" TargetType="Page">
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillColorBrush}" />
+        <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillPrimaryColorBrush}" />
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">

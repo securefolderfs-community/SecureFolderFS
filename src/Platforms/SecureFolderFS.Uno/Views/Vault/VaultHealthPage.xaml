@@ -7,14 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
     xmlns:vm2="using:SecureFolderFS.UI.ViewModels.Health"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:CountToStringConverter x:Key="CountToStringConverter" />
-
         <!--  Directory Issue  -->
         <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
             <ucab:ActionBlockControl
@@ -267,7 +264,7 @@
             </Grid.RowDefinitions>
 
             <InfoBar
-                Title="{x:Bind ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issue(s)'}"
+                Title="{x:Bind ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|FoundIssuesCount)'}"
                 Grid.Row="0"
                 VerticalContentAlignment="Center"
                 IsClosable="False"

@@ -76,7 +76,7 @@
                     VerticalScrollBarVisibility="Always">
                     <Editor
                         AutoSize="TextChanges"
-                        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                        Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                         HorizontalOptions="Fill"
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Placeholder="{l:ResourceString Rid=WriteHere}"

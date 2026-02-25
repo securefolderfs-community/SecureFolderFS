@@ -45,38 +45,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
-        private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
-                    AddVault(new(vaultModel));
-                    break;
-
-                case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
-                    RemoveVault(vaultModel);
-                    break;
-
-                case NotifyCollectionChangedAction.Move:
-                    Items.Move(e.OldStartingIndex, e.NewStartingIndex);
-                    break;
-
-                case NotifyCollectionChangedAction.Reset:
-                    SelectedItem = null;
-                    Items.Clear();
-                    HasVaults = false;
-                    break;
-
-                default: return;
-            }
-        }
-
         /// <inheritdoc/>
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            Items.Clear();
-            foreach (var item in _vaultCollectionModel)
-                AddVault(new(item));
+            if (Items.IsEmpty())
+            {
+                foreach (var item in _vaultCollectionModel)
+                    AddVault(new(item));
+            }
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
                 SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId?.Equals(SettingsService.AppSettings.LastVaultFolderId) ?? false);
@@ -125,6 +101,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         private void AddVault(VaultViewModel vaultViewModel)
         {
+            if (Items.Any(x => x.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel)))
+                return;
+
             var itemViewModel = new VaultListItemViewModel(vaultViewModel, _vaultCollectionModel);
             _ = itemViewModel.InitAsync();
 
@@ -140,16 +119,42 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             try
             {
-                itemToRemove.VaultViewModel.Dispose();
-                Items.Remove(itemToRemove);
+                if (Items.Remove(itemToRemove))
+                    itemToRemove.VaultViewModel.Dispose();
             }
             catch (Exception)
             {
-                // This happens rarely but the vault is actually removed
+                // This happens rarely, but the vault is actually removed
             }
 
             SelectedItem = Items.FirstOrDefault();
             HasVaults = !Items.IsEmpty();
+        }
+
+        private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
+                    AddVault(new(vaultModel));
+                    break;
+
+                case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
+                    RemoveVault(vaultModel);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    Items.Move(e.OldStartingIndex, e.NewStartingIndex);
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    SelectedItem = null;
+                    Items.Clear();
+                    HasVaults = false;
+                    break;
+
+                default: return;
+            }
         }
 
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)

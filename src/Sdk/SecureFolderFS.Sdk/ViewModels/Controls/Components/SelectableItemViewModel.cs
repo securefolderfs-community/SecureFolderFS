@@ -14,5 +14,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
         /// Gets or sets the value indicating whether the item is selected in view.
         /// </summary>
         [ObservableProperty] private bool _IsSelected;
+
+        /// <summary>
+        /// Called when <see cref="IsSelected"/> changes.
+        /// </summary>
+        protected virtual void IsSelectedChanged(bool newValue)
+        {
+        }
+
+        partial void OnIsSelectedChanged(bool value)
+        {
+            IsSelectedChanged(value);
+        }
     }
 }

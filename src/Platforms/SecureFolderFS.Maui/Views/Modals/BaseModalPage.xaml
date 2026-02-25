@@ -5,7 +5,10 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
-    x:DataType="local:BaseModalPage">
+    x:DataType="local:BaseModalPage"
+    Background="{OnPlatform Android={AppThemeBinding Light={StaticResource LightTransparentColor},
+                                                     Dark={StaticResource DarkTransparentColor}},
+                            iOS={StaticResource ThemeBackgroundFillSecondaryColorBrush}}">
 
     <ContentPage.Resources>
         <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
@@ -23,12 +26,6 @@
             <On Platform="iOS" Value="#007bff" />
         </OnPlatform>
     </NavigationPage.IconColor>
-
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android" Value="Transparent" />
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
 
     <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
@@ -64,7 +61,7 @@
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
-                Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"
                 StrokeThickness="0">
