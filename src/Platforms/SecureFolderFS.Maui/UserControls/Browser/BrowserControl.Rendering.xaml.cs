@@ -1,5 +1,3 @@
-using OwlCore.Storage;
-using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
@@ -9,7 +7,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl
     {
-        private readonly DeferredInitialization<IFolder> _deferredInitialization;
+        private readonly SemaphoreSlim _thumbnailSemaphore;
+        private CancellationTokenSource? _thumbnailCts;
         private readonly ISettingsService _settingsService;
         private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
@@ -87,10 +86,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Update our reference
             _collectionView = newCollectionView;
 
-            // Kick off thumbnail loading immediately - don't wait for the fade
+            // Kick off thumbnail loading immediately
             EnqueueVisibleItemsForThumbnails();
 
-            // Fade in concurrently
+            // Fade in
             await _collectionView.FadeToAsync(1, 100);
         }
 
@@ -99,12 +98,36 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
                 return;
 
-            if (ItemsSource.FirstOrDefault() is not { ParentFolder.Folder: { } folder})
+            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail).ToList();
+            if (items.Count == 0)
                 return;
 
-            _deferredInitialization.SetContext(folder);
-            foreach (var item in ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail))
-                _deferredInitialization.Enqueue(item);
+            // Cancel any in-flight thumbnail work from the previous folder
+            _thumbnailCts?.Cancel();
+            _thumbnailCts = new CancellationTokenSource();
+            var ct = _thumbnailCts.Token;
+
+            _ = Task.Run(async () =>
+            {
+                var tasks = items.Select(async item =>
+                {
+                    await _thumbnailSemaphore.WaitAsync(ct);
+                    try
+                    {
+                        await item.InitAsync(ct);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Navigation occurred, stop quietly
+                    }
+                    finally
+                    {
+                        _thumbnailSemaphore.Release();
+                    }
+                });
+
+                await Task.WhenAll(tasks);
+            }, ct);
         }
 
         private void TryEnqueueThumbnail(object? sender)
@@ -112,14 +135,25 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
+            if (sender is not BindableObject { BindingContext: FileViewModel { CanLoadThumbnail: true } fileViewModel })
                 return;
 
-            if (!fileViewModel.CanLoadThumbnail)
-                return;
-
-            _deferredInitialization.SetContext(fileViewModel.ParentFolder!.Folder);
-            _deferredInitialization.Enqueue(fileViewModel);
+            // Reuse the current folder's cancellation token, so virtualized
+            // items are also canceled on navigation
+            var ct = _thumbnailCts?.Token ?? CancellationToken.None;
+            _ = Task.Run(async () =>
+            {
+                await _thumbnailSemaphore.WaitAsync(ct);
+                try
+                {
+                    await fileViewModel.InitAsync(ct);
+                }
+                catch (OperationCanceledException) { }
+                finally
+                {
+                    _thumbnailSemaphore.Release();
+                }
+            }, ct);
         }
 
         private static IValueConverter? GetConverter(string key)

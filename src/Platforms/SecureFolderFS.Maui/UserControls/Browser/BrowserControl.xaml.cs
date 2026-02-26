@@ -3,7 +3,6 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared;
-using SecureFolderFS.UI;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -11,7 +10,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
     {
         public BrowserControl()
         {
-            _deferredInitialization = new(Constants.Browser.THUMBNAIL_MAX_PARALLELISATION);
+            _thumbnailSemaphore = new SemaphoreSlim(4, 4);
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
