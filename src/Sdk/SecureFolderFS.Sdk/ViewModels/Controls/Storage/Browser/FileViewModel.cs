@@ -70,14 +70,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             }
 
             // Generate a new thumbnail
+            cancellationToken.ThrowIfCancellationRequested();
             var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, Classification.TypeHint, cancellationToken);
             if (generatedThumbnail is null)
                 return;
 
-            // Cache the generated thumbnail
-            await BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
-
+            // Show and cache the generated thumbnail
             Thumbnail = generatedThumbnail;
+            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
         }
 
         /// <inheritdoc/>

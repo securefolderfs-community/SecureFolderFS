@@ -58,7 +58,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (navigationService.Views[Math.Max(--index, 0)] is not FolderViewModel folderViewModel)
                 return false;
 
-            // Remove last navigated-to breadcrumb
+            // Remove the last navigated-to breadcrumb
             var last = ViewModel?.Breadcrumbs?.LastOrDefault();
             if (last is not null)
                 ViewModel?.Breadcrumbs?.Remove(last);
@@ -120,11 +120,11 @@ namespace SecureFolderFS.Maui.Views.Vault
             {
                 Browser.IsVisible = false;
                 var synchronizationContext = SynchronizationContext.Current;
-                _ = Task.Delay(300).ContinueWith(async _ => await synchronizationContext.PostOrExecuteAsync(async _ =>
+                _ = synchronizationContext.PostOrExecuteAsync(async _ =>
                 {
                     await Browser.ReloadCollectionViewAsync();
                     Browser.IsVisible = true;
-                }));
+                });
             }
 
             base.OnAppearing();

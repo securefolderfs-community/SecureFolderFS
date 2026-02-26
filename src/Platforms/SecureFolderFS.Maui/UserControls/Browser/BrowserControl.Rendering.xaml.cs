@@ -87,14 +87,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Update our reference
             _collectionView = newCollectionView;
 
-            // Wait for layout
-            await Task.Delay(50);
-
-            // Fade in
-            await _collectionView.FadeToAsync(1, 100);
-
-            // Re-trigger thumbnail loading for visible items
+            // Kick off thumbnail loading immediately - don't wait for the fade
             EnqueueVisibleItemsForThumbnails();
+
+            // Fade in concurrently
+            await _collectionView.FadeToAsync(1, 100);
         }
 
         private void EnqueueVisibleItemsForThumbnails()
