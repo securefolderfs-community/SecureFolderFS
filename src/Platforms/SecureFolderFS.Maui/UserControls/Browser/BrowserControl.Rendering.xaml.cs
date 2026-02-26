@@ -98,7 +98,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
                 return;
 
-            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail).ToList();
+            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail()).ToList();
             if (items.Count == 0)
                 return;
 
@@ -135,7 +135,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            if (sender is not BindableObject { BindingContext: FileViewModel { CanLoadThumbnail: true } fileViewModel })
+            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
+                return;
+            
+            if (!fileViewModel.CanLoadThumbnail())
                 return;
 
             // Reuse the current folder's cancellation token, so virtualized

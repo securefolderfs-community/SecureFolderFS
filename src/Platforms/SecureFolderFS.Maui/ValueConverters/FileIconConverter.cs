@@ -1,6 +1,7 @@
 using System.Globalization;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -18,8 +19,8 @@ namespace SecureFolderFS.Maui.ValueConverters
 
             return value switch
             {
-                IImage image => ToImage(image),
-
+                IImage image => FromImage(image),
+                null when storableWrapper is FileViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
 #if ANDROID
                 _ => storableWrapper switch
                 {
@@ -35,7 +36,7 @@ namespace SecureFolderFS.Maui.ValueConverters
 #endif
             };
 
-            static object? ToImage(IImage image)
+            static object? FromImage(IImage image)
             {
                 switch (image)
                 {
@@ -66,7 +67,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                         };
                     }
 
-                    default: return null; // TODO: Add more IImage implementations
+                    default: return null;
                 }
             }
         }

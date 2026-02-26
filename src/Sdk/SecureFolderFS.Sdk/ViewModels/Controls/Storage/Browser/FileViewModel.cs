@@ -34,11 +34,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// </summary>
         public TypeClassification Classification { get; protected set; }
 
-        /// <summary>
-        /// Gets a value indicating whether a thumbnail can be loaded for the associated file.
-        /// </summary>
-        public virtual bool CanLoadThumbnail => Thumbnail is null && Classification.TypeHint is TypeHint.Image or TypeHint.Media;
-
         public FileViewModel(IFile file, BrowserViewModel browserViewModel, FolderViewModel? parentFolder)
             : base(browserViewModel, parentFolder)
         {
@@ -58,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (!SettingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            if (!CanLoadThumbnail)
+            if (!CanLoadThumbnail())
                 return;
 
             // Try to get from the cache first
@@ -78,6 +73,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Show and cache the generated thumbnail
             Thumbnail = generatedThumbnail;
             _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a thumbnail can be loaded for the associated file.
+        /// </summary>
+        /// <returns>True if a thumbnail can be loaded, otherwise; false.</returns>
+        public virtual bool CanLoadThumbnail()
+        {
+            if (Thumbnail is not null)
+                return false;
+
+            if (Classification.TypeHint is TypeHint.Image or TypeHint.Media)
+                return true;
+
+            return false;
         }
 
         /// <inheritdoc/>
