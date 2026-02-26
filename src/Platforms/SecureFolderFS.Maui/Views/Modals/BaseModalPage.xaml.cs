@@ -1,22 +1,17 @@
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Shapes;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Maui.Views.Modals
 {
     public partial class BaseModalPage : ContentPage
     {
+        private Guid? _primaryToolbarItemId;
+        
         public BaseModalPage()
         {
             BindingContext = this;
             InitializeComponent();
-        }
-
-        private void SheetPrimaryButton_SizeChanged(object? sender, EventArgs e)
-        {
-#if IOS
-            var displayInfo = DeviceDisplay.MainDisplayInfo;
-            SheetTitle.Margin = new(-(SheetPrimaryButton.Width / displayInfo.Density), 0d, 0d, 0d);
-#endif
         }
 
         private static void UpdateButtonsVisibility(BindableObject bindable)
@@ -59,7 +54,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(ModalContentProperty, value);
         }
         public static readonly BindableProperty ModalContentProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(View), typeof(BaseModalPage), null);
+            BindableProperty.Create(nameof(ModalContent), typeof(View), typeof(BaseModalPage));
 
         public ICommand? PrimaryCommand
         {
@@ -67,7 +62,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(PrimaryCommandProperty, value);
         }
         public static readonly BindableProperty PrimaryCommandProperty =
-            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage), null);
+            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage));
 
         public ICommand? CloseCommand
         {
@@ -75,7 +70,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(CloseCommandProperty, value);
         }
         public static readonly BindableProperty CloseCommandProperty =
-            BindableProperty.Create(nameof(CloseCommand), typeof(ICommand), typeof(BaseModalPage), null);
+            BindableProperty.Create(nameof(CloseCommand), typeof(ICommand), typeof(BaseModalPage));
 
         public string? PrimaryText
         {
@@ -84,7 +79,39 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty PrimaryTextProperty =
             BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage),
-                propertyChanged: static (bindable, _, _) => UpdateButtonsVisibility(bindable));
+                propertyChanged: static (bindable, oldValue, newValue) =>
+                {
+                    UpdateButtonsVisibility(bindable);
+#if IOS
+                    if (bindable is not BaseModalPage modalPage)
+                        return;
+
+                    if (newValue is null && oldValue is string)
+                    {
+                        var removed = modalPage.ToolbarItems.RemoveMatch(x => Equals(x.Id, modalPage._primaryToolbarItemId));
+                        if (removed is not null)
+                        {
+                            removed.RemoveBinding(MenuItem.TextProperty);
+                            removed.RemoveBinding(MenuItem.CommandProperty);
+                            removed.RemoveBinding(MenuItem.IsEnabledProperty);
+                        }
+                    }
+                    else if (oldValue is null && newValue is not null)
+                    {
+                        var toolbarItem = new ToolbarItem()
+                        {
+                            Order = ToolbarItemOrder.Primary
+                        };
+                        
+                        toolbarItem.SetBinding(MenuItem.TextProperty, new Binding(nameof(PrimaryText), mode: BindingMode.OneWay, source: modalPage));
+                        toolbarItem.SetBinding(MenuItem.CommandProperty, new Binding(nameof(PrimaryCommand), mode: BindingMode.OneWay, source: modalPage));
+                        toolbarItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(PrimaryEnabled), mode: BindingMode.OneWay, source: modalPage));
+
+                        modalPage.ToolbarItems.Add(toolbarItem);
+                        modalPage._primaryToolbarItemId = toolbarItem.Id;
+                    }
+#endif
+                });
 
         public string? CloseText
         {
