@@ -129,7 +129,7 @@
                             x:Name="SourceGrid"
                             Padding="8"
                             HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
-                            RowSpacing="8"
+                            RowSpacing="4"
                             Style="{StaticResource SelectableItemGridStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition />
@@ -148,14 +148,24 @@
                                 Text="{Binding Title, Mode=OneWay}"
                                 VerticalOptions="Center" />
 
-                            <CheckBox
+                            <Grid
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
                                 HorizontalOptions="Center"
-                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                 IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
-                                VerticalOptions="Center" />
+                                VerticalOptions="Center">
+                                <OnPlatform x:TypeArguments="View">
+                                    <On Platform="iOS">
+                                        <Ellipse
+                                            Fill="{StaticResource BackgroundFillPrimaryLightColor}"
+                                            HeightRequest="22"
+                                            IsVisible="{Binding IsSelected, Mode=OneWay}"
+                                            WidthRequest="22" />
+                                    </On>
+                                </OnPlatform>
+
+                                <CheckBox Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                            </Grid>
                         </Grid>
                     </Border>
                 </apesui:ContextMenuContainer.Content>

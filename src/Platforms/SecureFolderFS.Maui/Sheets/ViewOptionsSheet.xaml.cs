@@ -1,10 +1,12 @@
 using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
+using Plugin.SegmentedControl.Maui;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
@@ -57,9 +59,11 @@ namespace SecureFolderFS.Maui.Sheets
     public partial class ViewOptionsSheet : BottomSheet, IQueryAttributable
     {
         private TaskCompletionSource<IResult>? _tcs;
+        private readonly FirstTimeHelper _firstTime;
 
         public ViewOptionsSheet()
         {
+            _firstTime = new(1);
             ViewModel ??= ViewOptionsSheetFragment.EarlyInstance?.ViewModel;
             Closed += Sheet_Closed;
 
@@ -77,6 +81,26 @@ namespace SecureFolderFS.Maui.Sheets
         {
             _tcs?.TrySetResult(Result.Success);
             ViewOptionsSheetFragment.EarlyInstance = null;
+        }
+
+        private void SizeSegments_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not SegmentedControl sizeSegments || ViewModel is null)
+                return;
+
+            if (ViewModel.CurrentSizeOption is null)
+                return;
+
+            var index = ViewModel.SizeOptions.IndexOf(ViewModel.CurrentSizeOption);
+            sizeSegments.SelectedSegment = index;
+        }
+        
+        private void SizeSegments_SelectedIndexChanged(object? sender, SelectedIndexChangedEventArgs e)
+        {
+            if (_firstTime.IsFirstTime())
+                return;
+            
+            ViewModel?.SetLayoutSizeOptionCommand.Execute(e.NewValue);
         }
 
         public LayoutsViewModel? ViewModel

@@ -9,6 +9,7 @@
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Components;assembly=SecureFolderFS.Sdk"
     x:Name="ThisSheet"
+    Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
     BindingContext="{x:Reference ThisSheet}"
     HasHandle="True"
     IsCancelable="True"
@@ -59,8 +60,8 @@
                                     x:Name="SizeSegments"
                                     Background="Transparent"
                                     HorizontalOptions="Fill"
-                                    SegmentSelectedCommand="{Binding ViewModel.SetLayoutSizeOptionCommand, Mode=OneWay}"
-                                    SegmentSelectedCommandParameter="{Binding SelectedSegment, Mode=OneWay, Source={x:Reference SizeSegments}}"
+                                    Loaded="SizeSegments_Loaded"
+                                    SelectedIndexChanged="SizeSegments_SelectedIndexChanged"
                                     SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
                                                                         Dark={StaticResource PrimaryContrastingDarkColor}}"
                                     TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},

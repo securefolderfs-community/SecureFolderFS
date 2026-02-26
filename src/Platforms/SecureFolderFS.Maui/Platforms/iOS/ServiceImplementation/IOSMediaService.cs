@@ -19,7 +19,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSMediaService : BaseMauiMediaService
     {
         /// <inheritdoc/>
-        public override async Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
+        public override async Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default,
+            CancellationToken cancellationToken = default)
         {
             if (typeHint == default)
                 typeHint = FileTypeHelper.GetTypeHint(file);
@@ -29,7 +30,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 case TypeHint.Image:
                 {
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                    return await GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE).ConfigureAwait(false);
+                    return await GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE)
+                        .ConfigureAwait(false);
                 }
 
                 case TypeHint.Media:
@@ -50,7 +52,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 throw new Exception("Failed to load image.");
 
             // Apply EXIF orientation
-            var orientedImage = image.Orientation == UIImageOrientation.Up ? image : UIImage.FromImage(image.CGImage, 1.0f, image.Orientation);
+            var orientedImage = image.Orientation == UIImageOrientation.Up
+                ? image
+                : UIImage.FromImage(image.CGImage, 1.0f, image.Orientation);
 
             // Resize
             var scale = Math.Min(maxSize / orientedImage.Size.Width, maxSize / orientedImage.Size.Height);
@@ -80,23 +84,35 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         {
             var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.mp4");
 
-            // Write stream to temp file using NSData for speed
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms).ConfigureAwait(false);
-            var data = NSData.FromArray(ms.ToArray());
-            data.Save(tempPath, false); // Use NSData's fast file save
-
-            var asset = AVAsset.FromUrl(NSUrl.FromFilename(tempPath));
-            var generator = new AVAssetImageGenerator(asset)
-            {
-                AppliesPreferredTrackTransform = true,
-                MaximumSize = new CGSize(320, 240)
-            };
-
             try
             {
+                // Only read up to a limited prefix of the file. AVFoundation can typically
+                // decode the first keyframe from the first few MBs of a well-formed MP4,
+                // since moov/stbl metadata is usually at the front.
+                const int maxPrefixBytes = 4 * 1024 * 1024; // 4 MB
+                await using (var fileStream = File.OpenWrite(tempPath))
+                {
+                    var buffer = new byte[81920];
+                    int totalRead = 0, read;
+                    while (totalRead < maxPrefixBytes &&
+                           (read = await stream
+                                .ReadAsync(buffer.AsMemory(0, Math.Min(buffer.Length, maxPrefixBytes - totalRead)))
+                               .ConfigureAwait(false)) > 0)
+                    {
+                        await fileStream.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
+                        totalRead += read;
+                    }
+                }
+
+                var asset = AVAsset.FromUrl(NSUrl.FromFilename(tempPath));
+                var generator = new AVAssetImageGenerator(asset)
+                {
+                    AppliesPreferredTrackTransform = true,
+                    MaximumSize = new CGSize(320, 240)
+                };
+
                 var actualTime = new CMTime((long)captureTime.TotalSeconds, 1);
-                var imageRef = generator.CopyCGImageAtTime(actualTime, out var _, out var error);
+                var imageRef = generator.CopyCGImageAtTime(actualTime, out _, out var error);
                 if (imageRef is null || error != null)
                     throw new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}");
 
@@ -116,6 +132,5 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 File.Delete(tempPath);
             }
         }
-
     }
 }

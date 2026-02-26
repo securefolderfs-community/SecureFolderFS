@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.Credentials;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.DataModels;

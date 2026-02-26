@@ -1,9 +1,9 @@
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Maui.Views.Vault;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -11,7 +11,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
 {
-    public partial class AppShell : Shell
+    public partial class AppShell : Shell, IRecipient<VaultLockedMessage>
     {
         public AppShell()
         {
@@ -22,6 +22,14 @@ namespace SecureFolderFS.Maui
             Routing.RegisterRoute("OverviewPage", typeof(OverviewPage));
             Routing.RegisterRoute("BrowserPage", typeof(BrowserPage));
             Routing.RegisterRoute("HealthPage", typeof(HealthPage));
+            
+            WeakReferenceMessenger.Default.Register(this);
+        }
+        
+        /// <inheritdoc/>
+        public void Receive(VaultLockedMessage message)
+        {
+            HapticFeedback.Perform();
         }
 
         private async void AppShell_Loaded(object? sender, EventArgs e)
