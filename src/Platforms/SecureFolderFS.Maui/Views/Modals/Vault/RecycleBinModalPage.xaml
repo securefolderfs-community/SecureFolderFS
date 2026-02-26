@@ -24,16 +24,14 @@
 
     <md:BaseModalPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
-            Order="Secondary"
-            Priority="0"
-            Text="{l:ResourceString Rid=Refresh}" />
-        <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand, Mode=OneWay}"
             IsEnabled="{Binding ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
             Order="Secondary"
-            Priority="1"
             Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:none|Select:true:localize|Cancel'}" />
+        <ToolbarItem
+            Command="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
+            Order="Secondary"
+            Text="{l:ResourceString Rid=Refresh}" />
     </md:BaseModalPage.ToolbarItems>
 
     <md:BaseModalPage.ModalContent>
@@ -47,7 +45,7 @@
             <VerticalStackLayout
                 Grid.Row="0"
                 Padding="16,0"
-                Spacing="12">
+                Spacing="8">
                 <uco:OptionsContainer>
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>

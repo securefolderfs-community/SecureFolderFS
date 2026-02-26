@@ -45,7 +45,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                         Order = ToolbarItemOrder.Secondary
                     };
 
-                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, $"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", BindingMode.OneWay);
+                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, new Binding($"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", mode: BindingMode.OneWay, source: this));
                     ToolbarItems.Add(toolbarItem);
                 }
             }

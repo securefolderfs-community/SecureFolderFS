@@ -14,51 +14,57 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             InitializeComponent();
         }
 
-        private async void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+        private async void Panel_PanUpdated(object? sender, PanUpdatedEventArgs e)
         {
-            if (_isDismissing)
-                return;
-
-            switch (e.StatusType)
+            try
             {
-                case GestureStatus.Running:
+                if (_isDismissing)
+                    return;
+
+                switch (e.StatusType)
                 {
-                    var translation = e.TotalY;
-                    RootPanel.TranslationY = translation < 0
-                        ? Math.Max(translation / 4d, BOUNCE_LIMIT)
-                        : translation;
-                    break;
-                }
-
-                case GestureStatus.Completed:
-                case GestureStatus.Canceled:
-                {
-                    if (RootPanel.TranslationY >= DISMISS_THRESHOLD)
+                    case GestureStatus.Running:
                     {
-                        _isDismissing = true;
-
-                        // Animate out from the current dragged position
-                        var currentY = RootPanel.TranslationY;
-                        var remainingDistance = HIDE_TRANSLATION - currentY;
-                        var duration = (uint)Math.Max(300d * (remainingDistance / HIDE_TRANSLATION), 150d);
-                        await RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
-
-                        // Clean up visual state
-                        RootPanel.IsVisible = false;
-                        RootPanel.TranslationY = 0d;
-
-                        _isDismissing = false;
-
-                        // Tell the caller - they will set IsShown=false, which the guard will skip animating.
-                        // This also ensures the backing value is actually false, so the next IsShown=true fires propertyChanged.
-                        CancelCommand?.Execute(null);
+                        var translation = e.TotalY;
+                        RootPanel.TranslationY = translation < 0
+                            ? Math.Max(translation / 4d, BOUNCE_LIMIT)
+                            : translation;
+                        break;
                     }
-                    else
+
+                    case GestureStatus.Completed:
+                    case GestureStatus.Canceled:
                     {
-                        await RootPanel.TranslateToAsync(0, 0, 250U, Easing.SpringOut);
+                        if (RootPanel.TranslationY >= DISMISS_THRESHOLD)
+                        {
+                            _isDismissing = true;
+
+                            // Animate out from the current dragged position
+                            var currentY = RootPanel.TranslationY;
+                            var remainingDistance = HIDE_TRANSLATION - currentY;
+                            var duration = (uint)Math.Max(300d * (remainingDistance / HIDE_TRANSLATION), 150d);
+                            await RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
+
+                            // Clean up visual state
+                            RootPanel.IsVisible = false;
+                            RootPanel.TranslationY = 0d;
+
+                            _isDismissing = false;
+
+                            // Tell the caller - they will set IsShown=false, which the guard will skip animating.
+                            // This also ensures the backing value is actually false, so the next IsShown=true fires propertyChanged.
+                            CancelCommand?.Execute(null);
+                        }
+                        else
+                        {
+                            await RootPanel.TranslateToAsync(0, 0, 250U, Easing.SpringOut);
+                        }
+                        break;
                     }
-                    break;
                 }
+            }
+            catch (Exception)
+            {
             }
         }
 

@@ -26,18 +26,17 @@
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
                 HeightRequest="400"
+                IsDismissible="True"
                 SizeChanged="GalleryView_Loaded"
                 WidthRequest="300" />
         </DataTemplate>
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
             <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <uc:PanRouter.RouterContent>
-                    <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
-                        <vlc:MediaPlayerElement.PlaybackControls>
-                            <vlc:PlaybackControls />
-                        </vlc:MediaPlayerElement.PlaybackControls>
-                    </vlc:MediaPlayerElement>
-
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Text="Video Previewer is disabled. It contains usage of ClickGestureRecognizer which was removed in .NET 10 causing a TypeLoadException in the LibVLC library."
+                        VerticalOptions="Center" />
 
                     <!-- <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded"> -->
                     <!--     <vlc:MediaPlayerElement.PlaybackControls> -->

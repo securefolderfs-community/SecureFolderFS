@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.ServiceImplementation;
-using SecureFolderFS.Maui.UserControls.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;

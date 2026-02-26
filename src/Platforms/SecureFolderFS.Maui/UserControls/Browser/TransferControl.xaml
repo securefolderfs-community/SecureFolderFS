@@ -2,6 +2,8 @@
     x:Class="SecureFolderFS.Maui.UserControls.Browser.TransferControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
+    xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="ThisControl">
@@ -16,20 +18,21 @@
                 Opacity="0.4"
                 Radius="5" />
         </Grid.Shadow>
-
-        <Border
+        <av:AcrylicView
             Margin="16"
-            Padding="16,8,8,8"
+            Padding="8"
             x:DataType="local:TransferControl"
-            Background="{StaticResource ThemeCardFillPrimaryColorBrush}"
             BindingContext="{x:Reference ThisControl}"
-            HeightRequest="56">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="12" />
-            </Border.StrokeShape>
-            <Border.GestureRecognizers>
-                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
-            </Border.GestureRecognizers>
+            CornerRadius="12"
+            EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
+                                          Light={av2:EffectStyle Light}}"
+            HeightRequest="56"
+            TintColor="{AppThemeBinding Light={StaticResource CardFillPrimaryLightColor},
+                                        Dark={StaticResource CardFillPrimaryDarkColor}}"
+            TintOpacity="0.7">
+            <av:AcrylicView.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="Panel_PanUpdated" />
+            </av:AcrylicView.GestureRecognizers>
 
             <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
@@ -62,10 +65,11 @@
                     Grid.Column="1"
                     Padding="16,8"
                     Command="{Binding PrimaryCommand, Mode=OneWay}"
+                    CornerRadius="10"
                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                     Style="{StaticResource AccentButtonStyle}"
                     Text="{Binding PrimaryButtonText, Mode=OneWay}" />
             </Grid>
-        </Border>
+        </av:AcrylicView>
     </Grid>
 </ContentView>

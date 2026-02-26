@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
+using Page = Microsoft.Maui.Controls.Page;
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -75,6 +76,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             {
                 GalleryView.PreviousRequested -= Gallery_PreviousRequested;
                 GalleryView.NextRequested -= Gallery_NextRequested;
+                GalleryView.DismissRequested -= Gallery_DismissRequested;
                 GalleryView.Dispose();
 
                 (GalleryView.Previous as IDisposable)?.Dispose();
@@ -144,6 +146,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
+            galleryView.DismissRequested += Gallery_DismissRequested;
 
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex - 1) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IAsyncInitialize)?.InitAsync();
@@ -206,6 +209,17 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
+        }
+        
+        private async void Gallery_DismissRequested(object? sender, EventArgs e)
+        {
+            // The gallery has already translated/faded partway - animate the rest out, then dismiss
+            var page = this as Page;
+            var slideTask = page.TranslateToAsync(0, 60, 180U, Easing.CubicIn);
+            var fadeTask = page.FadeToAsync(0d, 180U, Easing.CubicIn);
+            
+            await Task.WhenAll(slideTask, fadeTask);
+            await HideAsync();
         }
 
         public PreviewerOverlayViewModel? ViewModel

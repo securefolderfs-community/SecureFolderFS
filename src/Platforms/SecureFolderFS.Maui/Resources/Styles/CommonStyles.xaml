@@ -4,6 +4,7 @@
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillPrimaryColorBrush}" />
         <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
+        <Setter Property="Shell.NavBarIsVisible" Value="True" />
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">

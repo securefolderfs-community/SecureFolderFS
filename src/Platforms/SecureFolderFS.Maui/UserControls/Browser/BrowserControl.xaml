@@ -121,7 +121,7 @@
                         Text="{l:ResourceString Rid=Delete}" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
-                    <Border>
+                    <Border StrokeThickness="0">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8" />
                         </Border.StrokeShape>
@@ -235,6 +235,7 @@
                             BackgroundColor="{StaticResource PlaybackIconPlateColor}"
                             HorizontalOptions="End"
                             IsVisible="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Media'}"
+                            StrokeThickness="0"
                             VerticalOptions="End">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="4" />

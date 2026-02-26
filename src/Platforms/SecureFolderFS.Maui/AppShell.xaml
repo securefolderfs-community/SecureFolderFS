@@ -6,7 +6,7 @@
     Title="SecureFolderFS"
     FlyoutBehavior="Disabled"
     Loaded="AppShell_Loaded"
-    Shell.NavBarIsVisible="True">
+    NavBarIsVisible="True">
 
     <Shell.ForegroundColor>
         <OnPlatform x:TypeArguments="Color">
