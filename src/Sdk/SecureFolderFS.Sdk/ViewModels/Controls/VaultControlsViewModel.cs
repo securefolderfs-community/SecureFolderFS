@@ -107,6 +107,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public void Dispose()
         {
+            _browserViewModel?.Dispose();
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
     }

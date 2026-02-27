@@ -94,6 +94,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
             <WebView
+                Background="Transparent"
                 HorizontalOptions="Fill"
                 Source="{Binding PdfSource, Mode=OneWay, Converter={StaticResource FileServerWebViewSourceConverter}}"
                 VerticalOptions="Fill" />
@@ -105,16 +106,15 @@
                     <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="iOS" />
                 </Grid>
 
-                <VerticalStackLayout>
-                    <Label
-                        FontSize="20"
-                        HorizontalOptions="Center"
-                        Text="{Binding Title, Mode=OneWay}" />
-                    <Label
-                        HorizontalOptions="Center"
-                        Opacity="0.8"
-                        Text="{l:ResourceString Rid=NoPreviewAvailable}" />
-                </VerticalStackLayout>
+                <Label
+                    FontSize="20"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding Title, Mode=OneWay}" />
+                <Label
+                    HorizontalOptions="Center"
+                    Opacity="0.8"
+                    Text="{l:ResourceString Rid=NoPreviewAvailable}" />
             </VerticalStackLayout>
         </DataTemplate>
     </md:BaseModalPage.Resources>

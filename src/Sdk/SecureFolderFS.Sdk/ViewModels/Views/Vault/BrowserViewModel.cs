@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<IFileExplorerService>]
     [Bindable(true)]
-    public partial class BrowserViewModel : BaseDesignationViewModel, IFolderPicker
+    public partial class BrowserViewModel : BaseDesignationViewModel, IFolderPicker, IDisposable
     {
         private readonly IViewable? _rootView;
 
@@ -112,6 +112,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             finally
             {
                 await OuterNavigator.GoBackAsync();
+                Dispose();
             }
         }
 
@@ -122,6 +123,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             Title = newValue?.Title;
             if (string.IsNullOrEmpty(Title))
                 Title = _rootView?.Title;
+        }
+
+        partial void OnIsSelectingChanged(bool oldValue, bool newValue)
+        {
+            if (oldValue && !newValue)
+                CurrentFolder?.Items.UnselectAll();
         }
 
         [RelayCommand]
@@ -269,6 +276,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     break;
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            ThumbnailCache.Dispose();
+            CurrentFolder?.Dispose();
+            CurrentFolder?.Items.DisposeAll();
+            CurrentFolder?.Items.Clear();
         }
     }
 }

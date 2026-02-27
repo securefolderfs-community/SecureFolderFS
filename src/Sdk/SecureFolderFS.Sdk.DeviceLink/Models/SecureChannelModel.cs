@@ -2,7 +2,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
-using static SecureFolderFS.Sdk.DeviceLink.Constants;
 
 namespace SecureFolderFS.Sdk.DeviceLink.Models
 {

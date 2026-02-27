@@ -101,7 +101,7 @@
                         <!--  Quick Options  -->
                         <HorizontalStackLayout Grid.Column="1">
                             <Button
-                                Padding="12"
+                                Padding="10"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
                                                                            IconSize=24,
                                                                            IconColor='#007bff'}"
@@ -110,7 +110,7 @@
                                 Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
-                                Padding="12"
+                                Padding="10"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino SquareArrowUp,
                                                                            IconSize=24,
                                                                            IconColor='#007bff'}"

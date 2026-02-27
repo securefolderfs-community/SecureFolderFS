@@ -49,6 +49,7 @@ namespace SecureFolderFS.Shared.Helpers
             TypeHint? Media()
             {
                 return mimeType.Equals("video/x-msvideo")
+                    || mimeType.Equals("video/quicktime")
                     || mimeType.Equals("video/mp4")
                     || mimeType.Equals("video/mpeg")
                     || mimeType.Equals("video/ogg")

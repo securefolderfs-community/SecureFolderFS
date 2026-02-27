@@ -30,14 +30,15 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 case TypeHint.Image:
                 {
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                    return await GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE)
-                        .ConfigureAwait(false);
+                    return await GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE).ConfigureAwait(false);
                 }
 
                 case TypeHint.Media:
                 {
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                    return await GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
+                    
+                    var extension = Path.GetExtension(file.Name);
+                    return await GenerateVideoThumbnailAsync(stream, extension, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
                 }
 
                 default: throw new InvalidOperationException("The provided file type is invalid.");
@@ -47,8 +48,11 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         private static async Task<IImageStream> GenerateImageThumbnailAsync(Stream stream, uint maxSize)
         {
             using var data = NSData.FromStream(stream);
+            if (data is null)
+                throw new Exception("Failed to load image data.");
+            
             using var image = UIImage.LoadFromData(data);
-            if (image is null)
+            if (image?.CGImage is null)
                 throw new Exception("Failed to load image.");
 
             // Apply EXIF orientation
@@ -80,10 +84,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             return new ImageStream(new NonDisposableStream(memoryStream));
         }
 
-        private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
+        private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, string extension, TimeSpan captureTime)
         {
-            var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.mp4");
-
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{extension}");
             try
             {
                 // Only read up to a limited prefix of the file. AVFoundation can typically
