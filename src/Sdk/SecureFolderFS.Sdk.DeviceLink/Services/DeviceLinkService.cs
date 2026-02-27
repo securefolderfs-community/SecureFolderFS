@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.DeviceLink.Models;
 using SecureFolderFS.Sdk.DeviceLink.ViewModels;
 using SecureFolderFS.Shared.Helpers;
 using static SecureFolderFS.Sdk.DeviceLink.Constants;
+#pragma warning disable SYSLIB5006
 
 namespace SecureFolderFS.Sdk.DeviceLink.Services
 {
@@ -194,30 +195,45 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
 
         private async Task HandlePairingRequestAsync(ConnectedDevice device, ConnectionSession session, byte[] message, CancellationToken cancellationToken)
         {
-            // Parse desktop's ECDH public key
-            using var ms = new MemoryStream(message);
-            using var reader = new BinaryReader(ms);
+            // Parse desktop's ECDH and ML-KEM public keys
+            ProtocolSerializer.ParsePairingRequest(
+                message,
+                out var desktopName,
+                out var desktopType,
+                out var desktopEcdhPublicKey,
+                out var desktopMlKemPublicKey);
 
-            reader.ReadByte(); // Skip message type
-            var desktopName = reader.ReadString();
-            var desktopType = reader.ReadString();
-            var keyLength = reader.ReadInt32();
-            var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
-
-            // Generate our ECDH keypair
+            // Generate our ECDH keypair (classical, for forward secrecy)
             using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var myEcdhPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
-            // Derive shared secret BEFORE sending response (so we can show code immediately)
-            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
+            // Derive classical ECDH component
+            var ecdhSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
+
+            // Encapsulate against desktop's ML-KEM public key.
+            // This produces a ciphertext (sent to desktop) and a shared secret (kept here).
+            // Only the desktop, holding the ML-KEM private key, can decapsulate to get the same secret.
+            using var desktopMlKemKey = MLKem.ImportSubjectPublicKeyInfo(desktopMlKemPublicKey);
+            desktopMlKemKey.Encapsulate(out var mlKemCiphertext, out var mlKemSecret);
+
+            byte[] sharedSecret;
+            try
+            {
+                sharedSecret = SecureChannelModel.CombineHybridSecrets(ecdhSecret, mlKemSecret);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(ecdhSecret);
+                CryptographicOperations.ZeroMemory(mlKemSecret);
+            }
 
             try
             {
-                // Compute verification code
+                // Compute verification code from the hybrid shared secret
                 var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
 
-                // Send our public key response
-                var response = ProtocolSerializer.CreatePairingResponse(myPublicKey);
+                // Send our ECDH public key and the ML-KEM ciphertext
+                var response = ProtocolSerializer.CreatePairingResponse(myEcdhPublicKey, mlKemCiphertext);
                 await device.SendMessageAsync(response, cancellationToken);
 
                 // Notify UI to display verification code and wait for user confirmation
@@ -319,16 +335,13 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
         private async Task HandleSecureSessionRequestAsync(ConnectedDevice device, ConnectionSession session, byte[] message,
             CancellationToken cancellationToken)
         {
-            // Parse request
-            using var ms = new MemoryStream(message);
-            using var reader = new BinaryReader(ms);
-
-            reader.ReadByte(); // Skip message type
-            var pairingId = reader.ReadString();
-            var nonceLength = reader.ReadInt32();
-            var desktopNonce = reader.ReadBytes(nonceLength);
-            var keyLength = reader.ReadInt32();
-            var desktopEcdhPublicKey = reader.ReadBytes(keyLength);
+            // Parse the desktop's pairingId, nonce, ECDH public key, and ML-KEM public key
+            ProtocolSerializer.ParseSecureSessionRequest(
+                message,
+                out var pairingId,
+                out var desktopNonce,
+                out var desktopEcdhPublicKey,
+                out var desktopMlKemPublicKey);
 
             // Find credential by pairing ID
             var credential = _credentialStoreModel.GetByPairingId(pairingId);
@@ -341,26 +354,43 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
             // Store credential in session for later use in auth request
             session.CurrentCredential = credential;
 
-            // Generate fresh ECDH keypair for this session (ephemeral)
+            // Generate fresh ephemeral ECDH keypair for this session (transport security)
             using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var myEcdhPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
 
-            // Derive session secret using ECDH (transport security only)
-            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
+            // Derive classical ECDH component
+            var ecdhSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, desktopEcdhPublicKey);
+
+            // Encapsulate against desktop's ML-KEM public key for this session.
+            // Fresh encapsulation per session ensures PQC forward secrecy.
+            using var desktopMlKemKey = MLKem.ImportSubjectPublicKeyInfo(desktopMlKemPublicKey);
+            desktopMlKemKey.Encapsulate(out var mlKemCiphertext, out var mlKemSecret);
+
+            byte[] sharedSecret;
+            try
+            {
+                sharedSecret = SecureChannelModel.CombineHybridSecrets(ecdhSecret, mlKemSecret);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(ecdhSecret);
+                CryptographicOperations.ZeroMemory(mlKemSecret);
+            }
 
             // Generate our session nonce
             var mobileNonce = new byte[16];
             RandomNumberGenerator.Fill(mobileNonce);
 
-            // Derive session key from ECDH secret + both nonces
+            // Derive session key from hybrid shared secret + both nonces
             var combinedNonce = new byte[desktopNonce.Length + mobileNonce.Length];
             desktopNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, desktopNonce.Length);
 
             session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
+            CryptographicOperations.ZeroMemory(sharedSecret);
 
-            // Send response with our ECDH public key
-            var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, publicKey);
+            // Send response with our ECDH public key and ML-KEM ciphertext
+            var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, myEcdhPublicKey, mlKemCiphertext);
             await device.SendMessageAsync(response, cancellationToken);
         }
 

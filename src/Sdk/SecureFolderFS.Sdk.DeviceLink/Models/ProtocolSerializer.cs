@@ -109,7 +109,16 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
 
         #region Pairing
 
-        public static byte[] CreatePairingRequest(string desktopName, string desktopType, byte[] ecdhPublicKey)
+        /// <summary>
+        /// Creates a pairing request carrying both ECDH and ML-KEM public keys.
+        /// The ML-KEM public key allows the mobile side to encapsulate a shared secret
+        /// that only the desktop can decapsulate (quantum-resistant key agreement).
+        /// </summary>
+        public static byte[] CreatePairingRequest(
+            string desktopName,
+            string desktopType,
+            byte[] ecdhPublicKey,
+            byte[] mlKemPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -119,8 +128,72 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write(desktopType);
             writer.Write(ecdhPublicKey.Length);
             writer.Write(ecdhPublicKey);
+            writer.Write(mlKemPublicKey.Length);
+            writer.Write(mlKemPublicKey);
 
             return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Parses a pairing request, extracting both ECDH and ML-KEM public keys.
+        /// </summary>
+        public static void ParsePairingRequest(
+            byte[] message,
+            out string desktopName,
+            out string desktopType,
+            out byte[] ecdhPublicKey,
+            out byte[] mlKemPublicKey)
+        {
+            using var ms = new MemoryStream(message);
+            using var reader = new BinaryReader(ms);
+
+            reader.ReadByte(); // Skip message type
+            desktopName = reader.ReadString();
+            desktopType = reader.ReadString();
+
+            var ecdhKeyLength = reader.ReadInt32();
+            ecdhPublicKey = reader.ReadBytes(ecdhKeyLength);
+
+            var mlKemKeyLength = reader.ReadInt32();
+            mlKemPublicKey = reader.ReadBytes(mlKemKeyLength);
+        }
+
+        /// <summary>
+        /// Creates a pairing response carrying the mobile's ECDH public key and the
+        /// ML-KEM ciphertext (encapsulated against the desktop's ML-KEM public key).
+        /// </summary>
+        public static byte[] CreatePairingResponse(byte[] ecdhPublicKey, byte[] mlKemCiphertext)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            writer.Write((byte)MessageType.PairingResponse);
+            writer.Write(ecdhPublicKey.Length);
+            writer.Write(ecdhPublicKey);
+            writer.Write(mlKemCiphertext.Length);
+            writer.Write(mlKemCiphertext);
+
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Parses a pairing response, extracting the mobile's ECDH public key and ML-KEM ciphertext.
+        /// </summary>
+        public static void ParsePairingResponse(
+            byte[] data,
+            out byte[] ecdhPublicKey,
+            out byte[] mlKemCiphertext)
+        {
+            using var ms = new MemoryStream(data);
+            using var reader = new BinaryReader(ms);
+
+            reader.ReadByte(); // Skip message type
+
+            var ecdhKeyLength = reader.ReadInt32();
+            ecdhPublicKey = reader.ReadBytes(ecdhKeyLength);
+
+            var ciphertextLength = reader.ReadInt32();
+            mlKemCiphertext = reader.ReadBytes(ciphertextLength);
         }
 
         public static byte[] CreatePairingConfirmMessage(string credentialId, string vaultName, string pairingId, byte[] challenge)
@@ -134,28 +207,6 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write(pairingId);
             writer.Write(challenge.Length);
             writer.Write(challenge);
-
-            return ms.ToArray();
-        }
-
-        public static byte[] ParsePairingResponse(byte[] data)
-        {
-            using var ms = new MemoryStream(data);
-            using var reader = new BinaryReader(ms);
-
-            reader.ReadByte(); // Skip message type
-            var keyLength = reader.ReadInt32();
-            return reader.ReadBytes(keyLength);
-        }
-
-        public static byte[] CreatePairingResponse(byte[] ecdhPublicKey)
-        {
-            using var ms = new MemoryStream();
-            using var writer = new BinaryWriter(ms);
-
-            writer.Write((byte)MessageType.PairingResponse);
-            writer.Write(ecdhPublicKey.Length);
-            writer.Write(ecdhPublicKey);
 
             return ms.ToArray();
         }
@@ -200,7 +251,14 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
 
         #region Secure Session
 
-        public static byte[] CreateSecureSessionRequest(string pairingId, ReadOnlySpan<byte> nonce, ReadOnlySpan<byte> ecdhPublicKey)
+        /// <summary>
+        /// Creates a secure session request carrying both ECDH and ML-KEM public keys.
+        /// </summary>
+        public static byte[] CreateSecureSessionRequest(
+            string pairingId,
+            ReadOnlySpan<byte> nonce,
+            ReadOnlySpan<byte> ecdhPublicKey,
+            ReadOnlySpan<byte> mlKemPublicKey)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -211,25 +269,46 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write(nonce);
             writer.Write(ecdhPublicKey.Length);
             writer.Write(ecdhPublicKey);
+            writer.Write(mlKemPublicKey.Length);
+            writer.Write(mlKemPublicKey);
 
             return ms.ToArray();
         }
 
-        public static void ParseSecureSessionAccepted(byte[] data, out byte[] nonce, out byte[] ecdhPublicKey)
+        /// <summary>
+        /// Parses a secure session request, extracting the nonce, ECDH public key, and ML-KEM public key.
+        /// </summary>
+        public static void ParseSecureSessionRequest(
+            byte[] message,
+            out string pairingId,
+            out byte[] nonce,
+            out byte[] ecdhPublicKey,
+            out byte[] mlKemPublicKey)
         {
-            using var ms = new MemoryStream(data);
+            using var ms = new MemoryStream(message);
             using var reader = new BinaryReader(ms);
 
             reader.ReadByte(); // Skip message type
+            pairingId = reader.ReadString();
 
             var nonceLength = reader.ReadInt32();
             nonce = reader.ReadBytes(nonceLength);
 
-            var keyLength = reader.ReadInt32();
-            ecdhPublicKey = reader.ReadBytes(keyLength);
+            var ecdhKeyLength = reader.ReadInt32();
+            ecdhPublicKey = reader.ReadBytes(ecdhKeyLength);
+
+            var mlKemKeyLength = reader.ReadInt32();
+            mlKemPublicKey = reader.ReadBytes(mlKemKeyLength);
         }
 
-        public static byte[] CreateSecureSessionAccepted(ReadOnlySpan<byte> nonce, ReadOnlySpan<byte> ecdhPublicKey)
+        /// <summary>
+        /// Creates a secure session accepted response carrying the mobile's ECDH public key
+        /// and the ML-KEM ciphertext encapsulated against the desktop's ML-KEM public key.
+        /// </summary>
+        public static byte[] CreateSecureSessionAccepted(
+            ReadOnlySpan<byte> nonce,
+            ReadOnlySpan<byte> ecdhPublicKey,
+            ReadOnlySpan<byte> mlKemCiphertext)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -239,8 +318,35 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write(nonce);
             writer.Write(ecdhPublicKey.Length);
             writer.Write(ecdhPublicKey);
+            writer.Write(mlKemCiphertext.Length);
+            writer.Write(mlKemCiphertext);
 
             return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Parses a secure session accepted response, extracting the nonce, ECDH public key,
+        /// and ML-KEM ciphertext.
+        /// </summary>
+        public static void ParseSecureSessionAccepted(
+            byte[] data,
+            out byte[] nonce,
+            out byte[] ecdhPublicKey,
+            out byte[] mlKemCiphertext)
+        {
+            using var ms = new MemoryStream(data);
+            using var reader = new BinaryReader(ms);
+
+            reader.ReadByte(); // Skip message type
+
+            var nonceLength = reader.ReadInt32();
+            nonce = reader.ReadBytes(nonceLength);
+
+            var ecdhKeyLength = reader.ReadInt32();
+            ecdhPublicKey = reader.ReadBytes(ecdhKeyLength);
+
+            var ciphertextLength = reader.ReadInt32();
+            mlKemCiphertext = reader.ReadBytes(ciphertextLength);
         }
 
         #endregion

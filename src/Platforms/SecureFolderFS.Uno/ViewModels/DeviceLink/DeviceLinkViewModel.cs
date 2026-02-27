@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.DeviceLink.Enums;
 using SecureFolderFS.Sdk.DeviceLink.Models;
 using SecureFolderFS.Sdk.DeviceLink.Results;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Uno.DataModels;
+#pragma warning disable SYSLIB5006
 
 namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 {
@@ -72,7 +73,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             if (VaultFolder is not IModifiableFolder modifiableFolder)
                 return;
 
-            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
             if (authenticationFile is null)
                 return;
 
@@ -93,15 +94,20 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             // Step 1: Connect to device
             using var connectedDevice = await ConnectedDevice.ConnectAsync(discoveredDevice, cancellationToken);
 
-            // Step 2: Generate ECDH key pair
+            // Step 2: Generate hybrid key pairs.
+            //   ECDH provides classical forward secrecy.
+            //   ML-KEM allows the mobile to encapsulate a PQC shared secret that only we can decapsulate.
             using var ecdhKeyPair = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
-            var publicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            using var mlKemKeyPair = SecureChannelModel.GenerateMlKemKeyPair();
 
-            // Step 3: Send pairing request
-            var pairingRequest = ProtocolSerializer.CreatePairingRequest(DesktopName, DesktopType, publicKey);
+            var ecdhPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var mlKemPublicKey = mlKemKeyPair.ExportSubjectPublicKeyInfo();
+
+            // Step 3: Send pairing request with both public keys
+            var pairingRequest = ProtocolSerializer.CreatePairingRequest(DesktopName, DesktopType, ecdhPublicKey, mlKemPublicKey);
             await connectedDevice.SendMessageAsync(pairingRequest, cancellationToken);
 
-            // Step 4: receive pairing response
+            // Step 4: Receive pairing response
             var response = await connectedDevice.ReceiveMessageAsync(cancellationToken);
             var messageType = (MessageType)response[0];
 
@@ -111,41 +117,68 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             if (messageType != MessageType.PairingResponse)
                 throw new InvalidOperationException("Unexpected response received during device link enrollment.");
 
-            // Step 5: Derive session secret
-            var mobileEcdhPublicKey = ProtocolSerializer.ParsePairingResponse(response);
-            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, mobileEcdhPublicKey);
+            // Step 5: Derive hybrid shared secret.
+            //   Classical: ECDH with mobile's ephemeral public key.
+            //   PQC: decapsulate the ML-KEM ciphertext the mobile encapsulated for us.
+            //   Both must be correct to reproduce the same shared secret.
+            ProtocolSerializer.ParsePairingResponse(response, out var mobileEcdhPublicKey, out var mlKemCiphertext);
 
-            // Step 6: Compute and display verification code
-            var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
+            var ecdhSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, mobileEcdhPublicKey);
+            var mlKemSecret = mlKemKeyPair.Decapsulate(mlKemCiphertext);
 
-            // Step 7: User confirms the code matches
-            var codeConfirmed = await ShowVerificationCodeAsync(verificationCode);
-            if (!codeConfirmed)
-                throw new UnauthorizedAccessException("Device link pairing was rejected by the user.");
-
-            // Step 8: Generate CID, PairingID
-            var pairingId = Guid.NewGuid().ToString();
-            var credentialId = Guid.NewGuid().ToString();
-
-            var confirmationMessage = ProtocolSerializer.CreatePairingConfirmMessage(credentialId, VaultName, pairingId, data);
-            await connectedDevice.SendMessageAsync(confirmationMessage, cancellationToken);
-
-            // Step 9: Receive pairing complete with initial HMAC
-            var completeResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
-
-            messageType = (MessageType)completeResponse[0];
-            if (messageType != MessageType.PairingComplete)
-                throw new InvalidOperationException("Unexpected response received during device link enrollment.");
-
-            var initialHmac = ProtocolSerializer.ParsePairingComplete(completeResponse);
-            return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(initialHmac))
+            byte[] sharedSecret;
+            try
             {
-                CredentialId = credentialId,
-                PairingId = pairingId,
-                MobileDeviceId = discoveredDevice.DeviceId,
-                MobileDeviceName = discoveredDevice.DeviceName,
-                MobileDeviceType = discoveredDevice.DeviceType,
-            };
+                sharedSecret = SecureChannelModel.CombineHybridSecrets(ecdhSecret, mlKemSecret);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(ecdhSecret);
+                CryptographicOperations.ZeroMemory(mlKemSecret);
+            }
+
+            try
+            {
+                // Step 6: Compute and display verification code from the hybrid shared secret.
+                //   Both sides derive this identically, so a mismatch means the connection was tampered with.
+                var verificationCode = SecureChannelModel.ComputeVerificationCode(sharedSecret);
+
+                // Step 7: User confirms the code matches on both devices
+                var codeConfirmed = await ShowVerificationCodeAsync(verificationCode);
+                if (!codeConfirmed)
+                    throw new UnauthorizedAccessException("Device link pairing was rejected by the user.");
+
+                // Step 8: Generate IDs here so they're in scope for the returned result,
+                //   then send the confirmation message to mobile.
+                var pairingId = Guid.NewGuid().ToString();
+                var credentialId = Guid.NewGuid().ToString();
+
+                var confirmationMessage = ProtocolSerializer.CreatePairingConfirmMessage(credentialId, VaultName, pairingId, data);
+                await connectedDevice.SendMessageAsync(confirmationMessage, cancellationToken);
+
+                // Step 9: Receive pairing complete with initial HMAC
+                var completeResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
+
+                messageType = (MessageType)completeResponse[0];
+                if (messageType != MessageType.PairingComplete)
+                    throw new InvalidOperationException("Unexpected response received during device link enrollment.");
+
+                var initialHmac = ProtocolSerializer.ParsePairingComplete(completeResponse);
+
+                // Return all pairing metadata so DeviceLinkCreationViewModel can persist it
+                return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(initialHmac))
+                {
+                    CredentialId = credentialId,
+                    PairingId = pairingId,
+                    MobileDeviceId = discoveredDevice.DeviceId,
+                    MobileDeviceName = discoveredDevice.DeviceName,
+                    MobileDeviceType = discoveredDevice.DeviceType,
+                };
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(sharedSecret);
+            }
         }
 
         /// <inheritdoc/>
@@ -172,19 +205,16 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                     }
                     catch (IOException) when (tries < MAX_TRIES - 1)
                     {
-                        // Connection failed, retry discovery
                         await Task.Delay(RETRY_DELAY_MS, cancellationToken);
                         continue;
                     }
                     catch (SocketException) when (tries < MAX_TRIES - 1)
                     {
-                        // Connection failed, retry discovery
                         await Task.Delay(RETRY_DELAY_MS, cancellationToken);
                         continue;
                     }
                 }
 
-                // Short delay before retry
                 if (tries < MAX_TRIES - 1)
                     await Task.Delay(RETRY_DELAY_MS, cancellationToken);
             }
@@ -196,16 +226,21 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             using var connectedDevice = await ConnectedDevice.ConnectAsync(device, cancellationToken);
 
-            // Generate fresh ECDH keypair for this session (transport security)
+            // Generate fresh ephemeral hybrid key pairs for this session.
+            // A new ML-KEM keypair per session ensures PQC forward secrecy:
+            // compromising one session's keys reveals nothing about any other session.
             using var ecdhKeyPair = SecureChannelModel.GenerateKeyPair();
-            var myPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            using var mlKemKeyPair = SecureChannelModel.GenerateMlKemKeyPair();
+
+            var myEcdhPublicKey = ecdhKeyPair.ExportSubjectPublicKeyInfo();
+            var myMlKemPublicKey = mlKemKeyPair.ExportSubjectPublicKeyInfo();
 
             // Generate session nonce
             var sessionNonce = new byte[16];
             RandomNumberGenerator.Fill(sessionNonce);
 
-            // Send secure session request with our ECDH public key
-            var sessionRequest = ProtocolSerializer.CreateSecureSessionRequest(dataModel.PairingId, sessionNonce, myPublicKey);
+            // Send secure session request with both public keys
+            var sessionRequest = ProtocolSerializer.CreateSecureSessionRequest(dataModel.PairingId, sessionNonce, myEcdhPublicKey, myMlKemPublicKey);
             await connectedDevice.SendMessageAsync(sessionRequest, cancellationToken);
 
             // Receive response
@@ -215,49 +250,70 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             if (messageType != MessageType.SecureSessionAccepted)
                 throw new InvalidOperationException("Unexpected response received during secure session establishment.");
 
-            ProtocolSerializer.ParseSecureSessionAccepted(response, out var mobileNonce, out var mobileEcdhPublicKey);
+            // Parse mobile's ECDH public key and ML-KEM ciphertext
+            ProtocolSerializer.ParseSecureSessionAccepted(response, out var mobileNonce, out var mobileEcdhPublicKey, out var mlKemCiphertext);
 
-            // Derive session secret using ECDH (ephemeral, for transport only)
-            var sharedSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, mobileEcdhPublicKey);
+            // Derive hybrid session secret
+            var ecdhSecret = SecureChannelModel.DeriveSharedSecret(ecdhKeyPair, mobileEcdhPublicKey);
+            var mlKemSecret = mlKemKeyPair.Decapsulate(mlKemCiphertext);
 
-            // Derive session key from ECDH secret + both nonces
+            byte[] sharedSecret;
+            try
+            {
+                sharedSecret = SecureChannelModel.CombineHybridSecrets(ecdhSecret, mlKemSecret);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(ecdhSecret);
+                CryptographicOperations.ZeroMemory(mlKemSecret);
+            }
+
+            // Derive session key from hybrid secret + both nonces
             var combinedNonce = new byte[sessionNonce.Length + mobileNonce.Length];
             sessionNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, sessionNonce.Length);
 
-            using var secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
-
-            // Step 3: Send authentication request
-            var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp);
-            var encryptedRequest = secureChannel.Encrypt(authRequest);
-            await connectedDevice.SendMessageAsync(encryptedRequest, MessageType.SecureAuthRequest, cancellationToken);
-
-            // Step 4: Receive encrypted response
-            var encryptedResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
-            messageType = (MessageType)encryptedResponse[0];
-
-            if (messageType == MessageType.AuthenticationRejected)
-                throw new UnauthorizedAccessException("Authentication was rejected by the remote device.");
-
-            if (messageType != MessageType.SecureAuthResponse)
-                throw new InvalidOperationException("Unexpected response received during authentication.");
-
-            // Decrypt response
-            var responsePayload = encryptedResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
-            var decryptedHmac = secureChannel.Decrypt(responsePayload);
-
-            // Step 5: Verify HMAC matches expected value
-            var expectedHmac = dataModel.ExpectedHmac;
-            var isValid = CryptographicOperations.FixedTimeEquals(decryptedHmac, expectedHmac);
-            if (!isValid)
-                throw new CryptographicException("HMAC verification failed.");
-
-            var managedHmac = ManagedKey.TakeOwnership(decryptedHmac);
-            return new DeviceLinkAuthenticationResult(managedHmac)
+            SecureChannelModel secureChannel;
+            try
             {
-                CredentialId = dataModel.CredentialId
-            };
+                secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(sharedSecret);
+            }
+
+            using (secureChannel)
+            {
+                // Send authentication request encrypted over the hybrid-secured channel
+                var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+                var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp);
+                var encryptedRequest = secureChannel.Encrypt(authRequest);
+                await connectedDevice.SendMessageAsync(encryptedRequest, MessageType.SecureAuthRequest, cancellationToken);
+
+                // Receive encrypted response
+                var encryptedResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
+                messageType = (MessageType)encryptedResponse[0];
+
+                if (messageType == MessageType.AuthenticationRejected)
+                    throw new UnauthorizedAccessException("Authentication was rejected by the remote device.");
+
+                if (messageType != MessageType.SecureAuthResponse)
+                    throw new InvalidOperationException("Unexpected response received during authentication.");
+
+                // Decrypt response
+                var responsePayload = encryptedResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
+                var decryptedHmac = secureChannel.Decrypt(responsePayload);
+
+                // Verify HMAC matches expected value
+                if (!CryptographicOperations.FixedTimeEquals(decryptedHmac, dataModel.ExpectedHmac))
+                    throw new CryptographicException("HMAC verification failed.");
+
+                return new DeviceLinkAuthenticationResult(ManagedKey.TakeOwnership(decryptedHmac))
+                {
+                    CredentialId = dataModel.CredentialId
+                };
+            }
         }
 
         /// <summary>

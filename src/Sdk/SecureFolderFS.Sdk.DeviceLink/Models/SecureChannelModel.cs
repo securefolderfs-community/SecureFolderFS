@@ -175,7 +175,23 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         }
 
         /// <summary>
-        /// Performs ECDH key exchange and derives shared secret.
+        /// Generates a new ECDH key pair for use in hybrid key exchange.
+        /// </summary>
+        public static ECDiffieHellman GenerateKeyPair()
+        {
+            return ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
+        }
+
+        /// <summary>
+        /// Generates a new ML-KEM-768 key pair for use in hybrid key exchange.
+        /// </summary>
+        public static MLKem GenerateMlKemKeyPair()
+        {
+            return MLKem.GenerateKey(MLKemAlgorithm.MLKem768);
+        }
+
+        /// <summary>
+        /// Performs classical ECDH shared secret derivation.
         /// </summary>
         public static byte[] DeriveSharedSecret(ECDiffieHellman localPrivateKey, ReadOnlySpan<byte> remotePublicKey)
         {
@@ -186,11 +202,24 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         }
 
         /// <summary>
-        /// Generates a new ECDH key pair.
+        /// Combines an ECDH shared secret with an ML-KEM shared secret into a single
+        /// hybrid shared secret. Both components must be correct to reproduce the output,
+        /// providing security against both classical and quantum adversaries.
         /// </summary>
-        public static ECDiffieHellman GenerateKeyPair()
+        /// <param name="ecdhSecret">The shared secret from ECDH key exchange.</param>
+        /// <param name="mlKemSecret">The shared secret from ML-KEM encapsulation/decapsulation.</param>
+        /// <returns>A 32-byte hybrid shared secret.</returns>
+        public static byte[] CombineHybridSecrets(byte[] ecdhSecret, byte[] mlKemSecret)
         {
-            return ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
+            // ECDH secret is the IKM; ML-KEM secret is the salt.
+            // HKDF-Extract requires that breaking either input breaks the output:
+            // an attacker needs both the classical and PQC component.
+            return HKDF.DeriveKey(
+                HashAlgorithmName.SHA256,
+                ikm: ecdhSecret,
+                outputLength: 32,
+                salt: mlKemSecret,
+                info: "DeviceLink-HybridSharedSecret-v1"u8.ToArray());
         }
 
         private void ThrowIfDisposed()
