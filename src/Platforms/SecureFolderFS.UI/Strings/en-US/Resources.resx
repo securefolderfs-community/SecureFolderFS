@@ -1238,4 +1238,10 @@
   <data name="FoundIssuesCount" xml:space="preserve">
       <value>Found {0} issue(s)</value>
   </data>
+  <data name="AvailableWidgets" xml:space="preserve">
+      <value>Available widgets</value>
+  </data>
+  <data name="ReorderWidgets" xml:space="preserve">
+      <value>Reorder widgets</value>
+  </data>
 </root>

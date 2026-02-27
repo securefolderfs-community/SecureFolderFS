@@ -20,7 +20,8 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly string _id;
         private readonly List<IWidgetModel> _widgets;
 
-        private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
+        /// <inheritdoc/>
+        public IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
 
         /// <inheritdoc/>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;

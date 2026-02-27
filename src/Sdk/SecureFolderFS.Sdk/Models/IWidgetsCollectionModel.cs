@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services.VaultPersistence;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -10,6 +11,11 @@ namespace SecureFolderFS.Sdk.Models
     /// </summary>
     public interface IWidgetsCollectionModel : INotifyCollectionChanged, IPersistable // TODO: Inherit from ICollection
     {
+        /// <summary>
+        /// Gets the collection of persisted vault widgets.
+        /// </summary>
+        public IVaultWidgets VaultWidgets { get; }
+
         /// <summary>
         /// Adds a new widget model identified by <paramref name="widgetId"/>.
         /// </summary>

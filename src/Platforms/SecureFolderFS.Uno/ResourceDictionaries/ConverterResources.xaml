@@ -14,6 +14,7 @@
     <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <vc:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
     <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
     <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
