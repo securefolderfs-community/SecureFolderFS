@@ -2,11 +2,13 @@ using System.Runtime.CompilerServices;
 using Dropbox.Api;
 using Dropbox.Api.Files;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Dropbox.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Dropbox.Storage
 {
-    public class DropboxFolder : DropboxStorable, IRenamableFolder, IChildFolder, IGetFirstByName, IGetItem
+    public class DropboxFolder : DropboxStorable, ICreateRenamedCopyOf, IMoveRenamedFrom, IRenamableFolder, IChildFolder, IGetFirstByName, IGetItem
     {
         public DropboxFolder(DropboxClient client, string id, string name, IFolder? parent = null)
             : base(client, id, name, parent)
@@ -19,7 +21,6 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var result = await Client.Files.ListFolderAsync(Id);
-
             while (true)
             {
                 foreach (var entry in result.Entries)
@@ -43,7 +44,6 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
         public virtual async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var path = CombinePaths(Id, name);
-
             try
             {
                 var metadata = await Client.Files.GetMetadataAsync(path);
@@ -125,16 +125,16 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
 
             var result = await Client.Files.MoveV2Async(storable.Id, targetPath, autorename: false);
             var moved = result.Metadata;
-
-            if (moved.IsFolder)
-                return new DropboxFolder(Client, targetPath, moved.Name, this);
-            else
-                return new DropboxFile(Client, targetPath, moved.Name, this);
+            return moved.IsFolder
+                ? new DropboxFolder(Client, targetPath, moved.Name, this)
+                : new DropboxFile(Client, targetPath, moved.Name, this);
         }
 
         /// <inheritdoc/>
         public virtual Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
-            => Task.FromException<IFolderWatcher>(new NotImplementedException());
+        {
+            return Task.FromException<IFolderWatcher>(new NotImplementedException());
+        }
 
         /// <inheritdoc/>
         public virtual async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
@@ -187,6 +187,91 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
 
                 throw;
             }
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken,
+            CreateCopyOfDelegate fallback)
+        {
+            return CreateCopyOfAsync(fileToCopy, overwrite, fileToCopy.Name, cancellationToken, (mf, f, ov, _, ct) => fallback(mf, f, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName, CancellationToken cancellationToken,
+            CreateRenamedCopyOfDelegate fallback)
+        {
+            // Fall back for non-Dropbox files - the fallback will stream the bytes manually
+            if (fileToCopy is not DropboxFile dropboxFile)
+                return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
+
+            var destPath = CombinePaths(Id, newName);
+
+            // No-op if source and destination are identical
+            if (dropboxFile.Id == destPath)
+                return dropboxFile;
+
+            if (!overwrite)
+            {
+                // Check for an existing item at the destination
+                try
+                {
+                    await Client.Files.GetMetadataAsync(destPath);
+                    throw new IOException($"File '{newName}' already exists in folder '{Name}'.");
+                }
+                catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath)
+                {
+                    // Destination is clear - proceed
+                }
+            }
+
+            var result = await Client.Files.CopyV2Async(dropboxFile.Id, destPath, autorename: false, allowOwnershipTransfer: false);
+            return new DropboxFile(Client, result.Metadata.PathDisplay, result.Metadata.Name, this);
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken,
+            MoveFromDelegate fallback)
+        {
+            return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken, (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName,
+            CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            // Fall back for non-Dropbox files - the fallback will stream the bytes manually
+            if (fileToMove is not DropboxFile dropboxFile)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            var destPath = CombinePaths(Id, newName);
+
+            // No-op if source and destination are identical
+            if (dropboxFile.Id == destPath)
+                return dropboxFile;
+
+            if (!overwrite)
+            {
+                try
+                {
+                    await Client.Files.GetMetadataAsync(destPath);
+                    throw new IOException($"File '{newName}' already exists in folder '{Name}'.");
+                }
+                catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath)
+                {
+                    // Destination is clear - proceed
+                }
+            }
+
+            // MoveV2Async handles both same-folder rename and cross-folder move atomically
+            var result = await Client.Files.MoveV2Async(dropboxFile.Id, destPath, autorename: false, allowOwnershipTransfer: false);
+            return new DropboxFile(Client, result.Metadata.PathDisplay, result.Metadata.Name, this);
+        }
+
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            properties ??= new DropboxFolderProperties(this, Client);
+            return Task.FromResult(properties);
         }
     }
 }

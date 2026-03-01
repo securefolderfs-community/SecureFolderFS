@@ -13,7 +13,7 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
-    public class GDriveFolder : GDriveStorable, IRenamableFolder, IChildFolder, IGetFirstByName, IGetItem
+    public class GDriveFolder : GDriveStorable, IRenamableFolder, ICreateRenamedCopyOf, IMoveRenamedFrom, IChildFolder, IGetFirstByName, IGetItem
     {
         public GDriveFolder(DriveService driveService, string id, string name, IFolder? parent = null)
             : base(driveService, id, name, parent)
@@ -24,7 +24,6 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         public virtual async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string? pageToken = null;
-
             do
             {
                 var request = DriveService.Files.List();
@@ -118,11 +117,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 
             var file = result.Files[0];
             var isFolder = file.MimeType == "application/vnd.google-apps.folder";
-
-            if (isFolder)
-                return new GDriveFolder(DriveService, CombinePaths(Id, file.Id), file.Name, this);
-            else
-                return new GDriveFile(DriveService, file.MimeType, CombinePaths(Id, file.Id), file.Name, this);
+            return isFolder
+                ? new GDriveFolder(DriveService, CombinePaths(Id, file.Id), file.Name, this)
+                : new GDriveFile(DriveService, file.MimeType, CombinePaths(Id, file.Id), file.Name, this);
         }
 
         /// <inheritdoc/>
@@ -137,8 +134,8 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
             var checkRequest = DriveService.Files.List();
             checkRequest.Q = $"'{DetachedId}' in parents and name='{newName}' and trashed=false";
             checkRequest.Fields = "files(id)";
-            var checkResult = await checkRequest.ExecuteAsync(cancellationToken);
 
+            var checkResult = await checkRequest.ExecuteAsync(cancellationToken);
             if (checkResult.Files.Count > 0)
                 throw new IOException($"An item with name '{newName}' already exists in folder '{Name}'.");
 
@@ -154,11 +151,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 
             // Return a new instance with the updated name
             var isFolder = updatedFile.MimeType == "application/vnd.google-apps.folder";
-
-            if (isFolder)
-                return new GDriveFolder(DriveService, storable.Id, updatedFile.Name, this);
-            else
-                return new GDriveFile(DriveService, updatedFile.MimeType, storable.Id, updatedFile.Name, this);
+            return isFolder
+                ? new GDriveFolder(DriveService, storable.Id, updatedFile.Name, this)
+                : new GDriveFile(DriveService, updatedFile.MimeType, storable.Id, updatedFile.Name, this);
         }
 
         /// <inheritdoc/>
@@ -249,6 +244,111 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 targetFile.MimeType ?? "application/octet-stream",
                 CombinePaths(Id, targetFile.Id),
                 targetFile.Name,
+                this);
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite,
+            CancellationToken cancellationToken, MoveFromDelegate fallback)
+        {
+            return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken,
+                (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite,
+            string newName, CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            if (fileToMove is not GDriveFile gDriveFile)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            // No-op if source and destination folder is the same and name is unchanged
+            if (gDriveFile.DetachedId == DetachedId && gDriveFile.Name == newName)
+                return gDriveFile;
+
+            // Check for an existing item at the destination if not overwriting
+            if (!overwrite)
+            {
+                var checkRequest = DriveService.Files.List();
+                checkRequest.Q = $"'{DetachedId}' in parents and name='{newName}' and trashed=false";
+                checkRequest.Fields = "files(id)";
+                var checkResult = await checkRequest.ExecuteAsync(cancellationToken);
+
+                if (checkResult.Files.Count > 0)
+                    throw new IOException($"File '{newName}' already exists in folder '{Name}'.");
+            }
+
+            // Google Drive has no dedicated move endpoint - moving is done by updating
+            // the file's parents: add the destination parent and remove the source parent
+            var sourceDetachedId = source is GDriveStorable gDriveSource
+                ? gDriveSource.DetachedId
+                : null;
+
+            var updateMeta = new File() { Name = newName };
+            var updateRequest = DriveService.Files.Update(updateMeta, gDriveFile.DetachedId);
+            updateRequest.Fields = "id,name,mimeType,parents";
+            updateRequest.AddParents = DetachedId;
+
+            // Only remove the source parent if we know its Drive ID
+            if (sourceDetachedId is not null)
+                updateRequest.RemoveParents = sourceDetachedId;
+
+            var movedFile = await updateRequest.ExecuteAsync(cancellationToken);
+            return new GDriveFile(
+                DriveService,
+                movedFile.MimeType ?? "application/octet-stream",
+                CombinePaths(Id, movedFile.Id),
+                movedFile.Name,
+                this);
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken,
+            CreateCopyOfDelegate fallback)
+        {
+            return CreateCopyOfAsync(fileToCopy, overwrite, fileToCopy.Name, cancellationToken,
+                (mf, f, ov, _, ct) => fallback(mf, f, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName,
+            CancellationToken cancellationToken, CreateRenamedCopyOfDelegate fallback)
+        {
+            if (fileToCopy is not GDriveFile gDriveFile)
+                return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
+
+            // No-op if source and destination are identical
+            if (gDriveFile.DetachedId == DetachedId && gDriveFile.Name == newName)
+                return gDriveFile;
+
+            // Check for an existing item at the destination if not overwriting
+            if (!overwrite)
+            {
+                var checkRequest = DriveService.Files.List();
+                checkRequest.Q = $"'{DetachedId}' in parents and name='{newName}' and trashed=false";
+                checkRequest.Fields = "files(id)";
+
+                var checkResult = await checkRequest.ExecuteAsync(cancellationToken);
+                if (checkResult.Files.Count > 0)
+                    throw new IOException($"File '{newName}' already exists in folder '{Name}'.");
+            }
+
+            // Google Drive Files.Copy creates a server-side copy without downloading/uploading
+            var copyMeta = new File()
+            {
+                Name = newName,
+                Parents = [DetachedId]
+            };
+
+            var copyRequest = DriveService.Files.Copy(copyMeta, gDriveFile.DetachedId);
+            copyRequest.Fields = "id,name,mimeType";
+
+            var copiedFile = await copyRequest.ExecuteAsync(cancellationToken);
+            return new GDriveFile(
+                DriveService,
+                copiedFile.MimeType ?? "application/octet-stream",
+                CombinePaths(Id, copiedFile.Id),
+                copiedFile.Name,
                 this);
         }
 

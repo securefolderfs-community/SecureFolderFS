@@ -1,10 +1,13 @@
 using Dropbox.Api;
 using OwlCore.Storage;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Dropbox.Storage
 {
-    public abstract class DropboxStorable : IStorableChild
+    public abstract class DropboxStorable : IStorableChild, IStorableProperties
     {
+        protected IBasicProperties? properties;
+
         protected IFolder? ParentFolder { get; }
 
         protected DropboxClient Client { get; }
@@ -25,7 +28,12 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
 
         /// <inheritdoc/>
         public virtual Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-            => Task.FromResult(ParentFolder);
+        {
+            return Task.FromResult(ParentFolder);
+        }
+
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         /// <summary>
         /// Builds the Dropbox path for a direct child of this folder.

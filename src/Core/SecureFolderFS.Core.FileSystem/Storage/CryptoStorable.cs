@@ -10,7 +10,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IStorable"/>
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability> , IStorableChild, IStorableProperties
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IStorableProperties
         where TCapability : IStorable
     {
         protected readonly CryptoFolder? parent;
