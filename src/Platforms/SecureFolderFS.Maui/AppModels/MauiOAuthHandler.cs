@@ -54,9 +54,17 @@ namespace SecureFolderFS.Maui.AppModels
         /// <inheritdoc/>
         public async Task<IResult<OAuthResult>> GetCodeAsync(string url, CancellationToken cancellationToken = default)
         {
-            // Ensure the port is set (this will trigger the RedirectUri getter)
-            var redirectUri = RedirectUrl;
+            return await GetCodeInternalAsync(url, RedirectUrl, cancellationToken);
+        }
 
+        /// <inheritdoc/>
+        public async Task<IResult<OAuthResult>> GetCodeAsync(string url, string redirectUri, CancellationToken cancellationToken = default)
+        {
+            return await GetCodeInternalAsync(url, redirectUri, cancellationToken);
+        }
+
+        private async Task<IResult<OAuthResult>> GetCodeInternalAsync(string url, string redirectUri, CancellationToken cancellationToken)
+        {
             // Start HTTP listener on localhost
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add(redirectUri);
@@ -81,7 +89,7 @@ namespace SecureFolderFS.Maui.AppModels
                 var state = queryParams.Get("state");
                 var error = queryParams.Get("error");
 
-                // Prepare a authorization result webpage
+                // Prepare the authorization result webpage
                 if (code is null)
                 {
                     await using var stream = await FileSystem.OpenAppPackageFileAsync("auth_fail.html");

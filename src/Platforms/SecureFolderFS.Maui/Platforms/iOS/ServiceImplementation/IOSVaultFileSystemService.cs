@@ -46,6 +46,11 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             {
                 Icon = new ImageResource("source_gdrive.png") 
             };
+            
+            yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.Dropbox", "Dropbox".ToLocalized(), mode, vaultCollectionModel)
+            {
+                Icon = new ImageResource("source_dropbox.png") 
+            };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.OneDrive", "OneDrive".ToLocalized(), mode, vaultCollectionModel)
             {

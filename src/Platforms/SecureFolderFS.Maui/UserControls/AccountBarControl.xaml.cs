@@ -1,3 +1,4 @@
+using SecureFolderFS.Sdk.Dropbox.ViewModels;
 using SecureFolderFS.Sdk.Ftp.ViewModels;
 using SecureFolderFS.Sdk.GoogleDrive.ViewModels;
 
@@ -30,6 +31,15 @@ namespace SecureFolderFS.Maui.UserControls
                             accountBarControl.UserAvatar.ImageSource = gDriveViewModel.UserPhotoUri is null ? ImageSource.FromStream(static () => Stream.Null) : ImageSource.FromUri(gDriveViewModel.UserPhotoUri);
                             accountBarControl.UserTitle.Text = gDriveViewModel.UserDisplayName ?? string.Empty;
                             accountBarControl.UserSubtitle.Text = gDriveViewModel.UserEmail ?? string.Empty;
+                            break;
+                        }
+
+                        case DropboxAccountViewModel dropboxViewModel:
+                        {
+                            accountBarControl.UserAvatar.IsVisible = dropboxViewModel.UserPhotoUri is not null;
+                            accountBarControl.UserAvatar.ImageSource = dropboxViewModel.UserPhotoUri is null ? ImageSource.FromStream(static () => Stream.Null) : ImageSource.FromUri(dropboxViewModel.UserPhotoUri);
+                            accountBarControl.UserTitle.Text = dropboxViewModel.UserDisplayName ?? string.Empty;
+                            accountBarControl.UserSubtitle.Text = dropboxViewModel.UserEmail ?? string.Empty;
                             break;
                         }
 

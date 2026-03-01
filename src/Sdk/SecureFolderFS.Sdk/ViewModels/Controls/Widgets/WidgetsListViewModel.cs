@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private readonly SynchronizationContext? _synchronizationContext;
         private readonly CollectionReorderHelper<BaseWidgetViewModel> _reorderHelper;
-        private bool _surpressCollectionChanged;
+        private bool _suppressCollectionChanged;
 
         public IWidgetsCollectionModel WidgetsCollectionModel { get; }
 
@@ -122,6 +122,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             if (widgetViewModel is null)
                 return;
 
+            _suppressCollectionChanged = true;
             Widgets.Add(widgetViewModel.WithInitAsync());
             AvailableWidgets.Remove(widget);
 
@@ -134,7 +135,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             if (widget is null)
                 return;
 
-            _surpressCollectionChanged = true;
+            _suppressCollectionChanged = true;
             if (!Widgets.Remove(widget))
                 return;
 
@@ -155,9 +156,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         private void Widgets_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (_surpressCollectionChanged)
+            if (_suppressCollectionChanged)
             {
-                _surpressCollectionChanged = false;
+                _suppressCollectionChanged = false;
                 return;
             }
 

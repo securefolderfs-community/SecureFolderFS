@@ -303,9 +303,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             return credential;
         }
 
-        private IFolder GetRootGDriveFolder(DriveService driveService)
+        private static IFolder GetRootGDriveFolder(DriveService driveService)
         {
-            return new GDriveFolder(driveService, "Root", "Drive");
+            return new GDriveFolder(driveService, string.Empty, "Drive");
         }
 
         public static void AssertApiAccess()

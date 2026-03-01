@@ -1244,4 +1244,7 @@
   <data name="ReorderWidgets" xml:space="preserve">
       <value>Reorder widgets</value>
   </data>
+  <data name="Dropbox" xml:space="preserve">
+      <value>Dropbox</value>
+  </data>
 </root>

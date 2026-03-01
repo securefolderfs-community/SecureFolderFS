@@ -71,16 +71,16 @@
                     <mi:MauiIcon
                         Grid.Column="2"
                         Icon="{mi_material:Material ChevronRight}"
-                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
                         IconSize="18"
                         OnPlatforms="Android"
                         VerticalOptions="Center" />
                     <mi:MauiIcon
                         Grid.Column="2"
                         Icon="{mi_cupertino:Cupertino ChevronRight}"
-                        IconColor="{AppThemeBinding Light={StaticResource TertiaryLightColor},
-                                                    Dark={StaticResource TertiaryDarkColor}}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
                         IconSize="18"
                         OnPlatforms="iOS"
                         VerticalOptions="Center" />

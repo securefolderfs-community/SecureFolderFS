@@ -105,7 +105,7 @@
                     <uc:IntroductionIconTile
                         Grid.Row="1"
                         Grid.Column="0"
-                        Source="source_aws_s3.png" />
+                        Source="source_dropbox.png" />
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
