@@ -7,8 +7,17 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFile"/>
-    internal sealed class IOSFile : IOSStorable, IFileOpenShare, IChildFile
+    internal sealed class IOSFile : IOSStorable, IFileOpenShare, IChildFile, ICreatedAt, ILastModifiedAt, ISizeOf
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new IOSCreatedAtProperty(Id, Inner, permissionRoot);
+        
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new IOSLastModifiedAtProperty(Id, Inner, permissionRoot);
+        
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new IOSSizeOfProperty(Id, Inner, permissionRoot);
+        
         public IOSFile(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null, string? suggestedName = null)
             : base(url, parent, permissionRoot, bookmarkId)
         {
@@ -37,13 +46,6 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             };
 
             return Task.FromResult<Stream>(iosStream);
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new IOSFileProperties(Inner, permissionRoot);
-            return Task.FromResult(properties);
         }
     }
 }

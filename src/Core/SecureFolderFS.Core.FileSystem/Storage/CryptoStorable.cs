@@ -10,12 +10,11 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IStorable"/>
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IStorableProperties
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild
         where TCapability : IStorable
     {
         protected readonly CryptoFolder? parent;
         protected readonly FileSystemSpecifics specifics;
-        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
@@ -66,9 +65,6 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             return (IFolder?)Wrap(ciphertextParent, plaintextName);
         }
-
-        /// <inheritdoc/>
-        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         /// <summary>
         /// Wraps an <see cref="IFile"/> instance, associating the file with additional metadata

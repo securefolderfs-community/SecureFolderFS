@@ -113,12 +113,15 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <returns>A unique cache key string.</returns>
         private static async Task<string> GetCacheKeyAsync(IFile file, CancellationToken cancellationToken)
         {
-            var dateModified = await file.GetDateModifiedAsync(cancellationToken);
             var pathHash = GetPathHash(file.Id);
+            var dateModified = await file.GetDateModifiedAsync(cancellationToken);
+            if (dateModified is null)
+                return pathHash;
+
 
             // Combine path hash with modification date for the cache key
             // Format: {pathHash}_{dateModifiedTicks}
-            return $"{pathHash}_{dateModified.Ticks}";
+            return $"{pathHash}_{dateModified.Value.Ticks}";
         }
 
         /// <summary>

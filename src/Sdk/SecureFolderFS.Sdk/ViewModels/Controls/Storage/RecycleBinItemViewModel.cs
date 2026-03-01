@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
     public sealed partial class RecycleBinItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
         private readonly IRecycleBinFolder _recycleBin;
+        private readonly IRecycleBinItem _recycleBinItem;
 
         [ObservableProperty] private string? _Size;
         [ObservableProperty] private string? _OriginalPath;
@@ -41,12 +42,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         public RecycleBinItemViewModel(RecycleBinOverlayViewModel overlayViewModel, IRecycleBinItem recycleBinItem, IRecycleBinFolder recycleBin)
         {
             ServiceProvider = DI.Default;
+            _recycleBinItem = recycleBinItem;
             OverlayViewModel = overlayViewModel;
             Inner = recycleBinItem.Inner;
             Title = recycleBinItem.Name;
-            Size = recycleBinItem.Size < 0L ? "NaN" : ByteSize.FromBytes(recycleBinItem.Size).ToString().Replace(" ", string.Empty);
             OriginalPath = recycleBinItem.Id;
-            DeletionTimestamp = recycleBinItem.DeletionTimestamp;
             _recycleBin = recycleBin;
         }
 
@@ -55,6 +55,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         {
             if (Inner is not IFile file)
                 return;
+
+            var size = await _recycleBinItem.SizeOf.GetValueAsync(cancellationToken);
+            Size = size.HasValue ? ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty) : "NaN";
+            DeletionTimestamp = await _recycleBinItem.CreatedAt.GetValueAsync(cancellationToken);
 
             var extension = Path.GetExtension(Title);
             if (extension is null)

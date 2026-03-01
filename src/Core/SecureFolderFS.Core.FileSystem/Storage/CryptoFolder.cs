@@ -15,13 +15,26 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IGetFirstByName, IMoveRenamedFrom, ICreateRenamedCopyOf, IRenamableFolder, IRecyclableFolder
+    public class CryptoFolder : CryptoStorable<IFolder>,
+        IChildFolder,
+        IGetFirstByName,
+        IMoveRenamedFrom,
+        ICreateRenamedCopyOf,
+        IRenamableFolder,
+        IRecyclableFolder,
+        ICreatedAt,
+        ILastModifiedAt
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new CryptoCreatedAtProperty(Id, (Inner as ICreatedAt)?.CreatedAt);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new CryptoLastModifiedAtProperty(Id, (Inner as ILastModifiedAt)?.LastModifiedAt);
+
         public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
         {
@@ -223,18 +236,6 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // Move the ciphertext file
             var movedCiphertextFile = await moveRenamedFrom.MoveFromAsync(ciphertextFileToMove, ciphertextSourceModifiableFolder, overwrite, newCiphertextName, cancellationToken, fallback);
             return (IChildFile)Wrap(movedCiphertextFile, newName);
-        }
-
-        /// <inheritdoc/>
-        public override async Task<IBasicProperties> GetPropertiesAsync()
-        {
-            if (Inner is not IStorableProperties storableProperties)
-                throw new NotSupportedException($"Properties on {nameof(CryptoFolder)}.{nameof(Inner)} are not supported.");
-
-            var innerProperties = await storableProperties.GetPropertiesAsync();
-            properties ??= new CryptoFolderProperties(innerProperties);
-
-            return properties;
         }
 
         /// <summary>

@@ -175,18 +175,16 @@ namespace SecureFolderFS.Storage.Extensions
             await modifiableFolder.DeleteAsync(item, cancellationToken);
         }
 
-        public static async Task<long> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Retrieves the cumulative size of files in the specified <paramref name="folder"/>.
+        /// </summary>
+        /// <param name="folder">The folder whose cumulative size is to be retrieved.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the cumulative size of the folder in bytes, or null if unavailable.</returns>
+        public static async Task<long?> GetSizeAsync(this IFolder folder, CancellationToken cancellationToken = default)
         {
-            if (folder is IStorableProperties storableProperties)
-            {
-                var properties = await storableProperties.GetPropertiesAsync();
-                if (properties is ISizeProperties sizeProperties)
-                {
-                    var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken);
-                    if (sizeProperty is not null)
-                        return sizeProperty.Value;
-                }
-            }
+            if (folder is ISizeOf sizeOf)
+                return await sizeOf.SizeOf.GetValueAsync(cancellationToken);
 
             var totalSize = 0L;
             await foreach (var item in folder.GetItemsAsync(StorableType.All, cancellationToken))
@@ -196,14 +194,14 @@ namespace SecureFolderFS.Storage.Extensions
                     case IFile file:
                     {
                         // Get file size
-                        totalSize += await file.GetSizeAsync(cancellationToken);
+                        totalSize += await file.GetSizeAsync(cancellationToken) ?? 0L;
                         break;
                     }
 
                     case IFolder subFolder:
                     {
                         // Get recursive folder size
-                        totalSize += await subFolder.GetSizeAsync(cancellationToken);
+                        totalSize += await subFolder.GetSizeAsync(cancellationToken) ?? 0L;
                         break;
                     }
                 }

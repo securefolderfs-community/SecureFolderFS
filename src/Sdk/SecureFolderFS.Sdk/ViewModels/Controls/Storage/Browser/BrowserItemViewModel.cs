@@ -68,11 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task OpenPropertiesAsync(CancellationToken cancellationToken)
         {
-            if (Inner is not IStorableProperties storableProperties)
-                return;
-
-            var properties = await storableProperties.GetPropertiesAsync();
-            var propertiesOverlay = new PropertiesOverlayViewModel(Inner, properties);
+            var propertiesOverlay = new PropertiesOverlayViewModel(Inner);
             _ = propertiesOverlay.InitAsync(cancellationToken);
 
             await OverlayService.ShowAsync(propertiesOverlay);
@@ -275,8 +271,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     {
                         sizes.Add(item.Inner switch
                         {
-                            IFile file => await file.GetSizeAsync(cts.Token),
-                            IFolder folder => await folder.GetSizeAsync(cts.Token),
+                            IFile file => await file.GetSizeAsync(cts.Token) ?? 0L,
+                            IFolder folder => await folder.GetSizeAsync(cts.Token) ?? 0L,
                             _ => 0L
                         });
                     }

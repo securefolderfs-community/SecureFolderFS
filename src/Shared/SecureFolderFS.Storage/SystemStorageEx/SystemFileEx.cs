@@ -1,18 +1,18 @@
-﻿using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
-using SecureFolderFS.Storage.StorageProperties;
-using SecureFolderFS.Storage.SystemStorageEx.StorageProperties;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Storage.FileShareOptions;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.SystemStorageEx
 {
     /// <inheritdoc cref="SystemFile"/>
-    public class SystemFileEx : SystemFile, IFileOpenShare, IStorableProperties
+    public class SystemFileEx : SystemFile, IFileOpenShare, ISizeOf
     {
-        protected IBasicProperties? properties;
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf { get; }
 
         /// <inheritdoc/>
         public SystemFileEx(string path)
@@ -53,13 +53,6 @@ namespace SecureFolderFS.Storage.SystemStorageEx
                 return Task.FromResult<IFolder?>(null);
 
             return Task.FromResult<IFolder?>(new SystemFolderEx(root));
-        }
-
-        /// <inheritdoc/>
-        public Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new SystemFileExProperties(Info);
-            return Task.FromResult(properties);
         }
     }
 }

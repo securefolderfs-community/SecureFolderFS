@@ -8,13 +8,26 @@ using Google.Apis.Drive.v3;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.GoogleDrive.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
-    public class GDriveFolder : GDriveStorable, IRenamableFolder, ICreateRenamedCopyOf, IMoveRenamedFrom, IChildFolder, IGetFirstByName, IGetItem
+    public class GDriveFolder : GDriveStorable,
+        IRenamableFolder,
+        ICreateRenamedCopyOf,
+        IMoveRenamedFrom,
+        IChildFolder,
+        IGetFirstByName,
+        IGetItem,
+        ICreatedAt,
+        ILastModifiedAt
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new GDriveCreatedAtProperty(Id, DetachedId, DriveService);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new GDriveLastModifiedAtProperty(Id, DetachedId, DriveService);
+
         public GDriveFolder(DriveService driveService, string id, string name, IFolder? parent = null)
             : base(driveService, id, name, parent)
         {
@@ -350,13 +363,6 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 CombinePaths(Id, copiedFile.Id),
                 copiedFile.Name,
                 this);
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new GDriveFolderProperties(this, DriveService);
-            return Task.FromResult(properties);
         }
     }
 }

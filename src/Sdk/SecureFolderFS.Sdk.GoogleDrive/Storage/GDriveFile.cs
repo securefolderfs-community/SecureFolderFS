@@ -10,12 +10,21 @@ using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
-    public class GDriveFile : GDriveStorable, IChildFile
+    public class GDriveFile : GDriveStorable, IChildFile, ICreatedAt, ILastModifiedAt, ISizeOf
     {
         /// <summary>
         /// Gets the MIME type of the file.
         /// </summary>
         public string MimeType { get; }
+
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new GDriveCreatedAtProperty(Id, DetachedId, DriveService);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new GDriveLastModifiedAtProperty(Id, DetachedId, DriveService);
+
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new GDriveSizeOfProperty(Id, DetachedId, DriveService);
 
         public GDriveFile(DriveService driveService, string mimeType, string id, string name, IFolder? parent = null)
             : base(driveService, id, name, parent)
@@ -44,16 +53,10 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                     return new GoogleDriveWriteStream(DriveService, DetachedId, Name, MimeType);
                 }
 
+                case FileAccess.ReadWrite:
                 default:
                     throw new NotSupportedException($"Access mode {accessMode} is not supported.");
             }
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new GDriveFileProperties(this, DriveService);
-            return Task.FromResult(properties);
         }
     }
 }

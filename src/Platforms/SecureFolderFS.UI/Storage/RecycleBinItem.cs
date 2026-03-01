@@ -1,15 +1,18 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.DataModels;
+using SecureFolderFS.Storage.StorageProperties;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.UI.Storage.StorageProperties;
 
-namespace SecureFolderFS.UI.AppModels
+namespace SecureFolderFS.UI.Storage
 {
     /// <inheritdoc cref="IRecycleBinItem"/>
     internal sealed class RecycleBinItem : IRecycleBinItem
     {
         private readonly IRecycleBinFolder? _recycleBin;
+        private readonly RecycleBinItemDataModel _dataModel;
 
         /// <inheritdoc/>
         public required string Id { get; init; }
@@ -18,17 +21,18 @@ namespace SecureFolderFS.UI.AppModels
         public required string Name { get; init; }
 
         /// <inheritdoc/>
-        public required DateTime DeletionTimestamp { get; init; }
-
-        /// <inheritdoc/>
-        public required long Size { get; init; }
-
-        /// <inheritdoc/>
         public IStorableChild Inner { get; }
 
-        public RecycleBinItem(IStorableChild inner, IRecycleBinFolder? recycleBin)
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new RecycleBinItemCreatedAtProperty(Inner.Id, _dataModel);
+
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new RecycleBinItemSizeOfProperty(Inner.Id, _dataModel);
+
+        public RecycleBinItem(IStorableChild inner, RecycleBinItemDataModel dataModel, IRecycleBinFolder? recycleBin)
         {
             Inner = inner;
+            _dataModel = dataModel;
             _recycleBin = recycleBin;
         }
 

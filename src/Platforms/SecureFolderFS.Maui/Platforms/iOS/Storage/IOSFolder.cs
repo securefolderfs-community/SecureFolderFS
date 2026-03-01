@@ -4,13 +4,25 @@ using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class IOSFolder : IOSStorable, IRenamableFolder, IChildFolder, IGetFirstByName, ICreateRenamedCopyOf, IMoveRenamedFrom
+    internal sealed class IOSFolder : IOSStorable,
+        IRenamableFolder,
+        IChildFolder,
+        IGetFirstByName,
+        ICreateRenamedCopyOf,
+        IMoveRenamedFrom,
+        ICreatedAt,
+        ILastModifiedAt
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new IOSCreatedAtProperty(Id, Inner, permissionRoot);
+        
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new IOSLastModifiedAtProperty(Id, Inner, permissionRoot);
+        
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
         {
@@ -287,13 +299,6 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 permissionRoot.StopAccessingSecurityScopedResource();
                 await Task.CompletedTask;
             }
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new IOSFolderProperties(Inner, permissionRoot);
-            return Task.FromResult(properties);
         }
     }
 }

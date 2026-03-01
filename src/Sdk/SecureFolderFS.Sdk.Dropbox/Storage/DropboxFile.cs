@@ -6,8 +6,14 @@ using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Dropbox.Storage
 {
-    public class DropboxFile : DropboxStorable, IChildFile
+    public class DropboxFile : DropboxStorable, IChildFile, ILastModifiedAt, ISizeOf
     {
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => new DropboxLastModifiedAtProperty(Id, Client);
+
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => new DropboxSizeOfProperty(Id, Client);
+
         public DropboxFile(DropboxClient client, string id, string name, IFolder? parent = null)
             : base(client, id, name, parent)
         {
@@ -35,13 +41,6 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
                 default:
                     throw new NotSupportedException($"Access mode {accessMode} is not supported.");
             }
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new DropboxFileProperties(this, Client);
-            return Task.FromResult(properties);
         }
     }
 }

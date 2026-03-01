@@ -2,13 +2,17 @@ using System.Runtime.CompilerServices;
 using Dropbox.Api;
 using Dropbox.Api.Files;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Dropbox.Storage.StorageProperties;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Dropbox.Storage
 {
-    public class DropboxFolder : DropboxStorable, ICreateRenamedCopyOf, IMoveRenamedFrom, IRenamableFolder, IChildFolder, IGetFirstByName, IGetItem
+    public class DropboxFolder : DropboxStorable,
+        ICreateRenamedCopyOf,
+        IMoveRenamedFrom,
+        IRenamableFolder,
+        IChildFolder,
+        IGetFirstByName,
+        IGetItem
     {
         public DropboxFolder(DropboxClient client, string id, string name, IFolder? parent = null)
             : base(client, id, name, parent)
@@ -265,13 +269,6 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
             // MoveV2Async handles both same-folder rename and cross-folder move atomically
             var result = await Client.Files.MoveV2Async(dropboxFile.Id, destPath, autorename: false, allowOwnershipTransfer: false);
             return new DropboxFile(Client, result.Metadata.PathDisplay, result.Metadata.Name, this);
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new DropboxFolderProperties(this, Client);
-            return Task.FromResult(properties);
         }
     }
 }

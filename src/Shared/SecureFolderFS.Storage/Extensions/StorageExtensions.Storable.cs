@@ -34,18 +34,13 @@ namespace SecureFolderFS.Storage.Extensions
         /// </summary>
         /// <param name="storable">The item object for which the modification date is retrieved.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was last modified. If the item does not support date properties, <see cref="DateTime.MinValue"/> is returned.</returns>
-        public static async Task<DateTime> GetDateModifiedAsync(this IStorable storable, CancellationToken cancellationToken = default)
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was last modified, if supported; otherwise, null.</returns>
+        public static async Task<DateTime?> GetDateModifiedAsync(this IStorable storable, CancellationToken cancellationToken = default)
         {
-            if (storable is not IStorableProperties storableProperties)
-                return DateTime.MinValue;
+            if (storable is not ILastModifiedAt lastModifiedAt)
+                return null;
 
-            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
-            if (properties is not IDateProperties dateProperties)
-                return DateTime.MinValue;
-
-            var dateModifiedProperty = await dateProperties.GetDateModifiedAsync(cancellationToken).ConfigureAwait(false);
-            return dateModifiedProperty.Value;
+            return await lastModifiedAt.LastModifiedAt.GetValueAsync(cancellationToken);
         }
 
         /// <summary>
@@ -53,18 +48,13 @@ namespace SecureFolderFS.Storage.Extensions
         /// </summary>
         /// <param name="storable">The item object for which the creation date is retrieved.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was created. If the item does not support date properties, <see cref="DateTime.MinValue"/> is returned.</returns>
-        public static async Task<DateTime> GetDateCreatedAsync(this IStorable storable, CancellationToken cancellationToken = default)
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was created, if supported; otherwise, null.</returns>
+        public static async Task<DateTime?> GetDateCreatedAsync(this IStorable storable, CancellationToken cancellationToken = default)
         {
-            if (storable is not IStorableProperties storableProperties)
-                return DateTime.MinValue;
+            if (storable is not ICreatedAt createdAt)
+                return null;
 
-            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
-            if (properties is not IDateProperties dateProperties)
-                return DateTime.MinValue;
-
-            var dateCreatedProperty = await dateProperties.GetDateCreatedAsync(cancellationToken).ConfigureAwait(false);
-            return dateCreatedProperty.Value;
+            return await createdAt.CreatedAt.GetValueAsync(cancellationToken);
         }
     }
 }

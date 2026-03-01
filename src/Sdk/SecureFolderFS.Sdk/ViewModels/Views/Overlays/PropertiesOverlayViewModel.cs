@@ -20,8 +20,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<ILocalizationService>, Inject<IClipboardService>, Inject<IMediaService>]
     public sealed partial class PropertiesOverlayViewModel : OverlayViewModel, IWrapper<IStorable>, IAsyncInitialize, IDisposable
     {
-        private readonly IBasicProperties _properties;
-
         [ObservableProperty] private string? _SizeText;
         [ObservableProperty] private string? _FileTypeText;
         [ObservableProperty] private string? _DateCreatedText;
@@ -31,11 +29,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public IStorable Inner { get; }
 
-        public PropertiesOverlayViewModel(IStorable storable, IBasicProperties properties)
+        public PropertiesOverlayViewModel(IStorable storable)
         {
             ServiceProvider = DI.Default;
             Inner = storable;
-            _properties = properties;
             Title = storable.Name;
         }
 
@@ -48,20 +45,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var typeClassification = FileTypeHelper.GetClassification(Inner);
             FileTypeText = Inner is IFolder ? "inode/directory" : typeClassification.MimeType;
 
-            if (_properties is ISizeProperties sizeProperties)
+            if (Inner is ISizeOf sizeOf)
             {
-                var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken);
-                if (sizeProperty is not null)
-                    SizeText = ByteSize.FromBytes(sizeProperty.Value).ToString();
+                var size = await sizeOf.SizeOf.GetValueAsync(cancellationToken);
+                if (size is not null)
+                    SizeText = ByteSize.FromBytes(size.Value).ToString();
             }
 
-            if (_properties is IDateProperties dateProperties)
+            if (Inner is ILastModifiedAt lastModifiedAt)
             {
-                var dateModifiedProperty = await dateProperties.GetDateModifiedAsync(cancellationToken);
-                DateModifiedText = LocalizationService.LocalizeDate(dateModifiedProperty.Value);
+                var lastModifiedAtDate = await lastModifiedAt.LastModifiedAt.GetValueAsync(cancellationToken);
+                if (lastModifiedAtDate is not null)
+                    DateModifiedText = LocalizationService.LocalizeDate(lastModifiedAtDate.Value);
+            }
 
-                var dateCreatedProperty = await dateProperties.GetDateCreatedAsync(cancellationToken);
-                DateCreatedText = LocalizationService.LocalizeDate(dateCreatedProperty.Value);
+            if (Inner is ICreatedAt createdAt)
+            {
+                var createdAtDate = await createdAt.CreatedAt.GetValueAsync(cancellationToken);
+                if (createdAtDate is not null)
+                    DateCreatedText = LocalizationService.LocalizeDate(createdAtDate.Value);
             }
         }
 

@@ -18,11 +18,12 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.StorageProperties;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.UI.Storage.StorageProperties;
 
-namespace SecureFolderFS.UI.AppModels
+namespace SecureFolderFS.UI.Storage
 {
     /// <inheritdoc cref="IRecycleBinFolder"/>
-    internal sealed class VaultRecycleBin : IRecycleBinFolder
+    internal sealed class RecycleBinFolder : IRecycleBinFolder
     {
         private readonly IVFSRoot _vfsRoot;
         private readonly FileSystemSpecifics _specifics;
@@ -34,19 +35,16 @@ namespace SecureFolderFS.UI.AppModels
 
         /// <inheritdoc/>
         public string Name => _recycleBin.Name;
+        
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new RecycleBinSizeOfProperty(_recycleBin);
 
-        public VaultRecycleBin(IModifiableFolder recycleBin, IVFSRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
+        public RecycleBinFolder(IModifiableFolder recycleBin, IVFSRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
         {
             _recycleBin = recycleBin;
             _vfsRoot = vfsRoot;
             _specifics = specifics;
             _serializer = serializer;
-        }
-
-        /// <inheritdoc/>
-        public Task<IBasicProperties> GetPropertiesAsync()
-        {
-            return Task.FromResult<IBasicProperties>(new RecycleBinProperties(_recycleBin));
         }
 
         /// <inheritdoc/>
@@ -155,12 +153,10 @@ namespace SecureFolderFS.UI.AppModels
                 else if (parentStorable is IStorableChild parentStorableChild)
                     plaintextParentPath = await AbstractPathHelpers.GetPlaintextPathAsync(parentStorableChild, _specifics, cancellationToken);
 
-                yield return new RecycleBinItem(item, this)
+                yield return new RecycleBinItem(item, dataModel, this)
                 {
                     Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
-                    Name = plaintextName ?? item.Name,
-                    DeletionTimestamp = dataModel.DeletionTimestamp ?? default,
-                    Size = dataModel.Size ?? -1L
+                    Name = plaintextName ?? item.Name
                 };
             }
         }

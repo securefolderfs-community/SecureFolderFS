@@ -105,18 +105,13 @@ namespace SecureFolderFS.Storage.Extensions
         /// </summary>
         /// <param name="file">The file whose size is to be retrieved.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the size of the file in bytes, or 0 if unavailable.</returns>
-        public static async Task<long> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the size of the file in bytes, or null if unavailable.</returns>
+        public static async Task<long?> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
         {
-            if (file is not IStorableProperties storableProperties)
-                return 0L;
+            if (file is not ISizeOf sizeOf)
+                return null;
 
-            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
-            if (properties is not ISizeProperties sizeProperties)
-                return 0L;
-
-            var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken).ConfigureAwait(false);
-            return sizeProperty?.Value ?? 0L;
+            return await sizeOf.SizeOf.GetValueAsync(cancellationToken);
         }
     }
 }

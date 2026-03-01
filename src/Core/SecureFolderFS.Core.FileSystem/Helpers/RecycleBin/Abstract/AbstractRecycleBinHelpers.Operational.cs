@@ -166,8 +166,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 sizeHint = ciphertextItem switch
                 {
-                    IFile file => await file.GetSizeAsync(cancellationToken),
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
+                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
                     _ => 0L
                 };
 
@@ -223,10 +223,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             try
             {
                 var dateCreated = await storable.GetDateCreatedAsync(cancellationToken);
-                if (dateCreated == DateTime.MinValue)
+                if (dateCreated is null)
                     return false;
 
-                var dateCreatedUtc = dateCreated.ToUniversalTime();
+                var dateCreatedUtc = dateCreated.Value.ToUniversalTime();
                 var timeSinceCreation = DateTime.UtcNow - dateCreatedUtc;
                 return timeSinceCreation.Seconds <= RECENT_FILE_THRESHOLD_MS / 1000;
             }

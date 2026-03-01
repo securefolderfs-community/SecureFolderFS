@@ -7,16 +7,12 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
-using SecureFolderFS.Storage.SystemStorageEx.StorageProperties;
 
 namespace SecureFolderFS.Storage.SystemStorageEx
 {
     /// <inheritdoc cref="SystemFolder"/>
-    public class SystemFolderEx : SystemFolder, IRenamableFolder, IStorableProperties
+    public class SystemFolderEx : SystemFolder, IRenamableFolder
     {
-        protected IBasicProperties? properties;
-
         /// <inheritdoc/>
         public SystemFolderEx(string path)
             : base(path)
@@ -156,13 +152,6 @@ namespace SecureFolderFS.Storage.SystemStorageEx
         {
             var root = Info.Root;
             return Task.FromResult<IFolder?>(new SystemFolderEx(root));
-        }
-
-        /// <inheritdoc/>
-        public Task<IBasicProperties> GetPropertiesAsync()
-        {
-            properties ??= new SystemFolderExProperties(Info);
-            return Task.FromResult(properties);
         }
     }
 }

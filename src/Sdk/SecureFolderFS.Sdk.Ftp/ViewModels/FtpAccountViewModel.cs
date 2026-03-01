@@ -8,6 +8,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Accounts.DataModels;
 using SecureFolderFS.Sdk.Accounts.ViewModels;
 using SecureFolderFS.Sdk.Ftp.DataModels;
+using SecureFolderFS.Sdk.Ftp.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;

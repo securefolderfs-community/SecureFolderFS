@@ -85,7 +85,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             // Get occupied state
             if (CurrentSizeOption is not null && CurrentSizeOption.Id != "-1")
             {
-                _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken);
+                _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken) ?? 0L;
                 UpdateSizeBar(CurrentSizeOption);
             }
 
@@ -150,7 +150,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (forceRecalculation)
                 await RecycleBinService.TryRecalculateSizesAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
 
-            _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken);
+            _occupiedSize = await _recycleBin.GetSizeAsync(cancellationToken) ?? 0L;
             if (CurrentSizeOption is not null)
                 UpdateSizeBar(CurrentSizeOption);
         }

@@ -74,11 +74,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
                 previewer = carouselPreviewer.Slides[carouselPreviewer.CurrentIndex];
 
-            if (previewer is not FilePreviewerViewModel { Inner: IStorableProperties storableProperties } filePreviewer)
+            if (previewer is not FilePreviewerViewModel filePreviewer)
                 return;
 
-            var properties = await storableProperties.GetPropertiesAsync();
-            var propertiesOverlay = new PropertiesOverlayViewModel(filePreviewer.Inner, properties);
+            var propertiesOverlay = new PropertiesOverlayViewModel(filePreviewer.Inner);
             _ = propertiesOverlay.InitAsync(cancellationToken);
 
             await OverlayService.ShowAsync(propertiesOverlay);
