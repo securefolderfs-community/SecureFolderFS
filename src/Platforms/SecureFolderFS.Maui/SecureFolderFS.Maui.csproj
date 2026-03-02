@@ -138,6 +138,7 @@
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.GoogleDrive\SecureFolderFS.Sdk.GoogleDrive.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.Dropbox\SecureFolderFS.Sdk.Dropbox.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.WebDavClient\SecureFolderFS.Sdk.WebDavClient.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />

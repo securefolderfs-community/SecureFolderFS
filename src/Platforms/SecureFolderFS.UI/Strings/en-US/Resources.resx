@@ -1247,4 +1247,10 @@
   <data name="Dropbox" xml:space="preserve">
       <value>Dropbox</value>
   </data>
+  <data name="WebDavClient" xml:space="preserve">
+      <value>WebDav</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+      <value>Port</value>
+  </data>
 </root>

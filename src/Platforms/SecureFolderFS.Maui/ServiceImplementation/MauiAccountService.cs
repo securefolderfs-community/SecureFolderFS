@@ -7,12 +7,14 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Ftp.ViewModels;
 using SecureFolderFS.Sdk.GoogleDrive.ViewModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.WebDavClient.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Sdk.Ftp.Constants;
 using static SecureFolderFS.Sdk.GoogleDrive.Constants;
 using static SecureFolderFS.Sdk.Dropbox.Constants;
+using static SecureFolderFS.Sdk.WebDavClient.Constants;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
@@ -46,6 +48,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 yield return accountData.DataSourceType switch
                 {
                     DATA_SOURCE_FTP => new FtpAccountViewModel(accountData, propertyStore),
+                    DATA_SOURCE_WEBDAV => new WebDavClientAccountViewModel(accountData, propertyStore),
                     DATA_SOURCE_GOOGLE_DRIVE => new GDriveAccountViewModel(accountData, propertyStore, MauiOAuthHandler.Instance),
                     DATA_SOURCE_DROPBOX => new DropboxAccountViewModel(accountData, propertyStore, MauiOAuthHandler.Instance),
                     _ => throw new ArgumentOutOfRangeException(nameof(AccountDataModel.DataSourceType))
@@ -60,6 +63,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             return dataSourceIdentifier switch
             {
                 DATA_SOURCE_FTP => new FtpAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "FTP".ToLocalized()),
+                DATA_SOURCE_WEBDAV => new WebDavClientAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "WebDavClient".ToLocalized()),
                 DATA_SOURCE_GOOGLE_DRIVE => new GDriveAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "GoogleDrive".ToLocalized(), MauiOAuthHandler.Instance),
                 DATA_SOURCE_DROPBOX => new DropboxAccountViewModel(Guid.NewGuid().ToString(), propertyStore, "Dropbox".ToLocalized(), MauiOAuthHandler.Instance),
                 _ => throw new ArgumentOutOfRangeException(nameof(dataSourceIdentifier))

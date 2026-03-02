@@ -12,7 +12,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
     public class SystemFileEx : SystemFile, IFileOpenShare, ISizeOf
     {
         /// <inheritdoc/>
-        public ISizeOfProperty SizeOf { get; }
+        public ISizeOfProperty SizeOf => field ??= new SystemFileSizeOfProperty(this, Info);
 
         /// <inheritdoc/>
         public SystemFileEx(string path)

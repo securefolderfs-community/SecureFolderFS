@@ -41,6 +41,11 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             {
                 Icon = new ImageResource("source_network_drive_macos.png") 
             };
+            
+            yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.WebDavClient", "WebDavClient".ToLocalized(), mode, vaultCollectionModel)
+            {
+                Icon = new ImageResource("source_webdav.png") 
+            };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)
             {

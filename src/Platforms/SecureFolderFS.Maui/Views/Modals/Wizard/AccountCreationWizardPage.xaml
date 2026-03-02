@@ -12,6 +12,7 @@
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Ftp.ViewModels;assembly=SecureFolderFS.Sdk.Ftp"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.GoogleDrive.ViewModels;assembly=SecureFolderFS.Sdk.GoogleDrive"
     xmlns:vm3="clr-namespace:SecureFolderFS.Sdk.Dropbox.ViewModels;assembly=SecureFolderFS.Sdk.Dropbox"
+    xmlns:vm4="clr-namespace:SecureFolderFS.Sdk.WebDavClient.ViewModels;assembly=SecureFolderFS.Sdk.WebDavClient"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:AccountCreationWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
@@ -22,6 +23,7 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.Resources>
+        <!--  FTP  -->
         <DataTemplate x:Key="FtpAccountTemplate" x:DataType="vm:FtpAccountViewModel">
             <VerticalStackLayout Spacing="16">
                 <VerticalStackLayout Spacing="2">
@@ -41,6 +43,37 @@
                 <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
             </VerticalStackLayout>
         </DataTemplate>
+
+        <!--  WebDav Client  -->
+        <DataTemplate x:Key="WebDavClientAccountTemplate" x:DataType="vm4:WebDavClientAccountViewModel">
+            <VerticalStackLayout Spacing="16">
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Address}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="http://myserver.com/dav"
+                        Text="{Binding Address, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Port}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Placeholder="8080"
+                        Text="{Binding Port, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Username}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="{l:ResourceString Rid=User1}"
+                        Text="{Binding UserName, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+
+        <!--  Google Drive  -->
         <DataTemplate x:Key="GoogleDriveAccountTemplate" x:DataType="vm2:GDriveAccountViewModel">
             <Grid Padding="0,32,0,0">
                 <VerticalStackLayout
@@ -87,6 +120,8 @@
                 </VerticalStackLayout>
             </Grid>
         </DataTemplate>
+
+        <!--  Dropbox  -->
         <DataTemplate x:Key="DropboxAccountTemplate" x:DataType="vm3:DropboxAccountViewModel">
             <Grid Padding="0,32,0,0">
                 <VerticalStackLayout
@@ -149,7 +184,8 @@
                     <ts:AccountCreationTemplateSelector
                         DropboxAccountTemplate="{StaticResource DropboxAccountTemplate}"
                         FtpAccountTemplate="{StaticResource FtpAccountTemplate}"
-                        GoogleDriveAccountTemplate="{StaticResource GoogleDriveAccountTemplate}" />
+                        GoogleDriveAccountTemplate="{StaticResource GoogleDriveAccountTemplate}"
+                        WebDavClientAccountTemplate="{StaticResource WebDavClientAccountTemplate}" />
                 </uc:ContentPresentation.TemplateSelector>
             </uc:ContentPresentation>
         </VerticalStackLayout>
