@@ -146,7 +146,8 @@
             Margin="0,-60,0,-35"
             Opacity="0">
             <Ellipse
-                HeightRequest="1000"
+                HeightRequest="{OnPlatform Android='1000',
+                                           iOS='800'}"
                 Opacity="0.8"
                 ScaleX="2.5"
                 VerticalOptions="Start"

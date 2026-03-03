@@ -2,8 +2,8 @@
 
 	<PropertyGroup>
 <!--		<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>-->
-		<TargetFramework>net10.0-android</TargetFramework>
-<!--		<TargetFramework>net10.0-ios</TargetFramework>-->
+<!--		<TargetFramework>net10.0-android</TargetFramework>-->
+		<TargetFramework>net10.0-ios</TargetFramework>
 
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>

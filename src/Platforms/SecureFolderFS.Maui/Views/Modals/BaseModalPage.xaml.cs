@@ -1,5 +1,8 @@
 using System.Windows.Input;
+using SecureFolderFS.Shared.Extensions;
+#if ANDROID
 using Microsoft.Maui.Controls.Shapes;
+#endif
 
 namespace SecureFolderFS.Maui.Views.Modals
 {

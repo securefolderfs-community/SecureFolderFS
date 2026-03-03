@@ -1,3 +1,4 @@
+using System;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
@@ -29,6 +30,9 @@ namespace SecureFolderFS.Uno.Helpers
         /// Gets the current theme represented by <see cref="ElementTheme"/>.
         /// </summary>
         public ElementTheme CurrentElementTheme => (ElementTheme)(int)CurrentTheme;
+
+        /// <inheritdoc/>
+        public override event EventHandler? ActualThemeChanged;
 
         /// <inheritdoc/>
         public override ThemeType ActualTheme
@@ -106,7 +110,14 @@ namespace SecureFolderFS.Uno.Helpers
         public void RegisterWindowInstance(FrameworkElement? rootContent, AppWindow? appWindow = null)
         {
             _rootContent = rootContent;
+            _rootContent?.ActualThemeChanged -= RootContent_ActualThemeChanged;
+            _rootContent?.ActualThemeChanged += RootContent_ActualThemeChanged;
             _appWindow = appWindow;
+        }
+
+        private void RootContent_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            ActualThemeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Settings_ColorValuesChanged(UISettings sender, object args)

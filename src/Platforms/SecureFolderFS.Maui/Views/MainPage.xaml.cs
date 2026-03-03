@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
@@ -90,6 +91,29 @@ namespace SecureFolderFS.Maui.Views
             // Set the current starting view
             if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
+
+            if (SharedConfiguration.ShowInternalBuildLabel)
+            {
+                var layout = new VerticalStackLayout()
+                {
+                    VerticalOptions = LayoutOptions.End,
+                    Padding = new(0, 8d),
+                    Background = Brush.Wheat,
+                    Margin = new(0d, 0d, 0d, 8d),
+                    Children =
+                    {
+                        new Label()
+                        {
+                            Text = "SecureFolderFS Internal. DO NOT REDISTRIBUTE!",
+                            FontSize = 14d,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            VerticalOptions = LayoutOptions.Center
+                        }
+                    }
+                };
+                
+                RootGrid.Children.Add(layout);
+            }
 
 #if IOS
             if (ToolbarItems.Count == 2)

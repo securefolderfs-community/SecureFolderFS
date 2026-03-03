@@ -23,7 +23,7 @@
             Text="{l:ResourceString Rid=Settings}" />
     </ContentPage.ToolbarItems>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -179,15 +179,13 @@
                         Margin="0,0,16,32"
                         mi:MauiIcon.Value="{mi_material:Material Icon=Add,
                                                                  IconSize=26,
-                                                                 IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
-                                                                                            Dark={StaticResource PrimaryContrastingLightColor}}}"
+                                                                 IconColor={StaticResource PrimaryContrastingDarkColor}}"
                         Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                         FontSize="16"
                         HorizontalOptions="End"
                         Style="{StaticResource AccentButtonStyle}"
                         Text="{l:ResourceString Rid=NewVault}"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingDarkColor},
-                                                    Dark={StaticResource PrimaryContrastingLightColor}}"
+                        TextColor="{StaticResource PrimaryContrastingDarkColor}"
                         VerticalOptions="End" />
                 </On>
             </OnPlatform>

@@ -73,6 +73,10 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 var rightView = new UIView(new CGRect(0, 0, 30, 20));
                 chevronImageView.Frame = new CGRect(6, 2, 16, 16);
                 rightView.AddSubview(chevronImageView);
+                
+                // Apply corner radius
+                uiTextField.Layer.CornerRadius = 8f;
+                uiTextField.Layer.MasksToBounds = true;
 
                 uiTextField.RightView = rightView;
                 uiTextField.RightViewMode = UITextFieldViewMode.Always;

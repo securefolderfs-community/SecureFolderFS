@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -16,6 +17,11 @@ namespace SecureFolderFS.UI.Helpers
     public abstract class ThemeHelper : ObservableObject, IAsyncInitialize
     {
         protected IAppSettings? AppSettings { get; } = DI.OptionalService<ISettingsService>()?.AppSettings;
+
+        /// <summary>
+        /// Occurs when the actual theme of the application changes.
+        /// </summary>
+        public abstract event EventHandler? ActualThemeChanged;
 
         private ThemeType _CurrentTheme;
         /// <summary>
