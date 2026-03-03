@@ -104,7 +104,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             base.OnDisappearing();
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task ShowIntroductionAsync()
         {
             if (AboutViewModel is null)

@@ -146,41 +146,92 @@
             Margin="0,-60,0,-35"
             Opacity="0">
             <Ellipse
-                Margin="0,-70,0,50"
-                HeightRequest="550"
-                Opacity="0.7"
+                HeightRequest="1000"
+                Opacity="0.8"
+                ScaleX="2.5"
                 VerticalOptions="Start"
-                WidthRequest="1000">
+                WidthRequest="550">
 
                 <Ellipse.Fill>
-                    <RadialGradientBrush>
-                        <GradientStop Offset="0.1" Color="{AppThemeBinding Light='#025DFF', Dark='#106bbf'}" />
-                        <GradientStop Offset="0.6" Color="#106bbf" />
-                        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
-                    </RadialGradientBrush>
+                    <OnPlatform x:TypeArguments="Brush">
+                        <On Platform="iOS">
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0.1" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                                <GradientStop Offset="0.6" Color="#106bbf" />
+                                <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                            </RadialGradientBrush>
+                        </On>
+                        <On Platform="Android">
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0.1" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                                <GradientStop Offset="0.4" Color="#106bbf" />
+                                <GradientStop Offset="0.7" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                                <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                            </RadialGradientBrush>
+                        </On>
+                    </OnPlatform>
                 </Ellipse.Fill>
             </Ellipse>
         </Grid>
 
         <!--  Foreground  -->
-        <av:AcrylicView Margin="0,-70,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
-            <Grid
-                x:Name="ForegroundView"
-                Opacity="0"
-                RowDefinitions="*,Auto"
-                RowSpacing="32">
-                <ucc:GalleryView
-                    x:Name="GalleryView"
-                    Grid.Row="0"
-                    Loaded="GalleryView_Loaded" />
-                <Button
-                    x:Name="Continue"
-                    Grid.Row="1"
-                    Margin="16,0,16,16"
-                    Clicked="Continue_Clicked"
-                    Text="{l:ResourceString Rid=Continue}"
-                    VerticalOptions="End" />
-            </Grid>
-        </av:AcrylicView>
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="iOS">
+                <av:AcrylicView
+                    Margin="0,-70,0,-35"
+                    CornerRadius="0"
+                    EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
+                                                  Light={av2:EffectStyle Light}}">
+                    <Grid
+                        x:Name="BlurredForegroundView"
+                        Opacity="0"
+                        RowDefinitions="*,Auto"
+                        RowSpacing="32">
+                        <ucc:GalleryView Grid.Row="0" Loaded="GalleryView_Loaded" />
+                        <Button
+                            Grid.Row="1"
+                            Margin="16,0,16,16"
+                            Clicked="Continue_Clicked"
+                            Loaded="Continue_Loaded"
+                            Text="{l:ResourceString Rid=Continue}"
+                            VerticalOptions="End" />
+                    </Grid>
+                </av:AcrylicView>
+            </On>
+            <On Platform="Android">
+                <Grid
+                    x:Name="ForegroundView"
+                    Opacity="0"
+                    RowDefinitions="*,Auto"
+                    RowSpacing="32">
+                    <ucc:GalleryView Grid.Row="0" Loaded="GalleryView_Loaded" />
+                    <Button
+                        Grid.Row="1"
+                        Margin="16,0,16,16"
+                        Clicked="Continue_Clicked"
+                        Loaded="Continue_Loaded"
+                        Text="{l:ResourceString Rid=Continue}"
+                        VerticalOptions="End" />
+                </Grid>
+            </On>
+        </OnPlatform>
+
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <Grid
+                    x:Name="SystemNavBarGradient"
+                    HeightRequest="140"
+                    HorizontalOptions="Fill"
+                    Opacity="0"
+                    VerticalOptions="Start">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                            <GradientStop Offset="0.6" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
+            </On>
+        </OnPlatform>
     </Grid>
 </ContentPage>

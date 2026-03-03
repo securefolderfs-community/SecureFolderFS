@@ -17,6 +17,8 @@ namespace SecureFolderFS.Maui.Views
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
         private int _currentIndex;
+        private GalleryView? _galleryView;
+        private Button? _continueButton;
 
         public IntroductionPage(INavigation sourceNavigation)
         {
@@ -56,40 +58,51 @@ namespace SecureFolderFS.Maui.Views
         /// <inheritdoc/>
         protected override async void OnAppearing()
         {
+            base.OnAppearing();
             await Task.Delay(400);
 
             BackgroundView.TranslationY = 800d;
             _ = BackgroundView.FadeToAsync(1, 800U, Easing.CubicIn);
-            _ = BackgroundView.TranslateToAsync(0, 0, 3000U, EasingHelpers.EaseOutExpo);
-
+            _ = BackgroundView.TranslateToAsync(0, -300, 3000U, EasingHelpers.EaseOutExpo);
+            
+#if ANDROID
+            _ = Task.Delay(900).ContinueWith(async _ => await SystemNavBarGradient.FadeToAsync(1, 300U, Easing.CubicIn));
+#endif
+            
             await Task.Delay(600);
+#if ANDROID
             _ = ForegroundView.FadeToAsync(1, 600U, Easing.CubicIn);
-
-            base.OnAppearing();
+#elif IOS || MACCATALYST
+            _ = BlurredForegroundView.FadeToAsync(1, 600U, Easing.CubicIn);
+#endif
         }
 
         private void UpdateButtonStyle()
         {
             if (_currentIndex >= 3)
             {
-                Continue.Style = Application.Current?.Resources.Get("AccentButtonStyle") as Style;
-                Continue.Text = "Done".ToLocalized();
+                _continueButton?.Style = Application.Current?.Resources.Get("AccentButtonStyle") as Style;
+                _continueButton?.Text = "Done".ToLocalized();
             }
             else
             {
-                Continue.Style = Application.Current?.Resources.Get("DefaultButtonStyle") as Style;
-                Continue.Text = "Continue".ToLocalized();
+                _continueButton?.Style = Application.Current?.Resources.Get("DefaultButtonStyle") as Style;
+                _continueButton?.Text = "Continue".ToLocalized();
             }
         }
 
         private void GalleryView_Loaded(object? sender, EventArgs e)
         {
-            GalleryView.NextRequested += GalleryView_NextRequested;
-            GalleryView.PreviousRequested += GalleryView_PreviousRequested;
+            if (sender is not GalleryView galleryView)
+                return;
+            
+            _galleryView = galleryView;
+            galleryView.NextRequested += GalleryView_NextRequested;
+            galleryView.PreviousRequested += GalleryView_PreviousRequested;
 
-            GalleryView.Current = Resources.Get("Slide0") as View;
-            GalleryView.Next = Resources.Get("Slide1") as View;
-            GalleryView.RefreshLayout();
+            galleryView.Current = Resources.Get("Slide0") as View;
+            galleryView.Next = Resources.Get("Slide1") as View;
+            galleryView.RefreshLayout();
         }
 
         private void GalleryView_PreviousRequested(object? sender, EventArgs e)
@@ -116,13 +129,16 @@ namespace SecureFolderFS.Maui.Views
 
         private async void Continue_Clicked(object? sender, EventArgs e)
         {
+            if (_galleryView is null)
+                return;
+            
             if (_currentIndex >= 3)
             {
                 await MainPage.Instance!.Navigation.PopAsync();
                 return;
             }
 
-            await GalleryView.SwipeToNextAsync();
+            await _galleryView.SwipeToNextAsync();
         }
 
         private void PrivacyPolicy_Tapped(object? sender, TappedEventArgs e)
@@ -135,6 +151,11 @@ namespace SecureFolderFS.Maui.Views
         {
             var applicationService = DI.Service<IApplicationService>();
             applicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/TERMS_OF_SERVICE.md"));
+        }
+
+        private void Continue_Loaded(object? sender, EventArgs e)
+        {
+            _continueButton = sender as Button;
         }
     }
 }

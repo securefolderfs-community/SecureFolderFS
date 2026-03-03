@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using AndroidX.Activity;
+using AndroidX.Core.View;
 using Microsoft.Maui.Platform;
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.UI.Enums;
@@ -38,6 +39,14 @@ namespace SecureFolderFS.Maui
             // Enable edge to edge
             EdgeToEdge.Enable(this);
 
+            // Apply system bar insets to the root view so the Shell toolbar
+            // is not hidden behind the status bar on navigated pages.
+            var rootView = FindViewById(Android.Resource.Id.Content);
+            if (rootView is not null)
+            {
+                ViewCompat.SetOnApplyWindowInsetsListener(rootView, new WindowInsetsListener());
+            }
+
             // Configure StatusBar color
             ApplyStatusBarColor(MauiThemeHelper.Instance.CurrentTheme);
 
@@ -69,6 +78,21 @@ namespace SecureFolderFS.Maui
                 _ => "PrimaryLightColor"
             }] as Color)!.ToPlatform());
 #pragma warning restore CA1422
+        }
+
+        private sealed class WindowInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
+        {
+            public WindowInsetsCompat? OnApplyWindowInsets(Android.Views.View? view, WindowInsetsCompat? insets)
+            {
+                if (view is null || insets is null)
+                    return insets;
+
+                var systemBarsInsets = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
+                if (systemBarsInsets is not null)
+                    view.SetPadding(systemBarsInsets.Left, systemBarsInsets.Top, systemBarsInsets.Right, systemBarsInsets.Bottom);
+                
+                return WindowInsetsCompat.Consumed;
+            }
         }
     }
 }

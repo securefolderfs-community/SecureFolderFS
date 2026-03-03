@@ -31,7 +31,6 @@
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
-                Padding="{OnPlatform Android='0,0,0,32'}"
                 Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"
@@ -57,6 +56,7 @@
 
                     <ContentView
                         Grid.Row="1"
+                        Margin="{OnPlatform Android='0,0,0,32'}"
                         Content="{Binding ModalContent, Mode=OneWay}"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill" />

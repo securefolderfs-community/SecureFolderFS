@@ -99,7 +99,6 @@ namespace SecureFolderFS.Maui.AppModels
                                 await response.OutputStream.FlushAsync(cancellationToken);
                                 response.StatusCode = (int)HttpStatusCode.OK;
                                 response.StatusDescription = "OK";
-
 #endif
                             }
                         }
