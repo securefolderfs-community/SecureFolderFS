@@ -40,6 +40,7 @@
     <Shell.TitleView>
         <Grid>
             <Label
+                Margin="{OnPlatform Android='-24,0,0,0'}"
                 FontAttributes="Bold"
                 FontSize="18"
                 HorizontalOptions="Center"

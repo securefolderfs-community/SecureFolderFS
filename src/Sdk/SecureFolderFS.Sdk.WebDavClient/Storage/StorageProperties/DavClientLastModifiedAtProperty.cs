@@ -42,6 +42,3 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage.StorageProperties
         }
     }
 }
-
-
-

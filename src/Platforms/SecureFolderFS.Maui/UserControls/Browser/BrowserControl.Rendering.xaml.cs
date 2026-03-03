@@ -172,6 +172,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             TryEnqueueThumbnail(sender);
             RegisterItemContainerPanGesture(sender);
+
+            if (sender is View view)
+                RegisterAndroidDragThreshold(view);
         }
 
         private void ItemContainer_BindingContextChanged(object? sender, EventArgs e)

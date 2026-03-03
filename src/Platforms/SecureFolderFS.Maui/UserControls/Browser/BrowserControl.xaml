@@ -80,7 +80,7 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
-                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DragGestureRecognizer CanDrag="{OnPlatform Default=True, Android=False}" DragStarting="DragGestureRecognizer_DragStarting" />
                     <DropGestureRecognizer
                         AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
                         DragLeave="DropGestureRecognizer_DragLeave"
@@ -162,16 +162,22 @@
                                             IsVisible="{Binding IsSelected, Mode=OneWay}"
                                             WidthRequest="22" />
                                     </On>
+                                    <On Platform="Android">
+                                        <Rectangle
+                                            Fill="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
+                                                                   Dark={StaticResource BackgroundFillPrimaryDarkColor}}"
+                                            HeightRequest="16"
+                                            WidthRequest="16" />
+                                    </On>
                                 </OnPlatform>
-
-                                <CheckBox Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                             </Grid>
                         </Grid>
                     </Border>
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
-                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DragGestureRecognizer CanDrag="{OnPlatform Default=True, Android=False}" DragStarting="DragGestureRecognizer_DragStarting" />
                     <DropGestureRecognizer
                         AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
                         DragLeave="DropGestureRecognizer_DragLeave"
@@ -266,6 +272,13 @@
                                         IsVisible="{Binding IsSelected, Mode=OneWay}"
                                         WidthRequest="22" />
                                 </On>
+                                <On Platform="Android">
+                                    <Rectangle
+                                        Fill="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
+                                                               Dark={StaticResource BackgroundFillPrimaryDarkColor}}"
+                                        HeightRequest="16"
+                                        WidthRequest="16" />
+                                </On>
                             </OnPlatform>
 
                             <CheckBox
@@ -277,7 +290,7 @@
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
                     <TapGestureRecognizer CommandParameter="{x:Reference ItemContainer}" Tapped="TapGestureRecognizer_Tapped" />
-                    <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting" />
+                    <DragGestureRecognizer CanDrag="{OnPlatform Default=True, Android=False}" DragStarting="DragGestureRecognizer_DragStarting" />
                     <DropGestureRecognizer
                         AllowDrop="{Binding Path=., Mode=OneWay, Converter={StaticResource BrowserItemTypeToBoolConverter}, ConverterParameter='Folder'}"
                         DragLeave="DropGestureRecognizer_DragLeave"

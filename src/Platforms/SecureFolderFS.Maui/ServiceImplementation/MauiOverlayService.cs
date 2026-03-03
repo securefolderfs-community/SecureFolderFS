@@ -41,7 +41,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 DeviceLinkRequestOverlayViewModel => new DeviceLinkRequestPage(navigation),
                 DeviceLinkCredentialsOverlayViewModel => new DeviceLinkCredentialsPage(navigation),
 
-                _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
+                _ => throw new ArgumentOutOfRangeException(nameof(viewable))
             };
         }
     }

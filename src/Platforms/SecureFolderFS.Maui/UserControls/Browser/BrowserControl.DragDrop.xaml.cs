@@ -9,6 +9,8 @@ using SecureFolderFS.Storage.Extensions;
 #if IOS || MACCATALYST
 using Foundation;
 using UniformTypeIdentifiers;
+#elif ANDROID
+using SecureFolderFS.Maui.Platforms.Android.Helpers;
 #endif
 
 namespace SecureFolderFS.Maui.UserControls.Browser
@@ -21,6 +23,49 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 return;
 
             e.Data.Properties["DraggedItem"] = itemViewModel;
+        }
+
+        /// <summary>
+        /// Tries to get the dragged item from either MAUI's <see cref="DataPackage"/> (iOS)
+        /// or from the static <see cref="DragThresholdTouchHandler.CurrentDraggedItem"/> (Android).
+        /// </summary>
+        private static BrowserItemViewModel? GetDraggedItem(DropEventArgs e)
+        {
+            // First, check MAUI's DataPackage (works on iOS and when DragGestureRecognizer is used)
+            if (e.Data.Properties.TryGetValue("DraggedItem", out var draggedItemObj) && draggedItemObj is BrowserItemViewModel draggedItem)
+                return draggedItem;
+
+#if ANDROID
+            // On Android, check the static field set by DragThresholdTouchHandler
+            return DragThresholdTouchHandler.CurrentDraggedItem;
+#else
+            return null;
+#endif
+        }
+
+        /// <summary>
+        /// Clears the Android drag state after a drop operation completes.
+        /// </summary>
+        private static void ClearDragState()
+        {
+#if ANDROID
+            DragThresholdTouchHandler.CurrentDraggedItem = null;
+#endif
+        }
+
+        /// <summary>
+        /// Registers the Android-specific drag threshold touch handler on an item container.
+        /// On iOS/macOS, this is a no-op since the platform handles drag thresholds natively.
+        /// </summary>
+        internal static void RegisterAndroidDragThreshold(View view)
+        {
+#if ANDROID
+            if (view.Handler?.PlatformView is global::Android.Views.View androidView)
+            {
+                var handler = new DragThresholdTouchHandler(view);
+                handler.Attach(androidView);
+            }
+#endif
         }
 
         private void DropGestureRecognizer_DragOver(object? sender, DragEventArgs e)
@@ -52,8 +97,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 return;
 
             // Handle internal drag-and-drop (from within the app)
-            if (e.Data.Properties.TryGetValue("DraggedItem", out var draggedItemObj) && draggedItemObj is BrowserItemViewModel draggedItem)
+            var draggedItem = GetDraggedItem(e);
+            if (draggedItem is not null)
             {
+                ClearDragState();
+
                 // Disallow dropping on itself
                 if (draggedItem == folderViewModel)
                     return;
@@ -83,8 +131,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private async void CollectionDropGestureRecognizer_Drop(object? sender, DropEventArgs e)
         {
             // Handle internal drag-and-drop (from within the app)
-            if (e.Data.Properties.TryGetValue("DraggedItem", out var draggedItemObj) && draggedItemObj is BrowserItemViewModel draggedItem)
+            var draggedItem = GetDraggedItem(e);
+            if (draggedItem is not null)
             {
+                ClearDragState();
+
                 if (draggedItem.ParentFolder is null)
                     return;
 

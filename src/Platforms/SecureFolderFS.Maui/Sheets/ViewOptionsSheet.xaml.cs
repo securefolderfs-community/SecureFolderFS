@@ -2,6 +2,7 @@ using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
 using Plugin.SegmentedControl.Maui;
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -102,6 +103,58 @@ namespace SecureFolderFS.Maui.Sheets
             
             ViewModel?.SetLayoutSizeOptionCommand.Execute(e.NewValue);
         }
+        
+        private void SizeSegmentsAndroid_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not HorizontalStackLayout layout || ViewModel is null)
+                return;
+
+            var currentIndex = ViewModel.CurrentSizeOption is null
+                ? -1
+                : ViewModel.SizeOptions.IndexOf(ViewModel.CurrentSizeOption);
+
+            for (var i = 0; i < ViewModel.SizeOptions.Count; i++)
+            {
+                var radio = new RadioButton()
+                {
+                    Content = ViewModel.SizeOptions[i].Title,
+                    IsChecked = i == currentIndex,
+                    GroupName = "SizeOptions".ToLocalized()
+                };
+                radio.CheckedChanged += SizeSegmentsAndroid_CheckedChanged;
+                layout.Add(radio);
+            }
+
+            layout.Unloaded += SizeSegmentsAndroid_Unloaded;
+        }
+
+        private void SizeSegmentsAndroid_Unloaded(object? sender, EventArgs e)
+        {
+            if (sender is not HorizontalStackLayout layout)
+                return;
+
+            layout.Unloaded -= SizeSegmentsAndroid_Unloaded;
+            foreach (var child in layout.Children.OfType<RadioButton>())
+                child.CheckedChanged -= SizeSegmentsAndroid_CheckedChanged;
+        }
+
+        private void SizeSegmentsAndroid_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+        {
+            if (!e.Value)
+                return;
+
+            if (sender is not RadioButton selected)
+                return;
+
+            var layout = (HorizontalStackLayout)selected.Parent;
+            var index = layout.Children.IndexOf(selected);
+
+            // Manually deselect others since GroupName isn't reliable in dynamic layouts
+            foreach (var radio in layout.Children.OfType<RadioButton>().Where(r => r != selected))
+                radio.IsChecked = false;
+
+            ViewModel?.SetLayoutSizeOptionCommand.Execute(index);
+        }
 
         public LayoutsViewModel? ViewModel
         {
@@ -112,4 +165,3 @@ namespace SecureFolderFS.Maui.Sheets
             BindableProperty.Create(nameof(ViewModel), typeof(LayoutsViewModel), typeof(ViewOptionsSheet));
     }
 }
-
