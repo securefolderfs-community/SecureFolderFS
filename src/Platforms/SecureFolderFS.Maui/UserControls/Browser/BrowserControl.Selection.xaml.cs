@@ -232,7 +232,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 UpdateItemContainerPanGesture(view);
         }
 
-        private void UpdateItemContainerPanGesture(View view)
+        private void UpdateItemContainerPanGesture(
+#if ANDROID
+            View _)
+        {
+            // On Android, PanGestureRecognizer conflicts with TapGestureRecognizer,
+            // preventing tap-to-select from working. Skip swipe-selection on Android.
+        }
+#else
+            View view)
         {
             var existing = view.GestureRecognizers.OfType<PanGestureRecognizer>().FirstOrDefault();
             if (IsSelecting)
@@ -253,5 +261,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 view.GestureRecognizers.Remove(existing);
             }
         }
+#endif
     }
 }

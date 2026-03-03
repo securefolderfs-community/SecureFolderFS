@@ -277,14 +277,12 @@
                                         Fill="{AppThemeBinding Light={StaticResource BackgroundFillPrimaryLightColor},
                                                                Dark={StaticResource BackgroundFillPrimaryDarkColor}}"
                                         HeightRequest="16"
+                                        IsVisible="{Binding IsSelected, Mode=OneWay}"
                                         WidthRequest="16" />
                                 </On>
                             </OnPlatform>
 
-                            <CheckBox
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
-                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                IsVisible="{Binding IsSelected, Mode=OneWay}" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding IsSelected, Mode=OneWay}" />
                         </Grid>
                     </Grid>
                 </apesui:ContextMenuContainer.Content>
@@ -324,7 +322,6 @@
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                     Loaded="ItemsCollectionView_Loaded"
-                    SelectionMode="{Binding IsSelecting, Mode=OneWay, Converter={StaticResource BoolSelectionModeConverter}}"
                     SizeChanged="ItemsCollectionView_SizeChanged"
                     ZIndex="0">
                     <CollectionView.ItemTemplate>

@@ -72,9 +72,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             newCollectionView.SetBinding(IsVisibleProperty,
                 new Binding($"{nameof(ItemsSource)}.Count", mode: BindingMode.OneWay, source: this,
                     converter: GetConverter("CountToBoolConverter")));
+#if ANDROID
+            // On Android, keep SelectionMode as None to prevent CollectionView re-layout
+            // when entering selection mode. Selection is managed via BrowserItemViewModel.IsSelected.
+            newCollectionView.SelectionMode = SelectionMode.None;
+#else
             newCollectionView.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
                     converter: GetConverter("BoolSelectionModeConverter")));
+#endif
 
             // Wire up the events
             newCollectionView.Loaded += ItemsCollectionView_Loaded;
@@ -189,6 +195,18 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             // Set initial ItemsLayout since we removed the binding from XAML
             _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+
+#if ANDROID
+            // On Android, keep SelectionMode as None to prevent CollectionView re-layout
+            // when entering selection mode. Selection is managed via BrowserItemViewModel.IsSelected.
+            if (_collectionView is not null)
+                _collectionView.SelectionMode = SelectionMode.None;
+#else
+            // On other platforms, bind SelectionMode to IsSelecting
+            _collectionView?.SetBinding(SelectableItemsView.SelectionModeProperty,
+                new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
+                    converter: GetConverter("BoolSelectionModeConverter")));
+#endif
         }
 
         private void ItemsCollectionView_SizeChanged(object? sender, EventArgs e)
