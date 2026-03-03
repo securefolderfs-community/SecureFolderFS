@@ -67,8 +67,10 @@
                     Margin="0,128,0,0"
                     Aspect="AspectFit"
                     HeightRequest="600"
-                    SourceFileName="{AppThemeBinding Light='intro_light_iphone_dashboard.png',
-                                                     Dark='intro_dark_iphone_dashboard.png'}"
+                    SourceFileName="{OnPlatform Android={AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                                         Dark='intro_dark_iphone_dashboard.png'},
+                                                iOS={AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                                     Dark='intro_dark_iphone_dashboard.png'}}"
                     StartPoint="0.5,1"
                     EndPoint="0.5,0.3">
                     <ucc:MaskedImage.Stops>

@@ -12,13 +12,19 @@ using AndroidUri = Android.Net.Uri;
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IChildFile"/>
-    internal sealed class AndroidFile : AndroidStorable, IChildFile
+    internal sealed class AndroidFile : AndroidStorable, IChildFile, ILastModifiedAt, ISizeOf
     {
         /// <inheritdoc/>
         public override string Name { get; }
 
         /// <inheritdoc/>
         public override DocumentFile? Document { get; }
+     
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new AndroidLastModifiedAtProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
+        
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new AndroidSizeOfProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
 
         public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
@@ -60,16 +66,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 var channelledStream = new ChannelledStream(fInChannel, fOutChannel);
                 return Task.FromResult<Stream>(channelledStream);
             }
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            if (Document is null)
-                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
-
-            properties ??= new AndroidFileProperties(Document);
-            return Task.FromResult(properties);
         }
 
         private static bool IsVirtualFile(Context context, AndroidUri uri)

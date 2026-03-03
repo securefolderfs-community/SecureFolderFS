@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using MauiIcons.Core;
-using MauiIcons.Cupertino;
+using MauiIcons.Material;
 using SecureFolderFS.Core.MobileFS.Platforms.Android;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Sdk.Enums;
@@ -34,12 +34,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var fileExplorerService = DI.Service<IFileExplorerService>();
             yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel)
             {
-                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2, IconColor = Colors.White })
+                Icon = new ImageIcon(new MauiIcon() { Icon = MaterialIcons.Storage, IconColor = Colors.White })
             };
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
                 Icon = new ImageResource("source_network_drive_macos.png") 
+            };
+            
+            yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.WebDavClient", "WebDavClient".ToLocalized(), mode, vaultCollectionModel)
+            {
+                Icon = new ImageResource("source_webdav.png") 
             };
 
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.GoogleDrive", "GoogleDrive".ToLocalized(), mode, vaultCollectionModel)

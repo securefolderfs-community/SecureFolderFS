@@ -31,6 +31,7 @@
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
+                Padding="{OnPlatform Android='0,0,0,32'}"
                 Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"

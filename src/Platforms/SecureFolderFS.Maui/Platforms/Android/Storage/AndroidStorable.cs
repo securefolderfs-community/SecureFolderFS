@@ -4,19 +4,17 @@ using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
-using SecureFolderFS.Storage.StorageProperties;
-using SecureFolderFS.UI;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
+using Constants = SecureFolderFS.UI.Constants;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IStorableChild"/>
-    internal abstract class AndroidStorable : IStorableChild, IStorableProperties, IBookmark, IWrapper<AndroidUri>
+    internal abstract class AndroidStorable : IStorableChild, IBookmark, IWrapper<AndroidUri>
     {
         protected readonly Activity activity;
         protected readonly AndroidUri permissionRoot;
-        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public AndroidUri Inner { get; }
@@ -66,7 +64,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 activity.ContentResolver?.TakePersistableUriPermission(Inner,
                     ActivityFlags.GrantWriteUriPermission | ActivityFlags.GrantReadUriPermission);
 
-                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{Id}";
+                BookmarkId = $"{Constants.STORABLE_BOOKMARK_RID}{Id}";
             }
             catch (Exception ex)
             {
@@ -93,9 +91,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.CompletedTask;
         }
-
-        /// <inheritdoc/>
-        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected static string? GetColumnValue(Context context, AndroidUri contentUri, string column, string? selection = null, string[]? selectionArgs = null)
         {

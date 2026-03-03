@@ -6,14 +6,19 @@ using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
-    internal sealed class AndroidFolder : AndroidStorable, IChildFolder, IGetFirstByName, IRenamableFolder, ICreateRenamedCopyOf, IMoveRenamedFrom
+    internal sealed class AndroidFolder : AndroidStorable,
+        IChildFolder,
+        IGetFirstByName,
+        IRenamableFolder,
+        ICreateRenamedCopyOf,
+        IMoveRenamedFrom,
+        ILastModifiedAt
     {
         private static Exception RenameException { get; } = new IOException("Could not rename the item.");
 
@@ -22,6 +27,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
         /// <inheritdoc/>
         public override DocumentFile? Document { get; }
+        
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new AndroidLastModifiedAtProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
 
         public AndroidFolder(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
@@ -69,8 +77,15 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (Document is null)
                 yield break;
 
-            foreach (var item in Document.ListFiles())
+            var items = Document.ListFiles();
+            if (items is null)
+                yield break;
+            
+            foreach (var item in items)
             {
+                if (item.Uri is null)
+                    continue;
+                
                 var isDirectory = item.IsDirectory;
                 var result = (IStorableChild?)(type switch
                 {
@@ -140,7 +155,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         public Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             var newFolder = Document?.CreateDirectory(name);
-            if (newFolder is null)
+            if (newFolder?.Uri is null)
                 return Task.FromException<IChildFolder>(new UnauthorizedAccessException("Could not create Android folder."));
 
             return Task.FromResult<IChildFolder>(new AndroidFolder(newFolder.Uri, activity, this, permissionRoot));
@@ -223,7 +238,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             // No-op if source and destination are the same
             if (androidFile.Id == Path.Combine(Id, newName))
-                return Task.FromResult<IChildFile>(fileToMove);
+                return Task.FromResult(fileToMove);
 
             return MoveInternalAsync(androidFile, source, newName, cancellationToken);
         }
@@ -251,16 +266,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 throw new FileNotFoundException($"No storage item with the name '{name}' could be found.");
 
             return target;
-        }
-
-        /// <inheritdoc/>
-        public override Task<IBasicProperties> GetPropertiesAsync()
-        {
-            if (Document is null)
-                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
-
-            properties ??= new AndroidFolderProperties(Document);
-            return Task.FromResult(properties);
         }
         
         private async Task<IChildFile> CopyInternalAsync(AndroidFile source, string newName, CancellationToken cancellationToken)

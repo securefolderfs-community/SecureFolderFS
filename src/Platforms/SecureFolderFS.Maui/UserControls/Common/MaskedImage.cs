@@ -1,5 +1,12 @@
 using Microsoft.Maui.Graphics.Platform;
+using BlendMode = Microsoft.Maui.Graphics.BlendMode;
 using IImage = Microsoft.Maui.Graphics.IImage;
+using Point = Microsoft.Maui.Graphics.Point;
+using RectF = Microsoft.Maui.Graphics.RectF;
+#if ANDROID
+using Android.Graphics;
+using Microsoft.Maui.Controls.Compatibility.Platform.Android;
+#endif
 
 namespace SecureFolderFS.Maui.UserControls.Common
 {
@@ -20,10 +27,30 @@ namespace SecureFolderFS.Maui.UserControls.Common
             if (newValue is not string fileName)
                 return;
 
+#if ANDROID
+            var rid = MauiApplication.Current.GetDrawableId(fileName);
+            await using var stream = LoadImageFromResources(rid);
+#elif IOS || MACCATALYST
             await using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
+#endif
             control.ImageInternal = PlatformImage.FromStream(stream);
             control.Invalidate(); // Trigger redraw
         }
+        
+#if ANDROID
+        private static Stream? LoadImageFromResources(int resourceId)
+        {
+            var bitmap = BitmapFactory.DecodeResource(MauiApplication.Current.Resources, resourceId);
+            if (bitmap is null)
+                return null;
+            
+            var stream = new MemoryStream();
+            bitmap.Compress(Bitmap.CompressFormat.Png!, 100, stream);
+            stream.Position = 0L;
+            
+            return stream;
+        }
+#endif
 
         private static void OnStopsChanged(BindableObject bindable, object oldValue, object newValue)
         {
