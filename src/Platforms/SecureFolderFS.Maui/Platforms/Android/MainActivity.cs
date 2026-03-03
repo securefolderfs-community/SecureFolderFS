@@ -47,6 +47,11 @@ namespace SecureFolderFS.Maui
                 ViewCompat.SetOnApplyWindowInsetsListener(rootView, new WindowInsetsListener());
             }
 
+            // Make the navigation bar transparent so content draws behind it
+#pragma warning disable CA1422
+            Window?.SetNavigationBarColor(Android.Graphics.Color.Transparent);
+#pragma warning restore CA1422
+
             // Configure StatusBar color
             ApplyStatusBarColor(MauiThemeHelper.Instance.CurrentTheme);
 
@@ -87,10 +92,22 @@ namespace SecureFolderFS.Maui
                 if (view is null || insets is null)
                     return insets;
 
-                var systemBarsInsets = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
-                if (systemBarsInsets is not null)
-                    view.SetPadding(systemBarsInsets.Left, systemBarsInsets.Top, systemBarsInsets.Right, systemBarsInsets.Bottom);
-                
+                // Only apply top (status bar) padding so the toolbar is visible.
+                // Bottom padding is NOT applied so content extends behind the
+                // navigation bar for a modern edge-to-edge experience.
+                var statusBarInsets = insets.GetInsets(WindowInsetsCompat.Type.StatusBars());
+                var imeInsets = insets.GetInsets(WindowInsetsCompat.Type.Ime());
+
+                // When the soft keyboard (IME) is visible, use its bottom inset
+                // so that input fields are not hidden behind the keyboard.
+                var bottomPadding = imeInsets is not null && imeInsets.Bottom > 0 ? imeInsets.Bottom : 0;
+
+                view.SetPadding(
+                    statusBarInsets?.Left ?? 0,
+                    statusBarInsets?.Top ?? 0,
+                    statusBarInsets?.Right ?? 0,
+                    bottomPadding);
+
                 return WindowInsetsCompat.Consumed;
             }
         }

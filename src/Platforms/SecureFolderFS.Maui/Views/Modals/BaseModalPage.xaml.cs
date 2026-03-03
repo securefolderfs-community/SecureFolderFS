@@ -1,6 +1,5 @@
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Shapes;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Maui.Views.Modals
 {
