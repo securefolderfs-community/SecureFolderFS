@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Android.Runtime;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.Helpers;
 using Uri = Android.Net.Uri;
@@ -14,12 +16,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     /// </summary>
     [ContentProvider(["${applicationId}.shareProvider"],
         Name = "securefolderfs.shareProvider",
+        Enabled = true,
         Exported = false,
         GrantUriPermissions = true)]
-    public sealed class ShareContentProvider : ContentProvider
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+    [Preserve(AllMembers = true)]
+    public class ShareContentProvider : ContentProvider
     {
         private static readonly Dictionary<string, IFile> _registeredFiles = new();
         private static readonly object _lock = new();
+
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ShareContentProvider))]
+        public ShareContentProvider()
+        {
+        }
 
         /// <summary>
         /// Registers a file for sharing and returns a unique identifier.
@@ -50,7 +60,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override bool OnCreate() => true;
+        [Register("onCreate", "()Z", "GetOnCreateHandler")]
+        public override bool OnCreate()
+        {
+            return true;
+        }
 
         /// <inheritdoc/>
         public override ParcelFileDescriptor? OpenFile(Uri uri, string mode)
@@ -118,7 +132,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             // Get the filename from the URI path (second segment)
             var fileName = uri.PathSegments?.ElementAtOrDefault(1) ?? file.Name;
 
-            var columns = projection ?? new[] { OpenableColumns.DisplayName, OpenableColumns.Size };
+            var columns = projection ?? [ IOpenableColumns.DisplayName, IOpenableColumns.Size ];
             var cursor = new MatrixCursor(columns);
             var row = cursor.NewRow();
 
@@ -126,12 +140,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             {
                 switch (column)
                 {
-                    case OpenableColumns.DisplayName:
+                    case IOpenableColumns.DisplayName:
                         row?.Add(fileName);
                         break;
-                    case OpenableColumns.Size:
+                    
+                    case IOpenableColumns.Size:
                         row?.Add(null); // Size unknown for streams
                         break;
+                    
                     default:
                         row?.Add(null);
                         break;

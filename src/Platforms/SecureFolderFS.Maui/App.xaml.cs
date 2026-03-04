@@ -65,11 +65,14 @@ namespace SecureFolderFS.Maui
         {
             ContextMenuContainer.Init();
 
-            var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
-            return new Window(appShell);
+            // Run initialization on a background thread (no UI work here)
+            Task.Run(InitializeAppAsync).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            // Create AppShell on the main thread where XAML initialization is safe
+            return new Window(new AppShell());
         }
 
-        private async Task<Page> GetAppShellAsync()
+        private async Task InitializeAppAsync()
         {
             // Initialize application lifecycle
             await ApplicationLifecycle.InitAsync();
@@ -110,9 +113,6 @@ namespace SecureFolderFS.Maui
 
             // Initialize ThemeHelper
             await MauiThemeHelper.Instance.InitAsync().ConfigureAwait(false);
-
-            // Create new AppShell
-            return new AppShell();
         }
 
         /// <inheritdoc/>

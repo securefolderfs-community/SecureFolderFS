@@ -40,6 +40,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
                 await TelemetryService.DisableTelemetryAsync();
 
             // Check if the changelog is available
+            if (!ApplicationService.IsDesktop)
+                return;
+
             if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
             {
                 var currentVersion = ApplicationService.AppVersion;
