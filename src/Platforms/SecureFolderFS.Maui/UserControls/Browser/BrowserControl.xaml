@@ -154,7 +154,7 @@
                                 HorizontalOptions="Center"
                                 IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
                                 VerticalOptions="Center">
-                                <OnPlatform x:TypeArguments="View">
+                                <OnPlatform x:TypeArguments="Shape">
                                     <On Platform="iOS">
                                         <Ellipse
                                             Fill="{StaticResource BackgroundFillPrimaryLightColor}"
@@ -264,7 +264,7 @@
                             Margin="0,0,4,4"
                             HorizontalOptions="End"
                             VerticalOptions="End">
-                            <OnPlatform x:TypeArguments="View">
+                            <OnPlatform x:TypeArguments="Shape">
                                 <On Platform="iOS">
                                     <Ellipse
                                         Fill="{StaticResource BackgroundFillPrimaryLightColor}"

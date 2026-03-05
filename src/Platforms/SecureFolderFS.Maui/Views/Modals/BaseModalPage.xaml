@@ -27,7 +27,7 @@
         </OnPlatform>
     </NavigationPage.IconColor>
 
-    <OnPlatform x:TypeArguments="View">
+    <OnPlatform x:TypeArguments="Border">
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
@@ -78,7 +78,7 @@
                         <Button
                             x:Name="CloseButton"
                             Grid.Column="0"
-                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
+                            Grid.ColumnSpan="{Binding IsVisible, Mode=OneWay, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
@@ -88,8 +88,8 @@
 
                         <Button
                             x:Name="PrimaryButton"
-                            Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
-                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
+                            Grid.Column="{Binding IsVisible, Mode=OneWay, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
+                            Grid.ColumnSpan="{Binding IsVisible, Mode=OneWay, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"

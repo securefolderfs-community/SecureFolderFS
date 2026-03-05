@@ -19,7 +19,7 @@
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Style.Triggers>
             <DataTrigger
-                Binding="{Binding IsSelected}"
+                Binding="{Binding IsSelected, Mode=OneWay}"
                 TargetType="Grid"
                 Value="True">
                 <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />

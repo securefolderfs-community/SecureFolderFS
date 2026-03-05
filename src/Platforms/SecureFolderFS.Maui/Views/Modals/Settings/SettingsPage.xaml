@@ -168,7 +168,7 @@
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
                         <HorizontalStackLayout Spacing="8">
-                            <OnPlatform x:TypeArguments="View">
+                            <OnPlatform x:TypeArguments="mi:MauiIcon">
                                 <On Platform="Android">
                                     <mi:MauiIcon
                                         Icon="{mi_material:Material Memory}"

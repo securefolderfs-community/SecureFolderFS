@@ -105,7 +105,7 @@
                                 Grid.Column="0"
                                 IsVisible="{Binding VaultViewModel.IsUnlocked, Mode=OneWay}"
                                 VerticalOptions="Center">
-                                <OnPlatform x:TypeArguments="View">
+                                <OnPlatform x:TypeArguments="Button">
                                     <On Platform="Android">
                                         <Button
                                             Padding="8"
@@ -173,7 +173,7 @@
             Grid.Row="0"
             Grid.RowSpan="2"
             VerticalOptions="End">
-            <OnPlatform x:TypeArguments="View">
+            <OnPlatform x:TypeArguments="Button">
                 <On Platform="Android">
                     <Button
                         Margin="0,0,16,32"

@@ -50,8 +50,8 @@
                     </Border.StrokeShape>
                     <ContentView
                         x:Name="ImageView"
-                        BindingContext="{Binding ViewModel}"
-                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
+                        BindingContext="{Binding ViewModel, Mode=OneWay}"
+                        Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
                         HeightRequest="36"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
@@ -103,14 +103,16 @@
                     Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
 
                 <!--  Date Created (iOS only)  -->
-                <OnPlatform x:TypeArguments="View">
+                <OnPlatform x:TypeArguments="Grid">
                     <On Platform="iOS">
-                        <uc:ItemProperty
-                            Title="{l:ResourceString Rid=DateCreated}"
-                            Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
-                            CommandParameter="DateCreated"
-                            IsLastItem="False"
-                            Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
+                        <Grid>
+                            <uc:ItemProperty
+                                Title="{l:ResourceString Rid=DateCreated}"
+                                Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                                CommandParameter="DateCreated"
+                                IsLastItem="False"
+                                Subtitle="{Binding ViewModel.DateCreatedText, Mode=OneWay}" />
+                        </Grid>
                     </On>
                 </OnPlatform>
 

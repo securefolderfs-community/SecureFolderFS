@@ -31,7 +31,7 @@
             VerticalOptions="Start"
             ZIndex="5">
 
-            <OnPlatform x:TypeArguments="View">
+            <OnPlatform x:TypeArguments="Grid">
                 <On Platform="Android">
                     <Grid
                         Padding="16,0"

@@ -105,6 +105,7 @@ namespace SecureFolderFS.Maui.Views
                         new Label()
                         {
                             Text = "SecureFolderFS Internal. DO NOT REDISTRIBUTE!",
+                            TextColor = Colors.Black,
                             FontSize = 14d,
                             HorizontalTextAlignment = TextAlignment.Center,
                             VerticalOptions = LayoutOptions.Center

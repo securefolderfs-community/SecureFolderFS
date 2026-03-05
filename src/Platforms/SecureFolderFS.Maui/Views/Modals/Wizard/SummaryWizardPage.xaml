@@ -67,7 +67,7 @@
             </VerticalStackLayout>
 
             <!--  CTA button (iOS)  -->
-            <OnPlatform x:TypeArguments="View">
+            <OnPlatform x:TypeArguments="Border">
                 <On Platform="iOS">
                     <Border
                         BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},

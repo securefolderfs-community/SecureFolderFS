@@ -37,7 +37,7 @@
             Text="{Binding StatusTitle, Mode=OneWay}"
             VerticalOptions="Center" />
 
-        <OnPlatform x:TypeArguments="View">
+        <OnPlatform x:TypeArguments="Button">
             <On Platform="Android">
                 <Button
                     Grid.Column="2"

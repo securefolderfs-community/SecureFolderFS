@@ -56,24 +56,26 @@
                             IsTransparent="True"
                             IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
                             <uco:OptionsContainer.InnerContent>
-                                <OnPlatform x:TypeArguments="View">
+                                <OnPlatform x:TypeArguments="HorizontalStackLayout">
                                     <On Platform="iOS">
-                                        <scm:SegmentedControl
-                                            x:Name="SizeSegments"
-                                            Background="Transparent"
-                                            HorizontalOptions="Fill"
-                                            Loaded="SizeSegments_Loaded"
-                                            SelectedIndexChanged="SizeSegments_SelectedIndexChanged"
-                                            SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
-                                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
-                                            TintColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
-                                                                        Dark={StaticResource ShimFillSecondaryDarkColor}}">
-                                            <scm:SegmentedControlOption Text="{l:ResourceString Rid=SmallSize}" />
-                                            <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
-                                            <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
-                                        </scm:SegmentedControl>
+                                        <HorizontalStackLayout>
+                                            <scm:SegmentedControl
+                                                x:Name="SizeSegments"
+                                                Background="Transparent"
+                                                HorizontalOptions="Fill"
+                                                Loaded="SizeSegments_Loaded"
+                                                SelectedIndexChanged="SizeSegments_SelectedIndexChanged"
+                                                SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                                    Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                            Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                                TintColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                                            Dark={StaticResource ShimFillSecondaryDarkColor}}">
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=SmallSize}" />
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
+                                            </scm:SegmentedControl>
+                                        </HorizontalStackLayout>
                                     </On>
                                     <On Platform="Android">
                                         <HorizontalStackLayout
