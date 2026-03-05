@@ -267,6 +267,12 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     ? new DirectoryInfo(ciphertextPath)
                     : new System.IO.FileInfo(ciphertextPath);
 
+                if (!info.Exists)
+                {
+                    FileAttributes = 0;
+                    return Trace(STATUS_OBJECT_NAME_NOT_FOUND, FileName);
+                }
+
                 // Set Attributes and Security Descriptor
                 FileAttributes = (uint)info.Attributes;
                 SecurityDescriptor = info switch

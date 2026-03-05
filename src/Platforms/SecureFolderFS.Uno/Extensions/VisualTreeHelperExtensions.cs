@@ -23,7 +23,7 @@ namespace SecureFolderFS.Uno.Extensions
 #else
             if (contentControl.ContentTemplateRoot is not { } contentTemplateRoot)
             {
-                var presenter = contentControl.FindChild<ContentPresenter>();
+                var presenter = contentControl.FindChild<ContentControl>();
                 return presenter?.ContentTemplateRoot as FrameworkElement;
             }
 
