@@ -7,7 +7,10 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Streams;
 using SecureFolderFS.UI;
+using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 using Stream = System.IO.Stream;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation

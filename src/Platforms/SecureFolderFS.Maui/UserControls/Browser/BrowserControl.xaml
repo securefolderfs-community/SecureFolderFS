@@ -16,6 +16,7 @@
     <ContentView.Resources>
         <vc:BoolSelectionModeConverter x:Key="BoolSelectionModeConverter" />
         <vc:BrowserItemTypeToBoolConverter x:Key="BrowserItemTypeToBoolConverter" />
+        <vc:BrowserImageDimensionsConverter x:Key="BrowserImageDimensionsConverter" />
 
         <!--  ListItem  -->
         <DataTemplate x:Key="ListItemTemplate" x:DataType="vm:BrowserItemViewModel">
@@ -59,10 +60,7 @@
                         </Grid.ColumnDefinitions>
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
-                            <CheckBox
-                                Background="{OnPlatform Android={StaticResource ThemeBackgroundFillPrimaryColorBrush}}"
-                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <ContentView
                                 Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                                 HeightRequest="32"
@@ -128,7 +126,12 @@
                         <Grid
                             x:Name="SourceGrid"
                             Padding="8"
-                            HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
+                            HeightRequest="{OnPlatform Android={Binding BrowserViewModel.Layouts.BrowserViewType,
+                                                                        Mode=OneWay,
+                                                                        Converter={StaticResource BrowserImageDimensionsConverter},
+                                                                        ConverterParameter='96,140,200'},
+                                                       iOS={Binding Width,
+                                                                    Source={x:Reference SourceGrid}}}"
                             RowSpacing="4"
                             Style="{StaticResource SelectableItemGridStyle}">
                             <Grid.RowDefinitions>

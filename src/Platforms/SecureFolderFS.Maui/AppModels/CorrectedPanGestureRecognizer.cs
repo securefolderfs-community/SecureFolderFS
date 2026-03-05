@@ -18,8 +18,8 @@ namespace SecureFolderFS.Maui.AppModels
         void IPanGestureController.SendPan(Element sender, double totalX, double totalY, int gestureId)
         {
 #if ANDROID
-            ArgumentNullException.ThrowIfNull(sender.Handler.MauiContext?.Context);
-            Android.Views.View view = sender.ToPlatform(sender.Handler.MauiContext);
+            ArgumentNullException.ThrowIfNull(sender.Handler?.MauiContext?.Context);
+            var view = sender.ToPlatform(sender.Handler.MauiContext);
             view.GetLocationOnScreen(currentLocation);
             totalX += sender.Handler.MauiContext.Context.FromPixels(currentLocation[0] - startingLocation[0]);
             totalY += sender.Handler.MauiContext.Context.FromPixels(currentLocation[1] - startingLocation[1]);
@@ -40,8 +40,8 @@ namespace SecureFolderFS.Maui.AppModels
         void IPanGestureController.SendPanStarted(Element sender, int gestureId)
         {
 #if ANDROID
-            ArgumentNullException.ThrowIfNull(sender.Handler.MauiContext);
-            Android.Views.View view = sender.ToPlatform(sender.Handler.MauiContext);
+            ArgumentNullException.ThrowIfNull(sender.Handler?.MauiContext);
+            var view = sender.ToPlatform(sender.Handler.MauiContext);
             view.GetLocationOnScreen(startingLocation);
 #endif
             PanUpdated?.Invoke(sender, new PanUpdatedEventArgs(GestureStatus.Started, gestureId));

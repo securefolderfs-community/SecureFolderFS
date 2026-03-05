@@ -56,14 +56,15 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             else
             {
                 var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, "rwt");
+                if (fd is null)
+                    return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open file descriptor."));
+                
                 var fInChannel = new FileInputStream(fd.FileDescriptor).Channel;
                 var fOutChannel = new FileOutputStream(fd.FileDescriptor).Channel;
-
                 if (fInChannel is null || fOutChannel is null)
-                    return Task.FromException<Stream>(
-                        new ArgumentException("Could not open input and output streams."));
+                    return Task.FromException<Stream>(new ArgumentException("Could not open input and output streams."));
 
-                var channelledStream = new ChannelledStream(fInChannel, fOutChannel);
+                var channelledStream = new ChannelledStream(fInChannel, fOutChannel, fd);
                 return Task.FromResult<Stream>(channelledStream);
             }
         }

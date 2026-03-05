@@ -23,8 +23,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
 
-        public GalleryView? GalleryView { get; private set; }
-
         public FilePreviewModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
@@ -91,7 +89,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (viewModel is null)
                 return null;
 
-            return new ContentPresentation()
+            var presentation = new ContentPresentation()
             {
                 Presentation = viewModel,
                 TemplateSelector = new PreviewerTemplateSelector()
@@ -100,6 +98,18 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     VideoTemplate = Resources["VideoTemplate"] as DataTemplate
                 }
             };
+            presentation.Loaded += Presentation_Loaded;
+            return presentation;
+
+            void Presentation_Loaded(object? sender, EventArgs e)
+            {
+                presentation.Loaded -= Presentation_Loaded;
+                var panPinchContainer = presentation.GetVisualTreeDescendants()
+                    .OfType<PanPinchContainer>()
+                    .FirstOrDefault();
+
+                panPinchContainer?.PanUpdatedCommand = GalleryView?.PanUpdatedCommand;
+            }
         }
 
         private async void Closed_Clicked(object? sender, EventArgs e)
@@ -118,7 +128,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             var libVlc = new LibVLC("--input-repeat=2");
             var mediaInput = new StreamMediaInput(stream);
             var media = new Media(libVlc, mediaInput);
-            var mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(libVlc)
+            var mediaPlayer = new MediaPlayer(libVlc)
             {
                 Media = media
             };
@@ -221,6 +231,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             await Task.WhenAll(slideTask, fadeTask);
             await HideAsync();
         }
+        
+        public GalleryView? GalleryView
+        {
+            get => (GalleryView?)GetValue(GalleryViewProperty);
+            private set => SetValue(GalleryViewProperty, value);
+        }
+        public static readonly BindableProperty GalleryViewProperty =
+            BindableProperty.Create(nameof(GalleryView), typeof(GalleryView), typeof(FilePreviewModalPage));
 
         public PreviewerOverlayViewModel? ViewModel
         {

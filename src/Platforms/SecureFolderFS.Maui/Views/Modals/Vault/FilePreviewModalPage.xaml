@@ -100,7 +100,10 @@
                 VerticalOptions="Fill" />
         </DataTemplate>
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
-            <VerticalStackLayout Spacing="16" VerticalOptions="Center">
+            <VerticalStackLayout
+                Padding="16"
+                Spacing="16"
+                VerticalOptions="Center">
                 <Grid HorizontalOptions="Center">
                     <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="Android" />
                     <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="iOS" />

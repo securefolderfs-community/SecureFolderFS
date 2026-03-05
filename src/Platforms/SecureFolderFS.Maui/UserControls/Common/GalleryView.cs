@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Maui.AppModels;
 
 namespace SecureFolderFS.Maui.UserControls.Common
 {
@@ -12,7 +13,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             Vertical
         }
         
-        private readonly PanGestureRecognizer _recognizer;
+        private readonly CorrectedPanGestureRecognizer _recognizer;
         private readonly Grid _container;
         private double _translateX;
 
@@ -47,8 +48,6 @@ namespace SecureFolderFS.Maui.UserControls.Common
             set => _nextView = value;
         }
 
-        public ICommand? PanUpdatedCommand { get; private set; }
-
         public GalleryView()
         {
             _container = new Grid()
@@ -65,7 +64,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             PanUpdatedCommand = new RelayCommand<PanUpdatedEventArgs>(args =>
                 Recognizer_PanUpdated(this, args ?? throw new ArgumentNullException(nameof(args))));
 
-            _recognizer = new();
+            _recognizer = new CorrectedPanGestureRecognizer();
             _recognizer.PanUpdated += Recognizer_PanUpdated;
             GestureRecognizers.Add(_recognizer);
         }
@@ -156,7 +155,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
         private async Task ResetDismissDragAsync()
         {
             var translateTask = this.TranslateToAsync(0, 0, 200U, Easing.CubicOut);
-            var fadeTask = this.FadeTo(1d, 200U, Easing.CubicOut);
+            var fadeTask = this.FadeToAsync(1d, 200U, Easing.CubicOut);
             await Task.WhenAll(translateTask, fadeTask);
             _dismissTranslateY = 0d;
         }
@@ -249,6 +248,14 @@ namespace SecureFolderFS.Maui.UserControls.Common
                 }
             }
         }
+        
+        public ICommand? PanUpdatedCommand
+        {
+            get => (ICommand?)GetValue(PanUpdatedCommandProperty);
+            set => SetValue(PanUpdatedCommandProperty, value);
+        }
+        public static readonly BindableProperty PanUpdatedCommandProperty =
+            BindableProperty.Create(nameof(PanUpdatedCommand), typeof(ICommand), typeof(GalleryView));
         
         public bool IsDismissible
         {

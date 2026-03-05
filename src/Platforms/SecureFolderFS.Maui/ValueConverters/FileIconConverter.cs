@@ -24,8 +24,8 @@ namespace SecureFolderFS.Maui.ValueConverters
 #if ANDROID
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new Image() { Source = "android_folder.png" },
-                    _ => new Image() { Source = "android_file.png" }
+                    { Inner: IFolder } => new Image() { Source = "android_folder.png", Scale = 0.8f },
+                    _ => new Image() { Source = "android_file.png", Scale = 0.8f }
                 }
 #else
                 _ => storableWrapper switch

@@ -21,11 +21,41 @@ namespace SecureFolderFS.Maui.Views.Modals
 #if ANDROID
             if (bindable is not BaseModalPage modalPage)
                 return;
+            
+            var primaryButton = modalPage.PrimaryButton;
+            var closeButton = modalPage.CloseButton;
+            var buttonsGrid = modalPage.ButtonsGrid;
 
             var closeVisible = !string.IsNullOrEmpty(modalPage.CloseText);
             var primaryVisible = !string.IsNullOrEmpty(modalPage.PrimaryText);
 
             modalPage.ButtonsGrid.IsVisible = primaryVisible || closeVisible;
+            if (!primaryVisible && !closeVisible)
+                return;
+
+            switch (primaryVisible, closeVisible)
+            {
+                case (true, true):
+                {
+                    buttonsGrid.SetColumn(primaryButton, 1);
+                    buttonsGrid.SetColumnSpan(primaryButton, 1);
+                    buttonsGrid.SetColumnSpan(closeButton, 1);
+                    break;
+                }
+
+                case (true, false):
+                {
+                    buttonsGrid.SetColumn(primaryButton, 0);
+                    buttonsGrid.SetColumnSpan(primaryButton, 2);
+                    break;
+                }
+
+                case (false, true):
+                {
+                    buttonsGrid.SetColumnSpan(closeButton, 2);
+                    break;
+                }
+            }
 #else
             _ = bindable;
 #endif

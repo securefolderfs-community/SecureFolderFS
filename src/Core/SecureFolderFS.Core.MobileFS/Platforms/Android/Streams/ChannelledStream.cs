@@ -1,3 +1,4 @@
+using Android.OS;
 using Java.Nio;
 using Java.Nio.Channels;
 
@@ -7,6 +8,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
     {
         private readonly FileChannel _inputChannel;
         private readonly FileChannel? _outputChannel;
+        private readonly ParcelFileDescriptor? _pfd;
 
         /// <inheritdoc/>
         public override bool CanRead => _inputChannel.IsOpen;
@@ -31,10 +33,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             }
         }
 
-        public ChannelledStream(FileChannel inputChannel, FileChannel? outputChannel)
+        public ChannelledStream(FileChannel inputChannel, FileChannel? outputChannel, ParcelFileDescriptor? pfd = null)
         {
             _inputChannel = inputChannel ?? throw new ArgumentNullException(nameof(inputChannel));
             _outputChannel = outputChannel;
+            _pfd = pfd;
         }
 
         /// <inheritdoc/>
@@ -106,8 +109,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
         {
             if (disposing)
             {
-                _inputChannel?.Close();
+                _inputChannel.Close();
                 _outputChannel?.Close();
+                _pfd?.Close();
             }
 
             base.Dispose(disposing);

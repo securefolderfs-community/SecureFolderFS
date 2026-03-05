@@ -185,8 +185,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void ItemContainer_BindingContextChanged(object? sender, EventArgs e)
         {
+#if IOS
             // Also handle BindingContextChanged for virtualized/recycled items on iOS
             TryEnqueueThumbnail(sender);
+#endif
         }
 
         private void ItemsCollectionView_Loaded(object? sender, EventArgs e)

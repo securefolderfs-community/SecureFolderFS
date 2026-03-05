@@ -66,30 +66,14 @@
                     Text="{Binding ViewModel.Message, Mode=OneWay}" />
             </VerticalStackLayout>
 
-            <!--  CTA button (iOS)  -->
-            <OnPlatform x:TypeArguments="Border">
+            <!--  Close button (iOS)  -->
+            <OnPlatform x:TypeArguments="Button">
                 <On Platform="iOS">
-                    <Border
-                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                          Dark={StaticResource PrimaryDarkColor}}"
-                        HeightRequest="50"
+                    <Button
+                        Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
                         HorizontalOptions="Center"
-                        MinimumWidthRequest="180"
-                        StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="14" />
-                        </Border.StrokeShape>
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="16"
-                            HorizontalOptions="Center"
-                            Text="{l:ResourceString Rid=GoToVaults}"
-                            TextColor="White"
-                            VerticalOptions="Center" />
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}" />
-                        </Border.GestureRecognizers>
-                    </Border>
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=GoToVaults}" />
                 </On>
             </OnPlatform>
         </VerticalStackLayout>
