@@ -3,6 +3,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
@@ -21,13 +22,16 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 IImage image => FromImage(image),
                 null when storableWrapper is FileViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
+
 #if ANDROID
+                null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
                 _ => storableWrapper switch
                 {
                     { Inner: IFolder } => new Image() { Source = "android_folder.png", Scale = 0.8f },
                     _ => new Image() { Source = "android_file.png", Scale = 0.8f }
                 }
 #else
+                null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "ios_archive.png" },
                 _ => storableWrapper switch
                 {
                     { Inner: IFolder } => new Image() { Source = "ios_folder.png" },

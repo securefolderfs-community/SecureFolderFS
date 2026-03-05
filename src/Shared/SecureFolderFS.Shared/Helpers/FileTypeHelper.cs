@@ -44,6 +44,7 @@ namespace SecureFolderFS.Shared.Helpers
                    ?? Plaintext()
                    ?? Document()
                    ?? Media()
+                   ?? Archive()
                    ?? TypeHint.Unclassified;
 
             TypeHint? Media()
@@ -58,6 +59,20 @@ namespace SecureFolderFS.Shared.Helpers
                     || mimeType.Equals("video/3gpp2")
 
                     ? TypeHint.Media : null;
+            }
+
+            TypeHint? Archive()
+            {
+                return mimeType.Equals("application/zip")
+                   || mimeType.Equals("application/x-rar-compressed")
+                   || mimeType.Equals("application/x-7z-compressed")
+                   || mimeType.Equals("application/x-tar")
+                   || mimeType.Equals("application/gzip")
+                   || mimeType.Equals("application/x-bzip2")
+                   || mimeType.Equals("application/x-xz")
+                   || mimeType.Equals("application/x-iso9660-image")
+
+                   ? TypeHint.Archive : null;
             }
 
             TypeHint? Document()
@@ -121,7 +136,7 @@ namespace SecureFolderFS.Shared.Helpers
         }
 
         public static string[] CodeExtensions { get; } =
-        {
+        [
             // Low level languages
             ".cpp", ".c", ".cxx",
             ".h", ".def", ".pl",
@@ -138,16 +153,16 @@ namespace SecureFolderFS.Shared.Helpers
             // Other
             ".bat", ".xml", ".json",
             ".inc", ".ini"
-        };
+        ];
 
         public static string[] TextExtensions { get; } =
-        {
+        [
             // Text based
             ".txt", ".md", ".markdown", ".rtf"
-        };
+        ];
 
         public static string[] DocumentExtensions { get; } =
-        {
+        [
             // Document based
             ".doc", ".docx", ".html",
             ".odt", ".pdf", ".htm",
@@ -157,10 +172,10 @@ namespace SecureFolderFS.Shared.Helpers
 
             // Presentation based
             ".ppt", ".pptx"
-        };
+        ];
 
         public static string[] ImageExtensions { get; } =
-        {
+        [
             // Special types
             ".apng", ".avif", ".gif",
 
@@ -171,19 +186,27 @@ namespace SecureFolderFS.Shared.Helpers
             // Other types
             ".png", ".svg", ".webp",
             ".bmp", ".tif", ".tiff"
-        };
+        ];
 
         public static string[] MediaExtensions { get; } =
-        {
+        [
             ".mp4", ".mov", ".avi",
             ".wmv", ".flv", ".webm",
             ".mkv", ".avi"
-        };
+        ];
 
         public static string[] AudioExtensions { get; } =
-        {
+        [
             ".3gp", ".flac", ".mp3",
             ".ogg", ".wav"
-        };
+        ];
+
+        public static string[] ArchiveExtensions { get; } =
+        [
+            ".zip", ".rar", ".7z",
+            ".tar", ".gz", ".bz2",
+            ".xz", ".zst", ".iso",
+            ".cab", ".lz", ".lzma"
+        ];
     }
 }

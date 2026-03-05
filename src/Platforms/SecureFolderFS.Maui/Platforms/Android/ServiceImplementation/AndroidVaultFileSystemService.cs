@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)
             {
-                Icon = new ImageResource("source_network_drive_macos.png") 
+                Icon = new ImageResource("source_network_drive_ftp.png") 
             };
             
             yield return new AccountSourceWizardViewModel($"{nameof(SecureFolderFS)}.WebDavClient", "WebDavClient".ToLocalized(), mode, vaultCollectionModel)

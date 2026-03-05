@@ -95,19 +95,23 @@
                     <uc:IntroductionIconTile
                         Grid.Row="0"
                         Grid.Column="0"
-                        Source="source_gdrive.png" />
-                    <uc:IntroductionIconTile
-                        Grid.Row="0"
-                        Grid.Column="1"
                         Source="source_network_drive_ftp.png" />
                     <uc:IntroductionIconTile
                         Grid.Row="0"
+                        Grid.Column="1"
+                        Source="source_webdav.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
                         Grid.Column="2"
-                        Source="source_onedrive.png" />
+                        Source="source_gdrive.png" />
                     <uc:IntroductionIconTile
                         Grid.Row="1"
                         Grid.Column="0"
                         Source="source_dropbox.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Source="source_onedrive.png" />
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>

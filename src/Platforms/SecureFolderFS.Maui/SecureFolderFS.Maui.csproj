@@ -29,7 +29,7 @@
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
-    
+
     <!-- Linking -->
     <MauiEnableXamlCBindingWithSourceCompilation>True</MauiEnableXamlCBindingWithSourceCompilation>
 
@@ -48,19 +48,19 @@
         <!-- App Icon -->
         <MauiIcon ForegroundScale="0.6" Resize="True" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFFFFF" />
       </ItemGroup>
-      
+
       <!-- Linking -->
-      <ItemGroup>
+      <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <LinkDescription Include="Platforms\Android\linker.xml" />
         <TrimmerRootAssembly Include="SecureFolderFS.Maui" RootMode="All" />
       </ItemGroup>
-      <PropertyGroup>
+      <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <!-- Prevent the trimmer from stripping JNI connector methods for custom Java subclasses -->
         <AndroidLinkMode>SdkOnly</AndroidLinkMode>
 
         <!--
           Disable marshal methods to use legacy JNI registration (via System.Reflection) instead
-          of generated native-to-managed trampolines. The new marshal methods feature can cause 
+          of generated native-to-managed trampolines. The new marshal methods feature can cause
           JNI connector methods for ContentProvider overrides to be stripped by the trimmer.
         -->
         <AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>

@@ -23,6 +23,7 @@
         <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
         <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
 
+        <!--  Carousel  -->
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
                 HeightRequest="400"
@@ -30,6 +31,8 @@
                 SizeChanged="GalleryView_Loaded"
                 WidthRequest="300" />
         </DataTemplate>
+
+        <!--  Video  -->
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
             <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <uc:PanRouter.RouterContent>
@@ -60,11 +63,15 @@
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
+
+        <!--  Image  -->
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <Image Source="{Binding Image, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
             </ucc:PanPinchContainer>
         </DataTemplate>
+
+        <!--  Text  -->
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <Grid>
                 <ScrollView
@@ -92,6 +99,8 @@
                                                             Dark={StaticResource PrimaryContrastingDarkColor}}}" />
             </Grid>
         </DataTemplate>
+
+        <!--  PDF  -->
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
             <WebView
                 Background="Transparent"
@@ -99,6 +108,15 @@
                 Source="{Binding PdfSource, Mode=OneWay, Converter={StaticResource FileServerWebViewSourceConverter}}"
                 VerticalOptions="Fill" />
         </DataTemplate>
+
+        <DataTemplate x:Key="ArchiveTemplate" x:DataType="vm:ArchivePreviewerViewModel">
+            <Grid>
+
+
+            </Grid>
+        </DataTemplate>
+
+        <!--  Fallback  -->
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
             <VerticalStackLayout
                 Padding="16"
@@ -137,6 +155,7 @@
                     ZIndex="1">
                     <uc:ContentPresentation.TemplateSelector>
                         <ts:PreviewerTemplateSelector
+                            ArchiveTemplate="{StaticResource ArchiveTemplate}"
                             CarouselTemplate="{StaticResource CarouselTemplate}"
                             FallbackTemplate="{StaticResource FallbackTemplate}"
                             ImageTemplate="{StaticResource ImageTemplate}"
