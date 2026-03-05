@@ -1,8 +1,8 @@
-﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using System;
 using System.Buffers;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography.ContentCrypt;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
@@ -185,8 +185,6 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            chunkReader.Dispose();
-            chunkWriter.Dispose();
         }
     }
 }

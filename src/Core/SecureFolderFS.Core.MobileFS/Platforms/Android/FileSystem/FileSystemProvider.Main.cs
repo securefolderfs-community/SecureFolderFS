@@ -4,9 +4,7 @@ using Android.Content.Res;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using Android.Runtime;
 using Android.Util;
-using Java.IO;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
@@ -17,6 +15,7 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 using Point = Android.Graphics.Point;
+using Uri = Android.Net.Uri;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -112,14 +111,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot.StorageRoot.Options.IsReadOnly && parcelFileMode is ParcelFileMode.WriteOnly or ParcelFileMode.ReadWrite)
                 return null;
 
-            return _storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
-
-            // var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
-            // if (storageManager is null)
-            //     return null;
-            //
-            // var parcelFileMode = ToParcelFileMode(mode);
-            // return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper!));
+            var handlerThread = new HandlerThread("ProxyFD-" + documentId);
+            handlerThread.Start();
+            return _storageManager.OpenProxyFileDescriptor(
+                parcelFileMode,
+                new ReadWriteCallbacks(stream, handlerThread),
+                new Handler(handlerThread.Looper!));
 
             static ParcelFileMode ToParcelFileMode(string? fileMode)
             {
@@ -285,13 +282,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
-            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> fileUriWrapper })
+            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<Uri> fileUriWrapper })
                 return fileUriWrapper.Inner.ToString();
 
-            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<global::Android.Net.Uri> folderUriWrapper })
+            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<Uri> folderUriWrapper })
                 return folderUriWrapper.Inner.ToString();
 
-            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
+            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<Uri>)}.");
         }
 
         /// <inheritdoc/>

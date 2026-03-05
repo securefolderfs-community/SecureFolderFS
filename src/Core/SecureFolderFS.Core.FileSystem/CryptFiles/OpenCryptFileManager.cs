@@ -1,12 +1,12 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
@@ -47,28 +47,23 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <returns>If successful, returns an instance of <see cref="OpenCryptFile"/>.</returns>
         public OpenCryptFile NewCryptFile(string id, BufferHolder headerBuffer)
         {
-            var cryptFile = GetCryptFile(id, headerBuffer);
+            if (headerBuffer is not HeaderBuffer headerBuffer2)
+                throw new ArgumentException($"{nameof(headerBuffer)} does not implement {nameof(HeaderBuffer)}.");
+
+            var cryptFile = new OpenCryptFile(id, _security, headerBuffer2, this, NotifyClosed);
             lock (_openCryptFiles)
                 _openCryptFiles[id] = cryptFile;
 
             return cryptFile;
         }
 
-        private OpenCryptFile GetCryptFile(string id, BufferHolder headerBuffer)
+        /// <summary>
+        /// Creates a new <see cref="ChunkAccess"/> bound exclusively to <paramref name="ciphertextStream"/>.
+        /// </summary>
+        internal ChunkAccess CreateChunkAccess(Stream ciphertextStream, HeaderBuffer headerBuffer)
         {
-            if (headerBuffer is not HeaderBuffer headerBuffer2)
-                throw new ArgumentException($"{nameof(headerBuffer)} does not implement {nameof(HeaderBuffer)}.");
-
-            var streamsManager = new StreamsManager();
-            var chunkAccess = GetChunkAccess(streamsManager, headerBuffer2);
-
-            return new OpenCryptFile(id, _security, headerBuffer2, chunkAccess, streamsManager, NotifyClosed);
-        }
-
-        private ChunkAccess GetChunkAccess(StreamsManager streamsManager, HeaderBuffer headerBuffer)
-        {
-            var chunkReader = new ChunkReader(_security, headerBuffer, streamsManager, _fileSystemStatistics);
-            var chunkWriter = new ChunkWriter(_security, headerBuffer, streamsManager, _fileSystemStatistics);
+            var chunkReader = new ChunkReader(_security, headerBuffer, ciphertextStream, _fileSystemStatistics);
+            var chunkWriter = new ChunkWriter(_security, headerBuffer, ciphertextStream, _fileSystemStatistics);
 
             return _enableChunkCache
                 ? new CachingChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics)

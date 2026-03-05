@@ -2,9 +2,9 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
-using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
 using IOPath = System.IO.Path;
 
@@ -19,11 +19,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return false;
 
             var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.VirtualizedRoot, safRoot.RootId);
-            row.Add(DocumentsContract.Root.ColumnRootId, safRoot.RootId);
-            row.Add(DocumentsContract.Root.ColumnDocumentId, rootFolderId);
-            row.Add(DocumentsContract.Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
-            row.Add(DocumentsContract.Root.ColumnIcon, iconRid);
-            row.Add(DocumentsContract.Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+            row.Add(Root.ColumnRootId, safRoot.RootId);
+            row.Add(Root.ColumnDocumentId, rootFolderId);
+            row.Add(Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
+            row.Add(Root.ColumnIcon, iconRid);
+            row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
 
             return true;
         }
@@ -75,7 +75,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.SupportsWrite;
 
-                    baseFlags |= DocumentContractFlags.SupportsThumbnail;
+                    var typeHint = FileTypeHelper.GetTypeHint(storable);
+                    if (typeHint is TypeHint.Image or TypeHint.Media)
+                        baseFlags |= DocumentContractFlags.SupportsThumbnail;
+
                     row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
                 else

@@ -1,30 +1,29 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using System;
+using System.Buffers;
+using System.IO;
+using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
-using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Buffers;
-using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <summary>
     /// Provides write access to chunks.
     /// </summary>
-    internal sealed class ChunkWriter : IDisposable
+    internal sealed class ChunkWriter
     {
         private readonly Security _security;
         private readonly HeaderBuffer _fileHeader;
-        private readonly StreamsManager _streamsManager;
+        private readonly Stream _ciphertextStream;
         private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public ChunkWriter(Security security, HeaderBuffer fileHeader, StreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
+        public ChunkWriter(Security security, HeaderBuffer fileHeader, Stream ciphertextStream, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
-            _streamsManager = streamsManager;
+            _ciphertextStream = ciphertextStream;
             _fileSystemStatistics = fileSystemStatistics;
         }
 
@@ -57,20 +56,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
-                // Get available read-write stream or throw
-                var ciphertextStream = _streamsManager.GetReadWriteStream();
-                _ = ciphertextStream ?? throw new UnavailableStreamException();
-
                 // Check position bounds
-                if (streamPosition > ciphertextStream.Length)
+                if (streamPosition > _ciphertextStream.Length)
                     return;
 
                 // Set the correct stream position
-                if (!ciphertextStream.TrySetPositionOrAdvance(streamPosition))
+                if (!_ciphertextStream.TrySetPositionOrAdvance(streamPosition))
                     return;
 
                 // Write to stream at the correct chunk
-                ciphertextStream.Write(realCiphertextChunk);
+                _ciphertextStream.Write(realCiphertextChunk);
 
                 _fileSystemStatistics.BytesWritten?.Report(realCiphertextChunk.Length);
             }
@@ -82,12 +77,6 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(ciphertextChunk);
             }
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            _streamsManager.Dispose();
         }
     }
 }

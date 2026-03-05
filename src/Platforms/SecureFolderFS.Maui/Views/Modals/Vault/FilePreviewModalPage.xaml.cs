@@ -109,7 +109,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     .OfType<PanPinchContainer>()
                     .FirstOrDefault();
 
-                panPinchContainer?.PanUpdatedCommand = GalleryView?.PanUpdatedCommand;
+                panPinchContainer?.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
             }
         }
 
