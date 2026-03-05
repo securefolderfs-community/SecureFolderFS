@@ -111,8 +111,57 @@
 
         <DataTemplate x:Key="ArchiveTemplate" x:DataType="vm:ArchivePreviewerViewModel">
             <Grid>
+                <VerticalStackLayout
+                    Padding="16"
+                    Spacing="16"
+                    VerticalOptions="Center">
 
+                    <!--  Archive Icon  -->
+                    <Image
+                        HeightRequest="80"
+                        HorizontalOptions="Center"
+                        Source="{OnPlatform Android='android_archive.png',
+                                            iOS='ios_archive.png'}"
+                        WidthRequest="80" />
 
+                    <!--  Title  -->
+                    <Label
+                        FontSize="20"
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding Title, Mode=OneWay}" />
+
+                    <!--  Unsupported Format Notice  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        IsVisible="{Binding IsSupported, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=ArchiveFormatNotSupported}" />
+
+                    <!--  Extract Button  -->
+                    <OnPlatform x:TypeArguments="uc:ActivityButton">
+                        <On Platform="Android">
+                            <uc:ActivityButton
+                                ButtonStyle="{StaticResource TransparentButtonStyle}"
+                                Command="{Binding ExtractCommand}"
+                                HorizontalOptions="Center"
+                                IsEnabled="{Binding IsSupported, Mode=OneWay}"
+                                IsProgressing="{Binding IsProgressing, Mode=OneWay}"
+                                MinimumWidthRequest="128"
+                                Text="{l:ResourceString Rid=Extract}" />
+                        </On>
+                        <On Platform="iOS">
+                            <uc:ActivityButton
+                                ButtonStyle="{StaticResource NoBackgroundButtonStyle}"
+                                Command="{Binding ExtractCommand}"
+                                HorizontalOptions="Center"
+                                IsEnabled="{Binding IsSupported, Mode=OneWay}"
+                                IsProgressing="{Binding IsProgressing, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=Extract}" />
+                        </On>
+                    </OnPlatform>
+                </VerticalStackLayout>
             </Grid>
         </DataTemplate>
 

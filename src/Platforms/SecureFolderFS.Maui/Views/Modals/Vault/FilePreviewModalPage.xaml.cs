@@ -62,6 +62,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         /// <inheritdoc/>
         public async Task HideAsync()
         {
+            _modalTcs.SetResult(Result.Success);
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
 

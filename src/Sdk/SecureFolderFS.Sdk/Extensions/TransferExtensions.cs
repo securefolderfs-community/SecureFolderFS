@@ -92,6 +92,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 {
                     TransferType.Save => "Saving".ToLocalized(),
                     TransferType.Load => "Loading".ToLocalized(),
+                    TransferType.Extract => "Extracting".ToLocalized(),
                     _ => string.Empty
                 };
                 transferViewModel.CanCancel = cancellationToken != CancellationToken.None;

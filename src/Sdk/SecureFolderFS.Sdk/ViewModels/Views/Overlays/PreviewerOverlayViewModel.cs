@@ -52,6 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                         .Where(x => x is FileViewModel && FileTypeHelper.GetTypeHint(x.Inner) is TypeHint.Image or TypeHint.Media)
                         .Select(x => (FileViewModel)x),
                     (FileViewModel)_itemViewModel).WithInitAsync(cancellationToken),
+                TypeHint.Archive => new ArchivePreviewerViewModel(file, _folderViewModel, _folderViewModel.BrowserViewModel.TransferViewModel).WithInitAsync(cancellationToken),
                 _ => new FallbackPreviewerViewModel(file).WithInitAsync(cancellationToken)
             });
 

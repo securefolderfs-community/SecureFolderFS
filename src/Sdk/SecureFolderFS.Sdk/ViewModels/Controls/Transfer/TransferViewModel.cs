@@ -47,6 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 TransferType.Copy => "CopyingItems".ToLocalized(GetItemsCount(value)),
                 TransferType.Move => "MovingItems".ToLocalized(GetItemsCount(value)),
                 TransferType.Delete => "DeletingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Extract => "ExtractingItems".ToLocalized(GetItemsCount(value)),
                 _ => "Loading".ToLocalized()
             };
 

@@ -1253,4 +1253,16 @@
   <data name="Port" xml:space="preserve">
       <value>Port</value>
   </data>
+  <data name="ArchiveFormatNotSupported" xml:space="preserve">
+      <value>This archive format is not supported for extraction</value>
+  </data>
+  <data name="ExtractingItems" xml:space="preserve">
+      <value>Extracting {0} items</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+      <value>Extracting...</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+      <value>Extract</value>
+  </data>
 </root>
