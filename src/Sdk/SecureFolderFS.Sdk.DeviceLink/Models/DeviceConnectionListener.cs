@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         private readonly string _deviceId;
         private readonly string _deviceName;
         private readonly string _deviceType;
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
         private UdpClient? _udpClient;
         private TcpListener? _tcpListener;
         private CancellationTokenSource? _listenerCts;

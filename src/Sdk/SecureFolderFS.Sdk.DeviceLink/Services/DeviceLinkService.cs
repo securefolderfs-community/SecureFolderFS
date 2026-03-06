@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
     {
         private readonly CredentialsStoreModel _credentialStoreModel;
         private readonly DeviceConnectionListener _connectionListener;
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
         private CancellationTokenSource? _serviceCts;
         private CancellationToken _externalToken;
         private bool _disposed;
@@ -437,7 +437,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
 
                 // Verify the persistent challenge matches what we have stored
                 var storedChallenge = session.CurrentCredential.Challenge;
-                if (storedChallenge == null || !persistentChallenge.SequenceEqual(storedChallenge))
+                if (storedChallenge == null || !CryptographicOperations.FixedTimeEquals(persistentChallenge, storedChallenge))
                 {
                     await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("Challenge mismatch"), cancellationToken);
                     return;

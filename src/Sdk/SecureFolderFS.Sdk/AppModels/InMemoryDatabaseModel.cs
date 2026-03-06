@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly int _maxEntries;
         private readonly Dictionary<string, TValue> _cache;
         private readonly LinkedList<string> _accessOrder; // Tracks insertion order for eviction
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemoryDatabaseModel{TValue}"/> class.

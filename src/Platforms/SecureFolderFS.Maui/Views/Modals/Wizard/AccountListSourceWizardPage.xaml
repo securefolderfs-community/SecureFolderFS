@@ -52,17 +52,14 @@
                                     <SwipeView.RightItems>
                                         <SwipeItem
                                             BackgroundColor="Red"
-                                            Command="{Binding ViewModel.RemoveAccountCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
-                                            CommandParameter="{Binding .}"
+                                            Clicked="RemoveAccount_Clicked"
+                                            CommandParameter="{Binding}"
                                             IsDestructive="True"
                                             Text="{l:ResourceString Rid=Remove}" />
                                     </SwipeView.RightItems>
-                                    <uco:OptionsControl
-                                        Title="{Binding Title, Mode=OneWay}"
-                                        Command="{Binding ViewModel.SelectAccountCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
-                                        CommandParameter="{Binding Path=.}">
-                                        <uco:OptionsControl.LeftSlot>
-                                            <Grid Margin="0,0,16,0">
+                                    <VerticalStackLayout MaximumHeightRequest="40">
+                                        <HorizontalStackLayout Margin="24,12" Spacing="16">
+                                            <Grid VerticalOptions="Center">
                                                 <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" IsVisible="{Binding IsProgressing, Mode=OneWay}" />
                                                 <Grid
                                                     HeightRequest="12"
@@ -72,8 +69,18 @@
                                                     <Ellipse BackgroundColor="Red" IsVisible="{Binding IsConnected, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
                                                 </Grid>
                                             </Grid>
-                                        </uco:OptionsControl.LeftSlot>
-                                    </uco:OptionsControl>
+                                            <Label Text="{Binding Title, Mode=OneWay}" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+
+                                        <BoxView
+                                            Margin="16,0"
+                                            Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                                            HeightRequest="1" />
+
+                                        <VerticalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{Binding}" Tapped="TapGestureRecognizer_Tapped" />
+                                        </VerticalStackLayout.GestureRecognizers>
+                                    </VerticalStackLayout>
                                 </SwipeView>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -93,7 +100,7 @@
                 Command="{Binding ViewModel.AddAccountCommand, Mode=OneWay}"
                 HorizontalOptions="Fill"
                 Style="{OnPlatform iOS={StaticResource NoBackgroundButtonStyle}}"
-                Text="Add account" />
+                Text="{l:ResourceString Rid=AddAccount}" />
         </Grid>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

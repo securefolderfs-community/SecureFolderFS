@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     public class ShareContentProvider : ContentProvider
     {
         private static readonly Dictionary<string, IFile> _registeredFiles = new();
-        private static readonly object _lock = new();
+        private static readonly Lock _lock = new();
 
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ShareContentProvider))]
         public ShareContentProvider()

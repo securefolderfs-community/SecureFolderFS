@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -147,26 +148,41 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
 
             try
             {
+                // Ensure the address has a scheme so UriBuilder parses it correctly.
+                // Without "http://" or "https://", UriBuilder misinterprets the host and path.
+                var normalizedAddress = address.Contains("://")
+                    ? address
+                    : "http://" + address;
+
                 // Build the base URI with optional custom port
-                var uriBuilder = new UriBuilder(address);
+                var uriBuilder = new UriBuilder(normalizedAddress);
                 if (int.TryParse(port, out var portValue) && portValue > 0)
                     uriBuilder.Port = portValue;
+                else
+                    uriBuilder.Port = -1; // Use the default port for the scheme
+
+                if (!uriBuilder.Path.EndsWith('/'))
+                    uriBuilder.Path += '/';
 
                 _baseUri = uriBuilder.Uri;
 
-                // Configure HttpClient with optional authentication
-                var handler = new HttpClientHandler();
-                if (!string.IsNullOrEmpty(username))
+                // Use SocketsHttpHandler to support non-standard HTTP methods (PROPFIND, MKCOL, etc.)
+                // The platform-default handler on platforms like Android (AndroidMessageHandler) uses java.net.HttpURLConnection
+                // which rejects non-standard HTTP methods with a ProtocolException.
+                _httpClient = new HttpClient(new SocketsHttpHandler()
                 {
-                    handler.Credentials = new NetworkCredential(username, password ?? string.Empty);
-                    handler.PreAuthenticate = true;
-                }
-
-                _httpClient = new HttpClient(handler)
+                    PreAuthenticate = false
+                })
                 {
                     BaseAddress = _baseUri,
-                    Timeout = TimeSpan.FromSeconds(30)
+                    Timeout = TimeSpan.FromSeconds(10)
                 };
+
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password ?? string.Empty}"));
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                }
 
                 _webDavClient = new WebDav.WebDavClient(_httpClient);
 
@@ -182,8 +198,6 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                     throw new InvalidOperationException($"Failed to connect to WebDAV server at '{_baseUri}': {response.StatusCode}");
 
                 IsConnected = true;
-                Password = null;
-
                 return new DavClientFolder(_webDavClient, _baseUri, "/", string.Empty);
             }
             catch (Exception)

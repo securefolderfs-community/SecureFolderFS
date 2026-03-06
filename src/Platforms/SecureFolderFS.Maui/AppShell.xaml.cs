@@ -29,7 +29,7 @@ namespace SecureFolderFS.Maui
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
-            HapticFeedback.Perform();
+            Vibration.Vibrate(200d);
         }
 
         private async void AppShell_Loaded(object? sender, EventArgs e)

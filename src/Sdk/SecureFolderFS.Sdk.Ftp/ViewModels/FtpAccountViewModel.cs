@@ -133,7 +133,6 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
                 timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(6000));
                 await _ftpClient.Connect(timeoutCts.Token);
                 IsConnected = true;
-                Password = null;
 
                 return new FtpFolder(_ftpClient, "/", string.Empty);
             }

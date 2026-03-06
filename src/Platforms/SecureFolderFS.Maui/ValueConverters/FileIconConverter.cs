@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
                 _ => storableWrapper switch
                 {
-                    { Inner: IFolder } => new Image() { Source = "android_folder.png", Scale = 0.8f },
+                    { Inner: IFolder } => new Image() { Source = "android_folder.png", Margin = new(0d, 0d, -8d, 0d)},
                     _ => new Image() { Source = "android_file.png", Scale = 0.8f }
                 }
 #else
