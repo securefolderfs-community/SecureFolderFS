@@ -252,7 +252,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     using var cts = TransferViewModel.GetCancellation(cancellationToken);
                     await TransferViewModel.TransferAsync([ file ], async (item, token) =>
                     {
-                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, token);
+                        // Get available name to avoid collision
+                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+
+                        // Copy
+                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+
+                        // Add to destination
                         CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 
@@ -269,7 +275,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     using var cts = TransferViewModel.GetCancellation(cancellationToken);
                     await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
                     {
-                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, item.Name, reporter, token);
+                        // Get available name to avoid collision
+                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+
+                        // Copy
+                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, reporter, token);
+
+                        // Add to destination
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 

@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 
 #if IOS || MACCATALYST
@@ -178,13 +179,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         /// Moves a dragged item to the specified destination folder.
         /// </summary>
         /// <param name="draggedItem">The item being dragged.</param>
-        /// <param name="destinationFolderViewModel">The destination folder view model.</param>
-        private static async Task MoveItemToFolderAsync(BrowserItemViewModel draggedItem, FolderViewModel destinationFolderViewModel)
+        /// <param name="destinationViewModel">The destination folder view model.</param>
+        private static async Task MoveItemToFolderAsync(BrowserItemViewModel draggedItem, FolderViewModel destinationViewModel)
         {
             if (draggedItem.ParentFolder?.Folder is not IModifiableFolder sourceFolder)
                 return;
 
-            if (destinationFolderViewModel.Folder is not IModifiableFolder destinationFolder)
+            if (destinationViewModel.Folder is not IModifiableFolder destinationFolder)
                 return;
 
             if (draggedItem.Inner is not IStorableChild itemToMove)
@@ -200,17 +201,20 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 using var cts = transferViewModel.GetCancellation();
                 await transferViewModel.TransferAsync([ itemToMove ], async (item, reporter, token) =>
                 {
+                    // Get available name to avoid collision
+                    var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+                    
                     // Move
-                    var movedItem = await destinationFolder.MoveStorableFromAsync(item, sourceFolder, false, reporter, token);
+                    var movedItem = await destinationFolder.MoveStorableFromAsync(item, sourceFolder, false, availableName, reporter, token);
 
                     // Remove existing from source folder
                     draggedItem.ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
 
                     // Add to destination
-                    destinationFolderViewModel.Items.Insert(movedItem switch
+                    destinationViewModel.Items.Insert(movedItem switch
                     {
-                        IFile file => new FileViewModel(file, browserViewModel, destinationFolderViewModel),
-                        IFolder folder => new FolderViewModel(folder, browserViewModel, destinationFolderViewModel),
+                        IFile file => new FileViewModel(file, browserViewModel, destinationViewModel),
+                        IFolder folder => new FolderViewModel(folder, browserViewModel, destinationViewModel),
                         _ => throw new ArgumentOutOfRangeException(nameof(movedItem))
                     }, browserViewModel.Layouts.GetSorter());
                 }, cts.Token);
@@ -230,13 +234,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         /// Copies external files from system apps (e.g., Files app) to the destination folder.
         /// </summary>
         /// <param name="dropEventArgs">The drop event args containing the dropped files.</param>
-        /// <param name="destinationFolderViewModel">The destination folder view model.</param>
-        private static async Task CopyExternalFilesToFolderAsync(DropEventArgs dropEventArgs, FolderViewModel destinationFolderViewModel)
+        /// <param name="destinationViewModel">The destination folder view model.</param>
+        private static async Task CopyExternalFilesToFolderAsync(DropEventArgs dropEventArgs, FolderViewModel destinationViewModel)
         {
-            if (destinationFolderViewModel.Folder is not IModifiableFolder destinationFolder)
+            if (destinationViewModel.Folder is not IModifiableFolder destinationFolder)
                 return;
 
-            var browserViewModel = destinationFolderViewModel.BrowserViewModel;
+            var browserViewModel = destinationViewModel.BrowserViewModel;
             if (browserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
                 return;
 
@@ -411,13 +415,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     await transferViewModel.TransferAsync(itemsToProcess, async (item, reporter, token) =>
                     {
                         token.ThrowIfCancellationRequested();
+                        
+                        // Get available name to avoid collision
+                        var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
 
                         if (item.IsFolder)
                         {
                             // Create folder
-                            var createdFolder = await destinationFolder.CreateFolderAsync(item.Name, false, token);
-                            destinationFolderViewModel.Items.Insert(
-                                new FolderViewModel(createdFolder, browserViewModel, destinationFolderViewModel),
+                            var createdFolder = await destinationFolder.CreateFolderAsync(availableName, false, token);
+                            destinationViewModel.Items.Insert(
+                                new FolderViewModel(createdFolder, browserViewModel, destinationViewModel),
                                 browserViewModel.Layouts.GetSorter());
                         }
                         else
@@ -427,13 +434,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                             if (dataStream is null)
                                 return;
 
-                            var createdFile = await destinationFolder.CreateFileAsync(item.Name, false, token);
+                            var createdFile = await destinationFolder.CreateFileAsync(availableName, false, token);
                             await using var destinationStream = await createdFile.OpenStreamAsync(FileAccess.Write, token);
                             await dataStream.CopyToAsync(destinationStream, token);
                             reporter.Report(createdFile);
 
-                            destinationFolderViewModel.Items.Insert(
-                                new FileViewModel(createdFile, browserViewModel, destinationFolderViewModel),
+                            destinationViewModel.Items.Insert(
+                                new FileViewModel(createdFile, browserViewModel, destinationViewModel),
                                 browserViewModel.Layouts.GetSorter());
                         }
                     }, cts.Token);

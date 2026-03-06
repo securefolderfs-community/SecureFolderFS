@@ -20,6 +20,7 @@
                 <VerticalStackLayout HorizontalOptions="Fill" Spacing="12">
                     <local:PasswordControl
                         HorizontalOptions="Fill"
+                        IsEnabled="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         PasswordSubmittedCommand="{Binding ProvideCredentialsCommand}"
                         ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
                         UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />

@@ -98,9 +98,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     return;
 
                 // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
-                // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
                 var destinationViewModel = BrowserViewModel.CurrentFolder;
-                if (destinationViewModel is null)
+                if (destinationViewModel is null || destinationViewModel.Inner.Id != destination.Id)
                     return;
 
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
@@ -108,8 +107,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
+                    // Get available name to avoid collision
+                    var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+
                     // Move
-                    var movedItem = await destinationFolder.MoveStorableFromAsync(item, modifiableParent, false, reporter, token);
+                    var movedItem = await destinationFolder.MoveStorableFromAsync(item, modifiableParent, false, availableName, reporter, token);
 
                     // Remove existing from folder
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
@@ -158,9 +160,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     return;
 
                 // Workaround for the fact that the returned folder is IFolder and not FolderViewModel
-                // TODO: Check consequences of this where the CurrentFolder might differ from the actual picked folder
                 var destinationViewModel = BrowserViewModel.CurrentFolder;
-                if (destinationViewModel is null)
+                if (destinationViewModel is null || destinationViewModel.Inner.Id != destination.Id)
                     return;
 
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
@@ -168,8 +169,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
                 {
+                    // Get available name to avoid collision
+                    var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+
                     // Copy
-                    var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, reporter, token);
+                    var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, availableName, reporter, token);
 
                     // Add to destination
                     destinationViewModel.Items.Insert(copiedItem switch

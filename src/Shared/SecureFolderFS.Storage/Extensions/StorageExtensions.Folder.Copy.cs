@@ -26,10 +26,26 @@ namespace SecureFolderFS.Storage.Extensions
         public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorable
         {
+            return await CreateCopyOfStorableAsync(destinationFolder, itemToCopy, overwrite, itemToCopy.Name, reporter, cancellationToken);
+        }
+
+        /// <summary>
+        /// Creates a copy of the provided storable within this folder.
+        /// </summary>
+        /// <typeparam name="TStorable">The type of storable, whether a <see cref="IFile"/> or a <see cref="IFolder"/>.</typeparam>
+        /// <param name="destinationFolder">The folder where the copy is created.</param>
+        /// <param name="itemToCopy">The storable to be copied into this folder.</param>
+        /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="newName">The new name of the copied item.</param>
+        /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite, string newName, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
+            where TStorable : IStorable
+        {
             return itemToCopy switch
             {
-                IFile fileToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(fileToCopy, overwrite, cancellationToken),
-                IFolder folderToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(folderToCopy, overwrite, folderToCopy.Name, reporter, cancellationToken),
+                IFile fileToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(fileToCopy, overwrite, newName, cancellationToken),
+                IFolder folderToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(folderToCopy, overwrite, newName, reporter, cancellationToken),
                 _ => throw new ArgumentOutOfRangeException(nameof(itemToCopy))
             };
         }
