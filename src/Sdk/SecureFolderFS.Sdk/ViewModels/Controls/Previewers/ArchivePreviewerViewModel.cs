@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -17,6 +18,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
@@ -27,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         private readonly FolderViewModel _folderViewModel;
         private readonly TransferViewModel? _transferViewModel;
 
+        [ObservableProperty] private string? _Size;
         [ObservableProperty] private bool _IsSupported;
         [ObservableProperty] private bool _IsProgressing;
 
@@ -41,13 +44,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Only zip is supported via System.IO.Compression
             var extension = Path.GetExtension(Inner.Name).ToLowerInvariant();
-            IsSupported = extension is ".zip";
+            IsSupported = extension == ".zip";
 
-            return Task.CompletedTask;
+            var size = await Inner.GetSizeAsync(cancellationToken);
+            if (size is not null)
+                Size = ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty);
         }
 
         [RelayCommand]

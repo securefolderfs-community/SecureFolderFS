@@ -37,7 +37,7 @@
                         Padding="16,0"
                         Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         ColumnSpacing="16"
-                        HeightRequest="75"
+                        HeightRequest="64"
                         VerticalOptions="Start">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -48,7 +48,7 @@
                         <!--  Close Button  -->
                         <Button
                             Grid.Column="0"
-                            Padding="12"
+                            Padding="12,8"
                             mi:MauiIcon.Value="{mi_material:Material Close,
                                                                      IconSize=20}"
                             Clicked="Close_Clicked"
@@ -68,7 +68,7 @@
                         <!--  Quick Options  -->
                         <HorizontalStackLayout Grid.Column="2">
                             <Button
-                                Padding="12"
+                                Padding="12,8"
                                 mi:MauiIcon.Value="{mi_material:Material InfoOutline,
                                                                          IconSize=20}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
@@ -76,7 +76,7 @@
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
-                                Padding="12"
+                                Padding="12,8"
                                 mi:MauiIcon.Value="{mi_material:Material Share,
                                                                          IconSize=20}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"

@@ -124,20 +124,20 @@
                                             iOS='ios_archive.png'}"
                         WidthRequest="80" />
 
-                    <!--  Title  -->
-                    <Label
-                        FontSize="20"
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        Text="{Binding Title, Mode=OneWay}" />
-
-                    <!--  Unsupported Format Notice  -->
-                    <Label
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        IsVisible="{Binding IsSupported, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-                        Opacity="0.8"
-                        Text="{l:ResourceString Rid=ArchiveFormatNotSupported}" />
+                    <VerticalStackLayout>
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Title, Mode=OneWay}" />
+                        <!--  File Size  -->
+                        <Label
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.8"
+                            Text="{Binding Size, Mode=OneWay}" />
+                    </VerticalStackLayout>
 
                     <!--  Extract Button  -->
                     <OnPlatform x:TypeArguments="uc:ActivityButton">
@@ -161,6 +161,14 @@
                                 Text="{l:ResourceString Rid=Extract}" />
                         </On>
                     </OnPlatform>
+
+                    <!--  Unsupported Format Notice  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        IsVisible="{Binding IsSupported, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=ArchiveFormatNotSupported}" />
                 </VerticalStackLayout>
             </Grid>
         </DataTemplate>

@@ -78,17 +78,15 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     var typeHint = FileTypeHelper.GetTypeHint(storable);
                     if (typeHint is TypeHint.Image or TypeHint.Media)
                         baseFlags |= DocumentContractFlags.SupportsThumbnail;
-
-                    row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
                 else
                 {
                     baseFlags |= DocumentContractFlags.DirPrefersGrid;
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.DirSupportsCreate;
-
-                    row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
+
+                row.Add(Document.ColumnFlags, (int)baseFlags);
             }
             void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
             void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);
@@ -140,14 +138,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            // Return base folder if the path is empty
+            // Return the base folder if the path is empty
             if (string.IsNullOrEmpty(path))
                 return safRoot.StorageRoot.VirtualizedRoot;
 
             return safRoot.StorageRoot.VirtualizedRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        private string GetMimeForStorable(IStorable storable)
+        private static string GetMimeForStorable(IStorable storable)
         {
             if (storable is IFolder)
                 return Document.MimeTypeDir;
@@ -157,7 +155,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (string.IsNullOrEmpty(extension))
                 return "application/octet-stream";
 
-            // Remove the starting . (dot)
+            // Remove the starting dot
             return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1)) ?? string.Empty;
         }
     }

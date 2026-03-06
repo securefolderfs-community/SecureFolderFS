@@ -5,6 +5,7 @@ using Android.Database;
 using Android.OS;
 using Android.Provider;
 using Android.Util;
+using Microsoft.Maui.Platform;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
@@ -47,9 +48,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override ICursor? QueryRoots(string[]? projection)
         {
             var matrix = new MatrixCursor(projection ?? DefaultRootProjection);
+            var rid = MauiApplication.Current.GetDrawableId("app_icon.png");
+            if (rid == 0)
+                rid = Constants.Android.Saf.IC_LOCK_LOCK;
+
             foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
             {
-                AddRoot(matrix, item, Constants.Android.Saf.IC_LOCK_LOCK);
+                AddRoot(matrix, item, rid);
             }
 
             return matrix;
@@ -75,9 +80,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var createdItem = (IStorableChild)(mimeType switch
             {
-                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false)
-                    .ConfigureAwait(false).GetAwaiter().GetResult(),
-                _ => parentFolder.CreateFileAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult()
+                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult(),
+                _ => parentFolder.CreateFileAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult()
             });
 
             var rootId = parentDocumentId.Split(':', 2)[0];
@@ -346,10 +350,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             try
             {
-                using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-                using var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, 300U).ConfigureAwait(false).GetAwaiter().GetResult();
+                // Honor sizeHint from the caller instead of always using a fixed size
+                var size = sizeHint is not null
+                    ? (uint)Math.Max(sizeHint.X, sizeHint.Y)
+                    : 300U;
 
-                // Need to copy thumbnail stream to a pipe (ParcelFileDescriptor with input/output stream)
+                using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, size).ConfigureAwait(false).GetAwaiter().GetResult();
+
                 var twoWayPipe = ParcelFileDescriptor.CreatePipe();
                 if (twoWayPipe is null)
                     return null;
@@ -359,17 +367,25 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 {
                     try
                     {
-                        int bytesRead;
                         var buffer = new byte[8192];
-                        while ((bytesRead = thumbnailStream.Read(buffer, 0, buffer.Length)) > 0)
-                            output.Write(buffer, 0, bytesRead);
+                        using (thumbnailStream)
+                        {
+                            int read;
+                            while ((read = thumbnailStream.Read(buffer, 0, buffer.Length)) > 0)
+                                output.Write(buffer, 0, read);
+                        }
 
                         output.Flush();
-                        output.Close();
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Handle if needed
+                        Log.Error(nameof(FileSystemProvider), $"Failed to write thumbnail to pipe. {ex}");
+                    }
+                    finally
+                    {
+                        // Always close the write end so the read end gets a clean EOF,
+                        // even if the drain throws midway
+                        output.Close();
                     }
                 });
 

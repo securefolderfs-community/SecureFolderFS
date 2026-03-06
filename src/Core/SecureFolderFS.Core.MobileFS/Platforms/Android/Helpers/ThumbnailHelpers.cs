@@ -14,14 +14,28 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             var exif = new ExifInterface(stream);
             stream.Position = 0;
 
-            // Get bounds
-            var boundsOptions = new BitmapFactory.Options { InJustDecodeBounds = true };
-            await BitmapFactory.DecodeStreamAsync(stream, null, boundsOptions).ConfigureAwait(false);
-            stream.Position = 0;
+            // Attempt to get dimensions from EXIF tags to avoid a full bounds decode pass
+            var exifWidth = exif.GetAttributeInt(ExifInterface.TagImageWidth, 0);
+            var exifHeight = exif.GetAttributeInt(ExifInterface.TagImageLength, 0);
 
-            var (width, height) = (boundsOptions.OutWidth, boundsOptions.OutHeight);
-            var scale = Math.Min((float)maxSize / width, (float)maxSize / height);
-            var inSampleSize = CalculateInSampleSize(width, height, (int)(width * scale), (int)(height * scale));
+            int width, height;
+            if (exifWidth > 0 && exifHeight > 0)
+            {
+                width = exifWidth;
+                height = exifHeight;
+            }
+            else
+            {
+                // Fall back to bounds decode if EXIF dimensions are missing
+                var boundsOptions = new BitmapFactory.Options { InJustDecodeBounds = true };
+                await BitmapFactory.DecodeStreamAsync(stream, null, boundsOptions).ConfigureAwait(false);
+                stream.Position = 0L;
+
+                width = boundsOptions.OutWidth;
+                height = boundsOptions.OutHeight;
+            }
+
+            var inSampleSize = CalculateInSampleSize(width, height, (int)maxSize);
 
             var options = new BitmapFactory.Options
             {
@@ -29,7 +43,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
                 InSampleSize = inSampleSize
             };
 
-            using var bitmap = await BitmapFactory.DecodeStreamAsync(stream, null, options);
+            using var bitmap = await BitmapFactory.DecodeStreamAsync(stream, null, options).ConfigureAwait(false);
             if (bitmap is null)
                 throw new Exception("Failed to decode image.");
 
@@ -37,16 +51,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             return await CompressBitmapAsync(rotated).ConfigureAwait(false);
         }
 
-        private static int CalculateInSampleSize(int width, int height, int reqWidth, int reqHeight)
+        private static int CalculateInSampleSize(int width, int height, int reqSize)
         {
             var inSampleSize = 1;
-            if (height <= reqHeight && width <= reqWidth)
-                return inSampleSize;
-
-            var halfHeight = height / 2;
-            var halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth)
+            while ((width / (inSampleSize * 2)) >= reqSize && (height / (inSampleSize * 2)) >= reqSize)
                 inSampleSize *= 2;
 
             return inSampleSize;
@@ -97,19 +105,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             }
 
             var rotated = Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
-            bitmap.Recycle();
             bitmap.Dispose();
             return rotated;
         }
 
         public static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
         {
-            const int IMAGE_THUMBNAIL_QUALITY = 80;
+            const int IMAGE_THUMBNAIL_QUALITY = 70;
 
             var memoryStream = new MemoryStream();
             await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg!, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
-            bitmap.Recycle();
+            bitmap.Dispose();
 
             return new NonDisposableStream(memoryStream);
         }
