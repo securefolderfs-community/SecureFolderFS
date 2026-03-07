@@ -208,7 +208,6 @@ namespace SecureFolderFS.Maui.UserControls
             get => (View?)GetValue(RevealContentProperty);
             set => SetValue(RevealContentProperty, value);
         }
-
         public static readonly BindableProperty RevealContentProperty =
             BindableProperty.Create(nameof(RevealContent), typeof(View), typeof(AnimatedRevealLayout),
                 propertyChanged: static (bindable, oldValue, newValue) =>
@@ -222,7 +221,6 @@ namespace SecureFolderFS.Maui.UserControls
             get => (View?)GetValue(MainContentProperty);
             set => SetValue(MainContentProperty, value);
         }
-
         public static readonly BindableProperty MainContentProperty =
             BindableProperty.Create(nameof(MainContent), typeof(View), typeof(AnimatedRevealLayout),
                 propertyChanged: static (bindable, oldValue, newValue) =>
@@ -236,7 +234,6 @@ namespace SecureFolderFS.Maui.UserControls
             get => (bool)GetValue(IsShownProperty);
             set => SetValue(IsShownProperty, value);
         }
-
         public static readonly BindableProperty IsShownProperty =
             BindableProperty.Create(nameof(IsShown), typeof(bool), typeof(AnimatedRevealLayout), false,
                 propertyChanged: static (bindable, _, newValue) =>
@@ -250,10 +247,8 @@ namespace SecureFolderFS.Maui.UserControls
             get => (RevealSide)GetValue(RevealSideProperty);
             set => SetValue(RevealSideProperty, value);
         }
-
         public static readonly BindableProperty RevealSideProperty =
-            BindableProperty.Create(nameof(RevealSide), typeof(RevealSide), typeof(AnimatedRevealLayout),
-                RevealSide.Left,
+            BindableProperty.Create(nameof(RevealSide), typeof(RevealSide), typeof(AnimatedRevealLayout), RevealSide.Left,
                 propertyChanged: static (bindable, _, _) =>
                 {
                     if (bindable is AnimatedRevealLayout layout)
@@ -265,7 +260,6 @@ namespace SecureFolderFS.Maui.UserControls
             get => (double)GetValue(SpacingProperty);
             set => SetValue(SpacingProperty, value);
         }
-
         public static readonly BindableProperty SpacingProperty =
             BindableProperty.Create(nameof(Spacing), typeof(double), typeof(AnimatedRevealLayout), 0d,
                 propertyChanged: static (bindable, _, _) =>

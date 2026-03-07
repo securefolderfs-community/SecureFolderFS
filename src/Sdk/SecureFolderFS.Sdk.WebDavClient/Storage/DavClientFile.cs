@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -13,16 +14,16 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
     public class DavClientFile : DavClientStorable, IChildFile, ICreatedAt, ILastModifiedAt, ISizeOf
     {
         /// <inheritdoc/>
-        public ICreatedAtProperty CreatedAt => field ??= new DavClientCreatedAtProperty(Id, client, baseUri);
+        public ICreatedAtProperty CreatedAt => field ??= new DavClientCreatedAtProperty(Id, davClient, baseUri);
 
         /// <inheritdoc/>
-        public ILastModifiedAtProperty LastModifiedAt => field ??= new DavClientLastModifiedAtProperty(Id, client, baseUri);
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new DavClientLastModifiedAtProperty(Id, davClient, baseUri);
 
         /// <inheritdoc/>
-        public ISizeOfProperty SizeOf => field ??= new DavClientSizeOfProperty(Id, client, baseUri);
+        public ISizeOfProperty SizeOf => field ??= new DavClientSizeOfProperty(Id, davClient, baseUri);
 
-        public DavClientFile(IWebDavClient client, Uri baseUri, string id, string name, IFolder? parentFolder = null)
-            : base(client, baseUri, id, name, parentFolder)
+        public DavClientFile(IWebDavClient davClient, HttpClient httpClient, Uri baseUri, string id, string name, IFolder? parentFolder = null)
+            : base(davClient, httpClient, baseUri, id, name, parentFolder)
         {
         }
 
@@ -33,20 +34,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
             {
                 case FileAccess.Read:
                 {
-                    var getParams = new GetFileParameters
-                    {
-                        CancellationToken = cancellationToken
-                    };
-                    var response = await client.GetRawFile(ResolveUri(Id), getParams);
-                    if (!response.IsSuccessful)
-                        throw new IOException($"Failed to download file '{Name}': {response.StatusCode}");
-
-                    return response.Stream;
+                    return await DavClientReadStream.CreateAsync(httpClient, baseUri, cancellationToken);
                 }
 
                 case FileAccess.Write:
                 {
-                    return new DavClientWriteStream(client, baseUri, Id);
+                    return new DavClientWriteStream(davClient, baseUri, Id);
                 }
 
                 default:

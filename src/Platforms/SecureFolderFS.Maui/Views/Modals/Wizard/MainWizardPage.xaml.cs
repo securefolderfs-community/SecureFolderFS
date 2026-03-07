@@ -144,139 +144,157 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            if (OverlayViewModel is null)
-                return;
-
-            IViewable? nextViewModel = null;
-            switch (e)
+            try
             {
-                case DismissNavigationRequestedEventArgs:
+                if (OverlayViewModel is null)
                 {
-                    await HideAsync();
+                    e.TaskCompletion?.TrySetResult(false);
                     return;
                 }
 
-                case DestinationNavigationRequestedEventArgs args:
+                IViewable? nextViewModel = null;
+                switch (e)
                 {
-                    nextViewModel = args.Destination;
-                    break;
-                }
-
-                case BackNavigationRequestedEventArgs:
-                {
-                    // Swap views
-                    (_previousView, OverlayViewModel.CurrentViewModel) = (OverlayViewModel.CurrentViewModel, _previousView);
-
-                    // Navigate back
-                    await Navigation.PopAsync(true);
-                    return;
-                }
-
-                default:
-                {
-                    switch (e.Origin)
+                    case DismissNavigationRequestedEventArgs:
                     {
-                        // Main -> Source Selection
-                        case MainWizardViewModel viewModel:
-                        {
-                            nextViewModel = new SourceSelectionWizardViewModel(viewModel.Mode, OverlayViewModel, OverlayViewModel.VaultCollectionModel);
-                            break;
-                        }
+                        await HideAsync();
+                        e.TaskCompletion?.TrySetResult(true);
+                        return;
+                    }
 
-                        // Source Selection -> Data Source
-                        case SourceSelectionWizardViewModel viewModel:
+                    case DestinationNavigationRequestedEventArgs args:
+                    {
+                        nextViewModel = args.Destination;
+                        break;
+                    }
+
+                    case BackNavigationRequestedEventArgs:
+                    {
+                        // Swap views
+                        (_previousView, OverlayViewModel.CurrentViewModel) =
+                            (OverlayViewModel.CurrentViewModel, _previousView);
+
+                        // Navigate back
+                        await Navigation.PopAsync(true);
+                        e.TaskCompletion?.TrySetResult(true);
+                        return;
+                    }
+
+                    default:
+                    {
+                        switch (e.Origin)
                         {
-                            nextViewModel = viewModel.SelectedSource;
-                            if (viewModel.SelectedSource is INavigatable navigatable)
+                            // Main -> Source Selection
+                            case MainWizardViewModel viewModel:
                             {
-                                navigatable.NavigationRequested -= ViewModel_NavigationRequested;
-                                navigatable.NavigationRequested += ViewModel_NavigationRequested;
+                                nextViewModel = new SourceSelectionWizardViewModel(viewModel.Mode, OverlayViewModel, OverlayViewModel.VaultCollectionModel);
+                                break;
                             }
 
-                            break;
-                        }
+                            // Source Selection -> Data Source
+                            case SourceSelectionWizardViewModel viewModel:
+                            {
+                                nextViewModel = viewModel.SelectedSource;
+                                if (viewModel.SelectedSource is INavigatable navigatable)
+                                {
+                                    navigatable.NavigationRequested -= ViewModel_NavigationRequested;
+                                    navigatable.NavigationRequested += ViewModel_NavigationRequested;
+                                }
 
-                        // Data Source -> Summary
-                        case BaseDataSourceWizardViewModel { Mode: NewVaultMode.AddExisting } viewModel:
-                        {
-                            var vaultModel = await FromDataSourceAsync(viewModel);
-                            if (vaultModel is null)
                                 break;
+                            }
 
-                            nextViewModel = new SummaryWizardViewModel(vaultModel, OverlayViewModel.VaultCollectionModel);
-                            break;
-                        }
+                            // Data Source -> Summary
+                            case BaseDataSourceWizardViewModel { Mode: NewVaultMode.AddExisting } viewModel:
+                            {
+                                var vaultModel = await FromDataSourceAsync(viewModel);
+                                if (vaultModel is null)
+                                    break;
 
-                        // Data Source -> Credentials Selection
-                        case BaseDataSourceWizardViewModel { Mode: NewVaultMode.CreateNew } viewModel:
-                        {
-                            var vaultModel = await FromDataSourceAsync(viewModel);
-                            if (vaultModel is null)
+                                nextViewModel = new SummaryWizardViewModel(vaultModel, OverlayViewModel.VaultCollectionModel);
                                 break;
+                            }
 
-                            nextViewModel = new CredentialsWizardViewModel(vaultModel);
-                            break;
-                        }
+                            // Data Source -> Credentials Selection
+                            case BaseDataSourceWizardViewModel { Mode: NewVaultMode.CreateNew } viewModel:
+                            {
+                                var vaultModel = await FromDataSourceAsync(viewModel);
+                                if (vaultModel is null)
+                                    break;
 
-                        // Credentials Selection -> Recovery
-                        case CredentialsWizardViewModel viewModel:
-                        {
-                            if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
+                                nextViewModel = new CredentialsWizardViewModel(vaultModel);
                                 break;
+                            }
 
-                            nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
-                            break;
+                            // Credentials Selection -> Recovery
+                            case CredentialsWizardViewModel viewModel:
+                            {
+                                if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
+                                    break;
+
+                                nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
+                                break;
+                            }
+
+                            // Recovery -> Summary
+                            case RecoveryWizardViewModel viewModel:
+                            {
+                                nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, OverlayViewModel.VaultCollectionModel);
+                                break;
+                            }
+
+                            // Account Creation -> Go Back
+                            case AccountCreationWizardViewModel:
+                            {
+                                // Swap views
+                                (_previousView, OverlayViewModel.CurrentViewModel) = (OverlayViewModel.CurrentViewModel, _previousView);
+
+                                // Navigate back
+                                await Navigation.PopAsync(true);
+                                e.TaskCompletion?.TrySetResult(true);
+                                return;
+                            }
                         }
 
-                        // Recovery -> Summary
-                        case RecoveryWizardViewModel viewModel:
-                        {
-                            nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, OverlayViewModel.VaultCollectionModel);
-                            break;
-                        }
-
-                        // Account Creation -> Go Back
-                        case AccountCreationWizardViewModel _:
-                        {
-                            // Swap views
-                            (_previousView, OverlayViewModel.CurrentViewModel) = (OverlayViewModel.CurrentViewModel, _previousView);
-
-                            // Navigate back
-                            await Navigation.PopAsync(true);
-                            return;
-                        }
+                        break;
                     }
-                    break;
                 }
+
+                if (nextViewModel is null)
+                {
+                    _modalTcs.SetResult(e.Origin is SummaryWizardViewModel ? Result.Success : Result.Failure(null));
+                    await HideAsync();
+                    e.TaskCompletion?.TrySetResult(e.Origin is SummaryWizardViewModel);
+                    return;
+                }
+
+                var page = (ContentPage?)(nextViewModel switch
+                {
+                    BrowserViewModel viewModel => new BrowserPage(viewModel),
+                    MainWizardViewModel => new MainWizardPage(_sourceNavigation),
+                    SourceSelectionWizardViewModel viewModel => new SourceSelectionWizardPage(viewModel, OverlayViewModel),
+                    AccountCreationWizardViewModel viewModel => new AccountCreationWizardPage(viewModel, OverlayViewModel),
+                    AccountSourceWizardViewModel viewModel => new AccountListSourceWizardPage(viewModel, OverlayViewModel),
+                    PickerSourceWizardViewModel viewModel => new PickerSourceWizardPage(viewModel, OverlayViewModel),
+                    CredentialsWizardViewModel viewModel => new CredentialsWizardPage(viewModel, OverlayViewModel),
+                    RecoveryWizardViewModel viewModel => new RecoveryWizardPage(viewModel, OverlayViewModel),
+                    SummaryWizardViewModel viewModel => new SummaryWizardPage(viewModel, OverlayViewModel),
+                    _ => null
+                });
+
+                if (page is null)
+                    return;
+
+                _previousView = OverlayViewModel.CurrentViewModel;
+                OverlayViewModel.CurrentViewModel = nextViewModel as IStagingView;
+                
+                await Navigation.PushAsync(page, true);
+                e.TaskCompletion?.TrySetResult(true);
             }
-
-            if (nextViewModel is null)
+            finally
             {
-                _modalTcs.SetResult(e.Origin is SummaryWizardViewModel ? Result.Success : Result.Failure(null));
-                await HideAsync();
-                return;
+                e.TaskCompletion?.TrySetResult(false);
             }
-
-            var page = (ContentPage?)(nextViewModel switch
-            {
-                BrowserViewModel viewModel => new BrowserPage(viewModel),
-                MainWizardViewModel => new MainWizardPage(_sourceNavigation),
-                SourceSelectionWizardViewModel viewModel => new SourceSelectionWizardPage(viewModel, OverlayViewModel),
-                AccountCreationWizardViewModel viewModel => new AccountCreationWizardPage(viewModel, OverlayViewModel),
-                AccountSourceWizardViewModel viewModel => new AccountListSourceWizardPage(viewModel, OverlayViewModel),
-                PickerSourceWizardViewModel viewModel => new PickerSourceWizardPage(viewModel, OverlayViewModel),
-                CredentialsWizardViewModel viewModel => new CredentialsWizardPage(viewModel, OverlayViewModel),
-                RecoveryWizardViewModel viewModel => new RecoveryWizardPage(viewModel, OverlayViewModel),
-                SummaryWizardViewModel viewModel => new SummaryWizardPage(viewModel, OverlayViewModel),
-                _ => null
-            });
-
-            if (page is null)
-                return;
-
-            _previousView = OverlayViewModel.CurrentViewModel;
-            OverlayViewModel.CurrentViewModel = nextViewModel as IStagingView;
-            await Navigation.PushAsync(page, true);
         }
 
         private async void Existing_Clicked(object? sender, EventArgs e)

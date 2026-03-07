@@ -86,10 +86,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         }
 
         /// <inheritdoc/>
-        public Task<bool> NavigateAsync(IViewDesignation? view)
+        public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
-            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(view, this));
-            return Task.FromResult(true);
+            var tcs = new TaskCompletionSource<bool>();
+            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(this, view, tcs));
+
+            return await tcs.Task;
         }
 
         /// <inheritdoc/>
@@ -109,7 +111,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         private async Task AddAccountAsync(CancellationToken cancellationToken)
         {
             var accountViewModel = await AccountService.GetAccountCreatorAsync(DataSourceType, PropertyStoreService.SecurePropertyStore, cancellationToken);
-            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(new AccountCreationWizardViewModel(accountViewModel), this));
+            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(this, new AccountCreationWizardViewModel(accountViewModel)));
         }
 
         [RelayCommand]

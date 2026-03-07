@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -8,7 +9,8 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
 {
     public abstract class DavClientStorable : IStorableChild
     {
-        protected readonly IWebDavClient client;
+        protected readonly IWebDavClient davClient;
+        protected readonly HttpClient httpClient;
         protected readonly Uri baseUri;
         protected readonly IFolder? parentFolder;
 
@@ -18,9 +20,10 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
         /// <inheritdoc/>
         public string Name { get; }
 
-        protected DavClientStorable(IWebDavClient client, Uri baseUri, string id, string name, IFolder? parentFolder = null)
+        protected DavClientStorable(IWebDavClient davClient, HttpClient httpClient, Uri baseUri, string id, string name, IFolder? parentFolder = null)
         {
-            this.client = client;
+            this.davClient = davClient;
+            this.httpClient = httpClient;
             this.baseUri = baseUri;
             this.parentFolder = parentFolder;
             Id = id;

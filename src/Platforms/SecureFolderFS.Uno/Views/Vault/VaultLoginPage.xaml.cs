@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
@@ -9,7 +8,6 @@ using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
@@ -63,11 +61,11 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            if (ViewModel is null)
+            if (ViewModel is null || e is not UnlockNavigationRequestedEventArgs args)
+            {
+                e.TaskCompletion?.TrySetResult(false);
                 return;
-
-            if (e is not UnlockNavigationRequestedEventArgs args)
-                return;
+            }
 
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
@@ -75,6 +73,8 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             await ViewModel.VaultNavigation.ForgetNavigateSpecificViewAsync(dashboardViewModel,
                x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(args.UnlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
+            
+            e.TaskCompletion?.TrySetResult(true);
         }
     }
 }

@@ -67,7 +67,10 @@ namespace SecureFolderFS.Maui.Views.Vault
                 return;
 
             if (e is not UnlockNavigationRequestedEventArgs args)
+            {
+                e.TaskCompletion?.TrySetResult(false);
                 return;
+            }
 
             ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
@@ -111,6 +114,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             dashboardViewModel.DashboardNavigation.Views.Add(propertiesViewModel);
 
             await ViewModel.VaultNavigation.ForgetNavigateCurrentViewAsync(dashboardViewModel);
+            e.TaskCompletion?.TrySetResult(true);
         }
 
         public VaultLoginViewModel? ViewModel
@@ -119,6 +123,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginViewModel), typeof(LoginPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginViewModel), typeof(LoginPage));
     }
 }

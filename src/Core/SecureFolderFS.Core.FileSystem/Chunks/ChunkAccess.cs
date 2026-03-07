@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // ArrayPool may return larger array than requested
+                // ArrayPool may return a larger array than requested
                 var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
                 // Read chunk
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
-                // Clear sensitive plaintext data before returning buffer to pool
+                // Clear sensitive plaintext data before returning the buffer to the pool
                 CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
 
                 // Return buffer

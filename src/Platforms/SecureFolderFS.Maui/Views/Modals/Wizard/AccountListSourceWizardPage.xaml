@@ -60,7 +60,11 @@
                                     <VerticalStackLayout MaximumHeightRequest="40">
                                         <HorizontalStackLayout Margin="24,12" Spacing="16">
                                             <Grid VerticalOptions="Center">
-                                                <ActivityIndicator IsRunning="{Binding IsProgressing, Mode=OneWay}" IsVisible="{Binding IsProgressing, Mode=OneWay}" />
+                                                <ActivityIndicator
+                                                    HeightRequest="20"
+                                                    IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                                                    IsVisible="{Binding IsProgressing, Mode=OneWay}"
+                                                    WidthRequest="20" />
                                                 <Grid
                                                     HeightRequest="12"
                                                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"

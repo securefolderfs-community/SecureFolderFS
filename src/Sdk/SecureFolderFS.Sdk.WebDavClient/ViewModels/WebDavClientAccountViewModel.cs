@@ -47,8 +47,8 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
         /// <inheritdoc/>
         protected override async Task<IFolder> ConnectFromUserInputAsync(CancellationToken cancellationToken)
         {
-            if (_webDavClient is not null && _baseUri is not null)
-                return new DavClientFolder(_webDavClient, _baseUri, "/", string.Empty);
+            if (_webDavClient is not null && _httpClient is not null && _baseUri is not null)
+                return new DavClientFolder(_webDavClient, _httpClient, _baseUri, _baseUri.AbsolutePath, string.Empty);
 
             return await ConnectAsync(Address, Port, UserName, Password, cancellationToken);
         }
@@ -56,8 +56,8 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
         /// <inheritdoc/>
         protected override async Task<IFolder> ConnectFromDataModelAsync(CancellationToken cancellationToken)
         {
-            if (_webDavClient is not null && _baseUri is not null)
-                return new DavClientFolder(_webDavClient, _baseUri, "/", string.Empty);
+            if (_webDavClient is not null && _httpClient is not null && _baseUri is not null)
+                return new DavClientFolder(_webDavClient, _httpClient, _baseUri, _baseUri.AbsolutePath, string.Empty);
 
             ArgumentNullException.ThrowIfNull(propertyStore);
             ArgumentNullException.ThrowIfNull(accountDataModel);
@@ -91,6 +91,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             if (_webDavClient is IDisposable disposableClient)
                 disposableClient.Dispose();
 
+            _webDavClient?.Dispose();
             _httpClient?.Dispose();
             _webDavClient = null;
             _httpClient = null;
@@ -150,11 +151,11 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             {
                 // Ensure the address has a scheme so UriBuilder parses it correctly.
                 // Without "http://" or "https://", UriBuilder misinterprets the host and path.
-                var normalizedAddress = address.Contains("://")
-                    ? address
-                    : "http://" + address;
+                var normalizedAddress = !address.Contains("://")
+                    ? $"http://{address}"
+                    : address;
 
-                // Build the base URI with optional custom port
+                // Build the base URI with an optional custom port
                 var uriBuilder = new UriBuilder(normalizedAddress);
                 if (int.TryParse(port, out var portValue) && portValue > 0)
                     uriBuilder.Port = portValue;
@@ -198,7 +199,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                     throw new InvalidOperationException($"Failed to connect to WebDAV server at '{_baseUri}': {response.StatusCode}");
 
                 IsConnected = true;
-                return new DavClientFolder(_webDavClient, _baseUri, "/", string.Empty);
+                return new DavClientFolder(_webDavClient, _httpClient, _baseUri, _baseUri.AbsolutePath, string.Empty);
             }
             catch (Exception)
             {

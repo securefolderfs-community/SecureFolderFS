@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
                 // Check position bounds
-                if (ciphertextPosition > _ciphertextStream.Length)
+                if (_ciphertextStream.CanSeek && _ciphertextStream.Length < ciphertextPosition)
                     return 0;
 
                 // Set the correct stream position
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 if (_ciphertextStream.IsEndOfStream())
                     return 0;
 
-                // Read from stream at correct chunk
+                // Read from the stream at the correct chunk
                 var read = _ciphertextStream.Read(realCiphertextChunk);
 
                 // Check for the end of the file

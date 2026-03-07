@@ -1,6 +1,7 @@
 using SecureFolderFS.Sdk.Dropbox.ViewModels;
 using SecureFolderFS.Sdk.Ftp.ViewModels;
 using SecureFolderFS.Sdk.GoogleDrive.ViewModels;
+using SecureFolderFS.Sdk.WebDavClient.ViewModels;
 
 namespace SecureFolderFS.Maui.UserControls
 {
@@ -18,7 +19,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty AccountViewModelProperty =
             BindableProperty.Create(nameof(AccountViewModel), typeof(IDisposable), typeof(AccountBarControl),
-                propertyChanged: static (bindable, value, newValue) =>
+                propertyChanged: static (bindable, _, newValue) =>
                 {
                     if (bindable is not AccountBarControl accountBarControl)
                         return;
@@ -48,6 +49,14 @@ namespace SecureFolderFS.Maui.UserControls
                             accountBarControl.UserAvatar.IsVisible = false;
                             accountBarControl.UserTitle.Text = ftpViewModel.UserName ?? string.Empty;
                             accountBarControl.UserSubtitle.Text = ftpViewModel.Address ?? string.Empty;
+                            break;
+                        }
+                        
+                        case WebDavClientAccountViewModel davClientAccountViewModel:
+                        {
+                            accountBarControl.UserAvatar.IsVisible = false;
+                            accountBarControl.UserTitle.Text = davClientAccountViewModel.UserName ?? string.Empty;
+                            accountBarControl.UserSubtitle.Text = davClientAccountViewModel.Address ?? string.Empty;
                             break;
                         }
                     }

@@ -99,9 +99,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             try
             {
-                TransferViewModel.IsPickingFolder = true;
                 await OuterNavigator.NavigateAsync(this);
-
                 using var cts = TransferViewModel.GetCancellation(cancellationToken);
                 return await TransferViewModel.PickFolderAsync(new TransferOptions(TransferType.Select), false, cts.Token);
             }
