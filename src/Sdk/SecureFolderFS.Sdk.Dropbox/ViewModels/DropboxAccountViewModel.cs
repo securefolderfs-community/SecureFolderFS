@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.Dropbox.ViewModels
 
             if (string.IsNullOrEmpty(dataModel.RefreshToken))
             {
-                // No refresh token stored — full re-authorization required
+                // No refresh token stored - full re-authorization required
                 (_client, _accessToken, _refreshToken, _expiresAt) = await AuthorizeAsync(cancellationToken);
             }
             else
@@ -104,7 +104,7 @@ namespace SecureFolderFS.Sdk.Dropbox.ViewModels
                 }
                 catch (AuthException)
                 {
-                    // Token was revoked or otherwise invalid — re-authorize
+                    // Token was revoked or otherwise invalid - re-authorize
                     _client?.Dispose();
                     (_client, _accessToken, _refreshToken, _expiresAt) = await AuthorizeAsync(cancellationToken);
                 }
@@ -204,7 +204,7 @@ namespace SecureFolderFS.Sdk.Dropbox.ViewModels
             var pkce = new PKCEOAuthFlow();
             var state = Guid.NewGuid().ToString("N");
 
-            // Build the authorization URI — IOAuthHandler supplies the redirect URL
+            // Build the authorization URI - IOAuthHandler supplies the redirect URL
             var authorizeUri = pkce.GetAuthorizeUri(
                 oauthResponseType: OAuthResponseType.Code,
                 clientId: ApiKeys.DropboxAppKey,
@@ -219,7 +219,7 @@ namespace SecureFolderFS.Sdk.Dropbox.ViewModels
 
             var oauthResult = result.Value!;
 
-            // Guard against CSRF — verify the returned state matches what we sent
+            // Guard against CSRF - verify the returned state matches what we sent
             if (oauthResult.State?.ToString() != state)
                 throw new InvalidOperationException(
                     "OAuth state mismatch. The authorization response may have been tampered with.");

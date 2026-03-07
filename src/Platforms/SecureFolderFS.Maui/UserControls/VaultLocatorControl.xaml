@@ -55,7 +55,7 @@
                         HorizontalTextAlignment="Center"
                         LineBreakMode="WordWrap"
                         Opacity="0.6"
-                        Text="Before logging in, establish a connection to the remote vault." />
+                        Text="{l:ResourceString Rid=ConnectToRemoteVault}" />
                 </VerticalStackLayout>
             </Border>
 

@@ -5,7 +5,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl
     {
-        private const double SWIPE_SELECTION_MIN_HORIZONTAL_THRESHOLD = 10.0d;
+        private const double SWIPE_SELECTION_MIN_HORIZONTAL_THRESHOLD = 10d;
         private readonly SwipeSelectionManager _swipeSelectionManager = new();
         private Point _swipeOriginCenterPoint;
         private Point? _swipeStartPan;
@@ -88,13 +88,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             var originCol = originIndex % columns;
             var originRow = originIndex / columns;
 
-            // Get current scroll offset
-            double scrollY = GetCurrentScrollY();
+            // Get the current scroll offset
+            var scrollY = GetCurrentScrollY();
 
             // Center of origin item in CANVAS coordinates (screen coordinates):
-            // content Y → canvas Y = contentY - scrollY
-            double canvasX = offsetX + originCol * (itemWidth + hSpacing) + itemWidth / 2.0;
-            double canvasY = offsetY + originRow * (itemHeight + vSpacing) + itemHeight / 2.0 - scrollY;
+            // content Y = canvas Y = contentY - scrollY
+            var canvasX = offsetX + originCol * (itemWidth + hSpacing) + itemWidth / 2d;
+            var canvasY = offsetY + originRow * (itemHeight + vSpacing) + itemHeight / 2d - scrollY;
 
             _swipeOriginCenterPoint = new Point(canvasX, canvasY);
             _swipeStartPan = new Point(totalX, totalY);

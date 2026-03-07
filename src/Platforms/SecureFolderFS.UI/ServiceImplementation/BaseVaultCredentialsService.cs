@@ -26,10 +26,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
 
             yield return Core.Cryptography.Constants.CipherId.AES_GCM;
-
-#if DEBUG
             yield return Core.Cryptography.Constants.CipherId.NONE;
-#endif
         }
 
         /// <inheritdoc/>

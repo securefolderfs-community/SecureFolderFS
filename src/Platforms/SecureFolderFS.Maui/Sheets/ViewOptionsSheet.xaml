@@ -56,9 +56,9 @@
                             IsTransparent="True"
                             IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
                             <uco:OptionsContainer.InnerContent>
-                                <OnPlatform x:TypeArguments="HorizontalStackLayout">
+                                <OnPlatform x:TypeArguments="Grid">
                                     <On Platform="iOS">
-                                        <HorizontalStackLayout>
+                                        <Grid HorizontalOptions="Fill">
                                             <scm:SegmentedControl
                                                 x:Name="SizeSegments"
                                                 Background="Transparent"
@@ -75,14 +75,16 @@
                                                 <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
                                                 <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
                                             </scm:SegmentedControl>
-                                        </HorizontalStackLayout>
+                                        </Grid>
                                     </On>
                                     <On Platform="Android">
-                                        <HorizontalStackLayout
-                                            x:Name="SizeSegmentsAndroid"
-                                            HorizontalOptions="Fill"
-                                            Loaded="SizeSegmentsAndroid_Loaded"
-                                            Spacing="8" />
+                                        <Grid>
+                                            <HorizontalStackLayout
+                                                x:Name="SizeSegmentsAndroid"
+                                                HorizontalOptions="Fill"
+                                                Loaded="SizeSegmentsAndroid_Loaded"
+                                                Spacing="8" />
+                                        </Grid>
                                     </On>
                                 </OnPlatform>
                             </uco:OptionsContainer.InnerContent>

@@ -99,7 +99,7 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
             }
             else
             {
-                // Files have no children — the id must match exactly
+                // Files have no children - the id must match exactly
                 if (id != directChildPath)
                     throw new FileNotFoundException($"Item with id '{id}' was not found.");
 
@@ -124,7 +124,7 @@ namespace SecureFolderFS.Sdk.Dropbox.Storage
             }
             catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath)
             {
-                // Path not found — safe to rename
+                // Path not found - safe to rename
             }
 
             var result = await Client.Files.MoveV2Async(storable.Id, targetPath, autorename: false);

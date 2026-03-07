@@ -22,7 +22,7 @@
     <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
     <PackageVersion Include="Plugin.SegmentedControl.Maui" Version="1.4.36" />
-    <PackageVersion Include="Sentry" Version="6.0.0" />
+    <PackageVersion Include="Sentry" Version="6.1.0" />
     <PackageVersion Include="SkiaSharp" Version="3.119.2" />
     <PackageVersion Include="SkiaSharp.Skottie" Version="3.119.2" />
     <PackageVersion Include="SkiaSharp.Views.Maui.Controls" Version="3.119.2" />

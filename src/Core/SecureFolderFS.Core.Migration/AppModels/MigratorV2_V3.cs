@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
     {
         private readonly IAsyncSerializer<Stream> _streamSerializer;
         private V2VaultConfigurationDataModel? _v2ConfigDataModel;
-        private VaultKeystoreDataModel? _v2KeystoreDataModel;
+        private V3VaultKeystoreDataModel? _v2KeystoreDataModel;
         private ManagedKey? _secretKeySequence;
         private bool _wasNewPasswordSet;
 
@@ -65,15 +65,15 @@ namespace SecureFolderFS.Core.Migration.AppModels
             await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
 
             _v2ConfigDataModel = await _streamSerializer.DeserializeAsync<Stream, V2VaultConfigurationDataModel>(configStream, cancellationToken);
-            _v2KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, VaultKeystoreDataModel>(keystoreStream, cancellationToken);
+            _v2KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, V3VaultKeystoreDataModel>(keystoreStream, cancellationToken);
             if (_v2KeystoreDataModel is null)
-                throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
+                throw new FormatException($"{nameof(V3VaultKeystoreDataModel)} was not in the correct format.");
 
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             using var dekKey = new ManagedKey(Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH);
             using var macKey = new ManagedKey(Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH);
 
-            Argon2id.Old_DeriveKey(secretKeySequence, _v2KeystoreDataModel.Salt, kek);
+            Argon2id.V2_DeriveKey(secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             using var rfc3394 = new Rfc3394KeyWrap();
@@ -100,7 +100,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             await using var keystoreStream = await keystoreFile.OpenReadAsync(cancellationToken);
 
             _v2ConfigDataModel = await _streamSerializer.DeserializeAsync<Stream, V2VaultConfigurationDataModel>(configStream, cancellationToken);
-            _v2KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, VaultKeystoreDataModel>(keystoreStream, cancellationToken);
+            _v2KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, V3VaultKeystoreDataModel>(keystoreStream, cancellationToken);
             if (_v2ConfigDataModel is null)
                 throw new FormatException($"{nameof(V2VaultConfigurationDataModel)} was not in the correct format.");
 
@@ -176,7 +176,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 // Vault Keystore ------------------------------------
                 //
                 Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-                Argon2id.V3_DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
+                Argon2id.DeriveKey(_secretKeySequence, _v2KeystoreDataModel.Salt, kek);
 
                 using var rfc3394 = new Rfc3394KeyWrap();
                 var newWrappedDekKey = rfc3394.WrapKey(dek, kek);
@@ -185,7 +185,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 return (newWrappedDekKey, newWrappedMacKey);
             });
 
-            var v3KeystoreDataModel = new VaultKeystoreDataModel()
+            var v3KeystoreDataModel = new V3VaultKeystoreDataModel()
             {
                 Salt = _v2KeystoreDataModel.Salt,
                 WrappedDekKey = newWrappedKeys.newWrappedDekKey,

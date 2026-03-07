@@ -24,17 +24,18 @@ internal static class PopupExtensions
     /// <param name="popup">The popup to display.</param>
     /// <param name="dismissOnBackgroundTap">If true, tapping the background will dismiss the popup.</param>
     /// <returns>A task that completes when the popup is closed.</returns>
-    public static Task OverlayPopupAsync(this Page page, Popup popup, bool dismissOnBackgroundTap = true)
+    public static async Task OverlayPopupAsync(this Page page, Popup popup, bool dismissOnBackgroundTap = true)
     {
         if (page is not ContentPage contentPage)
-            return Task.CompletedTask;
+            return;
 
         var completionSource = new TaskCompletionSource();
         var originalContent = contentPage.Content;
         if (originalContent is null || popup.Content is null)
         {
             completionSource.SetResult();
-            return completionSource.Task;
+            await completionSource.Task;
+            return;
         }
 
         // If the root is already a Grid, inject directly into it to avoid reparenting
@@ -75,7 +76,8 @@ internal static class PopupExtensions
             VerticalOptions = LayoutOptions.Center,
             InputTransparent = false,
             CascadeInputTransparent = false,
-            Opacity = 0
+            Opacity = 0d,
+            Scale = 0.8d
         };
         Grid.SetRowSpan(popupContainer, 99);
         Grid.SetColumnSpan(popupContainer, 99);
@@ -114,10 +116,11 @@ internal static class PopupExtensions
 
             await Task.WhenAll(
                 dimBackground.FadeToAsync(0, FADE_ANIMATION_MS, Easing.CubicOut),
-                popupContainer.FadeToAsync(0, FADE_ANIMATION_MS, Easing.CubicOut)
+                popupContainer.FadeToAsync(0, FADE_ANIMATION_MS, Easing.CubicOut),
+                popupContainer.ScaleToAsync(0.8, FADE_ANIMATION_MS, Easing.CubicOut)
             );
 
-            // Only remove the overlay layers — never touch the original content
+            // Only remove the overlay layers - never touch the original content
             rootGrid.Children.Remove(dimBackground);
             rootGrid.Children.Remove(popupContainer);
 
@@ -146,12 +149,14 @@ internal static class PopupExtensions
             Command = new Command(() => _ = CloseOverlayAsync())
         });
 
+        await Task.Delay(200);
         _ = Task.WhenAll(
-            dimBackground.FadeToAsync(OVERLAY_OPACITY, FADE_ANIMATION_MS, Easing.CubicIn),
-            popupContainer.FadeToAsync(1, FADE_ANIMATION_MS, Easing.CubicIn)
+            dimBackground.FadeToAsync(OVERLAY_OPACITY, FADE_ANIMATION_MS, Easing.CubicInOut),
+            popupContainer.FadeToAsync(1, FADE_ANIMATION_MS, Easing.CubicInOut),
+            popupContainer.ScaleToAsync(1, FADE_ANIMATION_MS, Easing.CubicInOut)
         );
 
-        return completionSource.Task;
+        await completionSource.Task;
     }
 
     /// <summary>

@@ -116,7 +116,7 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
                 sessionSecret,
                 32,
                 Encoding.UTF8.GetBytes(credentialId),
-                "DeviceLink-SigningKeyEncryption-v2"u8.ToArray());
+                "DeviceLink-SigningKeyEncryption-v1"u8.ToArray());
         }
 
         /// <summary>

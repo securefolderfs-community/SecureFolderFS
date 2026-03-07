@@ -1,12 +1,11 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -15,7 +14,8 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class UnlockRoutine : ICredentialsRoutine
     {
         private readonly VaultReader _vaultReader;
-        private VaultKeystoreDataModel? _keystoreDataModel;
+        private V3VaultKeystoreDataModel? _keystoreDataModel;
+        private V4VaultKeystoreDataModel? _v4KeystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
         private SecureKey? _dekKey;
         private SecureKey? _macKey;
@@ -28,21 +28,34 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync(cancellationToken);
             _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            if (_configDataModel.Version >= Constants.Vault.Versions.V4)
+                _v4KeystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+            else
+                _keystoreDataModel = await _vaultReader.ReadKeystoreAsync<V3VaultKeystoreDataModel>(cancellationToken);
         }
 
         /// <inheritdoc/>
         public void SetCredentials(IKeyUsage passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
-            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            // Derive keystore
-            var derived = passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel));
+            if (_v4KeystoreDataModel is not null)
+            {
+                var derived = passkey.UseKey(key => VaultParser.V4DeriveKeystore(key, _v4KeystoreDataModel));
+                _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+                _macKey = SecureKey.TakeOwnership(derived.macKey);
+            }
+            else
+            {
+                ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            _dekKey = SecureKey.TakeOwnership(derived.dekKey);
-            _macKey = SecureKey.TakeOwnership(derived.macKey);
+                // V3 path: unchanged
+                var derived = passkey.UseKey(key => VaultParser.V3DeriveKeystore(key, _keystoreDataModel));
+                _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+                _macKey = SecureKey.TakeOwnership(derived.macKey);
+            }
         }
 
         /// <inheritdoc/>

@@ -99,7 +99,7 @@ namespace SecureFolderFS.Sdk.Dropbox.Streams
             var size = _buffer.Length;
             if (size <= SESSION_THRESHOLD_BYTES)
             {
-                // Simple upload — single request
+                // Simple upload - single request
                 await _client.Files.UploadAsync(
                     _path,
                     WriteMode.Overwrite.Instance,
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Sdk.Dropbox.Streams
             }
             else
             {
-                // Session upload — stream in 150 MB chunks
+                // Session upload - stream in 150 MB chunks
                 const int CHUNK_SIZE = SESSION_THRESHOLD_BYTES;
                 var buffer = new byte[CHUNK_SIZE];
 

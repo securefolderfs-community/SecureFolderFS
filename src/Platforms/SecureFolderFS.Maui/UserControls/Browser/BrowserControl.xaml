@@ -126,12 +126,7 @@
                         <Grid
                             x:Name="SourceGrid"
                             Padding="8"
-                            HeightRequest="{OnPlatform Android={Binding BrowserViewModel.Layouts.BrowserViewType,
-                                                                        Mode=OneWay,
-                                                                        Converter={StaticResource BrowserImageDimensionsConverter},
-                                                                        ConverterParameter='96,140,200'},
-                                                       iOS={Binding Width,
-                                                                    Source={x:Reference SourceGrid}}}"
+                            HeightRequest="{Binding BrowserViewModel.Layouts.BrowserViewType, Mode=OneWay, Converter={StaticResource BrowserImageDimensionsConverter}, ConverterParameter='88,116,184'}"
                             RowSpacing="4"
                             Style="{StaticResource SelectableItemGridStyle}">
                             <Grid.RowDefinitions>
@@ -354,12 +349,14 @@
             IsVisible="False"
             VerticalOptions="Fill"
             ZIndex="5">
-            <Grid
+            <Border
                 x:Name="SelectionRectangleView"
                 BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
                                                   Dark={StaticResource PrimaryDarkColor}}"
                 HorizontalOptions="Start"
                 Opacity="0.3"
+                StrokeShape="RoundRectangle 4"
+                StrokeThickness="0"
                 VerticalOptions="Start" />
         </Grid>
     </Grid>
