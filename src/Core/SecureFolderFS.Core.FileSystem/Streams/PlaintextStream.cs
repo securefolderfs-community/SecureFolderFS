@@ -151,7 +151,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 var secureNoise = new byte[gapLength];
                 RandomNumberGenerator.Fill(secureNoise);
 
-                // Write contents of secure noise array
+                // Write contents of a secure noise array
                 WriteInternal(secureNoise, Length);
             }
             else

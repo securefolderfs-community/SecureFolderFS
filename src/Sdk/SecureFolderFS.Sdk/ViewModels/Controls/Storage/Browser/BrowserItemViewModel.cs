@@ -107,6 +107,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
+                    // Check if the item source is the same as destination
+                    if (destinationViewModel.Items.Any(x => x.Inner.Id == item.Id))
+                        return;
+
                     // Get available name to avoid collision
                     var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
 

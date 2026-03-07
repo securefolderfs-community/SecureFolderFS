@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Shared.Extensions;
 #if ANDROID
 using Microsoft.Maui.Controls.Shapes;
@@ -88,13 +89,13 @@ namespace SecureFolderFS.Maui.Views.Modals
         public static readonly BindableProperty ModalContentProperty =
             BindableProperty.Create(nameof(ModalContent), typeof(View), typeof(BaseModalPage));
 
-        public ICommand? PrimaryCommand
+        public IAsyncRelayCommand? PrimaryCommand
         {
-            get => (ICommand?)GetValue(PrimaryCommandProperty);
+            get => (IAsyncRelayCommand?)GetValue(PrimaryCommandProperty);
             set => SetValue(PrimaryCommandProperty, value);
         }
         public static readonly BindableProperty PrimaryCommandProperty =
-            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage));
+            BindableProperty.Create(nameof(PrimaryCommand), typeof(IAsyncRelayCommand), typeof(BaseModalPage));
 
         public ICommand? CloseCommand
         {

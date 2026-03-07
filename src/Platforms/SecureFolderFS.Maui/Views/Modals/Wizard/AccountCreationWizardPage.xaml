@@ -171,14 +171,20 @@
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
+        <Grid
             Margin="{OnPlatform iOS='0,16,0,0'}"
             Padding="16,0"
-            Spacing="16">
+            RowDefinitions="Auto,Auto,*"
+            RowSpacing="16">
+
+            <!--  Account Name  -->
             <Label
+                Grid.Row="0"
                 FontAttributes="Bold"
                 FontSize="18"
                 Text="{Binding ViewModel.AccountViewModel.Title, Mode=OneWay}" />
+
+            <!--  Account Login  -->
             <uc:ContentPresentation Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
                 <uc:ContentPresentation.TemplateSelector>
                     <ts:AccountCreationTemplateSelector
@@ -188,6 +194,12 @@
                         WebDavClientAccountTemplate="{StaticResource WebDavClientAccountTemplate}" />
                 </uc:ContentPresentation.TemplateSelector>
             </uc:ContentPresentation>
-        </VerticalStackLayout>
+
+            <!--  Error  -->
+            <uc:ErrorControl
+                Grid.Row="2"
+                ExceptionMessage="{Binding ViewModel.ExceptionMessage, Mode=OneWay}"
+                IsVisible="{Binding ViewModel.ExceptionMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" />
+        </Grid>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

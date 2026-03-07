@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
         {
             // Read EXIF
             var exif = new ExifInterface(stream);
-            stream.Position = 0;
+            stream.Position = 0L;
 
             // Attempt to get dimensions from EXIF tags to avoid a full bounds decode pass
             var exifWidth = exif.GetAttributeInt(ExifInterface.TagImageWidth, 0);
@@ -36,8 +36,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             }
 
             var inSampleSize = CalculateInSampleSize(width, height, (int)maxSize);
-
-            var options = new BitmapFactory.Options
+            var options = new BitmapFactory.Options()
             {
                 InJustDecodeBounds = false,
                 InSampleSize = inSampleSize

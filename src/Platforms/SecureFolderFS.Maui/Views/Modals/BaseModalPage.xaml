@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
     x:DataType="local:BaseModalPage"
@@ -85,14 +86,15 @@
                             Style="{StaticResource TransparentButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
-                        <Button
+                        <uc:ActivityButton
                             x:Name="PrimaryButton"
                             Grid.Column="1"
+                            ButtonStyle="{StaticResource AccentButtonStyle}"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsProgressing="{Binding PrimaryCommand.IsRunning, Mode=OneWay, FallbackValue={x:Boolean False}}"
                             IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Style="{StaticResource AccentButtonStyle}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>

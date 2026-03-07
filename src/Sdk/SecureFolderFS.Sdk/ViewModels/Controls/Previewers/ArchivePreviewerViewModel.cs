@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 
             var size = await Inner.GetSizeAsync(cancellationToken);
             if (size is not null)
-                Size = ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty);
+                Size = ByteSize.FromBytes(size.Value).ToString();
         }
 
         [RelayCommand]
