@@ -2,6 +2,7 @@ using System;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.Uno.AppModels;
 
@@ -15,6 +16,7 @@ namespace SecureFolderFS.Uno.ValueConverters
             return value switch
             {
                 ImageBitmap bitmap => new ImageIconSource() { ImageSource = bitmap.Source },
+                ImageResource resource => new BitmapIconSource() { UriSource = new Uri(resource.Name), ShowAsMonochrome = false },
                 ImageGlyph glyph => glyph switch
                 {
                     { FontFamily: not null } => new FontIconSource() { Glyph = glyph.Glyph, FontFamily = new FontFamily(glyph.FontFamily) },

@@ -3,15 +3,15 @@ namespace SecureFolderFS.Maui.Helpers
     internal static class EasingHelpers
     {
         public static readonly Easing QuarticIn = new(x => Math.Pow(x, 4));
-        
+
         public static readonly Easing QuarticOut = new(x => 1 - Math.Pow(1 - x, 4));
-        
+
         public static readonly Easing QuarticInOut = new(x => x < 0.5 ? 8 * Math.Pow(x, 4) : 1 - Math.Pow(-2 * x + 2, 4) / 2);
-        
+
         public static readonly Easing CubicBezierOut = CubicBezier(0.25, 0.46, 0.45, 0.94);
 
         public static readonly Easing EaseOutExpo = CubicBezier(0.16, 1, 0.3, 1);
-        
+
         private static Easing CubicBezier(double x1, double y1, double x2, double y2)
         {
             return new Easing(t =>

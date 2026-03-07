@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         public IModifyCredentialsRoutine ModifyCredentials()
         {
             CheckVaultValidation();
-            return new ModifyCredentialsRoutine(VaultWriter);
+            return new ModifyCredentialsRoutine(VaultReader, VaultWriter);
         }
 
         private void CheckVaultValidation()

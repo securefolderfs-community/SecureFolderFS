@@ -4,18 +4,19 @@ using Android.Content.Res;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using Android.Runtime;
 using Android.Util;
-using Java.IO;
+using Microsoft.Maui.Platform;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 using Point = Android.Graphics.Point;
+using Uri = Android.Net.Uri;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -47,9 +48,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override ICursor? QueryRoots(string[]? projection)
         {
             var matrix = new MatrixCursor(projection ?? DefaultRootProjection);
+            var rid = MauiApplication.Current.GetDrawableId("app_icon.png");
+            if (rid == 0)
+                rid = Constants.Android.Saf.IC_LOCK_LOCK;
+
             foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
             {
-                AddRoot(matrix, item, Constants.Android.Saf.IC_LOCK_LOCK);
+                AddRoot(matrix, item, rid);
             }
 
             return matrix;
@@ -75,9 +80,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var createdItem = (IStorableChild)(mimeType switch
             {
-                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false)
-                    .ConfigureAwait(false).GetAwaiter().GetResult(),
-                _ => parentFolder.CreateFileAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult()
+                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult(),
+                _ => parentFolder.CreateFileAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult()
             });
 
             var rootId = parentDocumentId.Split(':', 2)[0];
@@ -111,14 +115,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot.StorageRoot.Options.IsReadOnly && parcelFileMode is ParcelFileMode.WriteOnly or ParcelFileMode.ReadWrite)
                 return null;
 
-            return _storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
-
-            // var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
-            // if (storageManager is null)
-            //     return null;
-            //
-            // var parcelFileMode = ToParcelFileMode(mode);
-            // return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper!));
+            var handlerThread = new HandlerThread("ProxyFD-" + documentId);
+            handlerThread.Start();
+            return _storageManager.OpenProxyFileDescriptor(
+                parcelFileMode,
+                new ReadWriteCallbacks(stream, handlerThread),
+                new Handler(handlerThread.Looper!));
 
             static ParcelFileMode ToParcelFileMode(string? fileMode)
             {
@@ -171,7 +173,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parent is not IFolder folder)
                 return matrix;
 
-            var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            var items = folder.GetItemsAsync().ToArrayAsyncImpl().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
                 AddDocumentAsync(matrix, item, null).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -248,7 +250,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     return Path.Combine(targetParentDocumentId, movedFile.Name);
                 }
 
-                case IChildFolder folder:
+                case IModifiableFolder folder:
                 {
                     var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
                     return Path.Combine(targetParentDocumentId, movedFolder.Name);
@@ -284,13 +286,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
-            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<global::Android.Net.Uri> fileUriWrapper })
+            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<Uri> fileUriWrapper })
                 return fileUriWrapper.Inner.ToString();
 
-            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<global::Android.Net.Uri> folderUriWrapper })
+            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<Uri> folderUriWrapper })
                 return folderUriWrapper.Inner.ToString();
 
-            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
+            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<Uri>)}.");
         }
 
         /// <inheritdoc/>
@@ -348,10 +350,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             try
             {
-                using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-                using var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, 300U).ConfigureAwait(false).GetAwaiter().GetResult();
+                // Honor sizeHint from the caller instead of always using a fixed size
+                var size = sizeHint is not null
+                    ? (uint)Math.Max(sizeHint.X, sizeHint.Y)
+                    : 300U;
 
-                // Need to copy thumbnail stream to a pipe (ParcelFileDescriptor with input/output stream)
+                using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, size).ConfigureAwait(false).GetAwaiter().GetResult();
+
                 var twoWayPipe = ParcelFileDescriptor.CreatePipe();
                 if (twoWayPipe is null)
                     return null;
@@ -361,17 +367,25 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 {
                     try
                     {
-                        int bytesRead;
                         var buffer = new byte[8192];
-                        while ((bytesRead = thumbnailStream.Read(buffer, 0, buffer.Length)) > 0)
-                            output.Write(buffer, 0, bytesRead);
+                        using (thumbnailStream)
+                        {
+                            int read;
+                            while ((read = thumbnailStream.Read(buffer, 0, buffer.Length)) > 0)
+                                output.Write(buffer, 0, read);
+                        }
 
                         output.Flush();
-                        output.Close();
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Handle if needed
+                        Log.Error(nameof(FileSystemProvider), $"Failed to write thumbnail to pipe. {ex}");
+                    }
+                    finally
+                    {
+                        // Always close the write end so the read end gets a clean EOF,
+                        // even if the drain throws midway
+                        output.Close();
                     }
                 });
 

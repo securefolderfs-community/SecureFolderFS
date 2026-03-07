@@ -8,12 +8,11 @@ using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android
 {
     /// <inheritdoc cref="IFileSystem"/>
-    public sealed class AndroidFileSystem : IFileSystem
+    public sealed class AndroidFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.Android.FileSystem.FS_ID;

@@ -13,7 +13,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.UI.Storage;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -29,7 +29,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var keyPair = specifics.Security.KeyPair;
             var vaultReader = new VaultReader(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
             var vaultWriter = new VaultWriter(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
 
@@ -41,8 +40,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 
-            // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(newConfigDataModel, keyPair.MacKey, newConfigDataModel.PayloadMac);
+            // First, we need to fill in the PayloadMac of the content
+            specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+            });
 
             // Update the new configuration
             await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
@@ -86,8 +88,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 // Calculate new size
                 var sizeHint = item switch
                 {
-                    IFile file => await file.GetSizeAsync(cancellationToken),
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
+                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
                     _ => 0L
                 };
                 totalSize += sizeHint;
@@ -119,7 +121,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
+            return new RecycleBinFolder(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
@@ -132,7 +134,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
+            return new RecycleBinFolder(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace SecureFolderFS.Shared.Enums
         Document,
         Image,
         Media,
-        Audio
+        Audio,
+        Archive
     }
 }

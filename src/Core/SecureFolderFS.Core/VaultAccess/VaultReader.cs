@@ -23,13 +23,17 @@ namespace SecureFolderFS.Core.VaultAccess
             _serializer = serializer;
         }
 
-        public async Task<VaultKeystoreDataModel> ReadKeystoreAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Reads the keystore as the specified type.
+        /// </summary>
+        public async Task<TKeystore> ReadKeystoreAsync<TKeystore>(CancellationToken cancellationToken)
+            where TKeystore : class
         {
-            // Get keystore file
+            // Get the keystore file
             if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
                 throw new FileNotFoundException("The keystore file was not found.");
 
-            return await ReadDataAsync<VaultKeystoreDataModel>(keystoreFile, _serializer, cancellationToken);
+            return await ReadDataAsync<TKeystore>(keystoreFile, _serializer, cancellationToken);
         }
 
         public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)

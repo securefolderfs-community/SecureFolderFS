@@ -1,0 +1,225 @@
+﻿<Page
+    x:Class="SecureFolderFS.Uno.Views.DebugViews.DebugPhoneLinkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    mc:Ignorable="d">
+
+    <StackPanel Padding="8" Spacing="8">
+        <!--  Header  -->
+        <TextBlock
+            FontSize="20"
+            FontWeight="SemiBold"
+            Text="Phone Link Authentication Simulator" />
+        <TextBlock
+            Opacity="0.6"
+            Text="This simulates the BLE discovery and challenge-response flow for Phone Link authentication."
+            TextWrapping="Wrap" />
+
+        <!--  Mobile Device Simulator Section  -->
+        <ucab:ActionBlockControl Title="📱 Mobile Device Simulator" BlockMode="Expandable">
+            <ucab:ActionBlockControl.ExpanderContent>
+                <StackPanel Spacing="12">
+                    <TextBlock
+                        Opacity="0.7"
+                        Text="Simulates what the mobile app would do. Creates a keypair and responds to challenges."
+                        TextWrapping="Wrap" />
+
+                    <!--  Device Name  -->
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Text="Device Name:" />
+                        <TextBox
+                            x:Name="MobileDeviceName"
+                            Grid.Column="1"
+                            PlaceholderText="My Phone"
+                            Text="SecureFolderFS Mobile" />
+                    </Grid>
+
+                    <!--  Generate Keypair  -->
+                    <Button
+                        x:Name="GenerateKeypairButton"
+                        Click="GenerateKeypair_Click"
+                        Content="Generate New Keypair (Enrollment)" />
+
+                    <!--  Keypair Status  -->
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            x:Name="KeypairStatusIcon"
+                            FontSize="16"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Glyph="&#xE72E;" />
+                        <TextBlock x:Name="KeypairStatus" Text="No keypair generated" />
+                    </StackPanel>
+
+                    <!--  Public Key Display  -->
+                    <TextBlock Text="Public Key (Base64):" />
+                    <TextBox
+                        x:Name="PublicKeyDisplay"
+                        MaxHeight="60"
+                        AcceptsReturn="True"
+                        IsReadOnly="True"
+                        PlaceholderText="Generate a keypair first..."
+                        TextWrapping="Wrap" />
+
+                    <!--  Advertising Toggle  -->
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <ToggleSwitch
+                            x:Name="AdvertisingToggle"
+                            Header="BLE Advertising (Discoverable)"
+                            IsEnabled="False"
+                            Toggled="AdvertisingToggle_Toggled" />
+                        <FontIcon
+                            x:Name="AdvertisingIcon"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Glyph="&#xEC3F;" />
+                    </StackPanel>
+                </StackPanel>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+
+        <!--  Desktop Client Section  -->
+        <ucab:ActionBlockControl Title="💻 Desktop Client" BlockMode="Expandable">
+            <ucab:ActionBlockControl.ExpanderContent>
+                <StackPanel Spacing="12">
+                    <TextBlock
+                        Opacity="0.7"
+                        Text="Simulates the desktop app discovering and connecting to a mobile device."
+                        TextWrapping="Wrap" />
+
+                    <!--  Discovery  -->
+                    <Button
+                        x:Name="DiscoverButton"
+                        Click="Discover_Click"
+                        Content="🔍 Scan for Devices" />
+
+                    <!--  Discovered Devices List  -->
+                    <TextBlock Text="Discovered Devices:" />
+                    <ListView
+                        x:Name="DiscoveredDevicesList"
+                        MaxHeight="100"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        CornerRadius="4"
+                        SelectionChanged="DiscoveredDevicesList_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="14" Glyph="&#xE8EA;" />
+                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Opacity="0.5" Text="{Binding SignalStrength}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <!--  Connection Status  -->
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            x:Name="ConnectionStatusIcon"
+                            FontSize="16"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Glyph="&#xE703;" />
+                        <TextBlock x:Name="ConnectionStatus" Text="Not connected" />
+                    </StackPanel>
+
+                    <!--  Challenge-Response Section  -->
+                    <Border
+                        Padding="12"
+                        Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                        CornerRadius="4">
+                        <StackPanel Spacing="8">
+                            <TextBlock FontWeight="SemiBold" Text="Challenge-Response Test" />
+
+                            <TextBlock Text="Challenge (hex):" />
+                            <TextBox
+                                x:Name="ChallengeInput"
+                                IsReadOnly="True"
+                                PlaceholderText="Click 'Generate Challenge' first" />
+                            <Button
+                                x:Name="GenerateChallengeButton"
+                                Click="GenerateChallenge_Click"
+                                Content="Generate Random Challenge"
+                                IsEnabled="False" />
+
+                            <Button
+                                x:Name="SendChallengeButton"
+                                Click="SendChallenge_Click"
+                                Content="📤 Send Challenge to Mobile"
+                                IsEnabled="False" />
+
+                            <TextBlock Text="Signed Response (hex):" />
+                            <TextBox
+                                x:Name="ResponseDisplay"
+                                MaxHeight="60"
+                                AcceptsReturn="True"
+                                IsReadOnly="True"
+                                PlaceholderText="Response will appear here..."
+                                TextWrapping="Wrap" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon
+                                    x:Name="VerificationIcon"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xE9D5;" />
+                                <TextBlock x:Name="VerificationStatus" Text="Not verified" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Derive Key for Vault  -->
+                    <Button
+                        x:Name="DeriveKeyButton"
+                        Click="DeriveKey_Click"
+                        Content="🔐 Derive Vault Decryption Key"
+                        IsEnabled="False" />
+
+                    <TextBlock Text="Derived Key (hex, for vault decryption):" />
+                    <TextBox
+                        x:Name="DerivedKeyDisplay"
+                        MaxHeight="60"
+                        AcceptsReturn="True"
+                        IsReadOnly="True"
+                        PlaceholderText="Derived key will appear here..."
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+
+        <!--  Protocol Flow Log  -->
+        <ucab:ActionBlockControl Title="📋 Protocol Flow Log" BlockMode="Expandable">
+            <ucab:ActionBlockControl.ActionElement>
+                <Button Click="ClearLog_Click" Content="Clear" />
+            </ucab:ActionBlockControl.ActionElement>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <ScrollViewer MaxHeight="200">
+                    <TextBlock
+                        x:Name="ProtocolLog"
+                        FontFamily="Consolas"
+                        FontSize="12"
+                        IsTextSelectionEnabled="True"
+                        Text="Ready..."
+                        TextWrapping="Wrap" />
+                </ScrollViewer>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+
+        <!--  Full Authentication Flow  -->
+        <ucab:ActionBlockControl
+            Title="🚀 Run Complete Authentication Flow"
+            BlockMode="Clickable"
+            Click="RunFullFlow_Click"
+            Description="Simulates the entire enrollment and unlock flow in one click" />
+    </StackPanel>
+</Page>
+

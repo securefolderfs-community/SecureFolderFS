@@ -3,13 +3,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters">
 
-    <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-    <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
-    <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-    <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
-    <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-    <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     <vc:IconSourceConverter x:Key="IconSourceConverter" />
+    <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
+    <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+    <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
+    <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
+    <vc:CountToStringConverter x:Key="CountToStringConverter" />
+    <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+    <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <vc:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+    <vc:TypeNameVisibilityConverter x:Key="TypeNameVisibilityConverter" />
+    <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
+    <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
 
 </ResourceDictionary>

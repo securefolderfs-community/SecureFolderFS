@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

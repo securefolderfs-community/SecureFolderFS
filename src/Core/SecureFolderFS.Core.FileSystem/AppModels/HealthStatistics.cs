@@ -1,4 +1,4 @@
-﻿using OwlCore.Storage;
+﻿﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
@@ -10,6 +10,9 @@ namespace SecureFolderFS.Core.FileSystem.AppModels
     {
         /// <inheritdoc/>
         public IAsyncValidator<IFile, IResult>? FileValidator { get; set; }
+
+        /// <inheritdoc/>
+        public IAsyncValidator<IFile, IResult>? FileContentValidator { get; set; }
 
         /// <inheritdoc/>
         public IAsyncValidator<IFolder, IResult>? FolderValidator { get; set; }

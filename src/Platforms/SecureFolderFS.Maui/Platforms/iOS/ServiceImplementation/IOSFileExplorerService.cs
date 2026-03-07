@@ -8,7 +8,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Pickers;
 using UIKit;
 using UniformTypeIdentifiers;
-using UTType = MobileCoreServices.UTType;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 {
@@ -41,36 +40,19 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
-            AssertCanPick();
-            using var documentPicker = new UIDocumentPickerViewController([
-                    UTType.Content,
-                    UTType.Item,
-                    "public.data"], UIDocumentPickerMode.Open);
+            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Item, UTTypes.Content, UTTypes.Data], asCopy: false);
 
             var nsUrl = await PickInternalAsync(documentPicker, cancellationToken);
-            if (nsUrl is null)
-                return null;
-
-            var file = new IOSFile(nsUrl);
-            await file.AddBookmarkAsync(cancellationToken);
-
-            return file;
+            return nsUrl is null ? null : new IOSFile(nsUrl);
         }
 
         /// <inheritdoc/>
         public async Task<IFolder?> PickFolderAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
-            AssertCanPick();
-            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Folder], false);
+            using var documentPicker = new UIDocumentPickerViewController([UTTypes.Folder], asCopy: false);
 
             var nsUrl = await PickInternalAsync(documentPicker, cancellationToken);
-            if (nsUrl is null)
-                return null;
-
-            var folder = new IOSFolder(nsUrl);
-            await folder.AddBookmarkAsync(cancellationToken);
-
-            return folder;
+            return nsUrl is null ? null : new IOSFolder(nsUrl);
         }
 
         private static async Task<NSUrl?> PickInternalAsync(UIDocumentPickerViewController documentPicker, CancellationToken cancellationToken)
@@ -103,12 +85,6 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
                 tcs.TrySetResult(e.Urls[0]);
             }
-        }
-
-        private static void AssertCanPick()
-        {
-            if (!OperatingSystem.IsIOSVersionAtLeast(14))
-                throw new NotSupportedException("Picking folders on iOS<14 is not supported.");
         }
     }
 }

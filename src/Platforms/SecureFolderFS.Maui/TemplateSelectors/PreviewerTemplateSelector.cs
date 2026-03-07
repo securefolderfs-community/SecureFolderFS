@@ -11,6 +11,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? TextTemplate { get; set; }
 
         public DataTemplate? PdfTemplate { get; set; }
+        
+        public DataTemplate? ArchiveTemplate { get; set; }
 
         public DataTemplate? CarouselTemplate { get; set; }
 
@@ -23,6 +25,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
             {
                 FallbackPreviewerViewModel => FallbackTemplate,
                 CarouselPreviewerViewModel => CarouselTemplate,
+                ArchivePreviewerViewModel => ArchiveTemplate,
                 ImagePreviewerViewModel => ImageTemplate,
                 VideoPreviewerViewModel => VideoTemplate,
                 TextPreviewerViewModel => TextTemplate,

@@ -28,7 +28,7 @@
                     <FontIcon Glyph="&#xE946;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
-                    <Grid Padding="54,0,32,0" ColumnSpacing="48">
+                    <Grid Padding="52,0,32,0" ColumnSpacing="48">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -101,10 +101,24 @@
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.ViewRecycleBinCommand, Mode=OneWay}"
                 Description="{l:ResourceString Rid=OpenRecycleBinDescription}"
-                Visibility="Collapsed">
+                Visibility="Visible">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE74D;" />
                 </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <Grid
+                            Padding="8,2"
+                            Background="{ThemeResource AccentFillColorDefaultBrush}"
+                            CornerRadius="8">
+                            <TextBlock FontSize="10" Text="BETA" />
+                        </Grid>
+                        <InfoBadge
+                            x:Name="NumberBadge"
+                            x:Load="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                            Value="{x:Bind ViewModel.RecycleBinOverlayViewModel.Items.Count, Mode=OneWay}" />
+                    </StackPanel>
+                </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>
     </ScrollViewer>

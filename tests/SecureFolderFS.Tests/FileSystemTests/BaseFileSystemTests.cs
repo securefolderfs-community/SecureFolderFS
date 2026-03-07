@@ -9,7 +9,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 {
     public abstract class BaseFileSystemTests
     {
-        protected async Task<IVFSRoot> MountVault(IFileSystem fileSystem, MockVaultOptions? options, params (string, object)[] additionalOptions)
+        protected async Task<IVFSRoot> MountVault(IFileSystemInfo fileSystem, MockVaultOptions? options, params (string, object)[] additionalOptions)
         {
             var (vaultFolder, recoveryKey) = await MockVaultHelpers.CreateVaultLatestAsync(options);
 

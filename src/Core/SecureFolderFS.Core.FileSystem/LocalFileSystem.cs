@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed class LocalFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed class LocalFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;

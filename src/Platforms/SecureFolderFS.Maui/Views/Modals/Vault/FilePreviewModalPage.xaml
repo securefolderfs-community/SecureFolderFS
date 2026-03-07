@@ -23,42 +23,55 @@
         <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
         <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
 
+        <!--  Carousel  -->
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
                 HeightRequest="400"
+                IsDismissible="True"
                 SizeChanged="GalleryView_Loaded"
                 WidthRequest="300" />
         </DataTemplate>
+
+        <!--  Video  -->
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
             <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <uc:PanRouter.RouterContent>
-                    <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
-                        <vlc:MediaPlayerElement.PlaybackControls>
-                            <vlc:PlaybackControls
-                                AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"
-                                BackgroundColor="Transparent"
-                                ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"
-                                Foreground="#ffffff"
-                                IsTracksButtonVisible="False"
-                                LockButtonStyle="{StaticResource VideoLockButtonStyle}"
-                                MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                            Dark={StaticResource PrimaryDarkColor}}"
-                                PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
-                                RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"
-                                RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
-                                SeekBarStyle="{StaticResource VideoSeekBarStyle}"
-                                SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
-                                UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
-                        </vlc:MediaPlayerElement.PlaybackControls>
-                    </vlc:MediaPlayerElement>
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Text="Video Previewer is disabled. It contains usage of ClickGestureRecognizer which was removed in .NET 10 causing a TypeLoadException in the LibVLC library."
+                        VerticalOptions="Center" />
+
+                    <!-- <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded"> -->
+                    <!--     <vlc:MediaPlayerElement.PlaybackControls> -->
+                    <!--  <vlc:PlaybackControls  -->
+                    <!--  AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"  -->
+                    <!--  BackgroundColor="Transparent"  -->
+                    <!--  ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
+                    <!--  Foreground="#ffffff"  -->
+                    <!--  IsTracksButtonVisible="False"  -->
+                    <!--  LockButtonStyle="{StaticResource VideoLockButtonStyle}"  -->
+                    <!--  MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},  -->
+                    <!--  Dark={StaticResource PrimaryDarkColor}}"  -->
+                    <!--  PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"  -->
+                    <!--  RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
+                    <!--  RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"  -->
+                    <!--  SeekBarStyle="{StaticResource VideoSeekBarStyle}"  -->
+                    <!--  SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"  -->
+                    <!--  UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />  -->
+                    <!--     </vlc:MediaPlayerElement.PlaybackControls> -->
+                    <!-- </vlc:MediaPlayerElement> -->
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
+
+        <!--  Image  -->
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <Image Source="{Binding Image, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
             </ucc:PanPinchContainer>
         </DataTemplate>
+
+        <!--  Text  -->
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <Grid>
                 <ScrollView
@@ -69,7 +82,7 @@
                     VerticalScrollBarVisibility="Always">
                     <Editor
                         AutoSize="TextChanges"
-                        Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                        Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                         HorizontalOptions="Fill"
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Placeholder="{l:ResourceString Rid=WriteHere}"
@@ -86,29 +99,100 @@
                                                             Dark={StaticResource PrimaryContrastingDarkColor}}}" />
             </Grid>
         </DataTemplate>
+
+        <!--  PDF  -->
         <DataTemplate x:Key="PdfTemplate" x:DataType="vm:PdfPreviewerViewModel">
             <WebView
+                Background="Transparent"
                 HorizontalOptions="Fill"
                 Source="{Binding PdfSource, Mode=OneWay, Converter={StaticResource FileServerWebViewSourceConverter}}"
                 VerticalOptions="Fill" />
         </DataTemplate>
+
+        <DataTemplate x:Key="ArchiveTemplate" x:DataType="vm:ArchivePreviewerViewModel">
+            <Grid>
+                <VerticalStackLayout
+                    Padding="16"
+                    Spacing="16"
+                    VerticalOptions="Center">
+
+                    <!--  Archive Icon  -->
+                    <Image
+                        HeightRequest="80"
+                        HorizontalOptions="Center"
+                        Source="{OnPlatform Android='android_archive.png',
+                                            iOS='ios_archive.png'}"
+                        WidthRequest="80" />
+
+                    <VerticalStackLayout>
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Title, Mode=OneWay}" />
+                        <!--  File Size  -->
+                        <Label
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.8"
+                            Text="{Binding Size, Mode=OneWay}" />
+                    </VerticalStackLayout>
+
+                    <!--  Extract Button  -->
+                    <OnPlatform x:TypeArguments="uc:ActivityButton">
+                        <On Platform="Android">
+                            <uc:ActivityButton
+                                ButtonStyle="{StaticResource TransparentButtonStyle}"
+                                Command="{Binding ExtractCommand}"
+                                HorizontalOptions="Center"
+                                IsEnabled="{Binding IsSupported, Mode=OneWay}"
+                                IsProgressing="{Binding IsProgressing, Mode=OneWay}"
+                                MinimumWidthRequest="128"
+                                Text="{l:ResourceString Rid=Extract}" />
+                        </On>
+                        <On Platform="iOS">
+                            <uc:ActivityButton
+                                ButtonStyle="{StaticResource NoBackgroundButtonStyle}"
+                                Command="{Binding ExtractCommand}"
+                                HorizontalOptions="Center"
+                                IsEnabled="{Binding IsSupported, Mode=OneWay}"
+                                IsProgressing="{Binding IsProgressing, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=Extract}" />
+                        </On>
+                    </OnPlatform>
+
+                    <!--  Unsupported Format Notice  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        IsVisible="{Binding IsSupported, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=ArchiveFormatNotSupported}" />
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
+
+        <!--  Fallback  -->
         <DataTemplate x:Key="FallbackTemplate" x:DataType="vm:FallbackPreviewerViewModel">
-            <VerticalStackLayout Spacing="16" VerticalOptions="Center">
+            <VerticalStackLayout
+                Padding="16"
+                Spacing="16"
+                VerticalOptions="Center">
                 <Grid HorizontalOptions="Center">
                     <mi:MauiIcon Icon="{mi_material:Material Icon=Description, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="Android" />
                     <mi:MauiIcon Icon="{mi_cupertino:Cupertino Icon=Doc, IconSize=50, IconColor={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor}, Dark={StaticResource PrimaryContrastingDarkColor}}}" OnPlatforms="iOS" />
                 </Grid>
 
-                <VerticalStackLayout>
-                    <Label
-                        FontSize="20"
-                        HorizontalOptions="Center"
-                        Text="{Binding Title, Mode=OneWay}" />
-                    <Label
-                        HorizontalOptions="Center"
-                        Opacity="0.8"
-                        Text="{l:ResourceString Rid=NoPreviewAvailable}" />
-                </VerticalStackLayout>
+                <Label
+                    FontSize="20"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding Title, Mode=OneWay}" />
+                <Label
+                    HorizontalOptions="Center"
+                    Opacity="0.8"
+                    Text="{l:ResourceString Rid=NoPreviewAvailable}" />
             </VerticalStackLayout>
         </DataTemplate>
     </md:BaseModalPage.Resources>
@@ -119,7 +203,8 @@
             Closed="Closed_Clicked"
             IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
             IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}"
-            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}">
+            PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}"
+            ShareCommand="{Binding ViewModel.ShareCommand}">
             <uc:CommandBarControl.InnerContent>
                 <uc:ContentPresentation
                     x:Name="Presentation"
@@ -127,6 +212,7 @@
                     ZIndex="1">
                     <uc:ContentPresentation.TemplateSelector>
                         <ts:PreviewerTemplateSelector
+                            ArchiveTemplate="{StaticResource ArchiveTemplate}"
                             CarouselTemplate="{StaticResource CarouselTemplate}"
                             FallbackTemplate="{StaticResource FallbackTemplate}"
                             ImageTemplate="{StaticResource ImageTemplate}"

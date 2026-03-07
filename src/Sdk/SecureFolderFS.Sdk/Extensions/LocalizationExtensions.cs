@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
@@ -19,7 +20,11 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, ILocalizationService? localizationService = null)
         {
             localizationService = GetLocalizationService(localizationService);
-            return localizationService?.GetResource(resourceKey) ?? $"{{{resourceKey}}}";
+            var resource = localizationService?.GetResource(resourceKey);
+            if (string.IsNullOrEmpty(resource))
+                return $"{{{resourceKey}}}";
+
+            return resource.Replace("\\n", Environment.NewLine);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)
@@ -38,6 +43,20 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, params object?[] interpolate)
         {
             var localized = ToLocalized(resourceKey);
+            return SafetyHelpers.NoFailureResult(() => string.Format(localized, interpolate)) ?? localized;
+        }
+
+        /// <summary>
+        /// Converts the specified resource key to its localized string representation using the provided localization service
+        /// and formats it with the provided interpolation parameters.
+        /// </summary>
+        /// <param name="resourceKey">The key representing the resource to be localized and formatted.</param>
+        /// <param name="localizationService">The <see cref="ILocalizationService"/> to use.</param>
+        /// <param name="interpolate">An array of parameters used for string interpolation in the localized string representation.</param>
+        /// <returns>A formatted and localized string corresponding to the specified resource key. If localization or formatting fails, the resource key surrounded by curly braces ("{...}") is returned.</returns>
+        public static string ToLocalized(this string resourceKey, ILocalizationService localizationService, params object?[] interpolate)
+        {
+            var localized = ToLocalized(resourceKey, localizationService);
             return SafetyHelpers.NoFailureResult(() => string.Format(localized, interpolate)) ?? localized;
         }
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<linker>
+  <assembly fullname="SecureFolderFS.Maui">
+    <type fullname="SecureFolderFS.Maui.Platforms.Android.ServiceImplementation.ShareContentProvider" preserve="all" />
+  </assembly>
+  <!--
+    Preserve types whose constructors are needed by OnPlatform<T> in XAML.
+    The compiled InitializeComponent() instantiates these via reflection/generic
+    code paths that the trimmer cannot statically analyze.
+  -->
+  <assembly fullname="Microsoft.Maui.Controls">
+    <type fullname="Microsoft.Maui.Controls.View" preserve="all" />
+    <type fullname="Microsoft.Maui.Controls.Setter" preserve="all" />
+    <type fullname="Microsoft.Maui.Controls.Brush" preserve="all" />
+    <type fullname="Microsoft.Maui.Controls.SolidColorBrush" preserve="all" />
+    <type fullname="Microsoft.Maui.Controls.OnPlatform`1" preserve="all" />
+    <type fullname="Microsoft.Maui.Controls.On" preserve="all" />
+  </assembly>
+  <assembly fullname="Microsoft.Maui.Graphics">
+    <type fullname="Microsoft.Maui.Graphics.Color" preserve="all" />
+  </assembly>
+</linker>

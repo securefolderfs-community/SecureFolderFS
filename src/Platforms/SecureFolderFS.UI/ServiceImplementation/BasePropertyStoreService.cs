@@ -18,6 +18,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public abstract IPropertyStore<string> SecurePropertyStore { get; }
 
         /// <inheritdoc/>
+        public virtual IPropertyStore<string> InMemoryPropertyStore { get; } = new InMemoryPropertyStore();
+
+        /// <inheritdoc/>
         public virtual IDatabaseModel<string> GetDatabaseModel(IFile databaseFile)
         {
             return new SingleFileDatabaseModel(databaseFile, StreamSerializer.Instance);
@@ -28,7 +31,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public sealed class InMemoryPropertyStore : IPropertyStore<string>
     {
         private readonly Dictionary<string, object?> _properties = new();
-        
+
         /// <inheritdoc/>
         public async Task<TValue?> GetValueAsync<TValue>(string key, Func<TValue?>? defaultValue = null, CancellationToken cancellationToken = default)
         {

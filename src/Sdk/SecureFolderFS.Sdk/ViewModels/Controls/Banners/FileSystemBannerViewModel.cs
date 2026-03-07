@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
-using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             {
                 var fileSystemResult = await item.GetStatusAsync(cancellationToken);
                 if (fileSystemResult != FileSystemAvailability.None)
-                    FileSystemAdapters.Add(new(item, item.Name));
+                    FileSystemAdapters.Add(new(item));
             }
 
             SelectedItem = FileSystemAdapters.FirstOrDefault(x => x.FileSystem.Id == SettingsService.UserSettings.PreferredFileSystemId);
@@ -45,15 +45,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         {
             if (value is not null)
                 SettingsService.UserSettings.PreferredFileSystemId = value.FileSystem.Id;
-        }
-    }
-
-    public sealed record FileSystemItemViewModel(IFileSystem FileSystem, string Name)
-    {
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Name;
         }
     }
 }

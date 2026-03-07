@@ -1,30 +1,30 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Streams;
+﻿using System;
+using System.Buffers;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Buffers;
-using System.Diagnostics;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <summary>
     /// Provides read access to chunks.
     /// </summary>
-    internal sealed class ChunkReader : IDisposable
+    internal sealed class ChunkReader
     {
         private readonly Security _security;
         private readonly BufferHolder _fileHeader;
-        private readonly StreamsManager _streamsManager;
+        private readonly Stream _ciphertextStream;
         private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public ChunkReader(Security security, BufferHolder fileHeader, StreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
+        public ChunkReader(Security security, BufferHolder fileHeader, Stream ciphertextStream, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
-            _streamsManager = streamsManager;
+            _ciphertextStream = ciphertextStream;
             _fileSystemStatistics = fileSystemStatistics;
         }
 
@@ -48,27 +48,23 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // ArrayPool may return a larger array than requested
                 var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
-                // Get available read stream or throw
-                var ciphertextStream = _streamsManager.GetReadOnlyStream();
-                _ = ciphertextStream ?? throw new UnavailableStreamException();
-
                 // Check position bounds
-                if (ciphertextPosition > ciphertextStream.Length)
+                if (_ciphertextStream.CanSeek && _ciphertextStream.Length < ciphertextPosition)
                     return 0;
 
                 // Set the correct stream position
-                if (!ciphertextStream.TrySetPositionOrAdvance(ciphertextPosition))
+                if (!_ciphertextStream.TrySetPositionOrAdvance(ciphertextPosition))
                     return 0;
 
                 // Return early if the stream is at the EOF position
-                if (ciphertextStream.IsEndOfStream())
+                if (_ciphertextStream.IsEndOfStream())
                     return 0;
 
-                // Read from stream at correct chunk
-                var read = ciphertextStream.Read(realCiphertextChunk);
+                // Read from the stream at the correct chunk
+                var read = _ciphertextStream.Read(realCiphertextChunk);
 
                 // Check for the end of the file
-                if (read == FileSystem.Constants.FILE_EOF)
+                if (read == Constants.FILE_EOF)
                     return 0;
 
                 _fileSystemStatistics.BytesRead?.Report(read);
@@ -104,15 +100,12 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             }
             finally
             {
+                // Clear ciphertext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(ciphertextChunk.AsSpan(0, ciphertextSize));
+
                 // Return buffer
                 ArrayPool<byte>.Shared.Return(ciphertextChunk);
             }
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            _streamsManager.Dispose();
         }
     }
 }

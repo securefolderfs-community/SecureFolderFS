@@ -1,3 +1,4 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -11,5 +12,21 @@ namespace SecureFolderFS.Uno.UserControls
         {
             InitializeComponent();
         }
+
+        public string? PrimaryTitle
+        {
+            get => (string?)GetValue(PrimaryTitleProperty);
+            set => SetValue(PrimaryTitleProperty, value);
+        }
+        public static readonly DependencyProperty PrimaryTitleProperty =
+            DependencyProperty.Register(nameof(PrimaryTitle), typeof(string), typeof(TitleBarControl), new PropertyMetadata(null));
+
+        public string? SecondaryTitle
+        {
+            get => (string?)GetValue(SecondaryTitleProperty);
+            set => SetValue(SecondaryTitleProperty, value);
+        }
+        public static readonly DependencyProperty SecondaryTitleProperty =
+            DependencyProperty.Register(nameof(SecondaryTitle), typeof(string), typeof(TitleBarControl), new PropertyMetadata(null));
     }
 }

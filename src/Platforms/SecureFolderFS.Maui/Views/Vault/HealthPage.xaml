@@ -91,8 +91,7 @@
                     <apesui:ContextMenuItem
                         Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
                         CommandParameter="include_file_contents"
-                        IsEnabled="False"
-                        Text="Include file contents (slower)" />
+                        Text="Scan full vault (include file contents)" />
                 </apesui:ContextMenuContainer.MenuItems>
                 <apesui:ContextMenuContainer.Content>
                     <uc:ProgressiveButton
@@ -137,7 +136,7 @@
             Grid.Row="1"
             Margin="0,0,0,-36"
             Padding="16,16,16,48"
-            Background="{StaticResource ThemeBackgroundFillColorBrush}"
+            Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}"
             IsVisible="{Binding ViewModel.CanResolve, Mode=OneWay}"
             Spacing="8">
             <Button Command="{Binding ViewModel.ResolveCommand}" Text="{l:ResourceString Rid=RepairAll}" />

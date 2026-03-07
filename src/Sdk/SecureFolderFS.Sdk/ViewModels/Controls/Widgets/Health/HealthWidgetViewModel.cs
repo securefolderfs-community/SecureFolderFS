@@ -33,6 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             ServiceProvider = DI.Default;
             _context = SynchronizationContext.Current;
             _dashboardNavigator = dashboardNavigator;
+            Title = "HealthWidget".ToLocalized();
             HealthViewModel = new(unlockedVaultViewModel);
             HealthReportViewModel = new(unlockedVaultViewModel, HealthViewModel);
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");

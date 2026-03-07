@@ -49,6 +49,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 .Override<ISystemService, WindowsSystemService>(AddService.AddSingleton)
+                .Override<IPrivacyService, WindowsPrivacyService>(AddService.AddSingleton)
                 .Override<IPrinterService, WindowsPrinterService>(AddService.AddSingleton)
                 .Override<IApplicationService, WindowsApplicationService>(AddService.AddSingleton)
                 .Override<IVaultFileSystemService, WindowsVaultFileSystemService>(AddService.AddSingleton)

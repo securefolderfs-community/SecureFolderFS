@@ -1,17 +1,13 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.VirtualFileSystem
 {
     /// <summary>
     /// Represents an item in the recycle bin within the virtual file system.
     /// </summary>
-    public interface IRecycleBinItem : IStorableChild, IWrapper<IStorableChild>
+    public interface IRecycleBinItem : IStorableChild, IWrapper<IStorableChild>, ICreatedAt, ISizeOf
     {
-        /// <summary>
-        /// Gets the timestamp indicating when the item was deleted.
-        /// </summary>
-        DateTime DeletionTimestamp { get; }
     }
 }

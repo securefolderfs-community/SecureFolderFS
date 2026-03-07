@@ -13,7 +13,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 namespace SecureFolderFS.Core.FUSE
 {
     /// <inheritdoc cref="IFileSystem"/>
-    public sealed partial class FuseFileSystem : IFileSystem
+    public sealed partial class FuseFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;

@@ -18,15 +18,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         }
 
         /// <inheritdoc/>
-        public override ValueTask DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
-            if (!_disposed)
-            {
-                _disposed = true;
-                FileSystemManager.Instance.FileSystems.Remove(this);
-            }
+            if (_disposed)
+                return;
 
-            return ValueTask.CompletedTask;
+            _disposed = true;
+            FileSystemManager.Instance.FileSystems.Remove(this);
+            await base.DisposeAsync();
         }
     }
 }

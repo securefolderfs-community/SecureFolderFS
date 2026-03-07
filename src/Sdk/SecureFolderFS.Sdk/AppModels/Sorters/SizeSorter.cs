@@ -37,7 +37,11 @@ namespace SecureFolderFS.Sdk.AppModels.Sorters
             if (browserItemViewModel is not FileViewModel fileViewModel)
                 return -1L;
 
-            return await fileViewModel.File.GetSizeAsync().ConfigureAwait(false);
+            var size = await fileViewModel.File.GetSizeAsync().ConfigureAwait(false);
+            if (size is null)
+                return -1L;
+
+            return size.Value;
         }
     }
 }

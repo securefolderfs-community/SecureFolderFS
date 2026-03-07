@@ -45,8 +45,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsImmersedProperty, value);
         }
         public static readonly BindableProperty IsImmersedProperty =
-            BindableProperty.Create(nameof(IsImmersed), typeof(bool), typeof(CommandBarControl), propertyChanged:
-                static async (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsImmersed), typeof(bool), typeof(CommandBarControl),
+                propertyChanged: static async (bindable, _, newValue) =>
                 {
                     if (newValue is not bool bValue)
                         return;
@@ -58,17 +58,17 @@ namespace SecureFolderFS.Maui.UserControls
                     {
                         commandBar.TopBorder.IsVisible = true;
 #if ANDROID
-                        await commandBar.TopBorder.TranslateTo(0, 0, 350U, Easing.CubicInOut);
+                        await commandBar.TopBorder.TranslateToAsync(0, 0, 350U, Easing.CubicInOut);
 #elif IOS
-                        await commandBar.TopBorder.FadeTo(1d, 350U, Easing.CubicInOut);
+                        await commandBar.TopBorder.FadeToAsync(1d, 350U, Easing.CubicInOut);
 #endif
                     }
                     else
                     {
 #if ANDROID
-                        await commandBar.TopBorder.TranslateTo(0, -150, 350U, Easing.CubicInOut);
+                        await commandBar.TopBorder.TranslateToAsync(0, -150, 350U, Easing.CubicInOut);
 #elif IOS
-                        await commandBar.TopBorder.FadeTo(0d, 350U, Easing.CubicInOut);
+                        await commandBar.TopBorder.FadeToAsync(0d, 350U, Easing.CubicInOut);
 #endif
                         commandBar.TopBorder.IsVisible = false;
                     }
@@ -80,8 +80,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(IsToolbarOnTopProperty, value);
         }
         public static readonly BindableProperty IsToolbarOnTopProperty =
-            BindableProperty.Create(nameof(IsToolbarOnTop), typeof(bool), typeof(CommandBarControl), propertyChanged:
-                static (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(IsToolbarOnTop), typeof(bool), typeof(CommandBarControl),
+                propertyChanged: static (bindable, _, newValue) =>
                 {
                     if (newValue is not bool bValue)
                         return;

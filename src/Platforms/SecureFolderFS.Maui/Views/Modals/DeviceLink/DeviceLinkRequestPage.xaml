@@ -1,0 +1,204 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.DeviceLink.DeviceLinkRequestPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.DeviceLink"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    x:Name="ThisPage"
+    Title="{l:ResourceString Rid=DeviceLinkRequest}"
+    x:DataType="local:DeviceLinkRequestPage">
+
+    <md:BaseModalPage.ModalContent>
+        <Grid Padding="20,24" RowDefinitions="Auto,*,Auto">
+            <!--  Main Content  -->
+            <VerticalStackLayout
+                Grid.Row="1"
+                Spacing="56"
+                VerticalOptions="Center">
+
+                <!--  Device Animation Area  -->
+                <Grid
+                    x:Name="DeviceAnimationContainer"
+                    HeightRequest="120"
+                    HorizontalOptions="Center"
+                    WidthRequest="320">
+
+                    <!--  Desktop Device  -->
+                    <Border
+                        x:Name="DesktopDevice"
+                        Padding="12"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        ZIndex="3">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow
+                                Brush="#20000000"
+                                Radius="12"
+                                Offset="0,4" />
+                        </Border.Shadow>
+                        <Image
+                            Aspect="AspectFit"
+                            HeightRequest="72"
+                            Source="{Binding ViewModel.DesktopImage, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                            WidthRequest="100" />
+                    </Border>
+
+                    <!--  Key Transfer Indicator  -->
+                    <Grid
+                        x:Name="KeyTransferIndicator"
+                        Margin="0,0,70,0"
+                        HorizontalOptions="End"
+                        Opacity="0.7"
+                        VerticalOptions="Center"
+                        ZIndex="2">
+                        <Ellipse
+                            x:Name="KeyPulseRing"
+                            Fill="Transparent"
+                            HeightRequest="48"
+                            Opacity="0.5"
+                            Stroke="{StaticResource ThemePrimaryColorBrush}"
+                            StrokeThickness="2"
+                            WidthRequest="48" />
+                        <mi:MauiIcon
+                            x:Name="KeyIcon"
+                            HorizontalOptions="Center"
+                            Icon="{mi_cupertino:Cupertino LockShield}"
+                            IconColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                        Dark={StaticResource QuarternaryDarkColor}}"
+                            IconSize="24"
+                            OnPlatforms="iOS"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            HorizontalOptions="Center"
+                            Icon="{mi_material:Material SyncAlt}"
+                            IconColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                        Dark={StaticResource QuarternaryDarkColor}}"
+                            IconSize="24"
+                            OnPlatforms="Android"
+                            VerticalOptions="Center" />
+                    </Grid>
+
+                    <!--  Mobile Device  -->
+                    <Border
+                        x:Name="MobileDevice"
+                        Padding="12"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        ZIndex="1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow
+                                Brush="#20000000"
+                                Radius="12"
+                                Offset="0,4" />
+                        </Border.Shadow>
+                        <Image
+                            Aspect="AspectFit"
+                            HeightRequest="72"
+                            Source="{AppThemeBinding Light={OnPlatform Android='gpixel_light.png',
+                                                                       iOS='iphone_light.png'},
+                                                     Dark={OnPlatform Android='gpixel_dark.png',
+                                                                      iOS='iphone_dark.png'}}"
+                            WidthRequest="40" />
+                    </Border>
+                </Grid>
+
+                <!--  Request Description  -->
+                <Border
+                    Padding="16"
+                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                    HorizontalOptions="Fill">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalOptions="Start"
+                            Text="{Binding ViewModel.RemoteDeviceName, Mode=OneWay}" />
+                        <Label
+                            FontSize="14"
+                            HorizontalOptions="Start"
+                            LineBreakMode="WordWrap"
+                            Opacity="0.7"
+                            Text="{l:ResourceString Rid=DeviceLinkIsRequestingCredentials}" />
+
+                        <Label
+                            Margin="0,8,0,0"
+                            FontSize="14"
+                            HorizontalOptions="Start"
+                            LineBreakMode="TailTruncation"
+                            Opacity="0.7"
+                            Text="{Binding ViewModel.CredentialName, Mode=OneWay}" />
+
+                        <BoxView
+                            Margin="0,8,0,0"
+                            HeightRequest="1"
+                            Color="{AppThemeBinding Light={StaticResource BorderLightColor},
+                                                    Dark={StaticResource BorderDarkColor}}" />
+                        <Grid
+                            Margin="0,4,0,0"
+                            ColumnDefinitions="Auto,*"
+                            ColumnSpacing="8">
+                            <mi:MauiIcon
+                                Grid.Column="0"
+                                Icon="{mi_cupertino:Cupertino InfoCircle}"
+                                IconColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                            Dark={StaticResource QuarternaryDarkColor}}"
+                                IconSize="16"
+                                OnPlatforms="iOS"
+                                Opacity="0.6"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Grid.Column="0"
+                                Icon="{mi_material:Material Info}"
+                                IconColor="{AppThemeBinding Light={StaticResource QuarternaryLightColor},
+                                                            Dark={StaticResource QuarternaryDarkColor}}"
+                                IconSize="16"
+                                OnPlatforms="Android"
+                                Opacity="0.6"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="1"
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=DeviceLinkAcceptWarning}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <!--  Action Buttons  -->
+            <Grid
+                Grid.Row="2"
+                Margin="0,16,0,0"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="12">
+                <Button
+                    x:Name="AcceptButton"
+                    Grid.Column="0"
+                    Command="{Binding AcceptRequestCommand, Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Text="{l:ResourceString Rid=Accept}" />
+                <Button
+                    x:Name="RejectButton"
+                    Grid.Column="1"
+                    Command="{Binding RejectRequestCommand, Mode=OneWay}"
+                    Text="{l:ResourceString Rid=Reject}" />
+            </Grid>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

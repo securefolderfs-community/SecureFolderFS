@@ -5,6 +5,7 @@
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
@@ -70,13 +71,10 @@
             </Grid>
 
             <!--  Options list  -->
-            <VerticalStackLayout
-                Grid.Row="2"
-                Padding="16,0"
-                Spacing="16">
+            <VerticalStackLayout Grid.Row="2" Padding="16,0">
 
                 <!--  Quick Actions  -->
-                <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}">
+                <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}" Margin="0,0,0,16">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
                             <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
@@ -89,7 +87,7 @@
                 </uco:OptionsContainer>
 
                 <!--  Vault Properties  -->
-                <uco:OptionsContainer Title="{l:ResourceString Rid=VaultProperties}">
+                <uco:OptionsContainer Title="{l:ResourceString Rid=VaultProperties}" Margin="0,0,0,16">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
                             <uco:OptionsControl Title="{l:ResourceString Rid=Security}" SlotText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
@@ -101,6 +99,17 @@
                         </VerticalStackLayout>
                     </uco:OptionsContainer.InnerContent>
                 </uco:OptionsContainer>
+
+                <!--  Account Information  -->
+                <Border
+                    Margin="0,-8,0,16"
+                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                    IsVisible="{Binding ViewModel.VaultViewModel.VaultModel.IsRemote, Mode=OneWay}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <uc:AccountBarControl AccountViewModel="{Binding ViewModel.VaultViewModel.VaultModel.Inner, Mode=OneWay}" />
+                </Border>
 
                 <!--  Authentication  -->
                 <uco:OptionsContainer Title="{l:ResourceString Rid=Authentication}">

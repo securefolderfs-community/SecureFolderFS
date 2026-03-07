@@ -1,17 +1,28 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
-using SecureFolderFS.Storage.StorageProperties;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.FileShareOptions;
+using SecureFolderFS.Storage.StorageProperties;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IFile"/>
-    public class CryptoFile : CryptoStorable<IFile>, IChildFile
+    public class CryptoFile : CryptoStorable<IFile>, IFileOpenShare, IChildFile, ICreatedAt, ILastModifiedAt, ISizeOf
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new CryptoCreatedAtProperty(Id, (Inner as ICreatedAt)?.CreatedAt);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new CryptoLastModifiedAtProperty(Id, (Inner as ILastModifiedAt)?.LastModifiedAt);
+
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new CryptoSizeOfProperty(Id, specifics, (Inner as ISizeOf)?.SizeOf);
+
         public CryptoFile(string plaintextId, IFile inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
         {
@@ -31,16 +42,17 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             return CreatePlaintextStream(stream, readingStream);
         }
 
-        /// <inheritdoc/>
-        public override async Task<IBasicProperties> GetPropertiesAsync()
+        public async Task<Stream> OpenStreamAsync(FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
         {
-            if (Inner is not IStorableProperties storableProperties)
-                throw new NotSupportedException($"Properties on {nameof(CryptoFile)}.{nameof(Inner)} are not supported.");
+            if (specifics.Options.IsReadOnly && accessMode.HasFlag(FileAccess.Write))
+                throw FileSystemExceptions.FileSystemReadOnly;
 
-            var innerProperties = await storableProperties.GetPropertiesAsync();
-            properties ??= new CryptoFileProperties(specifics, innerProperties);
+            var stream = await Inner.OpenStreamAsync(accessMode, shareMode, cancellationToken);
+            if (stream.CanRead || stream is { CanSeek: true, Length: <= 0 })
+                return CreatePlaintextStream(stream, null);
 
-            return properties;
+            var readingStream = await Inner.OpenStreamAsync(FileAccess.Read, shareMode, cancellationToken);
+            return CreatePlaintextStream(stream, readingStream);
         }
 
         /// <summary>

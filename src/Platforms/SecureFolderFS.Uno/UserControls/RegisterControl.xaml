@@ -9,7 +9,9 @@
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm3="using:SecureFolderFS.UI.ViewModels.Authentication"
-    xmlns:vm4="using:SecureFolderFS.Uno.ViewModels"
+    xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
+    xmlns:vm5="using:SecureFolderFS.Uno.ViewModels.YubiKey"
+    xmlns:vm6="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="RootControl"
     mc:Ignorable="d">
@@ -31,17 +33,14 @@
         <!--  Key File Template  -->
         <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm3:KeyFileCreationViewModel">
             <StackPanel Spacing="24">
-                <!--  Logo  -->
+                <!--  Icon  -->
                 <FontIcon
                     HorizontalAlignment="Center"
                     FontSize="24"
                     Glyph="&#xE8D7;" />
 
                 <!--  Title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{l:ResourceString Rid=SetupKeyFile}" />
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -56,17 +55,14 @@
         <!--  Windows Hello Template  -->
         <win:DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm4:WindowsHelloCreationViewModel">
             <StackPanel Spacing="24">
-                <!--  Logo  -->
+                <!--  Icon  -->
                 <FontIcon
                     HorizontalAlignment="Center"
                     FontSize="38"
                     Glyph="&#xEB68;" />
 
                 <!--  Title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{l:ResourceString Rid=SetupWindowsHello}" />
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -77,14 +73,123 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </win:DataTemplate>
+
+        <!--  YubiKey Template  -->
+        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm5:YubiKeyCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <local:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
+
+                <StackPanel Spacing="8">
+                    <!--  Title  -->
+                    <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupYubiKey}" />
+
+                    <!--  Slot Selection  -->
+                    <CheckBox
+                        HorizontalAlignment="Center"
+                        Content="{l:ResourceString Rid=UseLongPress}"
+                        IsChecked="{x:Bind UseLongPress, Mode=TwoWay}" />
+                </StackPanel>
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Setup}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Device Link Template  -->
+        <DataTemplate x:Key="DeviceLinkTemplate" x:DataType="vm6:DeviceLinkCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="38"
+                    Glyph="&#xE8EA;" />
+
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupDeviceLink}" />
+
+                <!--  Instructions  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Rid=DeviceLinkInstructions}" />
+
+                <!--  Verification Code  -->
+                <Grid
+                    Padding="16"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8"
+                    RowSpacing="16"
+                    Translation="0,0,16"
+                    Visibility="{x:Bind VerificationCode, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                    <Grid.Shadow>
+                        <ThemeShadow />
+                    </Grid.Shadow>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Spacing="4">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="24"
+                            FontWeight="SemiBold"
+                            Text="{x:Bind VerificationCode, Mode=OneWay}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Opacity="0.8"
+                            Text="{l:ResourceString Rid=ConfirmBothCodesMatch}" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            Grid.Column="0"
+                            Padding="24,6"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ConfirmVerificationCodeCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=Accept}"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                        <Button
+                            Grid.Column="1"
+                            Padding="24,6"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind RejectVerificationCodeCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=Reject}" />
+                    </Grid>
+                </Grid>
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Setup}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
     </UserControl.Resources>
 
     <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind CurrentViewModel, Mode=OneWay}">
         <ContentControl.ContentTemplateSelector>
             <ts:RegistrationTemplateSelector
+                DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
-                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
+                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
+                YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />
         </ContentControl.ContentTemplateSelector>
     </ContentControl>
 </UserControl>

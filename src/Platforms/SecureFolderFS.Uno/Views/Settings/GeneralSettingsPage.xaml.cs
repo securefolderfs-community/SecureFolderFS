@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             set { DataContext = value; OnPropertyChanged(); }
         }
 
-        public int SelectedThemeIndex => (int)UnoThemeHelper.Instance.CurrentTheme;
+        public int SelectedThemeIndex => (int)UnoThemeHelper.Instance.ActualTheme;
 
         public GeneralSettingsPage()
         {

@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed partial class DokanyFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed partial class DokanyFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;

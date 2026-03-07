@@ -11,10 +11,9 @@
     Title="{OnPlatform iOS={Binding ViewModel.Title,
                                     Mode=OneWay}}"
     x:DataType="local:BrowserPage"
-    Background="{StaticResource ThemeBackgroundFillColorBrush}">
+    Background="{StaticResource ThemeBackgroundFillPrimaryColorBrush}">
 
     <ContentPage.Resources>
-        <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
         <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>
 
@@ -22,7 +21,7 @@
         <ToolbarItem
             Command="{Binding ViewModel.ToggleSelectionCommand}"
             Order="Secondary"
-            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|SelectItems:true:LOCALIZE|Cancel'}" />
+            Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
             Command="{Binding ViewModel.ChangeViewOptionsCommand}"
             Order="Secondary"
@@ -39,18 +38,29 @@
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>
-        <VerticalStackLayout VerticalOptions="Center">
+        <Grid>
             <Label
+                Margin="{OnPlatform Android='-24,0,0,0'}"
                 FontAttributes="Bold"
-                FontSize="20"
-                Text="{Binding ViewModel.Title, Mode=OneWay}"
-                TextColor="#FFFFFF" />
-            <Label
-                FontSize="14"
-                Opacity="0.6"
-                Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource FolderItemsCountToStringConverter}}"
-                TextColor="#FFFFFF" />
-        </VerticalStackLayout>
+                FontSize="18"
+                HorizontalOptions="Center"
+                IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+                Text="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(0:LOCALIZE|SelectItems)|(>0:LOCALIZE|ItemsSelected)'}"
+                TextColor="#FFFFFF"
+                VerticalOptions="Center" />
+            <VerticalStackLayout IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="{Binding ViewModel.Title, Mode=OneWay}"
+                    TextColor="#FFFFFF" />
+                <Label
+                    FontSize="12"
+                    Opacity="0.6"
+                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|ElementsCount)'}"
+                    TextColor="#FFFFFF" />
+            </VerticalStackLayout>
+        </Grid>
     </Shell.TitleView>
 
     <Grid>
@@ -61,7 +71,7 @@
 
         <uc:BreadcrumbBar
             Grid.Row="0"
-            Margin="56,4,0,4"
+            Margin="16,4"
             HeightRequest="32"
             ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
 

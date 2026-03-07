@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using SecureFolderFS.Sdk.Extensions;
@@ -6,10 +7,18 @@ namespace SecureFolderFS.Maui.UserControls
 {
     public partial class PasswordControl : ContentView
     {
+        public event EventHandler? PasswordSubmitted;
+
         public PasswordControl()
         {
             InitializeComponent();
             RootGrid.BindingContext = this;
+        }
+
+        private void PasswordEntry_Completed(object? sender, EventArgs e)
+        {
+            PasswordSubmittedCommand?.Execute(null);
+            PasswordSubmitted?.Invoke(this, EventArgs.Empty);
         }
 
         public string? Title
@@ -34,7 +43,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(UnsecurePasswordProperty, value);
         }
         public static readonly BindableProperty UnsecurePasswordProperty =
-            BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultValue: null, defaultBindingMode: BindingMode.TwoWay);
+            BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultBindingMode: BindingMode.TwoWay);
 
         public bool ShowInvalidPasswordMessage
         {
@@ -42,8 +51,8 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(ShowInvalidPasswordMessageProperty, value);
         }
         public static readonly BindableProperty ShowInvalidPasswordMessageProperty =
-            BindableProperty.Create(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), defaultValue: false, defaultBindingMode: BindingMode.TwoWay, propertyChanged:
-                static async (bindable, _, newValue) =>
+            BindableProperty.Create(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), defaultValue: false, defaultBindingMode: BindingMode.TwoWay,
+                propertyChanged: static async (bindable, _, newValue) =>
                 {
                     if (newValue is not true)
                         return;
@@ -56,5 +65,13 @@ namespace SecureFolderFS.Maui.UserControls
 
                     passwordControl.ShowInvalidPasswordMessage = false;
                 });
+
+        public ICommand? PasswordSubmittedCommand
+        {
+            get => (ICommand?)GetValue(PasswordSubmittedCommandProperty);
+            set => SetValue(PasswordSubmittedCommandProperty, value);
+        }
+        public static readonly BindableProperty PasswordSubmittedCommandProperty =
+            BindableProperty.Create(nameof(PasswordSubmittedCommand), typeof(ICommand), typeof(PasswordControl));
     }
 }

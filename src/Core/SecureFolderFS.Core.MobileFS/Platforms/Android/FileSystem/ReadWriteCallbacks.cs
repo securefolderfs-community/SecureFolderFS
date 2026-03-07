@@ -1,15 +1,16 @@
 using Android.OS;
-using Android.Systems;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     internal sealed class ReadWriteCallbacks : StorageManagerCompat.ProxyFileDescriptorCallbackCompat
     {
         private readonly Stream _stream;
+        private readonly HandlerThread? _handlerThread;
 
-        public ReadWriteCallbacks(Stream stream)
+        public ReadWriteCallbacks(Stream stream, HandlerThread? handlerThread = null)
         {
             _stream = stream;
+            _handlerThread = handlerThread;
         }
 
         /// <inheritdoc/>
@@ -27,8 +28,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     return 0;
 
                 // Seek to the requested offset
-                if (offset > 0)
-                    _stream.Seek(offset, SeekOrigin.Begin);
+                _stream.Seek(offset, SeekOrigin.Begin);
 
                 // Read the requested data
                 return _stream.Read(data.AsSpan(0, size));
@@ -50,8 +50,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     return 0;
 
                 // Seek to the requested offset
-                if (offset > 0)
-                    _stream.Seek(offset, SeekOrigin.Begin);
+                _stream.Seek(offset, SeekOrigin.Begin);
 
                 // Write the requested data
                 _stream.Write(data.AsSpan(0, size));
@@ -86,6 +85,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override void OnRelease()
         {
             _stream.Dispose();
+            _handlerThread?.QuitSafely();
         }
     }
 }

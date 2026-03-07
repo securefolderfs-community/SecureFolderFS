@@ -1,4 +1,4 @@
-﻿using OwlCore.Storage;
+﻿﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 
@@ -10,6 +10,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Gets the file health validator associated with this instance.
         /// </summary>
         IAsyncValidator<IFile, IResult>? FileValidator { get; set; }
+
+        /// <summary>
+        /// Gets the file content validator for deep file validation.
+        /// </summary>
+        IAsyncValidator<IFile, IResult>? FileContentValidator { get; set; }
 
         /// <summary>
         /// Gets the file health validator associated with this instance.

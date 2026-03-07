@@ -13,7 +13,7 @@ using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.Platforms.Windows
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed class WindowsWebDavFileSystem : WebDavFileSystem
     {
         /// <inheritdoc/>

@@ -32,6 +32,13 @@
                         <FontIcon Glyph="&#xEADF;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+
+                <!--  Phone Link  -->
+                <NavigationViewItem Content="Phone Link" Tag="2">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8EA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <!--  Display frame  -->

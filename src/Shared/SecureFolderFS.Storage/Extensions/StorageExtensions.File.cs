@@ -1,11 +1,12 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.StorageProperties;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.FileShareOptions;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -54,7 +55,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="string"/> that contains text found in the file.</returns>
         public static async Task<string> ReadAllTextAsync(this IFile file, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
-            await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             using var streamReader = new StreamReader(fileStream, encoding ?? Encoding.UTF8);
 
             return await streamReader.ReadToEndAsync(cancellationToken);
@@ -74,20 +75,43 @@ namespace SecureFolderFS.Storage.Extensions
             }
         }
 
-        public static async Task<long> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
+        /// <param name="shareMode">The <see cref="FileShare"/> value that informs what sharing permissions between consumers should be applied.</param>
+        /// <returns>If successful, returns a <see cref="Stream"/>; otherwise null.</returns>
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileShare shareMode, FileAccess access, CancellationToken cancellationToken = default)
         {
-            if (file is not IStorableProperties storableProperties)
-                return 0L;
+            try
+            {
+                return await file.OpenStreamAsync(access, shareMode, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
-            var properties = await storableProperties.GetPropertiesAsync().ConfigureAwait(false);
-            if (properties is not ISizeProperties sizeProperties)
-                return 0L;
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        /// <param name="shareMode">The <see cref="FileShare"/> value that informs what sharing permissions between consumers should be applied.</param>
+        public static async Task<Stream> OpenStreamAsync(this IFile file, FileAccess accessMode, FileShare shareMode, CancellationToken cancellationToken = default)
+        {
+            if (file is IFileOpenShare fileOpenShare)
+                return await fileOpenShare.OpenStreamAsync(accessMode, shareMode, cancellationToken);
 
-            var sizeProperty = await sizeProperties.GetSizeAsync(cancellationToken).ConfigureAwait(false);
-            if (sizeProperty is null)
-                return 0L;
+            return await file.OpenStreamAsync(accessMode, cancellationToken);
+        }
 
-            return sizeProperty.Value;
+        /// <summary>
+        /// Retrieves the size of the specified <paramref name="file"/>.
+        /// </summary>
+        /// <param name="file">The file whose size is to be retrieved.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the size of the file in bytes, or null if unavailable.</returns>
+        public static async Task<long?> GetSizeAsync(this IFile file, CancellationToken cancellationToken = default)
+        {
+            if (file is not ISizeOf sizeOf)
+                return null;
+
+            return await sizeOf.SizeOf.GetValueAsync(cancellationToken);
         }
     }
 }

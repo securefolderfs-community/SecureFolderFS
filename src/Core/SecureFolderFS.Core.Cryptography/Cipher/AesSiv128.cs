@@ -26,7 +26,6 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             macKey.CopyTo(longKeySpan.Slice(dekKey.Length));
 
             var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-
             return new AesSiv128(aesCmacSiv);
         }
 

@@ -5,11 +5,22 @@ using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Ftp.Extensions;
+using SecureFolderFS.Sdk.Ftp.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 
-namespace SecureFolderFS.Sdk.Ftp
+namespace SecureFolderFS.Sdk.Ftp.Storage
 {
-    public class FtpFile : FtpStorable, IChildFile
+    public class FtpFile : FtpStorable, IChildFile, ICreatedAt, ILastModifiedAt, ISizeOf
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new FtpCreatedAtProperty(Id, ftpClient);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new FtpLastModifiedAtProperty(Id, ftpClient);
+
+        /// <inheritdoc/>
+        public ISizeOfProperty SizeOf => field ??= new FtpSizeOfProperty(Id, ftpClient);
+
         public FtpFile(AsyncFtpClient ftpClient, string id, string name, IFolder? parentFolder = null)
             : base(ftpClient, id, name, parentFolder)
         {
@@ -24,15 +35,11 @@ namespace SecureFolderFS.Sdk.Ftp
             var ftpStream = accessMode switch
             {
                 FileAccess.Read => await ftpClient.OpenRead(Id, token: cancellationToken),
-                FileAccess.Write => await ftpClient.OpenWrite(Id, token: cancellationToken),
+                FileAccess.Write => await ftpClient.OpenWrite(Id, FtpDataType.Binary, false, token: cancellationToken),
                 _ => throw new NotSupportedException($"The {nameof(FileAccess)} '{accessMode}' is not supported on an FTP stream."),
             };
 
-            var fileSize = await ftpClient.GetFileSize(Id, -1L, cancellationToken);
-            if (fileSize < 0L)
-                throw new UnauthorizedAccessException("Cannot read the file size.");
-
-            return new LengthSupportedFtpStream(ftpStream, fileSize);
+            return ftpStream;
         }
     }
 }

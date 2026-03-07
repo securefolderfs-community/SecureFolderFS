@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -10,6 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
         public static void SetupValidators(this VirtualFileSystemOptions fileSystemOptions, FileSystemSpecifics specifics)
         {
             fileSystemOptions.HealthStatistics.FileValidator ??= new FileValidator(specifics);
+            fileSystemOptions.HealthStatistics.FileContentValidator ??= new FileContentValidator(specifics);
             fileSystemOptions.HealthStatistics.FolderValidator ??= new FolderValidator(specifics);
             fileSystemOptions.HealthStatistics.StructureValidator ??= new StructureValidator(specifics, fileSystemOptions.HealthStatistics.FileValidator, fileSystemOptions.HealthStatistics.FolderValidator);
         }

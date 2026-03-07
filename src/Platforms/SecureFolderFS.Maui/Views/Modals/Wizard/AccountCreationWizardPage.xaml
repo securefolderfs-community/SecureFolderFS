@@ -11,6 +11,8 @@
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.Ftp.ViewModels;assembly=SecureFolderFS.Sdk.Ftp"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.GoogleDrive.ViewModels;assembly=SecureFolderFS.Sdk.GoogleDrive"
+    xmlns:vm3="clr-namespace:SecureFolderFS.Sdk.Dropbox.ViewModels;assembly=SecureFolderFS.Sdk.Dropbox"
+    xmlns:vm4="clr-namespace:SecureFolderFS.Sdk.WebDavClient.ViewModels;assembly=SecureFolderFS.Sdk.WebDavClient"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:AccountCreationWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
@@ -21,6 +23,7 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.Resources>
+        <!--  FTP  -->
         <DataTemplate x:Key="FtpAccountTemplate" x:DataType="vm:FtpAccountViewModel">
             <VerticalStackLayout Spacing="16">
                 <VerticalStackLayout Spacing="2">
@@ -35,11 +38,42 @@
                     <ucc:ModernEntry
                         BackgroundColor="Transparent"
                         Placeholder="{l:ResourceString Rid=User1}"
-                        Text="{Binding Username, Mode=TwoWay}" />
+                        Text="{Binding UserName, Mode=TwoWay}" />
                 </VerticalStackLayout>
                 <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
             </VerticalStackLayout>
         </DataTemplate>
+
+        <!--  WebDav Client  -->
+        <DataTemplate x:Key="WebDavClientAccountTemplate" x:DataType="vm4:WebDavClientAccountViewModel">
+            <VerticalStackLayout Spacing="16">
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Address}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="http://myserver.com/dav"
+                        Text="{Binding Address, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Port}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Placeholder="8080"
+                        Text="{Binding Port, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=Username}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="{l:ResourceString Rid=User1}"
+                        Text="{Binding UserName, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+
+        <!--  Google Drive  -->
         <DataTemplate x:Key="GoogleDriveAccountTemplate" x:DataType="vm2:GDriveAccountViewModel">
             <Grid Padding="0,32,0,0">
                 <VerticalStackLayout
@@ -86,22 +120,86 @@
                 </VerticalStackLayout>
             </Grid>
         </DataTemplate>
+
+        <!--  Dropbox  -->
+        <DataTemplate x:Key="DropboxAccountTemplate" x:DataType="vm3:DropboxAccountViewModel">
+            <Grid Padding="0,32,0,0">
+                <VerticalStackLayout
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding IsConnected, Mode=OneWay}"
+                    Spacing="16">
+                    <tv:AvatarView
+                        BorderWidth="0"
+                        CornerRadius="48"
+                        HeightRequest="96"
+                        ImageSource="{Binding UserPhotoUri, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                        WidthRequest="96" />
+
+                    <VerticalStackLayout>
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="28"
+                            HorizontalTextAlignment="Center"
+                            LineBreakMode="WordWrap"
+                            Text="{Binding UserDisplayName, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|WelcomeUser'}" />
+
+                        <Label
+                            FontSize="14"
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding UserEmail, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            LineBreakMode="TailTruncation"
+                            Opacity="0.6"
+                            Text="{Binding UserEmail, Mode=OneWay}" />
+                    </VerticalStackLayout>
+
+                    <Button
+                        Command="{Binding DisconnectCommand, Mode=OneWay}"
+                        Style="{OnPlatform iOS={StaticResource NoBackgroundButtonStyle},
+                                           Android={StaticResource TransparentButtonStyle}}"
+                        Text="{l:ResourceString Rid=Disconnect}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsConnected, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="64">
+                    <Image HeightRequest="64" Source="source_dropbox.png" />
+                    <Button
+                        Command="{Binding ConnectAccountPromptCommand, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=Connect}" />
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
     </md:BaseModalPage.Resources>
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
+        <Grid
             Margin="{OnPlatform iOS='0,16,0,0'}"
             Padding="16,0"
-            Spacing="16">
+            RowDefinitions="Auto,Auto,*"
+            RowSpacing="16">
+
+            <!--  Account Name  -->
             <Label
+                Grid.Row="0"
                 FontAttributes="Bold"
                 FontSize="18"
                 Text="{Binding ViewModel.AccountViewModel.Title, Mode=OneWay}" />
+
+            <!--  Account Login  -->
             <uc:ContentPresentation Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
                 <uc:ContentPresentation.TemplateSelector>
-                    <ts:AccountCreationTemplateSelector FtpAccountTemplate="{StaticResource FtpAccountTemplate}" GoogleDriveAccountTemplate="{StaticResource GoogleDriveAccountTemplate}" />
+                    <ts:AccountCreationTemplateSelector
+                        DropboxAccountTemplate="{StaticResource DropboxAccountTemplate}"
+                        FtpAccountTemplate="{StaticResource FtpAccountTemplate}"
+                        GoogleDriveAccountTemplate="{StaticResource GoogleDriveAccountTemplate}"
+                        WebDavClientAccountTemplate="{StaticResource WebDavClientAccountTemplate}" />
                 </uc:ContentPresentation.TemplateSelector>
             </uc:ContentPresentation>
-        </VerticalStackLayout>
+
+            <!--  Error  -->
+            <uc:ErrorControl
+                Grid.Row="2"
+                ExceptionMessage="{Binding ViewModel.ExceptionMessage, Mode=OneWay}"
+                IsVisible="{Binding ViewModel.ExceptionMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" />
+        </Grid>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

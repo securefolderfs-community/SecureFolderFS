@@ -132,13 +132,25 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultConfigurations.PersistedVaults.Insert(index, item.DataModel);
 
             // Add default widgets for vault
-            VaultWidgets.SetForVault(item.DataModel.PersistableId, new List<WidgetDataModel>()
+            var widgetList = new List<WidgetDataModel>()
             {
-                new(Constants.Widgets.HEALTH_WIDGET_ID),
-                ApplicationService.IsDesktop
-                    ? new(Constants.Widgets.GRAPHS_WIDGET_ID)
-                    : new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID)
-            });
+                new(Constants.Widgets.HEALTH_WIDGET_ID)
+            };
+            if (ApplicationService.IsDesktop)
+                widgetList.Add(new(Constants.Widgets.GRAPHS_WIDGET_ID));
+            else
+                widgetList.Add(new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
+
+#if DEBUG
+            if (!OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS())
+            {
+                // TODO: Testing on desktop
+                widgetList.Insert(1, new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
+            }
+#endif
+
+            // Set widgets for vault
+            VaultWidgets.SetForVault(item.DataModel.PersistableId, widgetList);
 
             // Add to cache
             base.InsertItem(index, item);
