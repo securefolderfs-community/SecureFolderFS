@@ -6,21 +6,23 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm3="using:SecureFolderFS.UI.ViewModels.Authentication"
-    xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
-    xmlns:vm5="using:SecureFolderFS.Uno.ViewModels.YubiKey"
-    xmlns:vm6="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
+    xmlns:vm="using:SecureFolderFS.UI.ViewModels.Authentication"
+    xmlns:vm2="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
+    xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
+    xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
+    xmlns:vm6="clr-namespace:SecureFolderFS.Uno.Platforms.Desktop.ViewModels"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="RootControl"
-    mc:Ignorable="d">
+    mc:Ignorable="d not_win">
 
     <UserControl.Resources>
         <vc:PasswordToStrengthConverter x:Key="PasswordToStrengthConverter" />
 
         <!--  Password Template  -->
-        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordCreationViewModel">
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
             <StackPanel Spacing="16">
                 <StackPanel>
                     <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
@@ -31,7 +33,7 @@
         </DataTemplate>
 
         <!--  Key File Template  -->
-        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm3:KeyFileCreationViewModel">
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileCreationViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <FontIcon
@@ -53,7 +55,7 @@
         </DataTemplate>
 
         <!--  Windows Hello Template  -->
-        <win:DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm4:WindowsHelloCreationViewModel">
+        <win:DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm2:WindowsHelloCreationViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <FontIcon
@@ -74,8 +76,38 @@
             </StackPanel>
         </win:DataTemplate>
 
+        <!--  TouchID Template  -->
+        <DataTemplate x:Key="TouchIDTemplate" x:DataType="vm6:MacOSBiometricsCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <Grid>
+                    <win:Image
+                        Height="64"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/touchid.png" />
+                    <not_win:Image
+                        Height="64"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="/Assets/AppAssets/touchid.png" />
+                </Grid>
+
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupMacOsBiometrics}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Setup}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
         <!--  YubiKey Template  -->
-        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm5:YubiKeyCreationViewModel">
+        <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm3:YubiKeyCreationViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <local:YubiKeyControl IsBlinking="{x:Bind IsAwaitingTouch, Mode=OneWay}" />
@@ -102,7 +134,7 @@
         </DataTemplate>
 
         <!--  Device Link Template  -->
-        <DataTemplate x:Key="DeviceLinkTemplate" x:DataType="vm6:DeviceLinkCreationViewModel">
+        <DataTemplate x:Key="DeviceLinkTemplate" x:DataType="vm4:DeviceLinkCreationViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <FontIcon
@@ -188,6 +220,7 @@
                 DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
+                TouchIDTemplate="{StaticResource TouchIDTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
                 YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />
         </ContentControl.ContentTemplateSelector>

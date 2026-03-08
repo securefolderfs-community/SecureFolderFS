@@ -91,7 +91,16 @@
       <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">
         <UnoMacOSAppIconFile>Assets/AppIcon/AppIcon.icns</UnoMacOSAppIconFile>
         <UnoMacOSCustomInfoPlist>Platforms/Desktop/Info.plist</UnoMacOSCustomInfoPlist>
+        <EnableCodeSigning>true</EnableCodeSigning>
+        <CodeSigningKey>-</CodeSigningKey>
+        <CodeSignEntitlements>Platforms/Desktop/Entitlements.plist</CodeSignEntitlements>
       </PropertyGroup>
+
+      <ItemGroup>
+        <None Include="Platforms\Desktop\Entitlements.plist">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
 
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
@@ -172,8 +181,20 @@
         <DefineConstants>UNPACKAGED</DefineConstants>
       </PropertyGroup>
     </When>
-
   </Choose>
+
+  <!-- Codesign the macOS .app bundle with entitlements for Keychain/Secure Enclave (Touch ID) access -->
+  <Target Name="CodesignMacOSAppBundle" AfterTargets="Build"
+          Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">
+    <PropertyGroup>
+      <_MacOSAppBundle>$(OutputPath)$(AssemblyName).app</_MacOSAppBundle>
+      <_MacOSEntitlements>$(MSBuildProjectDirectory)/Platforms/Desktop/Entitlements.plist</_MacOSEntitlements>
+    </PropertyGroup>
+    <Exec Command="codesign --force --deep --sign - --entitlements &quot;$(_MacOSEntitlements)&quot; &quot;$(_MacOSAppBundle)&quot;"
+          Condition="Exists('$(_MacOSAppBundle)')"
+          IgnoreExitCode="true"
+          ContinueOnError="WarnAndContinue" />
+  </Target>
 
   <ItemGroup>
     <None Remove="Assets\AppIcon\AppIcon.altform-lightunplated_targetsize-16.png" />

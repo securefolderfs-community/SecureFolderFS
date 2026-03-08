@@ -14,6 +14,7 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.ViewModels.DeviceLink;
 using SecureFolderFS.Uno.ViewModels.YubiKey;
+using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
@@ -33,6 +34,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
                     Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uEE7E") },
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
+                    Constants.Vault.Authentication.AUTH_APPLE_MACOS => new MacOSBiometricsLoginViewModel(vaultFolder, config.Uid),
                     Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid).WithInitAsync(cancellationToken),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
@@ -49,6 +51,10 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             // YubiKey
             if (YubiKeyViewModel.IsSupported())
                 yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+
+            // macOS Biometrics (Touch ID)
+            if (MacOSBiometricsViewModel.IsSupported())
+                yield return new MacOSBiometricsCreationViewModel(vaultFolder, vaultId);
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };

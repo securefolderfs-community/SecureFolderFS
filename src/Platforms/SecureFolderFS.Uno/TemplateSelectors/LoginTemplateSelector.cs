@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ViewModels.Authentication;
+using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
 using SecureFolderFS.Uno.ViewModels.DeviceLink;
 using SecureFolderFS.Uno.ViewModels.WindowsHello;
 using SecureFolderFS.Uno.ViewModels.YubiKey;
@@ -17,6 +18,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? WindowsHelloTemplate { get; set; }
 
         public DataTemplate? YubiKeyTemplate { get; set; }
+
+        public DataTemplate? TouchIDTemplate { get; set; }
 
         public DataTemplate? DeviceLinkTemplate { get; set; }
 
@@ -34,6 +37,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 KeyFileLoginViewModel => KeyFileTemplate,
                 WindowsHelloLoginViewModel => WindowsHelloTemplate,
                 YubiKeyLoginViewModel => YubiKeyTemplate,
+                MacOSBiometricsLoginViewModel => TouchIDTemplate,
                 DeviceLinkLoginViewModel => DeviceLinkTemplate,
                 MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,

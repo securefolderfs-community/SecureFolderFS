@@ -109,6 +109,84 @@ namespace SecureFolderFS.Uno.PInvoke
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
 
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial void CFRelease(IntPtr cf);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFRetain(IntPtr cf);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial long CFDataGetLength(IntPtr theData);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFDataGetBytePtr(IntPtr theData);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFDictionaryCreate(
+            IntPtr allocator,
+            IntPtr keys,
+            IntPtr values,
+            long numValues,
+            IntPtr keyCallBacks,
+            IntPtr valueCallBacks);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFNumberCreate(IntPtr allocator, long theType, IntPtr valuePtr);
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        public static partial IntPtr CFBooleanGetValue(IntPtr boolean);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial int SecItemCopyMatching(IntPtr query, out IntPtr result);
+
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        public static partial int SecItemDelete(IntPtr query);
+
+        // Well-known CFString constants from Security framework
+        [LibraryImport("/System/Library/Frameworks/Security.framework/Security", EntryPoint = "kSecAttrKeyTypeECSECPrimeRandom")]
+        public static partial IntPtr GetSecAttrKeyTypeECSECPrimeRandom();
+
+        // Global symbol accessors for Security framework constants
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFBooleanTrue")]
+        public static partial IntPtr GetCFBooleanTrue();
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFBooleanFalse")]
+        public static partial IntPtr GetCFBooleanFalse();
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFTypeDictionaryKeyCallBacks")]
+        public static partial IntPtr GetCFTypeDictionaryKeyCallBacks();
+
+        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFTypeDictionaryValueCallBacks")]
+        public static partial IntPtr GetCFTypeDictionaryValueCallBacks();
+
 #endif
     }
 
