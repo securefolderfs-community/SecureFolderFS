@@ -138,14 +138,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
 
         private async Task UploadAsync()
         {
-            // ToArray() returns exactly [0..Length], regardless of Position or capacity.
-            // This guarantees truncations are reflected - passing MemoryStream directly
-            // risks the WebDAV library reading stale bytes beyond the truncated Length
-            // if it uses the underlying buffer rather than the stream bounds.
-            var data = _buffer.ToArray();
-            using var uploadStream = new MemoryStream(data, writable: false);
-
-            var response = await _client.PutFile(_fileUri, uploadStream);
+            var response = await _client.PutFile(_fileUri, _buffer);
             if (!response.IsSuccessful)
                 throw new IOException($"Failed to upload file '{_fileUri}': {response.StatusCode}");
         }
