@@ -108,10 +108,6 @@
                         Grid.Row="1"
                         Grid.Column="0"
                         Source="source_dropbox.png" />
-                    <uc:IntroductionIconTile
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Source="source_onedrive.png" />
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
@@ -184,7 +180,7 @@
             <On Platform="iOS">
                 <Grid>
                     <av:AcrylicView
-                        Margin="0,-70,0,-35"
+                        Margin="0,-70,0,-16"
                         CornerRadius="0"
                         EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
                                                       Light={av2:EffectStyle Light}}">

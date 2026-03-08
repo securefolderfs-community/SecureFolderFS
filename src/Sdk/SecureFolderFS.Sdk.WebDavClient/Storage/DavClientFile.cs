@@ -34,12 +34,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
             {
                 case FileAccess.Read:
                 {
-                    return await DavClientReadStream.CreateAsync(httpClient, baseUri, cancellationToken);
+                    return await DavClientReadStream.CreateAsync(httpClient, ResolveUri(Id), cancellationToken);
                 }
 
-                case FileAccess.Write:
+                case FileAccess.Write or FileAccess.ReadWrite:
                 {
-                    return new DavClientWriteStream(davClient, baseUri, Id);
+                    return await DavClientWriteStream.CreateAsync(httpClient, davClient, ResolveUri(Id), accessMode, cancellationToken);
                 }
 
                 default:

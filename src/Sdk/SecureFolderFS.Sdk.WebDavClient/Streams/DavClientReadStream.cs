@@ -70,7 +70,14 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
                 using var headRequest = new HttpRequestMessage(HttpMethod.Head, fileUri);
                 using var headResponse = await httpClient.SendAsync(headRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 if (headResponse.IsSuccessStatusCode)
-                    length = headResponse.Content.Headers.ContentLength ?? -1L;
+                {
+                    // Content.Headers.ContentLength is null when Apache omits the header
+                    // (e.g. chunked transfer). Fall back to the raw header string.
+                    length = headResponse.Content.Headers.ContentLength
+                             ?? (headResponse.Headers.TryGetValues("Content-Length", out var values)
+                                 && long.TryParse(System.Linq.Enumerable.FirstOrDefault(values), out var parsed)
+                                 ? parsed : -1L);
+                }
             }
             catch
             {
@@ -162,9 +169,18 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
             ObjectDisposedException.ThrowIf(_disposed, this);
             await EnsureStreamAtPositionAsync(cancellationToken);
 
-            var bytesRead = await _inner.ReadAsync(buffer.AsMemory(offset, count), cancellationToken);
-            _position += bytesRead;
-            return bytesRead;
+            var totalRead = 0;
+            while (totalRead < count)
+            {
+                var bytesRead = await _inner.ReadAsync(buffer.AsMemory(offset + totalRead, count - totalRead), cancellationToken);
+                if (bytesRead == 0)
+                    break; // EOF
+
+                totalRead += bytesRead;
+            }
+
+            _position += totalRead;
+            return totalRead;
         }
 
         /// <inheritdoc/>
@@ -173,9 +189,18 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
             ObjectDisposedException.ThrowIf(_disposed, this);
             await EnsureStreamAtPositionAsync(cancellationToken);
 
-            var bytesRead = await _inner.ReadAsync(buffer, cancellationToken);
-            _position += bytesRead;
-            return bytesRead;
+            var totalRead = 0;
+            while (totalRead < buffer.Length)
+            {
+                var bytesRead = await _inner.ReadAsync(buffer.Slice(totalRead), cancellationToken);
+                if (bytesRead == 0)
+                    break; // EOF
+
+                totalRead += bytesRead;
+            }
+
+            _position += totalRead;
+            return totalRead;
         }
 
         /// <inheritdoc/>

@@ -101,7 +101,7 @@
             </Border>
         </On>
         <On Platform="iOS">
-            <Border BindingContext="{x:Reference Root}">
+            <Border BindingContext="{x:Reference Root}" StrokeThickness="0">
                 <ContentView
                     Content="{Binding ModalContent, Mode=OneWay}"
                     HorizontalOptions="Fill"
