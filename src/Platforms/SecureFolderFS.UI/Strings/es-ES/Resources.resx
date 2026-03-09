@@ -363,7 +363,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal recovery key</value>
+    <value>Mostrar clave de recuperación</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Buscar</value>

@@ -429,7 +429,7 @@
     <value>View third-party libraries used by SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value></value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
     <value>Vault has been added</value>
