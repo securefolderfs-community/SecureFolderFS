@@ -774,13 +774,13 @@
     <value>Pulihkan</value>
   </data>
   <data name="RepairAll" xml:space="preserve">
-    <value>Repair all</value>
+    <value>Perbaiki semua</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
     <value>Semasa pembaikan, peti kebal anda akan ditetapkan ke dalam mod baca sahaja.</value>
   </data>
   <data name="GenerateNewName" xml:space="preserve">
-    <value>Generate a new name</value>
+    <value>Jana nama baharu</value>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Eksport</value>
@@ -942,52 +942,52 @@
     <value>Versi Dokany yg dipasang tidak serasi. Sila pasang versi Dokany yg diminta (v{0}).</value>
   </data>
   <data name="CopyPath" xml:space="preserve">
-    <value>Copy path</value>
+    <value>Salin laluan</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Copy error</value>
+    <value>Salin ralat</value>
   </data>
   <data name="RegenerateInvalidDirectoryId" xml:space="preserve">
-    <value>Regenerate invalid Directory ID</value>
+    <value>Jana semula ID Direktori yang tidak sah</value>
   </data>
   <data name="InvalidDirectoryId" xml:space="preserve">
-    <value>Invalid directory ID</value>
+    <value>ID direktori tidak sah</value>
   </data>
   <data name="InvalidItemName" xml:space="preserve">
-    <value>Invalid item name</value>
+    <value>Nama item tidak sah</value>
   </data>
   <data name="GenerateNewNameChanged" xml:space="preserve">
-    <value>A custom name will be applied</value>
+    <value>Nama tersuai akan diterapkan</value>
   </data>
   <data name="InvalidFileContents" xml:space="preserve">
-    <value>Corrupted file contents</value>
+    <value>Kandungan fail rosak</value>
   </data>
   <data name="RegenerateFileContents" xml:space="preserve">
-    <value>Overwrite affected file regions</value>
+    <value>Tulis ganti kawasan fail yang terjejas</value>
   </data>
   <data name="RegenerateMissingDirectoryId" xml:space="preserve">
-    <value>Regenerate missing directory ID</value>
+    <value>Jana semula ID direktori yang hilang</value>
   </data>
   <data name="MissingDirectoryId" xml:space="preserve">
-    <value>Missing directory ID</value>
+    <value>ID direktori tiada</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Unknown error</value>
+    <value>Ralat tidak diketahui</value>
   </data>
   <data name="ItemsLoseOriginalName" xml:space="preserve">
-    <value>Items in this directory will lose their original name</value>
+    <value>Item dalam direktori ini akan kehilangan nama asalnya</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-      <value>Welcome, {0}</value>
+      <value>Selamat Datang, {0}</value>
   </data>
   <data name="Connect" xml:space="preserve">
-      <value>Connect</value>
+      <value>Sambung</value>
   </data>
   <data name="WinFspNotDetected" xml:space="preserve">
-    <value>WinFsp has not been detected. Please install WinFsp (v{0}) to continue.</value>
+    <value>WinFsp tidak dikesan. Sila pasang WinFsp (v{0}) utk teruskan.</value>
   </data>
   <data name="WinFspIncompatible" xml:space="preserve">
-    <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
+    <value>Versi WinFsp yg dipasang tidak serasi. Sila pasang versi WinFsp yg diminta (v{0}).</value>
   </data>
   <data name="ChooseNewName" xml:space="preserve">
       <value>Pilih nama baharu</value>
