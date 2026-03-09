@@ -7,8 +7,10 @@ using System.Collections.Specialized;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
-    internal sealed class RootCollection : IDisposable
+    public sealed class RootCollection : IDisposable
     {
+        public static RootCollection? Instance { get; private set; }
+
         private readonly Context _context;
 
         public List<SafRoot> Roots { get; }
@@ -17,6 +19,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             _context = context;
             Roots = new();
+            Instance = this;
 
             FileSystemManager.Instance.FileSystems.CollectionChanged += FileSystemManager_CollectionChanged;
         }

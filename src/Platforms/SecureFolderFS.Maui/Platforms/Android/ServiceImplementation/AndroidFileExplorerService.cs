@@ -5,9 +5,13 @@ using Android.Provider;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Storage;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Maui.Platforms.Android.Storage;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Pickers;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using AndroidUri = Android.Net.Uri;
 using AOSEnvironment = Android.OS.Environment;
 
@@ -62,27 +66,51 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public Task<bool> TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
             try
             {
                 var context = MainActivity.Instance;
                 if (context is null)
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
+
+                // Find the SafRoot that owns this folder by matching VFSRoot
+                IVFSRoot? vfsRoot = null;
+                if (folder is IWrapper<IFolder> wrapper)
+                {
+                    // Walk wrappers to find the CryptoStorable which holds FileSystemSpecifics -> IVFSRoot
+                    // Alternatively, match via FileSystemManager directly
+                    vfsRoot = FileSystemManager.Instance.FileSystems
+                        .FirstOrDefault(x => (x.VirtualizedRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner.Id == wrapper.Inner.Id || IsOwnedByRoot(wrapper.Inner, x));
+                }
+
+                if (vfsRoot is null)
+                    return Task.FromResult(false);
+
+                // Now find the corresponding SafRoot for this IVFSRoot
+                var safRoot = RootCollection.Instance?.Roots.FirstOrDefault(r => r.StorageRoot == vfsRoot);
+                if (safRoot is null)
+                    return Task.FromResult(false);
 
                 var intent = new Intent(Intent.ActionView);
-                intent.SetType("*/*");
-                intent.AddCategory(Intent.CategoryDefault);
-                intent.AddFlags(ActivityFlags.NewTask);
+                var documentUri = AndroidUri.Parse($"content://{Core.MobileFS.Constants.Android.FileSystem.AUTHORITY}/root/{safRoot.RootId}");
+                intent.SetData(documentUri);
+                intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.GrantReadUriPermission);
                 context.StartActivity(intent);
 
-                return Task.CompletedTask;
+                return Task.FromResult(true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
+        }
+
+        private static bool IsOwnedByRoot(IFolder folder, IVFSRoot root)
+        {
+            var virtualizedRootInner = (root.VirtualizedRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner;
+            return folder.Id == virtualizedRootInner?.Id
+                   || folder.Id.StartsWith(virtualizedRootInner?.Id ?? string.Empty, StringComparison.Ordinal);
         }
 
         /// <inheritdoc/>

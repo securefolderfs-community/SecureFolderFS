@@ -93,7 +93,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     return Constants.FILE_EOF;
 
                 if (Inner.Length < _security.HeaderCrypt.HeaderCiphertextSize)
-                    return Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
+                    return Constants.FILE_EOF;
 
                 if (Length - Position <= 0L)
                     return Constants.FILE_EOF;
@@ -142,8 +142,6 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             if (CanSeek && Position > Length)
             {
-                // TODO: Maybe throw an exception?
-
                 // Write gap
                 var gapLength = Position - Length;
 

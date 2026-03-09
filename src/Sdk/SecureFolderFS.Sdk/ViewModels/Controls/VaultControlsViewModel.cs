@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IFileExplorerService>]
+    [Inject<IFileExplorerService>, Inject<IApplicationService>]
     [Bindable(true)]
     public sealed partial class VaultControlsViewModel : ObservableObject, IRecipient<VaultLockRequestedMessage>, IDisposable
     {
@@ -55,7 +55,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot.VirtualizedRoot, cancellationToken);
+            var result = await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot.VirtualizedRoot, cancellationToken);
+            if (!result && !ApplicationService.IsDesktop)
+                await BrowseAsync(cancellationToken);
         }
 
         [RelayCommand]
