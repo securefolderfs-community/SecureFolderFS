@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Dispatching;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -37,8 +39,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPoint);
             webDavWrapper.StartFileSystem();
 
-            Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
-            return new WebDavVFSFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), specifics);
+            var virtualizedRoot = new MemoryFolder(mountPoint, options.VolumeName);
+            var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new WebDavVFSFolder(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
 #endif
     }

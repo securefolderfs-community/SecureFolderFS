@@ -108,6 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ViewRecycleBinAsync(CancellationToken cancellationToken)
         {
+            await Task.Delay(100, cancellationToken);
             await OverlayService.ShowAsync(RecycleBinOverlayViewModel);
         }
 

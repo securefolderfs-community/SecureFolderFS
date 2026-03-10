@@ -4,8 +4,13 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -35,26 +40,43 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             // Begin scanning
             await Task.Delay(10);
-            _ = Task.Run(async () => await ScanAsync(_healthModel, includeFileContents, _cts?.Token ?? default));
+            _ = Task.Run(async () => await ScanAsync(_healthModel, includeFileContents, _cts?.Token ?? CancellationToken.None));
             await Task.Yield();
         }
 
         [RelayCommand]
-        private async Task ScanFolderAsync(string? mode)
+        private async Task ScanFolderAsync(string? mode, CancellationToken cancellationToken)
         {
             if (_contentFolder is null)
                 return;
 
-            // Prompt user to pick a folder
-            var pickedFolder = await FileExplorerService.PickFolderAsync(null, false);
+            // Prompt the user to pick a folder
+            IFolder pickedFolder = await FileExplorerService.PickFolderAsync(null, false);
             if (pickedFolder is null)
                 return;
 
-            // Verify the picked folder is within the vault's content folder
-            var contentFolderId = _contentFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
-            var pickedFolderId = pickedFolder.Id.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
-            if (!pickedFolderId.StartsWith(contentFolderId, StringComparison.OrdinalIgnoreCase))
-                return;
+            if (pickedFolder.Id.StartsWith(_unlockedVaultViewModel.StorageRoot.VirtualizedRoot.Id))
+            {
+                // The folder is in the virtual storage directory. Get the ciphertext equivalent
+
+                // Get the relative plaintext item
+                var relativePath = Path.GetRelativePath(_unlockedVaultViewModel.StorageRoot.VirtualizedRoot.Id, pickedFolder.Id);
+                var plaintextRelativeFolder = await _unlockedVaultViewModel.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(relativePath, cancellationToken) as IFolder;
+                if (plaintextRelativeFolder is not IWrapper<IFolder> { Inner: { } relativeCiphertextFolder })
+                    return;
+
+                pickedFolder = relativeCiphertextFolder;
+            }
+            else
+            {
+                // The picked folder is a ciphertext directory. Ensure it's within the vault's content folder
+
+                // Verify the picked folder is within the vault's content folder
+                var contentFolderId = _contentFolder.Id.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                var pickedFolderId = pickedFolder.Id.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (!pickedFolderId.StartsWith(contentFolderId, StringComparison.OrdinalIgnoreCase))
+                    return;
+            }
 
             // Set IsProgressing status
             IsProgressing = true;

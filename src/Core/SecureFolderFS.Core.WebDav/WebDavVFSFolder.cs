@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.WebDav
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WebDavVFSFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+        public WebDavVFSFolder(WebDavWrapper webDavWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+            : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _webDavWrapper = webDavWrapper;
         }

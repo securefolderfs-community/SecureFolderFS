@@ -22,7 +22,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="itemToCopy">The storable to be copied into this folder.</param>
         /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorable
         {
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="newName">The new name of the copied item.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite, string newName, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorable
         {
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="newName">The new name of the created folder.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public static async Task<IChildFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, string newName, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

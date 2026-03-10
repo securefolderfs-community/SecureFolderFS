@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.Storage
         public required string Name { get; init; }
 
         /// <inheritdoc/>
-        public IStorableChild Inner { get; }
+        public IStorable Inner { get; }
 
         /// <inheritdoc/>
         public ICreatedAtProperty CreatedAt => field ??= new RecycleBinItemCreatedAtProperty(Inner.Id, _dataModel);
@@ -29,7 +29,7 @@ namespace SecureFolderFS.UI.Storage
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new RecycleBinItemSizeOfProperty(Inner.Id, _dataModel);
 
-        public RecycleBinItem(IStorableChild inner, RecycleBinItemDataModel dataModel, IRecycleBinFolder? recycleBin)
+        public RecycleBinItem(IStorable inner, RecycleBinItemDataModel dataModel, IRecycleBinFolder? recycleBin)
         {
             Inner = inner;
             _dataModel = dataModel;

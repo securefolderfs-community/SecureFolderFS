@@ -33,9 +33,9 @@ namespace SecureFolderFS.Sdk.Extensions
             return await navigation.NavigateAsync(view);
         }
 
-        public static async Task<bool> ForgetNavigateCurrentViewAsync(this INavigationService navigationService, IViewDesignation view)
+        public static async Task<bool> ForgetNavigateCurrentViewAsync(this INavigationService navigationService, IViewDesignation destinationDesignation)
         {
-            return await ForgetNavigateViewAsync(navigationService, view, () =>
+            return await ForgetNavigateViewAsync(navigationService, destinationDesignation, () =>
             {
                 if (navigationService.CurrentView is null)
                     return null;
@@ -45,9 +45,9 @@ namespace SecureFolderFS.Sdk.Extensions
             });
         }
 
-        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation, bool> viewForgetter, bool addViewIfMissing = false)
+        public static async Task<bool> ForgetNavigateSpecificViewAsync(this INavigationService navigationService, IViewDesignation destinationDesignation, Func<IViewDesignation, bool> viewForgetter, bool addViewIfMissing = false)
         {
-            return await ForgetNavigateViewAsync(navigationService, view, () =>
+            return await ForgetNavigateViewAsync(navigationService, destinationDesignation, () =>
             {
                 var targetViews = navigationService.Views.Where(viewForgetter).ToArray();
                 if (targetViews.IsEmpty())
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Sdk.Extensions
             }, navigationService.CurrentView is null || viewForgetter(navigationService.CurrentView), addViewIfMissing);
         }
 
-        private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation view, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true, bool addViewIfMissing = false)
+        private static async Task<bool> ForgetNavigateViewAsync(this INavigationService navigationService, IViewDesignation destinationDesignation, Func<IViewDesignation?> viewForgetter, bool shouldTriggerNavigation = true, bool addViewIfMissing = false)
         {
             var navigated = false;
             IViewDesignation? currentView = null;
@@ -78,12 +78,12 @@ namespace SecureFolderFS.Sdk.Extensions
                 {
                     // Silently replace the removed view without triggering navigation
                     if (currentView is not null || addViewIfMissing)
-                        navigationService.Views.Add(view);
+                        navigationService.Views.Add(destinationDesignation);
 
                     return false;
                 }
 
-                navigated = await navigationService.NavigateAsync(view);
+                navigated = await navigationService.NavigateAsync(destinationDesignation);
                 return navigated;
             }
             finally

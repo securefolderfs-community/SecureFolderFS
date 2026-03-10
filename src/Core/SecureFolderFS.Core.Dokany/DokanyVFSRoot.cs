@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+            : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _dokanyWrapper = dokanyWrapper;
         }

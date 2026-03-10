@@ -77,7 +77,15 @@
                 <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}" Margin="0,0,0,16">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
-                            <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}" />
+                            <uco:OptionsControl Title="{l:ResourceString Rid=OpenFileBrowser}" Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}">
+                                <uco:OptionsControl.Slot>
+                                    <ActivityIndicator
+                                        HeightRequest="24"
+                                        IsRunning="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand.IsRunning, Mode=OneWay}"
+                                        IsVisible="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand.IsRunning, Mode=OneWay}"
+                                        WidthRequest="24" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
                             <uco:OptionsControl
                                 Title="{l:ResourceString Rid=OpenRecycleBin}"
                                 Command="{Binding PropertiesViewModel.ViewRecycleBinCommand}"

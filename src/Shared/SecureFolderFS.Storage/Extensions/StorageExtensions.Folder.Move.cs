@@ -24,7 +24,8 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="source">The folder that <paramref name="itemToMove"/> is being moved from.</param>
         /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the moved storable item.</returns>
         public static async Task<TStorable> MoveStorableFromAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToMove, IModifiableFolder source, bool overwrite, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorableChild
         {
@@ -41,7 +42,8 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="newName">The new name of the moved item.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the moved storable item.</returns>
         public static async Task<TStorable> MoveStorableFromAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToMove, IModifiableFolder source, bool overwrite, string newName, IProgress<IStorable>? reporter, CancellationToken cancellationToken = default)
             where TStorable : IStorableChild
         {
@@ -74,7 +76,7 @@ namespace SecureFolderFS.Storage.Extensions
         /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
         /// <param name="newName">The new name of the created folder.</param>
         /// <param name="reporter">An optional <see cref="IProgress{T}"/> instance where all progress notifications are forwarded to.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public static async Task<IChildFolder> MoveFromAsync(this IModifiableFolder destinationFolder,
             IModifiableFolder folderToMove, IModifiableFolder source, bool overwrite, string newName,
             IProgress<IStorable>? reporter = null, CancellationToken cancellationToken = default)

@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override string FileSystemName { get; } = Constants.Android.FileSystem.FS_NAME;
 
         public AndroidVFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+            : base(storageRoot, storageRoot, specifics)
         {
         }
 

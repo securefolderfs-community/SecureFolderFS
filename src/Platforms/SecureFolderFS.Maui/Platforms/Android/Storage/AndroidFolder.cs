@@ -13,9 +13,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IChildFolder"/>
     internal sealed class AndroidFolder : AndroidStorable,
+        IRenamableFolder,
         IChildFolder,
         IGetFirstByName,
-        IRenamableFolder,
         ICreateRenamedCopyOf,
         IMoveRenamedFrom,
         ILastModifiedAt
@@ -227,6 +227,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (fileToMove is not AndroidFile androidFile)
                 return fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
 
+            // No-op if source and destination path are identical
+            if (androidFile.Id == Path.Combine(Id, newName))
+                return Task.FromResult(fileToMove);
+
             var existingFile = Document?.FindFile(newName);
             if (existingFile is not null)
             {
@@ -236,9 +240,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 existingFile.Delete();
             }
 
-            // No-op if source and destination are the same
-            if (androidFile.Id == Path.Combine(Id, newName))
-                return Task.FromResult(fileToMove);
+            // Fast-path: same folder means this is a pure rename
+            var isSameFolder = source is AndroidFolder androidSource && androidSource.Id == Id;
+            if (isSameFolder)
+                return RenameInternalAsync(androidFile, newName);
 
             return MoveInternalAsync(androidFile, source, newName, cancellationToken);
         }
@@ -284,10 +289,22 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return new AndroidFile(newFile.Uri, activity, this, permissionRoot);
         }
+        
+        private Task<IChildFile> RenameInternalAsync(AndroidFile source, string newName)
+        {
+            if (activity.ContentResolver is null)
+                return Task.FromException<IChildFile>(new UnauthorizedAccessException("Could not access Android content resolver."));
+
+            var renamedUri = DocumentsContract.RenameDocument(activity.ContentResolver, source.Inner, newName);
+            if (renamedUri is null)
+                return Task.FromException<IChildFile>(RenameException);
+
+            return Task.FromResult<IChildFile>(new AndroidFile(renamedUri, activity, this, permissionRoot));
+        }
 
         private async Task<IChildFile> MoveInternalAsync(AndroidFile source, IModifiableFolder sourceFolder, string newName, CancellationToken cancellationToken)
         {
-            // First try native move via DocumentsContract (API 26+)
+            // Try native move via DocumentsContract (API 26+)
             if (OperatingSystem.IsAndroidVersionAtLeast(26)
                 && activity.ContentResolver is not null
                 && source.Parent is { } androidSourceFolder)
@@ -295,15 +312,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 var movedUri = DocumentsContract.MoveDocument(activity.ContentResolver, source.Inner, androidSourceFolder.Inner, Inner);
                 if (movedUri is not null)
                 {
-                    // Rename if needed
+                    // The file was moved but may still need renaming if the name changed
                     if (source.Name != newName)
                     {
                         var renamedUri = DocumentsContract.RenameDocument(activity.ContentResolver, movedUri, newName);
                         if (renamedUri is not null)
                             return new AndroidFile(renamedUri, activity, this, permissionRoot);
+                
+                        // Move succeeded, but rename failed - still return the moved file under the original name
                     }
-                    else
-                        return new AndroidFile(movedUri, activity, this, permissionRoot);
+
+                    return new AndroidFile(movedUri, activity, this, permissionRoot);
                 }
             }
 

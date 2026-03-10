@@ -7,7 +7,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
     /// <summary>
     /// Represents an item in the recycle bin within the virtual file system.
     /// </summary>
-    public interface IRecycleBinItem : IStorableChild, IWrapper<IStorableChild>, ICreatedAt, ISizeOf
+    public interface IRecycleBinItem : IStorableChild, IWrapper<IStorable>, ICreatedAt, ISizeOf
     {
     }
 }

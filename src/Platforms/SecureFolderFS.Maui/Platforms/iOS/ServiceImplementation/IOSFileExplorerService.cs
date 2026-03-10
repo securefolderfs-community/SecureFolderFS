@@ -16,16 +16,23 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public async Task<bool> TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
             if (folder is not IWrapper<NSUrl> wrapper)
-                return Task.CompletedTask;
+                return false;
 
-            // Open the folder in the Files app
-            var documentPicker = new UIDocumentPickerViewController(wrapper.Inner, UIDocumentPickerMode.Open);
-            UIApplication.SharedApplication.KeyWindow?.RootViewController?.PresentViewController(documentPicker, true, null);
+            try
+            {
+                // Open the folder in the Files app
+                var documentPicker = new UIDocumentPickerViewController(wrapper.Inner, UIDocumentPickerMode.Open);
+                UIApplication.SharedApplication.KeyWindow?.RootViewController?.PresentViewController(documentPicker, true, null);
 
-            return Task.CompletedTask;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>

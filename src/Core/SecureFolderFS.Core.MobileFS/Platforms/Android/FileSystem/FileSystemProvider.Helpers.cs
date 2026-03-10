@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
-            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.VirtualizedRoot, safRoot.RootId);
+            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.PlaintextRoot, safRoot.RootId);
             row.Add(Root.ColumnRootId, safRoot.RootId);
             row.Add(Root.ColumnDocumentId, rootFolderId);
             row.Add(Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
@@ -111,7 +111,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            if (storable.Id == safRoot.StorageRoot.VirtualizedRoot.Id)
+            if (storable.Id == safRoot.StorageRoot.PlaintextRoot.Id)
                 return $"{safRoot.RootId}:";
 
             return $"{safRoot.RootId}:{storable.Id}";
@@ -140,9 +140,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             // Return the base folder if the path is empty
             if (string.IsNullOrEmpty(path))
-                return safRoot.StorageRoot.VirtualizedRoot;
+                return safRoot.StorageRoot.PlaintextRoot;
 
-            return safRoot.StorageRoot.VirtualizedRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
+            return safRoot.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         private static string GetMimeForStorable(IStorable storable)

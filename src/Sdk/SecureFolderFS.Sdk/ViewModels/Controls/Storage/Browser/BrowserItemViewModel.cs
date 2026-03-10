@@ -22,7 +22,6 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Recyclable;
 using SecureFolderFS.Storage.Renamable;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {

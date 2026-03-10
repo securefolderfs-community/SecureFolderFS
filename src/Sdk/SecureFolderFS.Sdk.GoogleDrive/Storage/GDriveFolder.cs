@@ -275,8 +275,9 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
             if (fileToMove is not GDriveFile gDriveFile)
                 return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
 
-            // No-op if source and destination folder is the same and name is unchanged
-            if (gDriveFile.DetachedId == DetachedId && gDriveFile.Name == newName)
+            // No-op if the same folder and name is unchanged
+            var isSameFolder = source is GDriveStorable gDriveSource && gDriveSource.DetachedId == DetachedId;
+            if (isSameFolder && gDriveFile.Name == newName)
                 return gDriveFile;
 
             // Check for an existing item at the destination if not overwriting
@@ -291,27 +292,28 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                     throw new IOException($"File '{newName}' already exists in folder '{Name}'.");
             }
 
-            // Google Drive has no dedicated move endpoint - moving is done by updating
-            // the file's parents: add the destination parent and remove the source parent
-            var sourceDetachedId = source is GDriveStorable gDriveSource
-                ? gDriveSource.DetachedId
-                : null;
-
             var updateMeta = new File() { Name = newName };
             var updateRequest = DriveService.Files.Update(updateMeta, gDriveFile.DetachedId);
             updateRequest.Fields = "id,name,mimeType,parents";
-            updateRequest.AddParents = DetachedId;
 
-            // Only remove the source parent if we know its Drive ID
-            if (sourceDetachedId is not null)
-                updateRequest.RemoveParents = sourceDetachedId;
+            // Only reparent if actually moving to a different folder
+            if (!isSameFolder)
+            {
+                updateRequest.AddParents = DetachedId;
+                var sourceDetachedId = source is GDriveStorable gDriveSourceFolder
+                    ? gDriveSourceFolder.DetachedId
+                    : null;
 
-            var movedFile = await updateRequest.ExecuteAsync(cancellationToken);
+                if (sourceDetachedId is not null)
+                    updateRequest.RemoveParents = sourceDetachedId;
+            }
+
+            var updatedFile = await updateRequest.ExecuteAsync(cancellationToken);
             return new GDriveFile(
                 DriveService,
-                movedFile.MimeType ?? "application/octet-stream",
-                CombinePaths(Id, movedFile.Id),
-                movedFile.Name,
+                updatedFile.MimeType ?? "application/octet-stream",
+                CombinePaths(Id, updatedFile.Id),
+                updatedFile.Name,
                 this);
         }
 
@@ -331,7 +333,8 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
                 return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
 
             // No-op if source and destination are identical
-            if (gDriveFile.DetachedId == DetachedId && gDriveFile.Name == newName)
+            var isSameFolder = gDriveFile.ParentFolder is GDriveStorable gDriveParent && gDriveParent.DetachedId == DetachedId;
+            if (isSameFolder && gDriveFile.Name == newName)
                 return gDriveFile;
 
             // Check for an existing item at the destination if not overwriting

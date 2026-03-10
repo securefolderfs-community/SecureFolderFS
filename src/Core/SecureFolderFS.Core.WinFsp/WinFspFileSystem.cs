@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.WinFsp
 {
@@ -55,14 +56,17 @@ namespace SecureFolderFS.Core.WinFsp
             var driveInfo = new DriveInfo(pathRoot);
             var winFspCallbacks = new OnDeviceWinFsp(specifics, handlesManager, volumeModel, driveInfo);
             //var winFsp = new WinFspService(winFspCallbacks, winFspOptions.MountPoint);
-            var winFsp = new WinFspHost(winFspCallbacks, winFspOptions.MountPoint); 
+            var winFsp = new WinFspHost(winFspCallbacks, winFspOptions.MountPoint);
             var result = await winFsp.StartFileSystemAsync();
 
             if (!result.Successful)
                 throw new Win32Exception(result.Value);
 
             winFspOptions.DangerousSetMountPoint(winFsp.GetMountPointInternal());
-            return new WinFspVFSRoot(winFsp, new SystemFolderEx(winFspOptions.MountPoint), specifics);
+
+            var virtualizedRoot = new SystemFolderEx(winFspOptions.MountPoint);
+            var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new WinFspVFSRoot(winFsp, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

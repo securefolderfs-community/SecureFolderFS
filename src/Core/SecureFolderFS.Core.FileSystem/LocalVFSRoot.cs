@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.FileSystem
         public override string FileSystemName { get; } = Constants.LOCAL_FILE_SYSTEM_NAME;
 
         public LocalVFSRoot(IDisposable disposable, IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+            : base(storageRoot, storageRoot, specifics)
         {
             _disposable = disposable;
         }

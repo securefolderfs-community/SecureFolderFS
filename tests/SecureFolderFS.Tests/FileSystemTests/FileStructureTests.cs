@@ -26,7 +26,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
+            var modifiableFolder = _storageRoot.PlaintextRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
 
             // Act
             var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            var modifiableFolder = _storageRoot.VirtualizedRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
+            var modifiableFolder = _storageRoot.PlaintextRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
 
             // Act
             var subFolder = await modifiableFolder.CreateFolderAsync("FOLDER") as IModifiableFolder;

@@ -41,6 +41,22 @@ namespace SecureFolderFS.Shared.Extensions
             throw new InvalidOperationException($"Could not find wrapper at level {typeof(TAt).Name}.");
         }
 
+        public static IWrapper<T> GetWrapperAt<T>(this IWrapper<T> wrapper, int level)
+        {
+            while (true)
+            {
+                if (wrapper.Inner is IWrapper<T> innerWrapper)
+                {
+                    wrapper = innerWrapper;
+                    level--;
+                    continue;
+                }
+
+                if (level == 0)
+                    return wrapper;
+            }
+        }
+
         public static IWrapper<T> GetWrapperBelow<T, TAbove>(this IWrapper<T> wrapper)
         {
             var aboveWrapper = GetWrapperAt<T, TAbove>(wrapper);
@@ -48,6 +64,14 @@ namespace SecureFolderFS.Shared.Extensions
                 return belowWrapper;
 
             throw new InvalidOperationException($"Could not find wrapper below level {typeof(TAbove).Name}.");
+        }
+
+        public static IWrapper<T> AsWrapper<T>(this object presumedWrapper)
+        {
+            if (presumedWrapper is not IWrapper<T> wrapper)
+                throw new ArgumentException($"The {nameof(presumedWrapper)} is not of type {typeof(IWrapper<T>)}.");
+
+            return wrapper;
         }
     }
 }

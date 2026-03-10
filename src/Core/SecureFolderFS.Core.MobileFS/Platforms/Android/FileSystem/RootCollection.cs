@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             foreach (var safRoot in Roots)
             {
-                if (storable.Id.StartsWith(safRoot.StorageRoot.VirtualizedRoot.Id))
+                if (storable.Id.StartsWith(safRoot.StorageRoot.PlaintextRoot.Id))
                     return safRoot;
             }
 

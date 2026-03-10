@@ -197,8 +197,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (items.Length == 0)
                 return;
 
+            var itemsToRestore = items.Select(x => x.AsWrapper<IStorable>().GetWrapperAt(1).Inner).Cast<IStorableChild>().ToArray();
             var folderPicker = DI.Service<IFileExplorerService>();
-            if (await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken))
+            if (await _recycleBin.TryRestoreItemsAsync(itemsToRestore, folderPicker, cancellationToken))
             {
                 foreach (var item in items)
                     Items.Remove(item);
@@ -220,7 +221,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             foreach (var item in items)
             {
-                if (item.Inner is not IStorableChild innerChild)
+                if (item.AsWrapper<IStorable>().GetWrapperAt(1).Inner is not IStorableChild innerChild)
                     continue;
 
                 try
@@ -273,7 +274,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                                     continue;
 
                                 // Skip if item already exists in collection
-                                if (Items.Any(x => x.Inner.Id == newItem.Id))
+                                if (Items.Any(x => x.AsWrapper<IStorable>().GetWrapperAt(1).Inner.Id == newItem.Id))
                                     continue;
 
                                 await Task.Delay(200); // Delay to ensure the item is fully available
@@ -281,7 +282,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                                 // Get the recycle bin item wrapper
                                 await foreach (var item in _recycleBin.GetItemsAsync())
                                 {
-                                    if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.Inner.Id != newItem.Id)
+                                    if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner.Id != newItem.Id)
                                         continue;
 
                                     Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync());
@@ -298,7 +299,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                         {
                             foreach (var oldItem in e.OldItems.OfType<IStorable>())
                             {
-                                var existingItem = Items.FirstOrDefault(x => x.Inner.Id == oldItem.Id);
+                                var existingItem = Items.FirstOrDefault(x => x.AsWrapper<IStorable>().GetWrapperAt(1).Inner.Id == oldItem.Id);
                                 if (existingItem is not null)
                                     Items.Remove(existingItem);
                             }

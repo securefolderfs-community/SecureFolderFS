@@ -3,9 +3,9 @@ using Microsoft.Maui.Platform;
 using SecureFolderFS.Maui.UserControls.Common;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Enums;
+using SecureFolderFS.Maui.Helpers;
 #if ANDROID
 using Android.Graphics.Drawables.Shapes;
-using SecureFolderFS.Maui.Helpers;
 using Paint = Android.Graphics.Paint;
 using ShapeDrawable = Android.Graphics.Drawables.ShapeDrawable;
 #elif IOS || MACCATALYST
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                         }] as Color)!.ToPlatform();
 
                         chevronImageView.TintColor = uiTextField.TextColor;
-                    }
+                    });
                 }
 
                 ApplyIosColors();

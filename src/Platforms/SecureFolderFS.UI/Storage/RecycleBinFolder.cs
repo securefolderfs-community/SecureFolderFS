@@ -11,6 +11,7 @@ using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -53,7 +54,7 @@ namespace SecureFolderFS.UI.Storage
             if (_specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var allItems = items.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.Inner : x).ToArray();
+            var allItems = items.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
             switch (allItems.Length)
             {
                 case 1:
@@ -111,7 +112,7 @@ namespace SecureFolderFS.UI.Storage
                 if (await folderPicker.PickFolderAsync(new StartingFolderOptions("ComputerFolder"), false, cancellationToken) is not IModifiableFolder destinationFolder)
                     throw new OperationCanceledException("The user did not pick destination a folder.");
 
-                if (!destinationFolder.Id.Contains(_vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
+                if (!destinationFolder.Id.Contains(_vfsRoot.PlaintextRoot.Id, StringComparison.OrdinalIgnoreCase))
                     throw new InvalidOperationException("The folder is outside of the virtualized storage folder.");
 
                 // Get deepest implementation
@@ -125,7 +126,7 @@ namespace SecureFolderFS.UI.Storage
                     return null;
 
                 // Return the equivalent ciphertext implementation
-                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.VirtualizedRoot, _specifics, cancellationToken) as IModifiableFolder;
+                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.PlaintextRoot, _specifics, cancellationToken) as IModifiableFolder;
             }
         }
 
@@ -153,7 +154,14 @@ namespace SecureFolderFS.UI.Storage
                 else if (parentStorable is IStorableChild parentStorableChild)
                     plaintextParentPath = await AbstractPathHelpers.GetPlaintextPathAsync(parentStorableChild, _specifics, cancellationToken);
 
-                yield return new RecycleBinItem(item, dataModel, this)
+                IStorable plaintextItem = item switch
+                {
+                    IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
+                    IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
+                    _ => throw new ArgumentOutOfRangeException(nameof(item))
+                };
+                
+                yield return new RecycleBinItem(plaintextItem, dataModel, this)
                 {
                     Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
                     Name = plaintextName ?? item.Name

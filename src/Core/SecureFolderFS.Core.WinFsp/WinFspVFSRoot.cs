@@ -15,8 +15,8 @@ namespace SecureFolderFS.Core.WinFsp
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WinFspVFSRoot(WinFspHost winFsp, IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+        public WinFspVFSRoot(WinFspHost winFsp, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+            : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _winFsp = winFsp;
         }

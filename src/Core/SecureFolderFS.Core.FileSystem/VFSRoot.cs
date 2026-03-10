@@ -17,15 +17,19 @@ namespace SecureFolderFS.Core.FileSystem
         public IFolder VirtualizedRoot { get; }
 
         /// <inheritdoc/>
+        public IFolder PlaintextRoot { get; }
+
+        /// <inheritdoc/>
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
         public VirtualFileSystemOptions Options { get; }
 
-        protected VFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
+        protected VFSRoot(IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
         {
             this.specifics = specifics;
-            VirtualizedRoot = storageRoot;
+            VirtualizedRoot = virtualizedRoot;
+            PlaintextRoot = plaintextRoot;
             Options = specifics.Options;
 
             // Automatically add created root

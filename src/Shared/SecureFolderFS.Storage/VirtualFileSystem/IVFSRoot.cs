@@ -14,6 +14,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         IFolder VirtualizedRoot { get; }
 
         /// <summary>
+        /// Gets the virtualized storage root in the form of a plaintext folder that wraps the ciphertext storage root.
+        /// </summary>
+        IFolder PlaintextRoot { get; }
+
+        /// <summary>
         /// Gets the fully-qualified name of the file system this storage root is a part of.
         /// </summary>
         string FileSystemName { get; }

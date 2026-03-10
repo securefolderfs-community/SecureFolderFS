@@ -16,6 +16,7 @@ namespace SecureFolderFS.Maui.Views
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
+        private readonly SemaphoreSlim _gallerySemaphore;
         private int _currentIndex;
         private GalleryView? _galleryView;
         private Button? _continueButton;
@@ -24,6 +25,7 @@ namespace SecureFolderFS.Maui.Views
         {
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
+            _gallerySemaphore = new(1, 1);
             BindingContext = this;
 
             InitializeComponent();
@@ -52,6 +54,8 @@ namespace SecureFolderFS.Maui.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            _galleryView = null; // This prevents subsequent Continue button events
+            _gallerySemaphore.Dispose();
             _modalTcs.TrySetResult(Result.Success);
         }
 
@@ -131,14 +135,23 @@ namespace SecureFolderFS.Maui.Views
         {
             if (_galleryView is null)
                 return;
-            
-            if (_currentIndex >= 3)
-            {
-                await MainPage.Instance!.Navigation.PopAsync();
-                return;
-            }
 
-            await _galleryView.SwipeToNextAsync();
+            try
+            {
+                await _gallerySemaphore.WaitAsync();
+                if (_currentIndex >= 3)
+                {
+                    await MainPage.Instance!.Navigation.PopAsync();
+                    return;
+                }
+
+                await _galleryView.SwipeToNextAsync();
+            }
+            finally
+            {
+                if (_galleryView is not null)
+                    _gallerySemaphore.Release();
+            }
         }
 
         private void PrivacyPolicy_Tapped(object? sender, TappedEventArgs e)

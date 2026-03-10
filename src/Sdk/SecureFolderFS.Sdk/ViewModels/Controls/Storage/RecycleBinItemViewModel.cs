@@ -87,12 +87,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             IFolderPicker folderPicker = ApplicationService.IsDesktop
                 ? DI.Service<IFileExplorerService>()
                 : BrowserHelpers.CreateBrowser(
-                    OverlayViewModel.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot,
+                    OverlayViewModel.UnlockedVaultViewModel.StorageRoot.PlaintextRoot,
                     OverlayViewModel.UnlockedVaultViewModel.Options,
                     OverlayViewModel.UnlockedVaultViewModel,
                     outerNavigator: OverlayViewModel.OuterNavigator);
 
-            if (await _recycleBin.TryRestoreItemsAsync(items.Select(x => x.Inner as IStorableChild)!, folderPicker, cancellationToken))
+            var itemsToRestore = items.Select(x => x.AsWrapper<IStorable>().GetWrapperAt(1).Inner).Cast<IStorableChild>().ToArray();
+            if (await _recycleBin.TryRestoreItemsAsync(itemsToRestore, folderPicker, cancellationToken))
             {
                 foreach (var item in items)
                     OverlayViewModel.Items.Remove(item);
@@ -118,7 +119,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
 
             foreach (var item in items)
             {
-                if (item.Inner is not IStorableChild innerChild)
+                if (item.AsWrapper<IStorable>().GetWrapperAt(1).Inner is not IStorableChild innerChild)
                     continue;
 
                 try

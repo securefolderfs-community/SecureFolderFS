@@ -81,7 +81,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     // Walk wrappers to find the CryptoStorable which holds FileSystemSpecifics -> IVFSRoot
                     // Alternatively, match via FileSystemManager directly
                     vfsRoot = FileSystemManager.Instance.FileSystems
-                        .FirstOrDefault(x => (x.VirtualizedRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner.Id == wrapper.Inner.Id || IsOwnedByRoot(wrapper.Inner, x));
+                        .FirstOrDefault(x => (x.PlaintextRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner.Id == wrapper.Inner.Id || IsOwnedByRoot(wrapper.Inner, x));
                 }
 
                 if (vfsRoot is null)
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
         private static bool IsOwnedByRoot(IFolder folder, IVFSRoot root)
         {
-            var virtualizedRootInner = (root.VirtualizedRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner;
+            var virtualizedRootInner = (root.PlaintextRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner;
             return folder.Id == virtualizedRootInner?.Id
                    || folder.Id.StartsWith(virtualizedRootInner?.Id ?? string.Empty, StringComparison.Ordinal);
         }

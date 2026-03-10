@@ -1,15 +1,14 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
@@ -67,8 +66,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Get recycle bin
             var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
-            if (recycleBin is not IRenamableFolder renamableRecycleBin)
-                throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+            if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             // Deserialize configuration
             var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
@@ -83,11 +82,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var plaintextName = specifics.Security.NameCrypt?.DecryptName(Path.GetFileNameWithoutExtension(deserialized.OriginalName), deserialized.DirectoryId) ?? deserialized.OriginalName;
                 var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextName, destinationFolder, specifics, cancellationToken);
 
-                // Rename the item to correct name
-                var renamedItem = await renamableRecycleBin.RenameAsync(item, ciphertextName, cancellationToken);
-
-                // Move item to destination
-                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+                // Rename and move item to destination
+                _ = await destinationFolder.MoveStorableFromAsync(item, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
             }
             else
             {
@@ -95,25 +91,22 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 // The same name could be used since the Directory IDs match
                 // TODO: Check if the Directory IDs actually match and fallback to above method if not
 
-                // Rename the item to correct name
-                var renamedItem = await renamableRecycleBin.RenameAsync(item, deserialized.OriginalName, cancellationToken);
-
-                // Move item to destination
-                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+                // Rename and move item to destination
+                _ = await destinationFolder.MoveStorableFromAsync(item, modifiableRecycleBin, false, deserialized.OriginalName, null, cancellationToken);
             }
 
             // Delete old configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
-            await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
+            await modifiableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
 
             // Check if the item had any size
             if (deserialized.Size is not ({ } size and > 0L))
                 return;
 
             // Update occupied size
-            var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+            var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
             var newSize = occupiedSize - size;
-            await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
+            await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
         }
 
         public static async Task DeleteOrRecycleAsync(
@@ -159,8 +152,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             // Get recycle bin
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
-            if (recycleBin is not IRenamableFolder renamableRecycleBin)
-                throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+            if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             if (sizeHint < 0L && specifics.Options.RecycleBinSize > 0L)
             {
@@ -171,7 +164,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     _ => 0L
                 };
 
-                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
                 if (availableSize < sizeHint)
                 {
@@ -184,13 +177,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextSourceFolder.Id);
             var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(ciphertextSourceFolder, specifics, directoryId, cancellationToken);
 
-            // Move and rename item
+            // Rename and move item
             var guid = Guid.NewGuid().ToString();
-            var movedItem = await renamableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, cancellationToken);
-            _ = await renamableRecycleBin.RenameAsync(movedItem, guid, cancellationToken);
+            _ = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
 
             // Create configuration file
-            var configurationFile = await renamableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
+            var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
             await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
             {
                 // Serialize configuration data model
@@ -212,9 +204,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())
             {
-                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
                 var newSize = occupiedSize + sizeHint;
-                await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
+                await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
             }
         }
 

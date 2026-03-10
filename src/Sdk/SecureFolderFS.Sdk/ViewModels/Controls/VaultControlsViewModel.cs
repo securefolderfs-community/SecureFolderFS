@@ -63,6 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task BrowseAsync(CancellationToken cancellationToken)
         {
+            await Task.Delay(100, cancellationToken);
             if (_browserViewModel is not null)
                 await _dashboardNavigator.NavigateAsync(_browserViewModel);
         }

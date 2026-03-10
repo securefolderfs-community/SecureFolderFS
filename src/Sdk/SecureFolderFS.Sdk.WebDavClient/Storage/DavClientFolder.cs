@@ -14,10 +14,12 @@ using WebDav;
 namespace SecureFolderFS.Sdk.WebDavClient.Storage
 {
     public class DavClientFolder : DavClientStorable,
-        IChildFolder,
         IRenamableFolder,
+        IChildFolder,
         IGetFirstByName,
         IGetItem,
+        ICreateRenamedCopyOf,
+        IMoveRenamedFrom,
         ICreatedAt,
         ILastModifiedAt
     {
@@ -172,6 +174,91 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
                 return new DavClientFolder(davClient, httpClient, baseUri, destId, newName, this);
             else
                 return new DavClientFile(davClient, httpClient, baseUri, destPath, newName, this);
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, CancellationToken cancellationToken,
+            CreateCopyOfDelegate fallback)
+        {
+            return CreateCopyOfAsync(fileToCopy, overwrite, fileToCopy.Name, cancellationToken, (mf, f, ov, _, ct) => fallback(mf, f, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> CreateCopyOfAsync(IFile fileToCopy, bool overwrite, string newName,
+            CancellationToken cancellationToken, CreateRenamedCopyOfDelegate fallback)
+        {
+            if (fileToCopy is not DavClientFile davFile)
+                return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
+
+            var destPath = CombinePath(Id, newName);
+
+            // No-op if source and destination are identical
+            if (davFile.Id == destPath)
+                return davFile;
+
+            var sourceUri = ResolveUri(davFile.Id);
+            var destUri = ResolveUri(destPath);
+            var copyParams = new CopyParameters()
+            {
+                Overwrite = overwrite,
+                CancellationToken = cancellationToken
+            };
+
+            var response = await davClient.Copy(sourceUri, destUri, copyParams);
+            if (!response.IsSuccessful)
+                throw new IOException($"Failed to copy '{fileToCopy.Name}' to '{newName}': {response.StatusCode}");
+
+            // If the name differs from what COPY produced, MOVE to the correct name
+            if (fileToCopy.Name != newName)
+            {
+                var renamedPath = CombinePath(Id, newName);
+                var renamedUri = ResolveUri(renamedPath);
+                var moveParams = new MoveParameters() { CancellationToken = cancellationToken };
+
+                var moveResponse = await davClient.Move(destUri, renamedUri, moveParams);
+                if (!moveResponse.IsSuccessful)
+                    throw new IOException($"Failed to rename copy to '{newName}': {moveResponse.StatusCode}");
+
+                return new DavClientFile(davClient, httpClient, baseUri, renamedPath, newName, this);
+            }
+
+            return new DavClientFile(davClient, httpClient, baseUri, destPath, newName, this);
+        }
+
+        /// <inheritdoc/>
+        public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite,
+            CancellationToken cancellationToken, MoveFromDelegate fallback)
+        {
+            return MoveFromAsync(fileToMove, source, overwrite, fileToMove.Name, cancellationToken,
+                (mf, f, src, ov, _, ct) => fallback(mf, f, src, ov, ct));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite,
+            string newName, CancellationToken cancellationToken, MoveRenamedFromDelegate fallback)
+        {
+            if (fileToMove is not DavClientFile davFile)
+                return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
+
+            var destPath = CombinePath(Id, newName);
+
+            // No-op if source and destination are identical
+            if (davFile.Id == destPath)
+                return davFile;
+
+            var sourceUri = ResolveUri(davFile.Id);
+            var destUri = ResolveUri(destPath);
+            var moveParams = new MoveParameters()
+            {
+                Overwrite = overwrite,
+                CancellationToken = cancellationToken
+            };
+
+            var response = await davClient.Move(sourceUri, destUri, moveParams);
+            if (!response.IsSuccessful)
+                throw new IOException($"Failed to move '{fileToMove.Name}' to '{newName}': {response.StatusCode}");
+
+            return new DavClientFile(davClient, httpClient, baseUri, destPath, newName, this);
         }
 
         /// <inheritdoc/>
