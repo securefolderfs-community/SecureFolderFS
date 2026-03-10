@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
@@ -12,7 +14,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ViewModels.Health;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.UserControls.ActionBlocks;
-using Windows.System;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -46,7 +47,17 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private void NameText_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel viewModel }} textBlock)
+            if (sender is not TextBlock textBlock)
+                return;
+
+            HealthNameIssueViewModel? viewModel = null;
+            if (textBlock.DataContext is ActionBlockControl { DataContext: HealthNameIssueViewModel actionBlockViewModel })
+                viewModel = actionBlockViewModel;
+                
+            if (viewModel is null && textBlock is { DataContext: HealthNameIssueViewModel dataContextViewModel })
+                viewModel = dataContextViewModel;
+            
+            if (viewModel is null)
                 return;
 
             viewModel.IsEditing = true;
@@ -63,16 +74,20 @@ namespace SecureFolderFS.Uno.Views.Vault
             viewModel.IsEditing = false;
         }
 
-        private void NameEdit_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void NameEdit_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // Workaround: Since Visibility does not have *Changed event,
             // we rely on IsEnabled to notify when the IsEditing property changes and set the focus
-            if (sender is not TextBox { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel } } textBox)
-                return;
-
             if (e.NewValue is not true)
                 return;
+            
+            if (sender is not TextBox textBox)
+                return;
 
+            if (textBox.DataContext is not ActionBlockControl { DataContext: HealthNameIssueViewModel } && textBox is not { DataContext: HealthNameIssueViewModel })
+                return;
+
+            await Task.Delay(100);
             textBox.Focus(FocusState.Programmatic);
             textBox.SelectAll();
         }
@@ -82,7 +97,17 @@ namespace SecureFolderFS.Uno.Views.Vault
             if (ViewModel is null)
                 return;
 
-            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel nameIssueViewModel } actionBlock })
+            if (sender is not TextBox textBox)
+                return;
+            
+            ActionBlockControl? actionBlock = null;
+            if (textBox.DataContext is ActionBlockControl dataContextActionBlock)
+                actionBlock = dataContextActionBlock;
+            
+            if (actionBlock is null && textBox.FindAscendant<ActionBlockControl>() is { } foundActionBlock)
+                actionBlock = foundActionBlock;
+
+            if (actionBlock?.DataContext is not HealthNameIssueViewModel viewModel)
                 return;
 
             switch (e.Key)
@@ -90,19 +115,20 @@ namespace SecureFolderFS.Uno.Views.Vault
                 case VirtualKey.Escape:
                 {
                     e.Handled = true;
-                    nameIssueViewModel.IsEditing = false;
+                    viewModel.IsEditing = false;
                     break;
                 }
 
                 case VirtualKey.Enter:
                 {
                     e.Handled = true;
-                    nameIssueViewModel.IsEditing = false;
+                    viewModel.IsEditing = false;
 
                     ItemsControl itemsList;
                     IList<HealthIssueViewModel> issueCollection;
 
-                    if (actionBlock.FindAscendant<ListView>() is { DataContext: ActionBlockControl { DataContext: HealthDirectoryIssueViewModel directoryIssue } } parentListView)
+                    var listViewAscendant = actionBlock.FindAscendant<ListView>();
+                    if (listViewAscendant is { DataContext: ActionBlockControl { DataContext: HealthDirectoryIssueViewModel directoryIssue } } parentListView)
                     {
                         itemsList = parentListView;
                         issueCollection = directoryIssue.Issues;
@@ -113,7 +139,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                         issueCollection = ViewModel.HealthViewModel.FoundIssues;
                     }
 
-                    var nextIndex = issueCollection.IndexOf(nameIssueViewModel) + 1;
+                    var nextIndex = issueCollection.IndexOf(viewModel) + 1;
                     if (issueCollection.Count == 1)
                         return;
 
@@ -122,13 +148,16 @@ namespace SecureFolderFS.Uno.Views.Vault
 
                     if (issueCollection.ElementAtOrDefault(nextIndex) is not HealthNameIssueViewModel nextItem)
                         return;
+                    
+                    if (itemsList.ContainerFromIndex(nextIndex) is not ContentControl nextContainer)
+                        return;
 
-                    var nextContainer = itemsList.ContainerFromIndex(nextIndex);
-                    if (nextContainer is not ContentControl { ContentTemplateRoot: ActionBlockControl nextActionBlock } || nextActionBlock.FindDescendant<TextBox>() is not { } textBox)
+                    var contentTemplateRoot = nextContainer.GetContentControlRoot();
+                    if (contentTemplateRoot is not ActionBlockControl nextActionBlock || nextActionBlock.FindDescendant<TextBox>() is not { } textBox2)
                         return;
 
                     nextItem.IsEditing = true;
-                    textBox.Focus(FocusState.Programmatic);
+                    textBox2.Focus(FocusState.Programmatic);
 
                     break;
                 }
