@@ -11,13 +11,11 @@ namespace SecureFolderFS.Core.FileSystem.Validators
     /// <inheritdoc cref="IAsyncValidator{T,TResult}"/>
     internal sealed class StructureValidator : BaseFileSystemValidator<(IFolder, IProgress<IResult>?)>
     {
-        private readonly IAsyncValidator<IFile, IResult> _fileValidator;
         private readonly IAsyncValidator<IFolder, IResult> _folderValidator;
 
-        public StructureValidator(FileSystemSpecifics specifics, IAsyncValidator<IFile, IResult> fileValidator, IAsyncValidator<IFolder, IResult> folderValidator)
+        public StructureValidator(FileSystemSpecifics specifics, IAsyncValidator<IFolder, IResult> folderValidator)
             : base(specifics)
         {
-            _fileValidator = fileValidator;
             _folderValidator = folderValidator;
         }
 
@@ -36,22 +34,16 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             var folderResult = await _folderValidator.ValidateResultAsync(scannedFolder, cancellationToken).ConfigureAwait(false);
             reporter?.Report(folderResult);
 
+            if (!folderResult.Successful)
+                return folderResult;
+
             await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
             {
                 if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                if (item is IChildFile file)
-                {
-                    var result = await _fileValidator.ValidateResultAsync(file, cancellationToken).ConfigureAwait(false);
-                    reporter?.Report(result);
-                }
-
-                if (folderResult.Successful)
-                {
-                    var nameResult = await ValidateNameResultAsync(item, cancellationToken).ConfigureAwait(false);
-                    reporter?.Report(nameResult);
-                }
+                var nameResult = await ValidateNameResultAsync(item, cancellationToken).ConfigureAwait(false);
+                reporter?.Report(nameResult);
             }
 
             return Result.Success;
