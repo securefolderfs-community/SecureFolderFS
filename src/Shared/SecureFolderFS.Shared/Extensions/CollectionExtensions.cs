@@ -45,9 +45,13 @@ namespace SecureFolderFS.Shared.Extensions
         public static void AddMultiple<T>(this ICollection<T> collection, IEnumerable<T> enumerable)
         {
             foreach (var item in enumerable)
-            {
                 collection.Add(item);
-            }
+        }
+
+        public static void AddMultiple<T>(this ICollection<T> collection, params T[] enumerable)
+        {
+            foreach (var item in enumerable)
+                collection.Add(item);
         }
 
         public static T? RemoveAndGet<T>(this ICollection<T> collection, T item)

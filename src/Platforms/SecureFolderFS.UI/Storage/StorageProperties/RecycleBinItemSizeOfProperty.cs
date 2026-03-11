@@ -26,6 +26,9 @@ namespace SecureFolderFS.UI.Storage.StorageProperties
         /// <inheritdoc/>
         public Task<long?> GetValueAsync(CancellationToken cancellationToken = default)
         {
+            if (_dataModel.Size < 0L)
+                return Task.FromResult<long?>(null);
+            
             return Task.FromResult(_dataModel.Size);
         }
     }

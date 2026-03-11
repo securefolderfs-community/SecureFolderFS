@@ -12,6 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
             fileSystemOptions.HealthStatistics.FileContentValidator ??= new FileContentValidator(specifics);
             fileSystemOptions.HealthStatistics.FolderValidator ??= new FolderValidator(specifics);
             fileSystemOptions.HealthStatistics.StructureValidator ??= new StructureValidator(specifics, fileSystemOptions.HealthStatistics.FolderValidator);
+            fileSystemOptions.HealthStatistics.StructureContentsValidator ??= new StructureContentsValidator(specifics, fileSystemOptions.HealthStatistics.FileContentValidator, fileSystemOptions.HealthStatistics.FolderValidator);
         }
 
         public static IDictionary<string, object> AppendContract(this IDictionary<string, object> options, IDisposable unlockContract)

@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 return;
 
             var size = await _recycleBinItem.SizeOf.GetValueAsync(cancellationToken);
-            Size = size.HasValue ? ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty) : "NaN";
+            Size = size.HasValue ? ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty) : string.Empty;
             DeletionTimestamp = await _recycleBinItem.CreatedAt.GetValueAsync(cancellationToken);
 
             var extension = Path.GetExtension(Title);

@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly List<IChildFolder> _scannedFolders;
         private readonly ProgressModel<TotalProgress> _progress;
         private readonly IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? _structureValidator;
-        private readonly IAsyncValidator<IFile, IResult>? _fileContentValidator;
+        private readonly IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? _structureContentsValidator;
         private int _updateCount;
         private int _updateInterval;
         private volatile int _totalFilesScanned;
@@ -32,7 +32,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner folderScanner, ProgressModel<TotalProgress> progress, IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator, IAsyncValidator<IFile, IResult>? fileContentValidator = null)
+        public HealthModel(
+            IFolderScanner folderScanner,
+            ProgressModel<TotalProgress> progress,
+            IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator,
+            IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureContentsValidator = null)
         {
             ServiceProvider = DI.Default;
             _scannedFiles = new();
@@ -40,7 +44,7 @@ namespace SecureFolderFS.Sdk.AppModels
             _folderScanner = folderScanner;
             _progress = progress;
             _structureValidator = structureValidator;
-            _fileContentValidator = fileContentValidator;
+            _structureContentsValidator = structureContentsValidator;
         }
 
         /// <inheritdoc/>
@@ -84,12 +88,16 @@ namespace SecureFolderFS.Sdk.AppModels
                 ReportProgress(_progress);
                 await Task.Delay(750, cancellationToken);
 
-                // Begin scanning structure
-                await ScanStructureAsync(cancellationToken).ConfigureAwait(false);
-
-                // Scan file contents if requested
                 if (includeFileContents)
-                    await ScanFileContentsAsync(cancellationToken).ConfigureAwait(false);
+                {
+                    // Scan structure and file contents
+                    await ScanStructureContentsAsync(cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    // Scan only structure
+                    await ScanStructureAsync(cancellationToken).ConfigureAwait(false);
+                }
 
                 // Report final progress
                 ReportProgress(_progress);
@@ -175,33 +183,30 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        private async Task ScanFileContentsAsync(CancellationToken cancellationToken)
+        private async Task ScanStructureContentsAsync(CancellationToken cancellationToken)
         {
-            if (_fileContentValidator is null)
+            if (_structureContentsValidator is null)
                 return;
 
             if (Constants.Widgets.Health.IS_SCANNING_PARALLELIZED)
             {
-                var tasks = new List<Task>(_scannedFiles.Count);
-                foreach (var file in _scannedFiles)
-                    tasks.Add(ScanFileContentAsync(file, cancellationToken));
+                var tasks = new List<Task>(_scannedFolders.Count);
+                foreach (var folder in _scannedFolders)
+                    tasks.Add(ScanFolderAsync(folder, cancellationToken));
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             else
             {
-                foreach (var file in _scannedFiles)
-                    await ScanFileContentAsync(file, cancellationToken).ConfigureAwait(false);
+                foreach (var folder in _scannedFolders)
+                    await ScanFolderAsync(folder, cancellationToken).ConfigureAwait(false);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            async Task ScanFileContentAsync(IChildFile file, CancellationToken token)
+            async Task ScanFolderAsync(IChildFolder folder, CancellationToken token)
             {
-                if (VaultService.IsNameReserved(file.Name))
-                    return;
-
-                var result = await _fileContentValidator.ValidateResultAsync(file, token).ConfigureAwait(false);
-                Report(result);
+                // We do not care about the result, since we assume it is reported through IProgress
+                _ = await _structureContentsValidator.ValidateResultAsync((folder, this), token).ConfigureAwait(false);
             }
         }
 
