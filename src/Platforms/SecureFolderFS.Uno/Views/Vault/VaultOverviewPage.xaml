@@ -86,14 +86,14 @@
                                                     Text="{x:Bind Title, Mode=OneWay}" />
                                                 <Button
                                                     Grid.Column="1"
-                                                    Width="32"
-                                                    Height="32"
+                                                    Width="24"
+                                                    Height="24"
                                                     Padding="0"
                                                     Background="Transparent"
                                                     BorderThickness="0"
                                                     Command="{x:Bind RemoveWidgetCommand, Mode=OneWay}"
                                                     CommandParameter="{x:Bind}">
-                                                    <FontIcon Glyph="&#xE738;" />
+                                                    <FontIcon FontSize="12" Glyph="&#xE738;" />
                                                 </Button>
                                             </Grid>
                                         </DataTemplate>
@@ -121,14 +121,14 @@
                                                     Text="{x:Bind Title, Mode=OneWay}" />
                                                 <Button
                                                     Grid.Column="1"
-                                                    Width="32"
-                                                    Height="32"
+                                                    Width="24"
+                                                    Height="24"
                                                     Padding="0"
                                                     Background="Transparent"
                                                     BorderThickness="0"
                                                     Command="{x:Bind AddWidgetCommand, Mode=OneWay}"
                                                     CommandParameter="{x:Bind}">
-                                                    <FontIcon Glyph="&#xE710;" />
+                                                    <FontIcon FontSize="12" Glyph="&#xE710;" />
                                                 </Button>
                                             </Grid>
                                         </DataTemplate>

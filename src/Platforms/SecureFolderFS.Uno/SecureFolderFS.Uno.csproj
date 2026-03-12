@@ -297,6 +297,7 @@
     <None Remove="UserControls\TitleBarControl.xaml" />
     <None Remove="UserControls\VaultControls.xaml" />
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <None Remove="UserControls\Widgets\AggregatedDataWidget.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <None Remove="UserControls\Widgets\HealthWidget.xaml" />
     <None Remove="Views\DebugViews\DebugAppControlPage.xaml" />
@@ -318,10 +319,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Dialogs\AgreementDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Dialogs\RecycleBinDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -401,6 +398,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -426,6 +427,9 @@
     <Page Update="UserControls\LoginControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="UserControls\LoginOptions.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="UserControls\Navigation\ContentNavigationControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -449,8 +453,15 @@
     <Page Update="UserControls\TitleBarControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="UserControls\VaultControls.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="UserControls\VaultFolderSelectionControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Widgets\AggregatedDataWidget.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControls\Widgets\GraphsWidget.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -532,11 +543,13 @@
     <UpToDateCheckInput Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\AgreementScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\EndScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\LoginOptions.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
@@ -546,7 +559,9 @@
     <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\TitleBarControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\VaultControls.xaml" />
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Widgets\AggregatedDataWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\HealthWidget.xaml" />
     <UpToDateCheckInput Remove="Views\DebugViews\DebugAppControlPage.xaml" />
@@ -565,30 +580,5 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="UserControls\Widgets\AggregatedDataWidget.xaml.cs">
-      <DependentUpon>AggregatedDataWidget.xaml</DependentUpon>
-      <IsDefaultItem>true</IsDefaultItem>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="UserControls\LoginOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="UserControls\VaultControls.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 </Project>

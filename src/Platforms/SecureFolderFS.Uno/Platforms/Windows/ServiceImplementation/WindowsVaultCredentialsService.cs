@@ -4,8 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -64,9 +66,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
                 yield return new WindowsHelloCreationViewModel(vaultFolder, vaultId);
 
-            // YubiKey
-            if (YubiKeyViewModel.IsSupported())
-                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            var iapService = DI.Service<IIapService>();
+            if (await iapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                // YubiKey
+                if (YubiKeyViewModel.IsSupported())
+                    yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            }
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId) { Icon = new ImageGlyph("\uE8D7") };

@@ -20,4 +20,10 @@
 	  <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Platforms\Android\AndroidVfsRoot.cs">
+	    <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+	  </Compile>
+	</ItemGroup>
+
 </Project>

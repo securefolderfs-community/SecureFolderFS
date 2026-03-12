@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
@@ -49,9 +52,13 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
             // Key File
             yield return new KeyFileCreationViewModel(vaultId);
 
-            // YubiKey
-            if (YubiKeyViewModel.IsSupported())
-                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId);
+            var iapService = DI.Service<IIapService>();
+            if (await iapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                // YubiKey
+                if (YubiKeyViewModel.IsSupported())
+                    yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            }
 
             await Task.CompletedTask;
         }

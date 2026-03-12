@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Dokany
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.Dokany
 
             var virtualizedRoot = new SystemFolderEx(dokanyOptions.MountPoint);
             var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new DokanyVFSRoot(dokanyWrapper, virtualizedRoot, plaintextRoot, specifics);
+            return new DokanyVfsRoot(dokanyWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

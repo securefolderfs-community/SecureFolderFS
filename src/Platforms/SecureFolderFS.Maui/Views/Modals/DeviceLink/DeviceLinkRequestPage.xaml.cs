@@ -78,6 +78,12 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
                 await KeyPulseRing.ScaleToAsync(1.0, 1000, Easing.SinInOut);
             }
         }
+        
+        private async Task AnimateMobilePulseAsync()
+        {
+            await MobileDevice.ScaleToAsync(1.05, 150, Easing.CubicOut);
+            await MobileDevice.ScaleToAsync(1.0, 150, Easing.CubicIn);
+        }
 
         [RelayCommand]
         private async Task AcceptRequestAsync(CancellationToken cancellationToken)
@@ -161,12 +167,6 @@ namespace SecureFolderFS.Maui.Views.Modals.DeviceLink
 
             await Task.Delay(200);
             await HideAsync();
-        }
-
-        private async Task AnimateMobilePulseAsync()
-        {
-            await MobileDevice.ScaleToAsync(1.05, 150, Easing.CubicOut);
-            await MobileDevice.ScaleToAsync(1.0, 150, Easing.CubicIn);
         }
 
         public DeviceLinkRequestOverlayViewModel? ViewModel

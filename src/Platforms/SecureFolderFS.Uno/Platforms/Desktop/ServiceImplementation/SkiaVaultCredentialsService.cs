@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
@@ -48,9 +51,13 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             // Password
             yield return new PasswordCreationViewModel() { Icon = new ImageGlyph("\uE8AC") };
 
-            // YubiKey
-            if (YubiKeyViewModel.IsSupported())
-                yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            var iapService = DI.Service<IIapService>();
+            if (await iapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                // YubiKey
+                if (YubiKeyViewModel.IsSupported())
+                    yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            }
 
             // macOS Biometrics (Touch ID)
             if (MacOSBiometricsViewModel.IsSupported())

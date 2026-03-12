@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public async Task ConfigureRecycleBinAsync(UnlockedVaultViewModel unlockedViewModel, long maxSize, CancellationToken cancellationToken = default)
         {
             if (unlockedViewModel.StorageRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
@@ -54,10 +54,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task RecalculateSizesAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task RecalculateSizesAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
@@ -112,10 +112,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IRecycleBinFolder> GetRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task<IRecycleBinFolder> GetRecycleBinAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
@@ -125,10 +125,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             var recycleBin = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)

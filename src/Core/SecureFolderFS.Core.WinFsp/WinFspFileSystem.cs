@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.WinFsp
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.WinFsp
 
             var virtualizedRoot = new SystemFolderEx(winFspOptions.MountPoint);
             var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new WinFspVFSRoot(winFsp, virtualizedRoot, plaintextRoot, specifics);
+            return new WinFspVfsRoot(winFsp, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

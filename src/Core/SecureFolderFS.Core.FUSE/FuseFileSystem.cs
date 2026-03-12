@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.FUSE
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Core.FUSE
 
             var virtualizedRoot = new SystemFolderEx(mountPoint);
             var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new FuseVFSRoot(fuseWrapper, virtualizedRoot, plaintextRoot, specifics);
+            return new FuseVfsRoot(fuseWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

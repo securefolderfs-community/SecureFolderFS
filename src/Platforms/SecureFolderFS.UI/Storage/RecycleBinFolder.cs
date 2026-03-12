@@ -26,7 +26,7 @@ namespace SecureFolderFS.UI.Storage
     /// <inheritdoc cref="IRecycleBinFolder"/>
     internal sealed class RecycleBinFolder : IRecycleBinFolder
     {
-        private readonly IVFSRoot _vfsRoot;
+        private readonly IVfsRoot _vfsRoot;
         private readonly FileSystemSpecifics _specifics;
         private readonly IModifiableFolder _recycleBin;
         private readonly IAsyncSerializer<Stream> _serializer;
@@ -40,7 +40,7 @@ namespace SecureFolderFS.UI.Storage
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new RecycleBinSizeOfProperty(_recycleBin);
 
-        public RecycleBinFolder(IModifiableFolder recycleBin, IVFSRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
+        public RecycleBinFolder(IModifiableFolder recycleBin, IVfsRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
         {
             _recycleBin = recycleBin;
             _vfsRoot = vfsRoot;

@@ -4,8 +4,8 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    internal sealed class FuseVFSRoot : VFSRoot
+    /// <inheritdoc cref="IVfsRoot"/>
+    internal sealed class FuseVfsRoot : VfsRoot
     {
         private readonly FuseWrapper _fuseWrapper;
         private bool _disposed;
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public FuseVFSRoot(FuseWrapper fuseWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+        public FuseVfsRoot(FuseWrapper fuseWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
             : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _fuseWrapper = fuseWrapper;

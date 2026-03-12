@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WinFsp
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    internal sealed class WinFspVFSRoot : VFSRoot
+    /// <inheritdoc cref="IVfsRoot"/>
+    internal sealed class WinFspVfsRoot : VfsRoot
     {
         private readonly WinFspHost _winFsp;
         private bool _disposed;
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.WinFsp
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WinFspVFSRoot(WinFspHost winFsp, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+        public WinFspVfsRoot(WinFspHost winFsp, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
             : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _winFsp = winFsp;

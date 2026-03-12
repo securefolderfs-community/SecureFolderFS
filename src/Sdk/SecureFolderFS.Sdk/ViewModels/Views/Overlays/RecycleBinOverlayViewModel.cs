@@ -46,6 +46,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public INavigator OuterNavigator { get; }
 
+        public bool IsInitialized { get; }
+
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
         {
             ServiceProvider = DI.Default;
@@ -111,6 +113,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _folderWatcher = await _recycleBin.TryGetFolderWatcherAsync(cancellationToken);
             if (_folderWatcher is not null)
                 _folderWatcher.CollectionChanged += FolderWatcher_CollectionChanged;
+
+            IsInitialized = true;
         }
 
         /// <summary>

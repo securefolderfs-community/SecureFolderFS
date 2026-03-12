@@ -3,21 +3,21 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.WebDav
+namespace SecureFolderFS.Core.Dokany
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    public sealed class WebDavVFSFolder : VFSRoot
+    /// <inheritdoc cref="IVfsRoot"/>
+    internal sealed class DokanyVfsRoot : VfsRoot
     {
-        private readonly WebDavWrapper _webDavWrapper;
+        private readonly DokanyWrapper _dokanyWrapper;
         private bool _disposed;
 
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WebDavVFSFolder(WebDavWrapper webDavWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+        public DokanyVfsRoot(DokanyWrapper dokanyWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
             : base(virtualizedRoot, plaintextRoot, specifics)
         {
-            _webDavWrapper = webDavWrapper;
+            _dokanyWrapper = dokanyWrapper;
         }
 
         /// <inheritdoc/>
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.WebDav
             if (_disposed)
                 return;
 
-            _disposed = await _webDavWrapper.CloseFileSystemAsync();
+            _disposed = await Task.Run(_dokanyWrapper.CloseFileSystem);
             if (_disposed)
             {
                 FileSystemManager.Instance.FileSystems.Remove(this);

@@ -30,18 +30,18 @@ namespace SecureFolderFS.Core.FileSystem
         }
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fileSystemOptions = VirtualFileSystemOptions.ToOptions(options.AppendContract(unlockContract), () => new HealthStatistics(), static () => new FileSystemStatistics());
+            var fileSystemOptions = VirtualFileSystemOptions.ToOptions(options.AppendContract(unlockContract), static () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
             fileSystemOptions.SetupValidators(specifics);
 
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new LocalVFSRoot(specifics, storageRoot, specifics);
+            return new LocalVfsRoot(specifics, storageRoot, specifics);
         }
     }
 }

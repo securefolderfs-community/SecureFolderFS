@@ -17,7 +17,7 @@ using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IOverlayService>, Inject<IVaultService>, Inject<IVaultCredentialsService>]
+    [Inject<IOverlayService>, Inject<IVaultService>, Inject<IVaultCredentialsService>, Inject<IIapService>]
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize, IDisposable
     {
@@ -61,7 +61,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
 
             _ = UpdateSecurityTextAsync(cancellationToken);
-            _ = RecycleBinOverlayViewModel.InitAsync(cancellationToken);
         }
 
         [RelayCommand]
@@ -109,6 +108,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private async Task ViewRecycleBinAsync(CancellationToken cancellationToken)
         {
             await Task.Delay(100, cancellationToken);
+            if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
+                if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                    return;
+            }
+
+            if (!RecycleBinOverlayViewModel.IsInitialized)
+                await RecycleBinOverlayViewModel.InitAsync(cancellationToken);
+
             await OverlayService.ShowAsync(RecycleBinOverlayViewModel);
         }
 

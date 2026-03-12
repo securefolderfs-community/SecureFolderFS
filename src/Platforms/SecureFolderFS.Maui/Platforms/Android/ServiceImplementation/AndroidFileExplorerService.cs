@@ -75,7 +75,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     return Task.FromResult(false);
 
                 // Find the SafRoot that owns this folder by matching VFSRoot
-                IVFSRoot? vfsRoot = null;
+                IVfsRoot? vfsRoot = null;
                 if (folder is IWrapper<IFolder> wrapper)
                 {
                     // Walk wrappers to find the CryptoStorable which holds FileSystemSpecifics -> IVFSRoot
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             }
         }
 
-        private static bool IsOwnedByRoot(IFolder folder, IVFSRoot root)
+        private static bool IsOwnedByRoot(IFolder folder, IVfsRoot root)
         {
             var virtualizedRootInner = (root.PlaintextRoot as IWrapper<IFolder>)?.GetDeepestWrapper().Inner;
             return folder.Id == virtualizedRootInner?.Id

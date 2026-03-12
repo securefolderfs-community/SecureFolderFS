@@ -12,7 +12,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
     [TestFixture]
     public class RecycleBinTests : BaseFileSystemTests
     {
-        private IVFSRoot? _storageRoot;
+        private IVfsRoot? _storageRoot;
         private IRecycleBinService? _recycleBinService;
         private IFileExplorerService? _fileExplorerService;
 

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <param name="unlockContract">A disposable contract that provides credentials of the vault.</param>
         /// <param name="options">A dictionary of additional options for mounting the vault. The specific keys and values depend on the implementation.</param>
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the mount operation.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an <see cref="IVFSRoot"/> instance representing the mounted virtual file system.</returns>
-        Task<IVFSRoot> MountAsync(IFolder vaultFolder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an <see cref="IVfsRoot"/> instance representing the mounted virtual file system.</returns>
+        Task<IVfsRoot> MountAsync(IFolder vaultFolder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default);
     }
 }

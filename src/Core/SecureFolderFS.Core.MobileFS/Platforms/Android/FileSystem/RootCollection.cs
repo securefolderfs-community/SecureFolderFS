@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 case NotifyCollectionChangedAction.Add:
                 {
-                    if (e.NewItems?[0] is not IVFSRoot storageRoot)
+                    if (e.NewItems?[0] is not IVfsRoot storageRoot)
                         return;
 
                     // Add to available roots
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
                 case NotifyCollectionChangedAction.Remove:
                 {
-                    if (e.OldItems?[0] is not IVFSRoot storageRoot)
+                    if (e.OldItems?[0] is not IVfsRoot storageRoot)
                         return;
 
                     // Remove from available roots

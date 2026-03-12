@@ -1277,4 +1277,52 @@
   <data name="SetupMacOsBiometrics" xml:space="preserve">
       <value>Setup Touch ID authentication</value>
   </data>
+  <data name="PlusAcquireSubscription" xml:space="preserve">
+      <value>{0} per month</value>
+  </data>
+  <data name="PlusAcquireLifetime" xml:space="preserve">
+      <value>Lifetime, {0}</value>
+  </data>
+  <data name="PlusUpgrade" xml:space="preserve">
+      <value>UPGRADE</value>
+  </data>
+  <data name="PlusTitle" xml:space="preserve">
+      <value>Your vaults, fully unleashed.</value>
+  </data>
+  <data name="PlusDescription" xml:space="preserve">
+      <value>Support independent development and unlock every feature.</value>
+  </data>
+  <data name="PlusUnlimitedVaults" xml:space="preserve">
+      <value>Unlimited vaults</value>
+  </data>
+  <data name="PlusUnlimitedVaultsDescription" xml:space="preserve">
+      <value>Create and manage more than two vaults at a time.</value>
+  </data>
+  <data name="PlusDeviceLink" xml:space="preserve">
+      <value>Device Link</value>
+  </data>
+  <data name="PlusDeviceLinkDescription" xml:space="preserve">
+      <value>Sync vault credentials securely with the mobile app.</value>
+  </data>
+  <data name="PlusSecurityKey" xml:space="preserve">
+      <value>YubiKey authentication</value>
+  </data>
+  <data name="PlusSecurityKeyDescription" xml:space="preserve">
+      <value>Protect vaults with hardware-grade security keys.</value>
+  </data>
+  <data name="PlusFileRecovery" xml:space="preserve">
+      <value>Recycle bin</value>
+  </data>
+  <data name="PlusFileRecoveryDescription" xml:space="preserve">
+      <value>Recover accidentally deleted files with ease.</value>
+  </data>
+  <data name="PlusVaultShortcuts" xml:space="preserve">
+      <value>Vault shortcuts</value>
+  </data>
+  <data name="PlusVaultShortcutsDescription" xml:space="preserve">
+      <value>Jump straight into any vault from a desktop shortcut.</value>
+  </data>
+  <data name="PlusSupportDevelopment" xml:space="preserve">
+      <value>Achieve full potential · Supports independent development</value>
+  </data>
 </root>

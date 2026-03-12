@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    public abstract class VFSRoot : IVFSRoot, IWrapper<FileSystemSpecifics>
+    /// <inheritdoc cref="IVfsRoot"/>
+    public abstract class VfsRoot : IVfsRoot, IWrapper<FileSystemSpecifics>
     {
         protected readonly FileSystemSpecifics specifics;
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem
         /// <inheritdoc/>
         public VirtualFileSystemOptions Options { get; }
 
-        protected VFSRoot(IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+        protected VfsRoot(IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
         {
             this.specifics = specifics;
             VirtualizedRoot = virtualizedRoot;

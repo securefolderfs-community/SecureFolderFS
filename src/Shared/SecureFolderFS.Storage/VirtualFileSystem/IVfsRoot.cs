@@ -6,7 +6,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
     /// <summary>
     /// Represents a storage root of a virtual file system.
     /// </summary>
-    public interface IVFSRoot : IAsyncDisposable, IDisposable
+    public interface IVfsRoot : IAsyncDisposable, IDisposable
     {
         /// <summary>
         /// Gets the virtualized storage root folder of the file system.

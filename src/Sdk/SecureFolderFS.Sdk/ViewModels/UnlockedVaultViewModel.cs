@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         /// <summary>
         /// Gets the unlocked root folder of the vault.
         /// </summary>
-        public IVFSRoot StorageRoot { get; }
+        public IVfsRoot StorageRoot { get; }
 
         /// <summary>
         /// Gets the options of the unlocked vault.
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         /// </summary>
         public VaultViewModel VaultViewModel { get; }
 
-        public UnlockedVaultViewModel(IFolder vaultFolder, IVFSRoot storageRoot, VaultViewModel vaultViewModel)
+        public UnlockedVaultViewModel(IFolder vaultFolder, IVfsRoot storageRoot, VaultViewModel vaultViewModel)
         {
             VaultFolder = vaultFolder;
             StorageRoot = storageRoot;

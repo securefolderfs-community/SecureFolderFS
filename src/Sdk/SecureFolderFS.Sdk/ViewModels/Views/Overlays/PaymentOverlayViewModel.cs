@@ -6,6 +6,9 @@ using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -15,6 +18,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         public static PaymentOverlayViewModel Instance { get; } = new();
 
+        [ObservableProperty] private string? _LifetimeText;
+        [ObservableProperty] private string? _SubscriptionText;
+
         private PaymentOverlayViewModel()
         {
             ServiceProvider = DI.Default;
@@ -23,18 +29,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // TODO: Localize
-            if (PrimaryText is not null && PrimaryText != "Buy")
+            if (LifetimeText is not null && SubscriptionText is not null)
                 return;
 
-            var price = await IapService.GetPriceAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
-            if (string.IsNullOrEmpty(price))
-            {
-                PrimaryText = "Buy";
-                CanContinue = false;
-            }
-            else
-                PrimaryText = price;
+            var lifetime = await IapService.GetPriceAsync(IapProductType.PlusLifetime, cancellationToken);
+            LifetimeText = "PlusAcquireLifetime".ToLocalized(lifetime ?? "{price}");
+
+            var subscription = await IapService.GetPriceAsync(IapProductType.PlusSubscription, cancellationToken);
+            SubscriptionText = "PlusAcquireSubscription".ToLocalized(subscription ?? "{price}");
+        }
+
+        [RelayCommand]
+        private async Task PurchaseLifetimeAsync(CancellationToken cancellationToken)
+        {
+            await IapService.PurchaseAsync(IapProductType.PlusSubscription, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task PurchaseSubscriptionAsync(CancellationToken cancellationToken)
+        {
+            await IapService.PurchaseAsync(IapProductType.PlusSubscription, cancellationToken);
         }
     }
 }

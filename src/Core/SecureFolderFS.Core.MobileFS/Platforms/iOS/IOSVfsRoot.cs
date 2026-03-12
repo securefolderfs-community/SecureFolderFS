@@ -1,19 +1,19 @@
-﻿using OwlCore.Storage;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
-namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
+namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    internal sealed class AndroidVFSRoot : VFSRoot
+    /// <inheritdoc cref="IVfsRoot"/>
+    internal sealed class IOSVfsRoot : VfsRoot
     {
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = Constants.Android.FileSystem.FS_NAME;
+        public override string FileSystemName { get; } = Constants.IOS.FileSystem.FS_NAME;
 
-        public AndroidVFSRoot(IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, storageRoot, specifics)
+        public IOSVfsRoot(IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
         }
 

@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public virtual async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Core.WebDav
                 cancellationToken);
         }
 
-        protected abstract Task<IVFSRoot> MountAsync(
+        protected abstract Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,

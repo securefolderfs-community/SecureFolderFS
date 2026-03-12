@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
     {
 #if __UNO_SKIA_MACOS__
         /// <inheritdoc/>
-        protected override async Task<IVFSRoot> MountAsync(
+        protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
 
             var virtualizedRoot = new MemoryFolder(mountPoint, options.VolumeName);
             var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new WebDavVFSFolder(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
+            return new WebDavVfsRoot(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
 #endif
     }

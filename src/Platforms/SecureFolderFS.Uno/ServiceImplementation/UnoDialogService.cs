@@ -37,7 +37,6 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
                 // Unused
                 PaymentOverlayViewModel => new PaymentDialog(),
-                AgreementOverlayViewModel => new AgreementDialog(),
                 IntroductionOverlayViewModel => new IntroductionControl(),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))

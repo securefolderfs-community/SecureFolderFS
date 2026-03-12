@@ -11,7 +11,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 {
     public abstract class BaseReadWriteTests : BaseFileSystemTests
     {
-        protected IVFSRoot? StorageRoot { get; private set; }
+        protected IVfsRoot? StorageRoot { get; private set; }
 
         protected async Task SetupAsync(MockVaultOptions? options, CancellationToken cancellationToken = default)
         {

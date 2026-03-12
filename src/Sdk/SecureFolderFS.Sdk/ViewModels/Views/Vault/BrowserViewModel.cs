@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public ThumbnailCacheModel ThumbnailCache { get; }
 
         [Obsolete("Use FileSystemOptions instead.")]
-        public IVFSRoot? StorageRoot { get; init; }
+        public IVfsRoot? StorageRoot { get; init; }
 
         public FileSystemOptions Options { get; }
 

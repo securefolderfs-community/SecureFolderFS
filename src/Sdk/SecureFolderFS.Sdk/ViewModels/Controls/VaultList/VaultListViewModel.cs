@@ -66,13 +66,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
-            // Check Plus version
-            var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
-            if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
+            // Check Iap Plus requirement
+            if (_vaultCollectionModel.Count >= 2)
             {
-                _ = PaymentOverlayViewModel.Instance.InitAsync(cancellationToken);
-                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance);
-                return;
+                if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                {
+                    await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
+                    if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                        return;
+                }
             }
 
             if (folder is not null)

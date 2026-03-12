@@ -13,9 +13,9 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public static FileSystemManager Instance { get; } = new();
 
         /// <summary>
-        /// Gets the collection of registered <see cref="IVFSRoot"/>s.
+        /// Gets the collection of registered <see cref="IVfsRoot"/>s.
         /// </summary>
-        public ObservableCollection<IVFSRoot> FileSystems { get; }
+        public ObservableCollection<IVfsRoot> FileSystems { get; }
 
         private FileSystemManager()
         {

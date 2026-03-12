@@ -12,7 +12,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
     [TestFixture]
     public class FileSystemCacheTests : BaseFileSystemTests
     {
-        private IVFSRoot? _storageRoot;
+        private IVfsRoot? _storageRoot;
 
         [SetUp]
         public async Task Initialize()
