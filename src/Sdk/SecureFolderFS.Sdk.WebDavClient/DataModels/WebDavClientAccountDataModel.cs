@@ -18,6 +18,15 @@ namespace SecureFolderFS.Sdk.WebDavClient.DataModels
 
         [JsonPropertyName("password")]
         public required string? Password { get; init; }
+
+        [JsonPropertyName("acceptFirstCertificate")]
+        public bool AcceptFirstCertificate { get; init; }
+
+        [JsonPropertyName("manualCertificateFingerprint")]
+        public string? ManualCertificateFingerprint { get; init; }
+
+        [JsonPropertyName("trustedCertificateFingerprint")]
+        public string? TrustedCertificateFingerprint { get; init; }
     }
 }
 

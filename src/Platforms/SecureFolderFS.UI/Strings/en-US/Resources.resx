@@ -1325,4 +1325,10 @@
   <data name="PlusSupportDevelopment" xml:space="preserve">
       <value>Achieve full potential · Supports independent development</value>
   </data>
+  <data name="AcceptFirstSsl" xml:space="preserve">
+      <value>Accept first SSL certificate</value>
+  </data>
+  <data name="ManualSslCertificate" xml:space="preserve">
+      <value>Manual certificate fingerprint (SHA-256)</value>
+  </data>
 </root>

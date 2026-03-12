@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
         public override string FileSystemName { get; } = Constants.IOS.FileSystem.FS_NAME;
 
         public IOSVfsRoot(IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+            : base(storageRoot, storageRoot, specifics)
         {
         }
 

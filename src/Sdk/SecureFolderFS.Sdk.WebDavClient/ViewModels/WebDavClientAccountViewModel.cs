@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +32,9 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
         [ObservableProperty] private string? _Port;
         [ObservableProperty] private string? _UserName;
         [ObservableProperty] private string? _Password;
+        [ObservableProperty] private bool _AcceptFirstCertificate = true;
+        [ObservableProperty] private string? _ManualCertificateFingerprint;
+        [ObservableProperty] private string? _TrustedCertificateFingerprint;
 
         /// <inheritdoc/>
         public override string DataSourceType { get; } = Constants.DATA_SOURCE_WEBDAV;
@@ -50,7 +55,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             if (_webDavClient is not null && _httpClient is not null && _baseUri is not null)
                 return new DavClientFolder(_webDavClient, _httpClient, _baseUri, _baseUri.AbsolutePath, string.Empty);
 
-            return await ConnectAsync(Address, Port, UserName, Password, cancellationToken);
+            return await ConnectAsync(Address, Port, UserName, Password, AcceptFirstCertificate, ManualCertificateFingerprint, TrustedCertificateFingerprint, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -77,9 +82,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             Address = dataModel.Address;
             Port = dataModel.Port;
             UserName = dataModel.UserName;
+            AcceptFirstCertificate = dataModel.AcceptFirstCertificate;
+            ManualCertificateFingerprint = dataModel.ManualCertificateFingerprint;
+            TrustedCertificateFingerprint = dataModel.TrustedCertificateFingerprint;
 
             // Connect using the data model
-            return await ConnectAsync(dataModel.Address, dataModel.Port, dataModel.UserName, dataModel.Password, cancellationToken);
+            return await ConnectAsync(dataModel.Address, dataModel.Port, dataModel.UserName, dataModel.Password, dataModel.AcceptFirstCertificate, dataModel.ManualCertificateFingerprint, dataModel.TrustedCertificateFingerprint, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -134,7 +142,10 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                 Address = Address,
                 Port = Port,
                 UserName = UserName,
-                Password = Password
+                Password = Password,
+                AcceptFirstCertificate = AcceptFirstCertificate,
+                ManualCertificateFingerprint = ManualCertificateFingerprint,
+                TrustedCertificateFingerprint = TrustedCertificateFingerprint
             };
 
             // Serialize and set
@@ -142,7 +153,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             await propertyStore.SetValueAsync(AccountId, serialized, cancellationToken);
         }
 
-        private async Task<IFolder> ConnectAsync(string? address, string? port, string? username, string? password, CancellationToken cancellationToken)
+        private async Task<IFolder> ConnectAsync(string? address, string? port, string? username, string? password, bool acceptFirstCertificate, string? manualCertificateFingerprint, string? trustedCertificateFingerprint, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(address))
                 throw new ArgumentException("Address cannot be empty.");
@@ -166,13 +177,40 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                     uriBuilder.Path += '/';
 
                 _baseUri = uriBuilder.Uri;
+                var normalizedManualFingerprint = NormalizeFingerprint(manualCertificateFingerprint);
+                var normalizedTrustedFingerprint = NormalizeFingerprint(trustedCertificateFingerprint);
 
                 // Use SocketsHttpHandler to support non-standard HTTP methods (PROPFIND, MKCOL, etc.)
                 // The platform-default handler on platforms like Android (AndroidMessageHandler) uses java.net.HttpURLConnection
                 // which rejects non-standard HTTP methods with a ProtocolException.
                 _httpClient = new HttpClient(new SocketsHttpHandler()
                 {
-                    PreAuthenticate = false
+                    PreAuthenticate = false,
+                    SslOptions =
+                    {
+                        RemoteCertificateValidationCallback = (_, certificate, _, sslPolicyErrors) =>
+                        {
+                            var serverFingerprint = GetCertificateFingerprint(certificate);
+                            if (string.IsNullOrEmpty(serverFingerprint))
+                                return false;
+
+                            // Manual pinning takes precedence over TOFU/default validation.
+                            if (!string.IsNullOrWhiteSpace(normalizedManualFingerprint))
+                                return string.Equals(serverFingerprint, normalizedManualFingerprint, StringComparison.OrdinalIgnoreCase);
+
+                            if (!string.IsNullOrWhiteSpace(normalizedTrustedFingerprint))
+                                return string.Equals(serverFingerprint, normalizedTrustedFingerprint, StringComparison.OrdinalIgnoreCase);
+
+                            if (acceptFirstCertificate)
+                            {
+                                normalizedTrustedFingerprint = serverFingerprint;
+                                TrustedCertificateFingerprint = serverFingerprint;
+                                return true;
+                            }
+
+                            return sslPolicyErrors == SslPolicyErrors.None;
+                        }
+                    }
                 })
                 {
                     BaseAddress = _baseUri,
@@ -213,6 +251,27 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
             IsInputFilled = !string.IsNullOrEmpty(Address);
         }
 
+        private static string? NormalizeFingerprint(string? fingerprint)
+        {
+            if (string.IsNullOrWhiteSpace(fingerprint))
+                return null;
+
+            return fingerprint.Replace(":", string.Empty, StringComparison.Ordinal)
+                .Replace(" ", string.Empty, StringComparison.Ordinal)
+                .Trim()
+                .ToUpperInvariant();
+        }
+
+        private static string? GetCertificateFingerprint(X509Certificate? certificate)
+        {
+            if (certificate is null)
+                return null;
+
+            var cert2 = certificate as X509Certificate2 ?? new X509Certificate2(certificate);
+            var hash = cert2.GetCertHashString(System.Security.Cryptography.HashAlgorithmName.SHA256);
+            return NormalizeFingerprint(hash);
+        }
+
         partial void OnAddressChanged(string? value)
         {
             _ = value;
@@ -226,6 +285,18 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
         }
 
         partial void OnUserNameChanged(string? value)
+        {
+            _ = value;
+            UpdateInputValidation();
+        }
+
+        partial void OnManualCertificateFingerprintChanged(string? value)
+        {
+            _ = value;
+            UpdateInputValidation();
+        }
+
+        partial void OnAcceptFirstCertificateChanged(bool value)
         {
             _ = value;
             UpdateInputValidation();

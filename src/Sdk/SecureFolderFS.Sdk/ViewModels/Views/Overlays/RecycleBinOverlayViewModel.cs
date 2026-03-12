@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public INavigator OuterNavigator { get; }
 
-        public bool IsInitialized { get; }
+        public bool IsInitialized { get; private set; }
 
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
         {

@@ -70,6 +70,24 @@
                         Text="{Binding UserName, Mode=TwoWay}" />
                 </VerticalStackLayout>
                 <uc:PasswordControl Placeholder="{l:ResourceString Rid=Password}" UnsecurePassword="{Binding Password, Mode=TwoWay}" />
+
+                <HorizontalStackLayout IsVisible="{Binding ManualCertificateFingerprint, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}" Spacing="12">
+                    <Label
+                        HorizontalOptions="FillAndExpand"
+                        LineBreakMode="WordWrap"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=AcceptFirstSsl}"
+                        VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding AcceptFirstCertificate, Mode=TwoWay}" />
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding AcceptFirstCertificate, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="2">
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=ManualSslCertificate}" />
+                    <ucc:ModernEntry
+                        BackgroundColor="Transparent"
+                        Placeholder="AA:BB:CC:..."
+                        Text="{Binding ManualCertificateFingerprint, Mode=TwoWay}" />
+                </VerticalStackLayout>
             </VerticalStackLayout>
         </DataTemplate>
 
@@ -185,7 +203,7 @@
                 Text="{Binding ViewModel.AccountViewModel.Title, Mode=OneWay}" />
 
             <!--  Account Login  -->
-            <uc:ContentPresentation Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
+            <uc:ContentPresentation Grid.Row="1" Presentation="{Binding ViewModel.AccountViewModel, Mode=OneWay}">
                 <uc:ContentPresentation.TemplateSelector>
                     <ts:AccountCreationTemplateSelector
                         DropboxAccountTemplate="{StaticResource DropboxAccountTemplate}"
