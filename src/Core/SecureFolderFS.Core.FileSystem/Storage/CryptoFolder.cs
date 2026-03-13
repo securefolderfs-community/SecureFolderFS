@@ -260,6 +260,9 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 if (folderWrapper.GetWrapperAt<IFolder, CryptoFolder>() is not { Inner: var ciphertextRoot })
                     return null;
 
+                if (parentFolder.Id == Path.DirectorySeparatorChar.ToString())
+                    return ciphertextRoot as TStorable;
+
                 var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(item.Name, ciphertextRoot, specifics, cancellationToken);
                 return await ciphertextRoot.TryGetFirstByNameAsync(ciphertextName, cancellationToken) as TStorable;
             }

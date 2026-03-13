@@ -67,15 +67,33 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             var destinationPath = Path.Combine(recycleBinPath, guid);
             Directory.Move(ciphertextPath, destinationPath);
 
-            // Create configuration file
+            // Create the configuration file
             using (var configurationStream = File.Create($"{destinationPath}.json"))
             {
+                var parentCiphertextPath = Path.GetDirectoryName(ciphertextPath);
+                if (parentCiphertextPath is null)
+                    throw new FileNotFoundException("The parent folder could not be determined.");
+
+                // Decrypt the plaintext name
+                var plaintextName = specifics.Security.NameCrypt is not null
+                    ? specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextPath), directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty)
+                    : Path.GetFileName(ciphertextPath);
+
+                // Decrypt the plaintext parent ID
+                var plaintextParentId = NativePathHelpers.GetPlaintextPath(parentCiphertextPath, specifics);
+                if (plaintextParentId is null || plaintextName is null)
+                    throw new FormatException("Could not decrypt paths for recycle bin configuration file.");
+
+                // Encrypt the new plaintext name and parent ID
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : []);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : []);
+
                 // Serialize configuration data model
                 using var serializedStream = StreamSerializer.Instance.SerializeAsync(
                     new RecycleBinItemDataModel()
                     {
-                        OriginalName = Path.GetFileName(ciphertextPath),
-                        ParentPath = Path.GetDirectoryName(ciphertextPath)?.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/') ?? string.Empty,
+                        Name = newCiphertextName,
+                        ParentId = newCiphertextParentId,
                         DirectoryId = directoryIdResult ? directoryId : [],
                         DeletionTimestamp = DateTime.Now,
                         Size = sizeHint

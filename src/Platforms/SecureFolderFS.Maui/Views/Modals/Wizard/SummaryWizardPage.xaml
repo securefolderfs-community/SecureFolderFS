@@ -67,13 +67,18 @@
             </VerticalStackLayout>
 
             <!--  Close button (iOS)  -->
-            <OnPlatform x:TypeArguments="Button">
+            <OnPlatform x:TypeArguments="Grid">
                 <On Platform="iOS">
-                    <Button
-                        Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
-                        HorizontalOptions="Center"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Text="{l:ResourceString Rid=GoToVaults}" />
+                    <Grid>
+                        <Button
+                            Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+                            HorizontalOptions="Center"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Text="{l:ResourceString Rid=GoToVaults}" />
+                    </Grid>
+                </On>
+                <On Platform="Android">
+                    <Grid />
                 </On>
             </OnPlatform>
         </VerticalStackLayout>

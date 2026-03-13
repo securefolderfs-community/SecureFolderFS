@@ -14,6 +14,26 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
     /// </summary>
     public static partial class AbstractPathHelpers
     {
+        public static async Task<IStorable?> GetCiphertextItemAsync(string plaintextPath, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return specifics.ContentFolder;
+
+            IStorable finalItem = specifics.ContentFolder;
+            var currentParent = specifics.ContentFolder;
+
+            foreach (var plaintextName in plaintextPath.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries))
+            {
+                var ciphertextName = await EncryptNameAsync(plaintextName, currentParent, specifics, cancellationToken);
+                finalItem = await currentParent.GetFirstByNameAsync(ciphertextName, cancellationToken);
+
+                if (finalItem is IFolder nextParent)
+                    currentParent = nextParent;
+            }
+
+            return finalItem;
+        }
+
         // TODO: Add a comment that this method assumes that items have a backing store
         public static async Task<string?> GetCiphertextPathAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
@@ -101,7 +121,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 currentStorable = currentParent;
             }
 
-            return finalPath;
+            return $"/{finalPath}";
         }
 
         /// <summary>

@@ -139,20 +139,12 @@ namespace SecureFolderFS.UI.Storage
                     continue;
 
                 var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
-                if (dataModel.ParentPath is null || dataModel.OriginalName is null)
+                if (dataModel.ParentId is null || dataModel.Name is null)
                     continue;
 
-                // Decrypt name only when using name encryption
-                var plaintextName = _specifics.Security.NameCrypt is null
-                    ? dataModel.OriginalName
-                    : _specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(dataModel.OriginalName), dataModel.DirectoryId);
-
-                string? plaintextParentPath = null;
-                var parentStorable = await _specifics.ContentFolder.TryGetItemByRelativePathOrSelfAsync(dataModel.ParentPath, cancellationToken);
-                if (parentStorable?.Id.Equals(_specifics.ContentFolder.Id, StringComparison.OrdinalIgnoreCase) ?? false)
-                    plaintextParentPath = _specifics.ContentFolder.Id;
-                else if (parentStorable is IStorableChild parentStorableChild)
-                    plaintextParentPath = await AbstractPathHelpers.GetPlaintextPathAsync(parentStorableChild, _specifics, cancellationToken);
+                // Decrypt name and parent path
+                var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
+                var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
 
                 IStorable plaintextItem = item switch
                 {
@@ -163,7 +155,7 @@ namespace SecureFolderFS.UI.Storage
                 
                 yield return new RecycleBinItem(plaintextItem, dataModel, this)
                 {
-                    Id = string.IsNullOrEmpty(plaintextParentPath) || string.IsNullOrEmpty(plaintextName) ? string.Empty : $"{plaintextParentPath}/{plaintextName}",
+                    Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
                     Name = plaintextName ?? item.Name
                 };
             }
