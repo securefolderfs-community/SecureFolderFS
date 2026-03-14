@@ -59,27 +59,103 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public void UseKey(Action<ReadOnlySpan<byte>> keyAction)
         {
-            keyAction(Key);
+            var combinedKey = new byte[Length];
+            try
+            {
+                var offset = 0;
+                foreach (var key in _keys)
+                {
+                    key.UseKey(span =>
+                    {
+                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
+                        offset += key.Length;
+                    });
+                }
+
+                keyAction(combinedKey);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+            }
         }
 
         /// <inheritdoc/>
         public void UseKey<TState>(TState state, ReadOnlySpanAction<byte, TState> keyAction)
         {
-            keyAction(Key, state);
+            var combinedKey = new byte[Length];
+            try
+            {
+                var offset = 0;
+                foreach (var key in _keys)
+                {
+                    key.UseKey(span =>
+                    {
+                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
+                        offset += key.Length;
+                    });
+                }
+
+                keyAction(combinedKey, state);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+            }
         }
 
         /// <inheritdoc/>
         public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
-            return keyAction(Key);
+            var combinedKey = new byte[Length];
+            try
+            {
+                var offset = 0;
+                foreach (var key in _keys)
+                {
+                    key.UseKey(span =>
+                    {
+                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
+                        offset += key.Length;
+                    });
+                }
+
+                return keyAction(combinedKey);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+            }
         }
 
         /// <inheritdoc/>
         public TResult UseKey<TState, TResult>(TState state, ReadOnlySpanFunc<byte, TState, TResult> keyAction)
         {
-            return keyAction(Key, state);
+            var combinedKey = new byte[Length];
+            try
+            {
+                var offset = 0;
+                foreach (var key in _keys)
+                {
+                    key.UseKey(span =>
+                    {
+                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
+                        offset += key.Length;
+                    });
+                }
+
+                return keyAction(combinedKey, state);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+            }
         }
 
+        /// <summary>
+        /// Adds a key to the sequence.
+        /// </summary>
+        /// <param name="key">The key to be added.</param>
         public void Add(IKeyUsage key)
         {
             _keys.Add(key);
