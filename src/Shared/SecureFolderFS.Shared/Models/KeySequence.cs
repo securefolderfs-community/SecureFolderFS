@@ -59,20 +59,12 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public void UseKey(Action<ReadOnlySpan<byte>> keyAction)
         {
-            var combinedKey = new byte[Length];
+            var length = Length;
+            var combinedKey = GC.AllocateArray<byte>(length, pinned: true);
             try
             {
-                var offset = 0;
-                foreach (var key in _keys)
-                {
-                    key.UseKey(span =>
-                    {
-                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
-                        offset += key.Length;
-                    });
-                }
-
-                keyAction(combinedKey);
+                AssembleKey(combinedKey);
+                keyAction(combinedKey.AsSpan());
             }
             finally
             {
@@ -83,20 +75,12 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public void UseKey<TState>(TState state, ReadOnlySpanAction<byte, TState> keyAction)
         {
-            var combinedKey = new byte[Length];
+            var length = Length;
+            var combinedKey = GC.AllocateArray<byte>(length, pinned: true);
             try
             {
-                var offset = 0;
-                foreach (var key in _keys)
-                {
-                    key.UseKey(span =>
-                    {
-                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
-                        offset += key.Length;
-                    });
-                }
-
-                keyAction(combinedKey, state);
+                AssembleKey(combinedKey);
+                keyAction(combinedKey.AsSpan(), state);
             }
             finally
             {
@@ -107,20 +91,12 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public TResult UseKey<TResult>(Func<ReadOnlySpan<byte>, TResult> keyAction)
         {
-            var combinedKey = new byte[Length];
+            var length = Length;
+            var combinedKey = GC.AllocateArray<byte>(length, pinned: true);
             try
             {
-                var offset = 0;
-                foreach (var key in _keys)
-                {
-                    key.UseKey(span =>
-                    {
-                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
-                        offset += key.Length;
-                    });
-                }
-
-                return keyAction(combinedKey);
+                AssembleKey(combinedKey);
+                return keyAction(combinedKey.AsSpan());
             }
             finally
             {
@@ -131,20 +107,12 @@ namespace SecureFolderFS.Shared.Models
         /// <inheritdoc/>
         public TResult UseKey<TState, TResult>(TState state, ReadOnlySpanFunc<byte, TState, TResult> keyAction)
         {
-            var combinedKey = new byte[Length];
+            var length = Length;
+            var combinedKey = GC.AllocateArray<byte>(length, pinned: true);
             try
             {
-                var offset = 0;
-                foreach (var key in _keys)
-                {
-                    key.UseKey(span =>
-                    {
-                        span.CopyTo(_combinedKey.AsSpan(offset, key.Length));
-                        offset += key.Length;
-                    });
-                }
-
-                return keyAction(combinedKey, state);
+                AssembleKey(combinedKey);
+                return keyAction(combinedKey.AsSpan(), state);
             }
             finally
             {
@@ -186,6 +154,20 @@ namespace SecureFolderFS.Shared.Models
 
             CryptographicOperations.ZeroMemory(_combinedKey);
             _combinedKey = null;
+        }
+
+        private void AssembleKey(byte[] destination)
+        {
+            var offset = 0;
+            foreach (var key in _keys)
+            {
+                var capturedOffset = offset;
+                key.UseKey(span =>
+                {
+                    span.CopyTo(destination.AsSpan(capturedOffset, span.Length));
+                });
+                offset += key.Length;
+            }
         }
 
         /// <inheritdoc/>
