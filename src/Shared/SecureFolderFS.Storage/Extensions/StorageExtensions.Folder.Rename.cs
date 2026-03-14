@@ -49,7 +49,7 @@ namespace SecureFolderFS.Storage.Extensions
             if (destinationFolder is IRenamableFolder renamableFolder)
                 return (IChildFile)await renamableFolder.RenameAsync(fileToRename, newName, cancellationToken);
 
-            return await destinationFolder.MoveFromAsync(fileToRename, destinationFolder, false, newName, cancellationToken);
+            return await destinationFolder.MoveFileImmediatelyFrom(fileToRename, destinationFolder, false, newName, cancellationToken);
         }
 
         /// <summary>
