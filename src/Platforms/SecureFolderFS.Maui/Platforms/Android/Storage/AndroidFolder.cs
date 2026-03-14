@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
         /// <inheritdoc/>
         public override DocumentFile? Document { get; }
-        
+
         /// <inheritdoc/>
         public ILastModifiedAtProperty LastModifiedAt => field ??= new AndroidLastModifiedAtProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
 
@@ -80,12 +80,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             var items = Document.ListFiles();
             if (items is null)
                 yield break;
-            
+
             foreach (var item in items)
             {
                 if (item.Uri is null)
                     continue;
-                
+
                 var isDirectory = item.IsDirectory;
                 var result = (IStorableChild?)(type switch
                 {
@@ -212,7 +212,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return CopyInternalAsync(androidFile, newName, cancellationToken);
         }
-        
+
         /// <inheritdoc/>
         public Task<IChildFile> MoveFromAsync(IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken,
             MoveFromDelegate fallback)
@@ -272,7 +272,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return target;
         }
-        
+
         private async Task<IChildFile> CopyInternalAsync(AndroidFile source, string newName, CancellationToken cancellationToken)
         {
             if (activity.ContentResolver is null)
@@ -289,7 +289,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return new AndroidFile(newFile.Uri, activity, this, permissionRoot);
         }
-        
+
         private Task<IChildFile> RenameInternalAsync(AndroidFile source, string newName)
         {
             if (activity.ContentResolver is null)
@@ -318,7 +318,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                         var renamedUri = DocumentsContract.RenameDocument(activity.ContentResolver, movedUri, newName);
                         if (renamedUri is not null)
                             return new AndroidFile(renamedUri, activity, this, permissionRoot);
-                
+
                         // Move succeeded, but rename failed - still return the moved file under the original name
                     }
 

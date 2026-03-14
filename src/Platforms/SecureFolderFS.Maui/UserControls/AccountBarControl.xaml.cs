@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.UserControls
                             accountBarControl.UserSubtitle.Text = ftpViewModel.Address ?? string.Empty;
                             break;
                         }
-                        
+
                         case WebDavClientAccountViewModel davClientAccountViewModel:
                         {
                             accountBarControl.UserAvatar.IsVisible = false;

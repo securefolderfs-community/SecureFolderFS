@@ -199,11 +199,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             {
                 transferViewModel.TransferType = TransferType.Move;
                 using var cts = transferViewModel.GetCancellation();
+
+                // Ensure the destination has content already loaded
+                if (destinationViewModel.Items.IsEmpty())
+                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+
                 await transferViewModel.TransferAsync([ itemToMove ], async (item, reporter, token) =>
                 {
                     // Get available name to avoid collision
                     var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
-                    
+
                     // Move
                     var movedItem = await destinationFolder.MoveStorableFromAsync(item, sourceFolder, false, availableName, reporter, token);
 
@@ -412,10 +417,14 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     transferViewModel.TransferType = TransferType.Copy;
                     using var cts = transferViewModel.GetCancellation();
 
+                    // Ensure the destination has content already loaded
+                    if (destinationViewModel.Items.IsEmpty())
+                        _ = destinationViewModel.ListContentsAsync(cts.Token);
+
                     await transferViewModel.TransferAsync(itemsToProcess, async (item, reporter, token) =>
                     {
                         token.ThrowIfCancellationRequested();
-                        
+
                         // Get available name to avoid collision
                         var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
 

@@ -10,10 +10,10 @@ namespace SecureFolderFS.UI.Storage.StorageProperties
     public sealed class RecycleBinSizeOfProperty : ISizeOfProperty
     {
         private readonly IModifiableFolder _recycleBin;
-        
+
         /// <inheritdoc/>
         public string Id { get; }
-        
+
         /// <inheritdoc/>
         public string Name { get; }
 

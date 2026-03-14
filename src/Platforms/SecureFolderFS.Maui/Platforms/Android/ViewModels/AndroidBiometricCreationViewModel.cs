@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                     Report(keyResult);
                     return;
                 }
-                
+
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
                 await tcs.Task;

@@ -95,15 +95,15 @@ namespace SecureFolderFS.Maui.Sheets
             var index = ViewModel.SizeOptions.IndexOf(ViewModel.CurrentSizeOption);
             sizeSegments.SelectedSegment = index;
         }
-        
+
         private void SizeSegments_SelectedIndexChanged(object? sender, SelectedIndexChangedEventArgs e)
         {
             if (_firstTime.IsFirstTime())
                 return;
-            
+
             ViewModel?.SetLayoutSizeOptionCommand.Execute(e.NewValue);
         }
-        
+
         private void SizeSegmentsAndroid_Loaded(object? sender, EventArgs e)
         {
             if (sender is not HorizontalStackLayout layout || ViewModel is null)

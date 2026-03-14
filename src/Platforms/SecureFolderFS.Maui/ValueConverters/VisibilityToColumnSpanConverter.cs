@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 var isInverted = strParam.Contains("invert", StringComparison.OrdinalIgnoreCase);
                 if (isInverted)
                     bValue = !bValue;
-                
+
                 if (strParam.Contains("column", StringComparison.OrdinalIgnoreCase))
                     return bValue ? 1 : 0;
             }

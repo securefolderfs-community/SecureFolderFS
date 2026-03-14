@@ -22,31 +22,31 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel.CurrentViewModel = ViewModel;
             base.OnAppearing();
         }
-        
+
         private async void RemoveAccount_Clicked(object? sender, EventArgs e)
         {
             if (sender is not SwipeItem { CommandParameter: AccountViewModel accountViewModel })
                 return;
-            
+
             await ViewModel.RemoveAccountCommand.ExecuteAsync(accountViewModel);
         }
-        
+
         private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
             if (sender is not View { BindingContext: AccountViewModel accountViewModel })
                 return;
-            
+
             await ViewModel.SelectAccountCommand.ExecuteAsync(accountViewModel);
         }
-        
+
         private async void OptionsControl_Clicked(object? sender, EventArgs e)
         {
             if (sender is not TouchBehavior { CommandParameter: AccountViewModel accountViewModel })
                 return;
-            
+
             await ViewModel.SelectAccountCommand.ExecuteAsync(accountViewModel);
         }
-        
+
         public AccountSourceWizardViewModel ViewModel
         {
             get => (AccountSourceWizardViewModel)GetValue(ViewModelProperty);
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         }
         public static readonly BindableProperty ViewModelProperty =
             BindableProperty.Create(nameof(ViewModel), typeof(AccountSourceWizardViewModel), typeof(AccountListSourceWizardPage));
-        
+
         public WizardOverlayViewModel OverlayViewModel
         {
             get => (WizardOverlayViewModel)GetValue(OverlayViewModelProperty);

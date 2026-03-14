@@ -11,13 +11,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
     {
         /// <inheritdoc/>
         public ICreatedAtProperty CreatedAt => field ??= new IOSCreatedAtProperty(Id, Inner, permissionRoot);
-        
+
         /// <inheritdoc/>
         public ILastModifiedAtProperty LastModifiedAt => field ??= new IOSLastModifiedAtProperty(Id, Inner, permissionRoot);
-        
+
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new IOSSizeOfProperty(Id, Inner, permissionRoot);
-        
+
         public IOSFile(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null, string? suggestedName = null)
             : base(url, parent, permissionRoot, bookmarkId)
         {

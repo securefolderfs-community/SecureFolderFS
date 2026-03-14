@@ -31,7 +31,7 @@ namespace SecureFolderFS.Maui.Helpers
                 ActualThemeChanged?.Invoke(this, EventArgs.Empty);
             });
         }
-        
+
         private void Application_RequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
         {
             ActualThemeChanged?.Invoke(this, EventArgs.Empty);

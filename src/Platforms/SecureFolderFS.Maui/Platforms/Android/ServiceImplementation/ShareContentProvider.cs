@@ -95,7 +95,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 {
                     await using var fileStream = await file.OpenReadAsync();
                     using var outputStream = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide);
-                    
+
                     int bytesRead;
                     var buffer = new byte[8192];
                     while ((bytesRead = await fileStream.ReadAsync(buffer)) > 0)
@@ -143,11 +143,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     case IOpenableColumns.DisplayName:
                         row?.Add(fileName);
                         break;
-                    
+
                     case IOpenableColumns.Size:
                         row?.Add(null); // Size unknown for streams
                         break;
-                    
+
                     default:
                         row?.Add(null);
                         break;

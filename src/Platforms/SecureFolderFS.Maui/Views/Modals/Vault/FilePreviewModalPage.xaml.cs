@@ -228,7 +228,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             var page = this as Page;
             var slideTask = page.TranslateToAsync(0, 60, 180U, Easing.CubicIn);
             var fadeTask = page.FadeToAsync(0d, 180U, Easing.CubicIn);
-            
+
             await Task.WhenAll(slideTask, fadeTask);
             await HideAsync();
         }

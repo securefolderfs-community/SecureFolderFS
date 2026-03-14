@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
             Horizontal,
             Vertical
         }
-        
+
         private readonly CorrectedPanGestureRecognizer _recognizer;
         private readonly Grid _container;
         private double _translateX;
@@ -248,7 +248,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                 }
             }
         }
-        
+
         public ICommand? PanUpdatedCommand
         {
             get => (ICommand?)GetValue(PanUpdatedCommandProperty);
@@ -256,7 +256,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
         }
         public static readonly BindableProperty PanUpdatedCommandProperty =
             BindableProperty.Create(nameof(PanUpdatedCommand), typeof(ICommand), typeof(GalleryView));
-        
+
         public bool IsDismissible
         {
             get => (bool)GetValue(IsDismissibleProperty);

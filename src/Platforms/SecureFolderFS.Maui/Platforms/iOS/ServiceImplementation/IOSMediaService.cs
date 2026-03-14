@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 case TypeHint.Media:
                 {
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                    
+
                     var extension = Path.GetExtension(file.Name);
                     return await GenerateVideoThumbnailAsync(stream, extension, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
                 }
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             using var data = NSData.FromStream(stream);
             if (data is null)
                 throw new Exception("Failed to load image data.");
-            
+
             using var image = UIImage.LoadFromData(data);
             if (image?.CGImage is null)
                 throw new Exception("Failed to load image.");

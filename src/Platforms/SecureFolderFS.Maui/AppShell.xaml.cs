@@ -22,10 +22,10 @@ namespace SecureFolderFS.Maui
             Routing.RegisterRoute("OverviewPage", typeof(OverviewPage));
             Routing.RegisterRoute("BrowserPage", typeof(BrowserPage));
             Routing.RegisterRoute("HealthPage", typeof(HealthPage));
-            
+
             WeakReferenceMessenger.Default.Register(this);
         }
-        
+
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {

@@ -104,6 +104,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
+                // Ensure the destination has content already loaded
+                if (destinationViewModel.Items.IsEmpty())
+                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
                     // Check if the item source is the same as destination
@@ -170,6 +174,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
                     return;
 
+                // Ensure the destination has content already loaded
+                if (destinationViewModel.Items.IsEmpty())
+                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+
                 await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
                 {
                     // Get available name to avoid collision
@@ -177,6 +185,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                     // Copy
                     var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, availableName, reporter, token);
+
+                    // Ensure the destination has content already loaded
+                    if (destinationViewModel.Items.IsEmpty())
+                        _ = destinationViewModel.ListContentsAsync(cts.Token);
 
                     // Add to destination
                     destinationViewModel.Items.Insert(copiedItem switch

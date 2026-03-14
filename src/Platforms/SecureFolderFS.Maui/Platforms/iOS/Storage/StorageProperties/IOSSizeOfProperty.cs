@@ -38,7 +38,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties
                 var attributes = NSFileManager.DefaultManager.GetAttributes(path, out _);
                 if (attributes?.Size is null)
                     return Task.FromResult<long?>(null);
-                
+
                 return Task.FromResult<long?>((long)attributes.Size);
             }
             finally

@@ -53,7 +53,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             HealthNameIssueViewModel? viewModel = null;
             if (textBlock.DataContext is ActionBlockControl { DataContext: HealthNameIssueViewModel actionBlockViewModel })
                 viewModel = actionBlockViewModel;
-                
+
             if (viewModel is null && textBlock is { DataContext: HealthNameIssueViewModel dataContextViewModel })
                 viewModel = dataContextViewModel;
             
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
                     if (issueCollection.ElementAtOrDefault(nextIndex) is not HealthNameIssueViewModel nextItem)
                         return;
-                    
+
                     if (itemsList.ContainerFromIndex(nextIndex) is not ContentControl nextContainer)
                         return;
 

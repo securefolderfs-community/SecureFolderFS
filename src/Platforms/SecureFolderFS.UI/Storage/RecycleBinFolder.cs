@@ -136,7 +136,7 @@ namespace SecureFolderFS.UI.Storage
                     var relativePlaintextFolder = await _vfsRoot.PlaintextRoot.GetItemByRelativePathOrSelfAsync(relativePlaintextFolderId, cancellationToken);
                     if (relativePlaintextFolder is not IWrapper<IFolder> folderWrapper)
                         return null;
-                    
+
                     return folderWrapper.Inner as IModifiableFolder;   
                 }
                 else

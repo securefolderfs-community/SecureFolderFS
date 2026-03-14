@@ -287,7 +287,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
                 _previousView = OverlayViewModel.CurrentViewModel;
                 OverlayViewModel.CurrentViewModel = nextViewModel as IStagingView;
-                
+
                 await Navigation.PushAsync(page, true);
                 e.TaskCompletion?.TrySetResult(true);
             }

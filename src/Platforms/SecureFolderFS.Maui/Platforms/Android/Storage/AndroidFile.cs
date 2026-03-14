@@ -58,7 +58,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, "rwt");
                 if (fd is null)
                     return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open file descriptor."));
-                
+
                 var fInChannel = new FileInputStream(fd.FileDescriptor).Channel;
                 var fOutChannel = new FileOutputStream(fd.FileDescriptor).Channel;
                 if (fInChannel is null || fOutChannel is null)

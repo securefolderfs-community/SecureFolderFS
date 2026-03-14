@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Views.Modals
     public partial class BaseModalPage : ContentPage
     {
         private Guid? _primaryToolbarItemId;
-        
+
         public BaseModalPage()
         {
             BindingContext = this;
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Views.Modals
 #if ANDROID
             if (bindable is not BaseModalPage modalPage)
                 return;
-            
+
             var primaryButton = modalPage.PrimaryButton;
             var closeButton = modalPage.CloseButton;
             var buttonsGrid = modalPage.ButtonsGrid;
@@ -135,7 +135,7 @@ namespace SecureFolderFS.Maui.Views.Modals
                         {
                             Order = ToolbarItemOrder.Primary
                         };
-                        
+
                         toolbarItem.SetBinding(MenuItem.TextProperty, new Binding(nameof(PrimaryText), mode: BindingMode.OneWay, source: modalPage));
                         toolbarItem.SetBinding(MenuItem.CommandProperty, new Binding(nameof(PrimaryCommand), mode: BindingMode.OneWay, source: modalPage));
                         toolbarItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(PrimaryEnabled), mode: BindingMode.OneWay, source: modalPage));

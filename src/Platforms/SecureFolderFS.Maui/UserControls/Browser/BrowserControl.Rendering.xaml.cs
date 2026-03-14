@@ -143,7 +143,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
                 return;
-            
+
             if (!fileViewModel.CanLoadThumbnail())
                 return;
 

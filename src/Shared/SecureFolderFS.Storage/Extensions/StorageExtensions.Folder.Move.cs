@@ -100,19 +100,19 @@ namespace SecureFolderFS.Storage.Extensions
             }
 
             // If the destination folder declares a non-fallback move path, try that.
-            // Provide fallback in case this file is not a handled type.
+            // Provide a fallback in case this file is not a handled type.
             if (destinationFolder is IMoveRenamedFrom fastPath)
-                return await fastPath.MoveFromAsync(fileToMove, source, overwrite, newName, cancellationToken, fallback: MoveFromFallbackAsync);
+                return await fastPath.MoveFromAsync(fileToMove, source, overwrite, newName, cancellationToken, fallback: MoveRenamedFromFallbackAsync);
 
             // Manual move. Slower, but covers all scenarios.
-            return await MoveFromFallbackAsync(destinationFolder, fileToMove, source, overwrite, newName, cancellationToken);
+            return await MoveRenamedFromFallbackAsync(destinationFolder, fileToMove, source, overwrite, newName, cancellationToken);
         }
 
         /// <summary>
         /// Moves a file out of the source folder and into the destination folder. Returns the new file that resides in this folder.
         /// </summary>
         /// <remarks>
-        /// If the destination folder does not implement <see cref="IMoveRenamedFrom"/>, copy and delete operations take precedence.
+        /// If the destination folder does not implement <see cref="IMoveFrom"/>, copy and delete operations take precedence.
         /// The delete operation, if supported, deletes the item immediately, instead of recycling it.
         /// </remarks>
         /// <param name="destinationFolder">The folder where the file is moved to.</param>
@@ -209,9 +209,9 @@ namespace SecureFolderFS.Storage.Extensions
             return movedFolder;
         }
 
-        private static async Task<IChildFile> MoveFromFallbackAsync(IModifiableFolder destinationFolder, IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName, CancellationToken cancellationToken = default)
+        private static async Task<IChildFile> MoveRenamedFromFallbackAsync(IModifiableFolder destinationFolder, IChildFile fileToMove, IModifiableFolder source, bool overwrite, string newName, CancellationToken cancellationToken = default)
         {
-            // Use the copy fallback directly (which only preserves LastModifiedAt)
+            // Use the copy fallback directly
             var file = await destinationFolder.CreateCopyOfAsync(fileToMove, overwrite, newName, cancellationToken);
 
             // Delete the source file
@@ -222,7 +222,7 @@ namespace SecureFolderFS.Storage.Extensions
 
         private static async Task<IChildFile> MoveFromFallbackAsync(IModifiableFolder destinationFolder, IChildFile fileToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
         {
-            // Use the copy fallback directly (which only preserves LastModifiedAt)
+            // Use the copy fallback directly
             var file = await destinationFolder.CreateCopyOfAsync(fileToMove, overwrite, fileToMove.Name, cancellationToken);
 
             // Delete the source file

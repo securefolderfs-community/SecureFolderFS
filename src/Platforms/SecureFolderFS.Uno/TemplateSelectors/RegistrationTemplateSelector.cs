@@ -15,7 +15,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? KeyFileTemplate { get; set; }
 
         public DataTemplate? WindowsHelloTemplate { get; set; }
-        
+
         public DataTemplate? TouchIDTemplate { get; set; }
 
         public DataTemplate? YubiKeyTemplate { get; set; }

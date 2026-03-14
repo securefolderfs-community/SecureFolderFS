@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                     Report(keyResult);
                     return;
                 }
-                
+
                 // Report that credentials were provided and new provision needs to be applied
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key, tcs));

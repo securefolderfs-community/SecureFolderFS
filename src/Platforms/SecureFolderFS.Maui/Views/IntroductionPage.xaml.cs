@@ -68,11 +68,11 @@ namespace SecureFolderFS.Maui.Views
             BackgroundView.TranslationY = 800d;
             _ = BackgroundView.FadeToAsync(1, 800U, Easing.CubicIn);
             _ = BackgroundView.TranslateToAsync(0, -300, 3000U, EasingHelpers.EaseOutExpo);
-            
+
 #if ANDROID
             _ = Task.Delay(900).ContinueWith(async _ => await SystemNavBarGradient.FadeToAsync(1, 300U, Easing.CubicIn));
 #endif
-            
+
             await Task.Delay(600);
 #if ANDROID
             _ = ForegroundView.FadeToAsync(1, 600U, Easing.CubicIn);
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Maui.Views
         {
             if (sender is not GalleryView galleryView)
                 return;
-            
+
             _galleryView = galleryView;
             galleryView.NextRequested += GalleryView_NextRequested;
             galleryView.PreviousRequested += GalleryView_PreviousRequested;

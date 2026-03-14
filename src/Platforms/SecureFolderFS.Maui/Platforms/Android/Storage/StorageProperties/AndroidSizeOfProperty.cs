@@ -7,7 +7,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties
     internal sealed class AndroidSizeOfProperty : ISizeOfProperty
     {
         private readonly DocumentFile _document;
-        
+
         /// <inheritdoc/>
         public string Id { get; }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties
             Name = nameof(ISizeOf.SizeOf);
             Id = $"{id}/{nameof(ISizeOf.SizeOf)}";
         }
-        
+
         /// <inheritdoc/>
         public Task<long?> GetValueAsync(CancellationToken cancellationToken = default)
         {
