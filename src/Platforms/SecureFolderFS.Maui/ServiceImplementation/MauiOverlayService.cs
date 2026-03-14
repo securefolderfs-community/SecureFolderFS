@@ -2,6 +2,7 @@ using SecureFolderFS.Maui.Popups;
 using SecureFolderFS.Maui.Prompts;
 using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Maui.Views;
+using SecureFolderFS.Maui.Views.Modals;
 using SecureFolderFS.Maui.Views.Modals.DeviceLink;
 using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Vault;
@@ -26,6 +27,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
+                PaymentOverlayViewModel => new PaymentModalPage(navigation),
                 PreviewerOverlayViewModel => new FilePreviewModalPage(navigation),
                 RecycleBinOverlayViewModel => new RecycleBinModalPage(navigation),
                 IntroductionOverlayViewModel => new IntroductionPage(navigation),

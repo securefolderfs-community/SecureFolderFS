@@ -1,0 +1,217 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.PaymentModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    x:DataType="md:PaymentModalPage"
+    NavigationPage.HasNavigationBar="False"
+    SafeAreaEdges="None">
+
+    <md:BaseModalPage.ModalContent>
+        <Grid RowDefinitions="Auto,*">
+            <Border Padding="18,20,18,16" StrokeThickness="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0" Color="#55106bbf" />
+                        <GradientStop Offset="1" Color="Transparent" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid>
+                    <Button
+                        Margin="0,2,0,0"
+                        Padding="0"
+                        Background="Transparent"
+                        Clicked="CloseButton_Clicked"
+                        CornerRadius="16"
+                        HeightRequest="32"
+                        HorizontalOptions="End"
+                        IsVisible="{OnPlatform Android=True,
+                                               iOS=False}"
+                        Text="X"
+                        VerticalOptions="Start"
+                        WidthRequest="32" />
+
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                        <Grid
+                            HeightRequest="94"
+                            HorizontalOptions="Center"
+                            WidthRequest="94">
+                            <Ellipse
+                                x:Name="OuterRing"
+                                HeightRequest="84"
+                                HorizontalOptions="Center"
+                                Opacity="0.35"
+                                Stroke="{StaticResource ThemePrimaryColorBrush}"
+                                StrokeThickness="1"
+                                VerticalOptions="Center"
+                                WidthRequest="84" />
+
+                            <Ellipse
+                                x:Name="InnerRing"
+                                HeightRequest="66"
+                                HorizontalOptions="Center"
+                                Opacity="0.65"
+                                Stroke="{StaticResource ThemePrimaryColorBrush}"
+                                StrokeThickness="1.5"
+                                VerticalOptions="Center"
+                                WidthRequest="66" />
+
+                            <Image
+                                HeightRequest="34"
+                                HorizontalOptions="Center"
+                                Source="app_icon.png"
+                                VerticalOptions="Center"
+                                WidthRequest="34" />
+                        </Grid>
+
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="10"
+                                HorizontalTextAlignment="Center"
+                                Opacity="0.85"
+                                Text="{l:ResourceString Rid=PlusUpgrade}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}" />
+
+                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="0">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="22"
+                                    Text="SecureFolderFS" />
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="22"
+                                    Text="+"
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Grid
+                Grid.Row="1"
+                Padding="20,18,20,20"
+                RowDefinitions="Auto,*,Auto"
+                RowSpacing="16">
+                <VerticalStackLayout Grid.Row="0" Spacing="8">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="{l:ResourceString Rid=PlusTitle}" />
+
+                    <Label
+                        Margin="0,0,0,4"
+                        LineBreakMode="WordWrap"
+                        Opacity="0.75"
+                        Text="{l:ResourceString Rid=PlusDescription}" />
+                </VerticalStackLayout>
+
+                <ScrollView Grid.Row="1">
+                    <VerticalStackLayout Spacing="8">
+                        <uc:FeatureTile Title="{l:ResourceString Rid=PlusUnlimitedVaults}" Description="{l:ResourceString Rid=PlusUnlimitedVaultsDescription}">
+                            <uc:FeatureTile.IconContent>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        Icon="{mi_material:Material AddRoad}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="Android" />
+                                    <mi:MauiIcon
+                                        Icon="{mi_cupertino:Cupertino TrayArrowDownFill}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="iOS" />
+                                </Grid>
+                            </uc:FeatureTile.IconContent>
+                        </uc:FeatureTile>
+
+                        <uc:FeatureTile Title="{l:ResourceString Rid=PlusDeviceLink}" Description="{l:ResourceString Rid=PlusDeviceLinkDescription}">
+                            <uc:FeatureTile.IconContent>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        Icon="{mi_material:Material Devices}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="Android" />
+                                    <mi:MauiIcon
+                                        Icon="{mi_cupertino:Cupertino Desktopcomputer}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="iOS" />
+                                </Grid>
+                            </uc:FeatureTile.IconContent>
+                        </uc:FeatureTile>
+
+                        <uc:FeatureTile Title="{l:ResourceString Rid=PlusSecurityKey}" Description="{l:ResourceString Rid=PlusSecurityKeyDescription}">
+                            <uc:FeatureTile.IconContent>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        Icon="{mi_material:Material Key}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="Android" />
+                                    <mi:MauiIcon
+                                        Icon="{mi_cupertino:Cupertino LockFill}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="iOS" />
+                                </Grid>
+                            </uc:FeatureTile.IconContent>
+                        </uc:FeatureTile>
+
+                        <uc:FeatureTile Title="{l:ResourceString Rid=PlusFileRecovery}" Description="{l:ResourceString Rid=PlusFileRecoveryDescription}">
+                            <uc:FeatureTile.IconContent>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        Icon="{mi_material:Material Icon=Recycling}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="Android" />
+                                    <mi:MauiIcon
+                                        Icon="{mi_cupertino:Cupertino Icon=Trash}"
+                                        IconColor="White"
+                                        IconSize="16"
+                                        OnPlatforms="iOS" />
+                                </Grid>
+                            </uc:FeatureTile.IconContent>
+                        </uc:FeatureTile>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <VerticalStackLayout Grid.Row="2" Spacing="12">
+                    <Grid
+                        Margin="0,8,0,0"
+                        ColumnDefinitions="*,*"
+                        ColumnSpacing="10">
+                        <Button
+                            Grid.Column="0"
+                            Command="{Binding ViewModel.PurchaseLifetimeCommand}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Text="{Binding ViewModel.LifetimeText}" />
+
+                        <Button
+                            Grid.Column="1"
+                            Command="{Binding ViewModel.PurchaseSubscriptionCommand}"
+                            Text="{Binding ViewModel.SubscriptionText}" />
+                    </Grid>
+
+                    <Label
+                        Margin="0,2,0,0"
+                        FontSize="12"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.65"
+                        Text="{l:ResourceString Rid=PlusSupportDevelopment}" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

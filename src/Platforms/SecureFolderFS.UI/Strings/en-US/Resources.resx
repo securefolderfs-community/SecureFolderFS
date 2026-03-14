@@ -1302,7 +1302,7 @@
       <value>Device Link</value>
   </data>
   <data name="PlusDeviceLinkDescription" xml:space="preserve">
-      <value>Sync vault credentials securely with the mobile app.</value>
+      <value>Sync desktop vault credentials securely with the mobile app.</value>
   </data>
   <data name="PlusSecurityKey" xml:space="preserve">
       <value>YubiKey authentication</value>

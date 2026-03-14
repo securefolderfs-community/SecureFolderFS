@@ -1,4 +1,3 @@
-using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -29,7 +28,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             _firstTime = new(2);
             BindingContext = this;
 
-            _ = new MauiIcon(); // Workaround for XFC0000
             InitializeComponent();
         }
 
