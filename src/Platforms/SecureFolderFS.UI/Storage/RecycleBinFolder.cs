@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
@@ -112,7 +113,7 @@ namespace SecureFolderFS.UI.Storage
                 if (await folderPicker.PickFolderAsync(new StartingFolderOptions("ComputerFolder"), false, cancellationToken) is not IModifiableFolder destinationFolder)
                     throw new OperationCanceledException("The user did not pick destination a folder.");
 
-                if (!destinationFolder.Id.Contains(_vfsRoot.PlaintextRoot.Id, StringComparison.OrdinalIgnoreCase))
+                if (!destinationFolder.Id.Contains(_vfsRoot.VirtualizedRoot.Id, StringComparison.OrdinalIgnoreCase))
                     throw new InvalidOperationException("The folder is outside of the virtualized storage folder.");
 
                 // Get deepest implementation
@@ -126,7 +127,20 @@ namespace SecureFolderFS.UI.Storage
                     return null;
 
                 // Return the equivalent ciphertext implementation
-                return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.PlaintextRoot, _specifics, cancellationToken) as IModifiableFolder;
+                if (_vfsRoot.VirtualizedRoot is MemoryFolder)
+                {
+                    // In edge cases where the virtualized root is unknown (i.e., an in-memory implementation)
+                    // we can't get the ciphertext implementation from there, so we'll need to manually walk down the
+                    // plaintext root and get the ciphertext implementation
+                    var relativePlaintextFolderId = plaintextChild.Id.Replace(_vfsRoot.VirtualizedRoot.Id, string.Empty);
+                    var relativePlaintextFolder = await _vfsRoot.PlaintextRoot.GetItemByRelativePathOrSelfAsync(relativePlaintextFolderId, cancellationToken);
+                    if (relativePlaintextFolder is not IWrapper<IFolder> folderWrapper)
+                        return null;
+                    
+                    return folderWrapper.Inner as IModifiableFolder;   
+                }
+                else
+                    return await AbstractPathHelpers.GetCiphertextItemAsync(plaintextChild, _vfsRoot.VirtualizedRoot, _specifics, cancellationToken) as IModifiableFolder;
             }
         }
 

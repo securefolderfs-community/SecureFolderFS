@@ -7,6 +7,7 @@ using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -72,11 +73,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             if (plaintextOriginalName is null || plaintextParentPath is null)
                 throw new FormatException("Could not decrypt recycle bin configuration file.");
 
-            var ciphertextParentItem = await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken);
-            if (ciphertextParentItem is not IFolder ciphertextParentFolder)
-                throw new DirectoryNotFoundException("Could not find recycle bin parent folder.");
-
-            if (!ciphertextDestinationFolder.Id.EndsWith(ciphertextParentFolder.Id))
+            var ciphertextParentFolder = await SafetyHelpers.NoFailureAsync(async () => await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken) as IFolder);
+            if (string.IsNullOrEmpty(ciphertextParentFolder?.Id) || !ciphertextDestinationFolder.Id.EndsWith(ciphertextParentFolder.Id))
             {
                 // Destination folder is different from the original destination
                 // A new item name should be chosen fit for the new folder (so that Directory ID match)
