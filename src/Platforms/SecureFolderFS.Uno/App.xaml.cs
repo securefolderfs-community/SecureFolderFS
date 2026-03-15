@@ -26,15 +26,18 @@ using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.Extensions;
 using Uno.UI;
-using Uno.UI.Adapter.Microsoft.Extensions.Logging;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 #if HAS_UNO_SKIA
+using Uno.UI.Adapter.Microsoft.Extensions.Logging;
 using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
+using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
+#else
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
 #endif
 
 namespace SecureFolderFS.Uno
@@ -295,30 +298,34 @@ namespace SecureFolderFS.Uno
             appWindow.Title = title;
 
             // Extend title bar
-            if (window.Content is MainWindowRootControl rootControl)
+            var titleBar = window.Content switch
             {
-                window.ExtendsContentIntoTitleBar = true;
-                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                window.SetTitleBar(rootControl.CustomTitleBar);
+                VaultPreviewRootControl previewRootControl => previewRootControl.CustomTitleBar,
+                MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar
+            };
+
+            window.ExtendsContentIntoTitleBar = true;
+            appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            window.SetTitleBar(titleBar);
 
 #if __UNO_SKIA_MACOS__
-                // Use native macOS APIs to configure the window
-                MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
-                MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
+            // Use native macOS APIs to configure the window
+            MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+            MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
 
-                // Add left padding for traffic light buttons
-                var (leftPadding, _) = MacOsTitleBarHelper.GetTrafficLightButtonsInset();
-                rootControl.CustomTitleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
+            // Add left padding for traffic light buttons
+            var (leftPadding, _) = MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+            titleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
-                // For other non-Windows platforms, use OverlappedPresenter
-                if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
-                {
-                    overlappedPresenter.SetBorderAndTitleBar(true, false);
-                    overlappedPresenter.IsMinimizable = true;
-                    overlappedPresenter.IsMaximizable = true;
-                }
-#endif
+            // For other non-Windows platforms, use OverlappedPresenter
+            if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+            {
+                overlappedPresenter.SetBorderAndTitleBar(true, false);
+                overlappedPresenter.IsMinimizable = true;
+                overlappedPresenter.IsMaximizable = true;
             }
+#endif
+
 
 #if WINDOWS
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())

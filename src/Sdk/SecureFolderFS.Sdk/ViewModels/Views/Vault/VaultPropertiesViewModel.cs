@@ -61,6 +61,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
 
             _ = UpdateSecurityTextAsync(cancellationToken);
+
+            if (!RecycleBinOverlayViewModel.IsInitialized && await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                await RecycleBinOverlayViewModel.InitAsync(cancellationToken);
         }
 
         [RelayCommand]

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
@@ -24,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>, Inject<IIapService>]
     [Bindable(true)]
     public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize
     {
@@ -156,6 +157,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
+
+            // Check Iap Plus requirement
+            if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
+                if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                    return;
+            }
 
             var shortcutData = new VaultShortcutDataModel(VaultViewModel.VaultModel.DataModel.PersistableId, VaultViewModel.Title);
             var suggestedName = $"{VaultViewModel.Title}{VaultService.ShortcutFileExtension}";

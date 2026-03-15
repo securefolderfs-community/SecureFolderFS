@@ -10,7 +10,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     /// <inheritdoc cref="IIapService"/>
     internal sealed class MicrosoftStoreIapService : IIapService
     {
-        private const string IAP_SECUREFOLDERFS_PLUS_ID = "9N3GB650DVJQ";
+        private const string IAP_SECUREFOLDERFS_PLUS_LIFETIME_ID = "9N3GB650DVJQ";
+        private const string IAP_SECUREFOLDERFS_PLUS_SUBSCRIPTION_ID = "9N3GB650DVJQ";
 
         private StoreContext? _storeContext;
 
@@ -78,7 +79,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             if (!await SetStoreContextAsync() || _storeContext is null)
                 return null;
 
-            var result = await _storeContext.GetAssociatedStoreProductsAsync(new[] { "Durable" }).AsTask(cancellationToken);
+            var result = await _storeContext.GetAssociatedStoreProductsAsync([ "Durable" ]).AsTask(cancellationToken);
             if (result.ExtendedError is not null)
                 return null;
 
@@ -95,7 +96,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         {
             return productType switch
             {
-                IapProductType.SecureFolderFS_PlusSubscription => IAP_SECUREFOLDERFS_PLUS_ID,
+                IapProductType.PlusLifetime => IAP_SECUREFOLDERFS_PLUS_LIFETIME_ID,
+                IapProductType.PlusSubscription => IAP_SECUREFOLDERFS_PLUS_SUBSCRIPTION_ID,
                 _ => null
             };
         }
