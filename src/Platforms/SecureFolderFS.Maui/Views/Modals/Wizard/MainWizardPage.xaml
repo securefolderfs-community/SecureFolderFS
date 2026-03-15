@@ -18,52 +18,153 @@
         <VerticalStackLayout
             Margin="{OnPlatform iOS='0,16,0,0'}"
             Padding="16,0"
-            Spacing="16">
+            Spacing="24">
+
             <Label
-                FontSize="20"
-                HorizontalOptions="Start"
+                FontSize="15"
+                Opacity="0.55"
                 Text="Choose an option to add a new vault" />
 
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <VerticalStackLayout Spacing="4">
-                        <Button
-                            mi:MauiIcon.Value="{mi_material:Material Create}"
-                            Clicked="Existing_Clicked"
-                            ContentLayout="Top, 10"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="{l:ResourceString Rid=AddExisting}" />
+            <VerticalStackLayout Spacing="8">
 
-                        <Button
-                            mi:MauiIcon.Value="{mi_material:Material CreateNewFolder}"
-                            Clicked="New_Clicked"
-                            ContentLayout="Top, 10"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="{l:ResourceString Rid=CreateNew}" />
-                    </VerticalStackLayout>
-                </On>
-                <On Platform="iOS">
-                    <VerticalStackLayout Spacing="4">
-                        <Button
-                            mi:MauiIcon.Value="{mi_cupertino:Cupertino PlusCircle}"
-                            Clicked="Existing_Clicked"
-                            ContentLayout="Top, 10"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="{l:ResourceString Rid=AddExisting}" />
+                <!--  Add Existing  -->
+                <Border
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    HeightRequest="80"
+                    StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <Grid
+                        Padding="20,0"
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="14">
+                        <Border
+                            Grid.Column="0"
+                            Background="{StaticResource ThemePrimaryColorBrush}"
+                            HeightRequest="40"
+                            StrokeThickness="0"
+                            WidthRequest="40">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_material:Material Create}"
+                                    IconColor="White"
+                                    IconSize="20"
+                                    OnPlatforms="Android"
+                                    VerticalOptions="Center" />
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_cupertino:Cupertino PlusCircle}"
+                                    IconColor="White"
+                                    IconSize="20"
+                                    OnPlatforms="iOS"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            Text="{l:ResourceString Rid=AddExisting}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Grid.Column="2"
+                            Icon="{mi_material:Material ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            IconSize="18"
+                            OnPlatforms="Android"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Grid.Column="2"
+                            Icon="{mi_cupertino:Cupertino ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            IconSize="18"
+                            OnPlatforms="iOS"
+                            VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Existing_Clicked" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </Border>
 
-                        <Button
-                            mi:MauiIcon.Value="{mi_cupertino:Cupertino Pencil}"
-                            Clicked="New_Clicked"
-                            ContentLayout="Top, 10"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="{l:ResourceString Rid=CreateNew}" />
-                    </VerticalStackLayout>
-                </On>
-            </OnPlatform>
+                <!--  Create New  -->
+                <Border
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    HeightRequest="80"
+                    StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <Grid
+                        Padding="20,0"
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="14">
+                        <Border
+                            Grid.Column="0"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                              Dark={StaticResource PrimaryDarkColor}}"
+                            HeightRequest="40"
+                            StrokeThickness="0"
+                            WidthRequest="40">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_material:Material CreateNewFolder}"
+                                    IconColor="White"
+                                    IconSize="20"
+                                    OnPlatforms="Android"
+                                    VerticalOptions="Center" />
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_cupertino:Cupertino Pencil}"
+                                    IconColor="White"
+                                    IconSize="20"
+                                    OnPlatforms="iOS"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            Text="{l:ResourceString Rid=CreateNew}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Grid.Column="2"
+                            Icon="{mi_material:Material ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            IconSize="18"
+                            OnPlatforms="Android"
+                            VerticalOptions="Center" />
+                        <mi:MauiIcon
+                            Grid.Column="2"
+                            Icon="{mi_cupertino:Cupertino ChevronRight}"
+                            IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}"
+                            IconSize="18"
+                            OnPlatforms="iOS"
+                            VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="New_Clicked" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

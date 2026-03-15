@@ -28,13 +28,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         public VaultListViewModel VaultListViewModel { get; }
 
-        public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
+        public MainHostViewModel(VaultListViewModel vaultListViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _systemMonitorModel = new SystemMonitorModel(vaultCollectionModel);
             Title = "MyVaults".ToLocalized();
-            VaultListViewModel = new(vaultCollectionModel);
+            VaultListViewModel = vaultListViewModel;
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
@@ -45,11 +45,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await _systemMonitorModel.InitAsync(cancellationToken);
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenSettingsAsync()
         {
             await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private async Task OpenVaultCredentialsAsync()
+        {
+            await OverlayService.ShowAsync(DeviceLinkCredentialsOverlayViewModel.Instance);
         }
 
         private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

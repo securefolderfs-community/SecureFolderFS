@@ -6,16 +6,16 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for credentials provision changed events.
     /// </summary>
-    public sealed class CredentialsProvisionChangedEventArgs(IKey clearProvision, IKey signedProvision) : EventArgs
+    public sealed class CredentialsProvisionChangedEventArgs(IKeyBytes clearProvision, IKeyBytes signedProvision) : EventArgs
     {
         /// <summary>
         /// Gets the clear credentials provision representation.
         /// </summary>
-        public IKey ClearProvision { get; } = clearProvision;
+        public IKeyBytes ClearProvision { get; } = clearProvision;
 
         /// <summary>
         /// Gets the signed credentials provision representation using the user-provided credentials.
         /// </summary>
-        public IKey SignedProvision { get; } = signedProvision;
+        public IKeyBytes SignedProvision { get; } = signedProvision;
     }
 }

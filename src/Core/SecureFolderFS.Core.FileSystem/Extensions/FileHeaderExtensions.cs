@@ -18,23 +18,25 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
             if (!ciphertextStream.CanRead)
                 throw FileSystemExceptions.StreamNotReadable;
 
-            var ciphertextPosition = ciphertextStream.Position;
-            if (ciphertextPosition != 0 && !ciphertextStream.CanSeek)
-                throw FileSystemExceptions.StreamNotSeekable;
-
             // Allocate ciphertext header
             Span<byte> ciphertextHeader = stackalloc byte[security.HeaderCrypt.HeaderCiphertextSize];
 
             // Read header
             int read;
-            if (ciphertextPosition != 0)
+            if (ciphertextStream.CanSeek && ciphertextStream.Position != 0L)
             {
+                var ciphertextPosition = ciphertextStream.Position;
                 ciphertextStream.Position = 0L;
+
                 read = ciphertextStream.Read(ciphertextHeader);
                 ciphertextStream.Position = ciphertextPosition;
             }
             else
+            {
+                // Non-seekable streams must be at position 0 - header is always read first sequentially.
+                // There is no way to rewind, so we simply read and continue.
                 read = ciphertextStream.Read(ciphertextHeader);
+            }
 
             // Check if the read amount is correct
             if (read < ciphertextHeader.Length)

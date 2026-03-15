@@ -2,109 +2,261 @@
     x:Class="SecureFolderFS.Uno.UserControls.Introduction.IntroductionControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="using:SecureFolderFS.Uno.Extensions"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:Uno.CommunityToolkit.WinUI.UI"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:tui="using:CommunityToolkit.WinUI"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
+    PreviewKeyDown="IntroductionControl_KeyDown"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:IndexToProgressConverter x:Key="IndexToProgressConverter" />
+        <DataTemplate x:Key="FileSystemTemplate" x:DataType="vm:FileSystemItemViewModel">
+            <Grid
+                Margin="4"
+                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="{ThemeResource ControlCornerRadius}">
+                <ucab:ActionBlockContentControl
+                    Title="{x:Bind Title, Mode=OneWay}"
+                    Height="64"
+                    Description="{x:Bind IsDefault, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:LOCALIZE|DefaultFileSystem:false:LOCALIZE|BuiltinFileSystem'}">
+                    <ucab:ActionBlockContentControl.Icon>
+                        <IconSourceElement
+                            MaxWidth="28"
+                            Margin="12,0,0,0"
+                            IconSource="{x:Bind Icon, Mode=OneWay, Converter={StaticResource IconSourceConverter}}" />
+                    </ucab:ActionBlockContentControl.Icon>
+                </ucab:ActionBlockContentControl>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="InstallationTemplate" x:DataType="vm:ItemInstallationViewModel">
+            <Grid
+                Margin="4"
+                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="{ThemeResource ControlCornerRadius}">
+                <ucab:ActionBlockContentControl
+                    Title="{x:Bind Title, Mode=OneWay}"
+                    Height="64"
+                    Padding="16,0"
+                    Description="{l:ResourceString Rid=FileSystemOffersImprovedExperience}">
+                    <ucab:ActionBlockContentControl.Icon>
+                        <IconSourceElement
+                            MaxWidth="28"
+                            Margin="12,0,0,0"
+                            IconSource="{x:Bind Icon, Mode=OneWay, Converter={StaticResource IconSourceConverter}}" />
+                    </ucab:ActionBlockContentControl.Icon>
+                    <ucab:ActionBlockContentControl.ActionElement>
+                        <Grid Margin="0,0,12,0">
+                            <Grid Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Ellipse
+                                    Width="24"
+                                    Height="24"
+                                    Fill="LimeGreen" />
+                                <FontIcon FontSize="14" Glyph="&#xE73E;" />
+                            </Grid>
+                            <Grid Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                                <HyperlinkButton
+                                    x:Name="InstallButton"
+                                    Command="{x:Bind InstallCommand, Mode=OneWay}"
+                                    Content="{l:ResourceString Rid=Install}"
+                                    Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                            </Grid>
+                            <ProgressRing
+                                Width="32"
+                                Height="32"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                IsIndeterminate="{x:Bind IsIndeterminate, Mode=OneWay}"
+                                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Value="{x:Bind CurrentProgress, Mode=OneWay}" />
+                        </Grid>
+                    </ucab:ActionBlockContentControl.ActionElement>
+                </ucab:ActionBlockContentControl>
+            </Grid>
+        </DataTemplate>
+
+        <!--  Fade In + Scale In Animation  -->
+        <Storyboard x:Key="ShowOverlayStoryboard" x:Name="ShowOverlayStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
+                From="0.95"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
+                From="0.95"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!--  Fade Out + Scale Out Animation  -->
+        <Storyboard x:Key="HideOverlayStoryboard" x:Name="HideOverlayStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
+                To="0.95"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
+                To="0.95"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid Margin="0,80,0,64" RowSpacing="16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+    <Grid
+        x:Name="RootGrid"
+        RenderTransformOrigin="0.5,0.5"
+        RowSpacing="16">
+        <Grid.RenderTransform>
+            <CompositeTransform />
+        </Grid.RenderTransform>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="14*" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="10*" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <WebView2
+            x:Name="BackgroundWebView"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            DefaultBackgroundColor="Transparent"
+            Loaded="BackgroundWebView_Loaded" />
 
-            <Grid.RowDefinitions>
-                <!--  FlipView  -->
-                <RowDefinition />
-                <!--  Caption  -->
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <Border
+            x:Name="ShadowTarget"
+            Grid.Row="1"
+            Grid.Column="1" />
 
-            <!--  FlipView  -->
-            <FlipView
-                Grid.Row="0"
-                Grid.Column="1"
-                SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
+        <Grid
+            Grid.Row="1"
+            Grid.Column="1"
+            CornerRadius="8">
+
+            <!--  TODO: Not supported on non_win platforms. Implement and use OnPlatform  -->
+            <!-- <tui:Effects.Shadow> -->
+            <!--  <tui:AttachedDropShadow  -->
+            <!--  BlurRadius="10"  -->
+            <!--  CastTo="{x:Bind ShadowTarget}"  -->
+            <!--  CornerRadius="8"  -->
+            <!--  Opacity="0.6" />  -->
+            <!-- </tui:Effects.Shadow> -->
+
+            <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                 <!--  Views  -->
                 <local:WelcomeScreen />
-                <local:AgreementScreen />
-                <local:EndScreen />
-
-                <!--  Attached shadow TODO(u)  -->
-                <!--
-                <ui:Effects.Shadow>
-                    <ui:AttachedDropShadow
-                        BlurRadius="8"
-                        CornerRadius="8"
-                        IsMasked="True" />
-                </ui:Effects.Shadow>-->
+                <!--  Slide 1: Dashboard  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+                            Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingDashboardTitle}"
+                            Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 2: Authentication  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}"
+                            Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_authentication.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}"
+                            Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_authentication.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 3: Encryption  -->
+                <ext:OnPlatform>
+                    <ext:On Platform="Windows">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingEncryptionTitle}"
+                            Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}"
+                            ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_encryption.png" />
+                    </ext:On>
+                    <ext:On Platform="Default">
+                        <local:FeatureSlide
+                            Title="{l:ResourceString Rid=OnboardingEncryptionTitle}"
+                            Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}"
+                            ImageSource="Assets/AppAssets/Introduction/intro_light_encryption.png" />
+                    </ext:On>
+                </ext:OnPlatform>
+                <!--  Slide 4: Virtual File System  -->
+                <local:FeatureSlide
+                    Title="{l:ResourceString Rid=OnboardingFileSystemTitle}"
+                    Description="{l:ResourceString Rid=OnboardingFileSystemSubtitle}"
+                    ImageSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_filesystem.png">
+                    <local:FeatureSlide.Slot>
+                        <ListView
+                            VerticalAlignment="Bottom"
+                            ItemsSource="{x:Bind ViewModel.FileSystems, Mode=OneWay}"
+                            SelectionChanged="Selector_SelectionChanged"
+                            SelectionMode="Extended">
+                            <ListView.ItemTemplateSelector>
+                                <ts:FileSystemItemTemplateSelector FileSystemTemplate="{StaticResource FileSystemTemplate}" InstallationTemplate="{StaticResource InstallationTemplate}" />
+                            </ListView.ItemTemplateSelector>
+                        </ListView>
+                    </local:FeatureSlide.Slot>
+                </local:FeatureSlide>
+                <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
             </FlipView>
-
-            <!--  Caption  -->
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                MinHeight="60"
-                Spacing="8"
-                Visibility="Collapsed">
-
-                <!--  Caption title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontWeight="Medium"
-                    Text="Feature showcase" />
-
-                <!--  Progress  -->
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="4">
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='0'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='1'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='2'}" />
-                    <ProgressBar Width="60" Value="{x:Bind ViewModel.CurrentIndex, Mode=OneWay, Converter={StaticResource IndexToProgressConverter}, ConverterParameter='3'}" />
-                </StackPanel>
-
-                <!--  Step  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{x:Bind ViewModel.CurrentStep, Mode=OneWay}" />
-            </StackPanel>
         </Grid>
-
-        <!--  Settings  -->
-        <Button
-            Width="36"
-            Height="36"
-            Margin="0,0,16,16"
-            Padding="8"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Background="Transparent"
-            BorderThickness="0"
-            Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}">
-            <AnimatedIcon>
-                <AnimatedIcon.Source>
-                    <animvis:AnimatedSettingsVisualSource />
-                </AnimatedIcon.Source>
-                <AnimatedIcon.FallbackIconSource>
-                    <SymbolIconSource Symbol="Setting" />
-                </AnimatedIcon.FallbackIconSource>
-            </AnimatedIcon>
-        </Button>
     </Grid>
 </UserControl>

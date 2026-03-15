@@ -6,36 +6,254 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    CloseButtonText="{l:ResourceString Rid=Cancel}"
+    xmlns:not_win="http://uno.ui/not_win"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     DefaultButton="Primary"
-    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
-    PrimaryButtonText="{x:Bind ViewModel.PrimaryText, Mode=OneWay}"
+    Loaded="PaymentDialog_Loaded"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
-    mc:Ignorable="d">
+    mc:Ignorable="d not_win">
 
-    <StackPanel
-        Margin="0,-24,0,0"
-        Padding="0,24,0,24"
-        VerticalAlignment="Center"
-        Spacing="16">
+    <ContentDialog.Resources>
+        <Storyboard x:Key="OuterRingBreathe" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1.08">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1.08">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
 
+        <Storyboard x:Key="InnerRingBreathe" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </ContentDialog.Resources>
+
+    <Grid Width="520" Margin="-24,-24,-24,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="180" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Hero header  -->
+        <Grid Grid.Row="0" CornerRadius="8,8,0,0">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0.0" Color="#550f80d6" />
+                    <GradientStop Offset="1.0" Color="{ThemeResource TransparentColor}" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="10">
+
+                <Grid
+                    Width="96"
+                    Height="96"
+                    HorizontalAlignment="Center">
+                    <Ellipse
+                        x:Name="OuterRing"
+                        Width="80"
+                        Height="80"
+                        Opacity="0.35"
+                        Stroke="#0f80d6"
+                        StrokeThickness="1">
+                        <Ellipse.RenderTransform>
+                            <ScaleTransform CenterX="40" CenterY="40" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                    <Ellipse
+                        x:Name="InnerRing"
+                        Width="64"
+                        Height="64"
+                        Opacity="0.65"
+                        Stroke="#0f80d6"
+                        StrokeThickness="1.5">
+                        <Ellipse.RenderTransform>
+                            <ScaleTransform CenterX="32" CenterY="32" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+
+                    <Grid>
+                        <win:Image
+                            Height="32"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
+                        <not_win:Image
+                            Height="32"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="/Assets/AppAssets/app_icon.png" />
+                    </Grid>
+                </Grid>
+
+                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        CharacterSpacing="200"
+                        FontSize="10"
+                        FontWeight="SemiBold"
+                        Foreground="#0f80d6"
+                        Opacity="0.85"
+                        Text="{l:ResourceString Rid=PlusUpgrade}" />
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="0">
+                        <TextBlock
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Text="SecureFolderFS" />
+                        <TextBlock
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Foreground="#0f80d6"
+                            Text="+" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <Button
+                Width="32"
+                Height="32"
+                Margin="0,16,16,0"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="Close_Click"
+                CornerRadius="16">
+                <FontIcon FontSize="10" Glyph="&#xE8BB;" />
+            </Button>
+        </Grid>
+
+        <!--  Body  -->
         <StackPanel
-            Margin="0,0,0,24"
-            Orientation="Horizontal"
-            Spacing="16">
-            <Image
-                Height="42"
-                VerticalAlignment="Center"
-                Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="22"
-                FontWeight="SemiBold"
-                Text="SecureFolderFS+" />
-        </StackPanel>
+            Grid.Row="1"
+            Padding="24,20,24,20"
+            Background="{ThemeResource ContentDialogBackground}"
+            Spacing="6">
 
-        <TextBlock FontSize="18" Text="This feature requires SecureFolderFS+" />
-        <TextBlock Text="Thanks to your support, we can maintain and keep SecureFolderFS free for everyone!" TextWrapping="WrapWholeWords" />
-    </StackPanel>
+            <TextBlock
+                FontSize="16"
+                Style="{ThemeResource SubtitleTextBlockStyle}"
+                Text="{l:ResourceString Rid=PlusTitle}" />
+
+            <TextBlock
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{ThemeResource BodyTextBlockStyle}"
+                Text="{l:ResourceString Rid=PlusDescription}"
+                TextWrapping="WrapWholeWords" />
+
+            <ScrollViewer
+                MaxHeight="216"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="4">
+                    <uc:FeatureTile
+                        Title="{l:ResourceString Rid=PlusUnlimitedVaults}"
+                        Description="{l:ResourceString Rid=PlusUnlimitedVaultsDescription}"
+                        Glyph="&#xE8F1;" />
+
+                    <uc:FeatureTile
+                        Title="{l:ResourceString Rid=PlusDeviceLink}"
+                        Description="{l:ResourceString Rid=PlusDeviceLinkDescription}"
+                        Glyph="&#xE8EA;" />
+
+                    <uc:FeatureTile
+                        Title="{l:ResourceString Rid=PlusSecurityKey}"
+                        Description="{l:ResourceString Rid=PlusSecurityKeyDescription}"
+                        Glyph="&#xE8D7;" />
+
+                    <uc:FeatureTile
+                        Title="{l:ResourceString Rid=PlusFileRecovery}"
+                        Description="{l:ResourceString Rid=PlusFileRecoveryDescription}"
+                        Glyph="&#xE74D;" />
+
+                    <uc:FeatureTile
+                        Title="{l:ResourceString Rid=PlusVaultShortcuts}"
+                        Description="{l:ResourceString Rid=PlusVaultShortcutsDescription}"
+                        Glyph="&#xE71B;" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <Grid Margin="0,16,0,0" ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.PurchaseLifetimeCommand, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.LifetimeText, Mode=OneWay}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+
+                <Button
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.PurchaseSubscriptionCommand, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.SubscriptionText, Mode=OneWay}" />
+            </Grid>
+
+            <TextBlock
+                Margin="0,4,0,0"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+                Text="{l:ResourceString Rid=PlusSupportDevelopment}" />
+        </StackPanel>
+    </Grid>
 </ContentDialog>

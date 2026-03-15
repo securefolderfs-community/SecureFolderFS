@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 
@@ -43,7 +44,7 @@ namespace SecureFolderFS.Maui.Localization
             if (LocalizationService is null)
                 return $"{{{Rid}}}";
 
-            return LocalizationService.GetResource(Rid ?? string.Empty) ?? $"{{{Rid}}}";
+            return (Rid ?? string.Empty).ToLocalized();
         }
     }
 }

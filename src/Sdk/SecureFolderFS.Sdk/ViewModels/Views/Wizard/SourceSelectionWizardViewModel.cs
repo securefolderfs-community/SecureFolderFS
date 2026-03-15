@@ -37,6 +37,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             _mode = mode;
             _primaryStager = primaryStager;
             _vaultCollectionModel = vaultCollectionModel;
+            CanCancel = true;
+            SecondaryText = "Cancel".ToLocalized();
             Title = "ChooseDataSource".ToLocalized();
             Sources = new();
         }

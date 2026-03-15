@@ -2,10 +2,9 @@
 
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    /// TODO: Needs docs
     public static class Argon2id
     {
-        public static void Old_DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
+        public static void V2_DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
         {
             using var argon2id = new Konscious.Security.Cryptography.Argon2id(password.ToArray());
             argon2id.Salt = salt.ToArray();
@@ -16,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             argon2id.GetBytes(Constants.KeyTraits.ARGON2_KEK_LENGTH).CopyTo(result);
         }
 
-        public static void V3_DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
+        public static void DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
         {
             using var argon2id = new Konscious.Security.Cryptography.Argon2id(password.ToArray());
             argon2id.Salt = salt.ToArray();

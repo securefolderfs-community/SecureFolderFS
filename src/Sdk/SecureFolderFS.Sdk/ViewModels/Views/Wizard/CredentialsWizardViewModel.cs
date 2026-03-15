@@ -1,26 +1,27 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Results;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Results;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     public sealed partial class CredentialsWizardViewModel : OverlayViewModel, IStagingView
     {
         private readonly string _vaultId;
-        private readonly TaskCompletionSource<IKey> _credentialsTcs;
+        private readonly TaskCompletionSource<IKeyUsage> _credentialsTcs;
 
         [ObservableProperty] private bool _IsNameCipherEnabled;
         [ObservableProperty] private PickerOptionViewModel? _ContentCipher;

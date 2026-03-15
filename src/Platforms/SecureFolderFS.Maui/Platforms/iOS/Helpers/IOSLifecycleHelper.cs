@@ -46,6 +46,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
                     //.Override<IIapService, IOSIapService>(AddService.AddSingleton)
                     .Override<IIapService, DebugIapService>(AddService.AddSingleton)
                     .Override<IMediaService, IOSMediaService>(AddService.AddSingleton)
+                    .Override<IShareService, IOSShareService>(AddService.AddSingleton)
                     .Override<ISystemService, IOSSystemService>(AddService.AddSingleton)
                     .Override<IStorageService, IOSStorageService>(AddService.AddSingleton)
                     .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)

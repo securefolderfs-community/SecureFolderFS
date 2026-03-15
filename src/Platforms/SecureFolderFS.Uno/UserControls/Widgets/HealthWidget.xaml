@@ -6,11 +6,9 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:not_win="http://uno.ui/not_win"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="HealthControl"
-    mc:Ignorable="d not_win">
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
@@ -59,22 +57,15 @@
         </Grid.ColumnDefinitions>
 
         <!--  Icon  -->
-        <Grid Grid.Column="0" Margin="-8,0,0,0">
-            <win:Image
-                Width="64"
-                Height="64"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
-                Stretch="UniformToFill" />
-            <not_win:Image
-                Width="64"
-                Height="64"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
-                Stretch="UniformToFill" />
-        </Grid>
+        <Image
+            Grid.Column="0"
+            Width="64"
+            Height="64"
+            Margin="-8,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
+            Stretch="UniformToFill" />
 
         <!--  Health status  -->
         <ContentPresenter
@@ -107,8 +98,16 @@
                         <MenuFlyoutItem
                             Command="{x:Bind StartScanningCommand, Mode=OneWay}"
                             CommandParameter="include_file_contents"
-                            IsEnabled="False"
-                            Text="Include file contents (slower)" />
+                            Text="Scan full vault (include file contents)" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ScanFolderCommand, Mode=OneWay}"
+                            CommandParameter=""
+                            Text="Scan a folder (structure only)" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ScanFolderCommand, Mode=OneWay}"
+                            CommandParameter="include_file_contents"
+                            Text="Scan a folder (include file contents)" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>

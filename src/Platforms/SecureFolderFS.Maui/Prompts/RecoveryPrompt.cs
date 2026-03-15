@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -25,8 +24,8 @@ namespace SecureFolderFS.Maui.Prompts
                 "Cancel".ToLocalized());
 
             var result = await ViewModel.RecoverAsync(default);
-            if (!result)
-                return Result.Failure(new CryptographicException(ViewModel.ErrorMessage));
+            if (!result.Successful)
+                return result;
 
             return Result.Success;
         }

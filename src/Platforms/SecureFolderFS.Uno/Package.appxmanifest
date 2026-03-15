@@ -3,13 +3,14 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  IgnorableNamespaces="uap uap3 rescap">
 
   <Identity
     Name="636fdcec-de3d-40c0-b25d-22edc942a779"
     Publisher="CN=d2dyno"
-    Version="0.7.2.0" />
+    Version="0.8.0.0" />
 
   <Properties>
     <DisplayName>SecureFolderFS</DisplayName>
@@ -57,6 +58,19 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sfvault">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="application/json">.sfvault</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SecureFolderFS Vault</uap:DisplayName>
+            <uap:Logo>Assets\AppIcon\AppIcon.png</uap:Logo>
+            <uap:InfoTip>SecureFolderFS Vault</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

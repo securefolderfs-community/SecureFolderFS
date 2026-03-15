@@ -11,7 +11,7 @@ namespace SecureFolderFS.Sdk.Ftp.DataModels
         public required string? Address { get; init; }
 
         [JsonPropertyName("username")]
-        public required string? Username { get; init; }
+        public required string? UserName { get; init; }
 
         [JsonPropertyName("password")]
         public required string? Password { get; init; }

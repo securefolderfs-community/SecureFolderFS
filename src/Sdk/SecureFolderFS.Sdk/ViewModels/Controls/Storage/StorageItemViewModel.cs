@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage

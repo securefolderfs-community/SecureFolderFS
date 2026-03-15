@@ -9,13 +9,16 @@ namespace SecureFolderFS.Core.FileSystem.AppModels
     public sealed class HealthStatistics : IHealthStatistics
     {
         /// <inheritdoc/>
-        public IAsyncValidator<IFile, IResult>? FileValidator { get; set; }
+        public IAsyncValidator<IFile, IResult>? FileContentValidator { get; set; }
 
         /// <inheritdoc/>
         public IAsyncValidator<IFolder, IResult>? FolderValidator { get; set; }
 
         /// <inheritdoc/>
         public IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? StructureValidator { get; set; }
+
+        /// <inheritdoc/>
+        public IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? StructureContentsValidator { get; set; }
 
         /// <inheritdoc/>
         public IProgress<string>? DirectoryIdNotFound { get; set; }

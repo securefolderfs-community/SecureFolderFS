@@ -1,11 +1,11 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
@@ -15,10 +15,9 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
     internal sealed class OpenCryptFile : IDisposable
     {
         private readonly Security _security;
-        private readonly ChunkAccess _chunkAccess;
         private readonly Action<string> _notifyClosed;
-        private readonly StreamsManager _streamsManager;
-        private readonly Dictionary<Stream, long> _openedStreams;
+        private readonly OpenCryptFileManager _cryptFileManager;
+        private readonly Dictionary<Stream, (int RefCount, ChunkAccess ChunkAccess)> _openedStreams;
 
         /// <summary>
         /// Gets the unique ID of the file.
@@ -34,15 +33,13 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
             string id,
             Security security,
             HeaderBuffer headerBuffer,
-            ChunkAccess chunkAccess,
-            StreamsManager streamsManager,
+            OpenCryptFileManager cryptFileManager,
             Action<string> notifyClosed)
         {
             Id = id;
             HeaderBuffer = headerBuffer;
             _security = security;
-            _chunkAccess = chunkAccess;
-            _streamsManager = streamsManager;
+            _cryptFileManager = cryptFileManager;
             _notifyClosed = notifyClosed;
             _openedStreams = new();
         }
@@ -54,28 +51,32 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <returns>A new instance of <see cref="PlaintextStream"/>.</returns>
         public PlaintextStream OpenStream(Stream ciphertextStream)
         {
-            // Register the ciphertext stream
-            if (_openedStreams.TryGetValue(ciphertextStream, out var value))
-                _openedStreams[ciphertextStream] = ++value;
+            if (_openedStreams.TryGetValue(ciphertextStream, out var existing))
+                _openedStreams[ciphertextStream] = (existing.RefCount + 1, existing.ChunkAccess);
             else
-                _openedStreams.Add(ciphertextStream, 1L);
+            {
+                var chunkAccess = _cryptFileManager.CreateChunkAccess(ciphertextStream, HeaderBuffer);
+                _openedStreams.Add(ciphertextStream, (1, chunkAccess));
+            }
 
-            // Make sure to also add it to streams manager
-            _streamsManager.AddStream(ciphertextStream);
-
-            // Open the plaintext stream
-            return new PlaintextStream(ciphertextStream, _security, _chunkAccess, HeaderBuffer, NotifyClosed);
+            return new PlaintextStream(ciphertextStream, _security, _openedStreams[ciphertextStream].ChunkAccess, HeaderBuffer, NotifyClosed);
         }
 
         private void NotifyClosed(Stream ciphertextStream)
         {
-            // Make sure to remove it and update the reference count
-            if (_openedStreams.ContainsKey(ciphertextStream) && --_openedStreams[ciphertextStream] <= 0)
-                _openedStreams.Remove(ciphertextStream);
-
-            // Dispose of the stream
-            _streamsManager.RemoveStream(ciphertextStream);
-            ciphertextStream.Dispose();
+            if (_openedStreams.TryGetValue(ciphertextStream, out var existing))
+            {
+                // Make sure to remove it and update the reference count
+                if (--existing.RefCount <= 0)
+                {
+                    // Dispose of the stream
+                    _openedStreams.Remove(ciphertextStream);
+                    existing.ChunkAccess.Dispose();
+                    ciphertextStream.Dispose();
+                }
+                else
+                    _openedStreams[ciphertextStream] = (existing.RefCount, existing.ChunkAccess);
+            }
 
             // Notify closed if no streams left
             if (_openedStreams.IsEmpty())
@@ -88,8 +89,11 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <inheritdoc/>
         public void Dispose()
         {
-            _streamsManager.Dispose();
-            _openedStreams.Keys.DisposeAll();
+            foreach (var (stream, (_, chunkAccess)) in _openedStreams)
+            {
+                chunkAccess.Dispose();
+                stream.Dispose();
+            }
             _openedStreams.Clear();
         }
     }

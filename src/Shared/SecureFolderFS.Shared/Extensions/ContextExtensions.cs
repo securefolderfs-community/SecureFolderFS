@@ -14,12 +14,26 @@ namespace SecureFolderFS.Shared.Extensions
                 synchronizationContext.Post(action, state);
         }
 
-        public static async Task PostOrExecuteAsync(this SynchronizationContext? synchronizationContext, Func<object?, Task> func, object? state = null)
+        public static Task PostOrExecuteAsync(this SynchronizationContext? synchronizationContext, Func<Task> func)
         {
             if (synchronizationContext is null)
-                await func(state);
-            else
-                synchronizationContext.Post(async obj => await func(obj), state);
+                return func();
+
+            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            synchronizationContext.Post(async _ =>
+            {
+                try
+                {
+                    await func();
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            }, null);
+
+            return tcs.Task;
         }
 
         public static void TryCancel(this CancellationTokenSource cancellationTokenSource)

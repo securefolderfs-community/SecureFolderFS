@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Markup;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 
@@ -45,7 +46,7 @@ namespace SecureFolderFS.Uno.Localization
             if (LocalizationService is null)
                 return $"{{{Rid}}}";
 
-            return LocalizationService.GetResource(Rid ?? string.Empty) ?? $"{{{Rid}}}";
+            return (Rid ?? string.Empty).ToLocalized();
         }
     }
 }

@@ -17,7 +17,8 @@ namespace SecureFolderFS.Maui.ValueConverters
                 TransferType.Copy => "Copy".ToLocalized(),
                 TransferType.Move => "Move".ToLocalized(),
                 TransferType.Select => "Select".ToLocalized(),
-                _ => "Transfer".ToLocalized()
+                TransferType.Extract => "Extract".ToLocalized(),
+                _ => null
             };
         }
 

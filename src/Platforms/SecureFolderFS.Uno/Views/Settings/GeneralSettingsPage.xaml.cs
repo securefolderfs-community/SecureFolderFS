@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Uno.Views.Settings
     [INotifyPropertyChanged]
     public sealed partial class GeneralSettingsPage : Page
     {
-        private bool _isFirstTime = true;
+        private readonly FirstTimeHelper _firstTime;
 
         public GeneralSettingsViewModel? ViewModel
         {
@@ -32,6 +33,7 @@ namespace SecureFolderFS.Uno.Views.Settings
 
         public GeneralSettingsPage()
         {
+            _firstTime = new(1);
             InitializeComponent();
         }
 
@@ -46,11 +48,8 @@ namespace SecureFolderFS.Uno.Views.Settings
 
         private async void AppThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_isFirstTime)
-            {
-                _isFirstTime = false;
+            if (_firstTime.IsFirstTime())
                 return;
-            }
 
             await UnoThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
         }

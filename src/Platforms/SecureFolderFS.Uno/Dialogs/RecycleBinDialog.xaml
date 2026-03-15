@@ -6,9 +6,9 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tbv="using:WinUI.TableView"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
-    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Storage"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
     Title="{l:ResourceString Rid=RecycleBin}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonText="{l:ResourceString Rid=Close}"
@@ -16,7 +16,7 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <x:Double x:Key="ContentDialogMinWidth">600</x:Double>
+        <x:Double x:Key="ContentDialogMinWidth">900</x:Double>
     </ContentDialog.Resources>
 
     <Grid RowSpacing="24">
@@ -40,17 +40,23 @@
                 <FontIcon Glyph="&#xE74D;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ExpanderContent>
-                <Grid Margin="0,-8" Padding="54,0,32,0">
+                <Grid Margin="0,-8" Padding="52,0,32,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
                     <TextBlock
+                        Grid.Row="0"
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         Text="{l:ResourceString Rid=MaximumSize}" />
                     <ComboBox
+                        Grid.Row="0"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         IsEnabled="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
@@ -63,6 +69,25 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,12,0,0"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                    <ProgressRing
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="32"
+                        Height="32"
+                        Margin="0,12,0,0"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        IsIndeterminate="False"
+                        Visibility="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
         </ucab:ActionBlockControl>
@@ -71,55 +96,90 @@
             x:Name="RecycleBinContentsView"
             Grid.Row="1"
             x:Load="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}">
-            <Grid
+            <StackPanel
                 x:Name="EmptyView"
                 Padding="0,8,0,16"
-                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}">
+                x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                Spacing="16">
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
                     Text="{l:ResourceString Rid=EmptyRecycleBinDescription}" />
-            </Grid>
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.RefreshCommand}"
+                    Content="{l:ResourceString Rid=Refresh}" />
+            </StackPanel>
 
-            <StackPanel
+            <Grid
                 x:Name="ItemsView"
                 x:Load="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                Spacing="8">
+                RowSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <TextBlock
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
                     FontSize="14"
                     FontWeight="Semibold"
                     Text="{l:ResourceString Rid=RecentlyDeleted}" />
-                <ListView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}" SelectionMode="Multiple">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="vm2:RecycleBinItemViewModel">
-                            <ucab:ActionBlockControl
-                                Title="{x:Bind Title, Mode=OneWay}"
-                                BlockMode="Default"
-                                Description="{x:Bind OriginalPath, Mode=OneWay}">
-                                <ucab:ActionBlockControl.ActionElement>
-                                    <Button>
-                                        <FontIcon Glyph="&#xE712;" />
-                                        <Button.Flyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Command="{x:Bind RestoreCommand}" Text="{l:ResourceString Rid=Restore}" />
-                                                <MenuFlyoutItem Command="{x:Bind DeletePermanentlyCommand}" Text="{l:ResourceString Rid=DeleteImmediately}" />
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                </ucab:ActionBlockControl.ActionElement>
-                            </ucab:ActionBlockControl>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
 
-                <StackPanel x:Name="SizeBarPanel" x:Load="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                    <TextBlock
-                        FontSize="12"
-                        Opacity="0.8"
-                        Text="{x:Bind ViewModel.SpaceTakenText, Mode=OneWay}" />
-                    <ProgressBar Value="{x:Bind ViewModel.PercentageTaken, Mode=OneWay}" />
+                <tbv:TableView
+                    x:Name="RecycleBinTableView"
+                    Grid.Row="1"
+                    Padding="0,0,12,0"
+                    AlternateRowBackground="{ThemeResource ControlFillColorTertiaryBrush}"
+                    AutoGenerateColumns="False"
+                    BeginningEdit="RecycleBinTableView_BeginningEdit"
+                    CanFilterColumns="False"
+                    GridLinesVisibility="Horizontal"
+                    IsReadOnly="True"
+                    ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                    SelectionChanged="RecycleBinTableView_SelectionChanged"
+                    SelectionMode="Multiple"
+                    SelectionUnit="Row">
+                    <tbv:TableView.Columns>
+                        <tbv:TableViewTextColumn
+                            Width="232"
+                            Binding="{Binding Title}"
+                            Header="{l:ResourceString Rid=Name}" />
+                        <tbv:TableViewTextColumn
+                            Width="136"
+                            Binding="{Binding DeletionTimestamp, Converter={StaticResource DateTimeToStringConverter}}"
+                            Header="{l:ResourceString Rid=DeletedAt}" />
+                        <tbv:TableViewTextColumn
+                            Width="400"
+                            Binding="{Binding OriginalPath}"
+                            Header="{l:ResourceString Rid=OriginalLocation}" />
+                        <tbv:TableViewTextColumn
+                            Width="112"
+                            Binding="{Binding Size}"
+                            Header="{l:ResourceString Rid=Size}" />
+                    </tbv:TableView.Columns>
+                </tbv:TableView>
+
+                <StackPanel
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <Button Command="{x:Bind ViewModel.RefreshCommand}" Content="{l:ResourceString Rid=Refresh}" />
+                    <Button
+                        Command="{x:Bind ViewModel.RestoreSelectedCommand}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
+                        Content="{l:ResourceString Rid=Restore}"
+                        IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
+                    <Button
+                        Command="{x:Bind ViewModel.DeleteSelectedCommand}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
+                        Content="{l:ResourceString Rid=DeleteImmediately}"
+                        IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </ContentDialog>

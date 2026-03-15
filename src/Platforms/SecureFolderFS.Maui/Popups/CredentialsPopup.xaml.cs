@@ -1,5 +1,5 @@
-using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.UserControls.Options;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.Popups
             if (ViewModel is null)
                 return Result.Failure(null);
 
-            _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
+            await this.OverlayPopupAsync();
             return Result.Success;
         }
 
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Popups
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            return CloseAsync();
+            return this.CloseOverlayAsync();
         }
 
         private void AvailableOptionsPanel_Loaded(object? sender, EventArgs e)

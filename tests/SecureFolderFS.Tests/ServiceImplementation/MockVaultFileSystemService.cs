@@ -11,7 +11,7 @@ namespace SecureFolderFS.Tests.ServiceImplementation
     internal sealed class MockVaultFileSystemService : BaseVaultFileSystemService
     {
         /// <inheritdoc/>
-        public override IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken)
+        public override IAsyncEnumerable<IFileSystemInfo> GetFileSystemsAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

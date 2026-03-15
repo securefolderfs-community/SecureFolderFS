@@ -4,20 +4,17 @@ using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
-using SecureFolderFS.Storage.StorageProperties;
-using SecureFolderFS.UI;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
+using Constants = SecureFolderFS.UI.Constants;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IStorableChild"/>
-    internal abstract class AndroidStorable : IStorableChild, IStorableProperties, IBookmark, IWrapper<AndroidUri>
+    internal abstract class AndroidStorable : IStorableChild, IBookmark, IWrapper<AndroidUri>
     {
         protected readonly Activity activity;
-        protected readonly AndroidFolder? parent;
         protected readonly AndroidUri permissionRoot;
-        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public AndroidUri Inner { get; }
@@ -30,6 +27,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
         /// <inheritdoc/>
         public string? BookmarkId { get; protected set; }
+        
+        /// <summary>
+        /// Gets the parent folder of the current object.
+        /// </summary>
+        internal AndroidFolder? Parent { get; }
 
         /// <summary>
         /// Gets the <see cref="DocumentFile"/> associated with the storage type identified by <see cref="AndroidUri"/>.
@@ -39,7 +41,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         protected AndroidStorable(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
         {
             this.activity = activity;
-            this.parent = parent;
+            this.Parent = parent;
             this.permissionRoot = permissionRoot ?? uri;
 
             Inner = uri;
@@ -51,7 +53,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public virtual Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<IFolder?>(parent);
+            return Task.FromResult<IFolder?>(Parent);
         }
 
         /// <inheritdoc/>
@@ -89,9 +91,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.CompletedTask;
         }
-
-        /// <inheritdoc/>
-        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected static string? GetColumnValue(Context context, AndroidUri contentUri, string column, string? selection = null, string[]? selectionArgs = null)
         {

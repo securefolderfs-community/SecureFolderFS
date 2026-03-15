@@ -26,9 +26,9 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public Task<bool> TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
         /// <inheritdoc/>

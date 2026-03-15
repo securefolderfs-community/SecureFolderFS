@@ -20,8 +20,7 @@ namespace SecureFolderFS.Maui.Prompts
             var page = Shell.Current.CurrentPage;
             var fileText = "File".ToLocalized();
             var folderText = "Folder".ToLocalized();
-
-            var chosenOption = await page.DisplayActionSheet(
+            var chosenOption = await page.DisplayActionSheetAsync(
                 ViewModel.Title,
                 "Cancel".ToLocalized(),
                 null,

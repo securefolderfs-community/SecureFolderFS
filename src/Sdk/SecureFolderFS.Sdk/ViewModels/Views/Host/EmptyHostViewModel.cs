@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -22,16 +23,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         [ObservableProperty] private string? _Title;
 
-        public EmptyHostViewModel(INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
+        public VaultListViewModel VaultListViewModel { get; }
+
+        public EmptyHostViewModel(VaultListViewModel vaultListViewModel, INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
+            VaultListViewModel = vaultListViewModel;
             _rootNavigationService = rootNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
         }
 
         private async void VaultCollectionModel_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            await _rootNavigationService.TryNavigateAsync(() => new MainHostViewModel(_vaultCollectionModel), false);
+            await _rootNavigationService.TryNavigateAsync(() => new MainHostViewModel(VaultListViewModel, _vaultCollectionModel), false);
         }
 
         [RelayCommand]

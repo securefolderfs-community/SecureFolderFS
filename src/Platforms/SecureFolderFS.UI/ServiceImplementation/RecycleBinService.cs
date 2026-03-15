@@ -13,7 +13,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.UI.Storage;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -24,12 +24,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public async Task ConfigureRecycleBinAsync(UnlockedVaultViewModel unlockedViewModel, long maxSize, CancellationToken cancellationToken = default)
         {
             if (unlockedViewModel.StorageRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var keyPair = specifics.Security.KeyPair;
             var vaultReader = new VaultReader(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
             var vaultWriter = new VaultWriter(unlockedViewModel.VaultFolder, StreamSerializer.Instance);
 
@@ -41,8 +40,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 
-            // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(newConfigDataModel, keyPair.MacKey, newConfigDataModel.PayloadMac);
+            // First, we need to fill in the PayloadMac of the content
+            specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+            });
 
             // Update the new configuration
             await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
@@ -52,10 +54,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task RecalculateSizesAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task RecalculateSizesAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
@@ -86,8 +88,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 // Calculate new size
                 var sizeHint = item switch
                 {
-                    IFile file => await file.GetSizeAsync(cancellationToken),
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
+                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
                     _ => 0L
                 };
                 totalSize += sizeHint;
@@ -110,29 +112,29 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IRecycleBinFolder> GetRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task<IRecycleBinFolder> GetRecycleBinAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             var recycleBin = await AbstractRecycleBinHelpers.TryGetRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
+            return new RecycleBinFolder(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
-        public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public async Task<IRecycleBinFolder> GetOrCreateRecycleBinAsync(IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: { } specifics })
-                throw new ArgumentException($"The specified {nameof(IVFSRoot)} instance is not supported.");
+                throw new ArgumentException($"The specified {nameof(IVfsRoot)} instance is not supported.");
 
             var recycleBin = await AbstractRecycleBinHelpers.GetOrCreateRecycleBinAsync(specifics, cancellationToken);
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("Could not retrieve the recycle bin folder.");
 
-            return new VaultRecycleBin(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
+            return new RecycleBinFolder(modifiableRecycleBin, vfsRoot, specifics, StreamSerializer.Instance);
         }
     }
 }

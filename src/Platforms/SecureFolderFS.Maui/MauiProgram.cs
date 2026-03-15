@@ -2,6 +2,8 @@ using APES.UI.XF;
 using CommunityToolkit.Maui;
 using LibVLCSharp.MAUI;
 using Plugin.Maui.BottomSheet.Hosting;
+using Plugin.SegmentedControl.Maui;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Xe.AcrylicView;
 #if ANDROID
 using MauiIcons.Material;
@@ -31,11 +33,13 @@ namespace SecureFolderFS.Maui
                 .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
                 .UseLibVLCSharp()                       // https://github.com/videolan/libvlcsharp
                 .UseAcrylicView()                       // https://github.com/sswi/AcrylicView.MAUI
+                .UseSegmentedControl()                  // https://github.com/thomasgalliker/Plugin.SegmentedControl.Maui
+                .UseSkiaSharp()                         // https://github.com/mono/SkiaSharp
 
 #if ANDROID
                 .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons
 #elif IOS
-                .UseCupertinoMauiIcons()
+                .UseCupertinoMauiIcons()                // https://github.com/AathifMahir/MauiIcons
 #endif
 
                 // Handlers

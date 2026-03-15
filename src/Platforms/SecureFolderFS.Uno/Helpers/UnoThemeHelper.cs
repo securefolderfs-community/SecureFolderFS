@@ -1,11 +1,15 @@
+using System;
+using Windows.UI.ViewManagement;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
+
+#if WINDOWS
 using Windows.UI;
-using Windows.UI.ViewManagement;
+using Microsoft.UI.Xaml.Media;
+#endif
 
 namespace SecureFolderFS.Uno.Helpers
 {
@@ -26,6 +30,24 @@ namespace SecureFolderFS.Uno.Helpers
         /// Gets the current theme represented by <see cref="ElementTheme"/>.
         /// </summary>
         public ElementTheme CurrentElementTheme => (ElementTheme)(int)CurrentTheme;
+
+        /// <inheritdoc/>
+        public override event EventHandler? ActualThemeChanged;
+
+        /// <inheritdoc/>
+        public override ThemeType ActualTheme
+        {
+            get
+            {
+                if (CurrentTheme != ThemeType.Default)
+                    return CurrentTheme;
+
+                if (_rootContent is null)
+                    return ThemeType.Dark;
+
+                return (ThemeType)_rootContent.ActualTheme;
+            }
+        }
 
         /// <inheritdoc/>
         public override ThemeType CurrentTheme
@@ -49,12 +71,7 @@ namespace SecureFolderFS.Uno.Helpers
         protected override void UpdateTheme()
         {
             if (_rootContent is not null)
-            {
-                if (CurrentTheme == ThemeType.Default)
-                    _rootContent.RequestedTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                else
-                    _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
-            }
+                _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
 
 #if WINDOWS
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
@@ -93,7 +110,14 @@ namespace SecureFolderFS.Uno.Helpers
         public void RegisterWindowInstance(FrameworkElement? rootContent, AppWindow? appWindow = null)
         {
             _rootContent = rootContent;
+            _rootContent?.ActualThemeChanged -= RootContent_ActualThemeChanged;
+            _rootContent?.ActualThemeChanged += RootContent_ActualThemeChanged;
             _appWindow = appWindow;
+        }
+
+        private void RootContent_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            ActualThemeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Settings_ColorValuesChanged(UISettings sender, object args)

@@ -25,6 +25,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
 
         /// <inheritdoc/>
+        public string ShortcutFileExtension { get; } = UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION;
+
+        /// <inheritdoc/>
         public virtual bool IsNameReserved(string? name)
         {
             return name is not null && (

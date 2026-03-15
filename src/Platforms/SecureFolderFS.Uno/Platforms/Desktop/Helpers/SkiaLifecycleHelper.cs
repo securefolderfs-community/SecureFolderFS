@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
             var formattedException = ExceptionHelpers.FormatException(ex);
             if (formattedException is null)
                 return;
-            
+
             ExceptionHelpers.WriteSessionFile(AppDirectory, formattedException);
             ExceptionHelpers.WriteAggregateFile(AppDirectory, formattedException);
         }
@@ -58,13 +58,14 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
             return base.ConfigureServices(settingsFolder)
                     .Override<IIapService, DebugIapService>(AddService.AddSingleton)
                     .Override<ISystemService, SkiaSystemService>(AddService.AddSingleton)
+                    .Override<IPrivacyService, SkiaPrivacyService>(AddService.AddSingleton)
                     .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
                     .Override<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
                     .Override<IApplicationService, SkiaApplicationService>(AddService.AddSingleton)
                     .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
                     .Override<IVaultFileSystemService, SkiaVaultFileSystemService>(AddService.AddSingleton)
                     .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
-                
+
                     .WithUnoServices(settingsFolder)
                 ;
         }

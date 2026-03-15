@@ -3,9 +3,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
-    x:DataType="local:BaseModalPage">
+    x:DataType="local:BaseModalPage"
+    Background="{OnPlatform Android={AppThemeBinding Light={StaticResource LightTransparentColor},
+                                                     Dark={StaticResource DarkTransparentColor}},
+                            iOS={StaticResource ThemeBackgroundFillSecondaryColorBrush}}">
 
     <ContentPage.Resources>
         <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
@@ -24,47 +28,11 @@
         </OnPlatform>
     </NavigationPage.IconColor>
 
-    <ContentPage.BackgroundColor>
-        <OnPlatform x:TypeArguments="Color">
-            <On Platform="Android" Value="Transparent" />
-        </OnPlatform>
-    </ContentPage.BackgroundColor>
-
-    <NavigationPage.TitleView>
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="iOS">
-                <Grid HorizontalOptions="Fill">
-                    <Label
-                        x:Name="SheetTitle"
-                        FontAttributes="Bold"
-                        FontSize="18"
-                        HorizontalOptions="Center"
-                        Text="{Binding Title, Mode=OneWay}"
-                        VerticalOptions="Center" />
-
-                    <Button
-                        x:Name="SheetPrimaryButton"
-                        Margin="0,0,-12,0"
-                        Command="{Binding PrimaryCommand, Mode=OneWay}"
-                        FontAttributes="Bold"
-                        FontSize="17"
-                        HorizontalOptions="End"
-                        IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        SizeChanged="SheetPrimaryButton_SizeChanged"
-                        Style="{StaticResource NoBackgroundButtonStyle}"
-                        Text="{Binding PrimaryText, Mode=OneWay}"
-                        VerticalOptions="Center" />
-                </Grid>
-            </On>
-        </OnPlatform>
-    </NavigationPage.TitleView>
-
-    <OnPlatform x:TypeArguments="View">
+    <OnPlatform x:TypeArguments="Border">
         <On Platform="Android">
             <Border
                 x:Name="ModalBorder"
-                Background="{StaticResource ThemeBackgroundFillColorBrush}"
+                Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
                 BindingContext="{x:Reference Root}"
                 Stroke="Transparent"
                 StrokeThickness="0">
@@ -89,6 +57,7 @@
 
                     <ContentView
                         Grid.Row="1"
+                        Margin="{OnPlatform Android='0,0,0,32'}"
                         Content="{Binding ModalContent, Mode=OneWay}"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill" />
@@ -110,7 +79,6 @@
                         <Button
                             x:Name="CloseButton"
                             Grid.Column="0"
-                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
@@ -118,22 +86,22 @@
                             Style="{StaticResource TransparentButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
-                        <Button
+                        <uc:ActivityButton
                             x:Name="PrimaryButton"
-                            Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
-                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
+                            Grid.Column="1"
+                            ButtonStyle="{StaticResource AccentButtonStyle}"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsProgressing="{Binding PrimaryCommand.IsRunning, Mode=OneWay, FallbackValue={x:Boolean False}}"
                             IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Style="{StaticResource AccentButtonStyle}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>
             </Border>
         </On>
         <On Platform="iOS">
-            <Border BindingContext="{x:Reference Root}">
+            <Border BindingContext="{x:Reference Root}" StrokeThickness="0">
                 <ContentView
                     Content="{Binding ModalContent, Mode=OneWay}"
                     HorizontalOptions="Fill"

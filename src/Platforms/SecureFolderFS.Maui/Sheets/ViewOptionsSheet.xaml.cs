@@ -1,10 +1,13 @@
 using Plugin.Maui.BottomSheet;
 using Plugin.Maui.BottomSheet.Navigation;
+using Plugin.SegmentedControl.Maui;
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
@@ -57,9 +60,11 @@ namespace SecureFolderFS.Maui.Sheets
     public partial class ViewOptionsSheet : BottomSheet, IQueryAttributable
     {
         private TaskCompletionSource<IResult>? _tcs;
+        private readonly FirstTimeHelper _firstTime;
 
         public ViewOptionsSheet()
         {
+            _firstTime = new(1);
             ViewModel ??= ViewOptionsSheetFragment.EarlyInstance?.ViewModel;
             Closed += Sheet_Closed;
 
@@ -79,6 +84,78 @@ namespace SecureFolderFS.Maui.Sheets
             ViewOptionsSheetFragment.EarlyInstance = null;
         }
 
+        private void SizeSegments_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not SegmentedControl sizeSegments || ViewModel is null)
+                return;
+
+            if (ViewModel.CurrentSizeOption is null)
+                return;
+
+            var index = ViewModel.SizeOptions.IndexOf(ViewModel.CurrentSizeOption);
+            sizeSegments.SelectedSegment = index;
+        }
+
+        private void SizeSegments_SelectedIndexChanged(object? sender, SelectedIndexChangedEventArgs e)
+        {
+            if (_firstTime.IsFirstTime())
+                return;
+
+            ViewModel?.SetLayoutSizeOptionCommand.Execute(e.NewValue);
+        }
+
+        private void SizeSegmentsAndroid_Loaded(object? sender, EventArgs e)
+        {
+            if (sender is not HorizontalStackLayout layout || ViewModel is null)
+                return;
+
+            var currentIndex = ViewModel.CurrentSizeOption is null
+                ? -1
+                : ViewModel.SizeOptions.IndexOf(ViewModel.CurrentSizeOption);
+
+            for (var i = 0; i < ViewModel.SizeOptions.Count; i++)
+            {
+                var radio = new RadioButton()
+                {
+                    Content = ViewModel.SizeOptions[i].Title,
+                    IsChecked = i == currentIndex,
+                    GroupName = "SizeOptions".ToLocalized()
+                };
+                radio.CheckedChanged += SizeSegmentsAndroid_CheckedChanged;
+                layout.Add(radio);
+            }
+
+            layout.Unloaded += SizeSegmentsAndroid_Unloaded;
+        }
+
+        private void SizeSegmentsAndroid_Unloaded(object? sender, EventArgs e)
+        {
+            if (sender is not HorizontalStackLayout layout)
+                return;
+
+            layout.Unloaded -= SizeSegmentsAndroid_Unloaded;
+            foreach (var child in layout.Children.OfType<RadioButton>())
+                child.CheckedChanged -= SizeSegmentsAndroid_CheckedChanged;
+        }
+
+        private void SizeSegmentsAndroid_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+        {
+            if (!e.Value)
+                return;
+
+            if (sender is not RadioButton selected)
+                return;
+
+            var layout = (HorizontalStackLayout)selected.Parent;
+            var index = layout.Children.IndexOf(selected);
+
+            // Manually deselect others since GroupName isn't reliable in dynamic layouts
+            foreach (var radio in layout.Children.OfType<RadioButton>().Where(r => r != selected))
+                radio.IsChecked = false;
+
+            ViewModel?.SetLayoutSizeOptionCommand.Execute(index);
+        }
+
         public LayoutsViewModel? ViewModel
         {
             get => (LayoutsViewModel?)GetValue(ViewModelProperty);
@@ -88,4 +165,3 @@ namespace SecureFolderFS.Maui.Sheets
             BindableProperty.Create(nameof(ViewModel), typeof(LayoutsViewModel), typeof(ViewOptionsSheet));
     }
 }
-

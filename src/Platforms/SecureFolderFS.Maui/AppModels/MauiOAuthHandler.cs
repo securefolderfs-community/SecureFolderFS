@@ -11,7 +11,7 @@ namespace SecureFolderFS.Maui.AppModels
     internal sealed class MauiOAuthHandler : IOAuthHandler
     {
         public static IOAuthHandler Instance { get; } = new MauiOAuthHandler();
-        
+
         private int _port;
         private HttpListener? _httpListener;
         private readonly SemaphoreSlim _portSemaphore = new(1, 1);
@@ -30,10 +30,10 @@ namespace SecureFolderFS.Maui.AppModels
                         {
                             var listener = new TcpListener(IPAddress.Loopback, 0);
                             listener.Start();
-                            
+
                             var port = ((IPEndPoint)listener.LocalEndpoint).Port;
                             listener.Stop();
-                            
+
                             _port = port;
                         }
                     }
@@ -42,11 +42,11 @@ namespace SecureFolderFS.Maui.AppModels
                         _portSemaphore.Release();
                     }
                 }
-                
+
                 return $"http://localhost:{_port}/";
             }
         }
-        
+
         private MauiOAuthHandler()
         {
         }
@@ -54,9 +54,17 @@ namespace SecureFolderFS.Maui.AppModels
         /// <inheritdoc/>
         public async Task<IResult<OAuthResult>> GetCodeAsync(string url, CancellationToken cancellationToken = default)
         {
-            // Ensure the port is set (this will trigger the RedirectUri getter)
-            var redirectUri = RedirectUrl;
+            return await GetCodeInternalAsync(url, RedirectUrl, cancellationToken);
+        }
 
+        /// <inheritdoc/>
+        public async Task<IResult<OAuthResult>> GetCodeAsync(string url, string redirectUri, CancellationToken cancellationToken = default)
+        {
+            return await GetCodeInternalAsync(url, redirectUri, cancellationToken);
+        }
+
+        private async Task<IResult<OAuthResult>> GetCodeInternalAsync(string url, string redirectUri, CancellationToken cancellationToken)
+        {
             // Start HTTP listener on localhost
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add(redirectUri);
@@ -81,7 +89,7 @@ namespace SecureFolderFS.Maui.AppModels
                 var state = queryParams.Get("state");
                 var error = queryParams.Get("error");
 
-                // Prepare a authorization result webpage
+                // Prepare the authorization result webpage
                 if (code is null)
                 {
                     await using var stream = await FileSystem.OpenAppPackageFileAsync("auth_fail.html");
@@ -96,7 +104,7 @@ namespace SecureFolderFS.Maui.AppModels
                 {
                     await using var stream = await FileSystem.OpenAppPackageFileAsync("auth_success.html");
                     using var reader = new StreamReader(stream);
-                    
+
                     responseString = await reader.ReadToEndAsync(cancellationToken);
                 }
 
@@ -104,7 +112,7 @@ namespace SecureFolderFS.Maui.AppModels
                 var buffer = Encoding.UTF8.GetBytes(responseString);
                 response.ContentLength64 = buffer.Length;
                 response.ContentType = "text/html";
-                
+
                 // Write and close
                 await response.OutputStream.WriteAsync(buffer, cancellationToken);
                 response.OutputStream.Close();

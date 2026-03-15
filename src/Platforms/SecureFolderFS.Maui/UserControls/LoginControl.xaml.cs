@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CurrentViewModelProperty, value);
         }
         public static readonly BindableProperty CurrentViewModelProperty =
-            BindableProperty.Create(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), null);
+            BindableProperty.Create(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl));
 
         public bool ProvideContinuationButton
         {

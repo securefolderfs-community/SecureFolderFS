@@ -17,11 +17,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.WinFsp
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed partial class WinFspFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed partial class WinFspFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;
@@ -33,7 +34,7 @@ namespace SecureFolderFS.Core.WinFsp
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
@@ -55,14 +56,17 @@ namespace SecureFolderFS.Core.WinFsp
             var driveInfo = new DriveInfo(pathRoot);
             var winFspCallbacks = new OnDeviceWinFsp(specifics, handlesManager, volumeModel, driveInfo);
             //var winFsp = new WinFspService(winFspCallbacks, winFspOptions.MountPoint);
-            var winFsp = new WinFspHost(winFspCallbacks, winFspOptions.MountPoint); 
+            var winFsp = new WinFspHost(winFspCallbacks, winFspOptions.MountPoint);
             var result = await winFsp.StartFileSystemAsync();
 
             if (!result.Successful)
                 throw new Win32Exception(result.Value);
 
             winFspOptions.DangerousSetMountPoint(winFsp.GetMountPointInternal());
-            return new WinFspVFSRoot(winFsp, new SystemFolderEx(winFspOptions.MountPoint), specifics);
+
+            var virtualizedRoot = new SystemFolderEx(winFspOptions.MountPoint);
+            var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new WinFspVfsRoot(winFsp, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

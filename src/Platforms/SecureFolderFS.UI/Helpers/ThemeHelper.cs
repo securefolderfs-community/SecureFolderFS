@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,6 +18,11 @@ namespace SecureFolderFS.UI.Helpers
     {
         protected IAppSettings? AppSettings { get; } = DI.OptionalService<ISettingsService>()?.AppSettings;
 
+        /// <summary>
+        /// Occurs when the actual theme of the application changes.
+        /// </summary>
+        public abstract event EventHandler? ActualThemeChanged;
+
         private ThemeType _CurrentTheme;
         /// <summary>
         /// Gets the current theme used by the app.
@@ -26,6 +32,11 @@ namespace SecureFolderFS.UI.Helpers
             get => _CurrentTheme;
             protected set => SetProperty(ref _CurrentTheme, value);
         }
+
+        /// <summary>
+        /// Gets the actual theme of the application as defined in <see cref="ThemeType"/>.
+        /// </summary>
+        public abstract ThemeType ActualTheme { get; }
 
         /// <summary>
         /// Updates the application's theme to specified <paramref name="themeType"/>.

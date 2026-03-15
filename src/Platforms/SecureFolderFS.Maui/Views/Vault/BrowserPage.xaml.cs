@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.ServiceImplementation;
-using SecureFolderFS.Maui.UserControls.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views.Vault
@@ -29,25 +29,22 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
+            if (ViewModel is null)
+                return false;
+
             if (view is not FolderViewModel folderViewModel)
                 return false;
 
-            // Make last item non-leading
-            if (ViewModel?.Breadcrumbs?.LastOrDefault() is { } lastNavigationItem)
+            // Make the last item non-leading
+            if (ViewModel.Breadcrumbs.LastOrDefault() is { } lastNavigationItem)
                 lastNavigationItem.IsLeading = false;
 
-            // Add navigated-to folder to Breadcrumb
-            ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
+            // Add a navigated-to folder to Breadcrumb
+            ViewModel.Breadcrumbs.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
 
-            // Navigate by changing current folder (i.e. ViewModel source)
-            if (ViewModel is not null)
-            {
-                // Animate navigation
-                await AnimateViewChangeAsync(folderViewModel);
-                return true;
-            }
-
-            return false;
+            // Navigate by changing the current folder (i.e. ViewModel source)
+            await AnimateViewChangeAsync(folderViewModel);
+            return true;
         }
 
         /// <inheritdoc/>
@@ -60,7 +57,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (navigationService.Views[Math.Max(--index, 0)] is not FolderViewModel folderViewModel)
                 return false;
 
-            // Remove last navigated-to breadcrumb
+            // Remove the last navigated-to breadcrumb
             var last = ViewModel?.Breadcrumbs?.LastOrDefault();
             if (last is not null)
                 ViewModel?.Breadcrumbs?.Remove(last);
@@ -90,11 +87,10 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             // Make last navigated-to breadcrumb non-leading
             var last = ViewModel?.Breadcrumbs.LastOrDefault();
-            if (last is not null)
-                last.IsLeading = false;
+            last?.IsLeading = false;
 
             // Add new breadcrumb
-            ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
+            ViewModel?.Breadcrumbs.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
 
             return true;
         }
@@ -102,10 +98,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         protected override bool OnBackButtonPressed()
         {
-            if (ViewModel?.CurrentFolder is null)
-                return base.OnBackButtonPressed();
-
-            if (ViewModel.BaseFolder.Id == ViewModel.CurrentFolder.Folder.Id)
+            if (ViewModel?.CurrentFolder is null || ViewModel.BaseFolder.Id == ViewModel.CurrentFolder.Folder.Id)
                 return base.OnBackButtonPressed();
 
             _ = ViewModel.InnerNavigator.GoBackAsync();
@@ -118,7 +111,13 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is not null)
                 ViewModel.Layouts.PropertyChanged += Layouts_PropertyChanged;
 
-            // OnAppearing is called elsewhere in navigation logic.
+            if (ViewModel?.OuterNavigator is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+
+            // Also update the initial layout
+            if (Browser.CanReloadCollection())
+                Browser.IsVisible = false;
+
             base.OnAppearing();
         }
 
@@ -130,6 +129,19 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             ViewModel?.OnDisappearing();
             base.OnDisappearing();
+        }
+        
+        /// <inheritdoc/>
+        protected override void OnNavigatedTo(NavigatedToEventArgs args)
+        {
+            // Update the initial layout
+            var synchronizationContext = SynchronizationContext.Current;
+            _ = synchronizationContext.PostOrExecuteAsync(async () =>
+            {
+                await Task.Delay(200);
+                await Browser.ReloadCollectionViewAsync();
+                Browser.IsVisible = true;
+            });
         }
 
         private void ConfigureViewModel(BrowserViewModel? viewModel)
@@ -150,12 +162,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel is null)
                 return;
 
-            await Browser.FadeTo(0.0d, 150U);
+            await Browser.FadeToAsync(0.0d, 150U);
             ViewModel.CurrentFolder = folder;
 
             _ = Task.Delay(40).ContinueWith(async _ =>
             {
-                await Browser.FadeTo(1.0d, 150U);
+                await Browser.FadeToAsync(1.0d, 150U);
             }).Unwrap();
         }
 
@@ -164,9 +176,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (e.PropertyName != nameof(LayoutsViewModel.BrowserViewType))
                 return;
 
-            Browser.ItemsSource = null;
-            await Task.Delay(100);
-            Browser.SetBinding(BrowserControl.ItemsSourceProperty, $"{nameof(ViewModel)}.{nameof(BrowserViewModel.CurrentFolder)}.{nameof(FolderViewModel.Items)}");
+            // Force complete recreation of the CollectionView to avoid MAUI layout glitches
+            // when changing ItemsLayout dynamically
+            await Browser.ReloadCollectionViewAsync();
         }
 
         public BrowserViewModel? ViewModel

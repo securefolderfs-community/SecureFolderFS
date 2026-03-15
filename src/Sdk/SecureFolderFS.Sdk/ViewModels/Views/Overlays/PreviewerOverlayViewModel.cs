@@ -20,7 +20,7 @@ using SecureFolderFS.Storage.StorageProperties;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IShareService>]
     public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly BrowserItemViewModel _itemViewModel;
@@ -52,6 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                         .Where(x => x is FileViewModel && FileTypeHelper.GetTypeHint(x.Inner) is TypeHint.Image or TypeHint.Media)
                         .Select(x => (FileViewModel)x),
                     (FileViewModel)_itemViewModel).WithInitAsync(cancellationToken),
+                TypeHint.Archive => new ArchivePreviewerViewModel(file, _folderViewModel, _folderViewModel.BrowserViewModel.TransferViewModel).WithInitAsync(cancellationToken),
                 _ => new FallbackPreviewerViewModel(file).WithInitAsync(cancellationToken)
             });
 
@@ -74,14 +75,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
                 previewer = carouselPreviewer.Slides[carouselPreviewer.CurrentIndex];
 
-            if (previewer is not FilePreviewerViewModel { Inner: IStorableProperties storableProperties } filePreviewer)
+            if (previewer is not FilePreviewerViewModel filePreviewer)
                 return;
 
-            var properties = await storableProperties.GetPropertiesAsync();
-            var propertiesOverlay = new PropertiesOverlayViewModel(filePreviewer.Inner, properties);
+            var propertiesOverlay = new PropertiesOverlayViewModel(filePreviewer.Inner);
             _ = propertiesOverlay.InitAsync(cancellationToken);
 
             await OverlayService.ShowAsync(propertiesOverlay);
+        }
+
+        [RelayCommand]
+        private async Task ShareAsync()
+        {
+            BasePreviewerViewModel? previewer = PreviewerViewModel as FilePreviewerViewModel;
+            if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
+                previewer = carouselPreviewer.Slides[carouselPreviewer.CurrentIndex];
+
+            if (previewer is not FilePreviewerViewModel filePreviewer)
+                return;
+
+            await ShareService.ShareFileAsync(filePreviewer.Inner);
         }
 
         /// <inheritdoc/>

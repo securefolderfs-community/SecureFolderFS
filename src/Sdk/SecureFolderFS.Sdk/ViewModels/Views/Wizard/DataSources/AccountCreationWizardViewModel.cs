@@ -16,6 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
     public sealed partial class AccountCreationWizardViewModel : OverlayViewModel, IStagingView
     {
         [ObservableProperty] private AccountViewModel _AccountViewModel;
+        [ObservableProperty] private string? _ExceptionMessage;
 
         public AccountCreationWizardViewModel(AccountViewModel accountViewModel)
         {
@@ -28,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         /// <inheritdoc/>
         public async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
+            ExceptionMessage = null;
             if (!AccountViewModel.IsInputFilled)
                 return Result.Failure(new ArgumentException($"'{nameof(AccountViewModel.IsInputFilled)}' is false."));
 
@@ -40,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
             }
             catch (Exception ex)
             {
+                ExceptionMessage = ex.Message;
                 return Result.Failure(ex);
             }
         }

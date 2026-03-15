@@ -19,11 +19,11 @@ namespace SecureFolderFS.Tests
             var settingsFolderPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new MemoryFolder(settingsFolderPath, Path.GetFileName(settingsFolderPath));
 
-            var serviceProvider = BuildServiceProvider(settingsFolder);
+            var serviceProvider = ConfigureServices(settingsFolder);
             DI.Default.SetServiceProvider(serviceProvider);
         }
 
-        private static IServiceProvider BuildServiceProvider(IModifiableFolder settingsFolder)
+        private static IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
             return new ServiceCollection()
 

@@ -20,11 +20,11 @@ namespace SecureFolderFS.Core
                 public const string AUTH_PASSWORD = "password";
                 public const string AUTH_KEYFILE = "key_file";
                 public const string AUTH_WINDOWS_HELLO = "windows_hello";
-                public const string AUTH_HARDWARE_KEY = "hardware_key";
+                public const string AUTH_YUBIKEY = "yubikey";
+                public const string AUTH_APPLE_MACOS = "apple_macos_biometrics";
                 public const string AUTH_APPLE_BIOMETRIC = "apple_secure_enclave";
                 public const string AUTH_ANDROID_BIOMETRIC = "android_biometrics";
-
-                public const string AUTH_DEVICE_PING = "device_ping";
+                public const string AUTH_DEVICE_LINK = "device_link";
             }
 
             [Obsolete]
@@ -54,6 +54,7 @@ namespace SecureFolderFS.Core
                 public const int V1 = 1;
                 public const int V2 = 2;
                 public const int V3 = 3;
+                public const int V4 = 4;
                 public const int LATEST_VERSION = V3;
             }
         }

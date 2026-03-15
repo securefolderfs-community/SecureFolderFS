@@ -26,66 +26,108 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         public override void CreateHeader(Span<byte> plaintextHeader)
         {
             // Nonce
-            secureRandom.GetNonZeroBytes(plaintextHeader.Slice(0, HEADER_NONCE_SIZE));
+            RandomNumberGenerator.Fill(plaintextHeader.Slice(0, HEADER_NONCE_SIZE));
 
             // Content key
-            secureRandom.GetBytes(plaintextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
+            RandomNumberGenerator.Fill(plaintextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
         }
 
         /// <inheritdoc/>
-        public override void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
+        public override unsafe void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
         {
             // Nonce
             plaintextHeader.Slice(0, HEADER_NONCE_SIZE).CopyTo(ciphertextHeader);
 
-            // Encrypt
-            AesCtr128.Encrypt(
-                plaintextHeader.GetHeaderContentKey(),
-                DekKey,
-                plaintextHeader.GetHeaderNonce(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
+            // Use unsafe pointers to pass span data through the UseKey callback
+            fixed (byte* plaintextPtr = plaintextHeader)
+            fixed (byte* ciphertextPtr = ciphertextHeader)
+            {
+                var state = (ptPtr: (nint)plaintextPtr, ptLen: plaintextHeader.Length, ctPtr: (nint)ciphertextPtr, ctLen: ciphertextHeader.Length);
 
-            // Calculate MAC
-            CalculateHeaderMac(
-                plaintextHeader.GetHeaderNonce(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
-                ciphertextHeader.Slice(plaintextHeader.Length)); // plaintextHeader.Length already includes HEADER_NONCE_SIZE
+                // Encrypt with DekKey
+                DekKey.UseKey(state, static (dekKey, s) =>
+                {
+                    var pt = new ReadOnlySpan<byte>((byte*)s.ptPtr, s.ptLen);
+                    var ct = new Span<byte>((byte*)s.ctPtr, s.ctLen);
+
+                    AesCtr128.Encrypt(
+                        pt.GetHeaderContentKey(),
+                        dekKey,
+                        pt.GetHeaderNonce(),
+                        ct.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
+                });
+
+                // Calculate MAC with MacKey
+                MacKey.UseKey(state, static (macKey, s) =>
+                {
+                    var pt = new ReadOnlySpan<byte>((byte*)s.ptPtr, s.ptLen);
+                    var ct = new Span<byte>((byte*)s.ctPtr, s.ctLen);
+
+                    CalculateHeaderMacInternal(
+                        macKey,
+                        pt.GetHeaderNonce(),
+                        ct.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
+                        ct.Slice(pt.Length)); // plaintextHeader.Length already includes HEADER_NONCE_SIZE
+                });
+            }
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
+        public override unsafe bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
         {
-            // Allocate byte* for MAC
-            Span<byte> mac = stackalloc byte[HEADER_MAC_SIZE];
+            // Use unsafe pointers to pass span data through the UseKey callback
+            fixed (byte* ciphertextPtr = ciphertextHeader)
+            fixed (byte* plaintextPtr = plaintextHeader)
+            {
+                var state = (ctPtr: (nint)ciphertextPtr, ctLen: ciphertextHeader.Length, ptPtr: (nint)plaintextPtr, ptLen: plaintextHeader.Length);
 
-            // Calculate MAC
-            CalculateHeaderMac(
-                ciphertextHeader.GetHeaderNonce(),
-                ciphertextHeader.GetHeaderContentKey(),
-                mac);
+                // Verify MAC with MacKey
+                var macValid = MacKey.UseKey(state, static (macKey, s) =>
+                {
+                    var ct = new ReadOnlySpan<byte>((byte*)s.ctPtr, s.ctLen);
 
-            // Check MAC
-            if (!mac.SequenceEqual(ciphertextHeader.GetHeaderMac()))
-                return false;
+                    // Allocate byte* for MAC
+                    Span<byte> mac = stackalloc byte[HEADER_MAC_SIZE];
 
-            // Nonce
-            ciphertextHeader.GetHeaderNonce().CopyTo(plaintextHeader);
+                    // Calculate MAC
+                    CalculateHeaderMacInternal(
+                        macKey,
+                        ct.GetHeaderNonce(),
+                        ct.GetHeaderContentKey(),
+                        mac);
 
-            // Decrypt
-            AesCtr128.Decrypt(
-                ciphertextHeader.GetHeaderContentKey(),
-                DekKey,
-                ciphertextHeader.GetHeaderNonce(),
-                plaintextHeader.Slice(HEADER_NONCE_SIZE));
+                    // Check MAC using constant-time comparison to prevent timing attacks
+                    return CryptographicOperations.FixedTimeEquals(mac, ct.GetHeaderMac());
+                });
 
-            return true;
+                if (!macValid)
+                    return false;
+
+                // Nonce
+                ciphertextHeader.GetHeaderNonce().CopyTo(plaintextHeader);
+
+                // Decrypt with DekKey
+                DekKey.UseKey(state, static (dekKey, s) =>
+                {
+                    var ct = new ReadOnlySpan<byte>((byte*)s.ctPtr, s.ctLen);
+                    var pt = new Span<byte>((byte*)s.ptPtr, s.ptLen);
+
+                    AesCtr128.Decrypt(
+                        ct.GetHeaderContentKey(),
+                        dekKey,
+                        ct.GetHeaderNonce(),
+                        pt.Slice(HEADER_NONCE_SIZE));
+                });
+
+                return true;
+            }
         }
 
-        private void CalculateHeaderMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> ciphertextPayload, Span<byte> headerMac)
+        private static void CalculateHeaderMacInternal(ReadOnlySpan<byte> macKey, ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> ciphertextPayload, Span<byte> headerMac)
         {
             // Initialize HMAC
-            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, MacKey);
+            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
 
             hmacSha256.AppendData(headerNonce);         // headerNonce
             hmacSha256.AppendData(ciphertextPayload);   // ciphertextPayload

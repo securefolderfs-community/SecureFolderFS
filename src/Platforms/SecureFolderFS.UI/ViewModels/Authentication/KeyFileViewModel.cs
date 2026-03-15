@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -14,6 +15,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
@@ -48,17 +50,16 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            using var secureRandom = RandomNumberGenerator.Create();
-            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
+            using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
             await using var dataStream = new MemoryStream();
 
             // Fill the first 128 bytes with secure random data
-            secureRandom.GetNonZeroBytes(secretKey.Key.AsSpan(0, KEY_LENGTH));
+            RandomNumberGenerator.Fill(secretKey.Key.AsSpan(0, KEY_LENGTH));
 
             // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us
@@ -78,11 +79,11 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 throw new OperationCanceledException("The user did not save a file.");
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            return Result<IKeyBytes>.Success(secretKey.CreateCopy());
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -92,14 +93,14 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 throw new OperationCanceledException("The user did not pick a file.");
 
             await using var keyStream = await keyFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
+            using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
 
             var read = await keyStream.ReadAsync(secretKey.Key, cancellationToken);
             if (read < secretKey.Length)
                 throw new DataException("The key data was too short.");
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            return Result<IKeyBytes>.Success(secretKey.CreateCopy());
         }
     }
 }

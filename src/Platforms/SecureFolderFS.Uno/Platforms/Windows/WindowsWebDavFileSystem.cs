@@ -6,6 +6,7 @@ using NWebDav.Server.Dispatching;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -13,11 +14,11 @@ using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.Platforms.Windows
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed class WindowsWebDavFileSystem : WebDavFileSystem
     {
         /// <inheritdoc/>
-        protected override async Task<IVFSRoot> MountAsync(
+        protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,
@@ -38,8 +39,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
-            // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
-            return new WindowsWebDavVFSRoot(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), specifics);
+            var virtualizedRoot = new MemoryFolder(mountPath, options.VolumeName);
+            var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new WindowsWebDavVFSRoot(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

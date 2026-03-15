@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
         /// <returns>A relative plaintext path.</returns>
         public static string? GetPlaintextPath(string ciphertextPath, FileSystemSpecifics specifics, Span<byte> expendableDirectoryId)
         {
-            // Use relative path in both cases
+            // Use a relative path in both cases
             ciphertextPath = MakeRelative(ciphertextPath, specifics.ContentFolder.Id);
 
             // Return the (relative) path, if not using name encryption

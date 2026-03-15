@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     mc:Ignorable="d">
 
@@ -14,32 +15,45 @@
             <RowDefinition Height="Auto" />
             <!--  Other settings  -->
             <RowDefinition />
+            <!--  Bottom info  -->
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Banner  -->
-        <!--<uc:BannerControl Grid.Row="0">
+        <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
-                <StackPanel
+                <StackPanel Spacing="2">
+                    <TextBlock
+                        FontSize="21"
+                        FontWeight="SemiBold"
+                        Text="{l:ResourceString Rid=ClearTraces}" />
+                    <TextBlock
+                        FontSize="11"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=ClearTracesDescription}" />
+                </StackPanel>
             </uc:BannerControl.LeftSide>
-        </uc:BannerControl>-->
+            <uc:BannerControl.RightSide>
+                <Button
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="{l:ResourceString Rid=ClearTraces}"
+                    Command="{x:Bind ViewModel.ClearTracesCommand, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Glyph="&#xE74D;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="{l:ResourceString Rid=ClearTraces}" />
+                    </StackPanel>
+                </Button>
+            </uc:BannerControl.RightSide>
+        </uc:BannerControl>
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl
-                Title="{l:ResourceString Rid=DisableRecentAccess}"
-                BlockMode="Default"
-                Description="{l:ResourceString Rid=DisableRecentAccessDescription}">
-                <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xE81C;" />
-                </ucab:ActionBlockControl.Icon>
-                <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch
-                        MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Rid=DisableRecentAccess}"
-                        IsEnabled="False"
-                        IsOn="{x:Bind ViewModel.DisableRecentAccess, Mode=TwoWay}" />
-                </ucab:ActionBlockControl.ActionElement>
-            </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=AutoLock}"
                 BlockMode="Default"
@@ -69,6 +83,28 @@
                         IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
+            <InfoBar
+                IsClosable="False"
+                IsOpen="True"
+                Message="{l:ResourceString Rid=TelemetryInfoBarMessage}"
+                Severity="Informational" />
+        </StackPanel>
+
+        <!--  Bottom info  -->
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal"
+            Spacing="8">
+            <FontIcon
+                VerticalAlignment="Center"
+                FontSize="16"
+                Glyph="&#xEEA1;"
+                Opacity="0.8" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Opacity="0.8"
+                Text="{l:ResourceString Rid=CoreMemoryProtectionEnabled}" />
         </StackPanel>
     </Grid>
 </Page>

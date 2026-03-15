@@ -1,4 +1,4 @@
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 
 namespace SecureFolderFS.Maui.UserControls
 {

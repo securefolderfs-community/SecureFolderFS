@@ -40,6 +40,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             return base.ConfigureServices(settingsFolder)
                     //.Override<IIapService, AndroidIapService>(AddService.AddSingleton)
                     .Override<IMediaService, AndroidMediaService>(AddService.AddSingleton)
+                    .Override<IShareService, AndroidShareService>(AddService.AddSingleton)
                     .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
                     .Override<ISystemService, AndroidSystemService>(AddService.AddSingleton)
                     .Override<IStorageService, AndroidStorageService>(AddService.AddSingleton)

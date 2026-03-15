@@ -98,73 +98,81 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            if (e is DismissNavigationRequestedEventArgs)
+            try
             {
-                await HideAsync();
-                return;
+                if (e is DismissNavigationRequestedEventArgs)
+                {
+                    await HideAsync();
+                    e.TaskCompletion?.TrySetResult(true);
+                    return;
+                }
+
+                IStagingView? nextViewModel = null;
+                switch (e.Origin)
+                {
+                    // Main -> Summary
+                    case MainWizardViewModel { Mode: NewVaultMode.AddExisting }:
+                    {
+                        var viewModel = (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel;
+                        if (viewModel is null)
+                            return;
+
+                        var vaultModel = await FromDataSourceAsync(viewModel);
+                        if (vaultModel is null)
+                            return;
+
+                        nextViewModel = new SummaryWizardViewModel(vaultModel, ViewModel!.VaultCollectionModel);
+                        break;
+                    }
+
+                    // Main -> Credentials
+                    case MainWizardViewModel { Mode: NewVaultMode.CreateNew }:
+                    {
+                        var viewModel = (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel;
+                        if (viewModel is null)
+                            return;
+
+                        var vaultModel = await FromDataSourceAsync(viewModel);
+                        if (vaultModel is null)
+                            return;
+
+                        nextViewModel = new CredentialsWizardViewModel(vaultModel);
+                        break;
+                    }
+
+                    // Credentials -> Recovery
+                    case CredentialsWizardViewModel viewModel:
+                    {
+                        if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
+                            throw new ArgumentException(nameof(CredentialsResult));
+
+                        nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
+                        break;
+                    }
+
+                    // Recovery -> Summary
+                    case RecoveryWizardViewModel viewModel:
+                    {
+                        nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, ViewModel!.VaultCollectionModel);
+                        break;
+                    }
+                }
+
+                if (nextViewModel is null)
+                {
+                    await HideAsync();
+                    return;
+                }
+
+                await NavigateAsync(nextViewModel);
+                e.TaskCompletion?.TrySetResult(true);
             }
-
-
-            IStagingView? nextViewModel = null;
-            switch (e.Origin)
+            finally
             {
-                // Main -> Summary
-                case MainWizardViewModel { Mode: NewVaultMode.AddExisting }:
-                {
-                    var viewModel = (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel;
-                    if (viewModel is null)
-                        return;
-
-                    var vaultModel = await FromDataSourceAsync(viewModel);
-                    if (vaultModel is null)
-                        return;
-
-                    nextViewModel = new SummaryWizardViewModel(vaultModel, ViewModel!.VaultCollectionModel);
-                    break;
-                }
-
-                // Main -> Credentials
-                case MainWizardViewModel { Mode: NewVaultMode.CreateNew }:
-                {
-                    var viewModel = (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel;
-                    if (viewModel is null)
-                        return;
-
-                    var vaultModel = await FromDataSourceAsync(viewModel);
-                    if (vaultModel is null)
-                        return;
-
-                    nextViewModel = new CredentialsWizardViewModel(vaultModel);
-                    break;
-                }
-
-                // Credentials -> Recovery
-                case CredentialsWizardViewModel viewModel:
-                {
-                    if (e is not WizardNavigationRequestedEventArgs { Result: CredentialsResult credentialsResult })
-                        throw new ArgumentException(nameof(CredentialsResult));
-
-                    nextViewModel = new RecoveryWizardViewModel(viewModel.VaultModel, credentialsResult);
-                    break;
-                }
-
-                // Recovery -> Summary
-                case RecoveryWizardViewModel viewModel:
-                {
-                    nextViewModel = new SummaryWizardViewModel(viewModel.VaultModel, ViewModel!.VaultCollectionModel);
-                    break;
-                }
+                e.TaskCompletion?.TrySetResult(false);
             }
-
-            if (nextViewModel is null)
-            {
-                await HideAsync();
-                return;
-            }
-
-            await NavigateAsync(nextViewModel);
         }
-        
+
         private async Task<IVaultModel?> FromDataSourceAsync(BaseDataSourceWizardViewModel dataSource)
         {
             var folder = await dataSource.GetFolderAsync();

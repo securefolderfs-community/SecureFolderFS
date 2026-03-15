@@ -1,4 +1,8 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.Extensions
 {
@@ -23,6 +27,34 @@ namespace SecureFolderFS.Storage.Extensions
                 return storable.Id;
 
             return bookmark.BookmarkId;
+        }
+
+        /// <summary>
+        /// Retrieves the date and time the specified item was last modified.
+        /// </summary>
+        /// <param name="storable">The item object for which the modification date is retrieved.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was last modified, if supported; otherwise, null.</returns>
+        public static async Task<DateTime?> GetDateModifiedAsync(this IStorable storable, CancellationToken cancellationToken = default)
+        {
+            if (storable is not ILastModifiedAt lastModifiedAt)
+                return null;
+
+            return await lastModifiedAt.LastModifiedAt.GetValueAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves the date and time the specified item was created.
+        /// </summary>
+        /// <param name="storable">The item object for which the creation date is retrieved.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="DateTime"/> indicating the date and time the item was created, if supported; otherwise, null.</returns>
+        public static async Task<DateTime?> GetDateCreatedAsync(this IStorable storable, CancellationToken cancellationToken = default)
+        {
+            if (storable is not ICreatedAt createdAt)
+                return null;
+
+            return await createdAt.CreatedAt.GetValueAsync(cancellationToken);
         }
     }
 }
