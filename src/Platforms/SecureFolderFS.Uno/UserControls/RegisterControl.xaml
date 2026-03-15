@@ -13,7 +13,6 @@
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels.WindowsHello"
     xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
-    xmlns:vm6="clr-namespace:SecureFolderFS.Uno.Platforms.Desktop.ViewModels"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="RootControl"
     mc:Ignorable="d not_win">
@@ -75,36 +74,6 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </win:DataTemplate>
-
-        <!--  TouchID Template  -->
-        <DataTemplate x:Key="TouchIDTemplate" x:DataType="vm6:MacOSBiometricsCreationViewModel">
-            <StackPanel Spacing="24">
-                <!--  Icon  -->
-                <Grid>
-                    <win:Image
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/touchid.png" />
-                    <not_win:Image
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="/Assets/AppAssets/touchid.png" />
-                </Grid>
-
-                <!--  Title  -->
-                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupMacOsBiometrics}" />
-
-                <!--  Authenticate  -->
-                <Button
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Rid=Setup}"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
-        </DataTemplate>
 
         <!--  YubiKey Template  -->
         <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm3:YubiKeyCreationViewModel">
@@ -220,7 +189,6 @@
                 DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
-                TouchIDTemplate="{StaticResource TouchIDTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
                 YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />
         </ContentControl.ContentTemplateSelector>

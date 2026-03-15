@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
 using SecureFolderFS.Uno.ViewModels.DeviceLink;
@@ -24,6 +25,10 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
+#if HAS_UNO_SKIA
+            TouchIDTemplate ??= App.Instance?.Resources.Get("TouchIDLoginTemplate") as DataTemplate;            
+#endif
+            
             return item switch
             {
                 PasswordCreationViewModel => PasswordTemplate,

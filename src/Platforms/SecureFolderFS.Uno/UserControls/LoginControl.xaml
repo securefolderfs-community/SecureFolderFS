@@ -14,7 +14,6 @@
     xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
     xmlns:vm5="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
-    xmlns:vm6="clr-namespace:SecureFolderFS.Uno.Platforms.Desktop.ViewModels"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="ThisLoginControl"
     mc:Ignorable="d not_win">
@@ -88,37 +87,6 @@
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </win:DataTemplate>
-
-        <!--  TouchID Template  -->
-        <DataTemplate x:Key="TouchIDTemplate" x:DataType="vm6:MacOSBiometricsLoginViewModel">
-            <StackPanel Spacing="24">
-                <!--  Icon  -->
-                <Grid>
-                    <win:Image
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/touchid.png" />
-                    <not_win:Image
-                        Height="64"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="/Assets/AppAssets/touchid.png" />
-                </Grid>
-
-                <!--  Title  -->
-                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginMacOsBiometrics}" />
-
-                <!--  Authenticate  -->
-                <Button
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Rid=Authenticate}"
-                    Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-            </StackPanel>
-        </DataTemplate>
 
         <!--  YubiKey Template  -->
         <DataTemplate x:Key="YubiKeyTemplate" x:DataType="vm3:YubiKeyLoginViewModel">
@@ -250,7 +218,6 @@
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 MigrationTemplate="{StaticResource MigrationTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
-                TouchIDTemplate="{StaticResource TouchIDTemplate}"
                 UnsupportedTemplate="{StaticResource UnsupportedTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
                 YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />

@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
@@ -23,13 +24,18 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
+using Uno.Extensions;
 using Uno.UI;
-using Windows.ApplicationModel;
-using Windows.Storage;
-using Microsoft.UI.Windowing;
+using Uno.UI.Adapter.Microsoft.Extensions.Logging;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+#if HAS_UNO_SKIA
+using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
+#endif
 
 namespace SecureFolderFS.Uno
 {
@@ -58,7 +64,7 @@ namespace SecureFolderFS.Uno
 #elif MACCATALYST || __MACOS__
             new Platforms.MacCatalyst.Helpers.MacOsLifecycleHelper();
 #elif HAS_UNO_SKIA
-            new Platforms.Desktop.Helpers.SkiaLifecycleHelper();
+            new SkiaLifecycleHelper();
 #else
             true ? throw new PlatformNotSupportedException() : null;
 #endif
@@ -71,6 +77,10 @@ namespace SecureFolderFS.Uno
         {
             Instance = this;
             InitializeComponent();
+            
+#if HAS_UNO_SKIA
+            Resources.MergedDictionaries.Add(new DesktopDataTemplates());
+#endif
 
             // Configure exception handlers
             UnhandledException += App_UnhandledException;
@@ -187,11 +197,11 @@ namespace SecureFolderFS.Uno
             if (args.Kind != ExtendedActivationKind.File)
                 return;
 
-            if (args.Data is not Windows.ApplicationModel.Activation.IFileActivatedEventArgs fileArgs)
+            if (args.Data is not IFileActivatedEventArgs fileArgs)
                 return;
 
             var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
-            if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+            if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
                 return;
 
             await HandleVaultShortcutActivationAsync(storageFile.Path);
@@ -219,7 +229,7 @@ namespace SecureFolderFS.Uno
                 return;
 
             var vaultViewModel = listItemViewModel.VaultViewModel;
-            await MainWindowSynchronizationContext.PostOrExecuteAsync(async _ =>
+            await MainWindowSynchronizationContext.PostOrExecuteAsync(async () =>
             {
                 if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
                     return;
@@ -274,7 +284,7 @@ namespace SecureFolderFS.Uno
 
 #if !UNPACKAGED
             // Set icon
-            appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
+            appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, Constants.FileNames.ICON_ASSET_PATH));
 #endif
 #if WINDOWS
             // Set backdrop
@@ -293,11 +303,11 @@ namespace SecureFolderFS.Uno
 
 #if __UNO_SKIA_MACOS__
                 // Use native macOS APIs to configure the window
-                Platforms.Desktop.Helpers.MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
-                Platforms.Desktop.Helpers.MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
+                MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+                MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
 
                 // Add left padding for traffic light buttons
-                var (leftPadding, _) = Platforms.Desktop.Helpers.MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+                var (leftPadding, _) = MacOsTitleBarHelper.GetTrafficLightButtonsInset();
                 rootControl.CustomTitleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
                 // For other non-Windows platforms, use OverlappedPresenter
@@ -356,19 +366,19 @@ namespace SecureFolderFS.Uno
             }
 #endif
             var settingsService = DI.Service<ISettingsService>();
-            var useForceClose = App.Instance!.UseForceClose;
+            var useForceClose = Instance!.UseForceClose;
             var reduceToBackground = settingsService.UserSettings.ReduceToBackground;
 
             if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
-                App.Instance.MainWindow?.Hide(enableEfficiencyMode: false);
+                Instance.MainWindow?.Hide(enableEfficiencyMode: false);
             }
             else
             {
                 await SafetyHelpers.NoFailureAsync(async () => await settingsService.TrySaveAsync());
                 SafetyHelpers.NoFailure(static () => FileSystemManager.Instance.FileSystems.DisposeAll());
-                Application.Current.Exit();
+                Current.Exit();
             }
         }
 
@@ -433,10 +443,10 @@ namespace SecureFolderFS.Uno
                 // builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
             });
 
-            global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+            LogExtensionPoint.AmbientLoggerFactory = factory;
 
 #if HAS_UNO
-            global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
+            LoggingAdapter.Initialize();
 #endif
 #endif
         }
@@ -445,7 +455,7 @@ namespace SecureFolderFS.Uno
 
         #region Exception Handlers
 
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => ApplicationLifecycle.LogException(e.Exception);
+        private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e) => ApplicationLifecycle.LogException(e.Exception);
 
         private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e) => ApplicationLifecycle.LogException(e.ExceptionObject as Exception);
 
