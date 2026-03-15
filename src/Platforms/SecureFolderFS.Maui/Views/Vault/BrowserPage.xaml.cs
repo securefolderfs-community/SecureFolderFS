@@ -136,7 +136,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         {
             // Update the initial layout
             var synchronizationContext = SynchronizationContext.Current;
-            _ = synchronizationContext.PostOrExecuteAsync(async _ =>
+            _ = synchronizationContext.PostOrExecuteAsync(async () =>
             {
                 await Task.Delay(200);
                 await Browser.ReloadCollectionViewAsync();

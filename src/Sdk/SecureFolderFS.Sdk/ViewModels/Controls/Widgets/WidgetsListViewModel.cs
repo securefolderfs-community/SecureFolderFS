@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await _synchronizationContext.PostOrExecuteAsync(async state =>
+            await _synchronizationContext.PostOrExecuteAsync(async () =>
             {
                 // Load widgets for vault
                 if (!await WidgetsCollectionModel.TryInitAsync(cancellationToken))

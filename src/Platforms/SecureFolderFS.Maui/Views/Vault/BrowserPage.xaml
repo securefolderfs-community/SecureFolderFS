@@ -23,6 +23,11 @@
             Order="Secondary"
             Text="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:LOCALIZE|Select:true:LOCALIZE|Cancel'}" />
         <ToolbarItem
+            Command="{Binding ViewModel.SearchCommand}"
+            IsEnabled="{Binding ViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+            Order="Secondary"
+            Text="{l:ResourceString Rid=Search}" />
+        <ToolbarItem
             Command="{Binding ViewModel.ChangeViewOptionsCommand}"
             Order="Secondary"
             Text="{l:ResourceString Rid=ViewOptions}" />

@@ -40,6 +40,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 StorableTypeOverlayViewModel => new StorableTypePrompt(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),
+                BrowserSearchOverlayViewModel => new BrowserSearchModalPage(navigation),
                 DeviceLinkRequestOverlayViewModel => new DeviceLinkRequestPage(navigation),
                 DeviceLinkCredentialsOverlayViewModel => new DeviceLinkCredentialsPage(navigation),
 

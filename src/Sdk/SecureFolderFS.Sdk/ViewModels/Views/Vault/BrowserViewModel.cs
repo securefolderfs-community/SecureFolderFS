@@ -19,12 +19,14 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
+using SecureFolderFS.Storage.Scanners;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
@@ -156,6 +158,72 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             IsSelecting = value ?? !IsSelecting;
             CurrentFolder?.Items.UnselectAll();
+        }
+
+        [RelayCommand]
+        protected virtual async Task SearchAsync()
+        {
+            if (CurrentFolder?.Inner is not IFolder searchedFolder)
+                return;
+
+            var searchModel = new BrowserFolderSearchModel(
+                new ShallowFolderScanner(searchedFolder),
+                new DeepFolderScanner(searchedFolder));
+
+            var overlayViewModel = new BrowserSearchOverlayViewModel(
+                searchedFolder,
+                searchModel,
+                ThumbnailCache,
+                NavigateToSearchResultAsync).WithInitAsync();
+
+            await OverlayService.ShowAsync(overlayViewModel);
+            overlayViewModel.Dispose();
+        }
+
+        private async Task NavigateToSearchResultAsync(SearchBrowserItemViewModel searchItemViewModel, CancellationToken cancellationToken)
+        {
+            if (CurrentFolder is null)
+                return;
+
+            var destinationFolder = searchItemViewModel.Inner switch
+            {
+                IFolder folder => folder,
+                IStorableChild child => await child.GetParentAsync(cancellationToken),
+                _ => null
+            };
+
+            if (destinationFolder is null)
+                return;
+
+            if (CurrentFolder.Folder.Id == destinationFolder.Id)
+                return;
+
+            var navigationChain = new Stack<IFolder>();
+            var currentFolder = destinationFolder;
+            while (CurrentFolder.Folder.Id != currentFolder.Id)
+            {
+                navigationChain.Push(currentFolder);
+
+                if (currentFolder is not IStorableChild childFolder)
+                    return;
+
+                var parentFolder = await childFolder.GetParentAsync(cancellationToken);
+                if (parentFolder is null)
+                    return;
+
+                currentFolder = parentFolder;
+            }
+
+            var parentFolderViewModel = CurrentFolder;
+            while (navigationChain.TryPop(out var folder))
+            {
+                var targetViewModel = new FolderViewModel(folder, this, parentFolderViewModel);
+                if (targetViewModel.Items.IsEmpty())
+                    _ = targetViewModel.ListContentsAsync(cancellationToken);
+
+                await InnerNavigator.NavigateAsync(targetViewModel);
+                parentFolderViewModel = targetViewModel;
+            }
         }
 
         [RelayCommand]

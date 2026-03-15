@@ -159,7 +159,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private async void DeviceLink_AuthenticationRequested(object? sender, AuthenticationRequestViewModel e)
         {
-            await _synchronizationContext.PostOrExecuteAsync(async _ =>
+            await _synchronizationContext.PostOrExecuteAsync(async () =>
             {
                 var overlayViewModel = new DeviceLinkRequestOverlayViewModel(e);
                 await overlayViewModel.InitAsync();

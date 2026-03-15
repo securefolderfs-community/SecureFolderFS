@@ -22,9 +22,11 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 IImage image => FromImage(image),
                 null when storableWrapper is FileViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
+                null when storableWrapper is SearchBrowserItemViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
 
 #if ANDROID
                 null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
+                null when storableWrapper is SearchBrowserItemViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
                 _ => storableWrapper switch
                 {
                     { Inner: IFolder } => new Image() { Source = "android_folder.png", Margin = new(0d, 0d, -8d, 0d)},
@@ -32,6 +34,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 }
 #else
                 null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "ios_archive.png" },
+                null when storableWrapper is SearchBrowserItemViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "ios_archive.png" },
                 _ => storableWrapper switch
                 {
                     { Inner: IFolder } => new Image() { Source = "ios_folder.png" },

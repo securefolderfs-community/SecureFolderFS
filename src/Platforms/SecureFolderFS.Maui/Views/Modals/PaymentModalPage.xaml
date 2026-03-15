@@ -10,7 +10,8 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:DataType="md:PaymentModalPage"
     NavigationPage.HasNavigationBar="False"
-    SafeAreaEdges="None">
+    SafeAreaEdges="None"
+    Shell.PresentationMode="ModalAnimated">
 
     <md:BaseModalPage.ModalContent>
         <Grid RowDefinitions="Auto,*">

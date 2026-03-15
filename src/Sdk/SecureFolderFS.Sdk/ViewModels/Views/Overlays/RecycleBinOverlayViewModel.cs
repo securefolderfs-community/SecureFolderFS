@@ -257,7 +257,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private async void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            await _synchronizationContext.PostOrExecuteAsync(async _ => await UpdateCollectionAsync());
+            await _synchronizationContext.PostOrExecuteAsync(async () => await UpdateCollectionAsync());
             return;
 
             async Task UpdateCollectionAsync()

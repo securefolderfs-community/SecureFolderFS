@@ -1331,4 +1331,10 @@
   <data name="ManualSslCertificate" xml:space="preserve">
       <value>Manual certificate fingerprint (SHA-256)</value>
   </data>
+  <data name="SearchIn" xml:space="preserve">
+      <value>Search in: {0}</value>
+  </data>
+  <data name="RootFolder" xml:space="preserve">
+      <value>Root folder</value>
+  </data>
 </root>
