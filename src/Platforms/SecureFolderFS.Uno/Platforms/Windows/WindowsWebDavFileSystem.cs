@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 
             var virtualizedRoot = new MemoryFolder(mountPath, options.VolumeName);
             var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new WindowsWebDavVFSRoot(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
+            return new WindowsWebDavVfsRoot(webDavWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }
