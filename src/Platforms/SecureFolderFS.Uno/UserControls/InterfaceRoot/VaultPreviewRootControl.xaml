@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     mc:Ignorable="d not_win">
 
     <!--  Root  -->
@@ -19,13 +18,12 @@
         </Grid.RowDefinitions>
 
         <!--  Titlebar  -->
-        <win:Grid Grid.Row="0">
-            <uc:TitleBarControl
-                x:Name="CustomTitleBar"
-                x:FieldModifier="public"
-                Canvas.ZIndex="10"
-                PrimaryTitle="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inversemode:none|SecureFolderFS - {0}'}" />
-        </win:Grid>
+        <uc:TitleBarControl
+            x:Name="CustomTitleBar"
+            Grid.Row="0"
+            x:FieldModifier="public"
+            Canvas.ZIndex="10"
+            PrimaryTitle="{x:Bind ViewModel.VaultViewModel.Title, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inversemode:none|SecureFolderFS - {0}'}" />
 
         <Grid Grid.Row="1" Padding="24">
             <!--  Login view  -->

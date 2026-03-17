@@ -22,7 +22,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             // For Any, check all individual types and return true if at least one is owned.
             if (productType == IapProductType.Any)
             {
-                foreach (var type in GetIndividualTypes())
+                // Enumerate all concrete (non-composite) types by excluding Any itself.
+                foreach (var type in Enum.GetValues<IapProductType>().Where(t => t != IapProductType.Any))
                 {
                     if (await IsOwnedAsync(type, cancellationToken))
                         return true;
@@ -143,14 +144,6 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 IapProductType.PlusSubscription => IAP_SECUREFOLDERFS_PLUS_SUBSCRIPTION_TOKEN,
                 _ => null
             };
-        }
-
-        private static IapProductType[] GetIndividualTypes()
-        {
-            // Return all concrete (non-composite) types by excluding Any itself.
-            return Enum.GetValues<IapProductType>()
-                .Where(t => t != IapProductType.Any)
-                .ToArray();
         }
     }
 }
