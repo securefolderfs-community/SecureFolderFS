@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net;
 using SecureFolderFS.Maui.AppModels;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -13,11 +12,18 @@ namespace SecureFolderFS.Maui.ValueConverters
                 return null;
 
             var fileUrl = $"{server.BaseAddress}/app_file";
-            var viewerUrl = $"{server.BaseAddress}/pdfjs53/web/viewer.html?file={WebUtility.UrlEncode(fileUrl)}";
+#if ANDROID
+            var viewerUrl = $"{server.BaseAddress}/pdfjs53/web/viewer.html?file={System.Net.WebUtility.UrlEncode(fileUrl)}";
             return new UrlWebViewSource()
             {
                 Url = viewerUrl
             };
+#elif IOS
+            return new UrlWebViewSource()
+            {
+                Url = fileUrl
+            };
+#endif
         }
 
         /// <inheritdoc/>

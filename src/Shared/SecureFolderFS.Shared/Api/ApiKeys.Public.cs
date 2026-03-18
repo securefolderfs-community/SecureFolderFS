@@ -24,8 +24,21 @@
             }
         }
 
+        public static string? DropboxAppKey
+        {
+            get
+            {
+                string? key = null;
+                RetrieveDropboxAppKey(ref key);
+
+                return key;
+            }
+        }
+
         static partial void RetrieveSentryDsnKey(ref string? key);
 
         static partial void RetrieveGoogleDriveClientKey(ref string? key);
+
+        static partial void RetrieveDropboxAppKey(ref string? key);
     }
 }

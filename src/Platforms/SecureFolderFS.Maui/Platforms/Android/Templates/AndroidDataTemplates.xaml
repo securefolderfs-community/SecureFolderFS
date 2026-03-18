@@ -25,7 +25,7 @@
 
                 <!--  Authenticate  -->
                 <Button
-                    Command="{Binding ProvideCredentialsCommand}"
+                    Command="{Binding ProvideCredentialsCommand, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}"
                     Text="{l:ResourceString Rid=Authenticate}" />
             </VerticalStackLayout>

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {

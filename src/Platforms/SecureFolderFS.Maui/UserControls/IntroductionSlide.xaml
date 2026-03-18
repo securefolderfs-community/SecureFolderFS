@@ -12,6 +12,7 @@
                 FontSize="32"
                 Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}" />
             <Label Opacity="0.7" Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}" />
+            <ContentView Content="{Binding SlotBelow, Mode=OneWay, Source={x:Reference ThisControl}}" />
         </VerticalStackLayout>
     </Grid>
 </ContentView>

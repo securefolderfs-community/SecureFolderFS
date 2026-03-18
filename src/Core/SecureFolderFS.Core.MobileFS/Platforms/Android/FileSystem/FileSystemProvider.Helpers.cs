@@ -2,9 +2,9 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
-using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
 using IOPath = System.IO.Path;
 
@@ -18,12 +18,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
-            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.VirtualizedRoot, safRoot.RootId);
-            row.Add(DocumentsContract.Root.ColumnRootId, safRoot.RootId);
-            row.Add(DocumentsContract.Root.ColumnDocumentId, rootFolderId);
-            row.Add(DocumentsContract.Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
-            row.Add(DocumentsContract.Root.ColumnIcon, iconRid);
-            row.Add(DocumentsContract.Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.PlaintextRoot, safRoot.RootId);
+            row.Add(Root.ColumnRootId, safRoot.RootId);
+            row.Add(Root.ColumnDocumentId, rootFolderId);
+            row.Add(Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
+            row.Add(Root.ColumnIcon, iconRid);
+            row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
 
             return true;
         }
@@ -75,17 +75,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.SupportsWrite;
 
-                    baseFlags |= DocumentContractFlags.SupportsThumbnail;
-                    row.Add(Document.ColumnFlags, (int)baseFlags);
+                    var typeHint = FileTypeHelper.GetTypeHint(storable);
+                    if (typeHint is TypeHint.Image or TypeHint.Media)
+                        baseFlags |= DocumentContractFlags.SupportsThumbnail;
                 }
                 else
                 {
                     baseFlags |= DocumentContractFlags.DirPrefersGrid;
                     if (!safRoot.StorageRoot.Options.IsReadOnly)
                         baseFlags |= DocumentContractFlags.DirSupportsCreate;
-
-                    row.Add(Document.ColumnFlags, (int)baseFlags);
                 }
+
+                row.Add(Document.ColumnFlags, (int)baseFlags);
             }
             void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
             void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);
@@ -110,7 +111,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            if (storable.Id == safRoot.StorageRoot.VirtualizedRoot.Id)
+            if (storable.Id == safRoot.StorageRoot.PlaintextRoot.Id)
                 return $"{safRoot.RootId}:";
 
             return $"{safRoot.RootId}:{storable.Id}";
@@ -137,14 +138,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            // Return base folder if the path is empty
+            // Return the base folder if the path is empty
             if (string.IsNullOrEmpty(path))
-                return safRoot.StorageRoot.VirtualizedRoot;
+                return safRoot.StorageRoot.PlaintextRoot;
 
-            return safRoot.StorageRoot.VirtualizedRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
+            return safRoot.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        private string GetMimeForStorable(IStorable storable)
+        private static string GetMimeForStorable(IStorable storable)
         {
             if (storable is IFolder)
                 return Document.MimeTypeDir;
@@ -154,7 +155,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (string.IsNullOrEmpty(extension))
                 return "application/octet-stream";
 
-            // Remove the starting . (dot)
+            // Remove the starting dot
             return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1)) ?? string.Empty;
         }
     }

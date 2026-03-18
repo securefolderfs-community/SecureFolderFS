@@ -7,6 +7,7 @@
             public const string FS_ID = "DOKANY";
             public const string FS_NAME = "Dokany";
             public const string VERSION_STRING = "2.3.1";
+            public const string VERSION_TAG = "v2.3.1.1000";
         }
 
         internal static class Dokan

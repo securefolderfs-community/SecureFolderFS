@@ -71,7 +71,7 @@ namespace SecureFolderFS.Uno.Views.DebugViews
 
         private void RefreshPrimaryView_Click(object sender, RoutedEventArgs e)
         {
-            if (_rootControl?.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
+            if (_rootControl?.ViewModel?.RootNavigationService.CurrentView is not MainHostViewModel mainHost)
                 return;
 
             Dbg_PrimaryView_Presenter.Content = mainHost.NavigationService.CurrentView switch

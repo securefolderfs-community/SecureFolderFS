@@ -3,9 +3,11 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="BackgroundStrongTint">#AAFFFFFF</SolidColorBrush>
+            <Color x:Key="TransparentColor">#00FFFFFF</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="BackgroundStrongTint">#AA000000</SolidColorBrush>
+            <Color x:Key="TransparentColor">#00000000</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

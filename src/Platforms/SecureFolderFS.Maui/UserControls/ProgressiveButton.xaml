@@ -17,14 +17,11 @@
         </Border.StrokeShape>
 
         <Grid>
-            <Grid
-                Background="{StaticResource ThemeShimFillPrimaryColorBrush}"
-                HorizontalOptions="Fill"
-                Opacity="0.5" />
+            <Grid Background="{StaticResource ThemeShimFillPrimaryColorBrush}" HorizontalOptions="Fill" />
 
             <Grid
                 x:Name="ProgressStrip"
-                Background="{StaticResource ThemeSecondaryColorBrush}"
+                Background="{StaticResource ThemeTertiaryColorBrush}"
                 HorizontalOptions="Start"
                 IsVisible="{Binding IsProgressing, Mode=OneWay}"
                 WidthRequest="200" />

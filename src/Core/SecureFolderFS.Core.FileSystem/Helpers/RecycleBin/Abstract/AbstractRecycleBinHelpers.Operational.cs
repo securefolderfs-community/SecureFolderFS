@@ -1,21 +1,28 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static partial class AbstractRecycleBinHelpers
     {
-        public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild item, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// The threshold in seconds for detecting recently created files.
+        /// Files created within this threshold will be deleted immediately instead of recycled.
+        /// This helps work around macOS Finder behavior during copy operations.
+        /// </summary>
+        private const int RECENT_FILE_THRESHOLD_MS = 3000;
+
+        public static async Task<IModifiableFolder?> GetDestinationFolderAsync(IStorableChild recycleBinItem, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get recycle bin
             var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
@@ -23,166 +30,208 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new DirectoryNotFoundException("Could not find recycle bin folder.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
-            if (deserialized is not { ParentPath: not null, OriginalName: not null })
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            if (deserialized is not { ParentId: not null, Name: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
-            // Check if destination item exists
-            var parentId = deserialized.ParentPath.Replace('/', Path.DirectorySeparatorChar);
-            var itemId = Path.Combine(parentId, deserialized.OriginalName);
+            // Get the plaintext name and parent ID
+            var plaintextParentPath = deserialized.DecryptParentId(specifics.Security);
+            var plaintextOriginalName = deserialized.DecryptName(specifics.Security);
+            if (plaintextOriginalName is null || plaintextParentPath is null)
+                return null;
+
             try
             {
-                _ = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(itemId, cancellationToken);
-
-                // Destination item already exists, user must choose a new location
+                var ciphertextParent = await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken);
+                return ciphertextParent as IModifiableFolder;
+            }
+            catch (Exception)
+            {
+                // Destination folder does not exist, user must choose a new location
                 return null;
             }
-            catch (Exception) { }
-
-            // Check if destination folder exists
-            try
-            {
-                var parentItem = await specifics.ContentFolder.GetItemByRelativePathOrSelfAsync(parentId, cancellationToken);
-
-                // Assume the parent is a folder and return it
-                return parentItem as IModifiableFolder;
-            }
-            catch (Exception) { }
-
-            // No destination folder has been found, user must choose a new location
-            return null;
         }
 
-        public static async Task RestoreAsync(IStorableChild item, IModifiableFolder destinationFolder, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        public static async Task RestoreAsync(IStorableChild recycleBinItem, IModifiableFolder ciphertextDestinationFolder, FileSystemSpecifics specifics, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             // Get recycle bin
             var recycleBin = await TryGetRecycleBinAsync(specifics, cancellationToken);
-            if (recycleBin is not IRenamableFolder renamableRecycleBin)
-                throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+            if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(item, recycleBin, streamSerializer, cancellationToken);
-            _ = deserialized.OriginalName ?? throw new IOException("Could not get file name.");
-            _ = deserialized.ParentPath ?? throw new IOException("Could not get parent path.");
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            if (deserialized is not { ParentId: not null, Name: not null })
+                throw new FormatException("Could not deserialize recycle bin configuration file.");
 
-            if (!destinationFolder.Id.EndsWith(deserialized.ParentPath))
+            // Get the plaintext name and parent ID
+            var plaintextParentPath = deserialized.DecryptParentId(specifics.Security);
+            var plaintextOriginalName = deserialized.DecryptName(specifics.Security);
+            if (plaintextOriginalName is null || plaintextParentPath is null)
+                throw new FormatException("Could not decrypt recycle bin configuration file.");
+
+            var ciphertextParentFolder = await SafetyHelpers.NoFailureAsync(async () => await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken) as IFolder);
+            if (string.IsNullOrEmpty(ciphertextParentFolder?.Id) || !ciphertextDestinationFolder.Id.EndsWith(ciphertextParentFolder.Id))
             {
                 // Destination folder is different from the original destination
                 // A new item name should be chosen fit for the new folder (so that Directory ID match)
+                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
-                var plaintextName = specifics.Security.NameCrypt?.DecryptName(Path.GetFileNameWithoutExtension(deserialized.OriginalName), deserialized.DirectoryId) ?? deserialized.OriginalName;
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextName, destinationFolder, specifics, cancellationToken);
-
-                // Rename the item to correct name
-                var renamedItem = await renamableRecycleBin.RenameAsync(item, ciphertextName, cancellationToken);
-
-                // Move item to destination
-                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+                // Rename and move item to destination
+                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
             }
             else
             {
                 // Destination folder is the same as the original destination
                 // The same name could be used since the Directory IDs match
-                // TODO: Check if the Directory IDs actually match and fallback to above method if not
+                var ciphertextName = Path.ChangeExtension(await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken), Constants.Names.ENCRYPTED_FILE_EXTENSION);
 
-                // Rename the item to correct name
-                var renamedItem = await renamableRecycleBin.RenameAsync(item, deserialized.OriginalName, cancellationToken);
-
-                // Move item to destination
-                _ = await destinationFolder.MoveStorableFromAsync(renamedItem, renamableRecycleBin, false, cancellationToken);
+                // Rename and move item to destination
+                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
             }
 
-            // Delete old configuration file
-            var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
-            await renamableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
+            // Delete the old configuration file
+            var configurationFile = await recycleBin.GetFileByNameAsync($"{recycleBinItem.Name}.json", cancellationToken);
+            await modifiableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
 
             // Check if the item had any size
             if (deserialized.Size is not ({ } size and > 0L))
                 return;
 
             // Update occupied size
-            var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+            var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
             var newSize = occupiedSize - size;
-            await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
+            await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
         }
 
         public static async Task DeleteOrRecycleAsync(
-            IModifiableFolder sourceFolder,
-            IStorableChild item,
+            IModifiableFolder ciphertextSourceFolder,
+            IStorableChild ciphertextItem,
             FileSystemSpecifics specifics,
             IAsyncSerializer<Stream> streamSerializer,
             long sizeHint = -1L,
+            bool deleteImmediately = false,
             CancellationToken cancellationToken = default)
         {
             if (specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            if (!specifics.Options.IsRecycleBinEnabled())
+            if (!specifics.Options.IsRecycleBinEnabled() || deleteImmediately)
             {
-                await sourceFolder.DeleteAsync(item, cancellationToken);
+                await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                 return;
+            }
+
+            if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            {
+                var parentFolder = await ciphertextItem.GetParentAsync(cancellationToken);
+                if (parentFolder is not null)
+                {
+                    var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, parentFolder, specifics, cancellationToken) ?? string.Empty;
+                    if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
+                    {
+                        // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
+                        await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
+                        return;
+                    }
+                }
+
+                // Check if the file was recently created (likely part of a copy operation)
+                // On macOS, Finder creates files and immediately deletes them during copy operations
+                if (await IsRecentlyCreatedAsync(ciphertextItem, cancellationToken))
+                {
+                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
+                    return;
+                }
             }
 
             // Get recycle bin
             var recycleBin = await GetOrCreateRecycleBinAsync(specifics, cancellationToken);
-            if (recycleBin is not IRenamableFolder renamableRecycleBin)
-                throw new UnauthorizedAccessException("The recycle bin is not renamable.");
+            if (recycleBin is not IModifiableFolder modifiableRecycleBin)
+                throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             if (sizeHint < 0L && specifics.Options.RecycleBinSize > 0L)
             {
-                sizeHint = item switch
+                sizeHint = ciphertextItem switch
                 {
-                    IFile file => await file.GetSizeAsync(cancellationToken),
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken),
+                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
+                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
                     _ => 0L
                 };
 
-                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
                 if (availableSize < sizeHint)
                 {
-                    await sourceFolder.DeleteAsync(item, cancellationToken);
+                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
                     return;
                 }
             }
 
             // Get source Directory ID
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, sourceFolder.Id);
-            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(sourceFolder, specifics, directoryId, cancellationToken);
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextSourceFolder.Id);
+            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(ciphertextSourceFolder, specifics, directoryId, cancellationToken);
 
-            // Move and rename item
+            // Rename and move item
             var guid = Guid.NewGuid().ToString();
-            var movedItem = await renamableRecycleBin.MoveStorableFromAsync(item, sourceFolder, false, cancellationToken);
-            _ = await renamableRecycleBin.RenameAsync(movedItem, guid, cancellationToken);
+            _ = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
 
             // Create configuration file
-            var configurationFile = await renamableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-            await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
+            var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
+            await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
+            {
+                // Decrypt the plaintext name and parent ID
+                var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
+                var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
 
-            // Serialize configuration data model
-            await using var serializedStream = await streamSerializer.SerializeAsync(
-                new RecycleBinItemDataModel()
-                {
-                    OriginalName = item.Name,
-                    ParentPath = sourceFolder.Id.Replace(specifics.ContentFolder.Id, string.Empty).Replace(Path.DirectorySeparatorChar, '/'),
-                    DirectoryId = directoryIdResult ? directoryId : [],
-                    DeletionTimestamp = DateTime.Now,
-                    Size = sizeHint
-                }, cancellationToken);
+                // Encrypt the new plaintext name and parent ID
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : []);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : []);
 
-            // Write to destination stream
-            await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-            await configurationStream.FlushAsync(cancellationToken);
+                // Serialize configuration data model
+                await using var serializedStream = await streamSerializer.SerializeAsync(
+                    new RecycleBinItemDataModel()
+                    {
+                        Name = newCiphertextName,
+                        ParentId = newCiphertextParentId,
+                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DeletionTimestamp = DateTime.Now,
+                        Size = sizeHint
+                    }, cancellationToken);
+
+                // Write to destination stream
+                await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+                await configurationStream.FlushAsync(cancellationToken);
+            }
 
             // Update occupied size
             if (specifics.Options.IsRecycleBinEnabled())
             {
-                var occupiedSize = await GetOccupiedSizeAsync(renamableRecycleBin, cancellationToken);
+                var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
                 var newSize = occupiedSize + sizeHint;
-                await SetOccupiedSizeAsync(renamableRecycleBin, newSize, cancellationToken);
+                await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
+            }
+        }
+
+        private static async Task<bool> IsRecentlyCreatedAsync(IStorable storable, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var dateCreated = await storable.GetDateCreatedAsync(cancellationToken);
+                if (dateCreated is null)
+                    return false;
+
+                var dateCreatedUtc = dateCreated.Value.ToUniversalTime();
+                var timeSinceCreation = DateTime.UtcNow - dateCreatedUtc;
+                return timeSinceCreation.Seconds <= RECENT_FILE_THRESHOLD_MS / 1000;
+            }
+            catch
+            {
+                // If we can't determine creation time, assume it's not recent
+                return false;
             }
         }
     }

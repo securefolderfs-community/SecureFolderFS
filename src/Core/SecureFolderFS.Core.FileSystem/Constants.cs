@@ -7,7 +7,7 @@
         public const int FILE_EOF = 0;
         public const int DIRECTORY_ID_SIZE = 16;
         public const ulong INVALID_HANDLE = 0UL;
-        public const bool OPT_IN_FOR_OPTIONAL_DEBUG_TRACING = true;
+        public const bool OPT_IN_FOR_OPTIONAL_DEBUG_TRACING = false;
 
         public static class FileSystem
         {

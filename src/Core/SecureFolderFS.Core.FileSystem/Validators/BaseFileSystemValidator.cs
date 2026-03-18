@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             try
             {
                 await ValidateNameAsync(storable, cancellationToken).ConfigureAwait(false);
-                return Result.Success;
+                return Result<StorableType>.Success(storable is IFile ? StorableType.File : StorableType.Folder);
             }
             catch (Exception ex)
             {

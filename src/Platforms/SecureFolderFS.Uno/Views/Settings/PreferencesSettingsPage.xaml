@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
     mc:Ignorable="d">
 
     <Grid Loaded="Root_Loaded" RowSpacing="12">
@@ -41,7 +41,7 @@
                     SelectedItem="{x:Bind ViewModel.BannerViewModel.SelectedItem, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:FileSystemItemViewModel">
-                            <TextBlock Text="{x:Bind Name}" />
+                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

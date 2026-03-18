@@ -19,18 +19,16 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<ChangelogDataModel> GetLatestAsync(Version version, CancellationToken cancellationToken = default)
         {
-            const string repoName = Constants.GitHub.REPOSITORY_NAME;
-            const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
-            var client = new GitHubClient(new ProductHeaderValue(repoOwner));
+            var client = new GitHubClient(new ProductHeaderValue(Constants.GitHub.REPOSITORY_OWNER));
 
             try
             {
-                var release = await client.Repository.Release.Get(repoOwner, repoName, version.ToString());
+                var release = await client.Repository.Release.Get(Constants.GitHub.REPOSITORY_OWNER, Constants.GitHub.REPOSITORY_NAME, version.ToString());
                 return new(release.Name, release.Body, version);
             }
             catch (NotFoundException)
             {
-                var allReleases = await client.Repository.Release.GetAll(repoOwner, repoName);
+                var allReleases = await client.Repository.Release.GetAll(Constants.GitHub.REPOSITORY_OWNER, Constants.GitHub.REPOSITORY_NAME);
                 var latestRelease = allReleases.First();
 
                 return new(latestRelease.Name, latestRelease.Body, version);

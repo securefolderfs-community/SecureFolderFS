@@ -86,43 +86,47 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (buffer.IsEmpty)
                 return 0;
 
-            if (Inner.IsEndOfStream())
-                return FileSystem.Constants.FILE_EOF;
+            // For seekable streams, perform EOF checks up front
+            if (Inner.CanSeek)
+            {
+                if (Inner.IsEndOfStream())
+                    return Constants.FILE_EOF;
 
-            var ciphertextStreamLength = Inner.Length;
-            if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
-                return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
+                if (Inner.Length < _security.HeaderCrypt.HeaderCiphertextSize)
+                    return Constants.FILE_EOF;
 
-            var lengthToEof = Length - Position;
-            if (lengthToEof <= 0L)
-                return FileSystem.Constants.FILE_EOF;
+                if (Length - Position <= 0L)
+                    return Constants.FILE_EOF;
+            }
 
             // Read header if is not ready
             if (!_headerBuffer.ReadHeader(Inner, _security))
                 throw new CryptographicException("Could not read header.");
 
-            var read = 0;
             var positionInBuffer = 0;
             var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
-            var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
+            var adjustedBuffer = Inner.CanSeek
+                ? buffer.Slice(0, (int)Math.Min(buffer.Length, Length - Position))
+                : buffer;
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
-                var readPosition = Position + read;
+                var readPosition = Position + positionInBuffer;
                 var chunkNumber = readPosition / plaintextChunkSize;
                 var offsetInChunk = (int)(readPosition % plaintextChunkSize);
-                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
 
                 var copied = _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
                 if (copied < 0)
                     throw new CryptographicException();
 
+                if (copied == 0)
+                    break;
+
                 positionInBuffer += copied;
-                read += length;
             }
 
-            _position += read;
-            return read;
+            _position += positionInBuffer;
+            return positionInBuffer == 0 ? Constants.FILE_EOF : positionInBuffer;
         }
 
         /// <inheritdoc/>
@@ -132,23 +136,21 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (!CanWrite)
                 throw FileSystemExceptions.StreamReadOnly;
 
-            // Don't initiate write if the buffer is empty
+            // Don't initiate writing if the buffer is empty
             if (buffer.IsEmpty)
                 return;
 
             if (CanSeek && Position > Length)
             {
-                // TODO: Maybe throw an exception?
-
                 // Write gap
                 var gapLength = Position - Length;
 
-                // Generate weak noise
-                var weakNoise = new byte[gapLength];
-                Random.Shared.NextBytes(weakNoise);
+                // Generate cryptographically secure random bytes for gap filling
+                var secureNoise = new byte[gapLength];
+                RandomNumberGenerator.Fill(secureNoise);
 
-                // Write contents of weak noise array
-                WriteInternal(weakNoise, Length);
+                // Write contents of a secure noise array
+                WriteInternal(secureNoise, Length);
             }
             else
             {

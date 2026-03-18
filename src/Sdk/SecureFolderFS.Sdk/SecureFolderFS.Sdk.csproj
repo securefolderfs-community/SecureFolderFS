@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
   </ItemGroup>
 
 </Project>

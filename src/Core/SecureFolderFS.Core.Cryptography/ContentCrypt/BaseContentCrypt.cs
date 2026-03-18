@@ -6,8 +6,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
     /// <inheritdoc cref="IContentCrypt"/>
     internal abstract class BaseContentCrypt : IContentCrypt
     {
-        protected readonly RandomNumberGenerator secureRandom;
-
         /// <inheritdoc/>
         public abstract int ChunkPlaintextSize { get; }
 
@@ -16,11 +14,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
         /// <inheritdoc/>
         public abstract int ChunkFirstReservedSize { get; }
-
-        protected BaseContentCrypt()
-        {
-            secureRandom = RandomNumberGenerator.Create();
-        }
 
         /// <inheritdoc/>
         public abstract void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
@@ -61,7 +54,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            secureRandom.Dispose();
         }
     }
 }

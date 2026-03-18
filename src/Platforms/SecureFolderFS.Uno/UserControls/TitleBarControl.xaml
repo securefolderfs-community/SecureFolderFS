@@ -13,25 +13,27 @@
         IsHitTestVisible="True"
         IsTabStop="False">
 
-        <!--  Title  -->
         <StackPanel
             x:Name="TitlePanel"
             HorizontalAlignment="Left"
             x:FieldModifier="public"
             Orientation="Horizontal"
             Spacing="6">
+
             <TextBlock
                 VerticalAlignment="Center"
                 FontSize="12"
-                Text="SecureFolderFS" />
+                Text="{x:Bind PrimaryTitle, Mode=OneWay}" />
             <TextBlock
+                x:Name="SecondaryTitleText"
                 Margin="0,0,0,2"
                 VerticalAlignment="Bottom"
+                x:Load="{x:Bind SecondaryTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                 CharacterSpacing="32"
                 FontSize="9"
                 FontWeight="Thin"
                 Opacity="0.8"
-                Text="Beta5" />
+                Text="{x:Bind SecondaryTitle, Mode=OneWay}" />
         </StackPanel>
     </Border>
 </UserControl>

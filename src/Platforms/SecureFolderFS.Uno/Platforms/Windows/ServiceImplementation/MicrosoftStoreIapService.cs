@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Enums;
@@ -10,31 +11,48 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     /// <inheritdoc cref="IIapService"/>
     internal sealed class MicrosoftStoreIapService : IIapService
     {
-        private const string IAP_SECUREFOLDERFS_PLUS_ID = "9N3GB650DVJQ";
+        private const string IAP_SECUREFOLDERFS_PLUS_LIFETIME_TOKEN = "plus_lifetime";
+        private const string IAP_SECUREFOLDERFS_PLUS_SUBSCRIPTION_TOKEN = "plus_subscription";
 
-        private StoreContext? _storeContext;
+        private readonly Lazy<StoreContext> _storeContext = new(StoreContext.GetDefault);
 
         /// <inheritdoc/>
         public async Task<bool> IsOwnedAsync(IapProductType productType, CancellationToken cancellationToken = default)
         {
-            if (!await SetStoreContextAsync() || _storeContext is null)
+            // For Any, check all individual types and return true if at least one is owned.
+            if (productType == IapProductType.Any)
+            {
+                // Enumerate all concrete (non-composite) types by excluding Any itself.
+                foreach (var type in Enum.GetValues<IapProductType>().Where(t => t != IapProductType.Any))
+                {
+                    if (await IsOwnedAsync(type, cancellationToken))
+                        return true;
+                }
+
+                return false;
+            }
+
+            var token = GetIapToken(productType);
+            if (token is null)
                 return false;
 
-            var iapId = GetIapId(productType);
-            if (iapId is null)
+            StoreAppLicense? appLicense;
+            try
+            {
+                appLicense = await _storeContext.Value.GetAppLicenseAsync().AsTask(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
                 return false;
+            }
 
-            var appLicense = await _storeContext.GetAppLicenseAsync().AsTask(cancellationToken);
             if (appLicense is null)
                 return false;
 
             foreach (var item in appLicense.AddOnLicenses)
             {
                 var license = item.Value;
-                if (!license.IsActive)
-                    continue;
-
-                if (license.InAppOfferToken.Contains(iapId))
+                if (license.IsActive && license.InAppOfferToken == token)
                     return true;
             }
 
@@ -44,66 +62,88 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         /// <inheritdoc/>
         public async Task<bool> PurchaseAsync(IapProductType productType, CancellationToken cancellationToken = default)
         {
-            var iapId = GetIapId(productType);
-            if (iapId is null)
+            if (productType == IapProductType.Any)
+                return false; // Ambiguous - caller must specify a concrete product type
+
+            var token = GetIapToken(productType);
+            if (token is null)
                 return false;
 
-            var product = await GetProductAsync(iapId, cancellationToken);
+            var product = await GetProductAsync(productType, token, cancellationToken);
             if (product is null)
                 return false;
 
-            var purchaseResult = await product.RequestPurchaseAsync();
+            StorePurchaseResult? purchaseResult;
+            try
+            {
+                purchaseResult = await product.RequestPurchaseAsync().AsTask(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+
             if (purchaseResult is null)
                 return false;
 
-            return purchaseResult.ExtendedError is null;
+            return purchaseResult.Status is StorePurchaseStatus.Succeeded
+                or StorePurchaseStatus.AlreadyPurchased;
         }
 
         /// <inheritdoc/>
         public async Task<string?> GetPriceAsync(IapProductType productType, CancellationToken cancellationToken = default)
         {
-            var iapId = GetIapId(productType);
-            if (iapId is null)
+            if (productType == IapProductType.Any)
+                return null; // Ambiguous - caller must specify a concrete product type
+
+            var token = GetIapToken(productType);
+            if (token is null)
                 return null;
 
-            var product = await GetProductAsync(iapId, cancellationToken);
-            if (product is null)
-                return null;
-
-            return product.Price.FormattedPrice;
+            var product = await GetProductAsync(productType, token, cancellationToken);
+            return product?.Price.FormattedPrice;
         }
 
-        private async Task<StoreProduct?> GetProductAsync(string iapId, CancellationToken cancellationToken)
+        private async Task<StoreProduct?> GetProductAsync(IapProductType productType, string token, CancellationToken cancellationToken)
         {
-            if (!await SetStoreContextAsync() || _storeContext is null)
-                return null;
+            // Durables cover lifetime purchases; Subscriptions need their own kind.
+            // Query both so this method works regardless of product type passed.
+            string[] productKinds = productType == IapProductType.PlusSubscription
+                ? ["Subscription"]
+                : ["Durable"];
 
-            var result = await _storeContext.GetAssociatedStoreProductsAsync(new[] { "Durable" }).AsTask(cancellationToken);
+            StoreProductQueryResult result;
+            try
+            {
+                result = await _storeContext.Value
+                    .GetAssociatedStoreProductsAsync(productKinds)
+                    .AsTask(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return null;
+            }
+
             if (result.ExtendedError is not null)
                 return null;
 
             foreach (var item in result.Products.Values)
             {
-                if (item.InAppOfferToken.Contains(iapId))
+                if (item.InAppOfferToken == token)
                     return item;
             }
 
             return null;
         }
 
-        private string? GetIapId(IapProductType productType)
+        private static string? GetIapToken(IapProductType productType)
         {
             return productType switch
             {
-                IapProductType.SecureFolderFS_PlusSubscription => IAP_SECUREFOLDERFS_PLUS_ID,
+                IapProductType.PlusLifetime => IAP_SECUREFOLDERFS_PLUS_LIFETIME_TOKEN,
+                IapProductType.PlusSubscription => IAP_SECUREFOLDERFS_PLUS_SUBSCRIPTION_TOKEN,
                 _ => null
             };
-        }
-
-        private async Task<bool> SetStoreContextAsync()
-        {
-            _storeContext ??= await Task.Run(StoreContext.GetDefault);
-            return _storeContext is not null;
         }
     }
 }

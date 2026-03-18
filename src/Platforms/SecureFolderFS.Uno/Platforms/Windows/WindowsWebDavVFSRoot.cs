@@ -13,8 +13,8 @@ using SecureFolderFS.Uno.PInvoke;
 
 namespace SecureFolderFS.Uno.Platforms.Windows
 {
-    /// <inheritdoc cref="IVFSRoot"/>
-    internal sealed class WindowsWebDavVFSRoot : VFSRoot
+    /// <inheritdoc cref="IVfsRoot"/>
+    internal sealed class WindowsWebDavVfsRoot : VfsRoot
     {
         private const uint WM_CLOSE = 0x0010;
 
@@ -24,8 +24,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Core.WebDav.Constants.FileSystem.FS_NAME;
 
-        public WindowsWebDavVFSRoot(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
-            : base(storageRoot, specifics)
+        public WindowsWebDavVfsRoot(WebDavWrapper webDavWrapper, IFolder virtualizedRoot, IFolder plaintextRoot, FileSystemSpecifics specifics)
+            : base(virtualizedRoot, plaintextRoot, specifics)
         {
             _webDavWrapper = webDavWrapper;
         }

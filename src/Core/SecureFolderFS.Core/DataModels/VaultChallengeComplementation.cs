@@ -12,6 +12,6 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName("complementation")]
         [DefaultValue(null)]
-        private VaultKeystoreDataModel? ComplementedKeystore { get; set; }
+        private V3VaultKeystoreDataModel? ComplementedKeystore { get; set; }
     }
 }

@@ -9,6 +9,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -32,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _vaultFolder = vaultFolder;
         }
 
-        public async Task<bool> RecoverAsync(CancellationToken cancellationToken)
+        public async Task<IResult> RecoverAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -40,13 +42,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 UnlockContract?.Dispose();
                 UnlockContract = unlockContract;
 
-                return true;
+                return Result.Success;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO: Localize
                 ErrorMessage = "The provided recovery key is invalid.";
-                return false;
+                return new MessageResult(ex, ErrorMessage);
             }
         }
 

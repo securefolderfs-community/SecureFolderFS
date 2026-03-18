@@ -1,13 +1,16 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Storage.Pickers;
-using SecureFolderFS.Storage.StorageProperties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Storage.Pickers;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Storage.VirtualFileSystem
 {
-    public interface IRecycleBinFolder : IModifiableFolder, IStorableProperties
+    /// <summary>
+    /// Represents a recycle bin folder.
+    /// </summary>
+    public interface IRecycleBinFolder : IModifiableFolder, ISizeOf
     {
         /// <summary>
         /// Restores a collection of items from the recycle bin.

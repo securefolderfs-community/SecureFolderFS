@@ -23,6 +23,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly List<IChildFolder> _scannedFolders;
         private readonly ProgressModel<TotalProgress> _progress;
         private readonly IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? _structureValidator;
+        private readonly IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? _structureContentsValidator;
         private int _updateCount;
         private int _updateInterval;
         private volatile int _totalFilesScanned;
@@ -31,7 +32,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner folderScanner, ProgressModel<TotalProgress> progress, IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator)
+        public HealthModel(
+            IFolderScanner folderScanner,
+            ProgressModel<TotalProgress> progress,
+            IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator,
+            IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureContentsValidator = null)
         {
             ServiceProvider = DI.Default;
             _scannedFiles = new();
@@ -39,6 +44,7 @@ namespace SecureFolderFS.Sdk.AppModels
             _folderScanner = folderScanner;
             _progress = progress;
             _structureValidator = structureValidator;
+            _structureContentsValidator = structureContentsValidator;
         }
 
         /// <inheritdoc/>
@@ -82,8 +88,16 @@ namespace SecureFolderFS.Sdk.AppModels
                 ReportProgress(_progress);
                 await Task.Delay(750, cancellationToken);
 
-                // Begin scanning
-                await ScanStructureAsync(cancellationToken).ConfigureAwait(false);
+                if (includeFileContents)
+                {
+                    // Scan structure and file contents
+                    await ScanStructureContentsAsync(cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    // Scan only structure
+                    await ScanStructureAsync(cancellationToken).ConfigureAwait(false);
+                }
 
                 // Report final progress
                 ReportProgress(_progress);
@@ -169,6 +183,33 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
+        private async Task ScanStructureContentsAsync(CancellationToken cancellationToken)
+        {
+            if (_structureContentsValidator is null)
+                return;
+
+            if (Constants.Widgets.Health.IS_SCANNING_PARALLELIZED)
+            {
+                var tasks = new List<Task>(_scannedFolders.Count);
+                foreach (var folder in _scannedFolders)
+                    tasks.Add(ScanFolderAsync(folder, cancellationToken));
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+            else
+            {
+                foreach (var folder in _scannedFolders)
+                    await ScanFolderAsync(folder, cancellationToken).ConfigureAwait(false);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            async Task ScanFolderAsync(IChildFolder folder, CancellationToken token)
+            {
+                // We do not care about the result, since we assume it is reported through IProgress
+                _ = await _structureContentsValidator.ValidateResultAsync((folder, this), token).ConfigureAwait(false);
+            }
+        }
+
         private void ReportProgress(ProgressModel<TotalProgress> progress)
         {
             if (Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
@@ -187,6 +228,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
+            IssueFound = null;
             _scannedFiles.Clear();
             _scannedFolders.Clear();
         }

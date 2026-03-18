@@ -11,7 +11,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 {
     public abstract class BaseReadWriteTests : BaseFileSystemTests
     {
-        protected IVFSRoot? StorageRoot { get; private set; }
+        protected IVfsRoot? StorageRoot { get; private set; }
 
         protected async Task SetupAsync(MockVaultOptions? options, CancellationToken cancellationToken = default)
         {
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Arrange
             const string dataString = "test";
-            if (StorageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
+            if (StorageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Arrange
             var data = new byte[300_000];
             Random.Shared.NextBytes(data);
-            if (StorageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
+            if (StorageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Arrange
             const string dataString = "test";
             const string dataString2 = dataString + dataString;
-            if (StorageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
+            if (StorageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;

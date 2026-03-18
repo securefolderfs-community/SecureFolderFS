@@ -1,6 +1,7 @@
 ﻿using System;
 using OwlCore.Storage;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,36 +36,55 @@ namespace SecureFolderFS.Storage.Scanners
             }
         }
 
-        private async IAsyncEnumerable<IStorableChild> RecursiveScanAsync(IFolder folderToScan, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        private async IAsyncEnumerable<IStorableChild> RecursiveScanAsync(
+            IFolder folderToScan,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (_storableType == StorableType.Folder)
+            var subFolders = new List<IFolder>();
+            await foreach (var item in folderToScan.GetItemsAsync(cancellationToken: cancellationToken).ConfigureAwait(false))
             {
-                await foreach (var folder in folderToScan.GetFoldersAsync(cancellationToken: cancellationToken).ConfigureAwait(false))
+                if (_predicate is not null && !_predicate(item))
                 {
-                    if (!_predicate?.Invoke(folder) ?? false)
-                        continue;
+                    if (item is IFolder skippedFolder)
+                        subFolders.Add(skippedFolder);
 
-                    yield return folder;
-                    await foreach (var subFolder in RecursiveScanAsync(folder, cancellationToken).ConfigureAwait(false))
-                        yield return subFolder;
+                    continue;
                 }
-            }
-            else
-            {
-                await foreach (var item in folderToScan.GetItemsAsync(cancellationToken: cancellationToken).ConfigureAwait(false))
-                {
-                    if (!_predicate?.Invoke(item) ?? false)
-                        continue;
 
+                if (_storableType == StorableType.All
+                    || (_storableType == StorableType.File && item is IChildFile)
+                    || (_storableType == StorableType.Folder && item is IChildFolder))
                     yield return item;
 
-                    if (item is not IFolder folder)
-                        continue;
-
-                    await foreach (var subItem in RecursiveScanAsync(folder, cancellationToken).ConfigureAwait(false))
-                        yield return subItem;
-                }
+                if (item is IFolder folder)
+                    subFolders.Add(folder);
             }
+
+            if (subFolders.Count == 0)
+                yield break;
+
+            // Kick off all subtree scans concurrently, but buffer each one separately
+            // so we can yield them in original folder order
+            var subtreeTasks = subFolders
+                .Select(f => BufferSubtreeAsync(f, cancellationToken))
+                .ToArray();
+
+            foreach (var task in subtreeTasks)
+            {
+                foreach (var item in await task)
+                    yield return item;
+            }
+        }
+
+        private async Task<List<IStorableChild>> BufferSubtreeAsync(
+            IFolder folder,
+            CancellationToken cancellationToken)
+        {
+            var buffer = new List<IStorableChild>();
+            await foreach (var item in RecursiveScanAsync(folder, cancellationToken).ConfigureAwait(false))
+                buffer.Add(item);
+
+            return buffer;
         }
     }
 }

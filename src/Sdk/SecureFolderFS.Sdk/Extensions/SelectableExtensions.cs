@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 
 namespace SecureFolderFS.Sdk.Extensions
 {

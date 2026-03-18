@@ -7,11 +7,22 @@ using System.Threading.Tasks;
 using FluentFTP;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Ftp.Extensions;
+using SecureFolderFS.Sdk.Ftp.StorageProperties;
 
-namespace SecureFolderFS.Sdk.Ftp
+namespace SecureFolderFS.Sdk.Ftp.Storage
 {
-    public class FtpFolder : FtpStorable, IChildFolder, IModifiableFolder
+    public class FtpFolder : FtpStorable,
+        IChildFolder,
+        IModifiableFolder,
+        ICreatedAt,
+        ILastModifiedAt
     {
+        /// <inheritdoc/>
+        public ICreatedAtProperty CreatedAt => field ??= new FtpCreatedAtProperty(Id, ftpClient);
+
+        /// <inheritdoc/>
+        public ILastModifiedAtProperty LastModifiedAt => field ??= new FtpLastModifiedAtProperty(Id, ftpClient);
+
         public FtpFolder(AsyncFtpClient ftpClient, string id, string name, IFolder? parentFolder = null)
             : base(ftpClient, id, name, parentFolder)
         {

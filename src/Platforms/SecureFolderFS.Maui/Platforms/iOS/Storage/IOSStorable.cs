@@ -2,17 +2,16 @@ using Foundation;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
-using SecureFolderFS.Storage.StorageProperties;
 using UIKit;
+using Constants = SecureFolderFS.UI.Constants;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
     /// <inheritdoc cref="IStorableChild"/>
-    internal abstract class IOSStorable : IStorableChild, IStorableProperties, IBookmark, IWrapper<NSUrl>
+    internal abstract class IOSStorable : IStorableChild, IBookmark, IWrapper<NSUrl>
     {
         protected readonly IOSFolder? parent;
         protected readonly NSUrl permissionRoot;
-        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public NSUrl Inner { get; }
@@ -21,7 +20,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         public virtual string Id { get; }
 
         /// <inheritdoc/>
-        public virtual string Name { get; }
+        public virtual string Name { get; protected set; }
 
         /// <inheritdoc/>
         public string? BookmarkId { get; protected set; }
@@ -58,7 +57,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                     return;
 
                 var nsEncodedBookmark = nsDataBookmark.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
-                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{nsEncodedBookmark}";
+                BookmarkId = $"{Constants.STORABLE_BOOKMARK_RID}{nsEncodedBookmark}";
             }
             finally
             {
@@ -74,15 +73,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
-        public abstract Task<IBasicProperties> GetPropertiesAsync();
-
         protected static void GetImmediateProperties(NSUrl url, out string? id, out string? name)
         {
             using var document = new UIDocument(url);
             id = document.FileUrl?.Path ?? url.FilePathUrl?.Path;
             name = !string.IsNullOrEmpty(document.LocalizedName) 
-                ? document.LocalizedName : (System.IO.Path.GetFileName(id) ?? url.FilePathUrl?.LastPathComponent);
+                ? document.LocalizedName : (Path.GetFileName(id) ?? url.FilePathUrl?.LastPathComponent);
         }
 
         protected static IStorableChild NewStorage(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null)

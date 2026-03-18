@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
-            return new WebDavRootFolder(webDavWrapper, new SystemFolderEx(remotePath, options.VolumeName), specifics);
+            return new WebDavVFSRoot(webDavWrapper, new SystemFolderEx(remotePath, options.VolumeName), specifics);
         }
 #endif
     }

@@ -12,12 +12,12 @@ namespace SecureFolderFS.Storage.Extensions
     {
         public static bool IsRecycleBinEnabled(this FileSystemOptions options)
         {
-            return options.RecycleBinSize != 0;
+            return options.RecycleBinSize != 0L;
         }
 
         public static bool IsRecycleBinUnlimited(this FileSystemOptions options)
         {
-            return options.RecycleBinSize < 0;
+            return options.RecycleBinSize < 0L;
         }
 
         /// <inheritdoc cref="IRecycleBinFolder.RestoreItemsAsync"/>

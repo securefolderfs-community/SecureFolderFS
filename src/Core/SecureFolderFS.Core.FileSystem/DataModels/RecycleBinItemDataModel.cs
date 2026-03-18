@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Text.Json.Serialization;
+using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.DataModels
 {
@@ -9,14 +11,14 @@ namespace SecureFolderFS.Core.FileSystem.DataModels
         /// <summary>
         /// Gets the original ciphertext name of the item before it was deleted.
         /// </summary>
-        [JsonPropertyName("originalName")]
-        public required string? OriginalName { get; init; }
+        [JsonPropertyName("c_originalName")]
+        public required string? Name { get; init; }
 
         /// <summary>
-        /// Gets the original (relative) ciphertext path of the folder where the item resided before it was deleted.
+        /// Gets the fully encrypted ciphertext path of the folder where the item resided before it was deleted.
         /// </summary>
-        [JsonPropertyName("parentPath")]
-        public required string? ParentPath { get; init; }
+        [JsonPropertyName("c_parentId")]
+        public required string? ParentId { get; init; }
 
         /// <summary>
         /// Gets the Directory ID of the directory where this item originally belonged to.
@@ -37,5 +39,29 @@ namespace SecureFolderFS.Core.FileSystem.DataModels
         public required long? Size { get; init; }
 
         // TODO: Add MAC key signing for tamper proofing
+
+        public string? DecryptName(Security security)
+        {
+            if (security.NameCrypt is null)
+                return Name;
+
+            return security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(Name), DirectoryId);
+        }
+
+        public string? DecryptParentId(Security security)
+        {
+            if (security.NameCrypt is null)
+                return ParentId;
+
+            return security.NameCrypt.DecryptName(ParentId, DirectoryId);
+        }
+
+        public static string Encrypt(string plaintext, Security security, ReadOnlySpan<byte> directoryId)
+        {
+            if (security.NameCrypt is null)
+                return plaintext;
+
+            return security.NameCrypt.EncryptName(plaintext, directoryId);
+        }
     }
 }

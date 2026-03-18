@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     {
         private readonly IFolder _vaultFolder;
         private readonly AuthenticationStage _authenticationStage;
-        private readonly TaskCompletionSource<IKey> _credentialsTcs;
+        private readonly TaskCompletionSource<IKeyUsage> _credentialsTcs;
 
         [ObservableProperty] private bool _IsRemoving;
         [ObservableProperty] private bool _IsComplementing;
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
         }
 
-        private async Task ChangeCredentialsAsync(IKey key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
+        private async Task ChangeCredentialsAsync(IKeyUsage key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
         {
             // Modify the current unlock procedure
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, configuredOptions with
@@ -104,8 +104,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 UnlockProcedure = unlockProcedure
             }, cancellationToken);
 
-            // Revoke (invalidate) old configured credentials
-            if (ConfiguredViewModel is not null)
+            // Revoke (invalidate) old configured credentials if those are different from newly configured ones.
+            // If both are the same, the authentication method should override the old ones; otherwise we would be deleting
+            // the reconfigured ones essentially breaking the vault!
+            if (RegisterViewModel.CurrentViewModel is not null
+                && ConfiguredViewModel is not null
+                && !RegisterViewModel.CurrentViewModel.Id.Equals(ConfiguredViewModel.Id))
                 await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
         }
 

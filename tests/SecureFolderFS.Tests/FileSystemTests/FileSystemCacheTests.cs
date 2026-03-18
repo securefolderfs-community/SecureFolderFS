@@ -12,7 +12,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
     [TestFixture]
     public class FileSystemCacheTests : BaseFileSystemTests
     {
-        private IVFSRoot? _storageRoot;
+        private IVfsRoot? _storageRoot;
 
         [SetUp]
         public async Task Initialize()
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Arrange
             const string dataString = "test";
-            if (_storageRoot.VirtualizedRoot is not IModifiableFolder modifiableFolder)
+            if (_storageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
             {
                 Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
                 return;

@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
@@ -24,11 +25,12 @@ using SecureFolderFS.Storage.Scanners;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    [Inject<IVaultHealthService>, Inject<IVaultService>]
+    [Inject<IVaultHealthService>, Inject<IVaultService>, Inject<IFileExplorerService>]
     public sealed partial class VaultHealthViewModel : ObservableObject, IProgress<double>, IProgress<TotalProgress>, INotifyStateChanged, IViewable, IAsyncInitialize, IDisposable
     {
         private CancellationTokenSource? _cts;
         private IHealthModel? _healthModel;
+        private IFolder? _contentFolder;
         private string? _lastScanMode;
         private readonly SynchronizationContext? _context;
         private readonly List<HealthIssueViewModel> _savedState;
@@ -54,7 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _unlockedVaultViewModel = unlockedVaultViewModel;
             Title = "HealthNoProblems".ToLocalized();
             Subtitle = null;
-            StatusTitle = "Perform integrity check";
+            StatusTitle = "PerformIntegrityCheck".ToLocalized();
             FoundIssues = new();
             FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }
@@ -62,12 +64,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var contentFolder = await VaultHelpers.GetContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
-            var folderScanner = new DeepFolderScanner(contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
+            _contentFolder = await VaultHelpers.GetOrCreateContentFolderAsync(_unlockedVaultViewModel.VaultFolder, cancellationToken);
+            var folderScanner = new DeepFolderScanner(_contentFolder, predicate: x => !VaultService.IsNameReserved(x.Name));
             var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
+            var structureContentsValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureContentsValidator;
 
-            _healthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
+            var thisProgress = new ProgressModel<TotalProgress>(this, this);
+            _healthModel = new HealthModel(folderScanner, thisProgress, structureValidator, structureContentsValidator);
             _healthModel.IssueFound += HealthModel_IssueFound;
+        }
+
+        internal IHealthModel CreateHealthModel(IFolder folder)
+        {
+            var folderScanner = new DeepFolderScanner(folder, predicate: x => !VaultService.IsNameReserved(x.Name));
+            var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
+            var structureContentsValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureContentsValidator;
+
+            var thisProgress = new ProgressModel<TotalProgress>(this, this);
+            var healthModel = new HealthModel(folderScanner, thisProgress, structureValidator, structureContentsValidator);
+            healthModel.IssueFound += HealthModel_IssueFound;
+            return healthModel;
         }
 
         /// <inheritdoc/>
@@ -90,24 +106,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 if (value.Total == 0)
                 {
                     Title = value.Achieved == 0
-                        ? "Collecting items..."
-                        : $"Collecting items ({value.Achieved})";
+                        ? "CollectingItems".ToLocalized()
+                        : "CollectingItemsCount".ToLocalized(value.Achieved);
 
-                    StatusTitle = "Collecting items...";
+                    StatusTitle = "CollectingItems".ToLocalized();
                     Subtitle = value.Achieved == 0
-                        ? "Items are being collected"
-                        : $"Collected {value.Achieved} items";
+                        ? "CollectingItemsInProgress".ToLocalized()
+                        : "CollectedCountItems".ToLocalized(value.Achieved);
                 }
                 else
                 {
                     Title = value.Achieved == value.Total
-                        ? "Scan completed"
-                        : $"Scanning items ({value.Achieved} of {value.Total})";
+                        ? "ScanCompleted".ToLocalized()
+                        : "ScanningItemsCount".ToLocalized(value.Achieved, value.Total);
 
                     StatusTitle = value.Achieved == value.Total
-                        ? "Scan completed"
-                        : "Scanning items";
-                    Subtitle = $"Scanned {value.Achieved} out of {value.Total}";
+                        ? "ScanCompleted".ToLocalized()
+                        : "ScanningItems".ToLocalized();
+
+                    Subtitle = "ScannedCount".ToLocalized(value.Achieved, value.Total);
                 }
             });
         }
@@ -163,8 +180,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (e.Result.Successful || e.Storable is null)
                 return;
 
-            var issueViewModel = await VaultHealthService.GetIssueViewModelAsync(e.Result, e.Storable).ConfigureAwait(false);
-            _context.PostOrExecute(_ => FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)));
+            if (e.Result is IResult<(IResult, IResult)> aggregateResult)
+            {
+                var result1 = aggregateResult.Value.Item1;
+                var result2 = aggregateResult.Value.Item2;
+
+                var issueViewModel1 = await VaultHealthService.GetIssueViewModelAsync(result1, e.Storable).ConfigureAwait(false);
+                var issueViewModel2 = await VaultHealthService.GetIssueViewModelAsync(result2, e.Storable).ConfigureAwait(false);
+
+                _context.PostOrExecute(_ => FoundIssues.AddMultiple(issueViewModel1 ?? new(e.Storable, result1), issueViewModel2 ?? new(e.Storable, result2)));
+            }
+            else
+            {
+                var issueViewModel = await VaultHealthService.GetIssueViewModelAsync(e.Result, e.Storable).ConfigureAwait(false);
+                _context.PostOrExecute(_ => FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)));
+            }
         }
 
         /// <inheritdoc/>
@@ -173,6 +203,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _cts?.TryCancel();
             _cts?.Dispose();
             FoundIssues.CollectionChanged -= FoundIssues_CollectionChanged;
+
             if (_healthModel is not null)
             {
                 _healthModel.IssueFound -= HealthModel_IssueFound;

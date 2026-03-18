@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using SecureFolderFS.Core.FUSE.OpenHandles;
@@ -13,7 +14,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 namespace SecureFolderFS.Core.FUSE
 {
     /// <inheritdoc cref="IFileSystem"/>
-    public sealed partial class FuseFileSystem : IFileSystem
+    public sealed partial class FuseFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;
@@ -25,8 +26,9 @@ namespace SecureFolderFS.Core.FUSE
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
@@ -61,8 +63,9 @@ namespace SecureFolderFS.Core.FUSE
             var fuseWrapper = new FuseWrapper(fuseCallbacks);
             fuseWrapper.StartFileSystem(mountPoint, fuseOptions);
 
-            await Task.CompletedTask;
-            return new FuseVFSRoot(fuseWrapper, new SystemFolderEx(mountPoint), specifics);
+            var virtualizedRoot = new SystemFolderEx(mountPoint);
+            var plaintextRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            return new FuseVfsRoot(fuseWrapper, virtualizedRoot, plaintextRoot, specifics);
         }
     }
 }

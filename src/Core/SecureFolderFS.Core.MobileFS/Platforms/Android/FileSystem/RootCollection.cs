@@ -7,8 +7,10 @@ using System.Collections.Specialized;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
-    internal sealed class RootCollection : IDisposable
+    public sealed class RootCollection : IDisposable
     {
+        public static RootCollection? Instance { get; private set; }
+
         private readonly Context _context;
 
         public List<SafRoot> Roots { get; }
@@ -17,6 +19,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             _context = context;
             Roots = new();
+            Instance = this;
 
             FileSystemManager.Instance.FileSystems.CollectionChanged += FileSystemManager_CollectionChanged;
         }
@@ -30,7 +33,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             foreach (var safRoot in Roots)
             {
-                if (storable.Id.StartsWith(safRoot.StorageRoot.VirtualizedRoot.Id))
+                if (storable.Id.StartsWith(safRoot.StorageRoot.PlaintextRoot.Id))
                     return safRoot;
             }
 
@@ -43,7 +46,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 case NotifyCollectionChangedAction.Add:
                 {
-                    if (e.NewItems?[0] is not IVFSRoot storageRoot)
+                    if (e.NewItems?[0] is not IVfsRoot storageRoot)
                         return;
 
                     // Add to available roots
@@ -55,7 +58,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
                 case NotifyCollectionChangedAction.Remove:
                 {
-                    if (e.OldItems?[0] is not IVFSRoot storageRoot)
+                    if (e.OldItems?[0] is not IVfsRoot storageRoot)
                         return;
 
                     // Remove from available roots

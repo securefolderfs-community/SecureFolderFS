@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// </summary>
         /// <param name="plaintextName">The plaintext name to encrypt.</param>
         /// <param name="directoryId">The Directory ID that the file name is a part of. Can accept <see cref="ReadOnlySpan{T}.Empty"/>.</param>
-        /// <returns>Encrypted ciphertext name.</returns>
+        /// <returns>An encrypted ciphertext name.</returns>
         string EncryptName(ReadOnlySpan<char> plaintextName, ReadOnlySpan<byte> directoryId);
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// </summary>
         /// <param name="ciphertextName">The ciphertext name to encrypt.</param>
         /// <param name="directoryId">The Directory ID that the file name is a part of. Can accept <see cref="ReadOnlySpan{T}.Empty"/>.</param>
-        /// <returns>If the name was successfully decrypted, returns plaintext name; otherwise null.</returns>
+        /// <returns>If the name was successfully decrypted, returns a plaintext name; otherwise null.</returns>
         string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId);
     }
 }

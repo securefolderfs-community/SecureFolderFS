@@ -21,9 +21,24 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 #endif
 
         /// <inheritdoc/>
+        public override Version AppVersion
+        {
+            get
+            {
+                var packageVersion = Windows.ApplicationModel.Package.Current.Id.Version;
+                return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            }
+        }
+
+        /// <inheritdoc/>
         public override string GetSystemVersion()
         {
-            return Environment.OSVersion.VersionString;
+            return 0 switch
+            {
+                _ when OperatingSystem.IsMacOS() => $"MacOS {Environment.OSVersion.VersionString}",
+                _ when OperatingSystem.IsLinux() => $"Linux {Environment.OSVersion.VersionString}",
+                _ => Environment.OSVersion.VersionString
+            };
         }
 
         /// <inheritdoc/>
