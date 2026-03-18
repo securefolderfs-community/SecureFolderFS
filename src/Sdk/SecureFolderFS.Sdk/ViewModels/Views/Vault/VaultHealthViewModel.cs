@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _unlockedVaultViewModel = unlockedVaultViewModel;
             Title = "HealthNoProblems".ToLocalized();
             Subtitle = null;
-            StatusTitle = "Perform integrity check";
+            StatusTitle = "PerformIntegrityCheck".ToLocalized();
             FoundIssues = new();
             FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }
@@ -106,24 +106,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 if (value.Total == 0)
                 {
                     Title = value.Achieved == 0
-                        ? "Collecting items..."
-                        : $"Collecting items ({value.Achieved})";
+                        ? "CollectingItems".ToLocalized()
+                        : "CollectingItemsCount".ToLocalized(value.Achieved);
 
-                    StatusTitle = "Collecting items...";
+                    StatusTitle = "CollectingItems".ToLocalized();
                     Subtitle = value.Achieved == 0
-                        ? "Items are being collected"
-                        : $"Collected {value.Achieved} items";
+                        ? "CollectingItemsInProgress".ToLocalized()
+                        : "CollectedCountItems".ToLocalized(value.Achieved);
                 }
                 else
                 {
                     Title = value.Achieved == value.Total
-                        ? "Scan completed"
-                        : $"Scanning items ({value.Achieved} of {value.Total})";
+                        ? "ScanCompleted".ToLocalized()
+                        : "ScanningItemsCount".ToLocalized(value.Achieved, value.Total);
 
                     StatusTitle = value.Achieved == value.Total
-                        ? "Scan completed"
-                        : "Scanning items";
-                    Subtitle = $"Scanned {value.Achieved} out of {value.Total}";
+                        ? "ScanCompleted".ToLocalized()
+                        : "ScanningItems".ToLocalized();
+
+                    Subtitle = "ScannedCount".ToLocalized(value.Achieved, value.Total);
                 }
             });
         }

@@ -1337,4 +1337,31 @@
   <data name="RootFolder" xml:space="preserve">
       <value>Root folder</value>
   </data>
+  <data name="CollectingItemsInProgress" xml:space="preserve">
+      <value>Items are being collected</value>
+  </data>
+  <data name="CollectingItems" xml:space="preserve">
+      <value>Collecting items...</value>
+  </data>
+  <data name="CollectingItemsCount" xml:space="preserve">
+      <value>Collecting items ({0})</value>
+  </data>
+  <data name="CollectedCountItems" xml:space="preserve">
+      <value>Collected {0} items</value>
+  </data>
+  <data name="ScanCompleted" xml:space="preserve">
+      <value>Scan completed</value>
+  </data>
+  <data name="ScanningItems" xml:space="preserve">
+      <value>Scanning items</value>
+  </data>
+  <data name="ScanningItemsCount" xml:space="preserve">
+      <value>Scanning items {0} of {1}</value>
+  </data>
+  <data name="ScannedCount" xml:space="preserve">
+      <value>Scanned {0} out of {1}</value>
+  </data>
+  <data name="PerformIntegrityCheck" xml:space="preserve">
+      <value>Perform integrity check</value>
+  </data>
 </root>

@@ -92,10 +92,14 @@
                                 VerticalOptions="Center">
                                 <mi:MauiIcon
                                     Icon="{mi_material:Material Lock}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
                                     IconSize="28"
                                     OnPlatforms="Android" />
                                 <mi:MauiIcon
                                     Icon="{mi_cupertino:Cupertino Lock}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
                                     IconSize="28"
                                     OnPlatforms="iOS" />
                             </Grid>

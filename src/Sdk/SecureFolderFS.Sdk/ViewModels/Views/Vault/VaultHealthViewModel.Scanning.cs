@@ -1,16 +1,15 @@
-using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
-using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -149,8 +148,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // Update status
                 Title = Severity switch
                 {
-                    Enums.Severity.Warning => "HealthAttention".ToLocalized(),
-                    Enums.Severity.Critical => "HealthProblems".ToLocalized(),
+                    Severity.Warning => "HealthAttention".ToLocalized(),
+                    Severity.Critical => "HealthProblems".ToLocalized(),
                     _ => "HealthNoProblems".ToLocalized()
                 };
                 StatusTitle = "Perform integrity check";

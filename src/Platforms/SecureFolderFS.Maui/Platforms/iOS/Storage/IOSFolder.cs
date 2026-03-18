@@ -31,12 +31,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            var coordinator = new NSFileCoordinator();
             try
             {
                 permissionRoot.StartAccessingSecurityScopedResource();
 
                 var tcs = new TaskCompletionSource<IReadOnlyList<IStorableChild>>();
-                new NSFileCoordinator().CoordinateRead(Inner,
+                coordinator.CoordinateRead(Inner,
                     NSFileCoordinatorReadingOptions.WithoutChanges,
                     out var error,
                     uri =>
@@ -60,8 +61,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             }
             finally
             {
+                coordinator.Dispose();
                 permissionRoot.StopAccessingSecurityScopedResource();
-                await Task.CompletedTask;
             }
         }
 
