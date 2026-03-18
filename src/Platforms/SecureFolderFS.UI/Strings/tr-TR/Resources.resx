@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -118,878 +118,1250 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>Mevcut Olanı Ekle</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Mevcut Kasayı Ekle</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Cihazınızdan Mevcut Bir Kasa Seçin</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Yeni Kasa Ekle</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>Kimlik Doğrulama</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>Kullanarak Kimlik Doğrulaması Yapın {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Kasaları Otomatik Olarak Kilitleyin</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Cihaz Kilitlendiğinde Tüm Kasaları Kilitle</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Sistem ile Başlat</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Sistem Başlangıcında Çalıştırın</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Geri</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Vazgeç</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Sürüm Notları</value>
+  </data>
+  <data name="ClearTraces" xml:space="preserve">
+    <value>Clear traces</value>
+  </data>
+  <data name="ClearTracesDescription" xml:space="preserve">
+    <value>Wipes data from caches and recently accessed list</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Mükemmel!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Bu sürümün en son sürüm notlarını görüntüleyin</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Değişiklik günlüğü yüklenirken bir sorun oluştu.</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Güncellemeleri Kontrol Et</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Kapat</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Onayla</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Devam Et</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Kopyalandı</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Uygulama Sürümünü Kopyala</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Sistem Sürümünü Kopyala</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Sürümü kopyala</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Panoya kopyalanacak sürümü seçin</value>
   </data>
   <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
+    <value>Yeni Oluştur</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Yeni Kasa Oluştur</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Yeni Bir Kasa Oluşturun</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Mevcut Şifre</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Veri Şifreleme</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Son erişim listesini devre dışı bırak</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Kasaların kilidini açarken son kullanılan dosyalar listesini geçici olarak devre dışı bırakın</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>İndiriliyor {0}</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Şifreleme</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Şifrenizi Girin</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Hata</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Ayarları Dışa Aktar</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Dosya Sistemi Sağlayıcısı</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Tercih ettiğiniz sanal dosya sistemi türünü seçin</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Dikkat Gerektiriyor</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Hiç bir sorun bulunamadı</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Sorun bulundu</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Ayarları İçeri Aktar</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Yükleniyor...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Geçersiz şifre</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Girilen şifre yanlış.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>Anahtar Dosyası</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Dil</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Görüntüleme dilini seçin</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Son kontrol edilme: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>En son sürüm kuruldu</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Lisans</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Lisanslar</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>Kasayı Kilitle</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Bu kasayı güvenli bir şekilde kilitleyin ve kontrol panelini kapatın</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Ayarları Yönet</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Bu, bu kasaya yeniden erişim sağlamak için kullanabileceğiniz kurtarma anahtarıdır. Bu anahtarı kaybederseniz, şifrenizi sıfırlayamazsınız.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Kasalar</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Yeni Parola</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Yeni Kasa</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Şifreleme Yok</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Klasör Seçilmedi</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Henüz hiç kasa eklemediniz. Başlamak için yeni bir kasa oluşturun veya mevcut kasalara ekleme yapın!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Günlük dosyasının konumunu açın</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+      <value>Opens {0} where the log file is located</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>Kasayı Aç</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Kasa kilidi açıldığında klasörü otomatik olarak aç</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Parola</value>
   </data>
   <data name="Paste" xml:space="preserve">
-    <value>Paste</value>
+    <value>Yapıştır</value>
   </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>Yazdır</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Privacy Policy</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Gizlilik politikası beyanını görüntüleyin</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Okuma Hızları</value>
   </data>
   <data name="Recover" xml:space="preserve">
-    <value>Recover</value>
+    <value>Kurtarma</value>
   </data>
   <data name="RecoverAccess" xml:space="preserve">
-    <value>Recover access</value>
+    <value>Erişimi kurtar</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Listeden kasayı kaldır</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Şifre Tekrarla</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Yeniden Başlatma Gerekli</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>Kaldığım yerden devam et</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>Önceden seçilen kasadan başla</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Yeniden Dene</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal recovery key</value>
+    <value>Kurtarma Anahtarını Göster</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Ara</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Kasa yolunu seçin</value>
   </data>
   <data name="SetCredentials" xml:space="preserve">
-    <value>Set credentials</value>
+    <value>Kimlik bilgilerini ayarla</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Ayarlar</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Hakkında</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>Genel</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Seçenekler</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>Gizlilik</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show in File Explorer</value>
+      <value>Show in {0}</value>
+  </data>
+  <data name="CreateShortcut" xml:space="preserve">
+    <value>Create shortcut file</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Social</value>
+    <value>Sosyal</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Soru, Öneri &amp; Tartışma</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Özet</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>Telemetry Etkinleştir</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Anonim çökme raporları ve kullanım verilerini toplama</value>
+  </data>
+  <data name="TelemetryInfoBarMessage" xml:space="preserve">
+    <value>Telemetry data is anonymized and helps us improve app stability and performance.</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Koyu</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Uygulama temasını seçin</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Açık</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Sistem Varsayılanı</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Üçüncü taraf lisansları</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Kullanılan üçüncü taraf kütüphaneleri görüntüleyin.</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Kilidi Aç</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Kasa Eklendi</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Kasa Bilgileri</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>Kasa Kilitli</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Kasa Özellikleri</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Bu kasa bilgilerini görüntüle</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>Kasa Kurtarma</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Sürüm</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>GitHub da Görüntüle</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Depoyu Görüntüle</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Kasayı Görüntüle</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+      <value>Show this vault in {0}</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Website</value>
   </data>
   <data name="WelcomeTo" xml:space="preserve">
-    <value>Welcome to {0}</value>
+    <value>{0} Hoşgeldiniz</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Neler Yeni</value>
   </data>
   <data name="WindowsHello" xml:space="preserve">
-    <value>Windows Hello</value>
+    <value>Windows Merhaba</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Yazma Hızları</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Ekle</value>
   </data>
   <data name="VaultLoadError" xml:space="preserve">
-    <value>Vault could not be loaded</value>
+    <value>Kasa Yüklenemedi</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>İstisna Ayrıntıları</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Open</value>
+    <value>Aç</value>
   </data>
   <data name="SelectFolderToContinue" xml:space="preserve">
-    <value>Select a folder to continue</value>
+    <value>Devam etmek için bir klasör seç</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>Seçilen kasa desteklenmeyebilir</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
-    <value>Vault folder is invalid</value>
+    <value>Kasa Klasörü Geçersiz</value>
   </data>
   <data name="SelectedValidVault" xml:space="preserve">
-    <value>Found a valid vault folder</value>
+    <value>Geçerli bir kasa klasörü bulundu</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>Seçilen kasa üzerine yazılacaktır</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>Seçilen klasörde yeni bir kasa oluşturulacaktır</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
-    <value>No location selected</value>
+    <value>Konum seçilmedi</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>Kilit Tipi</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
-    <value>Advanced options</value>
+    <value>Gelişmiş Seçenekler</value>
     <comment>Use a short-hand name, if possible</comment>
   </data>
   <data name="Setup" xml:space="preserve">
-    <value>Setup</value>
+    <value>Kur</value>
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>Anahtar dosyası kimlik doğrulamasını ayarlayın</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>Windows Merhaba Kimlik Doğrulamasını Ayarlama</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
-    <value>Login options</value>
+    <value>Giriş Seçenekleri</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Güvenlik</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
-    <value>View recovery codes</value>
+    <value>Kurtarma Kodunu Göster</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>Kimlik bilgilerinizi unutmanız durumunda bu kasaya erişim kurtarma kodlarına erişin</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use recovery key</value>
+    <value>Kurtarma Anahtarını Kullan</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>Kimlik Bilgilerini Değiştir</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>Bu Kasaya Giriş Şeklinizi Değiştirin</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
+    <value>İki faktörlü kimlik doğrulama</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>İki Faktörlü Kimlik Doğrulamayı Ayarlama</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>Mevcut olanı değiştirin</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Select authentication option</value>
+    <value>Kimlik Doğrulama Seçeneğini Seçin</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
-    <value>All options</value>
+    <value>Tüm Ayarlar</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>Anahtar Dosyası Kullanarak Kimlik Doğrulama</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
-    <value>Authenticate with Windows Hello</value>
+    <value>Windows Merhaba ile kimlik doğrulaması yapın</value>
   </data>
   <data name="RemoveAuthentication" xml:space="preserve">
-    <value>Remove authentication</value>
+    <value>Kimlik doğrulamasını kaldır</value>
   </data>
   <data name="RemoveAuthenticationDescription" xml:space="preserve">
-    <value>Remove this authentication method</value>
+    <value>Bu kimlik doğrulama yöntemini kaldırın</value>
   </data>
   <data name="ChangeCurrentAuthentication" xml:space="preserve">
-    <value>Change current authentication method</value>
+    <value>Geçerli kimlik doğrulama yöntemini değiştirin</value>
   </data>
   <data name="ViewInFiles" xml:space="preserve">
-    <value>View in Files</value>
+    <value>Dosyalarda görüntüle</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
-    <value>Quick actions</value>
+    <value>Hızlı Eylemler</value>
   </data>
   <data name="Authentication" xml:space="preserve">
-    <value>Authentication</value>
+    <value>Kimlik Doğrulama</value>
   </data>
   <data name="TotalRead" xml:space="preserve">
-    <value>Total read</value>
+    <value>Toplam Okuma</value>
   </data>
   <data name="TotalWrite" xml:space="preserve">
-    <value>Total write</value>
+    <value>Toplam Yazma</value>
   </data>
   <data name="SystemVersion" xml:space="preserve">
-    <value>System version</value>
+    <value>Yazılım Sürümü</value>
   </data>
   <data name="Migrate" xml:space="preserve">
-    <value>Migrate</value>
+    <value>Geçiş Yap</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-    <value>Enter the recovery key for this vault</value>
+    <value>Bu Kasaya Ait Kurtarma Anahtarını Girin</value>
   </data>
   <data name="DateToday" xml:space="preserve">
-    <value>Today, {0}</value>
+    <value>Bugün, {0}</value>
   </data>
   <data name="DateAgo" xml:space="preserve">
-    <value>{0} ago</value>
+    <value>{0} Önce</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
-    <value>An error occurred</value>
+    <value>Bir hata oluştu</value>
   </data>
   <data name="VaultMigrated" xml:space="preserve">
-    <value>Vault has been migrated successfully</value>
+    <value>Kasa başarıyla taşındı.</value>
   </data>
   <data name="VaultNeedsMigration" xml:space="preserve">
-    <value>The vault needs to be migrated before it can be used</value>
+    <value>Kasanın kullanılabilmesi için önce taşınması gerekiyor.</value>
   </data>
   <data name="ActiveFileSystem" xml:space="preserve">
-    <value>Active file system</value>
+    <value>Aktif Dosya Sistemi</value>
   </data>
   <data name="RestartLogin" xml:space="preserve">
-    <value>Restart login process</value>
+    <value>Giriş İşlemini Yeniden Başlat</value>
   </data>
   <data name="ResetCredentials" xml:space="preserve">
-    <value>Reset credentials</value>
+    <value>Kimlik Bilgilerini Sıfırla</value>
   </data>
   <data name="RecoveryKeyTip" xml:space="preserve">
-    <value>You can recover your vault using Recovery Key in case you lose or forget your credentials</value>
+    <value>Kimlik bilgilerinizi kaybettiğiniz veya unuttuğunuz durumda, Kurtarma Anahtarını kullanarak kasanızı kurtarabilirsiniz.</value>
   </data>
   <data name="RemoveAuthenticationQuestion" xml:space="preserve">
-    <value>The following authentication method will be removed. Do you wish to continue?</value>
+    <value>Aşağıdaki kimlik doğrulama yöntemi kaldırılacaktır. Devam etmek istiyor musunuz?</value>
   </data>
   <data name="RemoveAuthenticationTip" xml:space="preserve">
-    <value>You can always re-add it later</value>
+    <value>İstediğiniz zaman daha sonra tekrar ekleyebilirsiniz.</value>
   </data>
   <data name="LearnMore" xml:space="preserve">
-    <value>Learn more</value>
+    <value>Daha fazla bilgi edinin</value>
   </data>
   <data name="VaultAlreadyExists" xml:space="preserve">
-    <value>The selected vault already exists</value>
+    <value>Seçilen kasa zaten mevcut</value>
   </data>
   <data name="UnlockAsReadOnly" xml:space="preserve">
-    <value>Unlock as read-only</value>
+    <value>Sadece okuma amaçlı olarak kilidi açın</value>
   </data>
   <data name="VaultReadOnlyMode" xml:space="preserve">
-    <value>The vault is in read-only mode</value>
+    <value>Kasa salt okunur modda</value>
   </data>
   <data name="HealthReport" xml:space="preserve">
-    <value>Health report</value>
+    <value>Sağlık Raporu</value>
     <comment>Title for health report view</comment>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Yeniden Adlandır</value>
   </data>
   <data name="MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Yukarı Taşı</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Aşağı Taşı</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="ChooseDestinationFolder" xml:space="preserve">
-    <value>Choose destination folder</value>
+    <value>Hedef klasörü seçin</value>
   </data>
   <data name="RecoveryKey" xml:space="preserve">
-    <value>Recovery key</value>
+    <value>Kurtarma Anahtarı</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>File</value>
+    <value>Dosya</value>
   </data>
   <data name="Folder" xml:space="preserve">
-    <value>Folder</value>
+    <value>Klasör</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copy</value>
+    <value>Kopyala</value>
   </data>
   <data name="Share" xml:space="preserve">
-    <value>Share</value>
+    <value>Paylaş</value>
   </data>
   <data name="SetupPassword" xml:space="preserve">
-    <value>Setup password authentication</value>
+    <value>Parola kimlik doğrulamasını ayarlayın.</value>
   </data>
   <data name="RecycleBin" xml:space="preserve">
-    <value>Recycle bin</value>
+    <value>Geri Dönüşüm Kutusu</value>
   </data>
   <data name="SortBy" xml:space="preserve">
-    <value>Sort by</value>
+    <value>Sıralama Ölçütü</value>
   </data>
   <data name="ItemLayout" xml:space="preserve">
-    <value>Item layout</value>
+    <value>Dosya Düzeni</value>
   </data>
   <data name="ViewOptions" xml:space="preserve">
-    <value>View options</value>
+    <value>Görünüm Seçenekleri</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>İsim</value>
   </data>
   <data name="Kind" xml:space="preserve">
-    <value>Kind</value>
+    <value>Tür</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Boyut</value>
   </data>
   <data name="ListViewLayout" xml:space="preserve">
-    <value>List view</value>
+    <value>Liste Görünümü</value>
   </data>
   <data name="ColumnViewLayout" xml:space="preserve">
-    <value>Column view</value>
+    <value>Sütun Görünümü</value>
   </data>
   <data name="GridViewLayout" xml:space="preserve">
-    <value>Grid view</value>
+    <value>Izgara Görünümü</value>
   </data>
   <data name="GalleryViewLayout" xml:space="preserve">
-    <value>Gallery view</value>
+    <value>Galeri Görünümü</value>
   </data>
   <data name="ItemSize" xml:space="preserve">
-    <value>Item size</value>
+    <value>Öge Boyutu</value>
   </data>
   <data name="SmallSize" xml:space="preserve">
-    <value>Small</value>
+    <value>Küçük</value>
   </data>
   <data name="MediumSize" xml:space="preserve">
-    <value>Medium</value>
+    <value>Orta</value>
   </data>
   <data name="LargeSize" xml:space="preserve">
-    <value>Large</value>
+    <value>Büyük</value>
   </data>
   <data name="EmptyRecycleBinDescription" xml:space="preserve">
-    <value>Recycle bin is empty. Delete some items to see them here.</value>
+    <value>Çöp Kutusu Boş. Bazı Dosyaları Silerek Burada Görebilirsiniz.</value>
   </data>
   <data name="DateModified" xml:space="preserve">
-    <value>Date modified</value>
+    <value>Değiştirme tarihi</value>
   </data>
   <data name="ItemType" xml:space="preserve">
-    <value>Item type</value>
+    <value>Dosya Türü</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Move</value>
+    <value>Taşı</value>
   </data>
   <data name="ImportExisting" xml:space="preserve">
-    <value>Import existing</value>
+    <value>Mevcut olanı içe aktar</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Select</value>
+    <value>Seç</value>
   </data>
   <data name="NameEncryption" xml:space="preserve">
-    <value>Name encryption</value>
+    <value>İsim Şifreleme</value>
   </data>
   <data name="NoItems" xml:space="preserve">
-    <value>No items</value>
+    <value>Dosya Yok</value>
   </data>
   <data name="EnableFileThumbnails" xml:space="preserve">
-    <value>Enable file thumbnails</value>
+    <value>Dosya küçük resimlerini etkinleştirin</value>
   </data>
   <data name="OpenFileBrowser" xml:space="preserve">
-    <value>Open file browser</value>
+    <value>Dosya tarayıcısını açın</value>
   </data>
   <data name="DeleteImmediately" xml:space="preserve">
-    <value>Delete immediately</value>
+    <value>Hemen sil</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Sil</value>
   </data>
   <data name="GetInfo" xml:space="preserve">
-    <value>Get info</value>
+    <value>Bilgi Al</value>
   </data>
   <data name="Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>Geri Yükle</value>
   </data>
   <data name="RepairAll" xml:space="preserve">
-    <value>Repair all</value>
+    <value>Tümünü Onar</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
-    <value>During repair, your vault will be set into read-only mode.</value>
+    <value>Onarım işlemi sırasında kasanız salt okunur moda alınacaktır.</value>
   </data>
   <data name="GenerateNewName" xml:space="preserve">
-    <value>Generate a new name</value>
+    <value>Yeni Bir İsim Oluşturun</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Dışa Aktar</value>
   </data>
   <data name="MaximumSize" xml:space="preserve">
-    <value>Maximum size</value>
+    <value>Maksimum Boyut</value>
   </data>
   <data name="EnableRecycleBin" xml:space="preserve">
-    <value>Enable recycle bin</value>
+    <value>Geri dönüşüm kutusunu aktif et</value>
   </data>
   <data name="NoSizeLimit" xml:space="preserve">
-    <value>No size limit</value>
+    <value>Boyut sınırı yok</value>
   </data>
   <data name="NoPreviewAvailable" xml:space="preserve">
-    <value>No preview available</value>
+    <value>Önizleme mevcut değil.</value>
   </data>
   <data name="AndroidBiometrics" xml:space="preserve">
-    <value>Android Biometrics</value>
+    <value>Android Biyometrik</value>
   </data>
   <data name="TransferDone" xml:space="preserve">
-    <value>Completed</value>
+    <value>Tamamlandı</value>
   </data>
   <data name="EnableFileExtensions" xml:space="preserve">
-    <value>Show file extensions</value>
+    <value>Dosya Uzantılarını Göster</value>
   </data>
   <data name="NameEncoding" xml:space="preserve">
-    <value>Name encoding</value>
+    <value>İsim kodlaması</value>
   </data>
   <data name="OpenRecycleBin" xml:space="preserve">
-    <value>Open recycle bin</value>
+    <value>Geri Dönüşüm Kutusunu Aç</value>
   </data>
   <data name="OpenRecycleBinDescription" xml:space="preserve">
-    <value>View deleted files and folders</value>
+    <value>Silinen dosyaları ve klasörleri görüntüle</value>
   </data>
   <data name="RecentlyDeleted" xml:space="preserve">
-    <value>Recently deleted</value>
+    <value>Son Silinenler</value>
   </data>
   <data name="FileBrowser" xml:space="preserve">
-    <value>File browser</value>
+    <value>Dosya Yöneticisi</value>
   </data>
   <data name="EnableAdaptiveLayout" xml:space="preserve">
-    <value>Enable adaptive layout</value>
+    <value>Uyarlanabilir Düzeni Etkinleştirin</value>
   </data>
   <data name="FoundIssues" xml:space="preserve">
-    <value>Found issues</value>
+    <value>Sorunlar tespit edildi</value>
   </data>
   <data name="UnsavedChanges" xml:space="preserve">
-    <value>Unsaved changes</value>
+    <value>Kaydedilmemiş Değişiklikler</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-    <value>You have made changes to the file. Do you want to save them now?</value>
+    <value>Dosyada değişiklikler yaptınız. Şimdi kaydetmek ister misiniz?</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Kaydet</value>
   </data>
   <data name="WriteHere" xml:space="preserve">
-    <value>Write here...</value>
+    <value>Buraya yazınız...</value>
   </data>
   <data name="NoIssuesFound" xml:space="preserve">
-    <value>No issues found</value>
+    <value>Herhangi bir sorun bulunamadı.</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Kaldır</value>
   </data>
   <data name="GoToVaults" xml:space="preserve">
-    <value>Go to vault list</value>
+    <value>Kasa listesine git</value>
   </data>
   <data name="DateCreated" xml:space="preserve">
-    <value>Date created</value>
+    <value>Oluşturma tarihi</value>
   </data>
   <data name="ClosedUnexpectedly" xml:space="preserve">
-    <value>{0} has closed unexpectedly</value>
+    <value>{0} Beklenmedik Şekilde Kapandı</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-    <value>Select</value>
+    <value>Select Items</value>
   </data>
   <data name="Done" xml:space="preserve">
-    <value>Done</value>
+    <value>Bitti</value>
   </data>
   <data name="ChooseDataSource" xml:space="preserve">
-    <value>Choose data source</value>
+    <value>Veri kaynağını seçin</value>
   </data>
   <data name="SourceLocalStorage" xml:space="preserve">
-    <value>Device storage</value>
+    <value>Cihaz Depolama</value>
   </data>
   <data name="FTP" xml:space="preserve">
     <value>FTP</value>
   </data>
   <data name="GoogleDrive" xml:space="preserve">
-    <value>Google Drive</value>
+    <value></value>
   </data>
   <data name="Address" xml:space="preserve">
-    <value>Address</value>
+    <value>Adres</value>
   </data>
   <data name="Username" xml:space="preserve">
-    <value>Username</value>
+    <value>Kullanıcı Adı</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
-    <value>Add account</value>
+    <value>Hesap Ekle</value>
   </data>
   <data name="User1" xml:space="preserve">
-    <value>User1</value>
+    <value>Kullanıcı1</value>
   </data>
   <data name="ChooseAccount" xml:space="preserve">
-    <value>Choose account</value>
+    <value>Hesap Seçin</value>
   </data>
   <data name="SelectedLocation" xml:space="preserve">
-    <value>Selected location</value>
+    <value>Seçilen Konum</value>
   </data>
   <data name="AccountList" xml:space="preserve">
-    <value>Account list</value>
+    <value>Hesap Listesi</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Bağlantıyı Kes</value>
   </data>
   <data name="AuthenticateForCredentials" xml:space="preserve">
-    <value>Authenticate to create credentials</value>
+    <value>Kimlik bilgilerini oluşturmak için kimlik doğrulama işlemi yapın.</value>
   </data>
   <data name="ViewOnboarding" xml:space="preserve">
-    <value>View onboarding</value>
+    <value>Yeni işe alım sürecini görüntüle</value>
   </data>
   <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
-    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+    <value>Başlangıç ​​olarak, bu sunum sizi uygulamanın en önemli özellikleriyle tanıştıracaktır.</value>
   </data>
   <data name="OnboardingDashboardTitle" xml:space="preserve">
-    <value>You're in control</value>
+    <value>Kontrol Sende</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Kasanızı yukarıdan aşağıya doğru bir kontrol paneli görünümünden hızlıca yönetin. Kimlik bilgilerini değiştirin, dosyalara göz atın ve dosyalarınızın bütünlüğünü kontrol edin.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
-    <value>Your data — secure, anywhere</value>
+    <value>Verileriniz Her Yerde Güvende</value>
   </data>
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
-    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+    <value>Verilerinizi cihazınızda saklamanın yanı sıra, diğer bulut depolama sağlayıcılarına da bağlanabilirsiniz.</value>
+  </data>
+  <data name="OnboardingAuthenticationTitle" xml:space="preserve">
+    <value>Authenticate the way you want</value>
+  </data>
+  <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
+    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+  </data>
+  <data name="OnboardingEncryptionTitle" xml:space="preserve">
+    <value>Your files, always protected</value>
+  </data>
+  <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
+    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+  </data>
+  <data name="OnboardingFileSystemTitle" xml:space="preserve">
+    <value>Seamless virtual file system</value>
+  </data>
+  <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
+    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
-    <value>You're ready to go!</value>
+    <value>Başlamaya Hazırsınız!</value>
   </data>
   <data name="AboutToMigrate" xml:space="preserve">
-    <value>You're about to migrate a vault</value>
+    <value>Bir kasayı Taşımak Üzeresiniz</value>
   </data>
   <data name="VersionValue" xml:space="preserve">
-    <value>Version {0}</value>
+    <value>Sürüm {0}</value>
   </data>
   <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
-    <value>The configured authentication method is unavailable or has expired. Please use your recovery key.</value>
+    <value>Yapılandırılmış kimlik doğrulama yöntemi kullanılamıyor veya süresi dolmuş. Lütfen kurtarma anahtarınızı kullanın.</value>
   </data>
   <data name="AuthenticationUnavailable" xml:space="preserve">
-    <value>Authentication unavailable</value>
+    <value>Kimlik Doğrulama Kullanılamıyor</value>
   </data>
   <data name="Documentation" xml:space="preserve">
-    <value>Documentation</value>
+    <value>Dokümantasyon</value>
   </data>
   <data name="DokanyNotDetected" xml:space="preserve">
-    <value>Dokany has not been detected. Please install Dokany (v{0}) to continue.</value>
+    <value>Dokany algılanmadı. Devam etmek için lütfen Dokany'yi (v{0}) yükleyin.</value>
   </data>
   <data name="DokanyIncompatible" xml:space="preserve">
-    <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
+    <value>Yüklü Dokany sürümü uyumsuz. Lütfen istenen Dokany sürümünü (v{0}) yükleyin.</value>
   </data>
   <data name="CopyPath" xml:space="preserve">
-    <value>Copy path</value>
+    <value>Kopyalama Yolu</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Copy error</value>
+    <value>Kopyalama Hatası</value>
   </data>
   <data name="RegenerateInvalidDirectoryId" xml:space="preserve">
-    <value>Regenerate invalid Directory ID</value>
+    <value>Geçersiz Dizin Kimliğini Yeniden Oluştur</value>
   </data>
   <data name="InvalidDirectoryId" xml:space="preserve">
-    <value>Invalid directory ID</value>
+    <value>Geçersiz Dizin Kimliği</value>
   </data>
   <data name="InvalidItemName" xml:space="preserve">
-    <value>Invalid item name</value>
+    <value>Öge Adı Geçersiz</value>
   </data>
   <data name="GenerateNewNameChanged" xml:space="preserve">
-    <value>A custom name will be applied</value>
+    <value>Özel bir isim uygulanacaktır.</value>
   </data>
   <data name="InvalidFileContents" xml:space="preserve">
-    <value>Corrupted file contents</value>
+    <value>Bozuk Dosya İçeriği</value>
   </data>
   <data name="RegenerateFileContents" xml:space="preserve">
-    <value>Overwrite affected file regions</value>
+    <value>Etkilenen dosya bölgelerinin üzerine yaz</value>
   </data>
   <data name="RegenerateMissingDirectoryId" xml:space="preserve">
-    <value>Regenerate missing directory ID</value>
+    <value>Geçersiz Dizin Kimliğini Yeniden Oluştur</value>
   </data>
   <data name="MissingDirectoryId" xml:space="preserve">
-    <value>Missing directory ID</value>
+    <value>Dizin Kimliği Eksik</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Unknown error</value>
+    <value>Bilinmeyen Hata</value>
   </data>
   <data name="ItemsLoseOriginalName" xml:space="preserve">
-    <value>Items in this directory will lose their original name</value>
+    <value>Bu dizindeki öğeler orijinal adlarını kaybedecektir.</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-      <value>Welcome, {0}</value>
+    <value>Hoş geldiniz, {0}</value>
   </data>
   <data name="Connect" xml:space="preserve">
-      <value>Connect</value>
+    <value>Bağlan</value>
   </data>
   <data name="WinFspNotDetected" xml:space="preserve">
-    <value>WinFsp has not been detected. Please install WinFsp (v{0}) to continue.</value>
+    <value>WinFsp algılanmadı. Devam etmek için lütfen WinFsp'yi (v{0}) yükleyin.</value>
   </data>
   <data name="WinFspIncompatible" xml:space="preserve">
-    <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
+    <value>Yüklü WinFsp sürümü uyumsuz. Lütfen istenen WinFsp sürümünü (v{0}) yükleyin.</value>
   </data>
   <data name="ChooseNewName" xml:space="preserve">
-      <value>Choose a new name</value>
+    <value>Yeni Bir İsim Seçin</value>
+  </data>
+  <data name="ViewOnboardingDescription" xml:space="preserve">
+    <value>Show the onboarding screen</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Cancelling" xml:space="preserve">
+    <value>Cancelling</value>
+  </data>
+  <data name="SizeOptions" xml:space="preserve">
+    <value>Size options</value>
+  </data>
+  <data name="OperationTimedOut" xml:space="preserve">
+    <value>Operation timed out</value>
+  </data>
+  <data name="DateYesterday" xml:space="preserve">
+    <value>Yesterday, {0}</value>
+  </data>
+  <data name="DateWeekAgo" xml:space="preserve">
+    <value>Last week</value>
+  </data>
+  <data name="DateDaysAgo" xml:space="preserve">
+    <value>{0} days ago</value>
+  </data>
+  <data name="VaultUnlocked" xml:space="preserve">
+    <value>Vault is unlocked</value>
+  </data>
+  <data name="AggregatedDataWidget" xml:space="preserve">
+      <value>Data widget</value>
+  </data>
+  <data name="GraphsWidget" xml:space="preserve">
+      <value>Graphs widget</value>
+  </data>
+  <data name="HealthWidget" xml:space="preserve">
+      <value>Health widget</value>
+  </data>
+  <data name="SetupYubiKey" xml:space="preserve">
+      <value>Setup YubiKey PIV authentication</value>
+  </data>
+  <data name="UseLongPress" xml:space="preserve">
+      <value>Use long press (Slot 2)</value>
+  </data>
+  <data name="YubiKey" xml:space="preserve">
+      <value>YubiKey</value>
+  </data>
+  <data name="LoginYubiKey" xml:space="preserve">
+      <value>Authenticate with YubiKey PIV</value>
+  </data>
+  <data name="Finder" xml:space="preserve">
+      <value>Finder</value>
+  </data>
+  <data name="FileExplorer" xml:space="preserve">
+      <value>File Explorer</value>
+  </data>
+  <data name="CorruptedFileChunks" xml:space="preserve">
+      <value>Corrupted file regions</value>
+  </data>
+  <data name="FileHasCorruptedChunks" xml:space="preserve">
+      <value>Parts of the file are corrupted and will be reset</value>
+  </data>
+  <data name="CorruptedChunks" xml:space="preserve">
+      <value>{0} corrupted region(s)</value>
+  </data>
+  <data name="DataLossImminent" xml:space="preserve">
+      <value>Data loss unpreventable</value>
+  </data>
+  <data name="IrrecoverableFile" xml:space="preserve">
+      <value>Irrecoverable file</value>
+  </data>
+  <data name="FileHeaderCorrupted" xml:space="preserve">
+      <value>File header is corrupted and the file will be deleted</value>
+  </data>
+  <data name="DeviceLink" xml:space="preserve">
+      <value>Device Link</value>
+  </data>
+  <data name="DeviceLinkInstructions" xml:space="preserve">
+      <value>1. Click "More Options" (three dots) in SecureFolderFS mobile app\n2. Select "Device Link" option\n3. Toggle "Enable Device Link"\n4. Ensure both devices are on the same network</value>
+  </data>
+  <data name="SetupDeviceLink" xml:space="preserve">
+      <value>Setup Device Link authentication</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+      <value>Accept</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+      <value>Reject</value>
+  </data>
+  <data name="LoginDeviceLink" xml:space="preserve">
+      <value>Authenticate with Device Link</value>
+  </data>
+  <data name="ConfirmBothCodesMatch" xml:space="preserve">
+      <value>Confirm that both codes match</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+      <value>Verification code</value>
+  </data>
+  <data name="DeviceLinkRequest" xml:space="preserve">
+      <value>Device Link request</value>
+  </data>
+  <data name="DeviceLinkIsRequestingCredentials" xml:space="preserve">
+      <value>This device is requesting to use your Device Link credentials to unlock a vault.</value>
+  </data>
+  <data name="DeviceLinkAcceptWarning" xml:space="preserve">
+      <value>Only accept if you initiated this request</value>
+  </data>
+  <data name="CredentialRequested" xml:space="preserve">
+      <value>Credential requested: {0}</value>
+  </data>
+  <data name="DeleteDeviceLinkCredential" xml:space="preserve">
+      <value>Delete Credential</value>
+  </data>
+  <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
+      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
+  </data>
+  <data name="DeviceLinkDescription" xml:space="preserve">
+      <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
+  </data>
+  <data name="DeletedAt" xml:space="preserve">
+      <value>Deleted at</value>
+  </data>
+  <data name="OriginalLocation" xml:space="preserve">
+      <value>Original location</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+      <value>Install</value>
+  </data>
+  <data name="FileSystemOffersImprovedExperience" xml:space="preserve">
+      <value>Improved user experience, reliability, and performance</value>
+  </data>
+  <data name="DefaultFileSystem" xml:space="preserve">
+      <value>The default file system</value>
+  </data>
+  <data name="BuiltinFileSystem" xml:space="preserve">
+      <value>One of the built-in file systems</value>
+  </data>
+  <data name="DokanyDescription" xml:space="preserve">
+      <value>Dokany offers better integration and reliability</value>
+  </data>
+  <data name="WinFspDescription" xml:space="preserve">
+      <value>WinFsp offers better performance and reliability</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+      <value>Refresh</value>
+  </data>
+  <data name="StorageUsed" xml:space="preserve">
+      <value>Storage used</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+      <value>Select all</value>
+  </data>
+  <data name="ClearSelection" xml:space="preserve">
+      <value>Clear selection</value>
+  </data>
+  <data name="CopyingItems" xml:space="preserve">
+      <value>Copying {0} item(s)</value>
+  </data>
+  <data name="MovingItems" xml:space="preserve">
+      <value>Moving {0} item(s)</value>
+  </data>
+  <data name="DeletingItems" xml:space="preserve">
+      <value>Deleting {0} item(s)</value>
+  </data>
+  <data name="NotEnoughSpace" xml:space="preserve">
+      <value>Not enough space</value>
+  </data>
+  <data name="ItemDeletionTitle" xml:space="preserve">
+      <value>Deleting item(s)</value>
+  </data>
+  <data name="ItemDeletionDescription" xml:space="preserve">
+      <value>Are you sure you want to permanently delete {0} item(s)?</value>
+  </data>
+  <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
+      <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+  </data>
+  <data name="IntroPrefix" xml:space="preserve">
+      <value>By continuing, you agree to our </value>
+  </data>
+  <data name="IntroMiddle" xml:space="preserve">
+      <value> and </value>
+  </data>
+  <data name="IntroSuffix" xml:space="preserve">
+      <value>.</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+      <value>Terms of Service</value>
+  </data>
+  <data name="SelectLocationOfVault" xml:space="preserve">
+      <value>Select a location of your vault</value>
+  </data>
+  <data name="CoreMemoryProtectionEnabled" xml:space="preserve">
+      <value>Core Memory Protection is enabled</value>
+  </data>
+  <data name="EnrolledCredentials" xml:space="preserve">
+      <value>Enrolled credentials</value>
+  </data>
+  <data name="PendingPairingRequest" xml:space="preserve">
+      <value>Pending pairing request</value>
+  </data>
+  <data name="DeviceRequestingToPair" xml:space="preserve">
+      <value>{0} is requesting to pair to create credentials</value>
+  </data>
+  <data name="EnableDeviceLink" xml:space="preserve">
+      <value>Enable Device Link</value>
+  </data>
+  <data name="ItemsSelected" xml:space="preserve">
+      <value>{0} item(s) selected</value>
+  </data>
+  <data name="ElementsCount" xml:space="preserve">
+      <value>{0} element(s)</value>
+  </data>
+  <data name="FoundIssuesCount" xml:space="preserve">
+      <value>Found {0} issue(s)</value>
+  </data>
+  <data name="AvailableWidgets" xml:space="preserve">
+      <value>Available widgets</value>
+  </data>
+  <data name="ReorderWidgets" xml:space="preserve">
+      <value>Reorder widgets</value>
+  </data>
+  <data name="Dropbox" xml:space="preserve">
+      <value>Dropbox</value>
+  </data>
+  <data name="WebDavClient" xml:space="preserve">
+      <value>WebDav</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+      <value>Port</value>
+  </data>
+  <data name="ArchiveFormatNotSupported" xml:space="preserve">
+      <value>This archive format is not supported for extraction</value>
+  </data>
+  <data name="ExtractingItems" xml:space="preserve">
+      <value>Extracting {0} items</value>
+  </data>
+  <data name="Extracting" xml:space="preserve">
+      <value>Extracting...</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+      <value>Extract</value>
+  </data>
+  <data name="ConnectToRemoteVault" xml:space="preserve">
+      <value>Before logging in, establish a connection to the remote vault.</value>
+  </data>
+  <data name="LoginMacOsBiometrics" xml:space="preserve">
+      <value>Authenticate using Touch ID</value>
+  </data>
+  <data name="MacOsBiometrics" xml:space="preserve">
+      <value>Touch ID</value>
+  </data>
+  <data name="SetupMacOsBiometrics" xml:space="preserve">
+      <value>Setup Touch ID authentication</value>
+  </data>
+  <data name="PlusAcquireSubscription" xml:space="preserve">
+      <value>{0} per month</value>
+  </data>
+  <data name="PlusAcquireLifetime" xml:space="preserve">
+      <value>Lifetime, {0}</value>
+  </data>
+  <data name="PlusUpgrade" xml:space="preserve">
+      <value>UPGRADE</value>
+  </data>
+  <data name="PlusTitle" xml:space="preserve">
+      <value>Your vaults, fully unleashed.</value>
+  </data>
+  <data name="PlusDescription" xml:space="preserve">
+      <value>Support independent development and unlock every feature.</value>
+  </data>
+  <data name="PlusUnlimitedVaults" xml:space="preserve">
+      <value>Unlimited vaults</value>
+  </data>
+  <data name="PlusUnlimitedVaultsDescription" xml:space="preserve">
+      <value>Create and manage more than two vaults at a time.</value>
+  </data>
+  <data name="PlusDeviceLink" xml:space="preserve">
+      <value>Device Link</value>
+  </data>
+  <data name="PlusDeviceLinkDescription" xml:space="preserve">
+      <value>Sync desktop vault credentials securely with the mobile app.</value>
+  </data>
+  <data name="PlusSecurityKey" xml:space="preserve">
+      <value>YubiKey authentication</value>
+  </data>
+  <data name="PlusSecurityKeyDescription" xml:space="preserve">
+      <value>Protect vaults with hardware-grade security keys.</value>
+  </data>
+  <data name="PlusFileRecovery" xml:space="preserve">
+      <value>Recycle bin</value>
+  </data>
+  <data name="PlusFileRecoveryDescription" xml:space="preserve">
+      <value>Recover accidentally deleted files with ease.</value>
+  </data>
+  <data name="PlusVaultShortcuts" xml:space="preserve">
+      <value>Vault shortcuts</value>
+  </data>
+  <data name="PlusVaultShortcutsDescription" xml:space="preserve">
+      <value>Jump straight into any vault from a desktop shortcut.</value>
+  </data>
+  <data name="PlusSupportDevelopment" xml:space="preserve">
+      <value>Achieve full potential · Supports independent development</value>
+  </data>
+  <data name="AcceptFirstSsl" xml:space="preserve">
+      <value>Accept first SSL certificate</value>
+  </data>
+  <data name="ManualSslCertificate" xml:space="preserve">
+      <value>Manual certificate fingerprint (SHA-256)</value>
+  </data>
+  <data name="SearchIn" xml:space="preserve">
+      <value>Search in: {0}</value>
+  </data>
+  <data name="RootFolder" xml:space="preserve">
+      <value>Root folder</value>
+  </data>
+  <data name="CollectingItemsInProgress" xml:space="preserve">
+      <value>Items are being collected</value>
+  </data>
+  <data name="CollectingItems" xml:space="preserve">
+      <value>Collecting items...</value>
+  </data>
+  <data name="CollectingItemsCount" xml:space="preserve">
+      <value>Collecting items ({0})</value>
+  </data>
+  <data name="CollectedCountItems" xml:space="preserve">
+      <value>Collected {0} items</value>
+  </data>
+  <data name="ScanCompleted" xml:space="preserve">
+      <value>Scan completed</value>
+  </data>
+  <data name="ScanningItems" xml:space="preserve">
+      <value>Scanning items</value>
+  </data>
+  <data name="ScanningItemsCount" xml:space="preserve">
+      <value>Scanning items {0} of {1}</value>
+  </data>
+  <data name="ScannedCount" xml:space="preserve">
+      <value>Scanned {0} out of {1}</value>
+  </data>
+  <data name="PerformIntegrityCheck" xml:space="preserve">
+      <value>Perform integrity check</value>
   </data>
 </root>
