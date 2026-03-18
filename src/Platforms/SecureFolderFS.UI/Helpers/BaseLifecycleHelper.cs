@@ -48,8 +48,8 @@ namespace SecureFolderFS.UI.Helpers
             Debug.WriteLine(formattedException);
 
             // Please check the Application Output for exception details
-            // On Microsoft Visual Studio, go to View -> Output Window
-            // On JetBrains Rider, go to View -> Tool Windows -> Debug -> Debug Output
+            // In Microsoft Visual Studio, go to View -> Output Window
+            // In JetBrains Rider, go to View -> Tool Windows -> Debug -> Debug Output
             Debugger.Break();
 #endif
         }

@@ -86,10 +86,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         }
 
         /// <inheritdoc/>
-        public Task<bool> NavigateAsync(IViewDesignation? view)
+        public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
-            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(view, this));
-            return Task.FromResult(true);
+            var tcs = new TaskCompletionSource<bool>();
+            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(this, view, tcs));
+
+            return await tcs.Task;
         }
 
         /// <inheritdoc/>
@@ -109,7 +111,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         private async Task AddAccountAsync(CancellationToken cancellationToken)
         {
             var accountViewModel = await AccountService.GetAccountCreatorAsync(DataSourceType, PropertyStoreService.SecurePropertyStore, cancellationToken);
-            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(new AccountCreationWizardViewModel(accountViewModel), this));
+            NavigationRequested?.Invoke(this, new DestinationNavigationRequestedEventArgs(this, new AccountCreationWizardViewModel(accountViewModel)));
         }
 
         [RelayCommand]
@@ -167,22 +169,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                 // It is expected that the existing connection will return the root folder immediately
                 var rootFolder = await accountViewModel.ConnectAsync(cancellationToken);
                 var browser = BrowserHelpers.CreateBrowser(rootFolder, new FileSystemOptions(), accountViewModel, outerNavigator: this);
-                try
-                {
-                    // Prompt the user to pick a folder
-                    browser.OnAppearing();
-                    _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
 
-                    // Update CanContinue
-                    var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
-                    Message = result.Message;
-                    CanContinue = result.CanContinue;
-                    SelectedLocation = result.SelectedLocation;
-                }
-                finally
-                {
-                    browser.OnDisappearing();
-                }
+                // Prompt the user to pick a folder
+                browser.OnAppearing();
+                _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
+                if (_selectedFolder is null)
+                    return;
+
+                // Update CanContinue
+                var result = await ValidationHelpers.ValidateAddedVault(_selectedFolder, Mode, VaultCollectionModel.Select(x => x.DataModel), cancellationToken);
+                Message = result.Message;
+                CanContinue = result.CanContinue;
+                SelectedLocation = result.SelectedLocation;
             }
             catch (Exception ex)
             {

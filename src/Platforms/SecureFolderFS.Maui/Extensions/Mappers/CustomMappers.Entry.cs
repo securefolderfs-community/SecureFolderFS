@@ -25,7 +25,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 var roundRectShape = new RoundRectShape(outerRadii, null, null);
                 var shape = new ShapeDrawable(roundRectShape);
 
-                shape.Paint!.Color = (App.Instance.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                shape.Paint!.Color = (App.Instance.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "BorderDarkColor",
                     _ => "BorderLightColor"
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 handler.PlatformView.Background = shape;
                 handler.PlatformView.SetPadding(40, 32,40, 32);
 #elif IOS
-                handler.PlatformView.Layer.BorderColor = (App.Current.Resources[MauiThemeHelper.Instance.CurrentTheme switch
+                handler.PlatformView.Layer.BorderColor = (App.Current.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
                     ThemeType.Dark => "BorderDarkColor",
                     _ => "BorderLightColor"

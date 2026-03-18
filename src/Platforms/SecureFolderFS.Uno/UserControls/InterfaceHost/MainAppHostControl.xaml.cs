@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -25,6 +26,9 @@ using SecureFolderFS.UI.Helpers;
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
     public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
+#if WINDOWS
+        , IRecipient<VaultSelectionRequestedMessage>
+#endif
     {
         private bool _isInitialized;
         private bool _isCompactMode; // WINDOWS only
@@ -54,6 +58,23 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
 #endif
         }
+
+#if WINDOWS
+        /// <inheritdoc/>
+        public void Receive(VaultSelectionRequestedMessage message)
+        {
+            if (ViewModel?.VaultListViewModel is not { } vaultListViewModel)
+                return;
+
+            // Find the vault item in the list
+            var vaultItem = vaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Equals(message.VaultModel));
+            if (vaultItem is not null)
+            {
+                // Select the vault item which will trigger navigation
+                vaultListViewModel.SelectedItem = vaultItem;
+            }
+        }
+#endif
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
@@ -87,15 +108,23 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
         }
 
-        private void Rename_Click(object sender, RoutedEventArgs e)
+        private async void Rename_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not MenuFlyoutItem menuItem)
-                return;
-
-            if (menuItem is not { DataContext: VaultListItemViewModel itemViewModel })
+            if (sender is not MenuFlyoutItem { DataContext: VaultListItemViewModel itemViewModel })
                 return;
 
             itemViewModel.IsRenaming = true;
+
+            // Get the container for the item from the NavigationView and find the TextBox
+            var container = Sidebar.ContainerFromMenuItem(itemViewModel);
+            if (container?.FindDescendant<TextBox>() is { } textBox)
+            {
+                // Wait for the TextBox to become visible after IsRenaming changes
+                await Task.Delay(50);
+                textBox.Focus(FocusState.Programmatic);
+                textBox.Text = itemViewModel.VaultViewModel.Title;
+                textBox.SelectAll();
+            }
         }
 
         private async void RenameBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -120,16 +149,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
         }
 
-        private void RenameBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel } textBox)
-                return;
-
-            textBox.Focus(FocusState.Programmatic);
-            textBox.Text = itemViewModel.VaultViewModel.Title;
-            textBox.SelectAll();
-        }
-
         private void RenameBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel })
@@ -142,6 +161,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
+#if WINDOWS
+            WeakReferenceMessenger.Default.Register<VaultSelectionRequestedMessage>(this);
+#endif
 
             await SetupNavigationAsync();
         }

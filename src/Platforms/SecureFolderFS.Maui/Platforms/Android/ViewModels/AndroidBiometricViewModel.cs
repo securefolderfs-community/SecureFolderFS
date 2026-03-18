@@ -11,7 +11,8 @@ using SecureFolderFS.Maui.Platforms.Android.Helpers;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using IKey = SecureFolderFS.Shared.ComponentModel.IKey;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {
@@ -61,7 +62,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> EnrollAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
@@ -85,11 +86,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                 privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
             }
 
-            return await MakeSignatureAsync(privateKey, data);
+            var signature = await MakeSignatureAsync(privateKey, data);
+            return Result<IKeyBytes>.Success(signature);
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(data);
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
@@ -103,10 +105,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             var privateKeyEntry = keyStore.GetEntry(alias, null) as KeyStore.PrivateKeyEntry;
             var privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
 
-            return await MakeSignatureAsync(privateKey, data);
+            var signature = await MakeSignatureAsync(privateKey, data);
+            return Result<IKeyBytes>.Success(signature);
         }
 
-        private static async Task<IKey> MakeSignatureAsync(IPrivateKey privateKey, byte[] data)
+        private static async Task<IKeyBytes> MakeSignatureAsync(IPrivateKey privateKey, byte[] data)
         {
             var signature = Signature.GetInstance("SHA256withRSA");
             if (signature is null)
@@ -115,7 +118,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             // Init signature
             signature.InitSign(privateKey);
 
-            var tcs = new TaskCompletionSource<IKey>();
+            var tcs = new TaskCompletionSource<IKeyBytes>();
             var executor = ContextCompat.GetMainExecutor(MainActivity.Instance!);
             var promptInfo = new BiometricPrompt.Builder(MainActivity.Instance!)
                 .SetTitle("Authenticate".ToLocalized())
@@ -139,7 +142,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                             if (signedBytes is null)
                                 throw new CryptographicException("Could not sign the data.");
 
-                            tcs.TrySetResult(SecureKey.TakeOwnership(signedBytes));
+                            tcs.TrySetResult(ManagedKey.TakeOwnership(signedBytes));
                         }
                         catch (Exception ex)
                         {

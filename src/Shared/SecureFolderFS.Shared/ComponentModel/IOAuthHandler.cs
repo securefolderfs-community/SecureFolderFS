@@ -32,5 +32,11 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// Value is an <see cref="IResult{T}"/> with an <see cref="OAuthResult"/> indicating the outcome of the authentication process.
         /// </returns>
         Task<IResult<OAuthResult>> GetCodeAsync(string url, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc cref="GetCodeAsync(string, CancellationToken)"/>
+        /// <param name="url">The URL to which the user should be redirected for authentication.</param>
+        /// <param name="redirectUri">The redirect URI to which the user should be redirected after authentication.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        Task<IResult<OAuthResult>> GetCodeAsync(string url, string redirectUri, CancellationToken cancellationToken = default);
     }
 }

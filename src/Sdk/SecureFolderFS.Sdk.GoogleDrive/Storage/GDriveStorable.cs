@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
         /// <summary>
         /// Gets the parent folder of the current storable item, if it exists.
         /// </summary>
-        protected IFolder? ParentFolder { get; }
+        internal IFolder? ParentFolder { get; }
 
         /// <summary>
         /// Provides access to the Google Drive API for managing and interacting with files and folders.

@@ -67,22 +67,31 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public async Task<bool> TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            if (OperatingSystem.IsLinux())
+            try
             {
-                Process.Start("xdg-open", folder.Id);
-                return Task.CompletedTask;
-            }
+                await Task.CompletedTask;
+                if (OperatingSystem.IsLinux())
+                {
+                    Process.Start("xdg-open", folder.Id);
+                    return true;
+                }
 
 #if __MACOS__ || __MACCATALYST__ || __UNO_SKIA_MACOS__
-            Process.Start("sh", [ "-c", $"open {folder.Id}" ]);
-            return Task.CompletedTask;
+                Process.Start("sh", ["-c", $"open {folder.Id}"]);
+                return true;
 #elif WINDOWS
-            return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+                await global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+                return true;
 #else
-            return Task.CompletedTask;
+                return false;
 #endif
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>

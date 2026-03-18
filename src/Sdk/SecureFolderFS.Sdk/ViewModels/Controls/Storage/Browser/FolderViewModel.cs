@@ -30,6 +30,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// </summary>
         public ObservableCollection<BrowserItemViewModel> Items { get; }
 
+        /// <summary>
+        /// Gets the selected items in this folder.
+        /// </summary>
+        public ObservableCollection<BrowserItemViewModel> SelectedItems { get; }
+
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
@@ -39,6 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             ServiceProvider = DI.Default;
             Folder = folder;
             Title = folder.Name;
+            SelectedItems = new();
             Items = new();
         }
 
@@ -49,8 +55,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+            // Apply adaptive layout when back to a folder
+            if (!Items.IsEmpty() && SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
+                ApplyAdaptiveLayout();
+        }
+
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
+            Items.DisposeAll();
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves and lists the contents of the current folder, organizing them into the observable collection of items.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
+            SelectedItems.Clear();
             Items.DisposeAll();
             Items.Clear();
 
@@ -64,22 +90,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             })), Items);
 
             // Apply adaptive layout
-            if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled)
+            if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
                 ApplyAdaptiveLayout();
-        }
-
-        /// <inheritdoc/>
-        public virtual void OnAppearing()
-        {
-            // Apply adaptive layout when back to a folder
-            if (!Items.IsEmpty() && SettingsService.UserSettings.IsAdaptiveLayoutEnabled)
-                ApplyAdaptiveLayout();
-        }
-
-        /// <inheritdoc/>
-        public virtual void OnDisappearing()
-        {
-            Items.DisposeAll();
         }
 
         /// <inheritdoc/>

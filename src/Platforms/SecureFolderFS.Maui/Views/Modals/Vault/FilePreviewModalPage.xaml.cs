@@ -4,15 +4,12 @@ using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.TemplateSelectors;
 using SecureFolderFS.Maui.UserControls;
 using SecureFolderFS.Maui.UserControls.Common;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Previewers;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
+using Page = Microsoft.Maui.Controls.Page;
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -25,8 +22,6 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
     {
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-
-        public GalleryView? GalleryView { get; private set; }
 
         public FilePreviewModalPage(INavigation sourceNavigation)
         {
@@ -67,11 +62,12 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         /// <inheritdoc/>
         public async Task HideAsync()
         {
+            _modalTcs.SetResult(Result.Success);
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
 
         /// <inheritdoc/>
-        protected override async void OnDisappearing()
+        protected override void OnDisappearing()
         {
             base.OnDisappearing();
             _modalTcs.TrySetResult(Result.Success);
@@ -79,30 +75,12 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             {
                 GalleryView.PreviousRequested -= Gallery_PreviousRequested;
                 GalleryView.NextRequested -= Gallery_NextRequested;
+                GalleryView.DismissRequested -= Gallery_DismissRequested;
                 GalleryView.Dispose();
 
                 (GalleryView.Previous as IDisposable)?.Dispose();
                 (GalleryView.Current as IDisposable)?.Dispose();
                 (GalleryView.Next as IDisposable)?.Dispose();
-            }
-
-            if (ViewModel?.PreviewerViewModel is TextPreviewerViewModel { WasModified: true } textViewModel)
-            {
-                var overlayService = DI.Service<IOverlayService>();
-                var messageOverlay = new MessageOverlayViewModel()
-                {
-                    Title = "UnsavedChanges".ToLocalized(),
-                    Message = "UnsavedChangesDescription".ToLocalized(),
-                    PrimaryText = "Save".ToLocalized(),
-                    SecondaryText = "Cancel".ToLocalized()
-                };
-
-#if IOS
-                await Task.Delay(600);
-#endif
-                var result = await overlayService.ShowAsync(messageOverlay);
-                if (result.Positive())
-                    await textViewModel.TrySaveAsync();
             }
         }
 
@@ -112,7 +90,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (viewModel is null)
                 return null;
 
-            return new ContentPresentation()
+            var presentation = new ContentPresentation()
             {
                 Presentation = viewModel,
                 TemplateSelector = new PreviewerTemplateSelector()
@@ -121,6 +99,18 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     VideoTemplate = Resources["VideoTemplate"] as DataTemplate
                 }
             };
+            presentation.Loaded += Presentation_Loaded;
+            return presentation;
+
+            void Presentation_Loaded(object? sender, EventArgs e)
+            {
+                presentation.Loaded -= Presentation_Loaded;
+                var panPinchContainer = presentation.GetVisualTreeDescendants()
+                    .OfType<PanPinchContainer>()
+                    .FirstOrDefault();
+
+                panPinchContainer?.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+            }
         }
 
         private async void Closed_Clicked(object? sender, EventArgs e)
@@ -149,6 +139,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             disposables.Add(media);
             disposables.Add(mediaPlayer);
 
+            mediaPlayerElement.LibVLC = libVlc;
             mediaPlayerElement.MediaPlayer = mediaPlayer;
             mediaPlayer.Play();
         }
@@ -166,6 +157,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
+            galleryView.DismissRequested += Gallery_DismissRequested;
 
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex - 1) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IAsyncInitialize)?.InitAsync();
@@ -229,6 +221,25 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
         }
+        
+        private async void Gallery_DismissRequested(object? sender, EventArgs e)
+        {
+            // The gallery has already translated/faded partway - animate the rest out, then dismiss
+            var page = this as Page;
+            var slideTask = page.TranslateToAsync(0, 60, 180U, Easing.CubicIn);
+            var fadeTask = page.FadeToAsync(0d, 180U, Easing.CubicIn);
+
+            await Task.WhenAll(slideTask, fadeTask);
+            await HideAsync();
+        }
+        
+        public GalleryView? GalleryView
+        {
+            get => (GalleryView?)GetValue(GalleryViewProperty);
+            private set => SetValue(GalleryViewProperty, value);
+        }
+        public static readonly BindableProperty GalleryViewProperty =
+            BindableProperty.Create(nameof(GalleryView), typeof(GalleryView), typeof(FilePreviewModalPage));
 
         public PreviewerOverlayViewModel? ViewModel
         {

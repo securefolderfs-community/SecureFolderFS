@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+
     <!-- Build Properties -->
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -21,25 +22,35 @@
     <AccelerateBuildsInVisualStudio>True</AccelerateBuildsInVisualStudio>
 
     <!-- Application Properties -->
+    <AssemblyName>SecureFolderFS</AssemblyName>
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
-    <AssemblyVersion>0.7.2.0</AssemblyVersion>
-    <ApplicationDisplayVersion>0.7.2.0</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>
+    <AssemblyVersion>0.8.0.0</AssemblyVersion>
+    <ApplicationDisplayVersion>0.8.0.0</ApplicationDisplayVersion>
+    <AssemblyVersion>0.8.0.0</AssemblyVersion>
+    <ApplicationVersion>800</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
+
+    <!-- Other -->
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+
   </PropertyGroup>
 
   <!-- Package References -->
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Animations" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
     <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
+    <PackageReference Include="WinUI.TableView" />
+    <PackageReference Include="Yubico.YubiKey" />
   </ItemGroup>
 
   <!-- Project References -->
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
@@ -70,6 +81,26 @@
       <PropertyGroup>
         <DefineConstants>HAS_UNO_SKIA</DefineConstants>
       </PropertyGroup>
+
+      <ItemGroup>
+        <None Include="Platforms\Desktop\Info.plist">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
+
+      <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">
+        <UnoMacOSAppIconFile>Assets/AppIcon/AppIcon.icns</UnoMacOSAppIconFile>
+        <UnoMacOSCustomInfoPlist>Platforms/Desktop/Info.plist</UnoMacOSCustomInfoPlist>
+        <EnableCodeSigning>true</EnableCodeSigning>
+        <CodeSigningKey>-</CodeSigningKey>
+        <CodeSignEntitlements>Platforms/Desktop/Entitlements.plist</CodeSignEntitlements>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <None Include="Platforms\Desktop\Entitlements.plist">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
 
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
@@ -140,8 +171,9 @@
         <SelfContained>True</SelfContained>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
-        <!-- Other -->
-        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+        <!-- Entry Point -->
+        <DisableEmbeddedXbf>false</DisableEmbeddedXbf>
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
       </PropertyGroup>
 
       <!-- Define UNPACKAGED constant -->
@@ -149,8 +181,20 @@
         <DefineConstants>UNPACKAGED</DefineConstants>
       </PropertyGroup>
     </When>
-
   </Choose>
+
+  <!-- Codesign the macOS .app bundle with entitlements for Keychain/Secure Enclave (Touch ID) access -->
+  <Target Name="CodesignMacOSAppBundle" AfterTargets="Build"
+          Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">
+    <PropertyGroup>
+      <_MacOSAppBundle>$(OutputPath)$(AssemblyName).app</_MacOSAppBundle>
+      <_MacOSEntitlements>$(MSBuildProjectDirectory)/Platforms/Desktop/Entitlements.plist</_MacOSEntitlements>
+    </PropertyGroup>
+    <Exec Command="codesign --force --deep --sign - --entitlements &quot;$(_MacOSEntitlements)&quot; &quot;$(_MacOSAppBundle)&quot;"
+          Condition="Exists('$(_MacOSAppBundle)')"
+          IgnoreExitCode="true"
+          ContinueOnError="WarnAndContinue" />
+  </Target>
 
   <ItemGroup>
     <None Remove="Assets\AppIcon\AppIcon.altform-lightunplated_targetsize-16.png" />
@@ -235,11 +279,12 @@
     <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
     <None Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <None Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
-    <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
+    <None Remove="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml" />
     <None Remove="UserControls\Introduction\EndScreen.xaml" />
     <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
+    <None Remove="UserControls\LoginOptions.xaml" />
     <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <None Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
@@ -250,7 +295,9 @@
     <None Remove="UserControls\RecoveryPreviewControl.xaml" />
     <None Remove="UserControls\RegisterControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
+    <None Remove="UserControls\VaultControls.xaml" />
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <None Remove="UserControls\Widgets\AggregatedDataWidget.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <None Remove="UserControls\Widgets\HealthWidget.xaml" />
     <None Remove="Views\DebugViews\DebugAppControlPage.xaml" />
@@ -272,10 +319,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Dialogs\AgreementDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Dialogs\RecycleBinDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -355,6 +398,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -362,7 +409,7 @@
     <Page Update="UserControls\InterfaceRoot\MainWindowRootControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="UserControls\Introduction\AgreementScreen.xaml">
+    <Page Update="UserControls\Introduction\FeatureSlide.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -378,6 +425,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControls\LoginControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\LoginOptions.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="UserControls\Navigation\ContentNavigationControl.xaml">
@@ -403,8 +453,15 @@
     <Page Update="UserControls\TitleBarControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="UserControls\VaultControls.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="UserControls\VaultFolderSelectionControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Widgets\AggregatedDataWidget.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControls\Widgets\GraphsWidget.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -486,11 +543,13 @@
     <UpToDateCheckInput Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceRoot\VaultPreviewRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\AgreementScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\EndScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\LoginOptions.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <UpToDateCheckInput Remove="UserControls\Migration\MigratorV2_V3.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
@@ -500,7 +559,9 @@
     <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\TitleBarControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\VaultControls.xaml" />
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Widgets\AggregatedDataWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\HealthWidget.xaml" />
     <UpToDateCheckInput Remove="Views\DebugViews\DebugAppControlPage.xaml" />

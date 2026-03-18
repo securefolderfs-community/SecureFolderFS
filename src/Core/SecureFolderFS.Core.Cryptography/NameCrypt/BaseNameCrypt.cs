@@ -3,20 +3,16 @@ using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Lex4K;
-using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 
 namespace SecureFolderFS.Core.Cryptography.NameCrypt
 {
     /// <inheritdoc cref="INameCrypt"/>
     internal abstract class BaseNameCrypt : INameCrypt
     {
-        protected readonly AesSiv128 aesSiv128;
         protected readonly string fileNameEncodingId;
 
-        protected BaseNameCrypt(KeyPair keyPair, string fileNameEncodingId)
+        protected BaseNameCrypt(string fileNameEncodingId)
         {
-            this.aesSiv128 = AesSiv128.CreateInstance(keyPair.DekKey, keyPair.MacKey);
             this.fileNameEncodingId = fileNameEncodingId;
         }
 
@@ -75,9 +71,6 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         protected abstract byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId);
 
         /// <inheritdoc/>
-        public virtual void Dispose()
-        {
-            aesSiv128.Dispose();
-        }
+        public abstract void Dispose();
     }
 }

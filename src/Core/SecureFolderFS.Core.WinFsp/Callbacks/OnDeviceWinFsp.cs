@@ -267,6 +267,12 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     ? new DirectoryInfo(ciphertextPath)
                     : new System.IO.FileInfo(ciphertextPath);
 
+                if (!info.Exists)
+                {
+                    FileAttributes = 0;
+                    return Trace(STATUS_OBJECT_NAME_NOT_FOUND, FileName);
+                }
+
                 // Set Attributes and Security Descriptor
                 FileAttributes = (uint)info.Attributes;
                 SecurityDescriptor = info switch
@@ -507,7 +513,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     dirHandle.DirectoryInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
                     dirHandle.DirectoryInfo.Attributes = (FileAttributes)FileAttributes;
                     FileInfo = dirHandle.GetFileInfo();
-                    
+
                     break;
                 }
 
@@ -902,7 +908,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
                     var directoryIdPath = Path.Combine(pathToDelete, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                     _specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
-                 
+
                     break;
                 }
             }

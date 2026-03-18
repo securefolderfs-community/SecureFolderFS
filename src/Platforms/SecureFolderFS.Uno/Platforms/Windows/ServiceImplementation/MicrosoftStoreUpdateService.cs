@@ -10,6 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using Windows.ApplicationModel;
+using Windows.Foundation;
 using Windows.Services.Store;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
@@ -33,6 +34,55 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public async Task<IResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
+        {
+            if (!await SetStoreContextAsync() || _storeContext is null)
+                return Result<AppUpdateResultType>.Failure(AppUpdateResultType.FailedUnknownError);
+
+            try
+            {
+                if (_updates is null && !await IsUpdateAvailableAsync(cancellationToken))
+                    return Result.Failure(new InvalidOperationException("No available updates found."));
+
+                // RequestDownloadAndInstallStorePackageUpdatesAsync requires the UI thread (HWND context).
+                // We use PostOrExecuteAsync to marshal onto the captured UI SynchronizationContext.
+                var uiContext = ThreadingService.GetContext();
+                IAsyncOperationWithProgress<StorePackageUpdateResult, StorePackageUpdateStatus>? operation = null;
+
+                await uiContext.PostOrExecuteAsync(() =>
+                {
+                    operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
+                    return Task.CompletedTask;
+                });
+
+                if (operation is null)
+                    return Result<AppUpdateResultType>.Failure(AppUpdateResultType.FailedUnknownError);
+
+                // Add progress operation callback
+                operation.Progress = (_, update) =>
+                {
+                    uiContext.PostOrExecute(_ => StateChanged?.Invoke(this, new UpdateChangedEventArgs(GetAppUpdateResultType(update.PackageUpdateState))));
+
+                    // According to docs, PackageDownloadProgress ranges from 0.0 to 0.8 (inclusive)
+                    // where 0.8 marks the end of the download stage - re-adjust to 0-100% range.
+                    progress?.Report(update.PackageDownloadProgress * 100d / 0.8d);
+                };
+
+                // Install packages
+                var result = await operation.AsTask(cancellationToken);
+                var resultType = GetAppUpdateResultType(result.OverallState);
+
+                return resultType == AppUpdateResultType.Completed
+                    ? Result<AppUpdateResultType>.Success(resultType)
+                    : Result<AppUpdateResultType>.Failure(resultType);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> IsUpdateAvailableAsync(CancellationToken cancellationToken = default)
         {
             if (!await SetStoreContextAsync() || _storeContext is null)
@@ -49,56 +99,19 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
             }
         }
 
-        /// <inheritdoc/>
-        public async Task<IResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
-        {
-            if (!await SetStoreContextAsync() || _storeContext is null)
-                return Result<AppUpdateResultType>.Failure(AppUpdateResultType.FailedUnknownError);
-
-            try
-            {
-                if (_updates is null && !await IsUpdateAvailableAsync(cancellationToken))
-                    return Result.Failure(new InvalidOperationException("No available updates found."));
-
-                // Switch to UI thread for installation of packages (as per docs)
-                await ThreadingService.ChangeThreadAsync();
-
-                // Add progress operation callback
-                var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
-                operation.Progress = (_, update) =>
-                {
-                    StateChanged?.Invoke(this, new UpdateChangedEventArgs(GetAppUpdateResultType(update.PackageUpdateState)));
-
-                    // According to docs, the PackageDownloadProgress ranges from 0.0 to 0.8 (inclusive)
-                    // which indicates the download progress where 0.8 is the end of the download stage.
-                    // Therefore, we need to re-adjust the value to fit the percentage range 0-100%
-                    var percentage = update.PackageDownloadProgress * 100 / 0.8d;
-
-                    // Report the percentage without rounding
-                    progress?.Report(percentage);
-                };
-
-                // Install packages
-                var result = await operation.AsTask(cancellationToken);
-                var resultType = GetAppUpdateResultType(result.OverallState);
-
-                return resultType == AppUpdateResultType.Completed
-                        ? Result<AppUpdateResultType>.Success(resultType)
-                        : Result<AppUpdateResultType>.Failure(resultType);
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure(ex);
-            }
-        }
-
         private async Task<bool> SetStoreContextAsync()
         {
             if (_storeContext is null)
             {
-                _storeContext = await Task.Run(StoreContext.GetDefault);
-                if (_storeContext is not null)
-                    WinRT_InitializeObject(_storeContext);
+                var uiContext = ThreadingService.GetContext();
+                await uiContext.PostOrExecuteAsync(() =>
+                {
+                    _storeContext = StoreContext.GetDefault();
+                    if (_storeContext is not null)
+                        WinRT_InitializeObject(_storeContext);
+
+                    return Task.CompletedTask;
+                });
             }
 
             return _storeContext is not null;

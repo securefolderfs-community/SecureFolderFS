@@ -1,0 +1,72 @@
+﻿<ResourceDictionary
+    x:Class="SecureFolderFS.Uno.Platforms.Desktop.DataTemplates.DesktopDataTemplates"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
+    xmlns:vm="clr-namespace:SecureFolderFS.Uno.Platforms.Desktop.ViewModels"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    mc:Ignorable="not_win">
+
+    <!--  TouchID Template  -->
+    <DataTemplate x:Key="TouchIDRegisterTemplate" x:DataType="vm:MacOSBiometricsCreationViewModel">
+        <StackPanel Spacing="24">
+            <!--  Icon  -->
+            <Grid>
+                <win:Image
+                    Height="64"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/touchid.png" />
+                <not_win:Image
+                    Height="64"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="/Assets/AppAssets/touchid.png" />
+            </Grid>
+
+            <!--  Title  -->
+            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=SetupMacOsBiometrics}" />
+
+            <!--  Authenticate  -->
+            <Button
+                Padding="24,6"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                Content="{l:ResourceString Rid=Setup}"
+                Style="{ThemeResource AccentButtonStyle}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!--  TouchID Template  -->
+    <DataTemplate x:Key="TouchIDLoginTemplate" x:DataType="vm:MacOSBiometricsLoginViewModel">
+        <StackPanel Spacing="24">
+            <!--  Icon  -->
+            <Grid>
+                <win:Image
+                    Height="64"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/touchid.png" />
+                <not_win:Image
+                    Height="64"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="/Assets/AppAssets/touchid.png" />
+            </Grid>
+
+            <!--  Title  -->
+            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=LoginMacOsBiometrics}" />
+
+            <!--  Authenticate  -->
+            <Button
+                Padding="24,6"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                Content="{l:ResourceString Rid=Authenticate}"
+                Style="{ThemeResource AccentButtonStyle}"
+                Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

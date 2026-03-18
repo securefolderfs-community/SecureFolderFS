@@ -1,5 +1,7 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
@@ -16,6 +18,14 @@ namespace SecureFolderFS.Maui.Views.Vault
         {
             BindingContext = this;
             InitializeComponent();
+        }
+
+        protected override void OnAppearing()
+        {
+            if (ViewModel?.VaultNavigation is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
+
+            base.OnAppearing();
         }
 
         /// <inheritdoc/>
@@ -36,7 +46,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                         Order = ToolbarItemOrder.Secondary
                     };
 
-                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, $"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", BindingMode.OneWay);
+                    toolbarItem.SetBinding(MenuItem.IsEnabledProperty, new Binding($"{nameof(ViewModel)}.{nameof(ViewModel.IsConnected)}", mode: BindingMode.OneWay, source: this));
                     ToolbarItems.Add(toolbarItem);
                 }
             }
@@ -54,11 +64,11 @@ namespace SecureFolderFS.Maui.Views.Vault
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            if (ViewModel is null)
+            if (ViewModel is null || e is not UnlockNavigationRequestedEventArgs args)
+            {
+                e.TaskCompletion?.TrySetResult(false);
                 return;
-
-            if (e is not UnlockNavigationRequestedEventArgs args)
-                return;
+            }
 
             ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
@@ -66,7 +76,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
             var browserViewModel = BrowserHelpers.CreateBrowser(
-                args.UnlockedVaultViewModel.StorageRoot.VirtualizedRoot,
+                args.UnlockedVaultViewModel.StorageRoot.PlaintextRoot,
                 args.UnlockedVaultViewModel.StorageRoot.Options,
                 args.UnlockedVaultViewModel,
                 outerNavigator: ViewModel.VaultNavigation);
@@ -101,7 +111,9 @@ namespace SecureFolderFS.Maui.Views.Vault
             dashboardViewModel.DashboardNavigation.Views.Add(overviewViewModel);
             dashboardViewModel.DashboardNavigation.Views.Add(propertiesViewModel);
 
-            await ViewModel.VaultNavigation.ForgetNavigateCurrentViewAsync(dashboardViewModel);
+            await ViewModel.VaultNavigation.ForgetNavigateSpecificViewAsync(dashboardViewModel, x
+                => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(args.UnlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
+            e.TaskCompletion?.TrySetResult(true);
         }
 
         public VaultLoginViewModel? ViewModel
@@ -110,6 +122,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginViewModel), typeof(LoginPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginViewModel), typeof(LoginPage));
     }
 }

@@ -64,23 +64,21 @@ namespace SecureFolderFS.Sdk.Helpers
             }
         }
 
-        public static async Task<IResultWithMessage<Severity>> ValidateExistingVault(IFolder vaultFolder, CancellationToken cancellationToken)
+        public static async Task<IResultWithMessage<Severity>> ValidateExistingVault(
+            IFolder vaultFolder,
+            CancellationToken cancellationToken)
         {
             var vaultService = DI.Service<IVaultService>();
             var validationResult = await vaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
+            if (validationResult.Successful)
+                return new MessageResult<Severity>(Severity.Success, "SelectedValidVault".ToLocalized());
 
-            if (!validationResult.Successful)
+            return validationResult.Exception switch
             {
-                if (validationResult.Exception is NotSupportedException)
-                {
-                    // Allow unsupported vaults to be migrated
-                    return new MessageResult<Severity>(Severity.Warning, "SelectedMayNotBeSupported".ToLocalized());
-                }
-
-                return new MessageResult<Severity>(Severity.Critical, "SelectedInvalidVault".ToLocalized(), false);
-            }
-
-            return new MessageResult<Severity>(Severity.Success, "SelectedValidVault".ToLocalized());
+                NotSupportedException => new MessageResult<Severity>(Severity.Warning, "SelectedMayNotBeSupported".ToLocalized()),
+                TimeoutException => new MessageResult<Severity>(Severity.Warning, "OperationTimedOut".ToLocalized(), false),
+                _ => new MessageResult<Severity>(Severity.Critical, "SelectedInvalidVault".ToLocalized(), false)
+            };
         }
 
         public static async Task<IResultWithMessage<Severity>> ValidateNewVault(IFolder vaultFolder, CancellationToken cancellationToken)

@@ -35,7 +35,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <OnPlatform x:TypeArguments="View">
+                <OnPlatform x:TypeArguments="HorizontalStackLayout">
                     <On Platform="Android">
                         <HorizontalStackLayout Spacing="4">
                             <Button

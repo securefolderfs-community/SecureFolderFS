@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.DataModels;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -12,6 +13,11 @@ namespace SecureFolderFS.Sdk.Models
         /// Gets the unique id associated with this widget.
         /// </summary>
         string WidgetId { get; }
+
+        /// <summary>
+        /// Gets the widget data model associated with this widget.
+        /// </summary>
+        WidgetDataModel DataModel { get; }
 
         /// <summary>
         /// Gets the data saved in this widget.

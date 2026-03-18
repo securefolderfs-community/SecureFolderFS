@@ -4,16 +4,14 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Storage;
-using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android
 {
     /// <inheritdoc cref="IFileSystem"/>
-    public sealed class AndroidFileSystem : IFileSystem
+    public sealed class AndroidFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.Android.FileSystem.FS_ID;
@@ -28,7 +26,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         }
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
@@ -39,7 +37,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
             fileSystemOptions.SetupValidators(specifics);
 
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new AndroidVFSRoot(storageRoot, specifics);
+            return new AndroidVfsRoot(storageRoot, specifics);
         }
     }
 }

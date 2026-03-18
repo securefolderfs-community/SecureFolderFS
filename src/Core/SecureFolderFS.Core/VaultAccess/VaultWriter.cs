@@ -20,7 +20,11 @@ namespace SecureFolderFS.Core.VaultAccess
             _serializer = serializer;
         }
 
-        public async Task WriteKeystoreAsync(VaultKeystoreDataModel? keystoreDataModel, CancellationToken cancellationToken)
+        /// <summary>
+        /// Writes the keystore as the specified type.
+        /// </summary>
+        public async Task WriteKeystoreAsync<TKeystore>(TKeystore? keystoreDataModel, CancellationToken cancellationToken)
+            where TKeystore : class
         {
             var keystoreFile = keystoreDataModel is null ? null : _vaultFolder switch
             {

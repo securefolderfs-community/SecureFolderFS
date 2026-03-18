@@ -1,6 +1,8 @@
 ﻿using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services.VaultPersistence;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -9,6 +11,11 @@ namespace SecureFolderFS.Sdk.Models
     /// </summary>
     public interface IWidgetsCollectionModel : INotifyCollectionChanged, IPersistable // TODO: Inherit from ICollection
     {
+        /// <summary>
+        /// Gets the collection of persisted vault widgets.
+        /// </summary>
+        public IVaultWidgets VaultWidgets { get; }
+
         /// <summary>
         /// Adds a new widget model identified by <paramref name="widgetId"/>.
         /// </summary>
@@ -22,6 +29,13 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="widgetId">The id of a widget.</param>
         /// <returns>If successful, returns true; otherwise false.</returns>
         bool RemoveWidget(string widgetId);
+
+        /// <summary>
+        /// Updates the order of widgets based on the provided list of widgets.
+        /// </summary>
+        /// <param name="orderedWidgets">The newly ordered list of widgets.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        void UpdateOrder(IList<IWidgetModel> orderedWidgets);
 
         /// <summary>
         /// Gets all persisted widgets.

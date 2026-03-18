@@ -42,12 +42,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 return;
             }
 
-            Title = $"{TransferType switch
+            Title = TransferType switch
             {
-                TransferType.Copy => "Copying",
-                TransferType.Move => "Moving",
-                _ => string.Empty,
-            }} {GetItemsCount(value)} item(s)";
+                TransferType.Copy => "CopyingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Move => "MovingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Delete => "DeletingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Extract => "ExtractingItems".ToLocalized(GetItemsCount(value)),
+                _ => "Loading".ToLocalized()
+            };
 
             return;
 
@@ -62,10 +64,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             }
         }
 
-        public CancellationTokenSource GetCancellation()
+        public CancellationTokenSource GetCancellation(CancellationToken? linkToken = null)
         {
             _cts?.Dispose();
-            _cts = new CancellationTokenSource();
+            _cts = linkToken is not null
+                ? CancellationTokenSource.CreateLinkedTokenSource(linkToken.Value)
+                : new CancellationTokenSource();
 
             CanCancel = true;
             return _cts;
@@ -92,6 +96,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             finally
             {
                 IsPickingFolder = false;
+                if (_tcs?.TrySetCanceled(CancellationToken.None) ?? false)
+                    await this.HideAsync();
             }
         }
 
@@ -112,10 +118,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             }
             else if (_cts is not null)
             {
-                CanCancel = false;
-                Title = "Cancelling".ToLocalized();
-                await _cts.CancelAsync();
-                await this.HideAsync();
+                try
+                {
+                    CanCancel = false;
+                    Title = "Cancelling".ToLocalized();
+                    await _cts.CancelAsync();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // CTS was already disposed, just hide
+                    await this.HideAsync();
+                }
             }
         }
     }

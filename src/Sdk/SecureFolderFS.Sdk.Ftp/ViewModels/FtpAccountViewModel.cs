@@ -8,6 +8,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Accounts.DataModels;
 using SecureFolderFS.Sdk.Accounts.ViewModels;
 using SecureFolderFS.Sdk.Ftp.DataModels;
+using SecureFolderFS.Sdk.Ftp.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
         private AsyncFtpClient? _ftpClient;
 
         [ObservableProperty] private string? _Address;
-        [ObservableProperty] private string? _Username;
+        [ObservableProperty] private string? _UserName;
         [ObservableProperty] private string? _Password;
 
         /// <inheritdoc/>
@@ -42,7 +43,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             if (_ftpClient is not null)
                 return new FtpFolder(_ftpClient, "/", string.Empty);
 
-            return await ConnectAsync(Address, Username, Password, cancellationToken);
+            return await ConnectAsync(Address, UserName, Password, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -65,7 +66,12 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             if (ftpAccountDataModel is null)
                 throw new ArgumentException("Data cannot be deserialized.");
 
-            return await ConnectAsync(ftpAccountDataModel.Address, ftpAccountDataModel.Username, ftpAccountDataModel.Password, cancellationToken);
+            // Update properties from the data model (except password for security reasons)
+            Address = ftpAccountDataModel.Address;
+            UserName = ftpAccountDataModel.UserName;
+
+            // Connect using the data model
+            return await ConnectAsync(ftpAccountDataModel.Address, ftpAccountDataModel.UserName, ftpAccountDataModel.Password, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -96,10 +102,10 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
         protected override async Task SaveAccountAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(propertyStore);
-            var dataModel = new FtpAccountDataModel(AccountId, DataSourceType, Username)
+            var dataModel = new FtpAccountDataModel(AccountId, DataSourceType, UserName)
             {
                 Address = Address,
-                Username = Username,
+                UserName = UserName,
                 Password = Password
             };
 
@@ -124,7 +130,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
 
                 _ftpClient = new AsyncFtpClient(uri.Host, username, password ?? string.Empty, uri.Port, config);
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(3000));
+                timeoutCts.CancelAfter(TimeSpan.FromMilliseconds(6000));
                 await _ftpClient.Connect(timeoutCts.Token);
                 IsConnected = true;
 
@@ -139,13 +145,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
 
         private void UpdateInputValidation()
         {
-            if (string.IsNullOrEmpty(Address) || string.IsNullOrEmpty(Username))
-            {
-                IsInputFilled = false;
-                return;
-            }
-
-            IsInputFilled = Address.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+            IsInputFilled = !string.IsNullOrEmpty(Address) && !string.IsNullOrEmpty(UserName);
         }
 
         partial void OnAddressChanged(string? value)
@@ -154,7 +154,7 @@ namespace SecureFolderFS.Sdk.Ftp.ViewModels
             UpdateInputValidation();
         }
 
-        partial void OnUsernameChanged(string? value)
+        partial void OnUserNameChanged(string? value)
         {
             _ = value;
             UpdateInputValidation();

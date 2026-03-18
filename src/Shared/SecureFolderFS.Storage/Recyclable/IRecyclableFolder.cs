@@ -14,6 +14,6 @@ namespace SecureFolderFS.Storage.Recyclable
         /// <param name="deleteImmediately">Determines whether to delete the item immediately or not.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task DeleteAsync(IStorableChild item, long sizeHint, bool deleteImmediately = false, CancellationToken cancellationToken = default);
+        Task DeleteAsync(IStorableChild item, long sizeHint = -1L, bool deleteImmediately = false, CancellationToken cancellationToken = default);
     }
 }

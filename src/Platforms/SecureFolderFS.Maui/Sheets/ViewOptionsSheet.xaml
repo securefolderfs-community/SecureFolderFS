@@ -4,10 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:btsh="http://pluginmauibottomsheet.com"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:scm="http://plugin.segmentedControl.maui"
     xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
-    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Components;assembly=SecureFolderFS.Sdk"
     x:Name="ThisSheet"
+    Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
     BindingContext="{x:Reference ThisSheet}"
     HasHandle="True"
     IsCancelable="True"
@@ -34,7 +36,7 @@
                                                 SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
-                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="False">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker
                                                 BindingContext="{x:Reference ThisSheet}"
@@ -46,22 +48,45 @@
                                                 SelectedItem="{Binding ViewModel.CurrentViewOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
-                                    <uco:OptionsControl
-                                        Title="{l:ResourceString Rid=ItemSize}"
-                                        IsSeparatorVisible="False"
-                                        IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
-                                        <uco:OptionsControl.Slot>
-                                            <ucc:ModernPicker
-                                                BindingContext="{x:Reference ThisSheet}"
-                                                HorizontalTextAlignment="End"
-                                                IsTransparent="True"
-                                                ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:PickerOptionViewModel}}"
-                                                ItemsSource="{Binding ViewModel.SizeOptions, Mode=OneWay}"
-                                                MinimumWidthRequest="120"
-                                                SelectedItem="{Binding ViewModel.CurrentSizeOption, Mode=TwoWay}" />
-                                        </uco:OptionsControl.Slot>
-                                    </uco:OptionsControl>
                                 </VerticalStackLayout>
+                            </uco:OptionsContainer.InnerContent>
+                        </uco:OptionsContainer>
+                        <uco:OptionsContainer
+                            Title="{l:ResourceString Rid=SizeOptions}"
+                            IsTransparent="True"
+                            IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
+                            <uco:OptionsContainer.InnerContent>
+                                <OnPlatform x:TypeArguments="Grid">
+                                    <On Platform="iOS">
+                                        <Grid HorizontalOptions="Fill">
+                                            <scm:SegmentedControl
+                                                x:Name="SizeSegments"
+                                                Background="Transparent"
+                                                HorizontalOptions="Fill"
+                                                Loaded="SizeSegments_Loaded"
+                                                SelectedIndexChanged="SizeSegments_SelectedIndexChanged"
+                                                SelectedTextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                                    Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                            Dark={StaticResource PrimaryContrastingDarkColor}}"
+                                                TintColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                                            Dark={StaticResource ShimFillSecondaryDarkColor}}">
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=SmallSize}" />
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=MediumSize}" />
+                                                <scm:SegmentedControlOption Text="{l:ResourceString Rid=LargeSize}" />
+                                            </scm:SegmentedControl>
+                                        </Grid>
+                                    </On>
+                                    <On Platform="Android">
+                                        <Grid>
+                                            <HorizontalStackLayout
+                                                x:Name="SizeSegmentsAndroid"
+                                                HorizontalOptions="Fill"
+                                                Loaded="SizeSegmentsAndroid_Loaded"
+                                                Spacing="8" />
+                                        </Grid>
+                                    </On>
+                                </OnPlatform>
                             </uco:OptionsContainer.InnerContent>
                         </uco:OptionsContainer>
                     </VerticalStackLayout>

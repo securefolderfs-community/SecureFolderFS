@@ -21,6 +21,42 @@
             <uc:IntroductionSlide.Slot>
                 <Image HeightRequest="300" Source="{AppThemeBinding Light='intro_light_apple_devices.png', Dark='intro_dark_apple_devices.png'}" />
             </uc:IntroductionSlide.Slot>
+            <uc:IntroductionSlide.SlotBelow>
+                <Label
+                    Margin="0,16,0,0"
+                    FontSize="10"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    Opacity="0.6">
+
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{l:ResourceString Rid=IntroPrefix}" />
+                            <Span
+                                Text="{l:ResourceString Rid=PrivacyPolicy}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="PrivacyPolicy_Tapped" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                            <Span Text="{l:ResourceString Rid=IntroMiddle}" />
+                            <Span
+                                Text="{l:ResourceString Rid=TermsOfService}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TermsOfService_Tapped" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                            <Span Text="{l:ResourceString Rid=IntroSuffix}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </uc:IntroductionSlide.SlotBelow>
         </uc:IntroductionSlide>
         <uc:IntroductionSlide
             x:Key="Slide1"
@@ -31,8 +67,10 @@
                     Margin="0,128,0,0"
                     Aspect="AspectFit"
                     HeightRequest="600"
-                    SourceFileName="{AppThemeBinding Light='intro_light_iphone_dashboard.png',
-                                                     Dark='intro_dark_iphone_dashboard.png'}"
+                    SourceFileName="{OnPlatform Android={AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                                         Dark='intro_dark_iphone_dashboard.png'},
+                                                iOS={AppThemeBinding Light='intro_light_iphone_dashboard.png',
+                                                                     Dark='intro_dark_iphone_dashboard.png'}}"
                     StartPoint="0.5,1"
                     EndPoint="0.5,0.3">
                     <ucc:MaskedImage.Stops>
@@ -57,19 +95,19 @@
                     <uc:IntroductionIconTile
                         Grid.Row="0"
                         Grid.Column="0"
-                        Source="source_gdrive.png" />
-                    <uc:IntroductionIconTile
-                        Grid.Row="0"
-                        Grid.Column="1"
                         Source="source_network_drive_ftp.png" />
                     <uc:IntroductionIconTile
                         Grid.Row="0"
+                        Grid.Column="1"
+                        Source="source_webdav.png" />
+                    <uc:IntroductionIconTile
+                        Grid.Row="0"
                         Grid.Column="2"
-                        Source="source_onedrive.png" />
+                        Source="source_gdrive.png" />
                     <uc:IntroductionIconTile
                         Grid.Row="1"
                         Grid.Column="0"
-                        Source="source_aws_s3.png" />
+                        Source="source_dropbox.png" />
                 </Grid>
             </uc:IntroductionSlide.Slot>
         </uc:IntroductionSlide>
@@ -108,32 +146,95 @@
             Margin="0,-60,0,-35"
             Opacity="0">
             <Ellipse
-                Margin="0,-70,0,50"
-                Fill="#106bbf"
-                HeightRequest="550"
-                Opacity="0.7"
+                HeightRequest="{OnPlatform Android='1000',
+                                           iOS='800'}"
+                Opacity="0.8"
+                ScaleX="2.5"
                 VerticalOptions="Start"
-                WidthRequest="1000" />
+                WidthRequest="550">
+
+                <Ellipse.Fill>
+                    <OnPlatform x:TypeArguments="Brush">
+                        <On Platform="iOS">
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0.1" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                                <GradientStop Offset="0.6" Color="#106bbf" />
+                                <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                            </RadialGradientBrush>
+                        </On>
+                        <On Platform="Android">
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0.1" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                                <GradientStop Offset="0.4" Color="#106bbf" />
+                                <GradientStop Offset="0.7" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                                <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                            </RadialGradientBrush>
+                        </On>
+                    </OnPlatform>
+                </Ellipse.Fill>
+            </Ellipse>
         </Grid>
 
         <!--  Foreground  -->
-        <av:AcrylicView Margin="0,-70,0,-35" EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark}, Light={av2:EffectStyle Light}}">
-            <Grid
-                x:Name="ForegroundView"
-                Opacity="0"
-                RowDefinitions="*,Auto"
-                RowSpacing="64">
-                <ucc:GalleryView
-                    x:Name="GalleryView"
-                    Grid.Row="0"
-                    Loaded="GalleryView_Loaded" />
-                <Button
-                    x:Name="Continue"
-                    Grid.Row="1"
-                    Margin="16,0,16,16"
-                    Clicked="Continue_Clicked"
-                    Text="{l:ResourceString Rid=Continue}" />
-            </Grid>
-        </av:AcrylicView>
+        <OnPlatform x:TypeArguments="Grid">
+            <On Platform="iOS">
+                <Grid>
+                    <av:AcrylicView
+                        Margin="0,-70,0,-16"
+                        CornerRadius="0"
+                        EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
+                                                      Light={av2:EffectStyle Light}}">
+                        <Grid
+                            x:Name="BlurredForegroundView"
+                            Opacity="0"
+                            RowDefinitions="*,Auto"
+                            RowSpacing="32">
+                            <ucc:GalleryView Grid.Row="0" Loaded="GalleryView_Loaded" />
+                            <Button
+                                Grid.Row="1"
+                                Margin="16,0,16,16"
+                                Clicked="Continue_Clicked"
+                                Loaded="Continue_Loaded"
+                                Text="{l:ResourceString Rid=Continue}"
+                                VerticalOptions="End" />
+                        </Grid>
+                    </av:AcrylicView>
+                </Grid>
+            </On>
+            <On Platform="Android">
+                <Grid
+                    x:Name="ForegroundView"
+                    Opacity="0"
+                    RowDefinitions="*,Auto"
+                    RowSpacing="32">
+                    <ucc:GalleryView Grid.Row="0" Loaded="GalleryView_Loaded" />
+                    <Button
+                        Grid.Row="1"
+                        Margin="16,0,16,16"
+                        Clicked="Continue_Clicked"
+                        Loaded="Continue_Loaded"
+                        Text="{l:ResourceString Rid=Continue}"
+                        VerticalOptions="End" />
+                </Grid>
+            </On>
+        </OnPlatform>
+
+        <OnPlatform x:TypeArguments="Grid">
+            <On Platform="Android">
+                <Grid
+                    x:Name="SystemNavBarGradient"
+                    HeightRequest="140"
+                    HorizontalOptions="Fill"
+                    Opacity="0"
+                    VerticalOptions="Start">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource PrimaryLightColor}, Dark={StaticResource PrimaryDarkColor}}" />
+                            <GradientStop Offset="0.6" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
+            </On>
+        </OnPlatform>
     </Grid>
 </ContentPage>

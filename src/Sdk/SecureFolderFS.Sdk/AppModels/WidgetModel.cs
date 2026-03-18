@@ -11,28 +11,30 @@ namespace SecureFolderFS.Sdk.AppModels
     public sealed class WidgetModel : IWidgetModel
     {
         private readonly IPersistable _widgetsStore;
-        private readonly WidgetDataModel _widgetDataModel;
 
         /// <inheritdoc/>
         public string WidgetId { get; }
 
+        /// <inheritdoc/>
+        public WidgetDataModel DataModel { get; }
+
         public WidgetModel(string widgetId, IPersistable widgetsStore, WidgetDataModel widgetDataModel)
         {
             WidgetId = widgetId;
+            DataModel = widgetDataModel;
             _widgetsStore = widgetsStore;
-            _widgetDataModel = widgetDataModel;
         }
 
         /// <inheritdoc/>
         public Task<string?> GetWidgetDataAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_widgetDataModel.WidgetsData);
+            return Task.FromResult(DataModel.WidgetsData);
         }
 
         /// <inheritdoc/>
         public Task<bool> SetWidgetDataAsync(string? value, CancellationToken cancellationToken = default)
         {
-            _widgetDataModel.WidgetsData = value;
+            DataModel.WidgetsData = value;
             return _widgetsStore.TrySaveAsync(cancellationToken);
         }
     }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
@@ -12,8 +13,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     /// A base class for all widget view models.
     /// </summary>
     [Bindable(true)]
-    public abstract class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public abstract partial class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable, IViewable
     {
+        [ObservableProperty] private string? _Title;
+        [ObservableProperty] private ICommand? _RemoveWidgetCommand;
+
         /// <summary>
         /// Gets the widget model interface used for manipulating widget data.
         /// </summary>

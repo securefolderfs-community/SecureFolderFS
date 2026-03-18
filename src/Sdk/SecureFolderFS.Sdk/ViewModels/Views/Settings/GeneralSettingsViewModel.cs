@@ -1,21 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Storage.Pickers;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    [Inject<ILocalizationService>, Inject<IApplicationService>]
+    [Inject<ILocalizationService>, Inject<IApplicationService>, Inject<IFileExplorerService>]
     [Bindable(true)]
     public sealed partial class GeneralSettingsViewModel : BaseSettingsViewModel
     {
@@ -60,6 +64,36 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         private Task RestartAsync()
         {
             return ApplicationService.TryRestartAsync();
+        }
+
+        [RelayCommand]
+        private async Task ExportSettingsAsync(CancellationToken cancellationToken)
+        {
+            await using var exportStream = await UserSettings.ExportAsync(cancellationToken);
+            if (exportStream == System.IO.Stream.Null)
+                return;
+
+            var filter = new Dictionary<string, string>()
+            {
+                { Constants.Settings.EXPORTED_ARCHIVE_FILENAME, Constants.Settings.EXPORTED_ARCHIVE_EXTENSION }
+            };
+            await FileExplorerService.SaveFileAsync(Constants.Settings.EXPORTED_ARCHIVE_FILENAME, exportStream, filter, cancellationToken);
+        }
+
+        [RelayCommand]
+        private async Task ImportSettingsAsync(CancellationToken cancellationToken)
+        {
+            var pickedFile = await FileExplorerService.PickFileAsync(new NameFilter([ Constants.Settings.EXPORTED_ARCHIVE_EXTENSION ]), false, cancellationToken);
+            if (pickedFile is null)
+                return;
+
+            await using var fileStream = await pickedFile.OpenReadAsync(cancellationToken);
+            var success = await UserSettings.ImportAsync(fileStream, cancellationToken);
+            if (!success)
+                return;
+
+            // Settings were imported successfully, a restart is recommended
+            IsRestartRequired = true;
         }
 
         async partial void OnSelectedLanguageChanged(LanguageViewModel? value)

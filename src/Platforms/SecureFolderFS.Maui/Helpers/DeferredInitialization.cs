@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Maui.Helpers
@@ -6,14 +7,16 @@ namespace SecureFolderFS.Maui.Helpers
         where T : notnull
     {
         private T? _context;
-        private bool _isProcessing;
         private readonly int _maxParallelization;
-        private readonly List<IAsyncInitialize> _initializations = new();
+        private readonly Channel<IAsyncInitialize> _channel;
+        private Task? _processingTask;
         private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public DeferredInitialization(int maxParallelization)
         {
             _maxParallelization = maxParallelization;
+            _channel = Channel.CreateUnbounded<IAsyncInitialize>(
+                new UnboundedChannelOptions { SingleReader = true, AllowSynchronousContinuations = false });
         }
 
         public void SetContext(T context)
@@ -22,8 +25,9 @@ namespace SecureFolderFS.Maui.Helpers
                 return;
 
             _context = context;
-            lock (_initializations)
-                _initializations.Clear();
+
+            // Drain the channel without blocking
+            while (_channel.Reader.TryRead(out _)) { }
         }
 
         public void Enqueue(IAsyncInitialize asyncInitialize)
@@ -31,56 +35,50 @@ namespace SecureFolderFS.Maui.Helpers
             if (_context is null)
                 return;
 
-            lock (_initializations)
-                _initializations.Add(asyncInitialize);
-
-            _ = StartProcessingAsync();
+            _channel.Writer.TryWrite(asyncInitialize);
+            EnsureProcessing();
         }
 
-        private async Task StartProcessingAsync()
+        private void EnsureProcessing()
         {
-            await _semaphore.WaitAsync();
+            if (_processingTask is { IsCompleted: false })
+                return;
 
+            _semaphore.Wait();
             try
             {
-                if (_isProcessing)
+                if (_processingTask is { IsCompleted: false })
                     return;
 
-                _isProcessing = true;
+                _processingTask = Task.Run(ProcessLoopAsync);
             }
             finally
             {
                 _semaphore.Release();
             }
+        }
 
-            try
+        private async Task ProcessLoopAsync()
+        {
+            var batch = new List<IAsyncInitialize>(_maxParallelization);
+
+            while (await _channel.Reader.WaitToReadAsync())
             {
-                while (true)
-                {
-                    IAsyncInitialize[] batch;
-                    lock (_initializations)
-                    {
-                        if (_initializations.Count == 0)
-                            break;
+                batch.Clear();
+                while (batch.Count < _maxParallelization && _channel.Reader.TryRead(out var item))
+                    batch.Add(item);
 
-                        batch = _initializations.Take(_maxParallelization).ToArray();
-                        _initializations.RemoveRange(0, batch.Length);
-                    }
+                if (batch.Count == 0)
+                    continue;
 
-                    var tasks = batch.Select(init => init.InitAsync());
-                    await Task.Run(async () => await Task.WhenAll(tasks));
-                }
-            }
-            finally
-            {
-                _isProcessing = false;
+                await Task.WhenAll(batch.Select(init => init.InitAsync()));
             }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _initializations.Clear();
+            _channel.Writer.TryComplete();
             _semaphore.Dispose();
         }
     }

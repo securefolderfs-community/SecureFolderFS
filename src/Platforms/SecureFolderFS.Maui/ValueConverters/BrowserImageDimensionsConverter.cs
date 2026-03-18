@@ -25,19 +25,21 @@ namespace SecureFolderFS.Maui.ValueConverters
             var large = System.Convert.ToDouble(largeStr);
 
             // Get columns count
-            var columns = viewType switch
+            var columnsWidth = viewType switch
             {
                 BrowserViewType.SmallGridView or BrowserViewType.SmallGalleryView => small,
                 BrowserViewType.MediumGridView or BrowserViewType.MediumGalleryView => medium,
                 BrowserViewType.LargeGridView or BrowserViewType.LargeGalleryView => large,
-                _ => 3
+                _ => 64d
             };
+
+            return columnsWidth;
 
             // Calculate dimensions with spacing consideration
             var spacing = 0;
             var screenWidth = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
-            var availableWidth = screenWidth - (spacing * (columns + 1));
-            var itemWidth = availableWidth / columns;
+            var availableWidth = screenWidth - (spacing * (columnsWidth + 1));
+            var itemWidth = availableWidth / columnsWidth;
 
             return itemWidth;
         }

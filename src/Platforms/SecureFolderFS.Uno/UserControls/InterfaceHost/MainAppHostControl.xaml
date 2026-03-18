@@ -8,19 +8,14 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Navigation"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.VaultList"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Loaded="MainAppHostControl_Loaded"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-    </UserControl.Resources>
-
     <NavigationView
         x:Name="Sidebar"
+        x:FieldModifier="public"
         AllowDrop="True"
         DisplayModeChanged="Sidebar_DisplayModeChanged"
         DragOver="Sidebar_DragOver"
@@ -105,10 +100,7 @@
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon
-                            Margin="2,0,2,-4"
-                            FontSize="16"
-                            Glyph="&#xECC8;" />
+                        <FontIcon FontSize="16" Glyph="&#xECC8;" />
                         <TextBlock Text="{l:ResourceString Rid=NewVault}" />
                     </StackPanel>
                 </Button>
@@ -209,31 +201,30 @@
                                     Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                             </StackPanel>
 
-                            <FontIcon
-                                x:Name="LockIcon"
-                                Grid.Column="1"
-                                x:Load="{x:Bind IsUnlocked, Mode=OneWay}"
-                                FontSize="14"
-                                Glyph="&#xE785;"
-                                Opacity="0.6"
-                                Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                            <Grid Grid.Column="1" Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                                <FontIcon
+                                    x:Name="LockIcon"
+                                    FontSize="14"
+                                    Glyph="&#xE785;"
+                                    Opacity="0.6"
+                                    Visibility="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </Grid>
 
                             <TextBox
                                 x:Name="RenameBox"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2"
                                 VerticalAlignment="Center"
-                                x:Load="{x:Bind IsRenaming, Mode=OneWay}"
                                 KeyDown="RenameBox_KeyDown"
-                                Loaded="RenameBox_Loaded"
                                 LostFocus="RenameBox_LostFocus"
-                                Text="{x:Bind VaultViewModel.Title, Mode=OneWay}" />
+                                Text="{x:Bind VaultViewModel.Title, Mode=OneWay}"
+                                Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout x:Name="ItemFlyout">
-                            <!--  Show in Explorer  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault}">
+                            <!--  Show in File Browser  -->
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='MacOS{LOCALIZE|Finder}Windows{LOCALIZE|FileExplorer}Default{LOCALIZE|FileBrowser}'}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
@@ -257,6 +248,16 @@
                                 Text="Change icon">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70F;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Create shortcut file  -->
+                            <MenuFlyoutItem
+                                Command="{x:Bind CreateShortcutCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind CanCreateShortcut, Mode=OneWay}"
+                                Text="{l:ResourceString Rid=CreateShortcut}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE71B;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 
@@ -288,7 +289,7 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind RequestLockCommand, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=LockVault}"
-                                Visibility="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                Visibility="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72E;" />
                                 </MenuFlyoutItem.Icon>
@@ -297,7 +298,7 @@
                             <!--  Remove  -->
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
-                                IsEnabled="{x:Bind IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                IsEnabled="{x:Bind VaultViewModel.IsUnlocked, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                                 Text="{l:ResourceString Rid=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />

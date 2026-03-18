@@ -2,7 +2,9 @@
 
     <Style ApplyToDerivedTypes="True" TargetType="Page">
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillColorBrush}" />
+        <Setter Property="Background" Value="{StaticResource ThemeBackgroundFillPrimaryColorBrush}" />
+        <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
+        <Setter Property="Shell.NavBarIsVisible" Value="True" />
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
@@ -17,7 +19,7 @@
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Style.Triggers>
             <DataTrigger
-                Binding="{Binding IsSelected}"
+                Binding="{Binding IsSelected, Mode=OneWay}"
                 TargetType="Grid"
                 Value="True">
                 <Setter Property="Background" Value="{StaticResource ThemeSecondaryColorBrush}" />

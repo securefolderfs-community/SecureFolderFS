@@ -1,0 +1,97 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Vault.BrowserSearchModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Vault"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;assembly=SecureFolderFS.Sdk"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:BrowserSearchModalPage"
+    CloseCommand="{Binding CloseCommand, Mode=OneWay}"
+    CloseText="{l:ResourceString Rid=Cancel}"
+    Shell.PresentationMode="ModalAnimated">
+
+    <md:BaseModalPage.ModalContent>
+        <Grid RowDefinitions="Auto,*">
+            <SearchBar
+                x:Name="SearchInput"
+                Grid.Row="0"
+                Placeholder="{l:ResourceString Rid=Search}"
+                SearchButtonPressed="SearchInput_SearchButtonPressed"
+                Text="{Binding ViewModel.Query, Mode=TwoWay}" />
+
+            <HorizontalStackLayout
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding ViewModel.HasSearched, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                Spacing="8"
+                VerticalOptions="Center">
+                <CheckBox IsChecked="{Binding ViewModel.IncludeChildDirectories, Mode=TwoWay}" VerticalOptions="Center" />
+                <Label Text="Include child directories" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <CollectionView
+                x:Name="ResultsCollectionView"
+                Grid.Row="1"
+                IsVisible="{Binding ViewModel.HasSearched, Mode=OneWay}"
+                ItemSizingStrategy="MeasureFirstItem"
+                ItemsSource="{Binding ViewModel.SearchResults, Mode=OneWay}"
+                SelectionChanged="ResultsCollectionView_SelectionChanged"
+                SelectionMode="Single"
+                VerticalOptions="FillAndExpand"
+                VerticalScrollBarVisibility="Always">
+                <CollectionView.EmptyView>
+                    <Grid>
+                        <Grid IsVisible="{Binding ViewModel.IsSearching, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
+                            <Label
+                                FontSize="18"
+                                HorizontalOptions="Center"
+                                IsVisible="{Binding ViewModel.SearchResults.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}, ConverterParameter='invert'}"
+                                Text="{l:ResourceString Rid=NoItems}"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <ActivityIndicator
+                            HorizontalOptions="Center"
+                            IsRunning="{Binding ViewModel.IsSearching, Mode=OneWay}"
+                            IsVisible="{Binding ViewModel.IsSearching, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SearchBrowserItemViewModel">
+                        <Grid
+                            x:Name="SourceGrid"
+                            Padding="12,8"
+                            ColumnDefinitions="Auto,*"
+                            ColumnSpacing="12">
+                            <ContentView
+                                Grid.Column="0"
+                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                HeightRequest="32"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                WidthRequest="32" />
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="4"
+                                VerticalOptions="Center">
+                                <Label
+                                    HorizontalOptions="Start"
+                                    LineBreakMode="TailTruncation"
+                                    Text="{Binding Title, Mode=OneWay}" />
+                                <Label
+                                    FontSize="10"
+                                    HorizontalOptions="Start"
+                                    LineBreakMode="TailTruncation"
+                                    Opacity="0.6"
+                                    Text="{Binding Id, Mode=OneWay}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

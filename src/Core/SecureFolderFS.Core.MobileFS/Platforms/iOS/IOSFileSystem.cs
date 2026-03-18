@@ -6,12 +6,11 @@ using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using IFileSystem = SecureFolderFS.Storage.VirtualFileSystem.IFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
 {
-    /// <inheritdoc cref="IFileSystem"/>
-    public sealed class IOSFileSystem : IFileSystem
+    /// <inheritdoc cref="IFileSystemInfo"/>
+    public sealed class IOSFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
         public string Id { get; } = Constants.IOS.FileSystem.FS_ID;
@@ -26,18 +25,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
         }
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
+        public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             if (unlockContract is not IWrapper<Cryptography.Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fileSystemOptions = VirtualFileSystemOptions.ToOptions(options.AppendContract(unlockContract), () => new HealthStatistics(), static () => new FileSystemStatistics());
+            var fileSystemOptions = VirtualFileSystemOptions.ToOptions(options.AppendContract(unlockContract), static () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
             fileSystemOptions.SetupValidators(specifics);
 
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new IOSVFSRoot(storageRoot, specifics);
+            return new IOSVfsRoot(storageRoot, specifics);
         }
     }
 }

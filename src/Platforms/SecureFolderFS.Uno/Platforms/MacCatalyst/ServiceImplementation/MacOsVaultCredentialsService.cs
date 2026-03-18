@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels.Authentication;
+using SecureFolderFS.Uno.ViewModels;
 
 namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 {
@@ -30,6 +34,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
                 {
                     Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
                     Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    Core.Constants.Vault.Authentication.AUTH_HARDWARE_KEY => YubiKeyViewModel.IsSupported()
+                            ? new YubiKeyLoginViewModel(vaultFolder, config.Uid)
+                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform. Please insert your YubiKey."),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -44,6 +51,14 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 
             // Key File
             yield return new KeyFileCreationViewModel(vaultId);
+
+            var iapService = DI.Service<IIapService>();
+            if (await iapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                // YubiKey
+                if (YubiKeyViewModel.IsSupported())
+                    yield return new YubiKeyCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") };
+            }
 
             await Task.CompletedTask;
         }

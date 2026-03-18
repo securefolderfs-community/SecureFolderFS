@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.Extensions
         }
 
         /// <inheritdoc cref="IRecycleBinService.GetRecycleBinAsync"/>
-        public static async Task<IRecycleBinFolder?> TryGetRecycleBinAsync(this IRecycleBinService recycleBinService, IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public static async Task<IRecycleBinFolder?> TryGetRecycleBinAsync(this IRecycleBinService recycleBinService, IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.Extensions
         }
 
         /// <inheritdoc cref="IRecycleBinService.GetOrCreateRecycleBinAsync"/>
-        public static async Task<IRecycleBinFolder?> TryGetOrCreateRecycleBinAsync(this IRecycleBinService recycleBinService, IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public static async Task<IRecycleBinFolder?> TryGetOrCreateRecycleBinAsync(this IRecycleBinService recycleBinService, IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Sdk.Extensions
         }
 
         /// <inheritdoc cref="IRecycleBinService.RecalculateSizesAsync"/>
-        public static async Task<bool> TryRecalculateSizesAsync(this IRecycleBinService recycleBinService, IVFSRoot vfsRoot, CancellationToken cancellationToken = default)
+        public static async Task<bool> TryRecalculateSizesAsync(this IRecycleBinService recycleBinService, IVfsRoot vfsRoot, CancellationToken cancellationToken = default)
         {
             try
             {

@@ -1,9 +1,10 @@
-﻿using SecureFolderFS.Shared.Models;
+﻿using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Core.FileSystem.Buffers
 {
     /// <inheritdoc cref="BufferHolder"/>
-    internal sealed class ChunkBuffer : BufferHolder
+    internal sealed class ChunkBuffer : BufferHolder, IChangeTracker
     {
         /// <summary>
         /// Gets or sets the value that determines whether the chunk has been modified or not.

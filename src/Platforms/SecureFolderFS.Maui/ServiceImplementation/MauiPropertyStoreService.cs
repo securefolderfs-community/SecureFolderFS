@@ -30,7 +30,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             var rawString = await SecureStorage.Default.GetAsync(key);
             if (string.IsNullOrEmpty(rawString))
                 return defaultValue is not null ? defaultValue.Invoke() : default;
-            
+
             var deserialized = await _serializer.TryDeserializeFromStringAsync<TValue>(rawString, cancellationToken);
             return deserialized is not null ? deserialized : (defaultValue is not null ? defaultValue.Invoke() : default);
         }
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             var serialized = await _serializer.TrySerializeToStringAsync(value, cancellationToken);
             await SecureStorage.Default.SetAsync(key, serialized ?? string.Empty);
-            
+
             return true;
         }
 
