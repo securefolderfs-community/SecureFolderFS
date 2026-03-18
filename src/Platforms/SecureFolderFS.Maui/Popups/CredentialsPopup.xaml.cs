@@ -99,11 +99,17 @@ namespace SecureFolderFS.Maui.Popups
 
         private async void ResetViewButton_Click(object? sender, EventArgs e)
         {
+            if (sender is not Button button)
+                return;
+            
             if (ViewModel?.SelectedViewModel is not CredentialsResetViewModel credentialsResetViewModel)
                 return;
 
             try
             {
+                button.IsEnabled = false;
+                await Task.Delay(100);
+
                 await credentialsResetViewModel.ConfirmAsync(default);
                 await HideAsync();
             }
@@ -111,16 +117,26 @@ namespace SecureFolderFS.Maui.Popups
             {
                 // TODO: Report to user
                 _ = ex;
-            }    
+            }
+            finally
+            {
+                button.IsEnabled = true;
+            }
         }
 
         private async void ConfirmationViewButton_Click(object? sender, EventArgs e)
         {
+            if (sender is not Button button)
+                return;
+            
             if (ViewModel?.SelectedViewModel is not CredentialsConfirmationViewModel credentialsConfirmation)
                 return;
 
             try
             {
+                button.IsEnabled = false;
+                await Task.Delay(100);
+                
                 await credentialsConfirmation.ConfirmAsync(default);
                 await HideAsync();
             }
@@ -128,6 +144,10 @@ namespace SecureFolderFS.Maui.Popups
             {
                 // TODO: Report to user
                 _ = ex;
+            }
+            finally
+            {
+                button.IsEnabled = true;
             }
         }
 
@@ -137,7 +157,7 @@ namespace SecureFolderFS.Maui.Popups
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(CredentialsOverlayViewModel), typeof(CredentialsPopup), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(CredentialsOverlayViewModel), typeof(CredentialsPopup));
     }
 }
 

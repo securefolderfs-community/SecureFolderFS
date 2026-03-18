@@ -214,7 +214,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                 })
                 {
                     BaseAddress = _baseUri,
-                    Timeout = TimeSpan.FromSeconds(10)
+                    Timeout = TimeSpan.FromSeconds(5)
                 };
 
                 if (!string.IsNullOrEmpty(username))

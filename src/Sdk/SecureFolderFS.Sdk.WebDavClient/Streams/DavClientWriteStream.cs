@@ -138,6 +138,7 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
 
         private async Task UploadAsync()
         {
+            _buffer.Position = 0L;
             var response = await _client.PutFile(_fileUri, _buffer);
             if (!response.IsSuccessful)
                 throw new IOException($"Failed to upload file '{_fileUri}': {response.StatusCode}");
