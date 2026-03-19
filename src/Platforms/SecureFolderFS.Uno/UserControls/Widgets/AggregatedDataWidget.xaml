@@ -8,7 +8,7 @@
     x:Name="HealthControl"
     mc:Ignorable="d">
 
-    <Grid ColumnSpacing="16">
+    <Grid Margin="0,8" ColumnSpacing="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />

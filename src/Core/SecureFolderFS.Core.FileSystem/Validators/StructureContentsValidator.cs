@@ -38,6 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (PathHelpers.IsCoreName(item.Name))
                     continue;
 

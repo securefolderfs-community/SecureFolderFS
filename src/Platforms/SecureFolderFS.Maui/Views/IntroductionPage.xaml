@@ -64,13 +64,14 @@
             Subtitle="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
             <uc:IntroductionSlide.Slot>
                 <ucc:MaskedImage
-                    Margin="0,128,0,0"
+                    Margin="0,0,0,-200"
                     Aspect="AspectFit"
                     HeightRequest="600"
                     SourceFileName="{OnPlatform Android={AppThemeBinding Light='intro_light_iphone_dashboard.png',
                                                                          Dark='intro_dark_iphone_dashboard.png'},
                                                 iOS={AppThemeBinding Light='intro_light_iphone_dashboard.png',
                                                                      Dark='intro_dark_iphone_dashboard.png'}}"
+                    VerticalOptions="Center"
                     StartPoint="0.5,1"
                     EndPoint="0.5,0.3">
                     <ucc:MaskedImage.Stops>
@@ -192,7 +193,7 @@
                             <ucc:GalleryView Grid.Row="0" Loaded="GalleryView_Loaded" />
                             <Button
                                 Grid.Row="1"
-                                Margin="16,0,16,16"
+                                Margin="24,0,24,24"
                                 Clicked="Continue_Clicked"
                                 Loaded="Continue_Loaded"
                                 Text="{l:ResourceString Rid=Continue}"
