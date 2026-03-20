@@ -21,6 +21,12 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
             InternalStream = memoryStream;
         }
 
+        public MemoryFileEx(string id, string name, MemoryStream memoryStream)
+            : base(id, name, memoryStream)
+        {
+            InternalStream = memoryStream;
+        }
+
         public MemoryFileEx(string id, string name, MemoryStream memoryStream, MemoryFolder? parent, IStreamSource? streamSource = null)
             : base(id, name, memoryStream)
         {

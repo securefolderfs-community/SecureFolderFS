@@ -109,6 +109,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     .OfType<PanPinchContainer>()
                     .FirstOrDefault();
 
+                panPinchContainer?.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
                 panPinchContainer?.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
             }
         }

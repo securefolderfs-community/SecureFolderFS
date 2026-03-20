@@ -13,6 +13,13 @@ namespace SecureFolderFS.Sdk.Services
     public interface IFileExplorerService : IFilePicker, IFolderPicker
     {
         /// <summary>
+        /// Awaits the user input and picks media items from the system gallery.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation and returns picked media items.</returns>
+        Task<IEnumerable<IStorable>> PickGalleryItemsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Tries to open the provided <paramref name="folder"/> in platform's default file explorer.
         /// </summary>
         /// <param name="folder">The folder to open the file explorer at.</param>

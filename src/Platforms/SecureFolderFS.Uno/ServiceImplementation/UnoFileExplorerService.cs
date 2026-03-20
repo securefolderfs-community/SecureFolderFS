@@ -17,6 +17,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
+        public Task<IEnumerable<IStorable>> PickGalleryItemsAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromException<IEnumerable<IStorable>>(new NotSupportedException("Gallery picker is not supported on Uno."));
+        }
+
+        /// <inheritdoc/>
         public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();

@@ -21,6 +21,25 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
+        public async Task<IEnumerable<IStorable>> PickGalleryItemsAsync(CancellationToken cancellationToken = default)
+        {
+            var intent = new Intent(Intent.ActionOpenDocument)
+                .AddCategory(Intent.CategoryOpenable)
+                .PutExtra(Intent.ExtraAllowMultiple, true)
+                .SetType("*/*")
+                .PutExtra(Intent.ExtraMimeTypes, new[] { "image/*", "video/*" });
+
+            var pickerIntent = Intent.CreateChooser(intent, "Select photos or videos");
+
+            // GalleryPicker 0x2AFA
+            var uris = await StartActivityForUrisAsync(pickerIntent, 0x2AFA);
+            if (uris.Count == 0 || MainActivity.Instance is null)
+                return [];
+
+            return uris.Select(x => (IStorable)new AndroidFile(x, MainActivity.Instance)).ToArray();
+        }
+
+        /// <inheritdoc/>
         public async Task<IFile?> PickFileAsync(PickerOptions? options, bool offerPersistence = true, CancellationToken cancellationToken = default)
         {
             var intent = new Intent(Intent.ActionOpenDocument)
@@ -124,24 +143,43 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
         private async Task<AndroidUri?> StartActivityAsync(Intent? pickerIntent, int requestCode)
         {
-            AndroidUri? resultUri = null;
+            var uris = await StartActivityForUrisAsync(pickerIntent, requestCode);
+            return uris.FirstOrDefault();
+        }
+
+        private async Task<IReadOnlyList<AndroidUri>> StartActivityForUrisAsync(Intent? pickerIntent, int requestCode)
+        {
             var tcs = new TaskCompletionSource<Intent?>();
 
             var activity = MainActivity.Instance;
             if (activity is null)
-                return null;
+                return [];
 
             activity.ActivityResult += OnActivityResult;
             activity.StartActivityForResult(pickerIntent, requestCode);
 
             var result = await tcs.Task;
-            if (result?.Data is { } uri)
-                resultUri = uri;
-
             if (result?.HasExtra("error") == true)
                 throw new Exception(result.GetStringExtra("error"));
 
-            return resultUri;
+            if (result is null)
+                return [];
+
+            var uris = new List<AndroidUri>();
+            if (result.Data is { } singleUri)
+                uris.Add(singleUri);
+
+            if (result.ClipData is { } clipData)
+            {
+                for (var i = 0; i < clipData.ItemCount; i++)
+                {
+                    var clipUri = clipData.GetItemAt(i)?.Uri;
+                    if (clipUri is not null)
+                        uris.Add(clipUri);
+                }
+            }
+
+            return uris.DistinctBy(x => x.ToString()).ToArray();
 
             void OnActivityResult(int rC, Result resultCode, Intent? data)
             {
