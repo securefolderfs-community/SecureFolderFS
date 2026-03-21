@@ -8,6 +8,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class StorableTypeOverlayViewModel : BaseDesignationViewModel
     {
         [ObservableProperty] private StorableType _StorableType;
+        [ObservableProperty] private bool _IncludeGallery;
+        [ObservableProperty] private string? _SelectedOption;
 
         public StorableTypeOverlayViewModel()
         {

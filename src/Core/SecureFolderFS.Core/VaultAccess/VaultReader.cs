@@ -45,6 +45,14 @@ namespace SecureFolderFS.Core.VaultAccess
             return await ReadDataAsync<VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
         }
 
+        public async Task<V4VaultConfigurationDataModel> ReadV4ConfigurationAsync(CancellationToken cancellationToken)
+        {
+            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
+                throw new FileNotFoundException("The configuration file was not found.");
+
+            return await ReadDataAsync<V4VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
+        }
+
         public async Task<VersionDataModel> ReadVersionAsync(CancellationToken cancellationToken)
         {
             // Get configuration file

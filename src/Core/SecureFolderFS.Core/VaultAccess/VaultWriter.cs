@@ -46,6 +46,17 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
         }
 
+        public async Task WriteV4ConfigurationAsync(V4VaultConfigurationDataModel? configDataModel, CancellationToken cancellationToken)
+        {
+            var configFile = configDataModel is null ? null : _vaultFolder switch
+            {
+                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, true, cancellationToken),
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) as IFile
+            };
+
+            await WriteDataAsync(configFile, configDataModel, cancellationToken);
+        }
+
         public async Task WriteAuthenticationAsync<TCapability>(string fileName, TCapability? authDataModel, CancellationToken cancellationToken)
             where TCapability : VaultCapabilityDataModel
         {

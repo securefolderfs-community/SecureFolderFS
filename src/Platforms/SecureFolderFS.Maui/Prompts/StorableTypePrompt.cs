@@ -20,20 +20,37 @@ namespace SecureFolderFS.Maui.Prompts
             var page = Shell.Current.CurrentPage;
             var fileText = "File".ToLocalized();
             var folderText = "Folder".ToLocalized();
+            var galleryText = "Gallery".ToLocalized();
+            var options = ViewModel.IncludeGallery
+                ? new[] { fileText, folderText, galleryText }
+                : new[] { fileText, folderText };
             var chosenOption = await page.DisplayActionSheetAsync(
                 ViewModel.Title,
                 "Cancel".ToLocalized(),
                 null,
-                fileText, folderText);
+                options);
+
+            ViewModel.SelectedOption = null;
 
             if (chosenOption == fileText)
+            {
                 ViewModel.StorableType = StorableType.File;
+                ViewModel.SelectedOption = nameof(StorableType.File);
+            }
             else if (chosenOption == folderText)
+            {
                 ViewModel.StorableType = StorableType.Folder;
+                ViewModel.SelectedOption = nameof(StorableType.Folder);
+            }
+            else if (ViewModel.IncludeGallery && chosenOption == galleryText)
+            {
+                ViewModel.StorableType = StorableType.None;
+                ViewModel.SelectedOption = galleryText;
+            }
             else
                 ViewModel.StorableType = StorableType.None;
 
-            return ViewModel.StorableType == StorableType.None ? Result.Failure(null) : Result.Success;
+            return string.IsNullOrEmpty(ViewModel.SelectedOption) ? Result.Failure(null) : Result.Success;
         }
 
         /// <inheritdoc/>

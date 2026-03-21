@@ -257,7 +257,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     if (result.Aborted())
                         return;
 
-                    itemType = storableTypeViewModel.StorableType.ToString();
+                    itemType = storableTypeViewModel.SelectedOption ?? storableTypeViewModel.StorableType.ToString();
                 }
             }
 
@@ -298,12 +298,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             if (itemType is not ("Folder" or "File"))
             {
-                var storableTypeViewModel = new StorableTypeOverlayViewModel();
+                var storableTypeViewModel = new StorableTypeOverlayViewModel
+                {
+                    IncludeGallery = true
+                };
                 var result = await OverlayService.ShowAsync(storableTypeViewModel);
                 if (result.Aborted())
                     return;
 
-                itemType = storableTypeViewModel.StorableType.ToString();
+                itemType = storableTypeViewModel.SelectedOption ?? storableTypeViewModel.StorableType.ToString();
             }
 
             switch (itemType)
@@ -349,6 +352,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                         // Add to destination
                         CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder), Layouts.GetSorter());
+                    }, cts.Token);
+
+                    break;
+                }
+
+                case var t when t == "Gallery".ToLocalized():
+                {
+                    var galleryItems = (await FileExplorerService.PickGalleryItemsAsync(cancellationToken)).OfType<IFile>().ToArray();
+                    if (galleryItems.Length == 0)
+                        return;
+
+                    TransferViewModel.TransferType = TransferType.Copy;
+                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                    await TransferViewModel.TransferAsync(galleryItems, async (item, token) =>
+                    {
+                        // Get available name to avoid collision
+                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+
+                        // Copy
+                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+
+                        // Add to destination
+                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder), Layouts.GetSorter());
                     }, cts.Token);
 
                     break;

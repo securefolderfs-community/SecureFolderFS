@@ -64,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{724C2A9B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Tests", "tests\SecureFolderFS.Tests\SecureFolderFS.Tests.csproj", "{67ED86B1-D287-4F36-A8BE-189F68502B4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Dashboard", "src\Platforms\SecureFolderFS.Dashboard\SecureFolderFS.Dashboard.csproj", "{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.AppPlatform", "src\Platforms\SecureFolderFS.AppPlatform\SecureFolderFS.AppPlatform.csproj", "{9CF66911-1E7E-4A82-B7B4-97B2DE8BA9B0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.Ftp", "src\Sdk\SecureFolderFS.Sdk.Ftp\SecureFolderFS.Sdk.Ftp.csproj", "{17592A5B-EFB4-478C-87A1-C4A10BDECA50}"
 EndProject
@@ -81,6 +81,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.Dropbox", "src\Sdk\SecureFolderFS.Sdk.Dropbox\SecureFolderFS.Sdk.Dropbox.csproj", "{FD52B782-4E07-41B2-8EA9-DE2347DEB9E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk.WebDavClient", "src\Sdk\SecureFolderFS.Sdk.WebDavClient\SecureFolderFS.Sdk.WebDavClient.csproj", "{E9D21865-C31B-49AD-B9CE-A8A9491789D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.AppPlatform.Server", "src\Platforms\SecureFolderFS.AppPlatform.Server\SecureFolderFS.AppPlatform.Server.csproj", "{4440EBF8-9707-41DD-A723-F52987F83E1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -558,6 +560,22 @@ Global
 		{E9D21865-C31B-49AD-B9CE-A8A9491789D5}.Release|x64.Build.0 = Release|Any CPU
 		{E9D21865-C31B-49AD-B9CE-A8A9491789D5}.Release|x86.ActiveCfg = Release|Any CPU
 		{E9D21865-C31B-49AD-B9CE-A8A9491789D5}.Release|x86.Build.0 = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|arm64.Build.0 = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|x64.Build.0 = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Debug|x86.Build.0 = Debug|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|arm64.ActiveCfg = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|arm64.Build.0 = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|x64.ActiveCfg = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|x64.Build.0 = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|x86.ActiveCfg = Release|Any CPU
+		{4440EBF8-9707-41DD-A723-F52987F83E1F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -596,6 +614,7 @@ Global
 		{85FE77EA-9F89-4F42-BD79-26C82F847DDC} = {086CDAC6-2730-4F09-BA28-B41F737E6C4D}
 		{FD52B782-4E07-41B2-8EA9-DE2347DEB9E2} = {086CDAC6-2730-4F09-BA28-B41F737E6C4D}
 		{E9D21865-C31B-49AD-B9CE-A8A9491789D5} = {086CDAC6-2730-4F09-BA28-B41F737E6C4D}
+		{4440EBF8-9707-41DD-A723-F52987F83E1F} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1906FD8-BB54-4688-BC0F-9ED7532D2CB0}

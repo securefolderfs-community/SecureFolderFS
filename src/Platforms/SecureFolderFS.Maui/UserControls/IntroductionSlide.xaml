@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="ThisControl">
 
-    <Grid Padding="16,0" RowDefinitions="*,Auto">
+    <Grid Padding="24,0" RowDefinitions="*,Auto">
         <ContentView Grid.Row="0" Content="{Binding Slot, Mode=OneWay, Source={x:Reference ThisControl}}" />
         <VerticalStackLayout Grid.Row="1" Spacing="12">
             <Label

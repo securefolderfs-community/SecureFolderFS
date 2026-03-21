@@ -180,6 +180,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (e.Result.Successful || e.Storable is null)
                 return;
 
+            if (e.Result.Exception is TaskCanceledException or OperationCanceledException)
+                return;
+
             if (e.Result is IResult<(IResult, IResult)> aggregateResult)
             {
                 var result1 = aggregateResult.Value.Item1;

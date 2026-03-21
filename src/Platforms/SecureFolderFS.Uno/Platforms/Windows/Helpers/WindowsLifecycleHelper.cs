@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 .Override<IIapService, DebugIapService>(AddService.AddSingleton)
                 .Override<IUpdateService, DebugUpdateService>(AddService.AddSingleton)
 #else
-                .Override<IIapService, DebugIapService>(AddService.AddSingleton) // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
+                .Override<IIapService, MicrosoftStoreIapService>(AddService.AddSingleton)
                 .Override<IUpdateService, MicrosoftStoreUpdateService>(AddService.AddSingleton)
 #endif
 

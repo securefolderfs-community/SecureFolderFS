@@ -123,7 +123,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 return;
 
             _suppressCollectionChanged = true;
-            Widgets.Add(widgetViewModel.WithInitAsync());
+            var index = widget.WidgetId switch
+            {
+                Constants.Widgets.HEALTH_WIDGET_ID => 0,
+                Constants.Widgets.AGGREGATED_DATA_WIDGET_ID =>
+                    Widgets.Any(x => x.WidgetModel.WidgetId == Constants.Widgets.HEALTH_WIDGET_ID) ? 1 : 0,
+                Constants.Widgets.GRAPHS_WIDGET_ID => 2,
+                _ => int.MaxValue
+            };
+
+            Widgets.Insert(Math.Max(0, Math.Min(index, Widgets.Count)), widgetViewModel.WithInitAsync());
             AvailableWidgets.Remove(widget);
 
             await PersistWidgetOrderAsync();

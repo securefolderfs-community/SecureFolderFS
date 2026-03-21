@@ -80,6 +80,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 // A new item name should be chosen fit for the new folder (so that Directory ID match)
                 var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
+                // Get an available name if the destination already exists
+                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
+
                 // Rename and move item to destination
                 _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
             }
@@ -88,6 +91,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 // Destination folder is the same as the original destination
                 // The same name could be used since the Directory IDs match
                 var ciphertextName = Path.ChangeExtension(await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken), Constants.Names.ENCRYPTED_FILE_EXTENSION);
+
+                // Get an available name if the destination already exists
+                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
 
                 // Rename and move item to destination
                 _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
@@ -214,6 +220,28 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var newSize = occupiedSize + sizeHint;
                 await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
             }
+        }
+
+        private static async Task<string> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        {
+            // Check if the item already exists
+            var existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
+            if (existing is not null)
+            {
+                // If the item already exists, append a suffix to the name
+                var nameWithoutExtension = Path.GetFileNameWithoutExtension(plaintextOriginalName);
+                var extension = Path.GetExtension(plaintextOriginalName);
+                var suffix = 1;
+                do
+                {
+                    var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
+                    ciphertextName = Path.ChangeExtension(await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken), Constants.Names.ENCRYPTED_FILE_EXTENSION);
+                    existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
+                    suffix++;
+                } while (existing is not null);
+            }
+
+            return ciphertextName;
         }
 
         private static async Task<bool> IsRecentlyCreatedAsync(IStorable storable, CancellationToken cancellationToken)
