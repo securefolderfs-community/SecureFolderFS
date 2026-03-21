@@ -91,6 +91,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     VaultId = _vaultId
                 };
 
+                if (RegisterViewModel.CurrentViewModel is IVaultOptionsProvider optionsProvider)
+                    vaultOptions = optionsProvider.AmendVaultOptions(vaultOptions);
+
                 // Create the vault
                 var unlockContract = await VaultManagerService.CreateAsync(
                     modifiableFolder,

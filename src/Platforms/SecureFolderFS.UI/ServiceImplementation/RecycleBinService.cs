@@ -34,20 +34,38 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Read configuration
             var configDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var newConfigDataModel = configDataModel with
+            if (configDataModel.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
             {
-                RecycleBinSize = maxSize,
-                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-            };
+                var v4ConfigDataModel = await vaultReader.ReadV4ConfigurationAsync(cancellationToken);
+                var newV4ConfigDataModel = v4ConfigDataModel with
+                {
+                    RecycleBinSize = maxSize,
+                    PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+                };
 
-            // First, we need to fill in the PayloadMac of the content
-            specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+                specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+                {
+                    VaultParser.V4CalculateConfigMac(newV4ConfigDataModel, macKey, newV4ConfigDataModel.PayloadMac);
+                });
+
+                await vaultWriter.WriteV4ConfigurationAsync(newV4ConfigDataModel, cancellationToken);
+            }
+            else
             {
-                VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
-            });
+                var newConfigDataModel = configDataModel with
+                {
+                    RecycleBinSize = maxSize,
+                    PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+                };
 
-            // Update the new configuration
-            await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
+                // First, we need to fill in the PayloadMac of the content
+                specifics.Security.KeyPair.MacKey.UseKey(macKey =>
+                {
+                    VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+                });
+
+                await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
+            }
 
             // Make sure to also update the file system options
             specifics.Options.DangerousSetRecycleBin(maxSize);

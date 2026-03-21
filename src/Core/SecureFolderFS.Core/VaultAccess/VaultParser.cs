@@ -36,6 +36,26 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.GetCurrentHash(mac);
         }
 
+        public static void V4CalculateConfigMac(V4VaultConfigurationDataModel configDataModel, ReadOnlySpan<byte> macKey, Span<byte> mac)
+        {
+            using var hmacSha256 = new HMACSHA256(macKey.ToArray());
+
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.Version));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.ServerUrl ?? string.Empty));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.VaultResource ?? string.Empty));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.Organization ?? string.Empty));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.AccessTokenEndpoint ?? string.Empty));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.DeviceRegistrationEndpoint ?? string.Empty));
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));
+
+            hmacSha256.GetCurrentHash(mac);
+        }
+
         /// <summary>
         /// Derives DEK and MAC keys from provided credentials.
         /// </summary>

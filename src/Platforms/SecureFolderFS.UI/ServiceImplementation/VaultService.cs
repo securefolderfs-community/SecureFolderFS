@@ -42,6 +42,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            Shared.Models.AppPlatformVaultOptions? appPlatform = null;
+
+            if (config.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
+            {
+                try
+                {
+                    var v4Config = await vaultReader.ReadV4ConfigurationAsync(cancellationToken);
+                    appPlatform = v4Config.AppPlatform;
+                }
+                catch (Exception)
+                {
+                    appPlatform = null;
+                }
+            }
 
             return new()
             {
@@ -51,7 +65,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 NameEncodingId = config.FileNameEncodingId,
                 RecycleBinSize = config.RecycleBinSize,
                 VaultId = config.Uid,
-                Version = config.Version
+                Version = config.Version,
+                AppPlatform = appPlatform
             };
         }
 

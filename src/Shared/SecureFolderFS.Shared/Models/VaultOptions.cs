@@ -44,5 +44,10 @@
         /// Gets the version format of the vault.
         /// </summary>
         public int Version { get; init; }
+
+        /// <summary>
+        /// Gets App Platform metadata when the vault is managed by a key broker.
+        /// </summary>
+        public AppPlatformVaultOptions? AppPlatform { get; init; }
     }
 }

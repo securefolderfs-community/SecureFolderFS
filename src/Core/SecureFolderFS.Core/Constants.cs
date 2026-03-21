@@ -25,6 +25,7 @@ namespace SecureFolderFS.Core
                 public const string AUTH_APPLE_BIOMETRIC = "apple_secure_enclave";
                 public const string AUTH_ANDROID_BIOMETRIC = "android_biometrics";
                 public const string AUTH_DEVICE_LINK = "device_link";
+                public const string AUTH_APP_PLATFORM = "app_platform";
             }
 
             [Obsolete]
@@ -46,6 +47,7 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
+                public const string ASSOC_APP_PLATFORM = "appPlatform";
                 public const string ASSOC_VERSION = "version";
             }
 
