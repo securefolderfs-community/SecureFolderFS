@@ -1364,4 +1364,7 @@
   <data name="PerformIntegrityCheck" xml:space="preserve">
       <value>Perform integrity check</value>
   </data>
+  <data name="Gallery" xml:space="preserve">
+      <value>Gallery</value>
+  </data>
 </root>
