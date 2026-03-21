@@ -7,3 +7,6 @@
 [submodule "src/Platforms/SecureFolderFS.AppPlatform"]
 	path = src/Platforms/SecureFolderFS.AppPlatform
 	url = git@github.com:securefolderfs-community/SecureFolderFS.AppPlatform.git
+[submodule "src/Platforms/SecureFolderFS.AppPlatform.Server"]
+	path = src/Platforms/SecureFolderFS.AppPlatform.Server
+	url = git@github.com:securefolderfs-community/SecureFolderFS.AppPlatform.Server.git
