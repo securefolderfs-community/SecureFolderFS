@@ -58,5 +58,18 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKeyUsage newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Modifies the configured authentication for the specified <paramref name="vaultFolder"/>
+        /// using both old and new passkeys.
+        /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
+        /// <param name="unlockContract">The recovery key used to decrypt the vault</param>
+        /// <param name="oldPasskey">The currently configured passkey.</param>
+        /// <param name="newPasskey">The new passkey to secure the vault with.</param>
+        /// <param name="vaultOptions">The required options to set for this vault.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKeyUsage oldPasskey, IKeyUsage newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
     }
 }

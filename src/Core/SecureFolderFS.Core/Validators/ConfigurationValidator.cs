@@ -9,7 +9,7 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Validators
 {
-    internal sealed class ConfigurationValidator : IAsyncValidator<VaultConfigurationDataModel>
+    internal sealed class ConfigurationValidator : IAsyncValidator<V4VaultConfigurationDataModel>
     {
         private readonly IKeyUsage _macKey;
 
@@ -19,45 +19,25 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public async Task ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
+        public async Task ValidateAsync(V4VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
             Validate(value);
             await Task.CompletedTask;
         }
 
-        public async Task V4ValidateAsync(V4VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
-        {
-            V4Validate(value);
-            await Task.CompletedTask;
-        }
-
         [SkipLocalsInit]
-        private void Validate(VaultConfigurationDataModel value)
+        private void Validate(V4VaultConfigurationDataModel value)
         {
             var isEqual = _macKey.UseKey(macKey =>
             {
                 Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
-                VaultParser.CalculateConfigMac(value, macKey, payloadMac);
+                VaultParser.V4CalculateConfigMac(value, macKey, payloadMac);
 
                 // Check if stored hash equals to computed hash using constant-time comparison to prevent timing attacks
                 return CryptographicOperations.FixedTimeEquals(payloadMac, value.PayloadMac);
             });
 
             // Confirm that the hashes are equal
-            if (!isEqual)
-                throw new CryptographicException("Vault hash doesn't match the computed hash.");
-        }
-
-        [SkipLocalsInit]
-        private void V4Validate(V4VaultConfigurationDataModel value)
-        {
-            var isEqual = _macKey.UseKey(macKey =>
-            {
-                Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
-                VaultParser.V4CalculateConfigMac(value, macKey, payloadMac);
-                return CryptographicOperations.FixedTimeEquals(payloadMac, value.PayloadMac);
-            });
-
             if (!isEqual)
                 throw new CryptographicException("Vault hash doesn't match the computed hash.");
         }

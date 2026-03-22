@@ -35,6 +35,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         public required IDisposable UnlockContract { private get; init; }
 
+        public KeySequence? OldPasskey { private get; init; }
+
         public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
@@ -86,23 +88,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private async Task RemoveAsync(CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
             if (_authenticationStage != AuthenticationStage.ProceedingStageOnly)
                 return;
 
-            var key = RegisterViewModel.Credentials.Keys.First();
+            var firstStageKey = OldPasskey.Keys.First();
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             var authenticationMethod = new AuthenticationMethod([configuredOptions.UnlockProcedure.Methods[0]], null);
 
-            await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
+            await ChangeCredentialsAsync(firstStageKey, configuredOptions, authenticationMethod, cancellationToken);
         }
 
         private async Task ChangeCredentialsAsync(IKeyUsage key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
         {
             // Modify the current unlock procedure
-            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, configuredOptions with
+            var updatedOptions = configuredOptions with
             {
                 UnlockProcedure = unlockProcedure
-            }, cancellationToken);
+            };
+
+            if (OldPasskey is not null)
+                await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, key, updatedOptions, cancellationToken);
+            else
+                await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, updatedOptions, cancellationToken);
 
             // Revoke (invalidate) old configured credentials if those are different from newly configured ones.
             // If both are the same, the authentication method should override the old ones; otherwise we would be deleting

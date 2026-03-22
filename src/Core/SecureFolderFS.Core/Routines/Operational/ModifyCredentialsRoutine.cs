@@ -9,6 +9,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -20,10 +21,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultWriter _vaultWriter;
         private KeyPair? _keyPair;
         private V4VaultKeystoreDataModel? _existingV4KeystoreDataModel;
-        private V3VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultKeystoreDataModel? _v4KeystoreDataModel;
-        private VaultConfigurationDataModel? _configDataModel;
-        private V4VaultConfigurationDataModel? _v4ConfigDataModel;
+        private V4VaultKeystoreDataModel? _keystoreDataModel;
+        private V4VaultConfigurationDataModel? _configDataModel;
 
         public ModifyCredentialsRoutine(VaultReader vaultReader, VaultWriter vaultWriter)
         {
@@ -34,8 +33,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await Task.CompletedTask;
-            //_existingV4KeystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+            _existingV4KeystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -50,16 +48,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
-            if (vaultOptions.AppPlatform is null)
-            {
-                _configDataModel = VaultConfigurationDataModel.FromVaultOptions(vaultOptions);
-                _v4ConfigDataModel = null;
-            }
-            else
-            {
-                _v4ConfigDataModel = V4VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
-                _configDataModel = _v4ConfigDataModel.ToVaultConfigurationDataModel();
-            }
+            _configDataModel = V4VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
         }
 
         /// <inheritdoc/>
@@ -67,11 +56,10 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
 
-            // Generate new salt
+            // Recovery/unlock-contract flow: rotate to a fresh entropy value under the new passkey.
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
-            // Encrypt a new keystore
             passkey.UseKey(key =>
             {
                 fixed (byte* keyPtr = key)
@@ -80,26 +68,26 @@ namespace SecureFolderFS.Core.Routines.Operational
                     _keyPair.UseKeys(state, (dekKey, macKey, s) =>
                     {
                         var k = new ReadOnlySpan<byte>((byte*)s.keyPtr, s.keyLen);
-                        _keystoreDataModel = VaultParser.V3EncryptKeystore(k, dekKey, macKey, salt);
+                        _keystoreDataModel = VaultParser.V4EncryptKeystore(k, dekKey, macKey, salt);
                     });
                 }
             });
         }
 
+        /// <inheritdoc/>
         [SkipLocalsInit]
-        public unsafe void V4SetCredentials(IKeyUsage oldPasskey, IKeyUsage newPasskey, CancellationToken cancellationToken = default)
+        public unsafe void SetCredentials(IKeyUsage oldPasskey, IKeyUsage newPasskey, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
             ArgumentNullException.ThrowIfNull(_existingV4KeystoreDataModel);
 
-            // Generate new salt for the re-encrypted keystore
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
-            // Decrypt existing SoftwareEntropy using the old passkey, then re-encrypt
-            // it under the new passkey alongside the (unchanged) DEK and MAC keys.
-            // SoftwareEntropy must be preserved - regenerating it would change the KEK
-            // derivation and make the vault permanently unreadable.
+            // Optional step-up flow: preserve existing entropy by decrypting it with the old passkey
+            // and re-encrypting it under the new passkey next to unchanged DEK and MAC keys.
+            // If old passkey material is unavailable (for example recovery-key driven rotation),
+            // the single-passkey overload rotates to fresh entropy and still yields a valid keystore.
             Span<byte> softwareEntropy = stackalloc byte[32];
             try
             {
@@ -112,6 +100,9 @@ namespace SecureFolderFS.Core.Routines.Operational
                         VaultParser.V4DecryptSoftwareEntropy(oldKey, _existingV4KeystoreDataModel, se);
                     });
                 }
+
+                if (softwareEntropy.IsAllZeros())
+                    throw new CryptographicException("The old passkey material is unavailable.");
 
                 fixed (byte* softwareEntropyPtr = softwareEntropy)
                 {
@@ -126,7 +117,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                                 var nk = new ReadOnlySpan<byte>((byte*)s2.nkPtr, s2.nkLen);
                                 var se = new Span<byte>((byte*)s2.outerState.sePtr, s2.outerState.seLen);
 
-                                _v4KeystoreDataModel = VaultParser.V4ReEncryptKeystore(nk, dekKey, macKey, salt, se);
+                                _keystoreDataModel = VaultParser.V4ReEncryptKeystore(nk, dekKey, macKey, salt, se);
                             });
                         }
                     });
@@ -142,24 +133,18 @@ namespace SecureFolderFS.Core.Routines.Operational
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
             ArgumentNullException.ThrowIfNull(_configDataModel);
 
             // First, we need to fill in the PayloadMac of the content
             _keyPair.MacKey.UseKey(macKey =>
             {
-                if (_v4ConfigDataModel is not null)
-                    VaultParser.V4CalculateConfigMac(_v4ConfigDataModel, macKey, _v4ConfigDataModel.PayloadMac);
-                else
-                    VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+                VaultParser.V4CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
             });
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
-            //await _vaultWriter.WriteKeystoreAsync(_v4KeystoreDataModel, cancellationToken);
-            if (_v4ConfigDataModel is not null)
-                await _vaultWriter.WriteV4ConfigurationAsync(_v4ConfigDataModel, cancellationToken);
-            else
-                await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
+            await _vaultWriter.WriteV4ConfigurationAsync(_configDataModel, cancellationToken);
 
             // Key copies need to be created because the original ones are disposed of here
             using (_keyPair)

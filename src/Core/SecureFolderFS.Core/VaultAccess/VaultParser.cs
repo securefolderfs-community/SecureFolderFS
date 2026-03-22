@@ -211,8 +211,8 @@ namespace SecureFolderFS.Core.VaultAccess
 
         /// <summary>
         /// Re-encrypts cryptographic keys into a new <see cref="V4VaultKeystoreDataModel"/> while
-        /// preserving the existing <paramref name="existingSoftwareEntropy"/>. Used during credential
-        /// changes so the vault remains accessible after the passkey changes.
+        /// preserving the provided <paramref name="existingSoftwareEntropy"/>.
+        /// This is an optional credential-rotation path when the previous passkey is available.
         /// </summary>
         /// <param name="passkey">The new passkey credential.</param>
         /// <param name="dekKey">The DEK key (unchanged from the existing keystore).</param>
@@ -233,8 +233,9 @@ namespace SecureFolderFS.Core.VaultAccess
 
         /// <summary>
         /// Decrypts the <see cref="V4VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> from an existing
-        /// keystore using the current passkey. Used during credential changes to recover the entropy
-        /// value before re-encrypting it under the new passkey.
+        /// keystore using the previous passkey.
+        /// This is only required for preserve-entropy rotation; fresh-entropy rotation uses
+        /// <see cref="V4EncryptKeystore(ReadOnlySpan{byte}, ReadOnlySpan{byte}, ReadOnlySpan{byte}, byte[])"/>.
         /// </summary>
         /// <param name="passkey">The current (old) passkey.</param>
         /// <param name="keystoreDataModel">The existing V4 keystore.</param>
