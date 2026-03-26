@@ -145,7 +145,7 @@
                 </local:FeatureSlide>
 
                 <!--  Slide 2: Authentication  -->
-                <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}" Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}" />
+                <local:AuthenticationSlide />
 
                 <!--  Slide 3: Encryption  -->
                 <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}" />
