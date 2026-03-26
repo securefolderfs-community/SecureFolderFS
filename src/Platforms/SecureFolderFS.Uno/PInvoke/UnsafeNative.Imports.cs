@@ -81,6 +81,9 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
+        
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);

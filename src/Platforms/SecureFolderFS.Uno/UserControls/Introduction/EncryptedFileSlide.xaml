@@ -1,0 +1,37 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.Introduction.EncryptedFileSlide"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}">
+        <local:FeatureSlide.LeftSlot>
+            <Grid>
+                <Image
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Source="Assets/AppAssets/Introduction/intro_wallpaper.jpg"
+                    Stretch="UniformToFill" />
+
+                <Border
+                    x:Name="MagnifierGlass"
+                    Width="100"
+                    Height="100"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="4"
+                    CornerRadius="50">
+                    <Image Source="Assets/AppAssets/Introduction/intro_hex_dark.png" Stretch="Fill" />
+                </Border>
+            </Grid>
+        </local:FeatureSlide.LeftSlot>
+    </local:FeatureSlide>
+</UserControl>
+

@@ -310,11 +310,12 @@ namespace SecureFolderFS.Uno
 
 #if __UNO_SKIA_MACOS__
             // Use native macOS APIs to configure the window
-            MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+            MacOsWindowHelper.ConfigureFullSizeContentView(window);
+            MacOsWindowHelper.CenterWindow(window);
             MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
 
             // Add left padding for traffic light buttons
-            var (leftPadding, _) = MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+            var (leftPadding, _) = MacOsWindowHelper.GetTrafficLightButtonsInset();
             titleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
             // For other non-Windows platforms, use OverlappedPresenter

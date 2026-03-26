@@ -148,7 +148,7 @@
                 <local:AuthenticationSlide />
 
                 <!--  Slide 3: Encryption  -->
-                <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}" />
+                <local:EncryptedFileSlide />
 
                 <!--  Slide 4: Virtual File System  -->
                 <local:FileSystemSlide OverlayViewModel="{x:Bind ViewModel, Mode=OneWay}" />

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
     /// Provides helper methods for configuring macOS title bar to extend content into the title bar area
     /// while preserving the native window chrome (traffic light buttons and rounded corners).
     /// </summary>
-    internal static class MacOsTitleBarHelper
+    internal static class MacOsWindowHelper
     {
         // NSWindowStyleMask values (for reference)
         private const ulong NSWindowStyleMaskFullSizeContentView = 1 << 15;
@@ -64,6 +64,34 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         public static (double Left, double Top) GetTrafficLightButtonsInset()
         {
             return (64, 0);
+        }
+
+        /// <summary>
+        /// Centers the specified window on the screen.
+        /// </summary>
+        /// <param name="window">The window to center.</param>
+        /// <returns>True if the window was successfully centered; otherwise, false.</returns>
+        public static bool CenterWindow(Window window)
+        {
+            if (!OperatingSystem.IsMacOS())
+                return false;
+
+            try
+            {
+                var nsWindow = GetNativeWindowHandle(window);
+                if (nsWindow == IntPtr.Zero)
+                    return false;
+
+                // Call [nsWindow center]
+                var selector = sel_registerName("center");
+                objc_msgSend_void(nsWindow, selector);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static IntPtr GetNativeWindowHandle(Window window)
