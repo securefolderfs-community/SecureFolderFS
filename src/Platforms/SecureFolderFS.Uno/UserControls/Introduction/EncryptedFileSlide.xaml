@@ -6,32 +6,24 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
+    xmlns:skia="clr-namespace:SkiaSharp.Views.Windows;assembly=SkiaSharp.Views.Windows"
+    Loaded="EncryptedFileSlide_Loaded"
+    Unloaded="EncryptedFileSlide_Unloaded"
     mc:Ignorable="d">
 
     <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}">
         <local:FeatureSlide.LeftSlot>
-            <Grid>
-                <Image
+            <Grid
+                x:Name="SlotGrid"
+                PointerEntered="SlotGrid_PointerEntered"
+                PointerExited="SlotGrid_PointerExited"
+                PointerMoved="SlotGrid_PointerMoved">
+                <skia:SKXamlCanvas
+                    x:Name="SkiaCanvas"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Source="Assets/AppAssets/Introduction/intro_wallpaper.jpg"
-                    Stretch="UniformToFill" />
-
-                <Border
-                    x:Name="MagnifierGlass"
-                    Width="100"
-                    Height="100"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="4"
-                    CornerRadius="50">
-                    <Image Source="Assets/AppAssets/Introduction/intro_hex_dark.png" Stretch="Fill" />
-                </Border>
+                    PaintSurface="SkiaCanvas_PaintSurface" />
             </Grid>
         </local:FeatureSlide.LeftSlot>
     </local:FeatureSlide>
 </UserControl>
-
