@@ -15,7 +15,7 @@ using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     internal sealed partial class SkiaWebDavFileSystem : WebDavFileSystem
     {
 #if __UNO_SKIA_MACOS__

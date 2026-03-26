@@ -7,7 +7,6 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -149,40 +148,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
                     break;
                 }
-            }
-        }
-
-        private void Selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ViewModel is null)
-                return;
-
-            if (sender is not ListView listView)
-                return;
-
-            foreach (var item in ViewModel.FileSystems)
-                item.IsSelected = false;
-
-            var selectedItem = e.AddedItems.FirstOrDefault();
-            if (selectedItem is ItemInstallationViewModel installation)
-            {
-                if (installation.IsInstalled)
-                {
-                    installation.IsSelected = true;
-                    ViewModel.SelectedFileSystem = installation;
-                }
-                else
-                {
-                    var oldSelected = e.RemovedItems.FirstOrDefault()?.TryCast<PickerOptionViewModel>();
-                    oldSelected?.IsSelected = true;
-                    ViewModel.SelectedFileSystem = oldSelected;
-                    listView.SelectedItem = oldSelected;
-                }
-            }
-            else if (selectedItem is PickerOptionViewModel itemViewModel)
-            {
-                itemViewModel.IsSelected = true;
-                ViewModel.SelectedFileSystem = itemViewModel;
             }
         }
     }

@@ -1367,4 +1367,13 @@
   <data name="Gallery" xml:space="preserve">
       <value>Gallery</value>
   </data>
+  <data name="EncryptedFile" xml:space="preserve">
+      <value>Encrypted file</value>
+  </data>
+  <data name="VirtualFile" xml:space="preserve">
+      <value>Virtual file</value>
+  </data>
+  <data name="VirtualFileName" xml:space="preserve">
+      <value>Vacations.jpeg</value>
+  </data>
 </root>
