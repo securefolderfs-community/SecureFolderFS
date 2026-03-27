@@ -13,10 +13,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class EncryptedFileSlide : UserControl
     {
-        private const float MAGNIFIER_RADIUS = 110f;
-        private const float LENS_ZOOM = 1.35f;
+        private const float INNER_SHADOW_OFFSET = 6f;
+        private const float DEFORM_STRENGTH = 0.25f;
+        private const float MAGNIFIER_RADIUS = 115f;
+        private const float LENS_ZOOM = 1.3f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
-        
+
         private SKPoint? _lastInvalidatedPosition;
         private const float MOVEMENT_THRESHOLD = 2.5f;
 
@@ -207,8 +209,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 erasePaint.IsAntialias = true;
                 erasePaint.BlendMode = SKBlendMode.DstOut;
                 erasePaint.Shader = SKShader.CreateRadialGradient(center, MAGNIFIER_RADIUS,
-                    [new SKColor(0, 0, 0, 255), new SKColor(0, 0, 0, 200), SKColors.Transparent],
-                    [0f, 0.2f, 1f],
+                    [new SKColor(0, 0, 0, 250), new SKColor(0, 0, 0, 200), SKColors.Transparent],
+                    [0.2f, 0.4f, 1f],
                     SKShaderTileMode.Clamp);
 
                 canvas.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
@@ -232,23 +234,77 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             ringPath.AddCircle(center.X, center.Y, innerR);
             ringPath.FillType = SKPathFillType.EvenOdd;
 
-            // Lens interior: magnified + warped + blurred content
+            // Lens Interior with Edge Deformation
             canvas.SaveLayer();
             canvas.ClipPath(ringPath, SKClipOperation.Intersect, true);
 
             canvas.Save();
-            canvas.Translate(center.X, center.Y);
-            canvas.Scale(LENS_ZOOM, LENS_ZOOM);
-            canvas.Translate(-center.X, -center.Y);
 
+            // Center the transform
+            canvas.Translate(center.X, center.Y);
+
+            // Base zoom (slightly reduced so deformation is more visible)
+            canvas.Scale(LENS_ZOOM, LENS_ZOOM);
+
+            // Edge Deformation
+            // This creates a directional outward push at the four edges
+            // We apply a small additional translation based on normalized position
+            // This is approximated by drawing the image multiple times with slight offsets
+
+            // 1. Base zoomed content
+            canvas.Translate(-center.X, -center.Y);
             canvas.DrawImage(snapshot, 0, 0, _blurPaint);
 
-            // Invisible pass that restores the warping effect
+            // 2. Deformed passes for edge stretch (directional)
+            using var deformPaint = new SKPaint { IsAntialias = true };
+            deformPaint.ColorFilter = SKColorFilter.CreateBlendMode(new SKColor(255, 255, 255, 40), SKBlendMode.SrcOver);
+
+            // Top edge - push upward
+            canvas.DrawImage(snapshot, 0, DEFORM_STRENGTH * 12, deformPaint);
+
+            // Bottom edge - push downward
+            canvas.DrawImage(snapshot, 0, -DEFORM_STRENGTH * 12, deformPaint);
+
+            // Left edge - push left
+            canvas.DrawImage(snapshot, DEFORM_STRENGTH * 12, 0, deformPaint);
+
+            // Right edge - push right
+            canvas.DrawImage(snapshot, -DEFORM_STRENGTH * 12, 0, deformPaint);
+
+            // Invisible pass to help with warping consistency
             canvas.DrawImage(snapshot, 0, 0, _invisiblePaint);
 
-            canvas.Restore(); // zoom
+            canvas.Restore(); // end all transforms
 
-            // Radial fade for soft lens edges
+            // Internal Glass Effects
+            
+            // Caustic light scattering
+            var causticPhase = (float)(DateTime.UtcNow.TimeOfDay.TotalSeconds * 0.8) % (MathF.PI * 2);
+            using var causticPaint = new SKPaint
+            {
+                BlendMode = SKBlendMode.Screen,
+                Shader = SKShader.CreateRadialGradient(
+                    new SKPoint(center.X + MathF.Sin(causticPhase) * 12,
+                        center.Y + MathF.Cos(causticPhase) * 12),
+                    r * 0.45f,
+                    [SKColors.White.WithAlpha(0), SKColors.White.WithAlpha(90), SKColors.White.WithAlpha(0)],
+                    [0.3f, 0.7f, 1f], SKShaderTileMode.Clamp)
+            };
+            canvas.DrawCircle(center, r * 0.65f, causticPaint);
+
+            // Dynamic inner shadow for thickness
+            using var innerShadowPaint = new SKPaint
+            {
+                BlendMode = SKBlendMode.DstOut,
+                Shader = SKShader.CreateRadialGradient(
+                    new SKPoint(center.X - INNER_SHADOW_OFFSET, center.Y - INNER_SHADOW_OFFSET),
+                    r * 0.82f,
+                    [new SKColor(0, 0, 0, 0), new SKColor(0, 0, 0, 80)],
+                    [0.7f, 1f], SKShaderTileMode.Clamp)
+            };
+            canvas.DrawCircle(center, r * 0.78f, innerShadowPaint);
+
+            // Smooth radial fade
             using var fadePaint = new SKPaint
             {
                 BlendMode = SKBlendMode.DstIn,
@@ -258,16 +314,14 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             };
             canvas.DrawCircle(center, r, fadePaint);
 
-            canvas.Restore(); // lens interior SaveLayer
+            canvas.Restore(); // end lens interior SaveLayer
 
-            // Iridescent rim (reused paints + cached colors)
-            var edgeColors = GetRimColors(snapshot, center, r); // cached when possible
-
+            // Iridescent Rim + Edge Highlights
+            var edgeColors = GetRimColors(snapshot, center, r);
             if (_cachedSweepStops == null || _cachedSweepStops.Length != edgeColors.Length)
             {
                 _cachedSweepStops = Enumerable.Range(0, edgeColors.Length)
-                    .Select(i => i / (float)(edgeColors.Length - 1))
-                    .ToArray();
+                    .Select(i => i / (float)(edgeColors.Length - 1)).ToArray();
             }
 
             if (_cachedCoreColors == null || _cachedCoreColors.Length != edgeColors.Length)
@@ -292,7 +346,16 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _additiveGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
             canvas.DrawOval(edgeRingRect, _additiveGlowPaint);
 
-            // Bevel & depth
+            // Fresnel bright edge
+            using var fresnelPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 3.5f,
+                IsAntialias = true,
+                BlendMode = SKBlendMode.Screen,
+                Color = SKColors.White.WithAlpha(180)
+            };
+            canvas.DrawCircle(center, r - 1.5f, fresnelPaint);
             canvas.DrawCircle(center, r - 2f, _highlightPaint);
             canvas.DrawCircle(center, r + 3f, _shadowPaint);
 
