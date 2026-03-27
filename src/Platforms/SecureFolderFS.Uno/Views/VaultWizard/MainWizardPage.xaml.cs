@@ -25,7 +25,6 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     {
         private PickerSourceWizardViewModel? _createNewViewModel;
         private PickerSourceWizardViewModel? _addExistingViewModel;
-        private Button? _lastClickedButton;
 
         [ObservableProperty] private PickerSourceWizardViewModel? _CurrentViewModel;
 

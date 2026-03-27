@@ -6,7 +6,7 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:skia="clr-namespace:SkiaSharp.Views.Windows;assembly=SkiaSharp.Views.Windows"
+    xmlns:skia="using:SkiaSharp.Views.Windows"
     Loaded="EncryptedFileSlide_Loaded"
     Unloaded="EncryptedFileSlide_Unloaded"
     mc:Ignorable="d">
