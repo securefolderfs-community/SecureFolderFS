@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class EncryptedFileSlide : UserControl
     {
-        private const float MAGNIFIER_RADIUS = 90f;
+        private const float MAGNIFIER_RADIUS = 110f;
         private const float LENS_ZOOM = 1.35f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
         
@@ -207,8 +207,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 erasePaint.IsAntialias = true;
                 erasePaint.BlendMode = SKBlendMode.DstOut;
                 erasePaint.Shader = SKShader.CreateRadialGradient(center, MAGNIFIER_RADIUS,
-                    [new SKColor(0, 0, 0, 255), SKColors.Transparent],
-                    [0f, 1f], SKShaderTileMode.Clamp);
+                    [new SKColor(0, 0, 0, 255), new SKColor(0, 0, 0, 200), SKColors.Transparent],
+                    [0f, 0.2f, 1f],
+                    SKShaderTileMode.Clamp);
 
                 canvas.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
                 canvas.Restore();
@@ -217,7 +218,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             // Snapshot for the lens effect (only once per frame)
             using var snapshot = e.Surface.Snapshot();
 
-            // Layer 3: Liquid Glass Lens (optimized)
+            // Layer 3: Liquid Glass Lens
             DrawLiquidGlassLens(canvas, center, snapshot);
         }
 
@@ -295,7 +296,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.DrawCircle(center, r - 2f, _highlightPaint);
             canvas.DrawCircle(center, r + 3f, _shadowPaint);
 
-            // Specular highlight (unchanged)
+            // Specular highlight
             using var specularPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
@@ -341,12 +342,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 y = Math.Clamp(y, 0, bitmap.Height - 1);
 
                 var pixel = bitmap.GetPixel(x, y);
-
                 pixel.ToHsv(out var h, out var s, out var v);
 
                 // Aggressive boost for maximum visibility
-                s = Math.Min(1f, s * 4.0f + 0.65f); // very heavy saturation
-                v = Math.Min(1f, v * 2.8f + 0.55f); // strong brightness push
+                s = Math.Min(1f, s * 5.0f + 0.65f); // very heavy saturation
+                v = Math.Min(1f, v * 3.6f + 0.55f); // strong brightness push
 
                 // Gentle hue rotation for a more dynamic color feel
                 h = (h + 0.025f) % 1f;
