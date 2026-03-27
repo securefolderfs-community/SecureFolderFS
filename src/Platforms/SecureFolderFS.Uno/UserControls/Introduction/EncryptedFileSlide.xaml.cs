@@ -4,6 +4,8 @@ using System.Reflection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using SecureFolderFS.UI.Enums;
+using SecureFolderFS.Uno.Helpers;
 using SkiaSharp;
 using SkiaSharp.Views.Windows;
 
@@ -11,8 +13,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class EncryptedFileSlide : UserControl
     {
-        private const float MAGNIFIER_RADIUS = 80f;
+        private const float MAGNIFIER_RADIUS = 90f;
+        private const float LENS_ZOOM = 1.35f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
+        
+        private SKPoint? _lastInvalidatedPosition;
+        private const float MOVEMENT_THRESHOLD = 2.5f;
 
         private SKBitmap? _wallpaperBitmap;
         private SKBitmap? _hexBitmap;
@@ -20,9 +26,18 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         // Reusable resources for better performance
         private readonly SKPaint _blurPaint;
-        private readonly SKPaint _ringPaint;
         private readonly SKPaint _highlightPaint;
         private readonly SKPaint _shadowPaint;
+
+        private SKColor[]? _cachedEdgeColors;
+        private SKColor[]? _cachedCoreColors;
+        private float[]? _cachedSweepStops;
+
+        private readonly SKPaint _invisiblePaint; // for the warping trick
+        private readonly SKPaint _outerGlowPaint;
+        private readonly SKPaint _iridescentPaint;
+        private readonly SKPaint _corePaint;
+        private readonly SKPaint _additiveGlowPaint;
 
         public EncryptedFileSlide()
         {
@@ -32,15 +47,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _blurPaint = new SKPaint
             {
                 IsAntialias = true,
-                ImageFilter = SKImageFilter.CreateBlur(5.5f, 5.5f, SKImageFilter.CreateBlur(1f, 1f)) // light + subtle secondary blur
-            };
-
-            _ringPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                Color = SKColors.White.WithAlpha(180),
-                StrokeWidth = 2f,
-                IsAntialias = true
+                ImageFilter =
+                    SKImageFilter.CreateBlur(4.8f, 4.8f,
+                        SKImageFilter.CreateBlur(1f, 1f)) // light + subtle secondary blur
             };
 
             _highlightPaint = new SKPaint
@@ -54,10 +63,46 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _shadowPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
-                Color = new SKColor(0, 0, 0, 45),
-                StrokeWidth = 5f,
+                Color = new SKColor(0, 0, 0, 30),
+                StrokeWidth = 3f,
                 IsAntialias = true,
-                MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 3.5f)
+                MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 6.5f)
+            };
+
+            _invisiblePaint = new SKPaint { IsAntialias = true };
+            _invisiblePaint.ColorFilter = SKColorFilter.CreateBlendMode(
+                new SKColor(255, 255, 255, 0), SKBlendMode.SrcOver);
+
+            _outerGlowPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 24f,
+                IsAntialias = true,
+                BlendMode = SKBlendMode.Screen
+            };
+
+            _iridescentPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 12f,
+                IsAntialias = true,
+                BlendMode = SKBlendMode.Screen
+            };
+
+            _corePaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 3.5f,
+                IsAntialias = true,
+                BlendMode = SKBlendMode.Screen
+            };
+
+            _additiveGlowPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 28f,
+                IsAntialias = true,
+                BlendMode = SKBlendMode.Plus
             };
         }
 
@@ -71,19 +116,27 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 return;
 
             _wallpaperBitmap = LoadBitmap(assembly, "Introduction.intro_wallpaper.jpg");
-            _hexBitmap = LoadBitmap(assembly, "Introduction.intro_hex_dark.png");
+            _hexBitmap = LoadBitmap(assembly, "Introduction." + UnoThemeHelper.Instance.ActualTheme switch
+            {
+                ThemeType.Light => "intro_hex_light.png",
+                _ => "intro_hex_dark.png"
+            });
             if (_wallpaperBitmap is not null)
             {
                 _wallpaperBitmap = RotateBitmap(_wallpaperBitmap, 180);
                 _wallpaperBitmap = FlipBitmap(_wallpaperBitmap, horizontal: true, vertical: true);
             }
 
+            _cachedEdgeColors = null;
+            _cachedSweepStops = null;
+            _cachedCoreColors = null;
             SkiaCanvas.Invalidate();
         }
 
         private static SKBitmap? LoadBitmap(Assembly assembly, string resourceSuffix)
         {
-            var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($"Assets.AppAssets.{resourceSuffix}"));
+            var resourceName = assembly.GetManifestResourceNames()
+                .FirstOrDefault(x => x.Contains($"Assets.AppAssets.{resourceSuffix}"));
             if (resourceName is null)
                 return null;
 
@@ -113,7 +166,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var matrix = SKMatrix.CreateIdentity();
             if (horizontal)
                 matrix = matrix.PostConcat(SKMatrix.CreateScale(-1, 1, src.Width / 2f, 0));
-            
+
             if (vertical)
                 matrix = matrix.PostConcat(SKMatrix.CreateScale(1, -1, 0, src.Height / 2f));
 
@@ -178,30 +231,143 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             ringPath.AddCircle(center.X, center.Y, innerR);
             ringPath.FillType = SKPathFillType.EvenOdd;
 
-            // Blur only inside the ring + smooth fade
+            // Lens interior: magnified + warped + blurred content
             canvas.SaveLayer();
             canvas.ClipPath(ringPath, SKClipOperation.Intersect, true);
+
+            canvas.Save();
+            canvas.Translate(center.X, center.Y);
+            canvas.Scale(LENS_ZOOM, LENS_ZOOM);
+            canvas.Translate(-center.X, -center.Y);
+
             canvas.DrawImage(snapshot, 0, 0, _blurPaint);
 
-            // Smooth radial fade to avoid hard edges
-            using var fadePaint = new SKPaint();
-            fadePaint.BlendMode = SKBlendMode.DstIn;
-            fadePaint.Shader = SKShader.CreateRadialGradient(center, r,
-                [SKColors.Transparent, SKColors.Transparent, new SKColor(255, 255, 255, 220)],
-                [0f, innerR / r, 1f],
-                SKShaderTileMode.Clamp);
-            
+            // Invisible pass that restores the warping effect
+            canvas.DrawImage(snapshot, 0, 0, _invisiblePaint);
+
+            canvas.Restore(); // zoom
+
+            // Radial fade for soft lens edges
+            using var fadePaint = new SKPaint
+            {
+                BlendMode = SKBlendMode.DstIn,
+                Shader = SKShader.CreateRadialGradient(center, r,
+                    [SKColors.Transparent, SKColors.Transparent, new SKColor(255, 255, 255, 235)],
+                    [0f, innerR / r, 1f], SKShaderTileMode.Clamp)
+            };
             canvas.DrawCircle(center, r, fadePaint);
-            canvas.Restore();
 
-            // Glass rim
-            canvas.DrawCircle(center, r, _ringPaint);
+            canvas.Restore(); // lens interior SaveLayer
 
-            // Inner highlight (subtle bevel)
+            // Iridescent rim (reused paints + cached colors)
+            var edgeColors = GetRimColors(snapshot, center, r); // cached when possible
+
+            if (_cachedSweepStops == null || _cachedSweepStops.Length != edgeColors.Length)
+            {
+                _cachedSweepStops = Enumerable.Range(0, edgeColors.Length)
+                    .Select(i => i / (float)(edgeColors.Length - 1))
+                    .ToArray();
+            }
+
+            if (_cachedCoreColors == null || _cachedCoreColors.Length != edgeColors.Length)
+                _cachedCoreColors = edgeColors.Select(c => LightenColor(c, 70)).ToArray();
+
+            var edgeRingRect = new SKRect(center.X - r + 1, center.Y - r + 1,
+                center.X + r - 1, center.Y + r - 1);
+
+            // Wide outer glow
+            _outerGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
+            canvas.DrawOval(edgeRingRect, _outerGlowPaint);
+
+            // Vibrant mid ring
+            _iridescentPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
+            canvas.DrawOval(edgeRingRect, _iridescentPaint);
+
+            // Bright core
+            _corePaint.Shader = SKShader.CreateSweepGradient(center, _cachedCoreColors, _cachedSweepStops);
+            canvas.DrawOval(edgeRingRect, _corePaint);
+
+            // Aggressive additive glow
+            _additiveGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
+            canvas.DrawOval(edgeRingRect, _additiveGlowPaint);
+
+            // Bevel & depth
             canvas.DrawCircle(center, r - 2f, _highlightPaint);
-
-            // Outer soft shadow for depth
             canvas.DrawCircle(center, r + 3f, _shadowPaint);
+
+            // Specular highlight (unchanged)
+            using var specularPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 2.8f,
+                IsAntialias = true
+            };
+            specularPaint.Shader = SKShader.CreateLinearGradient(
+                new SKPoint(center.X + r * 0.55f, center.Y - r * 0.65f),
+                new SKPoint(center.X + r * 0.95f, center.Y + r * 0.45f),
+                [SKColors.Transparent, SKColors.White.WithAlpha(235), SKColors.Transparent],
+                [0f, 0.5f, 1f],
+                SKShaderTileMode.Clamp);
+
+            canvas.DrawArc(new SKRect(center.X - r + 6, center.Y - r + 6, center.X + r - 6, center.Y + r - 6),
+                305, 110, false, specularPaint);
+        }
+
+        private SKColor[] GetRimColors(SKImage snapshot, SKPoint center, float radius)
+        {
+            // Recompute only when necessary (e.g., the pointer moved a lot)
+            if (_cachedEdgeColors != null)
+                return _cachedEdgeColors;
+
+            _cachedEdgeColors = SampleRimColors(snapshot, center, radius, sampleCount: 20);
+            return _cachedEdgeColors;
+        }
+
+        /// <summary>
+        /// Samples pixel colors from the lens rim and boosts them aggressively for a vivid iridescent effect.
+        /// </summary>
+        private static SKColor[] SampleRimColors(SKImage image, SKPoint center, float radius, int sampleCount)
+        {
+            var colors = new SKColor[sampleCount + 1];
+            using var bitmap = SKBitmap.FromImage(image);
+
+            for (var i = 0; i < sampleCount; i++)
+            {
+                var angle = 2f * MathF.PI * i / sampleCount;
+                var x = (int)(center.X + radius * MathF.Cos(angle));
+                var y = (int)(center.Y + radius * MathF.Sin(angle));
+
+                x = Math.Clamp(x, 0, bitmap.Width - 1);
+                y = Math.Clamp(y, 0, bitmap.Height - 1);
+
+                var pixel = bitmap.GetPixel(x, y);
+
+                pixel.ToHsv(out var h, out var s, out var v);
+
+                // Aggressive boost for maximum visibility
+                s = Math.Min(1f, s * 4.0f + 0.65f); // very heavy saturation
+                v = Math.Min(1f, v * 2.8f + 0.55f); // strong brightness push
+
+                // Gentle hue rotation for a more dynamic color feel
+                h = (h + 0.025f) % 1f;
+
+                colors[i] = SKColor.FromHsv(h, s, v).WithAlpha(250);
+            }
+
+            colors[sampleCount] = colors[0];
+            return colors;
+        }
+
+        /// <summary>
+        /// Mixes a color toward white by <paramref name="amount"/> (0–255) for the bright core pass.
+        /// </summary>
+        private static SKColor LightenColor(SKColor color, byte amount)
+        {
+            return new SKColor(
+                (byte)Math.Min(255, color.Red + amount),
+                (byte)Math.Min(255, color.Green + amount),
+                (byte)Math.Min(255, color.Blue + amount),
+                color.Alpha);
         }
 
         private static SKRect ComputeUniformToFillRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight)
@@ -217,7 +383,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private void SlotGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            UpdatePointer(e);   
+            UpdatePointer(e);
         }
 
         private void SlotGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -228,6 +394,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private void SlotGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             _pointerPosition = null;
+            _lastInvalidatedPosition = null;
             SkiaCanvas.Invalidate();
         }
 
@@ -246,16 +413,34 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS / scaleX, width - MAGNIFIER_RADIUS / scaleX);
             var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS / scaleY, height - MAGNIFIER_RADIUS / scaleY);
 
-            _pointerPosition = new SKPoint(clampedX * scaleX, clampedY * scaleY);
-            SkiaCanvas.Invalidate();
+            var newPosition = new SKPoint(clampedX * scaleX, clampedY * scaleY);
+
+            // Only invalidate if the pointer moved more than the threshold
+            if (_lastInvalidatedPosition == null ||
+                MathF.Abs(newPosition.X - _lastInvalidatedPosition.Value.X) > MOVEMENT_THRESHOLD ||
+                MathF.Abs(newPosition.Y - _lastInvalidatedPosition.Value.Y) > MOVEMENT_THRESHOLD)
+            {
+                _pointerPosition = newPosition;
+                _lastInvalidatedPosition = newPosition;
+                SkiaCanvas.Invalidate();
+            }
         }
 
         private void EncryptedFileSlide_Unloaded(object sender, RoutedEventArgs e)
         {
             _blurPaint.Dispose();
-            _ringPaint.Dispose();
             _highlightPaint.Dispose();
             _shadowPaint.Dispose();
+
+            _invisiblePaint.Dispose();
+            _outerGlowPaint.Dispose();
+            _iridescentPaint.Dispose();
+            _corePaint.Dispose();
+            _additiveGlowPaint.Dispose();
+
+            _cachedEdgeColors = null;
+            _cachedSweepStops = null;
+            _cachedCoreColors = null;
         }
     }
 }
