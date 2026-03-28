@@ -8,6 +8,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 {
@@ -15,14 +17,28 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
     {
         public static async Task<IResult> RepairNameAsync(IStorableChild affected, FileSystemSpecifics specifics, string newName, CancellationToken cancellationToken)
         {
-            return await RepairNameAsync(affected, specifics.Security, specifics.ContentFolder, newName, cancellationToken);
+            var repairResult = await RepairNameAsync(affected, specifics.Security, specifics.ContentFolder, newName, cancellationToken);
+            if (!repairResult.Successful || !specifics.CiphertextFileNameCache.IsAvailable)
+                return repairResult;
 
-            // TODO: Update caches in FileSystemSpecifics
+            // Update cache
+            await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                var parent = await affected.GetParentAsync(cancellationToken);
+                if (parent is null)
+                    return;
+
+                var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
+                var isAllocated = await AbstractPathHelpers.GetDirectoryIdAsync(parent, specifics, directoryId, cancellationToken);
+                specifics.CiphertextFileNameCache.CacheRemove(new(isAllocated ? directoryId : [], affected.Name));
+            });
+
+            return repairResult;
         }
 
-        public static async Task<IResult> RepairNameAsync(IStorableChild affected, Security security, IFolder contentFolder, string newName, CancellationToken cancellationToken)
+        private static async Task<IResult> RepairNameAsync(IStorableChild affected, Security security, IFolder contentFolder, string newName, CancellationToken cancellationToken)
         {
-            // Return success, if no encryption is used
+            // Return success if no encryption is used
             if (security.NameCrypt is null)
                 return Result.Success;
 

@@ -13,6 +13,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class EncryptedFileSlide : UserControl
     {
+        private const float MOVEMENT_THRESHOLD = 2.5f;
         private const float INNER_SHADOW_OFFSET = 6f;
         private const float DEFORM_STRENGTH = 0.25f;
         private const float MAGNIFIER_RADIUS = 115f;
@@ -20,16 +21,15 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
 
         private SKPoint? _lastInvalidatedPosition;
-        private const float MOVEMENT_THRESHOLD = 2.5f;
 
         private SKBitmap? _wallpaperBitmap;
         private SKBitmap? _hexBitmap;
         private SKPoint? _pointerPosition;
 
         // Reusable resources for better performance
-        private readonly SKPaint _blurPaint;
         private readonly SKPaint _highlightPaint;
         private readonly SKPaint _shadowPaint;
+        private readonly SKPaint _blurPaint;
 
         private SKColor[]? _cachedEdgeColors;
         private SKColor[]? _cachedCoreColors;

@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                     if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
-                    // Encrypt new name
+                    // Encrypt a new name
                     var encryptedName = security.NameCrypt.EncryptName(item.Name, directoryId);
                     encryptedName = $"{encryptedName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}";
 
