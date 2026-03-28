@@ -91,7 +91,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             // Show introduction
             var settingsService = DI.Service<ISettingsService>();
-            if (!settingsService.AppSettings.WasIntroduced || true)
+            if (!settingsService.AppSettings.WasIntroduced)
             {
                 var overlayService = DI.Service<IOverlayService>();
                 await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());

@@ -491,6 +491,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private void EncryptedFileSlide_Unloaded(object sender, RoutedEventArgs e)
         {
+            SkiaCanvas.Dispose();
+            
             _blurPaint.Dispose();
             _highlightPaint.Dispose();
             _shadowPaint.Dispose();
