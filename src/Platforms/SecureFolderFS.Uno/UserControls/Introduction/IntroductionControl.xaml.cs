@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.System;
@@ -10,6 +11,7 @@ using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Enums;
@@ -26,6 +28,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
         private Grid? _overlayContainer;
+        private readonly FirstTimeHelper _firstTime = new(1);
 
         public IntroductionOverlayViewModel? ViewModel
         {
@@ -75,6 +78,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public void SetView(IViewable viewable)
         {
             ViewModel = (IntroductionOverlayViewModel)viewable;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             if (ViewModel is { SlidesCount: < 0 })
                 ViewModel.SlidesCount = SlidesFlipView.Items.Count;
         }
@@ -83,6 +87,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         [RelayCommand]
         public async Task HideAsync()
         {
+            ViewModel?.PropertyChanged -= ViewModel_PropertyChanged;
+            
             // Play the hide animation
             await HideOverlayStoryboard.BeginAsync();
             HideOverlayStoryboard.Stop();
@@ -96,6 +102,18 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
 
             ViewModel?.TaskCompletion.SetResult(Result.Success);
+        }
+        
+        private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(IntroductionOverlayViewModel.CurrentIndex))
+                return;
+
+            if (ViewModel?.CurrentIndex == 2 && _firstTime.IsFirstTime())
+            {
+                await Task.Delay(250);
+                await AuthenticationSlide.AnimateAsync();
+            }
         }
 
         private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)

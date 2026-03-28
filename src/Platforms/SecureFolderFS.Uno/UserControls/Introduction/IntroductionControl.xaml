@@ -145,7 +145,7 @@
                 </local:FeatureSlide>
 
                 <!--  Slide 2: Authentication  -->
-                <local:AuthenticationSlide />
+                <local:AuthenticationSlide x:Name="AuthenticationSlide" />
 
                 <!--  Slide 3: Encryption  -->
                 <local:EncryptedFileSlide />
