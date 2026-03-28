@@ -21,9 +21,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDesignationViewModel, IUnlockedViewContext, IAsyncInitialize, IDisposable
     {
-        private readonly INavigator _innerNavigator;
-        private readonly INavigator _outerNavigator;
-
         [ObservableProperty] private string? _SecurityText;
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;
@@ -47,8 +44,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             UnlockedVaultViewModel = unlockedVaultViewModel;
             RecycleBinOverlayViewModel = new(UnlockedVaultViewModel, outerNavigator);
             Title = "VaultProperties".ToLocalized();
-            _innerNavigator = innerNavigator;
-            _outerNavigator = outerNavigator;
         }
 
         /// <inheritdoc/>

@@ -15,6 +15,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
@@ -152,26 +153,32 @@ namespace SecureFolderFS.UI.Storage
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
-                if (dataModel.ParentId is null || dataModel.Name is null)
-                    continue;
-
-                // Decrypt name and parent path
-                var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
-                var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
-
-                IStorable plaintextItem = item switch
+                var recycleBinItem = await SafetyHelpers.NoFailureAsync(async () =>
                 {
-                    IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
-                    IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
-                    _ => throw new ArgumentOutOfRangeException(nameof(item))
-                };
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
+                    if (dataModel.ParentId is null || dataModel.Name is null)
+                        return null;
+
+                    // Decrypt name and parent path
+                    var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
+                    var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
+
+                    IStorable plaintextItem = item switch
+                    {
+                        IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
+                        IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
+                        _ => throw new ArgumentOutOfRangeException(nameof(item))
+                    };
+                    
+                    return new RecycleBinItem(plaintextItem, dataModel, this)
+                    {
+                        Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
+                        Name = plaintextName ?? item.Name
+                    };
+                });
                 
-                yield return new RecycleBinItem(plaintextItem, dataModel, this)
-                {
-                    Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
-                    Name = plaintextName ?? item.Name
-                };
+                if (recycleBinItem is not null)
+                    yield return recycleBinItem;
             }
         }
 
