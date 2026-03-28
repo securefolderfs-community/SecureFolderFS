@@ -129,18 +129,11 @@
                 <!--  Slide 1: Dashboard  -->
                 <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingDashboardTitle}" Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
                     <local:FeatureSlide.LeftSlot>
-                        <Grid>
-                            <win:Image
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png"
-                                Stretch="UniformToFill" />
-                            <not_win:Image
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Source="Assets/AppAssets/Introduction/intro_light_dashboard.png"
-                                Stretch="UniformToFill" />
-                        </Grid>
+                        <Image
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Stretch="UniformToFill"
+                            Style="{ThemeResource VaultDashboardImage}" />
                     </local:FeatureSlide.LeftSlot>
                 </local:FeatureSlide>
 
