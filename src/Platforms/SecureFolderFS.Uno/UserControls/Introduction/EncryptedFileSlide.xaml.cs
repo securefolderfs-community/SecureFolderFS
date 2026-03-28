@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.UI.Xaml;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 using SkiaSharp;
@@ -11,14 +13,22 @@ using SkiaSharp.Views.Windows;
 
 namespace SecureFolderFS.Uno.UserControls.Introduction
 {
-    public sealed partial class EncryptedFileSlide : UserControl
+    public sealed partial class EncryptedFileSlide : UserControl, IAsyncInitialize, IDisposable
     {
-        private const float MOVEMENT_THRESHOLD = 2.5f;
         private const float INNER_SHADOW_OFFSET = 6f;
         private const float DEFORM_STRENGTH = 0.25f;
-        private const float MAGNIFIER_RADIUS = 115f;
         private const float LENS_ZOOM = 1.3f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
+
+#if HAS_UNO_SKIA
+        private const float MAGNIFIER_RADIUS = 115f;
+        private const float MOVEMENT_THRESHOLD = 2.5f;
+#else
+        private const float MAGNIFIER_RADIUS = 80f;
+        private const float MOVEMENT_THRESHOLD = 1f;
+#endif
+
+        private bool _isInitialized;
 
         private SKPoint? _lastInvalidatedPosition;
 
@@ -49,9 +59,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _blurPaint = new SKPaint
             {
                 IsAntialias = true,
-                ImageFilter =
-                    SKImageFilter.CreateBlur(4.8f, 4.8f,
-                        SKImageFilter.CreateBlur(1f, 1f)) // light + subtle secondary blur
+                ImageFilter = SKImageFilter.CreateBlur(4.8f, 4.8f, SKImageFilter.CreateBlur(1f, 1f)) // light + subtle secondary blur
             };
 
             _highlightPaint = new SKPaint
@@ -71,9 +79,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 6.5f)
             };
 
-            _invisiblePaint = new SKPaint { IsAntialias = true };
-            _invisiblePaint.ColorFilter = SKColorFilter.CreateBlendMode(
-                new SKColor(255, 255, 255, 0), SKBlendMode.SrcOver);
+            _invisiblePaint = new SKPaint
+            {
+                IsAntialias = true,
+                ColorFilter = SKColorFilter.CreateBlendMode(new SKColor(255, 255, 255, 0), SKBlendMode.SrcOver)
+            };
 
             _outerGlowPaint = new SKPaint
             {
@@ -108,14 +118,15 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             };
         }
 
-        private void EncryptedFileSlide_Loaded(object sender, RoutedEventArgs e)
+        /// <inheritdoc/>
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var assembly = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .SingleOrDefault(x => x.GetName().Name == UI_ASSEMBLY_NAME);
+            if (_isInitialized)
+                return Task.CompletedTask;
 
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == UI_ASSEMBLY_NAME);
             if (assembly is null)
-                return;
+                return Task.CompletedTask;
 
             _wallpaperBitmap = LoadBitmap(assembly, "Introduction.intro_wallpaper.jpg");
             _hexBitmap = LoadBitmap(assembly, "Introduction." + UnoThemeHelper.Instance.ActualTheme switch
@@ -133,6 +144,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _cachedSweepStops = null;
             _cachedCoreColors = null;
             SkiaCanvas.Invalidate();
+
+            _isInitialized = true;
+            return Task.CompletedTask;
         }
 
         private static SKBitmap? LoadBitmap(Assembly assembly, string resourceSuffix)
@@ -489,10 +503,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
         }
 
-        private void EncryptedFileSlide_Unloaded(object sender, RoutedEventArgs e)
+        /// <inheritdoc/>
+        public void Dispose()
         {
+#if HAS_UNO_SKIA
             SkiaCanvas.Dispose();
-            
+#endif
+
             _blurPaint.Dispose();
             _highlightPaint.Dispose();
             _shadowPaint.Dispose();

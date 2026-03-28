@@ -88,7 +88,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public async Task HideAsync()
         {
             ViewModel?.PropertyChanged -= ViewModel_PropertyChanged;
-            
+            EncryptedFileSlide.Dispose();
+
             // Play the hide animation
             await HideOverlayStoryboard.BeginAsync();
             HideOverlayStoryboard.Stop();
@@ -132,6 +133,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             await BackgroundWebView.EnsureCoreWebView2Async();
             BackgroundWebView.NavigateToString(htmlString);
+            await EncryptedFileSlide.InitAsync();
         }
 
         private void IntroductionControl_KeyDown(object sender, KeyRoutedEventArgs e)

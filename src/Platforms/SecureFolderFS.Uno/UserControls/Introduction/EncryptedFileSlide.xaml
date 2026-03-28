@@ -7,8 +7,6 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:skia="using:SkiaSharp.Views.Windows"
-    Loaded="EncryptedFileSlide_Loaded"
-    Unloaded="EncryptedFileSlide_Unloaded"
     mc:Ignorable="d">
 
     <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}">

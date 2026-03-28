@@ -148,7 +148,7 @@
                 <local:AuthenticationSlide x:Name="AuthenticationSlide" />
 
                 <!--  Slide 3: Encryption  -->
-                <local:EncryptedFileSlide />
+                <local:EncryptedFileSlide x:Name="EncryptedFileSlide" />
 
                 <!--  Slide 4: Virtual File System  -->
                 <local:FileSystemSlide OverlayViewModel="{x:Bind ViewModel, Mode=OneWay}" />
