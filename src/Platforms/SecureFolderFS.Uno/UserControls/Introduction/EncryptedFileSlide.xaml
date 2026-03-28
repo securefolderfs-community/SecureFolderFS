@@ -15,7 +15,9 @@
                 x:Name="SlotGrid"
                 PointerEntered="SlotGrid_PointerEntered"
                 PointerExited="SlotGrid_PointerExited"
-                PointerMoved="SlotGrid_PointerMoved">
+                PointerMoved="SlotGrid_PointerMoved"
+                PointerPressed="SlotGrid_PointerPressed"
+                PointerReleased="SlotGrid_PointerReleased">
                 <skia:SKXamlCanvas
                     x:Name="SkiaCanvas"
                     HorizontalAlignment="Stretch"

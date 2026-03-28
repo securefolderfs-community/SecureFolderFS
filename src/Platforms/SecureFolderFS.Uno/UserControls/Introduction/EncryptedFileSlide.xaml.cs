@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Shared.ComponentModel;
@@ -19,6 +20,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float DEFORM_STRENGTH = 0.25f;
         private const float LENS_ZOOM = 1.3f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
+        
+        private const float VELOCITY_SCALE = 0.00018f; // pixels/sec to deform ratio
+        private const float MAX_DEFORM = 0.1f;
+        private const float LERP_SPEED = 12f;
+        private const float SPRING_STIFFNESS = 280f;
+        private const float SPRING_DAMPING = 18f;
 
 #if HAS_UNO_SKIA
         private const float MAGNIFIER_RADIUS = 115f;
@@ -50,6 +57,21 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private readonly SKPaint _iridescentPaint;
         private readonly SKPaint _corePaint;
         private readonly SKPaint _additiveGlowPaint;
+
+        // Fluid pointer dynamics
+        private SKPoint _targetPosition;
+        private SKPoint _smoothPosition;
+        private SKPoint _positionVelocity;
+
+        // Spring scale for press/release bounce
+        private float _lensScale = 1f;
+        private float _scaleVelocity = 0f;
+        private float _scaleTarget = 1f;
+
+        // Animation timer (runs only while settling)
+        private readonly DispatcherTimer _animTimer;
+        private DateTime _lastTick;
+        private bool _isAnimating;
 
         public EncryptedFileSlide()
         {
@@ -116,6 +138,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 IsAntialias = true,
                 BlendMode = SKBlendMode.Plus
             };
+
+            _animTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) }; // ~60 fps
+            _animTimer.Tick += AnimTimer_Tick;
         }
 
         /// <inheritdoc/>
@@ -197,7 +222,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var info = e.Info;
             canvas.Clear(SKColors.Transparent);
 
-            var center = _pointerPosition ?? new SKPoint(info.Width / 2f, info.Height / 2f);
+            var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(info.Width / 2f, info.Height / 2f);
             var canvasRect = new SKRect(0, 0, info.Width, info.Height);
 
             // Layer 1: Hex (encrypted content)
@@ -235,17 +260,22 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             using var snapshot = e.Surface.Snapshot();
 
             // Layer 3: Liquid Glass Lens
-            DrawLiquidGlassLens(canvas, center, snapshot);
+            DrawLiquidGlassLens(canvas, center, snapshot, _lensScale);
         }
 
-        private void DrawLiquidGlassLens(SKCanvas canvas, SKPoint center, SKImage snapshot)
+        private void DrawLiquidGlassLens(SKCanvas canvas, SKPoint center, SKImage snapshot, float lensScale = 1f)
         {
             var r = MAGNIFIER_RADIUS;
+            var (rx, ry) = ComputeRingRadii(r);
             var innerR = r * 0.76f;
 
+            // Approximate inner ellipse with same aspect ratio as outer
+            var innerRx = innerR * (rx / r);
+            var innerRy = innerR * (ry / r);
+
             using var ringPath = new SKPath();
-            ringPath.AddCircle(center.X, center.Y, r);
-            ringPath.AddCircle(center.X, center.Y, innerR);
+            ringPath.AddOval(new SKRect(center.X - rx, center.Y - ry, center.X + rx, center.Y + ry));
+            ringPath.AddOval(new SKRect(center.X - innerRx, center.Y - innerRy, center.X + innerRx, center.Y + innerRy));
             ringPath.FillType = SKPathFillType.EvenOdd;
 
             // Lens Interior with Edge Deformation
@@ -258,7 +288,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.Translate(center.X, center.Y);
 
             // Base zoom (slightly reduced so deformation is more visible)
-            canvas.Scale(LENS_ZOOM, LENS_ZOOM);
+            canvas.Scale(LENS_ZOOM * lensScale, LENS_ZOOM * lensScale);
 
             // Edge Deformation
             // This creates a directional outward push at the four edges
@@ -270,7 +300,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.DrawImage(snapshot, 0, 0, _blurPaint);
 
             // 2. Deformed passes for edge stretch (directional)
-            using var deformPaint = new SKPaint { IsAntialias = true };
+            using var deformPaint = new SKPaint();
+            deformPaint.IsAntialias = true;
             deformPaint.ColorFilter = SKColorFilter.CreateBlendMode(new SKColor(255, 255, 255, 40), SKBlendMode.SrcOver);
 
             // Top edge - push upward
@@ -291,7 +322,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.Restore(); // end all transforms
 
             // Internal Glass Effects
-            
+
             // Caustic light scattering
             var causticPhase = (float)(DateTime.UtcNow.TimeOfDay.TotalSeconds * 0.8) % (MathF.PI * 2);
             using var causticPaint = new SKPaint
@@ -341,8 +372,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (_cachedCoreColors == null || _cachedCoreColors.Length != edgeColors.Length)
                 _cachedCoreColors = edgeColors.Select(c => LightenColor(c, 70)).ToArray();
 
-            var edgeRingRect = new SKRect(center.X - r + 1, center.Y - r + 1,
-                center.X + r - 1, center.Y + r - 1);
+            // Deformed ring rect - rx/ry drive horizontal/vertical radius independently
+            var edgeRingRect = new SKRect(center.X - rx + 1, center.Y - ry + 1, center.X + rx - 1, center.Y + ry - 1);
 
             // Wide outer glow
             _outerGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
@@ -360,7 +391,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _additiveGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
             canvas.DrawOval(edgeRingRect, _additiveGlowPaint);
 
-            // Fresnel bright edge
+            // Fresnel bright edge - follows deformed shape
             using var fresnelPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
@@ -369,11 +400,15 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 BlendMode = SKBlendMode.Screen,
                 Color = SKColors.White.WithAlpha(180)
             };
-            canvas.DrawCircle(center, r - 1.5f, fresnelPaint);
-            canvas.DrawCircle(center, r - 2f, _highlightPaint);
-            canvas.DrawCircle(center, r + 3f, _shadowPaint);
+            var fresnelRect = new SKRect(center.X - rx + 1.5f, center.Y - ry + 1.5f, center.X + rx - 1.5f, center.Y + ry - 1.5f);
+            canvas.DrawOval(fresnelRect, fresnelPaint);
+            canvas.DrawOval(fresnelRect, _highlightPaint);
 
-            // Specular highlight
+            // Outer shadow - a slightly larger oval
+            var shadowRect = new SKRect(center.X - rx - 3f, center.Y - ry - 3f, center.X + rx + 3f, center.Y + ry + 3f);
+            canvas.DrawOval(shadowRect, _shadowPaint);
+
+            // Specular highlight - arc mapped onto the deformed ellipse
             using var specularPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
@@ -381,13 +416,14 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 IsAntialias = true
             };
             specularPaint.Shader = SKShader.CreateLinearGradient(
-                new SKPoint(center.X + r * 0.55f, center.Y - r * 0.65f),
-                new SKPoint(center.X + r * 0.95f, center.Y + r * 0.45f),
+                new SKPoint(center.X + rx * 0.55f, center.Y - ry * 0.65f),
+                new SKPoint(center.X + rx * 0.95f, center.Y + ry * 0.45f),
                 [SKColors.Transparent, SKColors.White.WithAlpha(235), SKColors.Transparent],
                 [0f, 0.5f, 1f],
                 SKShaderTileMode.Clamp);
 
-            canvas.DrawArc(new SKRect(center.X - r + 6, center.Y - r + 6, center.X + r - 6, center.Y + r - 6),
+            canvas.DrawArc(
+                new SKRect(center.X - rx + 6, center.Y - ry + 6, center.X + rx - 6, center.Y + ry - 6),
                 305, 110, false, specularPaint);
         }
 
@@ -434,6 +470,42 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             colors[sampleCount] = colors[0];
             return colors;
         }
+        
+        /// <summary>
+        /// Computes the ellipse radii for the glass ring, combining spring-scale squeeze
+        /// with velocity-driven directional squash-and-stretch.
+        /// </summary>
+        private (float rx, float ry) ComputeRingRadii(float baseRadius)
+        {
+            // Spring squeeze (uniform, from press/release)
+            // _lensScale < 1 = compressed, > 1 = expanded
+            // We invert slightly so a zoom-in squashes the ring outward at edges
+            var springSquash = 1f + (1f - _lensScale) * 0.55f;
+            var uniformR = baseRadius * springSquash;
+
+            // Velocity squash-and-stretch
+            // Map speed to a deformation magnitude, capped so it doesn't go wild
+            var vx = _positionVelocity.X;
+            var vy = _positionVelocity.Y;
+            var speed = MathF.Sqrt(vx * vx + vy * vy);
+
+            var deformX = 0f;
+            var deformY = 0f;
+            if (speed > 1f)
+            {
+                var raw = Math.Min(speed * VELOCITY_SCALE, MAX_DEFORM);
+
+                // Direction: normalize velocity, project onto axes
+                var nx = vx / speed;
+                var ny = vy / speed;
+
+                // Stretch along movement axis, squash perpendicular
+                deformX = raw * (nx * nx - ny * ny); // positive = wider when moving horizontally
+                deformY = raw * (ny * ny - nx * nx); // positive = taller when moving vertically
+            }
+
+            return (uniformR * (1f + deformX), uniformR * (1f + deformY));
+        }
 
         /// <summary>
         /// Mixes a color toward white by <paramref name="amount"/> (0–255) for the bright core pass.
@@ -458,6 +530,102 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             return new SKRect(offsetX, offsetY, offsetX + scaledW, offsetY + scaledH);
         }
 
+        private void AnimTimer_Tick(object? sender, object e)
+        {
+            var now = DateTime.UtcNow;
+            var dt = (float)(now - _lastTick).TotalSeconds;
+            _lastTick = now;
+
+            // Clamp dt to avoid large jumps on frame drops
+            dt = Math.Min(dt, 0.05f);
+
+            // Fluid pointer lerp
+            var lerpFactor = 1f - MathF.Exp(-LERP_SPEED * dt);
+
+            var prevSmooth = _smoothPosition;
+            _smoothPosition = new SKPoint(
+                _smoothPosition.X + (_targetPosition.X - _smoothPosition.X) * lerpFactor,
+                _smoothPosition.Y + (_targetPosition.Y - _smoothPosition.Y) * lerpFactor
+            );
+
+            // Track velocity for directional ring deformation
+            if (dt > 0f)
+            {
+                _positionVelocity = new SKPoint(
+                    (_smoothPosition.X - prevSmooth.X) / dt,
+                    (_smoothPosition.Y - prevSmooth.Y) / dt
+                );
+            }
+
+            // Spring scale integration (damped harmonic oscillator)
+            var displacement = _lensScale - _scaleTarget;
+            var springForce = -SPRING_STIFFNESS * displacement;
+            var dampingForce = -SPRING_DAMPING * _scaleVelocity;
+            _scaleVelocity += (springForce + dampingForce) * dt;
+            _lensScale += _scaleVelocity * dt;
+
+            // Determine if we've settled (stop timer to save CPU)
+            var positionSettled = MathF.Abs(_smoothPosition.X - _targetPosition.X) < 0.5f
+                                  && MathF.Abs(_smoothPosition.Y - _targetPosition.Y) < 0.5f;
+            var scaleSettled = MathF.Abs(_lensScale - _scaleTarget) < 0.001f
+                               && MathF.Abs(_scaleVelocity) < 0.001f;
+
+            if (positionSettled && scaleSettled)
+            {
+                _smoothPosition = _targetPosition;
+                _lensScale = _scaleTarget;
+                _scaleVelocity = 0f;
+                _positionVelocity = new SKPoint(0f, 0f);
+                StopAnimation();
+            }
+
+            // Invalidate edge color cache if smoothed position moved meaningfully
+            var moved = MathF.Abs(_smoothPosition.X - prevSmooth.X) > MOVEMENT_THRESHOLD
+                        || MathF.Abs(_smoothPosition.Y - prevSmooth.Y) > MOVEMENT_THRESHOLD;
+            if (moved)
+                _cachedEdgeColors = null;
+
+            SkiaCanvas.Invalidate();
+        }
+
+        private void StartAnimation()
+        {
+            if (_isAnimating)
+                return;
+            
+            _lastTick = DateTime.UtcNow;
+            _isAnimating = true;
+            _animTimer.Start();
+        }
+
+        private void StopAnimation()
+        {
+            _isAnimating = false;
+            _animTimer.Stop();
+        }
+        
+        private void SlotGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            // Compress the lens on press
+            _scaleTarget = 0.9f;
+            _scaleVelocity = 0f;
+            StartAnimation();
+        }
+
+        private void SlotGrid_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            // Overshoot on release, then spring settles to 1.0
+            _scaleTarget = 1.06f;
+            _scaleVelocity = 0f;
+
+            // After a short delay, target moves to 1.0 - spring does the rest
+            Task.Delay(80).ContinueWith(_ =>
+            {
+                _scaleTarget = 1f;
+            });
+            StartAnimation();
+        }
+
         private void SlotGrid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             UpdatePointer(e);
@@ -472,6 +640,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             _pointerPosition = null;
             _lastInvalidatedPosition = null;
+            _lensScale = 1f;
+            _scaleVelocity = 0f;
+            _scaleTarget = 1f;
+            _positionVelocity = new SKPoint(0f, 0f);
+            StopAnimation();
             SkiaCanvas.Invalidate();
         }
 
@@ -491,21 +664,22 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS / scaleY, height - MAGNIFIER_RADIUS / scaleY);
 
             var newPosition = new SKPoint(clampedX * scaleX, clampedY * scaleY);
+            _targetPosition = newPosition;
 
-            // Only invalidate if the pointer moved more than the threshold
-            if (_lastInvalidatedPosition == null ||
-                MathF.Abs(newPosition.X - _lastInvalidatedPosition.Value.X) > MOVEMENT_THRESHOLD ||
-                MathF.Abs(newPosition.Y - _lastInvalidatedPosition.Value.Y) > MOVEMENT_THRESHOLD)
-            {
-                _pointerPosition = newPosition;
-                _lastInvalidatedPosition = newPosition;
-                SkiaCanvas.Invalidate();
-            }
+            // Seed smooth position on the first enter so there's no pop from (0,0)
+            if (_pointerPosition == null)
+                _smoothPosition = newPosition;
+
+            _pointerPosition = newPosition;
+            StartAnimation();
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public new void Dispose()
         {
+            _animTimer.Stop();
+            _animTimer.Tick -= AnimTimer_Tick;
+            
 #if HAS_UNO_SKIA
             SkiaCanvas.Dispose();
 #endif
