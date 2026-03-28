@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float DEFORM_STRENGTH = 0.25f;
         private const float LENS_ZOOM = 1.3f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
-        
+
         private const float VELOCITY_SCALE = 0.00018f; // pixels/sec to deform ratio
         private const float MAX_DEFORM = 0.1f;
         private const float LERP_SPEED = 12f;
@@ -31,13 +31,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float MAGNIFIER_RADIUS = 115f;
         private const float MOVEMENT_THRESHOLD = 2.5f;
 #else
-        private const float MAGNIFIER_RADIUS = 80f;
+        private const float MAGNIFIER_RADIUS = 60f;
         private const float MOVEMENT_THRESHOLD = 1f;
 #endif
 
         private bool _isInitialized;
-
-        private SKPoint? _lastInvalidatedPosition;
 
         private SKBitmap? _wallpaperBitmap;
         private SKBitmap? _hexBitmap;
@@ -110,7 +108,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _outerGlowPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
-                StrokeWidth = 28f,
+                StrokeWidth = 24f,
                 IsAntialias = true,
                 BlendMode = SKBlendMode.Screen
             };
@@ -118,7 +116,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _iridescentPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
-                StrokeWidth = 16f,
+                StrokeWidth = 12f,
                 IsAntialias = true,
                 BlendMode = SKBlendMode.Screen
             };
@@ -126,7 +124,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _corePaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
-                StrokeWidth = 6f,
+                StrokeWidth = 3.5f,
                 IsAntialias = true,
                 BlendMode = SKBlendMode.Screen
             };
@@ -134,7 +132,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _additiveGlowPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
-                StrokeWidth = 36f,
+                StrokeWidth = 28f,
                 IsAntialias = true,
                 BlendMode = SKBlendMode.Plus
             };
@@ -458,21 +456,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 var pixel = bitmap.GetPixel(x, y);
                 pixel.ToHsv(out var h, out var s, out var v);
 
-                // Saturate fully and push brightness to near-max
-                s = 1f;
-                v = Math.Min(1f, v * 2.2f + 0.75f);
+                // Aggressive boost for maximum visibility
+                s = Math.Min(1f, s * 5.0f + 0.65f); // very heavy saturation
+                v = Math.Min(1f, v * 3.6f + 0.55f); // strong brightness push
 
-                // Spread hues across the full wheel based on sample position
-                // so adjacent samples land on visibly different colors
-                h = (h + i / (float)sampleCount * 0.35f + 0.04f) % 1f;
+                // Gentle hue rotation for a more dynamic color feel
+                h = (h + 0.025f) % 1f;
 
-                colors[i] = SKColor.FromHsv(h, s, v).WithAlpha(255);
+                colors[i] = SKColor.FromHsv(h, s, v).WithAlpha(250);
             }
 
             colors[sampleCount] = colors[0];
             return colors;
         }
-        
+
         /// <summary>
         /// Computes the ellipse radii for the glass ring, combining spring-scale squeeze
         /// with velocity-driven directional squash-and-stretch.
@@ -514,13 +511,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         /// </summary>
         private static SKColor LightenColor(SKColor color, byte amount)
         {
-            color.ToHsv(out var h, out var s, out var v);
-
-            // Boost value while keeping saturation fully pegged - stays vivid rather than washing out
-            v = Math.Min(1f, v + amount / 255f * 1.4f);
-            s = Math.Min(1f, s + 0.15f);
-
-            return SKColor.FromHsv(h, s, v).WithAlpha(color.Alpha);
+            return new SKColor(
+                (byte)Math.Min(255, color.Red + amount),
+                (byte)Math.Min(255, color.Green + amount),
+                (byte)Math.Min(255, color.Blue + amount),
+                color.Alpha);
         }
 
         private static SKRect ComputeUniformToFillRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight)
@@ -596,7 +591,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             if (_isAnimating)
                 return;
-            
+
             _lastTick = DateTime.UtcNow;
             _isAnimating = true;
             _animTimer.Start();
@@ -607,7 +602,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _isAnimating = false;
             _animTimer.Stop();
         }
-        
+
         private void SlotGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             // Compress the lens on press
@@ -643,7 +638,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private void SlotGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             _pointerPosition = null;
-            _lastInvalidatedPosition = null;
             _lensScale = 1f;
             _scaleVelocity = 0f;
             _scaleTarget = 1f;
@@ -683,7 +677,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             _animTimer.Stop();
             _animTimer.Tick -= AnimTimer_Tick;
-            
+
 #if HAS_UNO_SKIA
             SkiaCanvas.Dispose();
 #endif
