@@ -1,11 +1,11 @@
-NSec
-https://github.com/ektrah/nsec/blob/master/LICENSE
+Sentry
+https://github.com/getsentry/sentry-dotnet/blob/main/LICENSE
 MIT
-https://github.com/ektrah/nsec
+https://github.com/getsentry/sentry-dotnet
 
 MIT License
 
-Copyright (c) 2026 Klaus Hartke
+Copyright (c) 2018 Sentry
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
