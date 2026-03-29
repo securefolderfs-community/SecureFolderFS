@@ -3,8 +3,7 @@ using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    /// TODO: Needs docs
-    public static class AesGcm128
+    public static class AesGcm256
     {
         public static void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> nonce, Span<byte> tag, Span<byte> result, ReadOnlySpan<byte> associatedData)
         {

@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     [Obsolete("AES-CTR + HMAC encryption mode is deprecated.")]
-    public static class AesCtr128
+    public static class AesCtr256
     {
         private const ulong CTR_START = 0UL;
 

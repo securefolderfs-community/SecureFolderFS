@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedDataBigEndian(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Encrypt
-            AesGcm128.Encrypt(
+            AesGcm256.Encrypt(
                 plaintextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedDataBigEndian(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Decrypt
-            return AesGcm128.TryDecrypt(
+            return AesGcm256.TryDecrypt(
                 ciphertextChunk.GetChunkPayload(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),

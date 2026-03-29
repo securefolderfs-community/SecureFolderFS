@@ -124,6 +124,25 @@
                     IsLastItem="True"
                     Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
 
+                <!--  Path  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=Path}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="Path"
+                    IsLastItem="True"
+                    IsVisible="{Binding ViewModel.Id, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.Id, Mode=OneWay}" />
+
+                <!--  Encrypted Path  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=EncryptedPath}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="EncryptedPath"
+                    IsLastItem="True"
+                    IsVisible="{Binding ViewModel.CiphertextId, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.CiphertextId, Mode=OneWay}"
+                    SubtitleTruncation="HeadTruncation" />
+
             </VerticalStackLayout>
         </VerticalStackLayout>
     </Border>

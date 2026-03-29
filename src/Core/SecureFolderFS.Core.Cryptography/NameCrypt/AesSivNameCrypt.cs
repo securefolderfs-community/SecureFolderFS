@@ -8,21 +8,21 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal sealed class AesSivNameCrypt : BaseNameCrypt
     {
-        private readonly AesSiv128 _aesSiv128;
+        private readonly AesSiv256 _aesSiv256;
 
         public AesSivNameCrypt(KeyPair keyPair, string fileNameEncodingId)
             : base(fileNameEncodingId)
         {
-            _aesSiv128 = keyPair.UseKeys((dekKey, macKey) =>
+            _aesSiv256 = keyPair.UseKeys((dekKey, macKey) =>
             {
-                return AesSiv128.CreateInstance(dekKey.ToArray(), macKey.ToArray()); // Note: AesSiv128 requires a byte[] key.
+                return AesSiv256.CreateInstance(dekKey.ToArray(), macKey.ToArray()); // Note: AesSiv128 requires a byte[] key.
             });
         }
 
         /// <inheritdoc/>
         protected override byte[] EncryptFileName(ReadOnlySpan<byte> plaintextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return _aesSiv128.Encrypt(plaintextFileNameBuffer, directoryId);
+            return _aesSiv256.Encrypt(plaintextFileNameBuffer, directoryId);
         }
 
         /// <inheritdoc/>
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         {
             try
             {
-                return _aesSiv128.Decrypt(ciphertextFileNameBuffer, directoryId);
+                return _aesSiv256.Decrypt(ciphertextFileNameBuffer, directoryId);
             }
             catch (CryptographicException)
             {
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _aesSiv128.Dispose();
+            _aesSiv256.Dispose();
         }
     }
 }

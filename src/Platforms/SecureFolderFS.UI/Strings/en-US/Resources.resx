@@ -1376,4 +1376,10 @@
   <data name="VirtualFileName" xml:space="preserve">
       <value>Vacations.jpeg</value>
   </data>
+  <data name="Path" xml:space="preserve">
+      <value>Path</value>
+  </data>
+  <data name="EncryptedPath" xml:space="preserve">
+      <value>Encrypted path</value>
+  </data>
 </root>

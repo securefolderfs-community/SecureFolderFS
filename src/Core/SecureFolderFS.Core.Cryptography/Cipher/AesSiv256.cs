@@ -1,21 +1,19 @@
-﻿using Miscreant;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
+using Miscreant;
 
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    // TODO: Needs docs
-    public sealed class AesSiv128 : IDisposable
+    public sealed class AesSiv256 : IDisposable
     {
         private readonly Aead _aesCmacSiv;
 
-        private AesSiv128(Aead aesCmacSiv)
+        private AesSiv256(Aead aesCmacSiv)
         {
             _aesCmacSiv = aesCmacSiv;
         }
 
-        public static AesSiv128 CreateInstance(ReadOnlySpan<byte> dekKey, ReadOnlySpan<byte> macKey)
+        public static AesSiv256 CreateInstance(ReadOnlySpan<byte> dekKey, ReadOnlySpan<byte> macKey)
         {
             // The longKey will be split into two keys - one for S2V and the other one for CTR
             var longKey = new byte[dekKey.Length + macKey.Length];
@@ -26,7 +24,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             macKey.CopyTo(longKeySpan.Slice(dekKey.Length));
 
             var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-            return new AesSiv128(aesCmacSiv);
+            return new AesSiv256(aesCmacSiv);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

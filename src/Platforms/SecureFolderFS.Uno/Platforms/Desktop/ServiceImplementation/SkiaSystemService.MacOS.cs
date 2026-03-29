@@ -24,8 +24,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             }
             remove
             {
+                var hadValue = _deviceLocked is not null;
                 _deviceLocked -= value;
-                if (_deviceLocked is null)
+                if (_deviceLocked is null && hadValue)
                     DetachLockObserver();
             }
         }
