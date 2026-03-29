@@ -57,7 +57,10 @@
             <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses}" Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:LicenseViewModel">
-                        <ucab:ActionBlockControl Title="{x:Bind PackageName}" Description="{x:Bind LicenseName}">
+                        <ucab:ActionBlockControl
+                            Title="{x:Bind PackageName}"
+                            BlockMode="Expandable"
+                            Description="{x:Bind LicenseName}">
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <HyperlinkButton
