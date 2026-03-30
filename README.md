@@ -39,77 +39,6 @@ This ensures that your data will always stay secure.
 	</a>
 </p>
 
-### Building from source
-
-> Below are the instructions for building the cross-platform SecureFolderFS app (main app).
-> For other projects, such as the SDK, libraries and CLI programme, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
-
-#### 1. Prerequisites
-
-- .NET 10 SDK or later
-- [`Uno.Check`](https://platform.uno/docs/articles/uno-check.html)
-- Git
-- For Android builds:
-  - Android SDK and platform tools (Android Studio)
-  - JDK 17+
-- For iOS builds:
-  - Xcode (on macOS)
-
-#### 2. Set up IDE
-
-> *Using Visual Studio 2026 is recommended for SecureFolderFS development.*
-> *Otherwise, you might see issues with the .NET SDK.*
-
-##### Visual Studio
-
-- Microsoft Visual Studio with .NET
-- Workloads:
-  - ".NET desktop development" (desktop target, including all platform SDKs)
-  - ".NET multi-platform app UI development"
-  - "WinUI application development"
-- Uno Platform extension
-
-##### Rider
-
-> [!NOTE]
-> Running the Windows App SDK version of SecureFolderFS (targetting `net10.0-windows10.0....`) is not supported in Rider.
-
-- JetBrains Rider with .NET
-- Android SDK/JDK (and Xcode SDK on macOS) are configured correctly in Rider settings (for mobile targets)
-
-#### 3. Run `Uno.Check`
-
-> *This step is optional, but is good practice to check you installed all the necessary dependencies to build SecureFolderFS on your computer.*
-
-Run the following command and follow all of its instructions (you need to have `Uno.Check` installed!)
-
-```
-uno-check
-```
-
-See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-check.html) for tips.
-
-#### 4. Clone the repository
-
-> [!WARNING]
-> Ensure that you initialise and update the submodules when cloning SecureFolderFS.
-> Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
-
-> *Click the "Code" button on the top of this page to make cloning easier.*
-
-```bash
-git clone --recurse-submodules https://github.com/securefolderfs-community/SecureFolderFS
-cd SecureFolderFS
-```
-
-#### 5. Build the project
-
-- Open the solution `SecureFolderFS.Public.slnx`
-- Set `SecureFolderFS.Uno` as the startup project if you are building for desktop targets (i.e. macOS, Linux or Windows)
-- Set `SecureFolderFS.Maui` as the startup project if you are building for mobile targets (i.e. Android, iOS or iPadOS)
-- Select the appropriate target device / platform
-- Run with debugger
-
 ### How to use SecureFolderFS
 
 SecureFolderFS is a modern vault programme that helps you keep your files safe.
@@ -131,7 +60,7 @@ From the app's UI, you can create new vaults to store items securely.
 > *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
 > *The vault remains offline on your disk and your data is encrypted in a way that cannot be accessed by any programme, past, present or future.*
 
-### Supported platforms
+## Supported platforms
 
 > [!NOTE]
 > The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
@@ -149,13 +78,82 @@ All contributions are welcome!
 Whether you want to suggest a new feature or report a bug, you can open a new *[issue or feature request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*.
 Take a look at our *[contributing guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new pull request.
 
-### Translating
+## Translating
 
-You can update existing localisation strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
+You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
 To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
-New translations will be synchronised periodically to the source code, and new releases will always contain the latest translations.
+New translations will be synchronized periodically to the source code, and new releases will always contain the latest translations.
 
 ---
+
+## Building from source
+
+> Below are the instructions for building the cross-platform SecureFolderFS app (main app).
+> For other projects, such as the SDK, libraries and CLI programme, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
+
+### 1. Prerequisites
+
+- .NET 10 SDK
+- [`Uno.Check`](https://platform.uno/docs/articles/uno-check.html)
+- Git
+- For Android builds:
+  - Android SDK and platform tools (Android Studio)
+  - JDK 17+
+- For iOS builds:
+  - Xcode 26.2 (on macOS)
+
+### 2. Set up IDE
+
+> *Using Visual Studio 2026 is recommended for SecureFolderFS development.*
+> *Otherwise, you might see issues with the .NET SDK.*
+
+##### Visual Studio
+
+- Microsoft Visual Studio with .NET
+- Workloads:
+  - ".NET desktop development" (desktop target, including all platform SDKs)
+  - ".NET multi-platform app UI development"
+  - "WinUI application development"
+- Uno Platform extension
+
+##### Rider
+
+> [!NOTE]
+> Running the Windows App SDK version of SecureFolderFS (targetting `net10.0-windows10.0...`) is not supported in Rider.
+
+- JetBrains Rider with .NET
+- Android SDK/JDK (and Xcode SDK on macOS) are configured correctly in Rider settings (for mobile targets)
+
+### 3. Run `Uno.Check`
+
+> *This step is optional, but is good practice to check you installed all the necessary dependencies to build SecureFolderFS on your computer.*
+
+Run the following command and follow all of its instructions (you need to have `Uno.Check` installed!)
+
+```
+uno-check
+```
+
+See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-check.html) for tips.
+
+### 4. Clone the repository
+
+> [!WARNING]
+> Ensure that you include the required submodules when cloning SecureFolderFS.
+> Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
+
+```bash
+git clone --recursive https://github.com/securefolderfs-community/SecureFolderFS
+cd SecureFolderFS
+```
+
+### 5. Build the project
+
+- Open the solution `SecureFolderFS.Public.slnx`
+- Set `SecureFolderFS.Uno` as the startup project if you are building for desktop targets (i.e. macOS, Linux or Windows)
+- Set `SecureFolderFS.Maui` as the startup project if you are building for mobile targets (i.e. Android, iOS or iPadOS)
+- Select the appropriate target device / platform
+- Run with debugger
 
 <p align="center">
   <img src="assets/SecureFolderFS_Hero.png" />
