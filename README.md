@@ -89,6 +89,7 @@ New translations will be synchronized periodically to the source code, and new r
 
 ## Building from source
 
+> [!NOTE]
 > Below are the instructions for building SecureFolderFS for a cross-platform target.
 > For other projects, such as the SDK, libraries and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
 
@@ -105,6 +106,7 @@ New translations will be synchronized periodically to the source code, and new r
 
 ### 2. Set up IDE
 
+> [!TIP]
 > *Using Visual Studio 2026 is recommended for SecureFolderFS development.*
 > *Otherwise, you might see issues with the .NET SDK.*
 
@@ -127,6 +129,7 @@ New translations will be synchronized periodically to the source code, and new r
 
 ### 3. Run `Uno.Check`
 
+> [!TIP]
 > *This step is optional, but is good practice to check you installed all the necessary dependencies to build SecureFolderFS on your computer.*
 
 Run the following command and follow all of its instructions (you need to have `Uno.Check` installed!)
