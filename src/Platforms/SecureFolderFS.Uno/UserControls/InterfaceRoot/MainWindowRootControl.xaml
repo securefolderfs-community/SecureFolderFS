@@ -70,7 +70,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             x:FieldModifier="public"
-            x:Load="{x:Bind IsDebugging, Mode=OneWay}"
+            x:Load="{x:Bind IsDebugging}"
             Click="DebugButton_Click">
             <FontIcon Glyph="&#xEBE8;" />
         </Button>
@@ -80,7 +80,7 @@
             <hni:TaskbarIcon
                 x:Name="TaskbarIcon"
                 ContextMenuMode="SecondWindow"
-                DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
+                DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand}"
                 IconSource="ms-appx:///Assets/Icons/app_icon.ico"
                 MenuActivation="LeftOrRightClick"
                 PopupActivation="DoubleClick"

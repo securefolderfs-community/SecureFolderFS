@@ -176,7 +176,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title?.Equals(args.ChosenSuggestion) ?? false);
             if (chosenItem is null)
                 return;
 

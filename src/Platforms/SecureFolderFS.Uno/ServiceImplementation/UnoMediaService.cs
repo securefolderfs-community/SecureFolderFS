@@ -9,7 +9,6 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
@@ -83,10 +82,6 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             await bitmapImage.SetSourceAsync(winrtStream).AsTask(cancellationToken);
 
             return new ImageBitmap(bitmapImage, null);
-
-            // TODO: Check if it works
-            var classification = FileTypeHelper.GetClassification(file);
-            return await ImagingHelpers.GetBitmapFromStreamAsync(winrtStream, classification.MimeType, cancellationToken);
         }
 
         /// <inheritdoc/>

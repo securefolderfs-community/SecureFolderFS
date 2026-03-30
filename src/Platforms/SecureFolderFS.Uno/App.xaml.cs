@@ -301,7 +301,8 @@ namespace SecureFolderFS.Uno
             var titleBar = window.Content switch
             {
                 VaultPreviewRootControl previewRootControl => previewRootControl.CustomTitleBar,
-                MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar
+                MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar,
+                _ => null
             };
 
             window.ExtendsContentIntoTitleBar = true;

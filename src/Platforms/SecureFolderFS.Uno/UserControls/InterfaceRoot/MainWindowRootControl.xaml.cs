@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (OperatingSystem.IsMacCatalyst())
                 RootGrid.Margin = new(0, 37, 0, 0);
 
-            ViewModel.RootNavigationService.SetupNavigation(Navigation);
+            ViewModel?.RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
 
@@ -117,7 +117,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (XamlRoot is null)
+            if (ViewModel is null || XamlRoot is null)
                 return;
 
             var focusedElement = FocusManager.GetFocusedElement(XamlRoot);

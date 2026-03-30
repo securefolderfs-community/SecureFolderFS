@@ -59,7 +59,10 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async Task NavigateToTagAsync(int tag)
         {
-            if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
+            if (ViewModel is null)
+                return;
+
+            if (!ViewModel.NavigationService.SetupNavigation(Navigation))
                 return;
 
             _firstNavigated = true;
