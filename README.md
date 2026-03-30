@@ -1,8 +1,4 @@
-> [!IMPORTANT]
-> SecureFolderFS is currently in the <kbd>Beta</kbd> development stage and may have occasional stability issues.
-> Developers are not responsible for the loss or corruption of data.
-
-<p align="left">
+<p align="center">
   <img src="assets/SecureFolderFS_Header.png" />
 </p>
 
