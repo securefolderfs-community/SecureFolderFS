@@ -167,6 +167,8 @@ cd SecureFolderFS
 - Select the appropriate target device / platform
 - Run with debugger
 
+---
+
 <p align="center">
   <img src="assets/SecureFolderFS_Hero.png" />
 </p>
