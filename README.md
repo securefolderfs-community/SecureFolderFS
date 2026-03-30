@@ -143,7 +143,7 @@ See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-chec
 > Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
 
 ```bash
-git clone --recursive https://github.com/securefolderfs-community/SecureFolderFS
+git clone --recurse-submodules https://github.com/securefolderfs-community/SecureFolderFS
 cd SecureFolderFS
 ```
 
