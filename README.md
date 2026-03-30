@@ -32,21 +32,25 @@ This ensures that your data will always stay secure.
 
 <p align="left">
   <a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
-    <img height="56" src="assets/Source_Microsoft.svg" alt="Get it from Microsoft" />
+    <img height="56" src="assets/Source_Microsoft.png" alt="Get it from Microsoft" />
   </a>
   <!--<a style="text-decoration:none" href="https://apps.apple.com">
-    <img height="56" src="assets/Source_AppStore.svg" alt="Download on the App Store" />
+    <img height="56" src="assets/Source_AppStore.png" alt="Download on the App Store" />
   </a>
   <a style="text-decoration:none" href="https://play.google.com/store/apps/details?id=org.securefolderfs.securefolderfs">
-    <img height="56" src="assets/Source_GooglePlay.svg" alt="Get it on Google Play" />
+    <img height="56" src="assets/Source_GooglePlay.png" alt="Get it on Google Play" />
   </a>
   <a style="text-decoration:none" href="https://flathub.org/apps/org.securefolderfs.securefolderfs">
-    <img height="56" src="assets/Source_Flathub.svg" alt="Get it on Flathub" />
+    <img height="56" src="assets/Source_Flathub.png" alt="Get it on Flathub" />
   </a>-->
   <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_GitHub.svg" alt="Get it from GitHub" />
+    <img height="56" src="assets/Source_GitHub.png" alt="Get it from GitHub" />
   </a>
 </p>
+
+> [!NOTE]
+> The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
+> SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, MAUI and the .NET Runtime).
 
 ### How to use SecureFolderFS
 
@@ -69,18 +73,6 @@ From the app's UI, you can create new vaults to store items securely.
 > *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
 > *The vault remains offline on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
 
-## Supported platforms
-
-> [!NOTE]
-> The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
-> SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, MAUI and the .NET Runtime).
-
-SecureFolderFS can run on the following platforms:
-- Android, iOS and iPadOS: SecureFolderFS provides its encryption services across all modern mobile devices using Microsoft's MAUI platform.
-- Windows: SecureFolderFS provides an extremely feature-rich experience on Windows, built from-the-ground-up using the Windows App SDK.
-- macOS: SecureFolderFS lets you safeguard your data on macOS, with built-in support for Touch ID, made possible by Uno Platform.
-- Linux: SecureFolderFS provides the same rich feature set that exists on other platforms to Linux devices.
-
 ## Contributing
 
 All contributions are welcome!
@@ -89,15 +81,15 @@ Take a look at our *[contributing guidelines](CONTRIBUTING.md)* to learn about b
 
 ## Translating
 
-You can update existing localisation strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
+You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
 To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
-New translations will be synchronised periodically to the source code, and new releases will always contain the latest translations.
+New translations will be synchronized periodically to the source code, and new releases will always contain the latest translations.
 
 ---
 
 ## Building from source
 
-> Below are the instructions for building the cross-platform SecureFolderFS app (main app).
+> Below are the instructions for building SecureFolderFS for a cross-platform target.
 > For other projects, such as the SDK, libraries and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
 
 ### 1. Prerequisites
@@ -128,7 +120,7 @@ New translations will be synchronised periodically to the source code, and new r
 ##### Rider
 
 > [!NOTE]
-> Running the Windows App SDK version of SecureFolderFS (targetting `net10.0-windows10.0...`) is not supported in Rider.
+> Running the Windows App SDK version of SecureFolderFS (targeting `net10.0-windows10.0...`) is not supported in Rider.
 
 - JetBrains Rider with .NET
 - Android SDK/JDK (and Xcode SDK on macOS) are configured correctly in Rider settings (for mobile targets)
