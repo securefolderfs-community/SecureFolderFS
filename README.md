@@ -70,7 +70,7 @@ From the app's UI, you can create new vaults to store items securely.
 > *Upon entering the correct password, the vault will then open.*
 > *You can press 'Open vault' to open the vault's mounted file-system in your file manager of choice.*
 > *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
-> *The vault remains offline on your disk and your data is encrypted in a way that cannot be accessed by any programme, past, present or future.*
+> *The vault remains offline on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
 
 ## Supported platforms
 
@@ -101,7 +101,7 @@ New translations will be synchronized periodically to the source code, and new r
 ## Building from source
 
 > Below are the instructions for building the cross-platform SecureFolderFS app (main app).
-> For other projects, such as the SDK, libraries and CLI programme, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
+> For other projects, such as the SDK, libraries and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
 
 ### 1. Prerequisites
 
@@ -151,7 +151,7 @@ See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-chec
 ### 4. Clone the repository
 
 > [!WARNING]
-> Ensure that you initialise and update the required submodules when cloning SecureFolderFS.
+> Ensure that you initialize and update the required submodules when cloning SecureFolderFS.
 > Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
 
 ```bash
