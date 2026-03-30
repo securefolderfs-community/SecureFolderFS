@@ -16,6 +16,10 @@ inputs:
   sdk-version:
     description: 'The version of the Windows Sdk'
     required: false
+  run-uno-check:
+    description: 'Whether to run the Uno.Check tool'
+    default: 'true'
+    required: false
 
 runs:
   using: "composite"
@@ -43,6 +47,7 @@ runs:
 
     # Run Uno.Check
     - name: Install ${{ inputs.target-platform }} Workloads
+      if: ${{ inputs.run-uno-check == 'true' }}
       shell: pwsh
       run: |
         dotnet tool install -g uno.check
