@@ -24,7 +24,7 @@ This **groundbreaking approach** allows SecureFolderFS to achieve **exceptional 
 
 *When trust is broken, encryption is not.*
 SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials.
-This ensures that your data will always stay secure.
+This ensures that your data will always remain secure.
 
 ---
 
@@ -48,30 +48,30 @@ This ensures that your data will always stay secure.
   </a>
 </p>
 
-> [!NOTE]
+> [!TIP]
 > The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
 > SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, MAUI and the .NET Runtime).
 
 ### How to use SecureFolderFS
 
-SecureFolderFS is a modern vault programme that helps you keep your files safe.
+SecureFolderFS is a modern encryption program that helps you keep your files safe.
 From the app's UI, you can create new vaults to store items securely.
 
 <p align="center">
-  <img src="assets/SecureFolderFS_Demo_MyVaults.png" width="750" />
+  <img src="assets/SecureFolderFS_LockedVault.png" width="750" />
 </p>
 
 > *For example, the 'Secrets' vault is locked behind a password.*
 > *You must enter the correct password, which was set when the vault was created, to decrypt and unlock the vault.*
 
 <p align="center">
-  <img src="assets/SecureFolderFS_Demo_SecretsVault.png" width="750" />
+  <img src="assets/SecureFolderFS_Dashboard.png" width="750" />
 </p>
 
 > *Upon entering the correct password, the vault will then open.*
-> *You can press 'Open vault' to open the vault's mounted file-system in your file manager of choice.*
+> *You can press 'View vault' to open the vault's mounted file-system in your file manager of choice.*
 > *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
-> *The vault remains offline on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
+> *The vault remains on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
 
 ## Contributing
 
