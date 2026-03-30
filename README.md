@@ -31,12 +31,12 @@ This ensures that your data will always stay secure.
 ## Try out SecureFolderFS
 
 <p align="left">
-	<a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
-		<img src="https://github.com/Rise-Software/Rise-Media-Player/assets/74561130/3d7edcaf-26d8-4453-a751-29b851721abd" alt="Get it from Microsoft" />
-	</a>
-	<a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-		<img src="https://github.com/Rise-Software/Rise-Media-Player/assets/74561130/60deb402-0c8e-4579-80e6-69cb7b19cd43" alt="Get it from GitHub" />
-	</a>
+  <a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
+    <img src="https://github.com/Rise-Software/Rise-Media-Player/assets/74561130/3d7edcaf-26d8-4453-a751-29b851721abd" alt="Get it from Microsoft" />
+  </a>
+  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
+    <img src="https://github.com/Rise-Software/Rise-Media-Player/assets/74561130/60deb402-0c8e-4579-80e6-69cb7b19cd43" alt="Get it from GitHub" />
+  </a>
 </p>
 
 ### How to use SecureFolderFS
@@ -139,7 +139,7 @@ See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-chec
 ### 4. Clone the repository
 
 > [!WARNING]
-> Ensure that you include the required submodules when cloning SecureFolderFS.
+> Ensure that you initialise and update the required submodules when cloning SecureFolderFS.
 > Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
 
 ```bash
