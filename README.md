@@ -32,22 +32,19 @@ This ensures that your data will always stay secure.
 
 <p align="left">
   <a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
-    <img height="56" src="assets/Source_Microsoft.png" alt="Get it from Microsoft" />
+    <img height="56" src="assets/Source_Microsoft.svg" alt="Get it from Microsoft" />
   </a>
-
-  <!--<a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_AppStore.png" alt="Download on the App Store" />
+  <!--<a style="text-decoration:none" href="https://apps.apple.com">
+    <img height="56" src="assets/Source_AppStore.svg" alt="Download on the App Store" />
   </a>
-
-  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_GooglePlay.png" alt="Get it on Google Play" />
+  <a style="text-decoration:none" href="https://play.google.com/store/apps/details?id=org.securefolderfs.securefolderfs">
+    <img height="56" src="assets/Source_GooglePlay.svg" alt="Get it on Google Play" />
   </a>
-  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_Flathub.png" alt="Get it on Flathub" />
+  <a style="text-decoration:none" href="https://flathub.org/apps/org.securefolderfs.securefolderfs">
+    <img height="56" src="assets/Source_Flathub.svg" alt="Get it on Flathub" />
   </a>-->
-
   <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_GitHub.png" alt="Get it from GitHub" />
+    <img height="56" src="assets/Source_GitHub.svg" alt="Get it from GitHub" />
   </a>
 </p>
 
