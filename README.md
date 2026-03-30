@@ -1,38 +1,166 @@
 <p align="center">
-  <h1 align="center">SecureFolderFS</h1>
+  <img src="assets/SecureFolderFS_Header.png" />
 </p>
 
 <p align="center">
-  <img src="assets/SecureFolderFS_Hero.png">
+  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
+    <img src="https://img.shields.io/github/v/release/securefolderfs-community/SecureFolderFS" />
+  </a>
+  <!--<a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/actions/workflows/ci.yml">
+    <img src="https://github.com/securefolderfs-community/SecureFolderFS/actions/workflows/ci.yml/badge.svg" />
+  </a>-->
+  <a style="text-decoration:none" href="https://crowdin.com/project/securefolderfs">
+    <img src="https://badges.crowdin.net/securefolderfs/localized.svg" />
+  </a>
+  <a style="text-decoration:none" href="https://discord.gg/NrTxXpJ2Zj">
+    <img src="https://img.shields.io/discord/926425949078159420?label=Discord&color=7289da" />
+  </a>
 </p>
 
-[![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
-[![Crowdin](https://badges.crowdin.net/securefolderfs/localized.svg)](https://crowdin.com/project/securefolderfs)
-![GitHub Release](https://img.shields.io/github/v/release/securefolderfs-community/SecureFolderFS)
+SecureFolderFS helps you **keep your files private**.
+SecureFolderFS lets you safeguard your data with **cutting-edge** cryptographic algorithms that **seamlessly secure** your data thanks to the app's **'on-the-fly' encryption**.
+**Built from the ground up** to be powerful, adaptable, and safe, our **advanced** file system engine ensures that your files are seen by your eyes only.
+This **groundbreaking approach** allows SecureFolderFS to achieve **exceptional performance** without sacrificing security.
 
-### About
+*When trust is broken, encryption is not.*
+SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials.
+This ensures that your data will always remain secure.
 
-SecureFolderFS helps you keep your files private. Safeguard your data with cutting-edge cryptographic algorithms that seamlessly secure your data thanks to the on-fly encryption. Built from the ground up to be safe, our advanced file system engine ensures that only the specific sections of your data necessary for viewing are decrypted. This groundbreaking approach allows SecureFolderFS to achieve exceptional performance without sacrificing security.
+---
 
-When trust is broken, encryption is not. SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials (not even the authors). This ensures that your data will always stay secure.
+## Try out SecureFolderFS
+
+<p align="left">
+  <a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
+    <img height="56" src="assets/Source_Microsoft.png" alt="Get it from Microsoft" />
+  </a>
+  <!--<a style="text-decoration:none" href="https://apps.apple.com">
+    <img height="56" src="assets/Source_AppStore.png" alt="Download on the App Store" />
+  </a>
+  <a style="text-decoration:none" href="https://play.google.com/store/apps/details?id=org.securefolderfs.securefolderfs">
+    <img height="56" src="assets/Source_GooglePlay.png" alt="Get it on Google Play" />
+  </a>
+  <a style="text-decoration:none" href="https://flathub.org/apps/org.securefolderfs.securefolderfs">
+    <img height="56" src="assets/Source_Flathub.png" alt="Get it on Flathub" />
+  </a>-->
+  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
+    <img height="56" src="assets/Source_GitHub.png" alt="Get it from GitHub" />
+  </a>
+</p>
+
+> [!TIP]
+> The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
+> SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, MAUI and the .NET Runtime).
+
+### How to use SecureFolderFS
+
+SecureFolderFS is a modern encryption program that helps you keep your files safe.
+From the app's UI, you can create new vaults to store items securely.
+
+<p align="center">
+  <img src="assets/SecureFolderFS_LockedVault.png" width="750" />
+</p>
+
+> *For example, the 'Secrets' vault is locked behind a password.*
+> *You must enter the correct password, which was set when the vault was created, to decrypt and unlock the vault.*
+
+<p align="center">
+  <img src="assets/SecureFolderFS_Dashboard.png" width="750" />
+</p>
+
+> *Upon entering the correct password, the vault will then open.*
+> *You can press 'View vault' to open the vault's mounted file-system in your file manager of choice.*
+> *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
+> *The vault remains on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
+
+## Contributing
+
+All contributions are welcome!
+Whether you want to suggest a new feature or report a bug, you can open a new *[issue or feature request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*.
+Take a look at our *[contributing guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new pull request.
+
+## Translating
+
+You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
+To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
+New translations will be synchronized periodically to the source code, and new releases will always contain the latest translations.
+
+---
+
+## Building from source
 
 > [!NOTE]
-> The software is currently in the Beta stage which might have occasional stability issues. Developers are not responsible for the loss or corruption of data.
+> Below are the instructions for building SecureFolderFS for a cross-platform target.
+> For other projects, such as the SDK, libraries and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
 
-### Try out SecureFolderFS
+### 1. Prerequisites
 
-<a href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
-  <img src="assets/MSStore_Download.png" width=140>
-</a>
+- .NET 10 SDK
+- [`Uno.Check`](https://platform.uno/docs/articles/uno-check.html)
+- Git
+- For Android builds:
+  - Android SDK and platform tools (Android Studio)
+  - JDK 17+
+- For iOS builds:
+  - Xcode 26.2 (on macOS)
 
-You can also download from *[Releases (Source code only)](https://github.com/securefolderfs-community/SecureFolderFS/releases)*.
-<br>
-*More platforms including Android, iOS, and Linux are coming in the foreseeable future.*
+### 2. Set up IDE
 
-### Translating and contributing to SecureFolderFS
+> [!TIP]
+> *Using Visual Studio 2026 is recommended for SecureFolderFS development.*
+> *Otherwise, you might see issues with the .NET SDK.*
 
-You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*. To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*. New translations will be synced periodically to the main repository.
+##### Visual Studio
 
-All contributions are welcome! Whether you want to suggest a new feature or report a bug, you can open a new *[Issue or Feature Request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*. Take a look at our *[Contributing Guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new Pull Request.
+- Microsoft Visual Studio with .NET
+- Workloads:
+  - ".NET desktop development" (desktop target, including all platform SDKs)
+  - ".NET multi-platform app UI development"
+  - "WinUI application development"
+- Uno Platform extension
 
-Check out *[BUILDING](BUILDING.md)* to prepare your environment for developing SecureFolderFS.
+##### Rider
+
+> [!NOTE]
+> Running the Windows App SDK version of SecureFolderFS (targeting `net10.0-windows10.0...`) is not supported in Rider.
+
+- JetBrains Rider with .NET
+- Android SDK/JDK (and Xcode SDK on macOS) are configured correctly in Rider settings (for mobile targets)
+
+### 3. Run `Uno.Check`
+
+> [!TIP]
+> *This step is optional, but is good practice to check you installed all the necessary dependencies to build SecureFolderFS on your computer.*
+
+Run the following command and follow all of its instructions (you need to have `Uno.Check` installed!)
+
+```
+uno-check
+```
+
+See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-check.html) for tips.
+
+### 4. Clone the repository
+
+> [!WARNING]
+> Ensure that you initialize and update the required submodules when cloning SecureFolderFS.
+> Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
+
+```bash
+git clone --recurse-submodules https://github.com/securefolderfs-community/SecureFolderFS
+cd SecureFolderFS
+```
+
+### 5. Build the project
+
+- Open the solution `SecureFolderFS.Public.slnx`
+- Set `SecureFolderFS.Uno` as the startup project if you are building for desktop targets (i.e. macOS, Linux or Windows)
+- Set `SecureFolderFS.Maui` as the startup project if you are building for mobile targets (i.e. Android, iOS or iPadOS)
+- Select the appropriate target device / platform
+- Run with debugger
+
+---
+
+<p align="center">
+  <img src="assets/SecureFolderFS_Hero.png" />
+</p>
