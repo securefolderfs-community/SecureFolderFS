@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+env:
+  WORKING_DIR: ${{ github.workspace }}
+  GLOBAL_JSON_PATH: '${{ github.workspace }}\global.json'
+  SOLUTION_PATH: '${{ github.workspace }}\SecureFolderFS.Public.slnx'
+  SFFS_UNO_PROJECT_PATH: '${{ github.workspace }}\src\Platforms\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj'
+  SFFS_MAUI_PROJECT_PATH: '${{ github.workspace }}\src\Platforms\SecureFolderFS.Maui\SecureFolderFS.Maui.csproj'
+  SFFS_CLI_PROJECT_PATH: '${{ github.workspace }}\src\Platforms\SecureFolderFS.Cli\SecureFolderFS.Cli.csproj'
+  DOTNET_TFM: 'net10.0'
+  DOTNET_SDK: '10.0.102'
+
+jobs:
+  # Ensures that the formatting in all XAML files across the codebase is correct for the latest commit.
+  formatting:
+    runs-on: windows-2025-vs2026
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+
+      - name: Install XAML Styler
+        run: 'dotnet tool install --global XamlStyler.Console'
+
+      - name: Check XAML formatting
+        id: check-step
+        run: |
+          $changedFiles = (git diff --diff-filter=d --name-only HEAD~1) -split "\n" | Where-Object {$_ -like "*.xaml"}
+          foreach ($file in $changedFiles)
+          {
+            xstyler -p -l None -f $file
+            if ($LASTEXITCODE -ne 0)
+            {
+              echo "::error file=$file::Format check failed"
+            }
+          }
+        continue-on-error: true
+
+      - name: Fail if necessary
+        if: steps.check-step.outcome == 'failure'
+        run: exit 1
+
+  # Builds the external libraries required by SecureFolderFS.
+  # This ensures that the external dependencies can be built before even attempting the main projects.
+  lib:
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        project: [NWebDav, Tmds.Fuse]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      PROJECT: ${{ matrix.project }}
+      THIS_PROJECT_PATH: '${{ github.workspace }}\lib\${{ matrix.project }}'
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
