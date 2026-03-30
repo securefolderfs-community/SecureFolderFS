@@ -151,7 +151,7 @@ See the [official `Uno.Check` guide](https://platform.uno/docs/articles/uno-chec
 ### 4. Clone the repository
 
 > [!WARNING]
-> Ensure that you include the required submodules when cloning SecureFolderFS.
+> Ensure that you initialise and update the required submodules when cloning SecureFolderFS.
 > Otherwise, you will run into issues as SecureFolderFS will not have all the dependencies it needs to build.
 
 ```bash
