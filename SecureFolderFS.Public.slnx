@@ -1,26 +1,8 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="arm64" />
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
   <Folder Name="/lib/">
-    <Project Path="lib/nwebdav/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
-    <Project Path="lib/nwebdav/NWebDav.Server/NWebDav.Server.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
-    <Project Path="lib/Tmds.Fuse/src/Tmds.Fuse/Tmds.Fuse.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="lib/nwebdav/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj" />
+    <Project Path="lib/nwebdav/NWebDav.Server/NWebDav.Server.csproj" />
+    <Project Path="lib/Tmds.Fuse/src/Tmds.Fuse/Tmds.Fuse.csproj" />
   </Folder>
   <Folder Name="/SolutionItems/">
     <File Path="../SecureFolderFS.Uno/Directory.Build.props" />
@@ -29,53 +11,24 @@
   </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Core/">
-    <Project Path="src/Core/SecureFolderFS.Core.Cryptography/SecureFolderFS.Core.Cryptography.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Core/SecureFolderFS.Core.Cryptography/SecureFolderFS.Core.Cryptography.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.Migration/SecureFolderFS.Core.Migration.csproj" />
-    <Project Path="src/Core/SecureFolderFS.Core/SecureFolderFS.Core.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Core/SecureFolderFS.Core/SecureFolderFS.Core.csproj" />
   </Folder>
   <Folder Name="/src/Core/FileSystems/">
-    <Project Path="src/Core/SecureFolderFS.Core.Dokany/SecureFolderFS.Core.Dokany.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
-    <Project Path="src/Core/SecureFolderFS.Core.FileSystem/SecureFolderFS.Core.FileSystem.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
-    <Project Path="src/Core/SecureFolderFS.Core.FUSE/SecureFolderFS.Core.FUSE.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Core/SecureFolderFS.Core.Dokany/SecureFolderFS.Core.Dokany.csproj" />
+    <Project Path="src/Core/SecureFolderFS.Core.FileSystem/SecureFolderFS.Core.FileSystem.csproj" />
+    <Project Path="src/Core/SecureFolderFS.Core.FUSE/SecureFolderFS.Core.FUSE.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.MobileFS/SecureFolderFS.Core.MobileFS.csproj" />
-    <Project Path="src/Core/SecureFolderFS.Core.WebDav/SecureFolderFS.Core.WebDav.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Core/SecureFolderFS.Core.WebDav/SecureFolderFS.Core.WebDav.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.WinFsp/SecureFolderFS.Core.WinFsp.csproj" />
   </Folder>
   <Folder Name="/src/Platforms/">
     <Project Path="src/Platforms/SecureFolderFS.Cli/SecureFolderFS.Cli.csproj" />
     <Project Path="src/Platforms/SecureFolderFS.Maui/SecureFolderFS.Maui.csproj">
-      <Platform Solution="Debug|x64" Project="x64" />
       <Deploy />
     </Project>
-    <Project Path="src/Platforms/SecureFolderFS.UI/SecureFolderFS.UI.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Platforms/SecureFolderFS.UI/SecureFolderFS.UI.csproj" />
     <Project Path="src/Platforms/SecureFolderFS.Uno/SecureFolderFS.Uno.csproj">
       <Deploy />
     </Project>
@@ -87,24 +40,12 @@
     <Project Path="src/Sdk/SecureFolderFS.Sdk.Ftp/SecureFolderFS.Sdk.Ftp.csproj" />
     <Project Path="src/Sdk/SecureFolderFS.Sdk.GoogleDrive/SecureFolderFS.Sdk.GoogleDrive.csproj" />
     <Project Path="src/Sdk/SecureFolderFS.Sdk.WebDavClient/SecureFolderFS.Sdk.WebDavClient.csproj" />
-    <Project Path="src/Sdk/SecureFolderFS.Sdk/SecureFolderFS.Sdk.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Sdk/SecureFolderFS.Sdk/SecureFolderFS.Sdk.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">
-    <Project Path="src/Shared/SecureFolderFS.Shared/SecureFolderFS.Shared.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Shared/SecureFolderFS.Shared/SecureFolderFS.Shared.csproj" />
     <Project Path="src/Shared/SecureFolderFS.SourceGenerator/SecureFolderFS.SourceGenerator.csproj" />
-    <Project Path="src/Shared/SecureFolderFS.Storage/SecureFolderFS.Storage.csproj">
-      <Platform Solution="Release|arm64" Project="ARM64" />
-      <Platform Solution="Release|x64" Project="x64" />
-      <Platform Solution="Release|x86" Project="x86" />
-    </Project>
+    <Project Path="src/Shared/SecureFolderFS.Storage/SecureFolderFS.Storage.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SecureFolderFS.Tests/SecureFolderFS.Tests.csproj" />
