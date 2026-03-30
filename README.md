@@ -18,12 +18,12 @@
 </p>
 
 SecureFolderFS helps you **keep your files private**.
-Safeguard your data with **cutting-edge** cryptographic algorithms that **seamlessly secure** your data thanks to **on-the-fly encryption**.
-**Built from the ground up** to be safe, our **advanced** file system engine ensures that only the specific sections of your data necessary for viewing are decrypted.
+SecureFolderFS lets you safeguard your data with **cutting-edge** cryptographic algorithms that **seamlessly secure** your data thanks to the app's **'on-the-fly' encryption**.
+**Built from the ground up** to be powerful, adaptable, and safe, our **advanced** file system engine ensures that your files are seen by your eyes only.
 This **groundbreaking approach** allows SecureFolderFS to achieve **exceptional performance** without sacrificing security.
 
 *When trust is broken, encryption is not.*
-SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials *(not even the authors)*.
+SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials.
 This ensures that your data will always stay secure.
 
 ---
@@ -89,9 +89,9 @@ Take a look at our *[contributing guidelines](CONTRIBUTING.md)* to learn about b
 
 ## Translating
 
-You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
+You can update existing localisation strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
 To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
-New translations will be synchronized periodically to the source code, and new releases will always contain the latest translations.
+New translations will be synchronised periodically to the source code, and new releases will always contain the latest translations.
 
 ---
 
