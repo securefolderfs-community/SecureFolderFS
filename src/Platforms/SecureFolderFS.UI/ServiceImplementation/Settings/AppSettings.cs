@@ -19,13 +19,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public virtual bool WasBetaNotificationShown1
-        {
-            get => GetSetting(static () => false);
-            set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
         public virtual bool ShouldShowVaultTutorial
         {
             get => GetSetting(static () => true);

@@ -25,7 +25,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>
 #if WINDOWS
         , IRecipient<VaultSelectionRequestedMessage>
 #endif
@@ -45,18 +45,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
-        }
-
-        /// <inheritdoc/>
-        public void Receive(VaultAddedMessage message)
-        {
-#if WINDOWS
-            if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
-                && !SettingsService.AppSettings.WasBetaNotificationShown1)
-            {
-                BetaTeachingTip.IsOpen = true;
-            }
-#endif
         }
 
 #if WINDOWS
@@ -160,7 +148,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
-            WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
 #if WINDOWS
             WeakReferenceMessenger.Default.Register<VaultSelectionRequestedMessage>(this);
 #endif
@@ -188,12 +175,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 await ViewModel!.VaultListViewModel.SearchViewModel.SubmitQueryAsync(sender.Text);
-        }
-
-        private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
-        {
-            SettingsService.AppSettings.WasBetaNotificationShown1 = true;
-            await SettingsService.AppSettings.TrySaveAsync();
         }
 
         #region Drag and Drop
