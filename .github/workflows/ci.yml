@@ -209,7 +209,7 @@ jobs:
 #          name: ''
 #          path: ''
 
-  # Builds the SecureFolderFS SDK libraries
+  # Builds the SecureFolderFS Core libraries
   core:
     needs: [shared, lib]
     runs-on: windows-2025-vs2026
