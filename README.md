@@ -6,9 +6,9 @@
   <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
     <img src="https://img.shields.io/github/v/release/securefolderfs-community/SecureFolderFS" />
   </a>
-  <!--<a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/actions/workflows/ci.yml">
+  <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/actions/workflows/ci.yml">
     <img src="https://github.com/securefolderfs-community/SecureFolderFS/actions/workflows/ci.yml/badge.svg" />
-  </a>-->
+  </a>
   <a style="text-decoration:none" href="https://crowdin.com/project/securefolderfs">
     <img src="https://badges.crowdin.net/securefolderfs/localized.svg" />
   </a>
