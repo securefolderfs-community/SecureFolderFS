@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net10.0-windows10.0.26100</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
-
-    <!-- To build SecureFolderFS (Desktop) on Windows, comment net10.0-windows[...] -->
+    <TargetFrameworks>net10.0-desktop;net10.0-windows10.0.26100.0</TargetFrameworks>
 
     <!-- Uncomment if you want to explicity set a TargetFramework -->
     <!--<TargetFramework>net10.0-desktop</TargetFramework>-->
-    <!--<TargetFramework>net10.0-maccatalyst</TargetFramework>-->
     <!--<TargetFramework>net10.0-windows10.0.26100</TargetFramework>-->
   </PropertyGroup>
 
@@ -58,23 +53,6 @@
   </ItemGroup>
 
   <Choose>
-
-    <!-- Mac Catalyst -->
-    <When Condition="'$(TargetFramework)'=='net10.0-maccatalyst'">
-      <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
-      </ItemGroup>
-
-      <ItemGroup>
-        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
-        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
-      </ItemGroup>
-
-      <PropertyGroup>
-        <_RequiresILLinkPack>true</_RequiresILLinkPack>
-        <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
-      </PropertyGroup>
-    </When>
 
     <!-- Skia Desktop -->
     <When Condition="'$(TargetFramework)'=='net10.0-desktop'">
@@ -145,7 +123,6 @@
         <EnableMsixTooling>True</EnableMsixTooling>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-        <TargetFramework>$(DotNetVersion)-net10.0-windows10.0.26100</TargetFramework>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <!--<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>-->
 
