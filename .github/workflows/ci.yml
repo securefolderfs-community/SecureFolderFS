@@ -166,7 +166,7 @@ jobs:
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
-      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Sdk\SecureFolderFS.${{ matrix.project }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Sdk\SecureFolderFS.Sdk.${{ matrix.project }}
 
     steps:
       - name: Checkout the repository
