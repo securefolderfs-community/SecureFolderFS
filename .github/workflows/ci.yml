@@ -153,7 +153,7 @@ jobs:
 #          name: ''
 #          path: ''
 
-  # Builds the SecureFolderFS SDK libraries
+  # Builds the SecureFolderFS SDK libraries.
   sdk:
     needs: shared
     runs-on: windows-2025-vs2026
@@ -209,7 +209,7 @@ jobs:
 #          name: ''
 #          path: ''
 
-  # Builds the SecureFolderFS Core libraries
+  # Builds the SecureFolderFS Core libraries.
   core:
     needs: [shared, lib]
     runs-on: windows-2025-vs2026
@@ -259,6 +259,147 @@ jobs:
           }
           $thisProjectPath = "$env:WORKING_DIR\src\Core\SecureFolderFS.$thisProject"
           Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION `
+            -p:TargetFramework=$env:THIS_TFM
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
+
+  # Builds the SecureFolderFS cross-platform UI library.
+  # This library is the common denominator for both the MAUI and Uno Platform project heads.
+  ui:
+    needs: [core, sdk]
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        targetFramework: [net10.0]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.UI
+      THIS_TFM: ${{ matrix.targetFramework }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
+
+  # Builds the SecureFolderFS Uno Platform app project head.
+  uno:
+    needs: [core, sdk, shared, ui]
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        targetFramework: [net10.0-desktop, net10.0-maccatalyst, net10.0-windows10.0.26100.0]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.Uno
+      THIS_TFM: ${{ matrix.targetFramework }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION `
+            -p:TargetFramework=$env:THIS_TFM
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
+
+  # Builds the SecureFolderFS MAUI app project head.
+  maui:
+    needs: [core, sdk, shared, ui]
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        targetFramework: [net10.0-android, net10.0-ios]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.Maui
+      THIS_TFM: ${{ matrix.targetFramework }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
 
       - name: Restore
         run: |
