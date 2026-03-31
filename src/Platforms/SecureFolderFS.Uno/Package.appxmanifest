@@ -45,7 +45,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="SecureFolderFS"
-        Description="SecureFolderFS lets you securely access your files. With strong AES encryption, you can be assured your files stay protected, and with advanced on-fly encryption/decryption you can continue to work uninterruptibly."
+        Description="SecureFolderFS lets you securely access your files. With strong AES encryption, you can be assured your precious files stay protected, and with advanced on-the-fly encryption/decryption you can continue to work without interruptions."
         Square150x150Logo="Assets\AppIcon\MediumTile.png"
         Square44x44Logo="Assets\AppIcon\AppIcon.png"
         BackgroundColor="transparent">

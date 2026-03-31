@@ -1,0 +1,61 @@
+name: Install Dependencies
+description: ""
+
+inputs:
+  target-platform:
+    description: 'The platform to install dependencies for. #See available values at https://platform.uno/docs/articles/external/uno.check/doc/using-uno-check.html'
+    required: false
+    default: 'all'
+  dotnet-version:
+    description: 'Installs and sets the .NET SDK Version'
+    required: false
+    default: '10.0.x'
+  global-json-file:
+    description: 'The global.json file specifying what SDK must be installed'
+    required: false
+  sdk-version:
+    description: 'The version of the Windows Sdk'
+    required: false
+  run-uno-check:
+    description: 'Whether to run the Uno.Check tool'
+    default: 'true'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    # Install .NET
+    - name: Setup .NET ${{ inputs.dotnet-version }}
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '${{ inputs.dotnet-version }}'
+        global-json-file: '${{ inputs.global-json-file }}'
+
+    # Set up MSBuild
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v3
+
+    # Set up NuGet
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    # Install Windows SDK
+    - name: Install Windows SDK ${{ inputs.sdk-version }}
+      shell: pwsh
+      if: ${{ runner.os == 'Windows' && inputs.sdk-version != '' }}
+      run: .\.github\Install-WindowsSdkISO.ps1 ${{ inputs.sdk-version }}
+
+    # Run Uno.Check
+    - name: Install ${{ inputs.target-platform }} Workloads
+      if: ${{ inputs.run-uno-check == 'true' }}
+      shell: pwsh
+      run: |
+        dotnet tool install -g uno.check
+        ("${{ inputs.target-platform }} ".ToLower().Split(' ') | ForEach-Object {
+          $target = $_.Replace("_win", "").Replace("_macos", "")
+          if (![string]::IsNullOrEmpty($target)) {
+            echo "target: $target"
+            uno-check -v --ci --non-interactive --fix --target $target --skip vswin --skip vsmac --skip xcode --skip androidemulator --skip dotnetnewunotemplates
+            echo "::error file=$file::uno-check finished for target: $target "
+          }
+        })

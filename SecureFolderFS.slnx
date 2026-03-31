@@ -6,12 +6,12 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/lib/">
-    <Project Path="lib/nwebdav/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj">
+    <Project Path="lib/nwebdav/src/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj">
       <Platform Solution="Release|arm64" Project="ARM64" />
       <Platform Solution="Release|x64" Project="x64" />
       <Platform Solution="Release|x86" Project="x86" />
     </Project>
-    <Project Path="lib/nwebdav/NWebDav.Server/NWebDav.Server.csproj">
+    <Project Path="lib/nwebdav/src/NWebDav.Server/NWebDav.Server.csproj">
       <Platform Solution="Release|arm64" Project="ARM64" />
       <Platform Solution="Release|x64" Project="x64" />
       <Platform Solution="Release|x86" Project="x86" />
