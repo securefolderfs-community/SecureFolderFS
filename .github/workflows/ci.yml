@@ -106,3 +106,49 @@ jobs:
 #        with:
 #          name: ''
 #          path: ''
+
+  # Builds the shared libraries consumed by almost all projects in the SecureFolderFS codebase.
+  shared:
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        project: [Shared, SourceGenerator, Storage]
+        targetFramework: [net10.0]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      PROJECT: ${{ matrix.project }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Shared\SecureFolderFS.${{ matrix.project }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
