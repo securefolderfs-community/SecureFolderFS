@@ -186,7 +186,7 @@ jobs:
           } else {
             $thisProject = "Sdk.$env:PROJECT" 
           }
-          $thisProjectPath = "$env:WORKING_DIR\src\Sdk\$thisProject"
+          $thisProjectPath = "$env:WORKING_DIR\src\Sdk\SecureFolderFS.$thisProject"
           Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
 
       - name: Restore
@@ -249,6 +249,16 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_SDK }}
           run-uno-check: false
+
+      - name: Find appropriate project to build
+        run: |
+          if ($env:PROJECT -eq "Core") {
+            $thisProject = "Core"
+          } else {
+            $thisProject = "Core.$env:PROJECT" 
+          }
+          $thisProjectPath = "$env:WORKING_DIR\src\Core\SecureFolderFS.$thisProject"
+          Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
 
       - name: Restore
         run: |
