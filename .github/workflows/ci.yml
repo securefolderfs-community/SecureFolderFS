@@ -199,3 +199,65 @@ jobs:
 #        with:
 #          name: ''
 #          path: ''
+
+  # Builds the SecureFolderFS SDK libraries
+  core:
+    needs: [shared, lib]
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        project: [Dokany, FileSystem, FUSE, WebDav, WinFsp, Core, Cryptography, Migration]
+        targetFramework: [net10.0]
+        include:
+          - configuration: Release
+            project: MobileFS
+            targetFramework: net10.0-android
+          - configuration: Debug
+            project: MobileFS
+            targetFramework: net10.0-android
+          - configuration: Release
+            project: MobileFS
+            targetFramework: net10.0-ios
+          - configuration: Debug
+            project: MobileFS
+            targetFramework: net10.0-ios
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      PROJECT: ${{ matrix.project }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Core\SecureFolderFS.Core.${{ matrix.project }}
+      THIS_TFM: ${{ matrix.targetFramework }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -t:Restore `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -t:Build `
+            -p:Platform="Any CPU" `
+            -p:Configuration=$env:CONFIGURATION `
+            -p:TargetFramework=$env:THIS_TFM
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
