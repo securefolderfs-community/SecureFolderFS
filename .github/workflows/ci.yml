@@ -69,12 +69,14 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
       - name: Install Dependencies
         uses: "./.github/install_dependencies"
         with:
           dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: 'false'
+          run-uno-check: false
 
       - name: Restore
         run: |
