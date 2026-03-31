@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/lib/">
-    <Project Path="lib/nwebdav/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj" />
-    <Project Path="lib/nwebdav/NWebDav.Server/NWebDav.Server.csproj" />
+    <Project Path="lib/nwebdav/src/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj" />
+    <Project Path="lib/nwebdav/src/NWebDav.Server/NWebDav.Server.csproj" />
     <Project Path="lib/Tmds.Fuse/src/Tmds.Fuse/Tmds.Fuse.csproj" />
   </Folder>
   <Folder Name="/SolutionItems/">
