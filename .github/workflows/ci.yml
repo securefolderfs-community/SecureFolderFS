@@ -60,7 +60,7 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
-        project: [NWebDav, Tmds.Fuse]
+        project: [NWebDav.Server, NWebDav.Server.HttpListener, Tmds.Fuse]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
@@ -77,6 +77,16 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_SDK }}
           run-uno-check: false
+
+      - name: Find appropriate project to build
+        run: |
+          if ($env:PROJECT -like "NWebDav*") {
+            $thisProject = "nwebdav"
+          } else {
+            $thisProject = "Tmds.Fuse" 
+          }
+          $thisProjectPath = "$env:WORKING_DIR\lib\$thisProject\src\$env:PROJECT"
+          Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
 
       - name: Restore
         run: |
