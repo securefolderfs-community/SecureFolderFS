@@ -166,7 +166,6 @@ jobs:
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
-      THIS_PROJECT_PATH: ${{ github.workspace }}\src\Sdk\SecureFolderFS.Sdk.${{ matrix.project }}
 
     steps:
       - name: Checkout the repository
@@ -179,6 +178,16 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_SDK }}
           run-uno-check: false
+
+      - name: Find appropriate project to build
+        run: |
+          if ($env:PROJECT -eq "Sdk") {
+            $thisProject = "Sdk"
+          } else {
+            $thisProject = "Sdk.$env:PROJECT" 
+          }
+          $thisProjectPath = "$env:WORKING_DIR\src\Sdk\$thisProject"
+          Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
 
       - name: Restore
         run: |
