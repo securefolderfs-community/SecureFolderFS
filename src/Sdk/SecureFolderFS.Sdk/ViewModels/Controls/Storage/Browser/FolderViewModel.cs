@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -16,7 +17,7 @@ using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<ISettingsService>]
+    [Inject<ISettingsService>, Inject<ILogger>]
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
@@ -76,6 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
+            var scope = Logger.GetPerformanceScope();
             SelectedItems.Clear();
             Items.DisposeAll();
             Items.Clear();
@@ -92,6 +94,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Apply adaptive layout
             if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
                 ApplyAdaptiveLayout();
+
+            Logger.LogPerformance(scope, minThresholdMs: 200);
         }
 
         /// <inheritdoc/>
