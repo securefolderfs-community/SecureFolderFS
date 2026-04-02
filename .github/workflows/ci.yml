@@ -16,6 +16,8 @@ env:
   SFFS_CLI_PROJECT_PATH: '${{ github.workspace }}\src\Platforms\SecureFolderFS.Cli\SecureFolderFS.Cli.csproj'
   DOTNET_TFM: 'net10.0'
   DOTNET_SDK: '10.0.102'
+  NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
+  NUGET_HTTP_CACHE_PATH: ${{ github.workspace }}\.nuget\http-cache
 
 jobs:
   # Ensures that the formatting in all XAML files across the codebase is correct for the latest commit.
@@ -180,6 +182,12 @@ jobs:
         with:
           name: ${{ env.PREREQUISITE }}
 
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
       - name: Find appropriate project to build
         run: |
           if ($env:PROJECT -eq "Sdk") {
@@ -241,6 +249,12 @@ jobs:
         with:
           name: ${{ env.PREREQUISITE }}
 
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
       - name: Find appropriate project to build
         run: |
           if ($env:PROJECT -eq "Core") {
@@ -290,6 +304,12 @@ jobs:
         with:
           name: ${{ env.PREREQUISITE }}
 
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
       - name: Build
         run: |
           msbuild $env:THIS_PROJECT_PATH `
@@ -326,6 +346,12 @@ jobs:
         with:
           name: ${{ env.PREREQUISITE }}
 
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
       - name: Build
         run: |
           msbuild $env:THIS_PROJECT_PATH `
@@ -355,6 +381,12 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.PREREQUISITE }}
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
 
       - name: Build
         run: |
