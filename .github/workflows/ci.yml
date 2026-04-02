@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  WORKING_DIR: ${{ github.workspace }}
+  WORKSPACE: ${{ github.workspace }}
   GLOBAL_JSON_PATH: '${{ github.workspace }}\global.json'
   SOLUTION_PATH: '${{ github.workspace }}\SecureFolderFS.Public.slnx'
   SFFS_UNO_PROJECT_PATH: '${{ github.workspace }}\src\Platforms\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj'
@@ -61,9 +61,11 @@ jobs:
       matrix:
         configuration: [Release, Debug]
         project: [NWebDav.Server, NWebDav.Server.HttpListener, Tmds.Fuse]
+        targetFramework: [net10.0]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
+      ID: runtime.lib.${{ matrix.project }}.${{ matrix.targetFramework }}.Environment-${{ matrix.configuration }}
 
     steps:
       - name: Checkout the repository
@@ -84,7 +86,7 @@ jobs:
           } else {
             $thisProject = "Tmds.Fuse" 
           }
-          $thisProjectPath = "$env:WORKING_DIR\lib\$thisProject\src\$env:PROJECT"
+          $thisProjectPath = "$env:WORKSPACE\lib\$thisProject\src\$env:PROJECT"
           Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
 
       - name: Restore
@@ -101,11 +103,12 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
 
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
+      - name: Upload workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ID }}
+          path: ${{ github.workspace }}
+          retention-days: 1
 
   # Builds the shared libraries consumed by almost all projects in the SecureFolderFS codebase.
   shared:
@@ -120,6 +123,7 @@ jobs:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Shared\SecureFolderFS.${{ matrix.project }}
+      ID: runtime.shared.${{ matrix.project }}.${{ matrix.targetFramework }}.Environment-${{ matrix.configuration }}
 
     steps:
       - name: Checkout the repository
@@ -147,11 +151,12 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
 
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
+      - name: Upload workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ID }}
+          path: ${{ github.workspace }}
+          retention-days: 1
 
   # Builds the SecureFolderFS SDK libraries.
   sdk:
@@ -166,18 +171,14 @@ jobs:
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       PROJECT: ${{ matrix.project }}
+      ID: runtime.sdk.${{ matrix.project }}.${{ matrix.targetFramework }}.Environment-${{ matrix.configuration }}
+      PREREQUISITE: runtime.shared.Storage.net10.0.Environment-${{ matrix.configuration }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
+      - name: Download workspace
+        uses: actions/download-artifact@v8
         with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        uses: "./.github/install_dependencies"
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: false
+          name: ${{ env.PREREQUISITE }}
 
       - name: Find appropriate project to build
         run: |
@@ -186,15 +187,8 @@ jobs:
           } else {
             $thisProject = "Sdk.$env:PROJECT" 
           }
-          $thisProjectPath = "$env:WORKING_DIR\src\Sdk\SecureFolderFS.$thisProject"
+          $thisProjectPath = "$env:WORKSPACE\src\Sdk\SecureFolderFS.$thisProject"
           Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
-
-      - name: Restore
-        run: |
-          msbuild $env:SOLUTION_PATH `
-            -t:Restore `
-            -p:Platform="Any CPU" `
-            -p:Configuration=$env:CONFIGURATION
 
       - name: Build
         run: |
@@ -202,12 +196,6 @@ jobs:
             -t:Build `
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
 
   # Builds the SecureFolderFS Core libraries.
   core:
@@ -237,18 +225,14 @@ jobs:
       PROJECT: ${{ matrix.project }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Core\SecureFolderFS.Core.${{ matrix.project }}
       THIS_TFM: ${{ matrix.targetFramework }}
+      ID: runtime.core.${{ matrix.project }}.${{ matrix.targetFramework }}.Environment-${{ matrix.configuration }}
+      PREREQUISITE: runtime.shared.Storage.net10.0.Environment-${{ matrix.configuration }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
+      - name: Download workspace
+        uses: actions/download-artifact@v8
         with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        uses: "./.github/install_dependencies"
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: false
+          name: ${{ env.PREREQUISITE }}
 
       - name: Find appropriate project to build
         run: |
@@ -257,15 +241,8 @@ jobs:
           } else {
             $thisProject = "Core.$env:PROJECT" 
           }
-          $thisProjectPath = "$env:WORKING_DIR\src\Core\SecureFolderFS.$thisProject"
+          $thisProjectPath = "$env:WORKSPACE\src\Core\SecureFolderFS.$thisProject"
           Add-Content -Path $env:GITHUB_ENV -Value "THIS_PROJECT_PATH=$thisProjectPath"
-
-      - name: Restore
-        run: |
-          msbuild $env:SOLUTION_PATH `
-            -t:Restore `
-            -p:Platform="Any CPU" `
-            -p:Configuration=$env:CONFIGURATION
 
       - name: Build
         run: |
@@ -274,12 +251,6 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION `
             -p:TargetFramework=$env:THIS_TFM
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
 
   # Builds the SecureFolderFS cross-platform UI library.
   # This library is the common denominator for both the MAUI and Uno Platform project heads.
@@ -290,30 +261,20 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
+        project: [UI]
         targetFramework: [net10.0]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.UI
       THIS_TFM: ${{ matrix.targetFramework }}
+      ID: runtime.ui.${{ matrix.project }}.${{ matrix.targetFramework }}.Environment-${{ matrix.configuration }}
+      PREREQUISITE: runtime.sdk.Sdk.net10.0.Environment-${{ matrix.configuration }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
+      - name: Download workspace
+        uses: actions/download-artifact@v8
         with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        uses: "./.github/install_dependencies"
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: false
-
-      - name: Restore
-        run: |
-          msbuild $env:SOLUTION_PATH `
-            -t:Restore `
-            -p:Platform="Any CPU" `
-            -p:Configuration=$env:CONFIGURATION
+          name: ${{ env.PREREQUISITE }}
 
       - name: Build
         run: |
@@ -321,12 +282,6 @@ jobs:
             -t:Build `
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
 
   # Builds the SecureFolderFS Uno Platform app project head.
   uno:
@@ -336,30 +291,19 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
+        project: [Uno]
         targetFramework: [net10.0-desktop, net10.0-windows10.0.26100.0]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.Uno
       THIS_TFM: ${{ matrix.targetFramework }}
+      PREREQUISITE: runtime.ui.UI.net10.0.Environment-${{ matrix.configuration }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
+      - name: Download workspace
+        uses: actions/download-artifact@v8
         with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        uses: "./.github/install_dependencies"
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: false
-
-      - name: Restore
-        run: |
-          msbuild $env:SOLUTION_PATH `
-            -t:Restore `
-            -p:Platform="Any CPU" `
-            -p:Configuration=$env:CONFIGURATION
+          name: ${{ env.PREREQUISITE }}
 
       - name: Build
         run: |
@@ -368,12 +312,6 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION `
             -p:TargetFramework=$env:THIS_TFM
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
 
   # Builds the SecureFolderFS MAUI app project head.
   maui:
@@ -383,30 +321,19 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
+        project: [Maui]
         targetFramework: [net10.0-android, net10.0-ios]
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.Maui
       THIS_TFM: ${{ matrix.targetFramework }}
+      PREREQUISITE: runtime.ui.UI.net10.0.Environment-${{ matrix.configuration }}
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v6
+      - name: Download workspace
+        uses: actions/download-artifact@v8
         with:
-          submodules: recursive
-
-      - name: Install Dependencies
-        uses: "./.github/install_dependencies"
-        with:
-          dotnet-version: ${{ env.DOTNET_SDK }}
-          run-uno-check: false
-
-      - name: Restore
-        run: |
-          msbuild $env:SOLUTION_PATH `
-            -t:Restore `
-            -p:Platform="Any CPU" `
-            -p:Configuration=$env:CONFIGURATION
+          name: ${{ env.PREREQUISITE }}
 
       - name: Build
         run: |
@@ -415,9 +342,3 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION `
             -p:TargetFramework=$env:THIS_TFM
-
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v7
-#        with:
-#          name: ''
-#          path: ''
