@@ -1,5 +1,4 @@
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Streams;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 

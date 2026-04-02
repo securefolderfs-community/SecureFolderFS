@@ -104,8 +104,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
                 return;
 
-            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail()).ToList();
-            if (items.Count == 0)
+            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail()).ToArray();
+            if (items.Length == 0)
                 return;
 
             // Cancel any in-flight thumbnail work from the previous folder

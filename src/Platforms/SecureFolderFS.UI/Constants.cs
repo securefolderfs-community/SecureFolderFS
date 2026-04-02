@@ -43,9 +43,8 @@ namespace SecureFolderFS.UI
         public static class Browser
         {
             public const int THUMBNAIL_MAX_PARALLELISATION = 4;
-            public const int IMAGE_THUMBNAIL_MAX_SIZE = 300;
-            public const int IMAGE_THUMBNAIL_QUALITY = 80;
-            public const int VIDEO_THUMBNAIL_QUALITY = 80;
+            public const int IMAGE_THUMBNAIL_MAX_SIZE = 296;
+            public const int IMAGE_THUMBNAIL_QUALITY = 75;
         }
 
         public static class FileData
