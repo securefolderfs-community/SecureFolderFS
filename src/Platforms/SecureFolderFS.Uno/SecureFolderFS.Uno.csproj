@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0-desktop;net10.0-windows10.0.26100.0</TargetFrameworks>
 
@@ -91,7 +91,7 @@
     </When>
 
     <!-- Windows -->
-    <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100'">
+    <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100.0'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
