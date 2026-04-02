@@ -111,6 +111,7 @@ jobs:
           name: ${{ env.ID }}
           path: ${{ github.workspace }}
           retention-days: 1
+          include-hidden-files: true
 
   # Builds the shared libraries consumed by almost all projects in the SecureFolderFS codebase.
   shared:
@@ -159,6 +160,7 @@ jobs:
           name: ${{ env.ID }}
           path: ${{ github.workspace }}
           retention-days: 1
+          include-hidden-files: true
 
   # Builds the SecureFolderFS SDK libraries.
   sdk:
@@ -211,6 +213,7 @@ jobs:
           name: ${{ env.ID }}
           path: ${{ github.workspace }}
           retention-days: 1
+          include-hidden-files: true
 
   # Builds the SecureFolderFS Core libraries.
   core:
@@ -279,6 +282,7 @@ jobs:
           name: ${{ env.ID }}
           path: ${{ github.workspace }}
           retention-days: 1
+          include-hidden-files: true
 
   # Builds the SecureFolderFS cross-platform UI library.
   # This library is the common denominator for both the MAUI and Uno Platform project heads.
@@ -323,6 +327,7 @@ jobs:
           name: ${{ env.ID }}
           path: ${{ github.workspace }}
           retention-days: 1
+          include-hidden-files: true
 
   # Builds the SecureFolderFS Uno Platform app project head.
   uno:
