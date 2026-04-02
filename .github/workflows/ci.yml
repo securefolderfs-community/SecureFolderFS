@@ -197,6 +197,13 @@ jobs:
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
 
+      - name: Upload workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ID }}
+          path: ${{ github.workspace }}
+          retention-days: 1
+
   # Builds the SecureFolderFS Core libraries.
   core:
     needs: [shared, lib]
@@ -252,6 +259,13 @@ jobs:
             -p:Configuration=$env:CONFIGURATION `
             -p:TargetFramework=$env:THIS_TFM
 
+      - name: Upload workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ID }}
+          path: ${{ github.workspace }}
+          retention-days: 1
+
   # Builds the SecureFolderFS cross-platform UI library.
   # This library is the common denominator for both the MAUI and Uno Platform project heads.
   ui:
@@ -282,6 +296,13 @@ jobs:
             -t:Build `
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
+
+      - name: Upload workspace
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ID }}
+          path: ${{ github.workspace }}
+          retention-days: 1
 
   # Builds the SecureFolderFS Uno Platform app project head.
   uno:
