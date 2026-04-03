@@ -45,16 +45,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// Tries to get a cached thumbnail for the specified file.
         /// The cache key includes the file's modification date, so modified files automatically get new thumbnails.
         /// </summary>
-        /// <param name="file">The file to get the cached thumbnail for.</param>
+        /// <param name="cacheKey">A unique cache ID.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the cached thumbnail stream if found, otherwise null.</returns>
-        public async Task<Stream?> TryGetCachedThumbnailAsync(IFile file, CancellationToken cancellationToken = default)
+        public async Task<Stream?> TryGetCachedThumbnailAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             try
             {
-                var cacheKey = await GetCacheKeyAsync(file, cancellationToken);
                 var cachedData = await _database.GetValueAsync<byte[]>(cacheKey, cancellationToken: cancellationToken);
-
                 if (cachedData is null || cachedData.Length == 0)
                     return null;
 
@@ -70,16 +68,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// Caches the thumbnail for the specified file.
         /// The cache key includes the file's modification date, ensuring modified files get fresh thumbnails.
         /// </summary>
-        /// <param name="file">The file to cache the thumbnail for.</param>
+        /// <param name="cacheKey">A unique cache ID.</param>
         /// <param name="thumbnailStream">The thumbnail stream to cache.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public async Task CacheThumbnailAsync(IFile file, IImageStream thumbnailStream, CancellationToken cancellationToken = default)
+        public async Task CacheThumbnailAsync(string cacheKey, IImageStream thumbnailStream, CancellationToken cancellationToken = default)
         {
             try
             {
-                var cacheKey = await GetCacheKeyAsync(file, cancellationToken);
-
                 // Copy thumbnail to byte array
                 using var memoryStream = new MemoryStream();
                 await thumbnailStream.CopyToAsync(memoryStream, cancellationToken);
@@ -111,7 +107,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <param name="file">The file to generate a cache key for.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A unique cache key string.</returns>
-        private static async Task<string> GetCacheKeyAsync(IFile file, CancellationToken cancellationToken)
+        public static async Task<string> GetCacheKeyAsync(IFile file, CancellationToken cancellationToken)
         {
             var pathHash = GetPathHash(file.Id);
             var dateModified = await file.GetDateModifiedAsync(cancellationToken);

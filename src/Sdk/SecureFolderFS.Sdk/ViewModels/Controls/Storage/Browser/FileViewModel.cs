@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -50,14 +51,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         {
             Thumbnail?.Dispose();
 
-            if (!SettingsService.UserSettings.AreThumbnailsEnabled)
-                return;
-
-            if (!CanLoadThumbnail())
+            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
                 return;
 
             // Try to get from the cache first
-            var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(File, cancellationToken);
+            var cacheKey = await ThumbnailCacheModel.GetCacheKeyAsync(File, cancellationToken);
+            var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(cacheKey, cancellationToken);
             if (cachedStream is not null)
             {
                 Thumbnail = new StreamImageModel(cachedStream);
@@ -72,7 +71,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             // Show and cache the generated thumbnail
             Thumbnail = generatedThumbnail;
-            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
+            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
         }
 
         /// <summary>
