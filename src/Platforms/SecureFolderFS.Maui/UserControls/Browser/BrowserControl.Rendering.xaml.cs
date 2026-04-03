@@ -115,22 +115,32 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             _ = Task.Run(async () =>
             {
-                var tasks = items.Select(async item =>
+                var tasks = new List<Task>();
+                foreach (var item in items)
                 {
+                    if (ct.IsCancellationRequested)
+                        break;
+
                     await _thumbnailSemaphore.WaitAsync(ct);
-                    try
+                    tasks.Add(Task.Run(async () =>
                     {
-                        await item.InitAsync(ct);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // Navigation occurred, stop quietly
-                    }
-                    finally
-                    {
-                        _thumbnailSemaphore.Release();
-                    }
-                });
+                        try
+                        {
+                            await item.InitAsync(ct);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Navigation occurred, stop quietly
+                        }
+                        finally
+                        {
+                            _thumbnailSemaphore.Release();
+                        }
+                    }, ct));
+
+                    // Clean up completed tasks
+                    tasks.RemoveAll(t => t.IsCompleted);
+                }
 
                 await Task.WhenAll(tasks);
             }, ct);
