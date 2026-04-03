@@ -1,7 +1,6 @@
 using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
@@ -80,7 +79,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 #else
             newCollectionView.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
-                    converter: GetConverter("BoolSelectionModeConverter")));
+                    converter: GetConverter(nameof(BoolSelectionModeConverter))));
 #endif
 
             // Wire up the events
@@ -166,7 +165,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // On other platforms, bind SelectionMode to IsSelecting
             _collectionView?.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
-                    converter: GetConverter("BoolSelectionModeConverter")));
+                    converter: GetConverter(nameof(BoolSelectionModeConverter))));
 #endif
         }
 

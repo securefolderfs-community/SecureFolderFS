@@ -192,6 +192,7 @@
                                                 <HorizontalStackLayout Grid.Column="0" Spacing="8">
                                                     <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding OverlayViewModel.IsSelecting, Mode=OneWay}" />
                                                     <Image
+                                                        Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                                                         HeightRequest="32"
                                                         HorizontalOptions="Center"
                                                         Source="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"

@@ -62,6 +62,7 @@
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
                             <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
                             <Image
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                                 HeightRequest="40"
                                 HorizontalOptions="Center"
                                 IsOpaque="True"
@@ -159,6 +160,7 @@
                             </Grid.RowDefinitions>
                             <Image
                                 Grid.Row="0"
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                                 IsOpaque="True"
                                 Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" />
 
@@ -245,7 +247,7 @@
                         HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
                         Style="{StaticResource SelectableItemGridStyle}">
                         <Image
-                            Aspect="AspectFill"
+                            Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                             HorizontalOptions="Fill"
                             IsOpaque="True"
                             Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"

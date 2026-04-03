@@ -14,6 +14,7 @@
     <vc:NullToOpacityConverter x:Key="NullToOpacityConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+    <vc:ThumbnailToAspectConverter x:Key="ThumbnailToAspectConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
 
 </ResourceDictionary>

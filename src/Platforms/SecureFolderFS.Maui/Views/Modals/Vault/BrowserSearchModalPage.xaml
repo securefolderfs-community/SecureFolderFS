@@ -68,6 +68,7 @@
                             ColumnSpacing="12">
                             <Image
                                 Grid.Column="0"
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                                 HeightRequest="32"
                                 HorizontalOptions="Center"
                                 Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"

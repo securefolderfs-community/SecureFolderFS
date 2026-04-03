@@ -50,6 +50,7 @@
                     </Border.StrokeShape>
                     <Image
                         x:Name="ImageView"
+                        Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                         BindingContext="{Binding ViewModel, Mode=OneWay}"
                         HeightRequest="40"
                         HorizontalOptions="Center"

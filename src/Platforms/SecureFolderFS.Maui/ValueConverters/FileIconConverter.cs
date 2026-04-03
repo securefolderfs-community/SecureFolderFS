@@ -10,6 +10,11 @@ using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
+    /// <summary>
+    /// Converts file-related image data into an appropriate <see cref="ImageSource"/>
+    /// representation for display purposes. This converter is designed to handle
+    /// file type determination and generate corresponding icons or thumbnails.
+    /// </summary>
     internal sealed class FileIconConverter : IValueConverter
     {
         /// <inheritdoc/>
@@ -18,17 +23,19 @@ namespace SecureFolderFS.Maui.ValueConverters
             if (parameter is not View { BindingContext: IWrapper<IStorable> storableWrapper })
                 return ImageSource.FromFile(GetDefaultFileIcon());
 
-            // Thumbnail loaded → return optimized ImageSource
+            // Thumbnail loaded - return optimized ImageSource
             if (value is IImage image)
                 return FromImage(image);
 
-            // Fallback icon (folder, file, PDF, archive…)
+            // Fallback icon (folder, file, PDF, archive, etc.)
             return GetFallbackImageSource(storableWrapper);
         }
 
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         private static ImageSource FromImage(IImage image)
         {
