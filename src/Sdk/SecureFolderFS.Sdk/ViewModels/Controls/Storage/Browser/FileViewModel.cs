@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public partial class FileViewModel : BrowserItemViewModel
     {
+        private Task? _thumbnailLoadingTask;
+
         /// <inheritdoc/>
         public override IStorable Inner => File;
 
@@ -49,9 +52,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
+                return;
+
+            // Deduplicate concurrent calls to prevent duplicate thumbnail generation
+            if (_thumbnailLoadingTask != null && !_thumbnailLoadingTask.IsCompleted)
+            {
+                try
+                {
+                    await _thumbnailLoadingTask;
+                    return;
+                }
+                catch (OperationCanceledException)
+                {
+                    // The previous load was canceled (e.g. navigation) - start a fresh one with the new token
+                }
+            }
+
+            _thumbnailLoadingTask = PerformThumbnailLoadAsync(cancellationToken);
+            await _thumbnailLoadingTask;
+        }
+
+        private async Task PerformThumbnailLoadAsync(CancellationToken cancellationToken)
+        {
             Thumbnail?.Dispose();
 
-            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
+            if (!CanLoadThumbnail())
                 return;
 
             // Try to get from the cache first
@@ -63,8 +89,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return;
             }
 
-            // Generate a new thumbnail
             cancellationToken.ThrowIfCancellationRequested();
+
+            // Generate a new thumbnail
             var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, Classification.TypeHint, cancellationToken);
             if (generatedThumbnail is null)
                 return;

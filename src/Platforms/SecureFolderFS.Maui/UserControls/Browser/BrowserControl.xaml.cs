@@ -59,7 +59,17 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             set => SetValue(ItemsSourceProperty, value);
         }
         public static readonly BindableProperty ItemsSourceProperty =
-            BindableProperty.Create(nameof(ItemsSource), typeof(IList<BrowserItemViewModel>), typeof(BrowserControl), defaultValue: null);
+            BindableProperty.Create(nameof(ItemsSource), typeof(IList<BrowserItemViewModel>), typeof(BrowserControl), defaultValue: null,
+                propertyChanged: static (bindable, oldValue, newValue) =>
+                {
+                    if (bindable is not BrowserControl control || ReferenceEquals(oldValue, newValue))
+                        return;
+
+                    // Cancel any in-flight thumbnail work from the previous folder
+                    control._thumbnailCts?.Cancel();
+                    control._thumbnailCts?.Dispose();
+                    control._thumbnailCts = new CancellationTokenSource();
+                });
 
         public BrowserViewType ViewType
         {

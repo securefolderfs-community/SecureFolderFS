@@ -92,58 +92,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Update our reference
             _collectionView = newCollectionView;
 
-            // Kick off thumbnail loading immediately
-            EnqueueVisibleItemsForThumbnails();
-
             // Fade in
             await _collectionView.FadeToAsync(1, 100);
-        }
-
-        private void EnqueueVisibleItemsForThumbnails()
-        {
-            if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
-                return;
-
-            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail()).ToArray();
-            if (items.Length == 0)
-                return;
-
-            // Cancel any in-flight thumbnail work from the previous folder
-            _thumbnailCts?.Cancel();
-            _thumbnailCts = new CancellationTokenSource();
-            var ct = _thumbnailCts.Token;
-
-            _ = Task.Run(async () =>
-            {
-                var tasks = new List<Task>();
-                foreach (var item in items)
-                {
-                    if (ct.IsCancellationRequested)
-                        break;
-
-                    await _thumbnailSemaphore.WaitAsync(ct);
-                    tasks.Add(Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await item.InitAsync(ct);
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            // Navigation occurred, stop quietly
-                        }
-                        finally
-                        {
-                            _thumbnailSemaphore.Release();
-                        }
-                    }, ct));
-
-                    // Clean up completed tasks
-                    tasks.RemoveAll(t => t.IsCompleted);
-                }
-
-                await Task.WhenAll(tasks);
-            }, ct);
         }
 
         private void TryEnqueueThumbnail(object? sender)
@@ -157,8 +107,6 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             if (!fileViewModel.CanLoadThumbnail())
                 return;
 
-            // Reuse the current folder's cancellation token, so virtualized
-            // items are also canceled on navigation
             var ct = _thumbnailCts?.Token ?? CancellationToken.None;
             _ = Task.Run(async () =>
             {
@@ -167,7 +115,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 {
                     await fileViewModel.InitAsync(ct);
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException)
+                {
+                    // Navigation occurred or load was canceled
+                }
                 finally
                 {
                     _thumbnailSemaphore.Release();
