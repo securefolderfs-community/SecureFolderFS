@@ -48,14 +48,15 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
-                    <ContentView
+                    <Image
                         x:Name="ImageView"
                         BindingContext="{Binding ViewModel, Mode=OneWay}"
-                        Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
-                        HeightRequest="36"
+                        HeightRequest="40"
                         HorizontalOptions="Center"
+                        IsOpaque="True"
+                        Source="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
                         VerticalOptions="Center"
-                        WidthRequest="36" />
+                        WidthRequest="40" />
                 </Border>
 
                 <!--  Title + type hint  -->

@@ -2,6 +2,7 @@ using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -96,15 +97,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             await _collectionView.FadeToAsync(1, 100);
         }
 
-        private void TryEnqueueThumbnail(object? sender)
+        private void TryEnqueueItem(object? sender)
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
-                return;
-
-            if (!fileViewModel.CanLoadThumbnail())
+            if (sender is not BindableObject { BindingContext: IAsyncInitialize asyncInitialize })
                 return;
 
             var ct = _thumbnailCts?.Token ?? CancellationToken.None;
@@ -113,7 +111,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 await _thumbnailSemaphore.WaitAsync(ct);
                 try
                 {
-                    await fileViewModel.InitAsync(ct);
+                    await asyncInitialize.InitAsync(ct);
                 }
                 catch (OperationCanceledException)
                 {
@@ -137,7 +135,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void ItemContainer_Loaded(object? sender, EventArgs e)
         {
-            TryEnqueueThumbnail(sender);
+            TryEnqueueItem(sender);
             RegisterItemContainerPanGesture(sender);
 
             if (sender is View view)
@@ -148,7 +146,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
 #if IOS
             // Also handle BindingContextChanged for virtualized/recycled items on iOS
-            TryEnqueueThumbnail(sender);
+            TryEnqueueItem(sender);
 #endif
         }
 

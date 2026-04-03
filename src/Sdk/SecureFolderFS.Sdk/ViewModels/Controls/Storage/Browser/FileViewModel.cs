@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -16,6 +17,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -23,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public partial class FileViewModel : BrowserItemViewModel
     {
-        private Task? _thumbnailLoadingTask;
+        private Task? _fileLoadingTask;
 
         /// <inheritdoc/>
         public override IStorable Inner => File;
@@ -52,35 +54,35 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
-                return;
-
-            // Deduplicate concurrent calls to prevent duplicate thumbnail generation
-            if (_thumbnailLoadingTask != null && !_thumbnailLoadingTask.IsCompleted)
+            // Deduplicate concurrent calls to prevent duplicate calls
+            if (_fileLoadingTask is { IsCompleted: false })
             {
                 try
                 {
-                    await _thumbnailLoadingTask;
+                    await _fileLoadingTask;
                     return;
                 }
                 catch (OperationCanceledException)
                 {
-                    // The previous load was canceled (e.g. navigation) - start a fresh one with the new token
+                    // The previous load was canceled (e.g., navigation) - start a fresh one with the new token
                 }
             }
 
-            _thumbnailLoadingTask = PerformThumbnailLoadAsync(cancellationToken);
-            await _thumbnailLoadingTask;
+            _fileLoadingTask = PerformFileLoadAsync(cancellationToken);
+            await _fileLoadingTask;
         }
 
-        private async Task PerformThumbnailLoadAsync(CancellationToken cancellationToken)
+        private async Task PerformFileLoadAsync(CancellationToken cancellationToken)
         {
-            Thumbnail?.Dispose();
+            var size = await File.GetSizeAsync(cancellationToken);
+            SizeText = size.HasValue ? ByteSize.FromBytes(size.Value).ToString() : null;
+            LastModified = await File.GetDateModifiedAsync(cancellationToken);
 
-            if (!CanLoadThumbnail())
+            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
                 return;
 
             // Try to get from the cache first
+            Thumbnail?.Dispose();
             var cacheKey = await ThumbnailCacheModel.GetCacheKeyAsync(File, cancellationToken);
             var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(cacheKey, cancellationToken);
             if (cachedStream is not null)
@@ -88,7 +90,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 Thumbnail = new StreamImageModel(cachedStream);
                 return;
             }
-
             cancellationToken.ThrowIfCancellationRequested();
 
             // Generate a new thumbnail

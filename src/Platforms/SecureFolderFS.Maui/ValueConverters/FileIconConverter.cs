@@ -16,73 +16,87 @@ namespace SecureFolderFS.Maui.ValueConverters
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (parameter is not View { BindingContext: IWrapper<IStorable> storableWrapper })
-                return null;
+                return ImageSource.FromFile(GetDefaultFileIcon());
 
-            return value switch
-            {
-                IImage image => FromImage(image),
-                null when storableWrapper is FileViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
-                null when storableWrapper is SearchBrowserItemViewModel { Classification.MimeType: "application/pdf" } => new Image() { Source = "pdf_icon.png" },
+            // Thumbnail loaded → return optimized ImageSource
+            if (value is IImage image)
+                return FromImage(image);
 
-#if ANDROID
-                null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
-                null when storableWrapper is SearchBrowserItemViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "android_archive.png" },
-                _ => storableWrapper switch
-                {
-                    { Inner: IFolder } => new Image() { Source = "android_folder.png", Margin = new(0d, 0d, -8d, 0d)},
-                    _ => new Image() { Source = "android_file.png", Scale = 0.8f }
-                }
-#else
-                null when storableWrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "ios_archive.png" },
-                null when storableWrapper is SearchBrowserItemViewModel { Classification.TypeHint: TypeHint.Archive } => new Image() { Source = "ios_archive.png" },
-                _ => storableWrapper switch
-                {
-                    { Inner: IFolder } => new Image() { Source = "ios_folder.png" },
-                    _ => new Image() { Source = "ios_file.png" }
-                }
-#endif
-            };
-
-            static object? FromImage(IImage image)
-            {
-                switch (image)
-                {
-                    case StreamImageModel { Inner.CanRead: true } streamImageModel:
-                    {
-                        streamImageModel.Inner.TrySetPositionOrAdvance(0L);
-                        return new Image()
-                        {
-                            Source = new StreamImageSource()
-                            {
-                                Stream = _ => Task.FromResult(streamImageModel.Inner)
-                            },
-                            Aspect = Aspect.AspectFill,
-                            HorizontalOptions = LayoutOptions.Fill,
-                            VerticalOptions = LayoutOptions.Fill
-                        };
-                    }
-
-                    case ImageStreamSource { Inner.CanRead: true } imageStream:
-                    {
-                        imageStream.Inner.TrySetPositionOrAdvance(0L);
-                        return new Image()
-                        {
-                            Source = imageStream.Source,
-                            Aspect = Aspect.AspectFill,
-                            HorizontalOptions = LayoutOptions.Fill,
-                            VerticalOptions = LayoutOptions.Fill
-                        };
-                    }
-
-                    default: return null;
-                }
-            }
+            // Fallback icon (folder, file, PDF, archive…)
+            return GetFallbackImageSource(storableWrapper);
         }
 
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+
+        private static ImageSource FromImage(IImage image)
         {
-            throw new NotImplementedException();
+            switch (image)
+            {
+                case StreamImageModel { Inner.CanRead: true } sim:
+                {
+                    sim.Inner.TrySetPositionOrAdvance(0L);
+                    return new StreamImageSource
+                    {
+                        Stream = _ =>
+                        {
+                            sim.Inner.TrySetPositionOrAdvance(0L);
+                            return Task.FromResult(sim.Inner);
+                        }
+                    };
+                }
+
+                case ImageStreamSource { Inner.CanRead: true } iss:
+                {
+                    iss.Inner.TrySetPositionOrAdvance(0L);
+                    return iss.Source;
+                }
+
+                default:
+                    return ImageSource.FromFile(GetDefaultFileIcon());
+            }
         }
+
+        private static ImageSource GetFallbackImageSource(IWrapper<IStorable> wrapper)
+        {
+            // Special PDF handling
+            if (wrapper is FileViewModel { Classification.MimeType: "application/pdf" } ||
+                wrapper is SearchBrowserItemViewModel { Classification.MimeType: "application/pdf" })
+                return ImageSource.FromFile("pdf_icon.png");
+
+            // Platform-specific archive icons
+            if (wrapper is FileViewModel { Classification.TypeHint: TypeHint.Archive } ||
+                wrapper is SearchBrowserItemViewModel { Classification.TypeHint: TypeHint.Archive })
+                return ImageSource.FromFile(GetArchiveIcon());
+
+            // Folder and file
+            return wrapper switch
+            {
+                { Inner: IFolder } => ImageSource.FromFile(GetFolderIcon()),
+                _ => ImageSource.FromFile(GetDefaultFileIcon())
+            };
+        }
+
+        private static string GetArchiveIcon() =>
+#if ANDROID
+            "android_archive.png";
+#else
+            "ios_archive.png";
+#endif
+
+        private static string GetFolderIcon() =>
+#if ANDROID
+            "android_folder.png";
+#else
+            "ios_folder.png";
+#endif
+
+        private static string GetDefaultFileIcon() =>
+#if ANDROID
+            "android_file.png";
+#else
+            "ios_file.png";
+#endif
     }
 }

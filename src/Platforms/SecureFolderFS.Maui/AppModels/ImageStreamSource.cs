@@ -1,4 +1,5 @@
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Streams;
 
 namespace SecureFolderFS.Maui.AppModels
@@ -17,8 +18,14 @@ namespace SecureFolderFS.Maui.AppModels
         public ImageStreamSource(Stream inner)
         {
             Inner = inner;
-            Source = new();
-            Source.Stream = _ => Task.FromResult(inner);
+            Source = new StreamImageSource
+            {
+                Stream = _ =>
+                {
+                    Inner.TrySetPositionOrAdvance(0L);
+                    return Task.FromResult(Inner);
+                }
+            };
         }
 
         /// <inheritdoc/>

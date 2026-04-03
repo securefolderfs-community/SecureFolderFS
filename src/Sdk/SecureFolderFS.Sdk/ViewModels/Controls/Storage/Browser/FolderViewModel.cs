@@ -14,6 +14,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -50,10 +51,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // TODO: Load thumbnail
-            return Task.CompletedTask;
+            LastModified = await Folder.GetDateModifiedAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

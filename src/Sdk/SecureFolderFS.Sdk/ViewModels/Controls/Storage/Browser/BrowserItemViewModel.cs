@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
@@ -29,6 +30,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
+        [ObservableProperty] private string? _SizeText;
+        [ObservableProperty] private DateTime? _LastModified;
+
         /// <summary>
         /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this item belongs to.
         /// </summary>
