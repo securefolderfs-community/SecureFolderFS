@@ -173,12 +173,12 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Grid
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            VerticalOptions="End">
-            <OnPlatform x:TypeArguments="Button">
-                <On Platform="Android">
+        <OnPlatform x:TypeArguments="Grid">
+            <On Platform="Android">
+                <Grid
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    VerticalOptions="End">
                     <Button
                         Margin="0,0,16,32"
                         mi:MauiIcon.Value="{mi_material:Material Icon=Add,
@@ -191,8 +191,11 @@
                         Text="{l:ResourceString Rid=NewVault}"
                         TextColor="{StaticResource PrimaryContrastingDarkColor}"
                         VerticalOptions="End" />
-                </On>
-            </OnPlatform>
-        </Grid>
+                </Grid>
+            </On>
+            <On Platform="iOS">
+                <Grid />
+            </On>
+        </OnPlatform>
     </Grid>
 </ContentPage>

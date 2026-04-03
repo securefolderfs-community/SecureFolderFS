@@ -54,29 +54,29 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses}" Loaded="Licenses_Loaded">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses, Mode=OneWay}" Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:LicenseViewModel">
                         <ucab:ActionBlockControl
-                            Title="{x:Bind PackageName}"
+                            Title="{x:Bind PackageName, Mode=OneWay}"
                             BlockMode="Expandable"
-                            Description="{x:Bind LicenseName}">
+                            Description="{x:Bind LicenseName, Mode=OneWay}">
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <HyperlinkButton
                                         Content="{l:ResourceString Rid=Website}"
-                                        NavigateUri="{x:Bind ProjectWebsiteUri}"
-                                        Visibility="{x:Bind ProjectWebsiteUri, Converter={StaticResource NullToVisibilityConverter}}" />
+                                        NavigateUri="{x:Bind ProjectWebsiteUri, Mode=OneWay}"
+                                        Visibility="{x:Bind ProjectWebsiteUri, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" />
                                     <HyperlinkButton
                                         Content="{l:ResourceString Rid=License}"
-                                        NavigateUri="{x:Bind LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}"
-                                        Visibility="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource NullToVisibilityConverter}}" />
+                                        NavigateUri="{x:Bind LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}, Mode=OneWay}"
+                                        Visibility="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" />
                                 </StackPanel>
                             </ucab:ActionBlockControl.ActionElement>
                             <ucab:ActionBlockControl.ExpanderContent>
                                 <TextBlock
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind LicenseContent}"
+                                    Text="{x:Bind LicenseContent, Mode=OneWay}"
                                     TextWrapping="Wrap" />
                             </ucab:ActionBlockControl.ExpanderContent>
                         </ucab:ActionBlockControl>

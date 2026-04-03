@@ -50,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 return;
 
             // Prompt the user to pick a folder
-            IFolder pickedFolder = await FileExplorerService.PickFolderAsync(null, false);
+            var pickedFolder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
             if (pickedFolder is null)
                 return;
 

@@ -10,7 +10,6 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
-    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
@@ -82,30 +81,122 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <!--  Scan button  -->
-            <apesui:ContextMenuContainer
-                x:Name="ItemContainer"
+            <!--  Status card  -->
+            <Border
+                x:Name="StatusCard"
                 Grid.Row="0"
-                Margin="0,4,0,0">
-                <apesui:ContextMenuContainer.MenuItems>
-                    <apesui:ContextMenuItem
-                        Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
-                        CommandParameter="include_file_contents"
-                        Text="Scan full vault (include file contents)" />
-                </apesui:ContextMenuContainer.MenuItems>
-                <apesui:ContextMenuContainer.Content>
-                    <uc:ProgressiveButton
-                        x:Name="ProgressiveButton"
-                        Title="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
-                        Clicked="ProgressiveButton_Clicked"
-                        DefaultIcon="{OnPlatform Android={x:Static mi_material:MaterialIcons.Search},
-                                                 iOS={x:Static mi_cupertino:CupertinoIcons.Search}}"
-                        HorizontalOptions="Fill"
-                        IsProgressing="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
-                        Progress="{Binding ViewModel.HealthViewModel.CurrentProgress, Mode=OneWay}"
-                        Subtitle="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}" />
-                </apesui:ContextMenuContainer.Content>
-            </apesui:ContextMenuContainer>
+                Margin="0,4,0,0"
+                StrokeThickness="0"
+                VerticalOptions="Start">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <Grid>
+                    <!--  Gradient background (set from code-behind)  -->
+                    <BoxView x:Name="GradientBackground" CornerRadius="12" />
+
+                    <!--  Shimmer sweep overlay  -->
+                    <BoxView
+                        x:Name="ShimmerOverlay"
+                        CornerRadius="12"
+                        IsVisible="False"
+                        Opacity="0.18">
+                        <BoxView.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Offset="0.0" Color="Transparent" />
+                                <GradientStop Offset="0.4" Color="White" />
+                                <GradientStop Offset="0.6" Color="White" />
+                                <GradientStop Offset="1.0" Color="Transparent" />
+                            </LinearGradientBrush>
+                        </BoxView.Background>
+                    </BoxView>
+
+                    <!--  Progress strip at bottom  -->
+                    <BoxView
+                        x:Name="ProgressStrip"
+                        HeightRequest="3"
+                        IsVisible="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
+                        Opacity="0.5"
+                        VerticalOptions="End">
+                        <BoxView.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Offset="0" Color="White" />
+                                <GradientStop Offset="1" Color="Transparent" />
+                            </LinearGradientBrush>
+                        </BoxView.Background>
+                    </BoxView>
+
+                    <!--  Content row  -->
+                    <Grid Padding="16,14" ColumnSpacing="14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Severity icon  -->
+                        <Image
+                            Grid.Column="0"
+                            HeightRequest="32"
+                            Source="{Binding ViewModel.HealthViewModel.Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
+                            VerticalOptions="Center"
+                            WidthRequest="32" />
+
+                        <!--  Title + subtitle  -->
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="16"
+                                Text="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
+                                TextColor="White" />
+                            <Label
+                                FontSize="13"
+                                IsVisible="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                Opacity="0.75"
+                                Text="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}"
+                                TextColor="White" />
+                        </VerticalStackLayout>
+
+                        <!--  Options button  -->
+                        <apesui:ContextMenuContainer Grid.Column="2" VerticalOptions="Center">
+                            <apesui:ContextMenuContainer.MenuItems>
+                                <apesui:ContextMenuItem Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}" Text="Scan vault" />
+                                <apesui:ContextMenuItem
+                                    Command="{Binding ViewModel.HealthViewModel.StartScanningCommand, Mode=OneWay}"
+                                    CommandParameter="include_file_contents"
+                                    Text="Scan full vault (include file contents)" />
+                                <apesui:ContextMenuItem Command="{Binding ViewModel.HealthViewModel.CancelScanningCommand, Mode=OneWay}" Text="Cancel scan" />
+                            </apesui:ContextMenuContainer.MenuItems>
+                            <apesui:ContextMenuContainer.Content>
+                                <Border
+                                    Padding="8,6"
+                                    BackgroundColor="#22FFFFFF"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid>
+                                        <mi:MauiIcon
+                                            Icon="{mi_material:Material MoreVert}"
+                                            IconColor="White"
+                                            IconSize="20"
+                                            OnPlatforms="Android" />
+                                        <mi:MauiIcon
+                                            Icon="{mi_cupertino:Cupertino Ellipsis}"
+                                            IconColor="White"
+                                            IconSize="20"
+                                            OnPlatforms="iOS" />
+                                    </Grid>
+                                </Border>
+                            </apesui:ContextMenuContainer.Content>
+                        </apesui:ContextMenuContainer>
+                    </Grid>
+                </Grid>
+            </Border>
 
             <!--  Issues list  -->
             <Grid Grid.Row="1">
