@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <summary>
         /// Gets the default maximum number of cached thumbnails.
         /// </summary>
-        public const int DEFAULT_MAX_ENTRIES = 100;
+        public const int DEFAULT_MAX_ENTRIES = 150;
 
         private readonly IDatabaseModel<string> _database;
 

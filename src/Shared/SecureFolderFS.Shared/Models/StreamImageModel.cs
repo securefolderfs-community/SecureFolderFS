@@ -25,5 +25,3 @@ namespace SecureFolderFS.Shared.Models
         }
     }
 }
-
-
