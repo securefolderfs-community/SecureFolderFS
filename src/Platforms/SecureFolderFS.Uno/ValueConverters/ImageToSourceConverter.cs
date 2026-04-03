@@ -15,7 +15,7 @@ namespace SecureFolderFS.Uno.ValueConverters
             return value switch
             {
                 ImageBitmap imageBitmap => imageBitmap.Source,
-                StreamImageModel imageStream => StreamToImageSource(imageStream.Stream),
+                StreamImageModel imageStream => StreamToImageSource(imageStream.Inner),
                 ImageResource resourceImage => new BitmapImage(resourceImage.IsResource
                     ? new Uri($"ms-appx:///{resourceImage.Name}")
                     : new Uri(resourceImage.Name)),

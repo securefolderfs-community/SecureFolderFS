@@ -1,11 +1,11 @@
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Shared.ComponentModel
 {
-    public interface IImageStream : IImage
+    /// <summary>
+    /// Represents an image that can be read from a <see cref="Stream"/>.
+    /// </summary>
+    public interface IImageStream : IImage, IWrapper<Stream>
     {
-        Task CopyToAsync(Stream destination, CancellationToken cancellationToken = default);
     }
 }

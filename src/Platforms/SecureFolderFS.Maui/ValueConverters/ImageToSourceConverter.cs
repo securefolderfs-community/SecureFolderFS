@@ -14,7 +14,7 @@ namespace SecureFolderFS.Maui.ValueConverters
         {
             return value switch
             {
-                ImageStream imageStream => imageStream.Source,
+                ImageStreamSource imageStream => imageStream.Source,
                 ImageIcon iconImage => new FontImageSource()
                 {
                     Glyph = GetDescription(iconImage.MauiIcon.Icon),

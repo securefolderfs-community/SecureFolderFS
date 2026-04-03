@@ -47,14 +47,14 @@ namespace SecureFolderFS.Maui.ValueConverters
             {
                 switch (image)
                 {
-                    case StreamImageModel { Stream.CanRead: true } streamImageModel:
+                    case StreamImageModel { Inner.CanRead: true } streamImageModel:
                     {
-                        streamImageModel.Stream.TrySetPositionOrAdvance(0L);
+                        streamImageModel.Inner.TrySetPositionOrAdvance(0L);
                         return new Image()
                         {
                             Source = new StreamImageSource()
                             {
-                                Stream = _ => Task.FromResult(streamImageModel.Stream)
+                                Stream = _ => Task.FromResult(streamImageModel.Inner)
                             },
                             Aspect = Aspect.AspectFill,
                             HorizontalOptions = LayoutOptions.Fill,
@@ -62,9 +62,9 @@ namespace SecureFolderFS.Maui.ValueConverters
                         };
                     }
 
-                    case ImageStream { Stream.CanRead: true } imageStream:
+                    case ImageStreamSource { Inner.CanRead: true } imageStream:
                     {
-                        imageStream.Stream.TrySetPositionOrAdvance(0L);
+                        imageStream.Inner.TrySetPositionOrAdvance(0L);
                         return new Image()
                         {
                             Source = imageStream.Source,

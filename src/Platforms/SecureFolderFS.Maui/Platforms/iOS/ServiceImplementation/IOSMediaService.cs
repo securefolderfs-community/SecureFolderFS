@@ -77,7 +77,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
 
-            return new ImageStream(new NonDisposableStream(memoryStream));
+            return new ImageStreamSource(new NonDisposableStream(memoryStream));
         }
 
         private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, string extension, TimeSpan captureTime)
@@ -132,7 +132,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
                 memoryStream.Position = 0L;
 
-                return new ImageStream(new NonDisposableStream(memoryStream));
+                return new ImageStreamSource(new NonDisposableStream(memoryStream));
             }
             finally
             {

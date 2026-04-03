@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (cachedData is null || cachedData.Length == 0)
                     return null;
 
-                return new MemoryStream(cachedData);
+                return new MemoryStream(cachedData, writable: false);
             }
             catch
             {
@@ -77,9 +77,13 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 // Copy thumbnail to byte array
-                using var memoryStream = new MemoryStream();
-                await thumbnailStream.CopyToAsync(memoryStream, cancellationToken);
-                var data = memoryStream.ToArray();
+                var data = new byte[thumbnailStream.Inner.Length];
+                var savedPosition = thumbnailStream.Inner.Position;
+                thumbnailStream.Inner.Position = 0L;
+                var read = await thumbnailStream.Inner.ReadAsync(data, cancellationToken);
+                thumbnailStream.Inner.Position = savedPosition;
+                if (read != data.Length)
+                    return;
 
                 await _database.SetValueAsync(cacheKey, data, cancellationToken);
             }
