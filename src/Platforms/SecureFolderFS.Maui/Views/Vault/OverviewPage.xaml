@@ -58,15 +58,17 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Button
+                <uc:ActivityButton
                     Grid.Column="0"
                     Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
                     HeightRequest="48"
+                    IsProgressing="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand.IsRunning, Mode=OneWay}"
                     Text="{l:ResourceString Rid=ViewInFiles}" />
-                <Button
+                <uc:ActivityButton
                     Grid.Column="1"
                     Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
                     HeightRequest="48"
+                    IsProgressing="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand.IsRunning, Mode=OneWay}"
                     Text="{l:ResourceString Rid=LockVault}" />
             </Grid>
 
