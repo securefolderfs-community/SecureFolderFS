@@ -4,16 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
     x:DataType="local:BaseModalPage"
     Background="{OnPlatform Android={AppThemeBinding Light={StaticResource LightTransparentColor},
                                                      Dark={StaticResource DarkTransparentColor}},
                             iOS={StaticResource ThemeBackgroundFillSecondaryColorBrush}}">
-
-    <ContentPage.Resources>
-        <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
-    </ContentPage.Resources>
 
     <NavigationPage.HasNavigationBar>
         <OnPlatform x:TypeArguments="x:Boolean">

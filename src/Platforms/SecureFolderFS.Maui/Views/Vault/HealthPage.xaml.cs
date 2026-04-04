@@ -1,6 +1,8 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
@@ -24,7 +26,10 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(ViewModel));
 
             ViewModel?.HealthViewModel.PropertyChanged += HealthViewModel_PropertyChanged;
-            UpdateGradient(ViewModel?.HealthViewModel.Severity ?? Severity.Default);
+            GradientBackground.Background = GetGradientBrush(ViewModel?.HealthViewModel.Severity ?? Severity.Default);
+            
+            if (ViewModel?.HealthViewModel.IsProgressing ?? false)
+                StartShimmer();
         }
 
         /// <inheritdoc/>
@@ -35,17 +40,21 @@ namespace SecureFolderFS.Maui.Views.Vault
             _shimmerCts?.Dispose();
         }
 
-        private void UpdateGradient(Severity severity)
+        public static Brush GetGradientBrush(Severity severity)
         {
             var (start, end) = severity switch
             {
                 Severity.Success => (Color.FromArgb("#2A7A50"), Color.FromArgb("#3DB874")),
                 Severity.Warning => (Color.FromArgb("#A05C00"), Color.FromArgb("#D4860A")),
                 Severity.Critical => (Color.FromArgb("#8B1F30"), Color.FromArgb("#C94055")),
-                _ => (Color.FromArgb("#3A3E45"), Color.FromArgb("#52575F"))
+                _ => MauiThemeHelper.Instance.ActualTheme switch
+                {
+                    ThemeType.Light => (Color.FromArgb("#6B8BA4"), Color.FromArgb("#8AAEC7")),
+                    _ => (Color.FromArgb("#3A3E45"), Color.FromArgb("#52575F"))
+                }
             };
-
-            GradientBackground.Background = new LinearGradientBrush([
+            
+            return new LinearGradientBrush([
                     new GradientStop(start, 0f),
                     new GradientStop(end, 1f)
                 ],
@@ -94,7 +103,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             switch (e.PropertyName)
             {
                 case nameof(viewModel.Severity):
-                    UpdateGradient(viewModel.Severity);
+                    GradientBackground.Background = GetGradientBrush(viewModel.Severity);
                     break;
                 
                 case nameof(viewModel.IsProgressing) when viewModel.IsProgressing:
@@ -113,6 +122,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultHealthReportViewModel), typeof(HealthPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultHealthReportViewModel), typeof(HealthPage));
     }
 }

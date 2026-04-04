@@ -17,7 +17,9 @@
         <!--  Health Widget  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
             <ucw:HealthWidget
+                IsProgressing="{Binding HealthViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{Binding LastCheckedText, Mode=OneWay}"
+                Loaded="HealthWidget_Loaded"
                 OpenVaultHealthCommand="{Binding OpenVaultHealthCommand, Mode=OneWay}"
                 Severity="{Binding HealthViewModel.Severity, Mode=OneWay}"
                 StatusTitle="{Binding HealthViewModel.Title, Mode=OneWay}" />
@@ -40,7 +42,7 @@
             <!--  Top widgets  -->
             <VerticalStackLayout
                 Grid.Row="0"
-                Margin="16,16"
+                Margin="16,16,16,0"
                 BindableLayout.ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}"
                 Spacing="16">
                 <BindableLayout.ItemTemplateSelector>
@@ -51,8 +53,8 @@
             <!--  Top buttons  -->
             <Grid
                 Grid.Row="1"
-                Padding="16,16"
-                ColumnSpacing="16">
+                Padding="16,12,16,16"
+                ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />

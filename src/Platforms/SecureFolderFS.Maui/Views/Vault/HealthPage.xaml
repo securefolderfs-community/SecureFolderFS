@@ -112,21 +112,6 @@
                         </BoxView.Background>
                     </BoxView>
 
-                    <!--  Progress strip at bottom  -->
-                    <BoxView
-                        x:Name="ProgressStrip"
-                        HeightRequest="3"
-                        IsVisible="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
-                        Opacity="0.5"
-                        VerticalOptions="End">
-                        <BoxView.Background>
-                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                <GradientStop Offset="0" Color="White" />
-                                <GradientStop Offset="1" Color="Transparent" />
-                            </LinearGradientBrush>
-                        </BoxView.Background>
-                    </BoxView>
-
                     <!--  Content row  -->
                     <Grid Padding="16,14" ColumnSpacing="14">
                         <Grid.ColumnDefinitions>
