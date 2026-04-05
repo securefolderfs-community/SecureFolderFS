@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -34,7 +35,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             var fileExplorerService = DI.Service<IFileExplorerService>();
             yield return new PickerSourceWizardViewModel(DATA_SOURCE_PICKER, fileExplorerService, mode, vaultCollectionModel)
             {
-                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2, IconColor = Colors.White })
+                Icon = new ImageIcon(new MauiIcon() { Icon = CupertinoIcons.Tray2, IconColor = App.Instance.Resources.GetAs<string, object, SolidColorBrush>("ThemePrimaryColorBrush")?.Color ?? Colors.White })
             };
 
             yield return new AccountSourceWizardViewModel(DATA_SOURCE_FTP, "FTP".ToLocalized(), mode, vaultCollectionModel)

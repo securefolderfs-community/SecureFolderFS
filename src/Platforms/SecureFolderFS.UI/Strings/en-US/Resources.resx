@@ -1382,4 +1382,16 @@
   <data name="EncryptedPath" xml:space="preserve">
       <value>Encrypted path</value>
   </data>
+  <data name="SourceLocalStorageDescription" xml:space="preserve">
+      <value>Browse local storage folders</value>
+  </data>
+  <data name="SourceThisDevice" xml:space="preserve">
+      <value>On this device</value>
+  </data>
+  <data name="SourceCloudAndRemote" xml:space="preserve">
+      <value>Cloud &amp; Remote</value>
+  </data>
+  <data name="ChooseNewVaultMode" xml:space="preserve">
+      <value>Choose how you want to add a new vault.</value>
+  </data>
 </root>

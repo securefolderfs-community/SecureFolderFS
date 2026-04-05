@@ -19,7 +19,7 @@
             <Label
                 FontSize="16"
                 Opacity="0.6"
-                Text="Choose how you want to add a new vault." />
+                Text="{l:ResourceString Rid=ChooseNewVaultMode}" />
 
             <VerticalStackLayout Spacing="10">
 
@@ -31,7 +31,6 @@
 
                     <!--  Content  -->
                     <Grid
-                        Grid.Column="1"
                         Padding="16,14"
                         Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         ColumnDefinitions="Auto,*,Auto"
@@ -113,9 +112,9 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="14" />
                     </Border.StrokeShape>
+
                     <!--  Content  -->
                     <Grid
-                        Grid.Column="1"
                         Padding="16,14"
                         Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         ColumnDefinitions="Auto,*,Auto"
@@ -191,7 +190,6 @@
                         </Grid.GestureRecognizers>
                     </Grid>
                 </Border>
-
             </VerticalStackLayout>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>

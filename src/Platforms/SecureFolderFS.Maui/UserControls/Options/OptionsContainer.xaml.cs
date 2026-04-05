@@ -39,22 +39,13 @@ namespace SecureFolderFS.Maui.UserControls.Options
         public static readonly BindableProperty InnerContentProperty =
             BindableProperty.Create(nameof(InnerContent), typeof(object), typeof(OptionsContainer));
 
-        public bool IsTransparent
+        public bool ProvideBackplate
         {
-            get => (bool)GetValue(IsTransparentProperty);
-            set => SetValue(IsTransparentProperty, value);
+            get => (bool)GetValue(ProvideBackplateProperty);
+            set => SetValue(ProvideBackplateProperty, value);
         }
-        public static readonly BindableProperty IsTransparentProperty =
-            BindableProperty.Create(nameof(IsTransparent), typeof(bool), typeof(OptionsContainer), false,
-                propertyChanged: (bindable, _, newValue) =>
-                {
-                    if (bindable is not OptionsContainer container)
-                        return;
-
-                    container.ContainerBorder.Background = (bool)newValue
-                        ? Colors.Transparent
-                        : Application.Current?.Resources["ThemeElevatedFillPrimaryColorBrush"] as Brush;
-                });
+        public static readonly BindableProperty ProvideBackplateProperty =
+            BindableProperty.Create(nameof(ProvideBackplate), typeof(bool), typeof(OptionsContainer), true);
     }
 }
 

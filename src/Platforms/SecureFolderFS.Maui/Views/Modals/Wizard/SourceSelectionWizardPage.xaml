@@ -2,11 +2,13 @@
     x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.SourceSelectionWizardPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SourceSelectionWizardPage"
@@ -15,124 +17,133 @@
     CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <Grid Padding="16,0" RowSpacing="16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <!--  Primary source (Device Storage)  -->
-            <Border
-                Grid.Row="0"
-                Background="{StaticResource ThemeSecondaryColorBrush}"
-                HeightRequest="72"
-                IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="14" />
-                </Border.StrokeShape>
-                <Grid
-                    Padding="18,0"
-                    ColumnDefinitions="Auto,*,Auto"
-                    ColumnSpacing="14">
-
-                    <!--  Icon plate  -->
-                    <Border
-                        Grid.Column="0"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                          Dark={StaticResource PrimaryDarkColor}}"
-                        HeightRequest="40"
-                        StrokeThickness="0"
-                        VerticalOptions="Center"
-                        WidthRequest="40">
+        <VerticalStackLayout Padding="16,0" Spacing="16">
+            <!--  On this device  -->
+            <uco:OptionsContainer Title="{l:ResourceString Rid=SourceThisDevice}" ProvideBackplate="False">
+                <uco:OptionsContainer.InnerContent>
+                    <Border IsVisible="{Binding ViewModel.PrimarySource, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" StrokeThickness="0">
                         <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
+                            <RoundRectangle CornerRadius="14" />
                         </Border.StrokeShape>
-                        <Image
-                            HeightRequest="22"
-                            HorizontalOptions="Center"
-                            Source="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
-                            VerticalOptions="Center"
-                            WidthRequest="22" />
-                    </Border>
 
-                    <Label
-                        Grid.Column="1"
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}"
-                        TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                    Dark={StaticResource PrimaryContrastingDarkColor}}"
-                        VerticalOptions="Center" />
+                        <!--  Content  -->
+                        <Grid
+                            Padding="16,14"
+                            Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                            ColumnDefinitions="Auto,*,Auto"
+                            ColumnSpacing="14">
 
-                    <mi:MauiIcon
-                        Grid.Column="2"
-                        Icon="{mi_material:Material ChevronRight}"
-                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                    Dark={StaticResource PrimaryDarkColor}}"
-                        IconSize="18"
-                        OnPlatforms="Android"
-                        VerticalOptions="Center" />
-                    <mi:MauiIcon
-                        Grid.Column="2"
-                        Icon="{mi_cupertino:Cupertino ChevronRight}"
-                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                    Dark={StaticResource PrimaryDarkColor}}"
-                        IconSize="18"
-                        OnPlatforms="iOS"
-                        VerticalOptions="Center" />
-
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}" CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}" />
-                    </Grid.GestureRecognizers>
-                </Grid>
-            </Border>
-
-            <!--  Cloud / remote sources grid  -->
-            <CollectionView
-                Grid.Row="1"
-                ItemSizingStrategy="MeasureFirstItem"
-                ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
-                SelectionChanged="CollectionView_SelectionChanged"
-                SelectionMode="Single">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
-                        <Border
-                            Margin="0"
-                            Padding="0"
-                            Background="{StaticResource ThemeSecondaryColorBrush}"
-                            StrokeThickness="0">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="14" />
-                            </Border.StrokeShape>
-                            <VerticalStackLayout
-                                Padding="16,20"
-                                Spacing="12"
-                                VerticalOptions="Center">
+                            <!--  Icon plate  -->
+                            <Border
+                                Grid.Column="0"
+                                Background="{StaticResource ThemeSecondaryColorBrush}"
+                                HeightRequest="40"
+                                StrokeThickness="0"
+                                VerticalOptions="Center"
+                                WidthRequest="40">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
                                 <Image
-                                    HeightRequest="44"
+                                    HeightRequest="22"
                                     HorizontalOptions="Center"
-                                    Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
-                                    WidthRequest="44" />
+                                    Source="{Binding ViewModel.PrimarySource.Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                                    VerticalOptions="Center"
+                                    WidthRequest="22" />
+                            </Border>
+
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="3"
+                                VerticalOptions="Center">
                                 <Label
                                     FontAttributes="Bold"
-                                    FontSize="14"
-                                    HorizontalOptions="Center"
-                                    Text="{Binding DataSourceName, Mode=OneWay}"
+                                    FontSize="15"
+                                    Text="{Binding ViewModel.PrimarySource.DataSourceName, Mode=OneWay}"
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                                <Label
+                                    FontSize="12"
+                                    Opacity="0.8"
+                                    Text="{Binding ViewModel.PrimarySource.DataSourceDescription, Mode=OneWay}"
                                     TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
                                                                 Dark={StaticResource PrimaryContrastingDarkColor}}" />
                             </VerticalStackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout
-                        HorizontalItemSpacing="10"
-                        Orientation="Vertical"
-                        Span="2"
-                        VerticalItemSpacing="10" />
-                </CollectionView.ItemsLayout>
-            </CollectionView>
-        </Grid>
+
+                            <mi:MauiIcon
+                                Grid.Column="2"
+                                Icon="{mi_material:Material ChevronRight}"
+                                IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                IconSize="18"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Grid.Column="2"
+                                Icon="{mi_cupertino:Cupertino ChevronRight}"
+                                IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                IconSize="18"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ViewModel.SelectSourceCommand, Mode=OneWay}" CommandParameter="{Binding ViewModel.PrimarySource, Mode=OneWay}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </Border>
+                </uco:OptionsContainer.InnerContent>
+            </uco:OptionsContainer>
+
+            <!--  Cloud & remote  -->
+            <uco:OptionsContainer Title="{l:ResourceString Rid=SourceCloudAndRemote}" ProvideBackplate="False">
+                <uco:OptionsContainer.InnerContent>
+                    <CollectionView
+                        ItemSizingStrategy="MeasureFirstItem"
+                        ItemsSource="{Binding ViewModel.Sources, Mode=OneWay}"
+                        SelectionChanged="CollectionView_SelectionChanged"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:BaseDataSourceWizardViewModel">
+                                <Border
+                                    Padding="5"
+                                    Background="Transparent"
+                                    StrokeThickness="0">
+                                    <Border Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}" StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="14" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout
+                                            Padding="16,18"
+                                            Spacing="10"
+                                            VerticalOptions="Center">
+                                            <Image
+                                                HeightRequest="44"
+                                                HorizontalOptions="Center"
+                                                Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                                                WidthRequest="44" />
+                                            <Label
+                                                FontAttributes="Bold"
+                                                FontSize="13"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding DataSourceName, Mode=OneWay}"
+                                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                            Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                HorizontalItemSpacing="8"
+                                Orientation="Vertical"
+                                Span="2"
+                                VerticalItemSpacing="8" />
+                        </CollectionView.ItemsLayout>
+                    </CollectionView>
+                </uco:OptionsContainer.InnerContent>
+            </uco:OptionsContainer>
+        </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>
