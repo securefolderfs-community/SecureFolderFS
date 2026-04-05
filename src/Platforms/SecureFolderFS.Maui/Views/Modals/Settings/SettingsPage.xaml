@@ -17,10 +17,7 @@
 
     <md:BaseModalPage.ModalContent>
         <ScrollView>
-            <VerticalStackLayout
-                Margin="{OnPlatform iOS='0,16,0,0'}"
-                Padding="16,0"
-                Spacing="16">
+            <VerticalStackLayout Padding="16,0" Spacing="16">
 
                 <!--  Hero card  -->
                 <Border

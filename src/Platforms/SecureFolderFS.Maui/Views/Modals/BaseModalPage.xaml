@@ -96,7 +96,10 @@
             </Border>
         </On>
         <On Platform="iOS">
-            <Border BindingContext="{x:Reference Root}" StrokeThickness="0">
+            <Border
+                Margin="{OnPlatform iOS='0,32,0,0'}"
+                BindingContext="{x:Reference Root}"
+                StrokeThickness="0">
                 <ContentView
                     Content="{Binding ModalContent, Mode=OneWay}"
                     HorizontalOptions="Fill"

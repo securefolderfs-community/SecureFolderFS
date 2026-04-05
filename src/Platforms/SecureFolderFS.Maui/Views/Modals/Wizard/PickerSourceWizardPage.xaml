@@ -18,11 +18,7 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            Spacing="24">
-
+        <VerticalStackLayout Padding="16,0" Spacing="24">
             <Label
                 FontSize="15"
                 Opacity="0.55"

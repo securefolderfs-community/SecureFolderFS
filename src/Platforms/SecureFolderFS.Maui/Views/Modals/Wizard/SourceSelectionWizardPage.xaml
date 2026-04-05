@@ -15,10 +15,7 @@
     CloseText="{Binding OverlayViewModel.SecondaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <Grid
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            RowSpacing="16">
+        <Grid Padding="16,0" RowSpacing="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />

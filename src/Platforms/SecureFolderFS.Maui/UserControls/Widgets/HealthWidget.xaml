@@ -18,7 +18,7 @@
         </Border.StrokeShape>
 
         <Grid>
-            <!--  Gradient background (set from code-behind)  -->
+            <!--  Gradient background  -->
             <BoxView x:Name="GradientBackground" />
 
             <!--  Shimmer sweep overlay  -->
