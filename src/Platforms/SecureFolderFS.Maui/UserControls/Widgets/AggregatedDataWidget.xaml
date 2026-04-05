@@ -24,16 +24,13 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <Grid RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="4" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <Grid Padding="12" ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <VerticalStackLayout
-                    Grid.Row="1"
-                    Padding="12,10,12,12"
-                    Spacing="2">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
                     <Label
                         FontSize="12"
                         Opacity="0.6"
@@ -43,6 +40,14 @@
                         FontSize="22"
                         Text="{Binding TotalRead, Mode=OneWay}" />
                 </VerticalStackLayout>
+
+                <Ellipse
+                    x:Name="ReadEllipsis"
+                    Grid.Column="1"
+                    Background="Orange"
+                    HeightRequest="8"
+                    Opacity="0"
+                    WidthRequest="8" />
             </Grid>
         </Border>
 
@@ -55,16 +60,13 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <Grid RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="4" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <Grid Padding="12" ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <VerticalStackLayout
-                    Grid.Row="1"
-                    Padding="12,10,12,12"
-                    Spacing="2">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
                     <Label
                         FontSize="12"
                         Opacity="0.6"
@@ -74,6 +76,14 @@
                         FontSize="22"
                         Text="{Binding TotalWrite, Mode=OneWay}" />
                 </VerticalStackLayout>
+
+                <Ellipse
+                    x:Name="WriteEllipsis"
+                    Grid.Column="1"
+                    Background="Orange"
+                    HeightRequest="8"
+                    Opacity="0"
+                    WidthRequest="8" />
             </Grid>
         </Border>
 

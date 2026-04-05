@@ -21,15 +21,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         private ulong _pendingBytesWritten;
         private ByteSize _bytesRead;
         private ByteSize _bytesWritten;
+        private int _updateTicks;
 
         [ObservableProperty] private string? _TotalRead;
         [ObservableProperty] private string? _TotalWrite;
+        [ObservableProperty] private bool _IsReading;
+        [ObservableProperty] private bool _IsWriting;
 
         public AggregatedDataWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
-            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.Graphs.GRAPH_UPDATE_INTERVAL_MS));
+            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.AggregatedData.UPDATE_INTERVAL_MS));
             Title = "AggregatedDataWidget".ToLocalized();
         }
 
@@ -46,14 +49,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             {
                 _bytesReadSubscription = subscriber.SubscribeToBytesRead(new Progress<long>(x =>
                 {
-                    if (x > 0)
-                        _pendingBytesRead += (ulong)x;
+                    if (x <= 0L)
+                        return;
+
+                    IsReading = true;
+                    _pendingBytesRead += (ulong)x;
                 }));
 
                 _bytesWrittenSubscription = subscriber.SubscribeToBytesWritten(new Progress<long>(x =>
                 {
-                    if (x > 0)
-                        _pendingBytesWritten += (ulong)x;
+                    if (x <= 0L)
+                        return;
+
+                    IsWriting = true;
+                    _pendingBytesWritten += (ulong)x;
                 }));
             }
 
@@ -79,6 +88,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                     _bytesWritten = _bytesWritten.AddBytes(_pendingBytesWritten);
                     TotalWrite = _bytesWritten.ToString().Replace(" ", string.Empty);
                     _pendingBytesWritten = 0UL;
+                }
+
+                _updateTicks++;
+                if (_updateTicks >= Constants.Widgets.AggregatedData.REFRESH_RATE)
+                {
+                    _updateTicks = 0;
+                    IsReading = false;
+                    IsWriting = false;
                 }
             }
         }

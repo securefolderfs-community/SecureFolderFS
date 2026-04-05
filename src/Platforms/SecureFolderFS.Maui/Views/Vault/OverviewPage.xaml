@@ -27,7 +27,11 @@
 
         <!--  Aggregated Data Statistics Widget  -->
         <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm2:AggregatedDataWidgetViewModel">
-            <ucw:AggregatedDataWidget TotalRead="{Binding TotalRead, Mode=OneWay}" TotalWrite="{Binding TotalWrite, Mode=OneWay}" />
+            <ucw:AggregatedDataWidget
+                IsReading="{Binding IsReading, Mode=OneWay}"
+                IsWriting="{Binding IsWriting, Mode=OneWay}"
+                TotalRead="{Binding TotalRead, Mode=OneWay}"
+                TotalWrite="{Binding TotalWrite, Mode=OneWay}" />
         </DataTemplate>
     </ContentPage.Resources>
 

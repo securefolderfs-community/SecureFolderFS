@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="6.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="6.0.0" />
-    <PackageVersion Include="AcrylicView.Maui" Version="3.0.0" />
+    <PackageVersion Include="AcrylicView.Maui" Version="3.0.1" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
@@ -45,7 +45,7 @@
     <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.6.5" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
     <PackageVersion Include="WinUI.TableView" Version="1.4.0" />
-    <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.1" />
+    <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.3" />
     <PackageVersion Include="Yubico.YubiKey" Version="1.15.1" />
   </ItemGroup>
 </Project>
