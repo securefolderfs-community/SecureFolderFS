@@ -48,7 +48,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         public MainWindowRootControl(MainViewModel mainViewModel)
         {
             InitializeComponent();
-            App.Instance.MainWindowSynchronizationContext = SynchronizationContext.Current;
+            App.Instance?.MainWindowSynchronizationContext = SynchronizationContext.Current;
             ViewModel = mainViewModel;
         }
 
