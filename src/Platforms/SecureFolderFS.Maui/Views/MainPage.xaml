@@ -14,7 +14,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding ViewModel.OpenVaultCredentialsCommand, Mode=OneWay}"
+            Command="{Binding ViewModel.OpenDeviceLinkCommand, Mode=OneWay}"
             Order="Secondary"
             Text="{l:ResourceString Rid=DeviceLink}" />
         <ToolbarItem

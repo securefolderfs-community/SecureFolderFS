@@ -11,7 +11,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> IsOwnedAsync(IapProductType productType, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(true);
+            return Task.FromResult(false);
         }
 
         /// <inheritdoc/>
