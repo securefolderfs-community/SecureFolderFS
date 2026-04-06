@@ -1,0 +1,85 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.HealthScanControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="ThisControl">
+
+    <Border
+        x:Name="CardBorder"
+        HeightRequest="72"
+        StrokeThickness="0">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+
+        <Grid>
+            <!--  Gradient background  -->
+            <BoxView x:Name="GradientBackground" />
+
+            <!--  Shimmer sweep overlay  -->
+            <BoxView
+                x:Name="ShimmerOverlay"
+                IsVisible="False"
+                Opacity="0.2">
+                <BoxView.Background>
+                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                        <GradientStop Offset="0.0" Color="Transparent" />
+                        <GradientStop Offset="0.4" Color="White" />
+                        <GradientStop Offset="0.6" Color="White" />
+                        <GradientStop Offset="1.0" Color="Transparent" />
+                    </LinearGradientBrush>
+                </BoxView.Background>
+            </BoxView>
+
+            <!--  Content row  -->
+            <Grid Padding="16,14" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Severity icon  -->
+                <Image
+                    Grid.Column="0"
+                    HeightRequest="36"
+                    Source="{Binding Severity, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource SeverityHealthIconConverter}}"
+                    VerticalOptions="Center"
+                    WidthRequest="36" />
+
+                <!--  Title + Subtitle  -->
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="{Binding Title, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        TextColor="White" />
+                    <Label
+                        FontSize="13"
+                        IsVisible="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}"
+                        Opacity="0.7"
+                        Text="{Binding Subtitle, Mode=OneWay, Source={x:Reference ThisControl}}"
+                        TextColor="White" />
+                </VerticalStackLayout>
+
+                <!--  Icon Slot  -->
+                <ContentView
+                    Grid.Column="2"
+                    Content="{Binding IconSlot, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    IsVisible="{Binding IconSlot, Mode=OneWay, Source={x:Reference ThisControl}}" />
+            </Grid>
+        </Grid>
+
+        <Border.Behaviors>
+            <mtk:TouchBehavior
+                DefaultAnimationDuration="150"
+                DefaultBackgroundColor="{AppThemeBinding Light={StaticResource LightTransparentColor},
+                                                         Dark={StaticResource DarkTransparentColor}}"
+                PressedAnimationDuration="150"
+                PressedBackgroundColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
+                                                         Dark={StaticResource ShimFillSecondaryDarkColor}}"
+                TouchGestureCompleted="TouchBehavior_TouchGestureCompleted" />
+        </Border.Behaviors>
+    </Border>
+</ContentView>

@@ -6,10 +6,9 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
-    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:mtk="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
@@ -69,7 +68,7 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid Padding="16">
+    <Grid Padding="16" RowSpacing="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -83,91 +82,13 @@
                     Text="Scan full vault (include file contents)" />
             </apesui:ContextMenuContainer.MenuItems>
             <apesui:ContextMenuContainer.Content>
-                <Grid RowSpacing="32">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
-                    <!--  Status card  -->
-                    <Border
-                        x:Name="StatusCard"
-                        Grid.Row="0"
-                        Margin="0,4,0,0"
-                        StrokeThickness="0"
-                        VerticalOptions="Start">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12" />
-                        </Border.StrokeShape>
-
-                        <Grid>
-                            <!--  Gradient background (set from code-behind)  -->
-                            <BoxView x:Name="GradientBackground" CornerRadius="12" />
-
-                            <!--  Shimmer sweep overlay  -->
-                            <BoxView
-                                x:Name="ShimmerOverlay"
-                                CornerRadius="12"
-                                IsVisible="False"
-                                Opacity="0.18">
-                                <BoxView.Background>
-                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <GradientStop Offset="0.0" Color="Transparent" />
-                                        <GradientStop Offset="0.4" Color="White" />
-                                        <GradientStop Offset="0.6" Color="White" />
-                                        <GradientStop Offset="1.0" Color="Transparent" />
-                                    </LinearGradientBrush>
-                                </BoxView.Background>
-                            </BoxView>
-
-                            <!--  Content row  -->
-                            <Grid Padding="16,14" ColumnSpacing="14">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <!--  Severity icon  -->
-                                <Image
-                                    Grid.Column="0"
-                                    HeightRequest="32"
-                                    Source="{Binding ViewModel.HealthViewModel.Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
-                                    VerticalOptions="Center"
-                                    WidthRequest="32" />
-
-                                <!--  Title + subtitle  -->
-                                <VerticalStackLayout
-                                    Grid.Column="1"
-                                    Spacing="2"
-                                    VerticalOptions="Center">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        FontSize="16"
-                                        Text="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
-                                        TextColor="White" />
-                                    <Label
-                                        FontSize="13"
-                                        IsVisible="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                                        Opacity="0.75"
-                                        Text="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}"
-                                        TextColor="White" />
-                                </VerticalStackLayout>
-                            </Grid>
-                        </Grid>
-
-                        <Border.Behaviors>
-                            <mtk:TouchBehavior
-                                DefaultAnimationDuration="150"
-                                DefaultBackgroundColor="{AppThemeBinding Light={StaticResource LightTransparentColor},
-                                                                         Dark={StaticResource DarkTransparentColor}}"
-                                PressedAnimationDuration="150"
-                                PressedBackgroundColor="{AppThemeBinding Light={StaticResource ShimFillSecondaryLightColor},
-                                                                         Dark={StaticResource ShimFillSecondaryDarkColor}}"
-                                TouchGestureCompleted="StatusCard_TouchGestureCompleted" />
-                        </Border.Behaviors>
-                    </Border>
-                </Grid>
+                <uc:HealthScanControl
+                    x:Name="ScanControl"
+                    Title="{Binding ViewModel.HealthViewModel.StatusTitle, Mode=OneWay}"
+                    Clicked="HealthScanControl_Clicked"
+                    IsProgressing="{Binding ViewModel.HealthViewModel.IsProgressing, Mode=OneWay}"
+                    Severity="{Binding ViewModel.HealthViewModel.Severity, Mode=OneWay}"
+                    Subtitle="{Binding ViewModel.HealthViewModel.Subtitle, Mode=OneWay}" />
             </apesui:ContextMenuContainer.Content>
         </apesui:ContextMenuContainer>
 

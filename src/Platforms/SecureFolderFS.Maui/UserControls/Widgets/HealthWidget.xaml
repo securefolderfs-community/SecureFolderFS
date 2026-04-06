@@ -2,102 +2,32 @@
     x:Class="SecureFolderFS.Maui.UserControls.Widgets.HealthWidget"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="RootControl">
 
-    <Border
-        x:Name="CardBorder"
-        x:DataType="local:HealthWidget"
-        BindingContext="{x:Reference RootControl}"
-        StrokeThickness="0">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="12" />
-        </Border.StrokeShape>
-
-        <Grid>
-            <!--  Gradient background  -->
-            <BoxView x:Name="GradientBackground" />
-
-            <!--  Shimmer sweep overlay  -->
-            <BoxView
-                x:Name="ShimmerOverlay"
-                IsVisible="False"
-                Opacity="0.18">
-                <BoxView.Background>
-                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                        <GradientStop Offset="0.0" Color="Transparent" />
-                        <GradientStop Offset="0.4" Color="White" />
-                        <GradientStop Offset="0.6" Color="White" />
-                        <GradientStop Offset="1.0" Color="Transparent" />
-                    </LinearGradientBrush>
-                </BoxView.Background>
-            </BoxView>
-
-            <!--  Content row  -->
-            <Grid Padding="16,14" ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <!--  Severity icon  -->
-                <Image
-                    Grid.Column="0"
-                    HeightRequest="36"
-                    Source="{Binding Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
-                    VerticalOptions="Center"
-                    WidthRequest="36" />
-
-                <!--  Title + last checked  -->
-                <VerticalStackLayout
-                    Grid.Column="1"
-                    Spacing="2"
-                    VerticalOptions="Center">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        Text="{Binding StatusTitle, Mode=OneWay}"
-                        TextColor="White" />
-                    <Label
-                        FontSize="12"
-                        IsVisible="{Binding LastCheckedText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        Opacity="0.7"
-                        Text="{Binding LastCheckedText, Mode=OneWay}"
-                        TextColor="White" />
-                </VerticalStackLayout>
-
-                <!--  Chevron button  -->
-                <OnPlatform x:TypeArguments="Button">
-                    <On Platform="Android">
-                        <Button
-                            Grid.Column="2"
-                            Padding="8"
-                            mi:MauiIcon.Value="{mi_material:Material ChevronRight,
-                                                                     IconColor=White}"
-                            Command="{Binding OpenVaultHealthCommand, Mode=OneWay}"
-                            HeightRequest="44"
-                            Style="{StaticResource TransparentButtonStyle}"
-                            VerticalOptions="Center"
-                            WidthRequest="44" />
-                    </On>
-                    <On Platform="iOS">
-                        <Button
-                            Grid.Column="2"
-                            Padding="8"
-                            mi:MauiIcon.Value="{mi_cupertino:Cupertino ChevronRight,
-                                                                       IconColor=White}"
-                            Command="{Binding OpenVaultHealthCommand, Mode=OneWay}"
-                            HeightRequest="44"
-                            Style="{StaticResource TransparentButtonStyle}"
-                            VerticalOptions="Center"
-                            WidthRequest="44" />
-                    </On>
-                </OnPlatform>
-            </Grid>
-        </Grid>
-    </Border>
+    <Grid>
+        <uc:HealthScanControl
+            x:Name="ScanControl"
+            Title="{Binding StatusTitle, Mode=OneWay, Source={x:Reference RootControl}}"
+            Clicked="HealthScanControl_Clicked"
+            IsProgressing="{Binding IsProgressing, Mode=OneWay, Source={x:Reference RootControl}}"
+            Severity="{Binding Severity, Mode=OneWay, Source={x:Reference RootControl}}"
+            Subtitle="{Binding LastCheckedText, Mode=OneWay, Source={x:Reference RootControl}}">
+            <uc:HealthScanControl.IconSlot>
+                <Grid>
+                    <mi:MauiIcon
+                        Icon="{mi_material:Material ChevronRight}"
+                        IconColor="White"
+                        OnPlatforms="Android" />
+                    <mi:MauiIcon
+                        Icon="{mi_cupertino:Cupertino ChevronRight}"
+                        IconColor="White"
+                        OnPlatforms="iOS" />
+                </Grid>
+            </uc:HealthScanControl.IconSlot>
+        </uc:HealthScanControl>
+    </Grid>
 </ContentView>

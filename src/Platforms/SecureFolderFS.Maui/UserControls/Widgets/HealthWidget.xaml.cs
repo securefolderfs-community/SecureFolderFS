@@ -1,48 +1,18 @@
 using System.Windows.Input;
-using SecureFolderFS.Maui.Views.Vault;
 using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Maui.UserControls.Widgets
 {
     public partial class HealthWidget : ContentView, IDisposable
     {
-        private CancellationTokenSource? _shimmerCts;
-        
         public HealthWidget()
         {
             InitializeComponent();
-            GradientBackground.Background = HealthPage.GetGradientBrush(Severity);
         }
         
-        private void StartShimmer()
+        private void HealthScanControl_Clicked(object? sender, EventArgs e)
         {
-            _shimmerCts?.Cancel();
-            _shimmerCts = new CancellationTokenSource();
-            var token = _shimmerCts.Token;
-
-            ShimmerOverlay.IsVisible = true;
-
-            _ = Task.Run(async () =>
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        var cardWidth = CardBorder.Width;
-                        ShimmerOverlay.TranslationX = -cardWidth;
-                        await ShimmerOverlay.TranslateToAsync(cardWidth, 0, 900, Easing.SinInOut);
-                    });
-                    await Task.Delay(400, token).ContinueWith(_ => { }, CancellationToken.None);
-                }
-            }, token);
-        }
-
-        private void StopShimmer()
-        {
-            _shimmerCts?.Cancel();
-            _shimmerCts = null;
-            ShimmerOverlay.IsVisible = false;
-            ShimmerOverlay.CancelAnimations();
+            OpenVaultHealthCommand?.Execute(null);
         }
 
         public Severity Severity
@@ -51,12 +21,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
             set => SetValue(SeverityProperty, value);
         }
         public static readonly BindableProperty SeverityProperty =
-            BindableProperty.Create(nameof(Severity), typeof(Severity), typeof(HealthWidget), Severity.Default,
-                propertyChanged: static (bindable, _, newValue) =>
-                {
-                    if (bindable is HealthWidget widget && newValue is Severity severity)
-                        widget.GradientBackground.Background = HealthPage.GetGradientBrush(severity);
-                });
+            BindableProperty.Create(nameof(Severity), typeof(Severity), typeof(HealthWidget), Severity.Default);
 
         public string? StatusTitle
         {
@@ -88,22 +53,12 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
             set => SetValue(IsProgressingProperty, value);
         }
         public static readonly BindableProperty IsProgressingProperty =
-            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(HealthWidget), false,
-                propertyChanged: static (bindable, _, newValue) =>
-                {
-                    if (bindable is not HealthWidget widget)
-                        return;
-
-                    if (newValue is true)
-                        widget.StartShimmer();
-                    else
-                        widget.StopShimmer();
-                });
+            BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(HealthWidget), false);
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            StopShimmer();
+            ScanControl.Dispose();
         }
     }
 }
