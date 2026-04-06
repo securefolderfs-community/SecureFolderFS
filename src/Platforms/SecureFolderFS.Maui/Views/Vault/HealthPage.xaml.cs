@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Core;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Helpers;
 using SecureFolderFS.Sdk.Enums;
@@ -93,6 +94,17 @@ namespace SecureFolderFS.Maui.Views.Vault
             _shimmerCts = null;
             ShimmerOverlay.IsVisible = false;
             ShimmerOverlay.CancelAnimations();
+        }
+        
+        private void StatusCard_TouchGestureCompleted(object? sender, TouchGestureCompletedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (ViewModel.HealthViewModel.IsProgressing)
+                ViewModel.HealthViewModel.CancelScanningCommand.Execute(null);
+            else
+                ViewModel.HealthViewModel.StartScanningCommand.Execute(null);
         }
         
         private void HealthViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
