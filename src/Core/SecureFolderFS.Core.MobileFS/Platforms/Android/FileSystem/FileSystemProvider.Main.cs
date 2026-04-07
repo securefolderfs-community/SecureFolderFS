@@ -53,9 +53,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 rid = Constants.Android.Saf.IC_LOCK_LOCK;
 
             foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
-            {
                 AddRoot(matrix, item, rid);
-            }
 
             return matrix;
         }

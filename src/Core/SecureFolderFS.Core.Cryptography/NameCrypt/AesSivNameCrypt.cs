@@ -15,7 +15,8 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         {
             _aesSiv256 = keyPair.UseKeys((dekKey, macKey) =>
             {
-                return AesSiv256.CreateInstance(dekKey.ToArray(), macKey.ToArray()); // Note: AesSiv128 requires a byte[] key.
+                // Note: AesSiv256 requires a byte[] key.
+                return AesSiv256.CreateInstance(dekKey.ToArray(), macKey.ToArray());
             });
         }
 

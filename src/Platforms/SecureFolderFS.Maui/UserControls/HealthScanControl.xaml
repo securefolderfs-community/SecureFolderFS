@@ -67,7 +67,7 @@
                 <ContentView
                     Grid.Column="2"
                     Content="{Binding IconSlot, Mode=OneWay, Source={x:Reference ThisControl}}"
-                    IsVisible="{Binding IconSlot, Mode=OneWay, Source={x:Reference ThisControl}}" />
+                    IsVisible="{Binding IconSlot, Mode=OneWay, Source={x:Reference ThisControl}, Converter={StaticResource NullToBoolConverter}}" />
             </Grid>
         </Grid>
 

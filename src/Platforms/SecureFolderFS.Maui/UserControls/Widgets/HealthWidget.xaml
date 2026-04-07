@@ -8,26 +8,24 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="RootControl">
 
-    <Grid>
-        <uc:HealthScanControl
-            x:Name="ScanControl"
-            Title="{Binding StatusTitle, Mode=OneWay, Source={x:Reference RootControl}}"
-            Clicked="HealthScanControl_Clicked"
-            IsProgressing="{Binding IsProgressing, Mode=OneWay, Source={x:Reference RootControl}}"
-            Severity="{Binding Severity, Mode=OneWay, Source={x:Reference RootControl}}"
-            Subtitle="{Binding LastCheckedText, Mode=OneWay, Source={x:Reference RootControl}}">
-            <uc:HealthScanControl.IconSlot>
-                <Grid>
-                    <mi:MauiIcon
-                        Icon="{mi_material:Material ChevronRight}"
-                        IconColor="White"
-                        OnPlatforms="Android" />
-                    <mi:MauiIcon
-                        Icon="{mi_cupertino:Cupertino ChevronRight}"
-                        IconColor="White"
-                        OnPlatforms="iOS" />
-                </Grid>
-            </uc:HealthScanControl.IconSlot>
-        </uc:HealthScanControl>
-    </Grid>
+    <uc:HealthScanControl
+        x:Name="ScanControl"
+        Title="{Binding StatusTitle, Mode=OneWay, Source={x:Reference RootControl}}"
+        Clicked="HealthScanControl_Clicked"
+        IsProgressing="{Binding IsProgressing, Mode=OneWay, Source={x:Reference RootControl}}"
+        Severity="{Binding Severity, Mode=OneWay, Source={x:Reference RootControl}}"
+        Subtitle="{Binding LastCheckedText, Mode=OneWay, Source={x:Reference RootControl}}">
+        <uc:HealthScanControl.IconSlot>
+            <Grid>
+                <mi:MauiIcon
+                    Icon="{mi_material:Material ChevronRight}"
+                    IconColor="White"
+                    OnPlatforms="Android" />
+                <mi:MauiIcon
+                    Icon="{mi_cupertino:Cupertino ChevronRight}"
+                    IconColor="White"
+                    OnPlatforms="iOS" />
+            </Grid>
+        </uc:HealthScanControl.IconSlot>
+    </uc:HealthScanControl>
 </ContentView>

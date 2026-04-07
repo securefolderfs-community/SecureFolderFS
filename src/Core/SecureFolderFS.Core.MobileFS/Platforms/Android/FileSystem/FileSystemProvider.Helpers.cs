@@ -90,16 +90,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             }
             void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
             void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);
-            void AddDisplayName()
-            {
-                if (string.IsNullOrEmpty(storable.Name))
-                {
-                    var safRoot = _rootCollection?.GetSafRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
-                    row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
-                }
-                else
-                    row.Add(Document.ColumnDisplayName, storable.Name);
-            }
+            void AddDisplayName() => row.Add(Document.ColumnDisplayName, string.IsNullOrEmpty(storable.Name)
+                ? safRoot.StorageRoot.Options.VolumeName
+                : storable.Name);
         }
 
         private string? GetDocumentIdForStorable(IStorable storable, string? rootId)
@@ -111,10 +104,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (safRoot is null)
                 return null;
 
-            if (storable.Id == safRoot.StorageRoot.PlaintextRoot.Id)
-                return $"{safRoot.RootId}:";
-
-            return $"{safRoot.RootId}:{storable.Id}";
+            return storable.Id == safRoot.StorageRoot.PlaintextRoot.Id
+                ? $"{safRoot.RootId}:"
+                : $"{safRoot.RootId}:{storable.Id}";
         }
 
         private IStorable? GetStorableForDocumentId(string documentId)
@@ -142,7 +134,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (string.IsNullOrEmpty(path))
                 return safRoot.StorageRoot.PlaintextRoot;
 
-            return safRoot.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
+            return SafetyHelpers.NoFailureResult(() => safRoot.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult());
         }
 
         private static string GetMimeForStorable(IStorable storable)

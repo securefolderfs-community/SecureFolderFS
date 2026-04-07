@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Shared.Logging
 {
@@ -34,9 +35,7 @@ namespace SecureFolderFS.Shared.Logging
         internal void WriteMessage(string message)
         {
             lock (_writeLock)
-            {
-                File.AppendAllText(_filePath, message + Environment.NewLine);
-            }
+                SafetyHelpers.NoFailure(() => File.AppendAllText(_filePath, message + Environment.NewLine));
         }
 
         /// <inheritdoc/>
