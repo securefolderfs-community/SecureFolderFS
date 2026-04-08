@@ -118,7 +118,6 @@ namespace SecureFolderFS.Sdk.AppModels
             if (dateModified is null)
                 return pathHash;
 
-
             // Combine path hash with modification date for the cache key
             // Format: {pathHash}_{dateModifiedTicks}
             return $"{pathHash}_{dateModified.Value.Ticks}";

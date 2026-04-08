@@ -4,6 +4,7 @@ using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -161,7 +162,22 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
                 var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, directoryId, cancellationToken);
 
-                return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
+                // Do NOT use Path.GetFileNameWithoutExtension - after APFS or ContentProvider NFD-decomposes Base4K
+                // codepoints, the string may contain spurious dot-like characters that confuse the
+                // path parser, causing it to truncate mid-ciphertext.
+                // Strip the known extension manually instead.
+                var nameWithoutExtension = ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+                    ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
+                    : ciphertextName.AsSpan();
+
+                var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
+                var normalized = new char[normalizedLength];
+
+                // NFC-normalize before decoding
+                if (nameWithoutExtension.TryNormalize(normalized, out var written, NormalizationForm.FormC))
+                    return specifics.Security.NameCrypt.DecryptName(normalized.AsSpan(0, written), result ? directoryId : ReadOnlySpan<byte>.Empty);
+
+                return specifics.Security.NameCrypt.DecryptName(nameWithoutExtension, result ? directoryId : ReadOnlySpan<byte>.Empty);
             }
             catch (Exception)
             {

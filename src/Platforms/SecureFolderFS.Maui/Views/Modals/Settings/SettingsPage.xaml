@@ -30,7 +30,7 @@
                     Background="{StaticResource ThemePrimaryColorBrush}">
                     <Border
                         Padding="20,20"
-                        Background="{StaticResource ThemeSecondaryColorBrush}"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         StrokeThickness="0">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16" />
@@ -66,15 +66,13 @@
                                 FontAttributes="Bold"
                                 FontSize="18"
                                 HorizontalOptions="Center"
-                                Text="{l:ResourceString Rid=Settings}"
-                                TextColor="{StaticResource PrimaryContrastingLightColor}" />
+                                Text="{l:ResourceString Rid=Settings}" />
                             <Label
                                 FontSize="13"
                                 HorizontalOptions="Center"
                                 HorizontalTextAlignment="Center"
                                 Opacity="0.7"
-                                Text="Manage your preferences, appearance, and privacy options for SecureFolderFS."
-                                TextColor="{StaticResource PrimaryContrastingLightColor}" />
+                                Text="Manage your preferences, appearance, and privacy options for SecureFolderFS." />
                         </VerticalStackLayout>
                     </Border>
                 </Grid>
