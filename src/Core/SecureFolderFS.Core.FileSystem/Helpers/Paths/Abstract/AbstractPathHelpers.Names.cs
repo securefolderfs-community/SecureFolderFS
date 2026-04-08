@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 var directoryId = AllocateDirectoryId(specifics.Security, ciphertextName);
                 var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, directoryId, cancellationToken);
 
-                var normalizedName = NoCipherExtensionNormalizedName(ciphertextName);
+                var normalizedName = RemoveCiphertextExtension(ciphertextName);
                 return specifics.Security.NameCrypt.DecryptName(normalizedName, result ? directoryId : ReadOnlySpan<byte>.Empty);
             }
             catch (Exception)

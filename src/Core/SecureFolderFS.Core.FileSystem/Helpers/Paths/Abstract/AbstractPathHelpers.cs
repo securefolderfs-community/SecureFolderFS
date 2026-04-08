@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using System;
+﻿using System;
 using System.IO;
-using System.Text;
+using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
@@ -21,24 +20,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             return new byte[Constants.DIRECTORY_ID_SIZE];
         }
 
-        public static ReadOnlySpan<char> NoCipherExtensionNormalizedName(string ciphertextName)
+        public static ReadOnlySpan<char> RemoveCiphertextExtension(string ciphertextName)
         {
             // Do NOT use Path.GetFileNameWithoutExtension - after APFS or ContentProvider NFD-decomposes Base4K
             // codepoints, the string may contain spurious dot-like characters that confuse the
             // path parser, causing it to truncate mid-ciphertext.
             // Strip the known extension manually instead.
-            var nameWithoutExtension = ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+            return ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
-
-            var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
-            var normalized = new char[normalizedLength];
-
-            // NFC-normalize before decoding
-            if (nameWithoutExtension.TryNormalize(normalized, out var written, NormalizationForm.FormC))
-                return normalized.AsSpan(0, written);
-
-            return nameWithoutExtension;
         }
     }
 }

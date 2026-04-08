@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
                 return ciphertextName;
 
             var result = GetDirectoryId(ciphertextParentFolder, specifics, expendableDirectoryId);
-            var normalizedName = AbstractPathHelpers.NoCipherExtensionNormalizedName(ciphertextName);
+            var normalizedName = AbstractPathHelpers.RemoveCiphertextExtension(ciphertextName);
 
             return specifics.Security.NameCrypt.DecryptName(normalizedName, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
         }
