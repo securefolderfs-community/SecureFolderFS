@@ -27,9 +27,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
-                var plaintextPath = NativePathHelpers.GetPlaintextPath(ciphertextPath, specifics);
-                var plaintextName = Path.GetFileName(plaintextPath) ?? string.Empty;
-                if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
+                var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
+                var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath ?? string.Empty, specifics);
+                if (plaintextName == ".DS_Store" || (plaintextName?.StartsWith("._", StringComparison.Ordinal) ?? false))
                 {
                     // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
                     DeleteImmediately(ciphertextPath, storableType);
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
             // Get source Directory ID
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
-            var directoryIdResult = NativePathHelpers.GetDirectoryId(ciphertextPath, specifics, directoryId);
+            var directoryIdResult = NativePathHelpers.GetDirectoryIdOfChild(ciphertextPath, specifics, directoryId);
 
             // Move and rename item
             var guid = Guid.NewGuid().ToString();

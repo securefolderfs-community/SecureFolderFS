@@ -3,7 +3,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 

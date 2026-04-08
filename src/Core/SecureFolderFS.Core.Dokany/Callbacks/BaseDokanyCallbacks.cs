@@ -18,14 +18,13 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 {
     internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe, IDisposable
     {
+        protected readonly FileSystemSpecifics specifics;
         protected readonly BaseHandlesManager handlesManager;
         protected readonly VolumeModel volumeModel;
 
-        public FileSystemSpecifics Specifics { get; }
-
         protected BaseDokanyCallbacks(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, VolumeModel volumeModel)
         {
-            Specifics = specifics;
+            this.specifics = specifics;
             this.handlesManager = handlesManager;
             this.volumeModel = volumeModel;
         }
@@ -83,7 +82,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
-            if (Specifics.Options.IsReadOnly)
+            if (specifics.Options.IsReadOnly)
                 return Trace(DokanResult.AccessDenied, fileName, info);
 
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
@@ -207,7 +206,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
-            if (Specifics.Options.IsReadOnly)
+            if (specifics.Options.IsReadOnly)
             {
                 bytesWritten = 0;
                 return Trace(DokanResult.AccessDenied, fileName, info);
@@ -349,7 +348,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            Specifics.Dispose();
+            specifics.Dispose();
             handlesManager.Dispose();
         }
 

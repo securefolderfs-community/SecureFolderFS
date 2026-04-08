@@ -3,9 +3,6 @@ using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
 {
-    /// <summary>
-    /// A set of file system path management helpers that only work in a native environment with unlimited file system access.
-    /// </summary>
     public static partial class NativePathHelpers
     {
         /// <summary>
@@ -61,16 +58,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
             var finalPath = specifics.ContentFolder.Id;
             foreach (var namePart in plaintextRelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                // Get the Directory ID
-                // Important: We cannot just combine the ciphertext (final) path with DIRECTORY_ID_FILENAME since the directory may be the storage root.
-                //      If the directory is in turn storage root, the Directory ID is empty, thus we must use GetDirectoryId
-                var result = GetDirectoryId(Path.Combine(finalPath, namePart), specifics, expendableDirectoryId);
+                // Encrypt the name part
+                var ciphertextName = EncryptName(namePart, finalPath, specifics, expendableDirectoryId);
 
-                // Encrypt the name. Use ReadOnlySpan<byte>.Empty only when we are in the storage root directory
-                var ciphertextName = specifics.Security.NameCrypt.EncryptName(namePart, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
-
-                // Combine the final path and append extension
-                finalPath = Path.Combine(finalPath, $"{ciphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}");
+                // Combine the final path
+                finalPath = Path.Combine(finalPath, ciphertextName);
             }
 
             return finalPath;
@@ -97,22 +89,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
             if (specifics.Security.NameCrypt is null)
                 return ciphertextPath;
 
-            var finalPath = specifics.ContentFolder.Id;
+            var finalPath = string.Empty;
             var finalCiphertextPath = specifics.ContentFolder.Id;
-
             foreach (var namePart in ciphertextPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                // Remove encrypted file extension
-                var clearedNamePart = Path.GetFileNameWithoutExtension(namePart);
-
-                // Get the Directory ID
-                // Important: The ciphertext path must be used with a file name to retrieve the Directory ID.
-                //      In addition, we cannot just combine the ciphertext path with DIRECTORY_ID_FILENAME since the directory may be the storage root.
-                //      If the directory is in turn storage root, the Directory ID is empty, thus we must use GetDirectoryId
-                var result = GetDirectoryId(Path.Combine(finalCiphertextPath, namePart), specifics, expendableDirectoryId);
-
-                // Decrypt the name. Use ReadOnlySpan<byte>.Empty only when we are in the storage root directory
-                var plaintextName = specifics.Security.NameCrypt.DecryptName(clearedNamePart, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+                // Decrypt the name part
+                var plaintextName = DecryptName(namePart, finalCiphertextPath, specifics, expendableDirectoryId);
                 if (plaintextName is null)
                     return null;
 
