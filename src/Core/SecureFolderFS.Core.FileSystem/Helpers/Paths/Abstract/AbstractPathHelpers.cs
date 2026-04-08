@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
@@ -26,9 +27,21 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             // codepoints, the string may contain spurious dot-like characters that confuse the
             // path parser, causing it to truncate mid-ciphertext.
             // Strip the known extension manually instead.
-            return ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+            var nameWithoutExtension = ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
+
+            if (OperatingSystem.IsAndroid() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            {
+                var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
+                var normalized = new char[normalizedLength];
+
+                // NFC-normalize before decoding
+                if (nameWithoutExtension.TryNormalize(normalized, out var written, NormalizationForm.FormC))
+                    return normalized.AsSpan(0, written);
+            }
+
+            return nameWithoutExtension;
         }
     }
 }
