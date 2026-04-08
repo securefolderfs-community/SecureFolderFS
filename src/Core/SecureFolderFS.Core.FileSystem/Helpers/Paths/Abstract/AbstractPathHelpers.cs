@@ -31,7 +31,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
 
-            if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            // Only normalize if needed. APFS/Android layers NFD-decompose Base4K codepoints,
+            // but Dokany/WinFsp deliver names in a form where NFC recomposition breaks lookup.
+            // IsNormalized() lets the string itself determine whether normalization is safe.
+            if (!nameWithoutExtension.IsNormalized(NormalizationForm.FormC))
             {
                 var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
                 var normalized = new char[normalizedLength];
