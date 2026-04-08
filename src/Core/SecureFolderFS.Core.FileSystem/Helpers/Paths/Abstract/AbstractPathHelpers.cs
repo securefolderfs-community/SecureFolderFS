@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
 
-            if (OperatingSystem.IsAndroid() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
                 var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
                 var normalized = new char[normalizedLength];
