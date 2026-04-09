@@ -141,7 +141,7 @@
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
 
         <!-- Languages -->
-        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN</AppxDefaultResourceQualifiers>
+        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN;tr-TR</AppxDefaultResourceQualifiers>
         <DefaultLanguage>en-US</DefaultLanguage>
 
         <!-- Bundle WinAppSDK binaries in SelfContained -->
