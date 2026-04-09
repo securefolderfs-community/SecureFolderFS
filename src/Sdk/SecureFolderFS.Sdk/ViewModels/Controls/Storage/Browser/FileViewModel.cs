@@ -155,18 +155,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (!result.Positive())
                     return;
 
-                if (BrowserViewModel.TransferViewModel is not { } transferViewModel)
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
                 {
-                    await persistable.SaveAsync(cancellationToken);
-                    return;
+                    transferViewModel.TransferType = TransferType.Save;
+                    using var saveCancellation = transferViewModel.GetCancellation();
+                    await transferViewModel.PerformOperationAsync(async ct =>
+                    {
+                        await persistable.SaveAsync(ct);
+                    }, saveCancellation.Token);
                 }
+                else
+                    await persistable.SaveAsync(cancellationToken);
 
-                transferViewModel.TransferType = TransferType.Save;
-                using var saveCancellation = transferViewModel.GetCancellation();
-                await transferViewModel.PerformOperationAsync(async ct =>
-                {
-                    await persistable.SaveAsync(ct);
-                }, saveCancellation.Token);
+                await PerformFileLoadAsync(cancellationToken);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
         public static ReadOnlySpan<char> RemoveCiphertextExtension(string ciphertextName)
         {
-            // Do NOT use Path.GetFileNameWithoutExtension - after APFS or ContentProvider NFD-decomposes Base4K
+            // Do NOT use Path.GetFileNameWithoutExtension - after APFS NFD-decomposes Base4K
             // codepoints, the string may contain spurious dot-like characters that confuse the
             // path parser, causing it to truncate mid-ciphertext.
             // Strip the known extension manually instead.
@@ -31,9 +31,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
 
-            // Only normalize if needed. APFS/Android layers NFD-decompose Base4K codepoints,
+            // Only normalize if needed. APFS layers NFD-decompose Base4K codepoints,
             // but Dokany/WinFsp deliver names in a form where NFC recomposition breaks lookup.
-            if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+            if (OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
                 // IsNormalized() lets the string itself determine whether normalization is safe.
                 // TODO: Fix normalization in Vault V4

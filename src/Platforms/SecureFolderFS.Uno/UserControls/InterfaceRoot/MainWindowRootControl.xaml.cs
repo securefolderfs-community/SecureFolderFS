@@ -73,16 +73,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (ViewModel is null)
                 return;
 
-            if (!VaultListMigratorHelpers.IsMigrated())
-            {
-                var file = await VaultListMigratorHelpers.TryGetVaultsFileAsync(CancellationToken.None);
-                if (file is not null)
-                {
-                    await VaultListMigratorHelpers.TryMigrateVaultsAsync(file, StreamSerializer.Instance, CancellationToken.None);
-                    VaultListMigratorHelpers.SetMigrated();
-                }
-            }
-
             // Initialize the root view model
             await ViewModel.InitAsync();
 
