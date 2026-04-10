@@ -102,17 +102,16 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
             var recycleBinItems = await recycleBin.GetItemsAsync().ToArrayAsyncImpl();
-            var first = recycleBinItems[0];
-            var second = recycleBinItems[1];
+            var deletedFile = recycleBinItems.First(x => x.Name == "SUB_FILE");
+            var deletedFolder = recycleBinItems.First(x => x.Name == "SUB_FOLDER");
 
-            await recycleBin.RestoreItemsAsync([ first ], _fileExplorerService);
-            await recycleBin.RestoreItemsAsync([ second ], _fileExplorerService);
+            await recycleBin.RestoreItemsAsync([ deletedFile ], _fileExplorerService);
+            await recycleBin.RestoreItemsAsync([ deletedFolder ], _fileExplorerService);
 
             // Assert
             var restoredItems = await subFolder.GetItemsAsync().ToArrayAsyncImpl();
-            restoredItems.Should().HaveCount(2);
-            restoredItems[0].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
-            restoredItems[1].Name.Should().Match(x => x == "SUB_FILE" || x == "SUB_FOLDER");
+            restoredItems.Select(x => x.Name).Should().Contain("SUB_FILE");
+            restoredItems.Select(x => x.Name).Should().Contain("SUB_FOLDER");
 
             Assert.Pass($"{nameof(restoredItems)}:\n" + string.Join('\n', restoredItems.Select(x => x.Id)));
         }

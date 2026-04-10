@@ -104,6 +104,8 @@ public sealed partial class VaultMountCommand(IVaultManagerService vaultManagerS
 
             await mountedRoot.DisposeAsync();
             unlockContract.Dispose();
+            mountedRoot = null;
+            unlockContract = null;
             Environment.ExitCode = CliExitCodes.Success;
         }
         catch (NotSupportedException ex)
