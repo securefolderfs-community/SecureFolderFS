@@ -70,6 +70,10 @@
             <uap:InfoTip>SecureFolderFS Vault</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
+          <uap:Protocol Name="sffs">
+            <uap:DisplayName>SecureFolderFS</uap:DisplayName>
+            <uap:Logo>Assets\AppIcon\AppIcon.png</uap:Logo>
+          </uap:Protocol>
         </uap:Extension>
       </Extensions>
     </Application>

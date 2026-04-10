@@ -1,6 +1,7 @@
 #if WINDOWS
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -55,8 +56,13 @@ namespace SecureFolderFS.Uno
         private static void RedirectActivationTo(AppInstance targetInstance, AppActivationArguments args)
         {
             // Redirect on a background thread to avoid blocking
-            var redirectTask = targetInstance.RedirectActivationToAsync(args).AsTask();
-            redirectTask.Wait();
+            var redirectSemaphore = new SemaphoreSlim(0, 1);
+            Task.Run(async () =>
+            {
+                await targetInstance.RedirectActivationToAsync(args);
+                redirectSemaphore.Release();
+            });
+            redirectSemaphore.Wait();
         }
 
         private static async void OnActivated(object? sender, AppActivationArguments args)
