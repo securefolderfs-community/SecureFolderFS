@@ -6,4 +6,27 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CliFx" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
+    <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <ProjectReference Include="..\..\Shared\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <DefineConstants>$(DefineConstants);SFFS_WINDOWS_FS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj" />
+    <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WinFsp\SecureFolderFS.Core.WinFsp.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -3,6 +3,7 @@
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="6.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="6.0.0" />
     <PackageVersion Include="AcrylicView.Maui" Version="3.0.1" />
+    <PackageVersion Include="CliFx" Version="2.3.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
