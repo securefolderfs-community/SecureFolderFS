@@ -27,6 +27,7 @@ internal sealed class CliLifecycleHelper
             .Foundation<IVaultFileSystemService, CliVaultFileSystemService>(AddService.AddSingleton)
             .Foundation<IVaultCredentialsService, CliVaultCredentialsService>(AddService.AddSingleton)
             .Foundation<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
+            .Foundation<CredentialReader, CredentialReader>(AddService.AddSingleton)
             .Foundation<ISettingsService, SettingsService>(AddService.AddSingleton,
                 _ => new SettingsService(new AppSettings(settingsFolder), new UserSettings(settingsFolder)));
 

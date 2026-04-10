@@ -5,6 +5,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Cli.Commands;
@@ -41,7 +42,7 @@ public sealed partial class VaultRunCommand(IVaultManagerService vaultManagerSer
                 return;
             }
 
-            var vaultFolder = CliCommandHelpers.GetVaultFolder(Path);
+            var vaultFolder = new SystemFolderEx(Path);
             var recovery = credentialReader.ReadRecoveryKey(RecoveryKey, Environment.GetEnvironmentVariable("SFFS_RECOVERY_KEY"));
 
             if (!string.IsNullOrWhiteSpace(recovery))
