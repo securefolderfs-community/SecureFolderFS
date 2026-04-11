@@ -1,5 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
+using SecureFolderFS.Tests.Helpers;
 
 namespace SecureFolderFS.Tests.CliTests.Commands;
 
@@ -17,6 +18,19 @@ public class VaultInfoCommandTests : BaseCliCommandTests
 
         // Assert
         result.ProcessExitCode.Should().Be(CliExpectedExitCodes.VaultUnreadable);
+    }
+
+    [Test]
+    public async Task VaultInfo_OnExistingVault_ShouldReturnInformation()
+    {
+        // Arrange
+        var (folder, _) = await MockVaultHelpers.CreateVaultLatestAsync(null);
+
+        // Act
+        var result = await RunCliAsync("vault", "info", folder.Id, "--no-color");
+
+        // TODO: Assert
+        // Since Cli currently uses hardcoded SystemFolderEx, we cannot test against MemoryFolderEx
     }
 }
 

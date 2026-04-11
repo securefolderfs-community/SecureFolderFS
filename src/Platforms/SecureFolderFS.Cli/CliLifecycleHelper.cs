@@ -1,65 +1,49 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OwlCore.Storage.System.IO;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ServiceImplementation.Settings;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
-namespace SecureFolderFS.Cli;
-
-internal sealed class CliLifecycleHelper
+namespace SecureFolderFS.Cli
 {
-    public IServiceCollection ServiceCollection { get; } = new ServiceCollection();
-
-    public IServiceProvider BuildServiceProvider(bool quiet)
+    internal sealed class CliLifecycleHelper : BaseLifecycleHelper
     {
-        var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-        var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
-        EnsureSettingsFile(settingsFolderPath, SecureFolderFS.UI.Constants.FileNames.APPLICATION_SETTINGS_FILENAME);
-        EnsureSettingsFile(settingsFolderPath, SecureFolderFS.UI.Constants.FileNames.USER_SETTINGS_FILENAME);
+        /// <inheritdoc/>
+        public override string AppDirectory { get; } = Directory.GetCurrentDirectory();
 
-        ServiceCollection
-            .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
-            .Foundation<IVaultManagerService, VaultManagerService>(AddService.AddSingleton)
-            .Foundation<IVaultFileSystemService, CliVaultFileSystemService>(AddService.AddSingleton)
-            .Foundation<IVaultCredentialsService, CliVaultCredentialsService>(AddService.AddSingleton)
-            .Foundation<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
-            .Foundation<CredentialReader, CredentialReader>(AddService.AddSingleton)
-            .Foundation<ISettingsService, SettingsService>(AddService.AddSingleton,
-                _ => new SettingsService(new AppSettings(settingsFolder), new UserSettings(settingsFolder)));
-
-        ServiceCollection.AddLogging(builder =>
+        /// <inheritdoc/>
+        public override void LogExceptionToFile(Exception? ex)
         {
-            builder.ClearProviders();
-            builder.SetMinimumLevel(quiet ? LogLevel.Error : LogLevel.Information);
-            builder.AddSimpleConsole(options =>
-            {
-                options.SingleLine = true;
-                options.TimestampFormat = "HH:mm:ss ";
-            });
-        });
-
-        var serviceProvider = ServiceCollection.BuildServiceProvider();
-        DI.Default.SetServiceProvider(serviceProvider);
-        return serviceProvider;
-    }
-
-    private static void EnsureSettingsFile(string settingsFolderPath, string fileName)
-    {
-        var filePath = Path.Combine(settingsFolderPath, fileName);
-        if (!File.Exists(filePath))
-        {
-            File.WriteAllText(filePath, "{}");
-            return;
+            _ = ex; // No-op
         }
 
-        var info = new FileInfo(filePath);
-        if (info.Length == 0)
-            File.WriteAllText(filePath, "{}");
+        /// <inheritdoc/>
+        protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
+        {
+            return base.ConfigureServices(settingsFolder)
+                .Override<IVaultFileSystemService, CliVaultFileSystemService>(AddService.AddSingleton)
+                .Override<IVaultCredentialsService, CliVaultCredentialsService>(AddService.AddSingleton)
+                .Override<ITelemetryService, DebugTelemetryService>(AddService.AddSingleton)
+                .Override<CredentialReader, CredentialReader>(AddService.AddSingleton);
+        }
+
+        /// <inheritdoc/>
+        protected override IServiceCollection WithLogging(IServiceCollection serviceCollection)
+        {
+            return serviceCollection
+                .AddLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.SetMinimumLevel(LogLevel.Information);
+                    builder.AddSimpleConsole(options =>
+                    {
+                        options.SingleLine = true;
+                        options.TimestampFormat = "HH:mm:ss ";
+                    });
+                });
+        }
     }
 }
-
-

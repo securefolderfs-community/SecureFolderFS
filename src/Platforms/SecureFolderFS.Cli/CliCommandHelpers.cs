@@ -38,15 +38,12 @@ internal static class CliCommandHelpers
         {
             UnlockProcedure = new AuthenticationMethod(methods, null),
             VaultId = vaultId,
-            Version = Constants.Vault.Versions.V3,
             ContentCipherId = string.IsNullOrWhiteSpace(contentCipher)
                 ? Core.Cryptography.Constants.CipherId.AES_GCM
                 : contentCipher,
             FileNameCipherId = string.IsNullOrWhiteSpace(fileNameCipher)
                 ? Core.Cryptography.Constants.CipherId.AES_SIV
                 : fileNameCipher,
-            NameEncodingId = Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL,
-            RecycleBinSize = 0
         };
     }
 

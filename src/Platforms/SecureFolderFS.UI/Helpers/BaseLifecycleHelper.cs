@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.Helpers
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -77,7 +77,13 @@ namespace SecureFolderFS.UI.Helpers
                 ;
 
             // Configure logging
-            ServiceCollection.AddLogging(builder =>
+            return WithLogging(ServiceCollection);
+        }
+
+        protected virtual IServiceCollection WithLogging(IServiceCollection serviceCollection)
+        {
+            // Configure logging
+            return ServiceCollection.AddLogging(builder =>
             {
 #if DEBUG
                 builder.SetMinimumLevel(LogLevel.Trace);
@@ -88,8 +94,6 @@ namespace SecureFolderFS.UI.Helpers
                 // Opt-in: file logging
                 // builder.AddFileOutput(Path.Combine(AppDirectory, "app.log"), LogLevel.Information);
             });
-
-            return ServiceCollection;
         }
 
         public abstract void LogExceptionToFile(Exception? ex);

@@ -98,7 +98,7 @@ public sealed partial class VaultShellCommand(IVaultManagerService vaultManagerS
                 {
                     var target = args.Count > 1 ? await ResolveFolderAsync(root, current, args[1]) : current;
                     await foreach (var item in target.GetItemsAsync())
-                        Console.WriteLine($"{(item is IFolder ? "d" : "f")} {item.Name}");
+                        Console.WriteLine($"{item.Name}\t\t{(item is IFolder ? "[Directory]" : "[File]")}");
                     break;
                 }
 
@@ -359,9 +359,3 @@ public sealed partial class VaultShellCommand(IVaultManagerService vaultManagerS
         return result;
     }
 }
-
-
-
-
-
-
