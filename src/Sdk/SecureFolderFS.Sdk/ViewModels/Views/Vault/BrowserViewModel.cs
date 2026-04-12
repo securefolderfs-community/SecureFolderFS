@@ -7,7 +7,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
@@ -101,6 +100,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             try
             {
+                TransferViewModel.IsPickingFolder = true;
                 await OuterNavigator.NavigateAsync(this);
                 using var cts = TransferViewModel.GetCancellation(cancellationToken);
                 return await TransferViewModel.PickFolderAsync(new TransferOptions(TransferType.Select), false, cts.Token);
@@ -111,6 +111,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
             finally
             {
+                TransferViewModel.IsPickingFolder = false;
                 await OuterNavigator.GoBackAsync();
                 Dispose();
             }

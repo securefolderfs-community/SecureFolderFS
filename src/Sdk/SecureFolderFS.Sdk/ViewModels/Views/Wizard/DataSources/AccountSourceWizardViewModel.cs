@@ -168,7 +168,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                 var browser = BrowserHelpers.CreateBrowser(rootFolder, new FileSystemOptions(), accountViewModel, outerNavigator: this);
 
                 // Prompt the user to pick a folder
-                browser.OnAppearing();
                 _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
                 if (_selectedFolder is null)
                     return;

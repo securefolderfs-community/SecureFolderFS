@@ -154,11 +154,15 @@
                             <Grid Grid.Column="2" Margin="0,0,8,0">
                                 <mi:MauiIcon
                                     Icon="{mi_material:Material ChevronRight}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
                                     IconSize="16"
                                     OnPlatforms="Android"
                                     Opacity="0.8" />
                                 <mi:MauiIcon
                                     Icon="{mi_cupertino:Cupertino ChevronRight}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                                Dark={StaticResource PrimaryContrastingDarkColor}}"
                                     IconSize="16"
                                     OnPlatforms="iOS"
                                     Opacity="0.8" />
