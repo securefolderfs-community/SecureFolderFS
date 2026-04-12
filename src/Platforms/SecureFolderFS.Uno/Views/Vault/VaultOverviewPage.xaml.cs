@@ -130,9 +130,9 @@ namespace SecureFolderFS.Uno.Views.Vault
                     return;
 
                 var plaintextItem = await storageRoot.PlaintextRoot.GetItemByRelativePathAsync(plaintextPath);
-                _ = DisplayInformation();
+                _ = ShowItemDialogAsync();
                 
-                async Task DisplayInformation()
+                async Task ShowItemDialogAsync()
                 {
                     var viewModel = new VaultItemInfoOverlayViewModel(ciphertextItem, plaintextItem);
                     await viewModel.InitAsync();

@@ -83,7 +83,7 @@ namespace SecureFolderFS.UI.Helpers
         protected virtual IServiceCollection WithLogging(IServiceCollection serviceCollection)
         {
             // Configure logging
-            return ServiceCollection.AddLogging(builder =>
+            return serviceCollection.AddLogging(builder =>
             {
 #if DEBUG
                 builder.SetMinimumLevel(LogLevel.Trace);

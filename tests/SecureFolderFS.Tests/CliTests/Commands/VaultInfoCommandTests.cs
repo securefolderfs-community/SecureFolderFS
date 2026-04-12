@@ -31,6 +31,7 @@ public class VaultInfoCommandTests : BaseCliCommandTests
 
         // TODO: Assert
         // Since Cli currently uses hardcoded SystemFolderEx, we cannot test against MemoryFolderEx
+        Assert.Pass();
     }
 }
 

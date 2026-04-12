@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Uno.AppModels;
 
@@ -36,6 +37,7 @@ namespace SecureFolderFS.Uno.ValueConverters
             if (stream is null)
                 return null;
 
+            stream.TrySetPositionOrAdvance(0L);
             var bitmapImage = new BitmapImage();
             var randomAccessStream = stream.AsRandomAccessStream();
 
