@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -128,8 +129,17 @@ namespace SecureFolderFS.Uno.Views.Vault
                 if (string.IsNullOrEmpty(plaintextPath))
                     return;
 
-                var overlayService = DI.Service<IOverlayService>();
-                _ = overlayService.ShowAsync(new VaultItemInfoOverlayViewModel(ciphertextItem, plaintextPath));
+                var plaintextItem = await storageRoot.PlaintextRoot.GetItemByRelativePathAsync(plaintextPath);
+                _ = DisplayInformation();
+                
+                async Task DisplayInformation()
+                {
+                    var viewModel = new VaultItemInfoOverlayViewModel(ciphertextItem, plaintextItem);
+                    await viewModel.InitAsync();
+                
+                    var overlayService = DI.Service<IOverlayService>();
+                    _ = overlayService.ShowAsync(viewModel);
+                }
             }
             catch (Exception)
             {

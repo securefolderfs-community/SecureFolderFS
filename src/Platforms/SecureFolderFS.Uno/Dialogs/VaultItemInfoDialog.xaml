@@ -30,6 +30,7 @@
                     <StackPanel Grid.Column="0" Spacing="4">
                         <TextBlock Text="{l:ResourceString Rid=Name}" />
                         <TextBlock Text="{l:ResourceString Rid=Path}" />
+                        <TextBlock Text="{l:ResourceString Rid=Size}" Visibility="{x:Bind ViewModel.PlaintextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">
                         <TextBlock
@@ -44,6 +45,12 @@
                             Text="{x:Bind ViewModel.PlaintextPath, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{x:Bind ViewModel.PlaintextPath, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.PlaintextSize, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.PlaintextFullSize, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.PlaintextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
@@ -64,6 +71,7 @@
                     <StackPanel Grid.Column="0" Spacing="4">
                         <TextBlock Text="{l:ResourceString Rid=Name}" />
                         <TextBlock Text="{l:ResourceString Rid=Path}" />
+                        <TextBlock Text="{l:ResourceString Rid=Size}" Visibility="{x:Bind ViewModel.CiphertextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">
                         <TextBlock
@@ -78,6 +86,12 @@
                             Text="{x:Bind ViewModel.CiphertextPath, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{x:Bind ViewModel.CiphertextPath, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.CiphertextSize, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CiphertextFullSize, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.CiphertextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
