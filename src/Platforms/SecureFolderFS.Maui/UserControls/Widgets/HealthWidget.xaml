@@ -20,10 +20,12 @@
                 <mi:MauiIcon
                     Icon="{mi_material:Material ChevronRight}"
                     IconColor="White"
+                    IconSize="20"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     Icon="{mi_cupertino:Cupertino ChevronRight}"
                     IconColor="White"
+                    IconSize="20"
                     OnPlatforms="iOS" />
             </Grid>
         </uc:HealthScanControl.IconSlot>
