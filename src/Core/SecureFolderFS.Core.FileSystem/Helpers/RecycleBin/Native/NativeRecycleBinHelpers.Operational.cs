@@ -65,7 +65,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
             var destinationPath = Path.Combine(recycleBinPath, guid);
-            Directory.Move(ciphertextPath, destinationPath);
+            if (storableType == StorableType.Folder)
+                Directory.Move(ciphertextPath, destinationPath);
+            else
+                File.Move(ciphertextPath, destinationPath);
 
             // Create the configuration file
             using (var configurationStream = File.Create($"{destinationPath}.json"))
@@ -117,7 +120,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             StorableType AlignStorableType(string path)
             {
                 var type = storableType is StorableType.File or StorableType.Folder ? storableType : GetStorableType(path);
-                if (type == StorableType.None)
+                if (type is not (StorableType.File or StorableType.Folder))
                     throw new FileNotFoundException("The item could not be determined.");
 
                 return type;

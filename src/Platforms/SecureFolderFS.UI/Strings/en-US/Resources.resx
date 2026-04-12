@@ -1403,4 +1403,16 @@
   <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
       <value>This device</value>
   </data>
+  <data name="FileInformation" xml:space="preserve">
+      <value>File information</value>
+  </data>
+  <data name="FolderInformation" xml:space="preserve">
+      <value>Folder information</value>
+  </data>
+  <data name="Encrypted" xml:space="preserve">
+      <value>Encrypted</value>
+  </data>
+  <data name="Decrypted" xml:space="preserve">
+      <value>Decrypted</value>
+  </data>
 </root>

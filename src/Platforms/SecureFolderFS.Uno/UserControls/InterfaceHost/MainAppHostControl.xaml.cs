@@ -193,17 +193,25 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             if (!e.DataView.Contains(StandardDataFormats.StorageItems))
                 return;
 
-            // We only want to get the first item
-            // as it is unlikely the user will want to add multiple vaults in batch.
-            var droppedItems = await e.DataView.GetStorageItemsAsync().AsTask();
-            var item = droppedItems.FirstOrDefault();
-            if (item is null)
-                return;
+            var deferral = e.GetDeferral();
+            try
+            {
+                // We only want to get the first item
+                // as it is unlikely the user will want to add multiple vaults in batch.
+                var droppedItems = await e.DataView.GetStorageItemsAsync().AsTask();
+                var item = droppedItems.FirstOrDefault();
+                if (item is null)
+                    return;
 
-            // Recreate as SystemFolder for best performance.
-            // The logic can be changed to handle Platform Storage Items in the future, if needed.
-            var folder = new SystemFolderEx(item.Path);
-            await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
+                // Recreate as SystemFolder for best performance.
+                // The logic can be changed to handle Platform Storage Items in the future, if needed.
+                var folder = new SystemFolderEx(item.Path);
+                await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
         }
 
         #endregion

@@ -1,10 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
@@ -15,17 +12,15 @@ using SecureFolderFS.Uno.Extensions;
 
 namespace SecureFolderFS.Uno.Dialogs
 {
-    public sealed partial class ChangelogDialog : ContentDialog, IOverlayControl
+    public sealed partial class VaultItemInfoDialog : ContentDialog, IOverlayControl
     {
-        private IApplicationService ApplicationService { get; } = DI.Service<IApplicationService>();
-
-        public ChangelogOverlayViewModel? ViewModel
+        public VaultItemInfoOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<ChangelogOverlayViewModel>();
+            get => DataContext.TryCast<VaultItemInfoOverlayViewModel>();
             set => DataContext = value;
         }
 
-        public ChangelogDialog()
+        public VaultItemInfoDialog()
         {
             InitializeComponent();
         }
@@ -34,19 +29,13 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (ChangelogOverlayViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (VaultItemInfoOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()
         {
             Hide();
             return Task.CompletedTask;
-        }
-
-        private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
-        {
-            var uri = new Uri(e.Link);
-            await ApplicationService.OpenUriAsync(uri);
         }
     }
 }

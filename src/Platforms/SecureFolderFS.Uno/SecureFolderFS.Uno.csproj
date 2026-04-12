@@ -335,6 +335,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Dialogs\VaultItemInfoDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -502,6 +506,7 @@
     <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\VaultItemInfoDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ConverterResources.xaml" />

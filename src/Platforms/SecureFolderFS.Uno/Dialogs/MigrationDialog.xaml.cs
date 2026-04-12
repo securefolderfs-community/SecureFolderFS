@@ -11,7 +11,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
-// To learn more about WinUI, the WinUI project structure,D
+// To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.Dialogs
