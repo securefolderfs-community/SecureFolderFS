@@ -14,10 +14,11 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
+using SecureFolderFS.Uno.PInvoke;
+using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 
 #if WINDOWS
 using System.Runtime.InteropServices;
-using Vanara.PInvoke;
 #endif
 
 namespace SecureFolderFS.Uno.ServiceImplementation
@@ -120,15 +121,15 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
                 // Notify Shell of the update
                 File.SetAttributes(desktopIniFile.Id, FileAttributes.Hidden | FileAttributes.System);
-                var folderSettings = new Shell32.SHFOLDERCUSTOMSETTINGS()
+                var folderSettings = new SHFOLDERCUSTOMSETTINGS()
                 {
                     cchIconFile = 0,
                     pszIconFile = iconFile.Name,
-                    dwMask = Shell32.FOLDERCUSTOMSETTINGSMASK.FCSM_ICONFILE,
-                    dwSize = (uint)Marshal.SizeOf<Shell32.SHFOLDERCUSTOMSETTINGS>()
+                    dwMask = FCSM_ICONFILE,
+                    dwSize = (uint)Marshal.SizeOf<SHFOLDERCUSTOMSETTINGS>()
                 };
-                Shell32.SHGetSetFolderCustomSettings(ref folderSettings, folder.Id, Shell32.FCS.FCS_FORCEWRITE);
-                Shell32.SHChangeNotify(Shell32.SHCNE.SHCNE_UPDATEITEM, Shell32.SHCNF.SHCNF_PATHW, folder.Id);
+                SHGetSetFolderCustomSettings(ref folderSettings, folder.Id, FCS_FORCEWRITE);
+                SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_PATHW, folder.Id, IntPtr.Zero);
 
                 return true;
             }
