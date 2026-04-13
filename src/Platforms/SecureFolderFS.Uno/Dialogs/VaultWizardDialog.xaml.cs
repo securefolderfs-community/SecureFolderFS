@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Enums;
@@ -28,7 +27,7 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class VaultWizardDialog : ContentDialog, IOverlayControl
     {
-        private IStagingView? _previousViewModel;
+        private IViewDesignation? _previousViewModel;
 
         public WizardOverlayViewModel? ViewModel
         {
@@ -58,7 +57,7 @@ namespace SecureFolderFS.Uno.Dialogs
             return Task.CompletedTask;
         }
 
-        private async Task NavigateAsync(IStagingView viewModel)
+        private async Task NavigateAsync(IViewDesignation viewModel)
         {
             if (ViewModel is null)
                 return;
@@ -107,7 +106,7 @@ namespace SecureFolderFS.Uno.Dialogs
                     return;
                 }
 
-                IStagingView? nextViewModel = null;
+                IViewDesignation? nextViewModel = null;
                 switch (e.Origin)
                 {
                     // Main -> Summary
