@@ -233,17 +233,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (string.IsNullOrWhiteSpace(viewModel.NewName))
                     return;
 
-                var formattedName = CollisionHelpers.GetAvailableName(
-                    FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item"),
-                    ParentFolder.Items.Select(x => x.Inner.Name));
-
+                var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item");
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
 
                 var existingItem = await renamableFolder.TryGetFirstByNameAsync(formattedName, cancellationToken);
                 if (existingItem is not null)
                 {
-                    // TODO: Report that the item already exists
+                    await OverlayService.ShowAsync(new MessageOverlayViewModel()
+                    {
+                        Title = "InvalidItemName".ToLocalized(),
+                        Message = "ItemAlreadyExists".ToLocalized(formattedName),
+                        SecondaryText = "Close".ToLocalized()
+                    });
                     return;
                 }
 

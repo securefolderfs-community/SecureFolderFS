@@ -1415,4 +1415,7 @@
   <data name="Decrypted" xml:space="preserve">
       <value>Decrypted</value>
   </data>
+  <data name="ItemAlreadyExists" xml:space="preserve">
+      <value>Item with the same name already exists</value>
+  </data>
 </root>
