@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             UpdateCanMove();
 
             // Save after move
-            await _vaultCollectionModel.SaveAsync(cancellationToken);
+            await _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 
         [RelayCommand]

@@ -45,6 +45,14 @@ namespace SecureFolderFS.Maui.Views
 
             base.OnAppearing();
         }
+        
+        private async void ItemsCollection_ReorderCompleted(object? sender, EventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+            
+            await ViewModel.VaultListViewModel.SyncOrderAsync();
+        }
 
         private async Task ItemTappedAsync(VaultListItemViewModel itemViewModel, View? view)
         {

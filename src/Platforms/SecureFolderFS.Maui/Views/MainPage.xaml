@@ -55,8 +55,10 @@
         <CollectionView
             Grid.Row="1"
             BackgroundColor="Transparent"
+            CanReorderItems="True"
             IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
+            ReorderCompleted="ItemsCollection_ReorderCompleted"
             SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
