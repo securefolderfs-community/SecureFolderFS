@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hni="using:H.NotifyIcon"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
     xmlns:svfs="using:SecureFolderFS.Storage.VirtualFileSystem"
@@ -87,7 +88,7 @@
                 ToolTipText="SecureFolderFS">
                 <hni:TaskbarIcon.ContextFlyout>
                     <MenuFlyout Placement="Top">
-                        <MenuFlyoutItem Click="MenuShowApp_Click" Text="View in app">
+                        <MenuFlyoutItem Click="MenuShowApp_Click" Text="{l:ResourceString Rid=ViewInApp}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8A7;" />
                             </MenuFlyoutItem.Icon>
@@ -95,13 +96,13 @@
                         <MenuFlyoutItem
                             Click="MenuLockAll_Click"
                             IsEnabled="{x:Bind svfs:FileSystemManager.Instance.FileSystems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                            Text="Lock all vaults">
+                            Text="{l:ResourceString Rid=LockAll}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE72E;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator />
-                        <MenuFlyoutItem Click="MenuCloseApp_Click" Text="Exit">
+                        <MenuFlyoutItem Click="MenuCloseApp_Click" Text="{l:ResourceString Rid=ExitApp}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xF78A;" />
                             </MenuFlyoutItem.Icon>

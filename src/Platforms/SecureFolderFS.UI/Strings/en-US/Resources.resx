@@ -1418,4 +1418,19 @@
   <data name="ItemAlreadyExists" xml:space="preserve">
       <value>Item with the same name already exists</value>
   </data>
+  <data name="TapToLockAll" xml:space="preserve">
+      <value>Tap to lock all vaults</value>
+  </data>
+  <data name="OneVaultIsUnlocked" xml:space="preserve">
+      <value>One vault is unlocked</value>
+  </data>
+  <data name="MultipleVaultsAreUnlocked" xml:space="preserve">
+      <value>{0} vaults are unlocked</value>
+  </data>
+  <data name="ViewInApp" xml:space="preserve">
+      <value>View in app</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+      <value>Exit</value>
+  </data>
 </root>
