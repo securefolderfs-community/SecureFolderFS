@@ -467,7 +467,6 @@ jobs:
           msbuild $env:SOLUTION_PATH `
             -maxcpucount `
             -t:Restore `
-            -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION
 
       - name: Build
@@ -475,7 +474,6 @@ jobs:
           msbuild $env:THIS_PROJECT_PATH `
             -maxcpucount `
             -t:Build `
-            -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION `
             -p:TargetFramework=$env:THIS_TFM
 
