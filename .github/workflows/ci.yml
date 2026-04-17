@@ -435,3 +435,53 @@ jobs:
 #        with:
 #          name: ''
 #          path: ''
+
+  # Builds and tests SecureFolderFS.
+  test:
+    needs: [sdk, ui]
+    runs-on: windows-2025-vs2026
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+        targetFramework: [net10.0]
+    env:
+      CONFIGURATION: ${{ matrix.configuration }}
+      THIS_PROJECT_PATH: ${{ github.workspace }}\tests\SecureFolderFS.Tests
+      THIS_TFM: ${{ matrix.targetFramework }}
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        uses: "./.github/install_dependencies"
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK }}
+          run-uno-check: false
+
+      - name: Restore
+        run: |
+          msbuild $env:SOLUTION_PATH `
+            -maxcpucount `
+            -t:Restore `
+            -p:Configuration=$env:CONFIGURATION
+
+      - name: Build
+        run: |
+          msbuild $env:THIS_PROJECT_PATH `
+            -maxcpucount `
+            -t:Build `
+            -p:Configuration=$env:CONFIGURATION `
+            -p:TargetFramework=$env:THIS_TFM
+
+      - name: Test
+        run: dotnet test $env:THIS_PROJECT_PATH -c $env:CONFIGURATION --no-build
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: ''
+#          path: ''
