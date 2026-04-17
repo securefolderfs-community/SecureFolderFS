@@ -15,9 +15,6 @@ namespace SecureFolderFS.SourceGenerator
     [Generator(LanguageNames.CSharp)]
     public sealed class InjectGenerator : AttributeWithTypeGenerator
     {
-        private const string LoggerFullName = "Microsoft.Extensions.Logging.ILogger";
-        private const string LoggerFactoryFullName = "Microsoft.Extensions.Logging.ILoggerFactory";
-
         protected override string AttributeNamespace { get; } = $"{nameof(SecureFolderFS)}.Sdk.Attributes.InjectAttribute`1";
 
         protected override string? GetCode(INamedTypeSymbol typeSymbol, ImmutableArray<AttributeData> attributes)

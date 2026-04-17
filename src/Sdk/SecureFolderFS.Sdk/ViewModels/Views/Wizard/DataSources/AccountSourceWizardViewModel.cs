@@ -188,7 +188,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         public override void Dispose()
         {
             NavigationRequested = null;
-            Accounts.Select(x => x != SelectedAccount).DisposeAll();
+            Accounts.Where(x => x != SelectedAccount).DisposeAll();
             Accounts.Clear();
         }
     }
