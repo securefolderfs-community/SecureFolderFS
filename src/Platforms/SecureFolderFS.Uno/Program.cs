@@ -59,8 +59,14 @@ namespace SecureFolderFS.Uno
             var redirectSemaphore = new SemaphoreSlim(0, 1);
             Task.Run(async () =>
             {
-                await targetInstance.RedirectActivationToAsync(args);
-                redirectSemaphore.Release();
+                try
+                {
+                    await targetInstance.RedirectActivationToAsync(args);
+                }
+                finally
+                {
+                    redirectSemaphore.Release();
+                }
             });
             redirectSemaphore.Wait();
         }
