@@ -18,19 +18,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
     public abstract partial class BaseDataSourceWizardViewModel : OverlayViewModel, IStagingView, IDisposable
     {
         [ObservableProperty] private IImage? _Icon;
+        [ObservableProperty] private string? _DataSourceName;
+        [ObservableProperty] private string? _DataSourceDescription;
 
+        /// <summary>
+        /// Gets the model representing the current vault collection.
+        /// </summary>
         protected IVaultCollectionModel VaultCollectionModel { get; }
 
-        public NewVaultMode Mode { get; }
-
+        /// <summary>
+        /// Gets the type of the data source.
+        /// </summary>
         public string DataSourceType { get; }
 
-        public abstract string DataSourceName { get; }
+        /// <summary>
+        /// Gets the creation mode of the new vault.
+        /// </summary>
+        public NewVaultMode Mode { get; }
 
         protected BaseDataSourceWizardViewModel(string dataSourceType, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
         {
-            DataSourceType = dataSourceType;
             Mode = mode;
+            DataSourceType = dataSourceType;
             VaultCollectionModel = vaultCollectionModel;
         }
 

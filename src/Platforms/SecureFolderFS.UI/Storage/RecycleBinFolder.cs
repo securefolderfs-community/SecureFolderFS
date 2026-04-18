@@ -15,6 +15,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
@@ -55,17 +56,31 @@ namespace SecureFolderFS.UI.Storage
             if (_specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var allItems = items.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
-            switch (allItems.Length)
+            var allItems = items.ToArray();
+            var storableItems = allItems.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
+            switch (storableItems.Length)
             {
                 case 1:
                 {
-                    var item = allItems[0];
+                    var item = storableItems[0];
                     var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
                         item,
                         _specifics,
                         StreamSerializer.Instance,
                         cancellationToken);
+
+                    if (destinationFolder is null && allItems[0] is IRecycleBinItem recycleBinItem)
+                    {
+                        var originalParentPath = Path.GetDirectoryName(recycleBinItem.Id);
+                        if (!string.IsNullOrWhiteSpace(originalParentPath))
+                        {
+                            destinationFolder = await SafetyHelpers.NoFailureAsync(async () =>
+                            {
+                                var ciphertextItem = await AbstractPathHelpers.GetCiphertextItemAsync(originalParentPath, _specifics, cancellationToken);
+                                return ciphertextItem as IModifiableFolder;
+                            });
+                        }
+                    }
 
                     // Prompt the user to pick the folder when the default destination couldn't be used
                     destinationFolder ??= await GetDestinationFolderAsync();
@@ -89,7 +104,7 @@ namespace SecureFolderFS.UI.Storage
                     if (destinationFolder is null)
                         throw new InvalidOperationException("The destination folder couldn't be chosen.");
 
-                    foreach (var item in allItems)
+                    foreach (var item in storableItems)
                     {
                         await AbstractRecycleBinHelpers.RestoreAsync(
                             item,
@@ -152,26 +167,32 @@ namespace SecureFolderFS.UI.Storage
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
-                if (dataModel.ParentId is null || dataModel.Name is null)
-                    continue;
-
-                // Decrypt name and parent path
-                var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
-                var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
-
-                IStorable plaintextItem = item switch
+                var recycleBinItem = await SafetyHelpers.NoFailureAsync(async () =>
                 {
-                    IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
-                    IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
-                    _ => throw new ArgumentOutOfRangeException(nameof(item))
-                };
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
+                    if (dataModel.ParentId is null || dataModel.Name is null)
+                        return null;
+
+                    // Decrypt name and parent path
+                    var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
+                    var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
+
+                    IStorable plaintextItem = item switch
+                    {
+                        IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
+                        IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
+                        _ => throw new ArgumentOutOfRangeException(nameof(item))
+                    };
+                    
+                    return new RecycleBinItem(plaintextItem, dataModel, this)
+                    {
+                        Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
+                        Name = plaintextName ?? item.Name
+                    };
+                });
                 
-                yield return new RecycleBinItem(plaintextItem, dataModel, this)
-                {
-                    Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
-                    Name = plaintextName ?? item.Name
-                };
+                if (recycleBinItem is not null)
+                    yield return recycleBinItem;
             }
         }
 

@@ -10,11 +10,6 @@ namespace SecureFolderFS.Sdk.Services.Settings
     public interface IAppSettings : IPersistable, INotifyPropertyChanged
     {
         /// <summary>
-        /// Gets or sets the value that determines whether the (first) notification about the beta program was shown.
-        /// </summary>
-        bool WasBetaNotificationShown1 { get; set; }
-
-        /// <summary>
         /// Gets or sets the value that determines whether the explanation of vault folder was shown.
         /// </summary>
         bool ShouldShowVaultTutorial { get; set; }

@@ -15,6 +15,35 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// <summary>
         /// Generate the following code:
         /// <code>
+        /// global::Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger&lt;<paramref name="containingTypeName"/>&gt;(
+        ///     global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService&lt;global::Microsoft.Extensions.Logging.ILoggerFactory&gt;(<paramref name="serviceProviderName"/>));
+        /// </code>
+        /// </summary>
+        /// <returns><see cref="ExpressionSyntax"/></returns>
+        internal static ExpressionSyntax GetLoggerRegistration(string containingTypeName, string serviceProviderName)
+        {
+            // ServiceProviderServiceExtensions.GetRequiredService<ILoggerFactory>(this.ServiceProvider)
+            var getLoggerFactory = InvocationExpression(
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName("global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions"),
+                        GenericName("GetRequiredService").WithTypeArgumentList(
+                            TypeArgumentList(SeparatedList<TypeSyntax>().Add(
+                                ParseTypeName("global::Microsoft.Extensions.Logging.ILoggerFactory"))))))
+                .AddArgumentListArguments(Argument(GetThisMemberAccessExpression(serviceProviderName)));
+
+            // LoggerFactoryExtensions.CreateLogger<ContainingType>(loggerFactory)
+            return InvocationExpression(
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName("global::Microsoft.Extensions.Logging.LoggerFactoryExtensions"),
+                        GenericName("CreateLogger").WithTypeArgumentList(
+                            TypeArgumentList(SeparatedList<TypeSyntax>().Add(
+                                ParseTypeName(containingTypeName))))))
+                .AddArgumentListArguments(Argument(getLoggerFactory));
+        }
+
+        /// <summary>
+        /// Generate the following code:
+        /// <code>
         /// get;
         /// </code>
         /// </summary>

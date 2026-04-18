@@ -1,7 +1,7 @@
 using SecureFolderFS.Maui.ValueConverters;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
 {
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 #else
             newCollectionView.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
-                    converter: GetConverter("BoolSelectionModeConverter")));
+                    converter: GetConverter(nameof(BoolSelectionModeConverter))));
 #endif
 
             // Wire up the events
@@ -92,72 +92,30 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Update our reference
             _collectionView = newCollectionView;
 
-            // Kick off thumbnail loading immediately
-            EnqueueVisibleItemsForThumbnails();
-
             // Fade in
             await _collectionView.FadeToAsync(1, 100);
         }
 
-        private void EnqueueVisibleItemsForThumbnails()
-        {
-            if (!_settingsService.UserSettings.AreThumbnailsEnabled || ItemsSource is null)
-                return;
-
-            var items = ItemsSource.OfType<FileViewModel>().Where(f => f.CanLoadThumbnail()).ToList();
-            if (items.Count == 0)
-                return;
-
-            // Cancel any in-flight thumbnail work from the previous folder
-            _thumbnailCts?.Cancel();
-            _thumbnailCts = new CancellationTokenSource();
-            var ct = _thumbnailCts.Token;
-
-            _ = Task.Run(async () =>
-            {
-                var tasks = items.Select(async item =>
-                {
-                    await _thumbnailSemaphore.WaitAsync(ct);
-                    try
-                    {
-                        await item.InitAsync(ct);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // Navigation occurred, stop quietly
-                    }
-                    finally
-                    {
-                        _thumbnailSemaphore.Release();
-                    }
-                });
-
-                await Task.WhenAll(tasks);
-            }, ct);
-        }
-
-        private void TryEnqueueThumbnail(object? sender)
+        private void TryEnqueueItem(object? sender)
         {
             if (!_settingsService.UserSettings.AreThumbnailsEnabled)
                 return;
 
-            if (sender is not BindableObject { BindingContext: FileViewModel fileViewModel })
+            if (sender is not BindableObject { BindingContext: IAsyncInitialize asyncInitialize })
                 return;
 
-            if (!fileViewModel.CanLoadThumbnail())
-                return;
-
-            // Reuse the current folder's cancellation token, so virtualized
-            // items are also canceled on navigation
             var ct = _thumbnailCts?.Token ?? CancellationToken.None;
             _ = Task.Run(async () =>
             {
                 await _thumbnailSemaphore.WaitAsync(ct);
                 try
                 {
-                    await fileViewModel.InitAsync(ct);
+                    await asyncInitialize.InitAsync(ct);
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException)
+                {
+                    // Navigation occurred or load was canceled
+                }
                 finally
                 {
                     _thumbnailSemaphore.Release();
@@ -176,7 +134,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void ItemContainer_Loaded(object? sender, EventArgs e)
         {
-            TryEnqueueThumbnail(sender);
+            TryEnqueueItem(sender);
             RegisterItemContainerPanGesture(sender);
 
             if (sender is View view)
@@ -187,7 +145,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
 #if IOS
             // Also handle BindingContextChanged for virtualized/recycled items on iOS
-            TryEnqueueThumbnail(sender);
+            TryEnqueueItem(sender);
 #endif
         }
 
@@ -207,7 +165,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // On other platforms, bind SelectionMode to IsSelecting
             _collectionView?.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
-                    converter: GetConverter("BoolSelectionModeConverter")));
+                    converter: GetConverter(nameof(BoolSelectionModeConverter))));
 #endif
         }
 

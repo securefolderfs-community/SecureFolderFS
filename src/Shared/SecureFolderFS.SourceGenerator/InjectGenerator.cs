@@ -53,20 +53,45 @@ namespace SecureFolderFS.SourceGenerator
                 }
 
                 visibility = visibility == SyntaxKind.None ? SyntaxKind.PrivateKeyword : visibility;
-                name = string.IsNullOrEmpty(name) ? FormatName(type.Name) : name;
-                var backingFieldName = $"_{name}";
 
-                var injecteeField = GetFieldDeclaration(SyntaxKind.PrivateKeyword, backingFieldName, type.ToDisplayString(), true);
-                var injecteeProperty = GetPropertyDeclaration(visibility, name, type.ToDisplayString()).WithExpressionBody(
-                    ArrowExpressionClause(
-                        AssignmentExpression(SyntaxKind.CoalesceAssignmentExpression,
-                            GetThisMemberAccessExpression(backingFieldName),
-                            GetServiceRegistration(type, Constants.ServiceProviderName))))
-                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-                    .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(InjectGenerator)));
+                // Check if this is the special ILogger injection case
+                var isLoggerInjection = type is INamedTypeSymbol { Name: "ILogger", IsGenericType: false } && type.ContainingNamespace.ToDisplayString().Contains("Microsoft.Extensions.Logging");
+                if (isLoggerInjection)
+                {
+                    name = string.IsNullOrEmpty(name) ? "Logger" : name;
+                    var backingFieldName = $"_{name}";
+                    var containingTypeName = typeSymbol.ToDisplayString();
+                    var loggerTypeName = $"global::Microsoft.Extensions.Logging.ILogger<{containingTypeName}>";
 
-                members.Add(injecteeField);
-                members.Add(injecteeProperty);
+                    var loggerField = GetFieldDeclaration(SyntaxKind.PrivateKeyword, backingFieldName, loggerTypeName, true);
+                    var loggerProperty = GetPropertyDeclaration(visibility, name, loggerTypeName).WithExpressionBody(
+                        ArrowExpressionClause(
+                            AssignmentExpression(SyntaxKind.CoalesceAssignmentExpression,
+                                GetThisMemberAccessExpression(backingFieldName),
+                                GetLoggerRegistration(containingTypeName, Constants.ServiceProviderName))))
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                        .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(InjectGenerator)));
+
+                    members.Add(loggerField);
+                    members.Add(loggerProperty);
+                }
+                else
+                {
+                    name = string.IsNullOrEmpty(name) ? FormatName(type.Name) : name;
+                    var backingFieldName = $"_{name}";
+
+                    var injecteeField = GetFieldDeclaration(SyntaxKind.PrivateKeyword, backingFieldName, type.ToDisplayString(), true);
+                    var injecteeProperty = GetPropertyDeclaration(visibility, name, type.ToDisplayString()).WithExpressionBody(
+                        ArrowExpressionClause(
+                            AssignmentExpression(SyntaxKind.CoalesceAssignmentExpression,
+                                GetThisMemberAccessExpression(backingFieldName),
+                                GetServiceRegistration(type, Constants.ServiceProviderName))))
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                        .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(InjectGenerator)));
+
+                    members.Add(injecteeField);
+                    members.Add(injecteeProperty);
+                }
             }
 
             if (members.Count > 0)

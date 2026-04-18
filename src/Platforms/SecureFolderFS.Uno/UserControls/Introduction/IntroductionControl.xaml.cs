@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.System;
@@ -7,10 +8,10 @@ using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using SecureFolderFS.Sdk.ViewModels.Controls.Components;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Enums;
@@ -27,6 +28,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
         private Grid? _overlayContainer;
+        private readonly FirstTimeHelper _firstTime = new(1);
 
         public IntroductionOverlayViewModel? ViewModel
         {
@@ -76,6 +78,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public void SetView(IViewable viewable)
         {
             ViewModel = (IntroductionOverlayViewModel)viewable;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             if (ViewModel is { SlidesCount: < 0 })
                 ViewModel.SlidesCount = SlidesFlipView.Items.Count;
         }
@@ -84,6 +87,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         [RelayCommand]
         public async Task HideAsync()
         {
+            ViewModel?.PropertyChanged -= ViewModel_PropertyChanged;
+            EncryptedFileSlide.Dispose();
+
             // Play the hide animation
             await HideOverlayStoryboard.BeginAsync();
             HideOverlayStoryboard.Stop();
@@ -97,6 +103,18 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
 
             ViewModel?.TaskCompletion.SetResult(Result.Success);
+        }
+        
+        private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(IntroductionOverlayViewModel.CurrentIndex))
+                return;
+
+            if (ViewModel?.CurrentIndex == 2 && _firstTime.IsFirstTime())
+            {
+                await Task.Delay(250);
+                await AuthenticationSlide.AnimateAsync();
+            }
         }
 
         private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
@@ -115,6 +133,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             await BackgroundWebView.EnsureCoreWebView2Async();
             BackgroundWebView.NavigateToString(htmlString);
+            await EncryptedFileSlide.InitAsync();
         }
 
         private void IntroductionControl_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -149,40 +168,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
                     break;
                 }
-            }
-        }
-
-        private void Selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ViewModel is null)
-                return;
-
-            if (sender is not ListView listView)
-                return;
-
-            foreach (var item in ViewModel.FileSystems)
-                item.IsSelected = false;
-
-            var selectedItem = e.AddedItems.FirstOrDefault();
-            if (selectedItem is ItemInstallationViewModel installation)
-            {
-                if (installation.IsInstalled)
-                {
-                    installation.IsSelected = true;
-                    ViewModel.SelectedFileSystem = installation;
-                }
-                else
-                {
-                    var oldSelected = e.RemovedItems.FirstOrDefault()?.TryCast<PickerOptionViewModel>();
-                    oldSelected?.IsSelected = true;
-                    ViewModel.SelectedFileSystem = oldSelected;
-                    listView.SelectedItem = oldSelected;
-                }
-            }
-            else if (selectedItem is PickerOptionViewModel itemViewModel)
-            {
-                itemViewModel.IsSelected = true;
-                ViewModel.SelectedFileSystem = itemViewModel;
             }
         }
     }

@@ -32,14 +32,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         [ObservableProperty] private string? _SelectedLocation;
         [ObservableProperty] private Severity _Severity;
 
-        /// <inheritdoc/>
-        public override string DataSourceName { get; } = "SourceLocalStorage".ToLocalized();
-
         public PickerSourceWizardViewModel(string dataSourceType, IFolderPicker folderPicker, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
             : base(dataSourceType, mode, vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
             _folderPicker = folderPicker;
+            DataSourceName = "SourceLocalStorage".ToLocalized();
+            DataSourceDescription = "SourceLocalStorageDescription".ToLocalized();
             CanCancel = true;
             CanContinue = false;
             PrimaryText = "Continue".ToLocalized();

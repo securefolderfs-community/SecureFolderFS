@@ -7,13 +7,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 {
     internal abstract class BaseFuseCallbacks : FuseFileSystemBase
     {
+        protected FileSystemSpecifics specifics;
         protected readonly FuseHandlesManager handlesManager;
-
-        public FileSystemSpecifics Specifics { get; }
 
         protected BaseFuseCallbacks(FileSystemSpecifics specifics, FuseHandlesManager handlesManager)
         {
-            Specifics = specifics;
+            this.specifics = specifics;
             this.handlesManager = handlesManager;
         }
 

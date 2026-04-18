@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.ValueConverters
                 case "background":
                 {
                     return value is not true
-                        ? Colors.Transparent
+                        ? App.Current.Resources[isDark ? "ShimFillPrimaryDarkColor" : "ShimFillPrimaryLightColor"]
                         : App.Current.Resources[isDark ? "SecondaryDarkColor" : "SecondaryLightColor"];
                 }
 

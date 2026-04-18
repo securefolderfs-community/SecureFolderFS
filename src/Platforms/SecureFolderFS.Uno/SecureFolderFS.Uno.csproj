@@ -94,8 +94,6 @@
     <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100.0'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
-        <PackageReference Include="Vanara.PInvoke.ComCtl32" />
-        <PackageReference Include="Vanara.PInvoke.Shell32" />
       </ItemGroup>
 
       <ItemGroup>
@@ -141,7 +139,7 @@
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
 
         <!-- Languages -->
-        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN</AppxDefaultResourceQualifiers>
+        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN;tr-TR</AppxDefaultResourceQualifiers>
         <DefaultLanguage>en-US</DefaultLanguage>
 
         <!-- Bundle WinAppSDK binaries in SelfContained -->
@@ -335,6 +333,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Dialogs\VaultItemInfoDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -502,6 +504,7 @@
     <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\VaultItemInfoDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ConverterResources.xaml" />

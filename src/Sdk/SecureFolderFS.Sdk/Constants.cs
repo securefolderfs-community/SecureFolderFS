@@ -16,9 +16,15 @@
 
             public static class Graphs
             {
-                public const int MAX_GRAPH_POINTS = 30;
-                public const int GRAPH_UPDATE_INTERVAL_MS = 200; // 0.2s
-                public const int GRAPH_REFRESH_RATE = 1000 / GRAPH_UPDATE_INTERVAL_MS;
+                public const int MAX_POINTS = 30;
+                public const int UPDATE_INTERVAL_MS = 200;
+                public const int REFRESH_RATE = 1000 / UPDATE_INTERVAL_MS;
+            }
+
+            public static class AggregatedData
+            {
+                public const int UPDATE_INTERVAL_MS = 400;
+                public const int REFRESH_RATE = 4;
             }
 
             public static class Health

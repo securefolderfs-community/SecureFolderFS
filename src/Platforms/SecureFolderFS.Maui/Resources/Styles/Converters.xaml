@@ -14,6 +14,8 @@
     <vc:NullToOpacityConverter x:Key="NullToOpacityConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+    <vc:ThumbnailToAspectConverter x:Key="ThumbnailToAspectConverter" />
+    <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
     <vc:StringInterpolationConverter x:Key="StringInterpolationConverter" />
 
 </ResourceDictionary>

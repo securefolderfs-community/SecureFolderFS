@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
@@ -9,6 +10,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
     [Bindable(true)]
     public partial class PickerOptionViewModel : SelectableItemViewModel
     {
+        /// <summary>
+        /// Gets or sets the icon image associated with this instance.
+        /// </summary>
+        [ObservableProperty] private IImage? _Icon;
+
         /// <summary>
         /// Gets the unique ID associated with this option.
         /// </summary>

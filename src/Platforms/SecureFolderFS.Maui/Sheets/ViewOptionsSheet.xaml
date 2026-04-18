@@ -53,8 +53,8 @@
                         </uco:OptionsContainer>
                         <uco:OptionsContainer
                             Title="{l:ResourceString Rid=SizeOptions}"
-                            IsTransparent="True"
-                            IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}">
+                            IsVisible="{Binding ViewModel.AreSizeOptionsAvailable, Mode=OneWay, FallbackValue={x:Boolean False}}"
+                            ProvideBackplate="False">
                             <uco:OptionsContainer.InnerContent>
                                 <OnPlatform x:TypeArguments="Grid">
                                     <On Platform="iOS">

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
+using CommunityToolkit.Mvvm.Messaging;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,7 +16,9 @@ using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
@@ -154,12 +157,13 @@ namespace SecureFolderFS.Uno
 #if WINDOWS
             // Check if the app was launched via file activation (shortcut file)
             var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
+            var isUriActivation = IsUriActivation(Program.InitialActivationArgs);
 
             // Activate MainWindow (required for initialization)
             MainWindow.Activate();
 
             // If launched via shortcut file, hide the main window immediately
-            if (isShortcutActivation)
+            if (isShortcutActivation || isUriActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
 
             // Process initial file activation if the app was launched via file association
@@ -190,6 +194,11 @@ namespace SecureFolderFS.Uno
             return file is IStorageFile storageFile && 
                    storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
         }
+        
+        private static bool IsUriActivation(AppActivationArguments? args)
+        {
+            return args is { Kind: ExtendedActivationKind.Protocol, Data: IProtocolActivatedEventArgs };
+        }
 #endif
 
         /// <summary>
@@ -197,17 +206,24 @@ namespace SecureFolderFS.Uno
         /// </summary>
         public async Task OnActivatedAsync(AppActivationArguments args)
         {
-            if (args.Kind != ExtendedActivationKind.File)
-                return;
+            if (args.Kind == ExtendedActivationKind.File)
+            {
+                if (args.Data is not IFileActivatedEventArgs fileArgs)
+                    return;
 
-            if (args.Data is not IFileActivatedEventArgs fileArgs)
-                return;
+                var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
+                if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                    return;
 
-            var file = fileArgs.Files.Count > 0 ? fileArgs.Files[0] : null;
-            if (file is not IStorageFile storageFile || !storageFile.Path.EndsWith(Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                return;
+                await HandleVaultShortcutActivationAsync(storageFile.Path);
+            }
+            else if (args.Kind == ExtendedActivationKind.Protocol)
+            {
+                if (args.Data is not IProtocolActivatedEventArgs protocolArgs)
+                    return;
 
-            await HandleVaultShortcutActivationAsync(storageFile.Path);
+                await HandleUriActivationAsync(protocolArgs.Uri);
+            }
         }
 
         /// <summary>
@@ -220,14 +236,21 @@ namespace SecureFolderFS.Uno
             await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
 
             var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
-            if (shortcutData?.PersistableId is null || MainViewModel is null)
+            if (shortcutData?.PersistableId is null)
                 return;
 
-            // Wait for the main window to finish initializing (vault collection loaded, navigation set up)
+            await HandleVaultPreviewActivationAsync(shortcutData.PersistableId);
+        }
+
+        private async Task HandleVaultPreviewActivationAsync(string persistableId)
+        {
+            if (MainViewModel is null)
+                return;
+
             await MainWindowInitialized.Task;
 
-            // Find the vault in the collection by PersistableId
-            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.DataModel.PersistableId == shortcutData.PersistableId);
+            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x =>
+                x.VaultViewModel.VaultModel.DataModel.PersistableId == persistableId);
             if (listItemViewModel is null)
                 return;
 
@@ -237,11 +260,9 @@ namespace SecureFolderFS.Uno
                 if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
                     return;
 
-                // Create the preview window
                 var window = new Window();
                 window.Closed += PreviewWindow_Closed;
 
-                // Initialize preview view model
                 var title = $"{nameof(SecureFolderFS)} - {listItemViewModel.VaultViewModel.Title}";
                 var vaultPreviewViewModel = !vaultViewModel.IsUnlocked
                     ? new VaultPreviewViewModel(vaultViewModel, mainHostViewModel.NavigationService)
@@ -254,18 +275,13 @@ namespace SecureFolderFS.Uno
                 EnsureEarlyWindow(window, title);
 
 #if WINDOWS
-                // Get BoundsManager
                 var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
-
-                // Set minimum window size
                 boundsManager.MinWidth = 464;
                 boundsManager.MinHeight = 640;
                 window.AppWindow.MoveAndResize(new(100, 100, 464, 640));
 #endif
 
-                // Initialize the login view model
                 await vaultPreviewViewModel.InitAsync();
-
                 window.Activate();
             });
 
@@ -276,6 +292,54 @@ namespace SecureFolderFS.Uno
 
                 window.Closed -= PreviewWindow_Closed;
                 (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
+            }
+        }
+
+        private async Task HandleVaultLockActivationAsync(string persistableId)
+        {
+            if (MainViewModel is null)
+                return;
+
+            await MainWindowInitialized.Task;
+
+            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x =>
+                x.VaultViewModel.VaultModel.DataModel.PersistableId == persistableId);
+            if (listItemViewModel is null)
+                return;
+
+            var vaultViewModel = listItemViewModel.VaultViewModel;
+            if (!vaultViewModel.IsUnlocked)
+                return;
+
+            await MainWindowSynchronizationContext.PostOrExecuteAsync(async () =>
+            {
+                WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(vaultViewModel.VaultModel));
+            });
+        }
+
+        /// <summary>
+        /// Handles URI protocol activation (e.g. sffs://vault/preview?id=...).
+        /// </summary>
+        public async Task HandleUriActivationAsync(Uri uri)
+        {
+            if (!uri.Host.Equals("vault", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            var persistableId = query["id"];
+            if (persistableId is null)
+                return;
+
+            var action = uri.AbsolutePath.Trim('/');
+            switch (action)
+            {
+                case "preview":
+                    await HandleVaultPreviewActivationAsync(persistableId);
+                    break;
+
+                case "lock":
+                    await HandleVaultLockActivationAsync(persistableId);
+                    break;
             }
         }
 
@@ -301,7 +365,8 @@ namespace SecureFolderFS.Uno
             var titleBar = window.Content switch
             {
                 VaultPreviewRootControl previewRootControl => previewRootControl.CustomTitleBar,
-                MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar
+                MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar,
+                _ => null
             };
 
             window.ExtendsContentIntoTitleBar = true;
@@ -310,11 +375,12 @@ namespace SecureFolderFS.Uno
 
 #if __UNO_SKIA_MACOS__
             // Use native macOS APIs to configure the window
-            MacOsTitleBarHelper.ConfigureFullSizeContentView(window);
+            MacOsWindowHelper.ConfigureFullSizeContentView(window);
+            MacOsWindowHelper.CenterWindow(window);
             MacOsIconHelper.SetDockIcon(Directory.GetCurrentDirectory() + "/Assets/AppIcon/AppIcon.icns");
 
             // Add left padding for traffic light buttons
-            var (leftPadding, _) = MacOsTitleBarHelper.GetTrafficLightButtonsInset();
+            var (leftPadding, _) = MacOsWindowHelper.GetTrafficLightButtonsInset();
             titleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
             // For other non-Windows platforms, use OverlappedPresenter

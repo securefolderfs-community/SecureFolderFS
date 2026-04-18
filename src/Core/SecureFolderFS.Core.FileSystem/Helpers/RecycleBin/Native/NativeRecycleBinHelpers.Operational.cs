@@ -27,9 +27,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
-                var plaintextPath = NativePathHelpers.GetPlaintextPath(ciphertextPath, specifics);
-                var plaintextName = Path.GetFileName(plaintextPath) ?? string.Empty;
-                if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
+                var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
+                var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath ?? string.Empty, specifics);
+                if (plaintextName == ".DS_Store" || (plaintextName?.StartsWith("._", StringComparison.Ordinal) ?? false))
                 {
                     // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
                     DeleteImmediately(ciphertextPath, storableType);
@@ -60,12 +60,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
             // Get source Directory ID
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
-            var directoryIdResult = NativePathHelpers.GetDirectoryId(ciphertextPath, specifics, directoryId);
+            var directoryIdResult = NativePathHelpers.GetDirectoryIdOfChild(ciphertextPath, specifics, directoryId);
 
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
             var destinationPath = Path.Combine(recycleBinPath, guid);
-            Directory.Move(ciphertextPath, destinationPath);
+            if (storableType == StorableType.Folder)
+                Directory.Move(ciphertextPath, destinationPath);
+            else
+                File.Move(ciphertextPath, destinationPath);
 
             // Create the configuration file
             using (var configurationStream = File.Create($"{destinationPath}.json"))
@@ -117,7 +120,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             StorableType AlignStorableType(string path)
             {
                 var type = storableType is StorableType.File or StorableType.Folder ? storableType : GetStorableType(path);
-                if (type == StorableType.None)
+                if (type is not (StorableType.File or StorableType.Folder))
                     throw new FileNotFoundException("The item could not be determined.");
 
                 return type;

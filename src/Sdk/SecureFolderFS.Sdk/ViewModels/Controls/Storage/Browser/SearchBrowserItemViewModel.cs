@@ -67,7 +67,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (!CanLoadThumbnail() || Inner is not IFile file || Classification is not { TypeHint: var typeHint })
                 return;
 
-            var cachedStream = await _thumbnailCache.TryGetCachedThumbnailAsync(file, cancellationToken).ConfigureAwait(false);
+            var cacheKey = await ThumbnailCacheModel.GetCacheKeyAsync(file, cancellationToken).ConfigureAwait(false);
+            var cachedStream = await _thumbnailCache.TryGetCachedThumbnailAsync(cacheKey, cancellationToken).ConfigureAwait(false);
             if (cachedStream is not null)
             {
                 await _uiContext.PostOrExecuteAsync(() =>
@@ -89,7 +90,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 return Task.CompletedTask;
             });
 
-            _ = _thumbnailCache.CacheThumbnailAsync(file, generatedThumbnail, cancellationToken);
+            _ = _thumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
         }
 
         public bool CanLoadThumbnail()

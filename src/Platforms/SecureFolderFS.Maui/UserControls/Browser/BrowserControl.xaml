@@ -51,7 +51,7 @@
                 <apesui:ContextMenuContainer.Content>
                     <Grid
                         x:Name="SourceGrid"
-                        Padding="13,4"
+                        Padding="12,4"
                         ColumnSpacing="13"
                         Style="{StaticResource SelectableItemGridStyle}">
                         <Grid.ColumnDefinitions>
@@ -61,19 +61,44 @@
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="8">
                             <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}" />
-                            <ContentView
-                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                                HeightRequest="32"
+                            <Image
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
+                                HeightRequest="40"
                                 HorizontalOptions="Center"
+                                IsOpaque="True"
+                                Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                                 VerticalOptions="Center"
-                                WidthRequest="32" />
+                                WidthRequest="40" />
                         </HorizontalStackLayout>
-                        <Label
+                        <VerticalStackLayout
                             Grid.Column="1"
-                            FontSize="15"
-                            LineBreakMode="TailTruncation"
-                            Text="{Binding Title, Mode=OneWay}"
-                            VerticalOptions="Center" />
+                            Spacing="4"
+                            VerticalOptions="Center">
+                            <Label
+                                FontSize="15"
+                                LineBreakMode="TailTruncation"
+                                Text="{Binding Title, Mode=OneWay}"
+                                VerticalOptions="Center" />
+
+                            <HorizontalStackLayout Spacing="4">
+                                <Label
+                                    FontSize="10"
+                                    Opacity="0.6"
+                                    Text="{Binding LastModified, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    FontSize="10"
+                                    IsVisible="{Binding SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                    Text="·"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    FontSize="10"
+                                    IsVisible="{Binding SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                    Opacity="0.6"
+                                    Text="{Binding SizeText, Mode=OneWay}"
+                                    VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
                     </Grid>
                 </apesui:ContextMenuContainer.Content>
                 <apesui:ContextMenuContainer.GestureRecognizers>
@@ -133,11 +158,12 @@
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <ContentView
+                            <Image
                                 Grid.Row="0"
-                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center" />
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
+                                IsOpaque="True"
+                                Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}" />
+
                             <Label
                                 Grid.Row="1"
                                 FontSize="12"
@@ -220,9 +246,11 @@
                         x:Name="SourceGrid"
                         HeightRequest="{Binding Width, Source={x:Reference SourceGrid}}"
                         Style="{StaticResource SelectableItemGridStyle}">
-                        <ContentView
-                            Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                        <Image
+                            Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                             HorizontalOptions="Fill"
+                            IsOpaque="True"
+                            Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                             VerticalOptions="Fill" />
 
                         <Grid

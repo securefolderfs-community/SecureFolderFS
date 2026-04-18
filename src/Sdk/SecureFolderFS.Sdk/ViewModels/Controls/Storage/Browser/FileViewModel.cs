@@ -1,8 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -14,6 +17,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
@@ -21,6 +25,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public partial class FileViewModel : BrowserItemViewModel
     {
+        private Task? _fileLoadingTask;
+
         /// <inheritdoc/>
         public override IStorable Inner => File;
 
@@ -48,31 +54,52 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            Thumbnail?.Dispose();
+            // Deduplicate concurrent calls to prevent duplicate calls
+            if (_fileLoadingTask is { IsCompleted: false })
+            {
+                try
+                {
+                    await _fileLoadingTask;
+                    return;
+                }
+                catch (OperationCanceledException)
+                {
+                    // The previous load was canceled (e.g., navigation) - start a fresh one with the new token
+                }
+            }
 
-            if (!SettingsService.UserSettings.AreThumbnailsEnabled)
-                return;
+            _fileLoadingTask = PerformFileLoadAsync(cancellationToken);
+            await _fileLoadingTask;
+        }
 
-            if (!CanLoadThumbnail())
+        private async Task PerformFileLoadAsync(CancellationToken cancellationToken)
+        {
+            var size = await File.GetSizeAsync(cancellationToken);
+            SizeText = size.HasValue ? ByteSize.FromBytes(size.Value).ToString() : null;
+            LastModified = await File.GetDateModifiedAsync(cancellationToken);
+
+            if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
                 return;
 
             // Try to get from the cache first
-            var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(File, cancellationToken);
+            Thumbnail?.Dispose();
+            var cacheKey = await ThumbnailCacheModel.GetCacheKeyAsync(File, cancellationToken);
+            var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(cacheKey, cancellationToken);
             if (cachedStream is not null)
             {
                 Thumbnail = new StreamImageModel(cachedStream);
                 return;
             }
+            cancellationToken.ThrowIfCancellationRequested();
 
             // Generate a new thumbnail
-            cancellationToken.ThrowIfCancellationRequested();
             var generatedThumbnail = await MediaService.TryGenerateThumbnailAsync(File, Classification.TypeHint, cancellationToken);
             if (generatedThumbnail is null)
                 return;
 
             // Show and cache the generated thumbnail
             Thumbnail = generatedThumbnail;
-            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(File, generatedThumbnail, cancellationToken);
+            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
         }
 
         /// <summary>
@@ -128,18 +155,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (!result.Positive())
                     return;
 
-                if (BrowserViewModel.TransferViewModel is not { } transferViewModel)
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
                 {
-                    await persistable.SaveAsync(cancellationToken);
-                    return;
+                    transferViewModel.TransferType = TransferType.Save;
+                    using var saveCancellation = transferViewModel.GetCancellation();
+                    await transferViewModel.PerformOperationAsync(async ct =>
+                    {
+                        await persistable.SaveAsync(ct);
+                    }, saveCancellation.Token);
                 }
+                else
+                    await persistable.SaveAsync(cancellationToken);
 
-                transferViewModel.TransferType = TransferType.Save;
-                using var saveCancellation = transferViewModel.GetCancellation();
-                await transferViewModel.PerformOperationAsync(async ct =>
-                {
-                    await persistable.SaveAsync(ct);
-                }, saveCancellation.Token);
+                await PerformFileLoadAsync(cancellationToken);
             }
         }
     }

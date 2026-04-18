@@ -40,7 +40,7 @@ namespace SecureFolderFS.Tests
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
-                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                .AddSingleton<ILocalizationService, MockLocalizationService>()
 
                 .BuildServiceProvider();
         }

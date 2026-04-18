@@ -4,11 +4,13 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Logging;
 using SecureFolderFS.UI.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 
@@ -23,7 +25,7 @@ namespace SecureFolderFS.UI.Helpers
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -56,7 +58,7 @@ namespace SecureFolderFS.UI.Helpers
 
         protected virtual IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
-            return ServiceCollection
+            ServiceCollection
 
                 // Singleton services
                     .Foundation<IVaultService, VaultService>(AddService.AddSingleton)
@@ -72,7 +74,26 @@ namespace SecureFolderFS.UI.Helpers
 #else
                     .Foundation<ITelemetryService, SentryTelemetryService>(AddService.AddSingleton)
 #endif
-                ; // Finish service initialization
+                ;
+
+            // Configure logging
+            return WithLogging(ServiceCollection);
+        }
+
+        protected virtual IServiceCollection WithLogging(IServiceCollection serviceCollection)
+        {
+            // Configure logging
+            return serviceCollection.AddLogging(builder =>
+            {
+#if DEBUG
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddDebugOutput(LogLevel.Trace);
+#else
+                builder.SetMinimumLevel(LogLevel.Warning);
+#endif
+                // Opt-in: file logging
+                // builder.AddFileOutput(Path.Combine(AppDirectory, "app.log"), LogLevel.Information);
+            });
         }
 
         public abstract void LogExceptionToFile(Exception? ex);

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             RandomNumberGenerator.Fill(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Encrypt
-            AesCtr128.Encrypt(
+            AesCtr256.Encrypt(
                 plaintextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
@@ -114,7 +114,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             }
 
             // Decrypt
-            AesCtr128.Decrypt(
+            AesCtr256.Decrypt(
                 ciphertextChunk.GetChunkPayload(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),

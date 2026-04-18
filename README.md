@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/SecureFolderFS_Header.png" />
+  <img src=".github/assets/SecureFolderFS_Header.png" />
 </p>
 
 <p align="center">
@@ -32,19 +32,19 @@ This ensures that your data will always remain secure.
 
 <p align="left">
   <a style="text-decoration:none" href="https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8" target="_blank">
-    <img height="56" src="assets/Source_Microsoft.png" alt="Get it from Microsoft" />
+    <img height="56" src=".github/assets/Source_Microsoft.png" alt="Get it from Microsoft" />
   </a>
   <!--<a style="text-decoration:none" href="https://apps.apple.com">
-    <img height="56" src="assets/Source_AppStore.png" alt="Download on the App Store" />
+    <img height="56" src=".github/assets/Source_AppStore.png" alt="Download on the App Store" />
   </a>
   <a style="text-decoration:none" href="https://play.google.com/store/apps/details?id=org.securefolderfs.securefolderfs">
-    <img height="56" src="assets/Source_GooglePlay.png" alt="Get it on Google Play" />
+    <img height="56" src=".github/assets/Source_GooglePlay.png" alt="Get it on Google Play" />
   </a>
   <a style="text-decoration:none" href="https://flathub.org/apps/org.securefolderfs.securefolderfs">
-    <img height="56" src="assets/Source_Flathub.png" alt="Get it on Flathub" />
+    <img height="56" src=".github/assets/Source_Flathub.png" alt="Get it on Flathub" />
   </a>-->
   <a style="text-decoration:none" href="https://github.com/securefolderfs-community/SecureFolderFS/releases/latest">
-    <img height="56" src="assets/Source_GitHub.png" alt="Get it from GitHub" />
+    <img height="56" src=".github/assets/Source_GitHub.png" alt="Get it from GitHub" />
   </a>
 </p>
 
@@ -58,14 +58,14 @@ SecureFolderFS is a modern encryption program that helps you keep your files saf
 From the app's UI, you can create new vaults to store items securely.
 
 <p align="center">
-  <img src="assets/SecureFolderFS_LockedVault.png" width="750" />
+  <img src=".github/assets/SecureFolderFS_LockedVault.png" width="750" />
 </p>
 
 > *For example, the 'Secrets' vault is locked behind a password.*
 > *You must enter the correct password, which was set when the vault was created, to decrypt and unlock the vault.*
 
 <p align="center">
-  <img src="assets/SecureFolderFS_Dashboard.png" width="750" />
+  <img src=".github/assets/SecureFolderFS_Dashboard.png" width="750" />
 </p>
 
 > *Upon entering the correct password, the vault will then open.*
@@ -162,5 +162,5 @@ cd SecureFolderFS
 ---
 
 <p align="center">
-  <img src="assets/SecureFolderFS_Hero.png" />
+  <img src=".github/assets/SecureFolderFS_Hero.png" />
 </p>

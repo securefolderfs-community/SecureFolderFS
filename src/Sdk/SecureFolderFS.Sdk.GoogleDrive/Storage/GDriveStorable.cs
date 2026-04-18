@@ -8,6 +8,8 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
 {
     public abstract class GDriveStorable : IStorableChild
     {
+        public const string ROOT_ID = "root";
+
         /// <summary>
         /// Gets the ID of the object that can exist independently of the parent context.
         /// </summary>
@@ -39,7 +41,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.Storage
             Id = id;
             Name = name;
             ParentFolder = parent;
-            DetachedId = Path.GetFileName(Id);
+
+            // Google Drive root can be represented as an empty path segment in app code.
+            // Normalize it so API queries always use the canonical root alias.
+            var normalizedId = Id.TrimEnd('/');
+            DetachedId = string.IsNullOrEmpty(normalizedId)
+                ? ROOT_ID
+                : Path.GetFileName(normalizedId);
         }
 
         /// <inheritdoc/>

@@ -236,6 +236,9 @@
                     </Grid.Background>
                 </Grid>
             </On>
+            <On Platform="iOS">
+                <Grid HorizontalOptions="Start" />
+            </On>
         </OnPlatform>
     </Grid>
 </ContentPage>

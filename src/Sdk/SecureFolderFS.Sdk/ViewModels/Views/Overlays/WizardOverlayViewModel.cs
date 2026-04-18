@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Bindable(true)]
     public sealed partial class WizardOverlayViewModel : OverlayViewModel, IStagingView, INavigatable, IDisposable
     {
-        [ObservableProperty] private IStagingView? _CurrentViewModel;
+        [ObservableProperty] private IViewDesignation? _CurrentViewModel;
 
         public IVaultCollectionModel VaultCollectionModel { get; }
 
@@ -40,10 +40,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc />
         public async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
-            if (CurrentViewModel is null)
+            if (CurrentViewModel is not IStagingView stagingView)
                 return Result.Failure(null);
 
-            var result = await CurrentViewModel.TryContinueAsync(cancellationToken);
+            var result = await stagingView.TryContinueAsync(cancellationToken);
             if (result.Successful)
                 NavigationRequested?.Invoke(this, new WizardNavigationRequestedEventArgs(result, CurrentViewModel));
 
@@ -53,10 +53,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc />
         public async Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            if (CurrentViewModel is null)
+            if (CurrentViewModel is not IStagingView stagingView)
                 return Result.Failure(null);
 
-            var result = await CurrentViewModel.TryCancelAsync(cancellationToken);
+            var result = await stagingView.TryCancelAsync(cancellationToken);
             if (result.Successful)
                 NavigationRequested?.Invoke(this, new DismissNavigationRequestedEventArgs(CurrentViewModel));
 
@@ -78,26 +78,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 eventDispatch?.PreventForwarding();
         }
 
-        partial void OnCurrentViewModelChanging(IStagingView? oldValue, IStagingView? newValue)
+        partial void OnCurrentViewModelChanging(IViewDesignation? oldValue, IViewDesignation? newValue)
         {
-            if (oldValue is not null)
-            {
-                oldValue.PropertyChanged -= CurrentViewModel_PropertyChanged;
-                oldValue.OnDisappearing();
-            }
+            oldValue?.PropertyChanged -= CurrentViewModel_PropertyChanged;
+            oldValue?.OnDisappearing();
+
+            newValue?.PropertyChanged += CurrentViewModel_PropertyChanged;
+            newValue?.OnAppearing();
+            Title = newValue?.Title;
 
             if (newValue is OverlayViewModel overlayViewModel)
             {
-                overlayViewModel.PropertyChanged += CurrentViewModel_PropertyChanged;
-                overlayViewModel.OnAppearing();
-
                 CanContinue = overlayViewModel.CanContinue;
                 CanCancel = overlayViewModel.CanCancel;
                 PrimaryText = overlayViewModel.PrimaryText;
                 SecondaryText = overlayViewModel.SecondaryText;
             }
-
-            Title = newValue?.Title;
         }
 
         private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

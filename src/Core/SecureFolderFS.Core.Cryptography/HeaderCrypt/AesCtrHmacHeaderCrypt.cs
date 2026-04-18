@@ -50,7 +50,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                     var pt = new ReadOnlySpan<byte>((byte*)s.ptPtr, s.ptLen);
                     var ct = new Span<byte>((byte*)s.ctPtr, s.ctLen);
 
-                    AesCtr128.Encrypt(
+                    AesCtr256.Encrypt(
                         pt.GetHeaderContentKey(),
                         dekKey,
                         pt.GetHeaderNonce(),
@@ -113,7 +113,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                     var ct = new ReadOnlySpan<byte>((byte*)s.ctPtr, s.ctLen);
                     var pt = new Span<byte>((byte*)s.ptPtr, s.ptLen);
 
-                    AesCtr128.Decrypt(
+                    AesCtr256.Decrypt(
                         ct.GetHeaderContentKey(),
                         dekKey,
                         ct.GetHeaderNonce(),

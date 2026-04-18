@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
@@ -29,6 +30,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
+        [ObservableProperty] private string? _SizeText;
+        [ObservableProperty] private DateTime? _LastModified;
+
         /// <summary>
         /// Gets the <see cref="Views.Vault.BrowserViewModel"/> instance, which this item belongs to.
         /// </summary>
@@ -229,17 +233,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (string.IsNullOrWhiteSpace(viewModel.NewName))
                     return;
 
-                var formattedName = CollisionHelpers.GetAvailableName(
-                    FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item"),
-                    ParentFolder.Items.Select(x => x.Inner.Name));
-
+                var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "Renamed item");
                 if (!Path.HasExtension(formattedName))
                     formattedName = $"{formattedName}{Path.GetExtension(innerChild.Name)}";
 
                 var existingItem = await renamableFolder.TryGetFirstByNameAsync(formattedName, cancellationToken);
                 if (existingItem is not null)
                 {
-                    // TODO: Report that the item already exists
+                    await OverlayService.ShowAsync(new MessageOverlayViewModel()
+                    {
+                        Title = "InvalidItemName".ToLocalized(),
+                        Message = "ItemAlreadyExists".ToLocalized(formattedName),
+                        SecondaryText = "Close".ToLocalized()
+                    });
                     return;
                 }
 

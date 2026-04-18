@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Vanara.PInvoke;
-using static Vanara.PInvoke.User32;
 
 namespace SecureFolderFS.Uno.PInvoke
 {
@@ -11,13 +9,13 @@ namespace SecureFolderFS.Uno.PInvoke
     {
         public static List<MONITORINFOEX> GetMonitorInfos()
         {
-            var count = GetSystemMetrics(SystemMetric.SM_CMONITORS);
+            var count = GetSystemMetrics(SM_CMONITORS);
 
             var infos = new List<MONITORINFOEX>(count);
             var gcHandle = GCHandle.Alloc(infos);
             var pGcHandle = GCHandle.ToIntPtr(gcHandle);
 
-            var success = EnumDisplayMonitors(default, null, MonitorEnumProc, pGcHandle);
+            var success = EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumProc, pGcHandle);
             gcHandle.Free();
             if (!success)
                 Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
@@ -25,10 +23,10 @@ namespace SecureFolderFS.Uno.PInvoke
             return infos;
         }
 
-        private static bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, PRECT lprcMonitor, IntPtr dwData)
+        private static bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
         {
             var handle = GCHandle.FromIntPtr(dwData);
-            if (!lprcMonitor.IsEmpty && handle is { IsAllocated: true, Target: List<MONITORINFOEX> list })
+            if (handle is { IsAllocated: true, Target: List<MONITORINFOEX> list })
             {
                 var monitorInfo = new MONITORINFOEX()
                 {

@@ -3,7 +3,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,22 +56,15 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             if (parentFolder is null)
                 return null;
 
-            var ciphertextName = storable.Name;
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextName);
+            var decryptedName = await AbstractPathHelpers.DecryptNameAsync(storable.Name, parentFolder, specifics, cancellationToken);
+            if (!string.IsNullOrEmpty(decryptedName))
+                return decryptedName;
 
-            try
-            {
-                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken).ConfigureAwait(false);
-                return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
-            }
-            catch (FileNotFoundException)
-            {
-                // We want to suppress FileNotFoundException that might be raised when the DirectoryID file is not found.
-                // This case should be already handled in the folder validator
+            // We want to suppress failures that might be raised when the Directory ID file is not found.
+            // This case should be already handled in the folder validator
 
-                // Return an empty string to prevent raising exceptions due to the name being null
-                return string.Empty;
-            }
+            // Return an empty string to prevent raising exceptions due to the name being null
+            return string.Empty;
         }
     }
 }

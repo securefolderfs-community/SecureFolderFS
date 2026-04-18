@@ -28,6 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     public sealed partial class VaultListViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
+        private bool _ignoreCollectionChanged;
 
         [ObservableProperty] private bool _HasVaults;
         [ObservableProperty] private VaultListItemViewModel? _SelectedItem;
@@ -61,6 +62,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             HasVaults = !Items.IsEmpty();
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Syncs the order of the vaults with the internal model.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        public async Task SyncOrderAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                _ignoreCollectionChanged = true;
+                foreach (var item in Items)
+                {
+                    var currentIndex = _vaultCollectionModel.IndexOf(item.VaultViewModel.VaultModel);
+                    var targetIndex = Items.IndexOf(item);
+
+                    if (currentIndex != targetIndex)
+                        _vaultCollectionModel.Move(currentIndex, targetIndex);
+                }
+
+                await _vaultCollectionModel.TrySaveAsync(cancellationToken);
+            }
+            finally
+            {
+                _ignoreCollectionChanged = false;
+            }
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
@@ -135,6 +163,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            if (_ignoreCollectionChanged)
+                return;
+
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:

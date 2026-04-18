@@ -4,16 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
     x:DataType="local:BaseModalPage"
     Background="{OnPlatform Android={AppThemeBinding Light={StaticResource LightTransparentColor},
                                                      Dark={StaticResource DarkTransparentColor}},
                             iOS={StaticResource ThemeBackgroundFillSecondaryColorBrush}}">
-
-    <ContentPage.Resources>
-        <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
-    </ContentPage.Resources>
 
     <NavigationPage.HasNavigationBar>
         <OnPlatform x:TypeArguments="x:Boolean">
@@ -101,11 +96,22 @@
             </Border>
         </On>
         <On Platform="iOS">
-            <Border BindingContext="{x:Reference Root}" StrokeThickness="0">
+            <Border
+                Margin="0,32,0,0"
+                BindingContext="{x:Reference Root}"
+                StrokeThickness="0">
                 <ContentView
                     Content="{Binding ModalContent, Mode=OneWay}"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill" />
+                <Border.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsImmersive, Mode=OneWay, Source={x:Reference Root}}"
+                        TargetType="Border"
+                        Value="True">
+                        <Setter Property="Margin" Value="0" />
+                    </DataTrigger>
+                </Border.Triggers>
             </Border>
         </On>
     </OnPlatform>

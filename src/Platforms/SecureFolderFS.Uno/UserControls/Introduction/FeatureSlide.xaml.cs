@@ -30,20 +30,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register(nameof(Description), typeof(string), typeof(FeatureSlide), new PropertyMetadata(null));
 
-        public ImageSource? ImageSource
+        public FrameworkElement? LeftSlot
         {
-            get => (ImageSource?)GetValue(ImageSourceProperty);
-            set => SetValue(ImageSourceProperty, value);
+            get => (FrameworkElement?)GetValue(LeftSlotProperty);
+            set => SetValue(LeftSlotProperty, value);
         }
-        public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(FeatureSlide), new PropertyMetadata(null));
+        public static readonly DependencyProperty LeftSlotProperty =
+            DependencyProperty.Register(nameof(LeftSlot), typeof(FrameworkElement), typeof(FeatureSlide), new PropertyMetadata(null));
 
-        public FrameworkElement? Slot
+        public FrameworkElement? RightSlot
         {
-            get => (FrameworkElement?)GetValue(SlotProperty);
-            set => SetValue(SlotProperty, value);
+            get => (FrameworkElement?)GetValue(RightSlotProperty);
+            set => SetValue(RightSlotProperty, value);
         }
-        public static readonly DependencyProperty SlotProperty =
-            DependencyProperty.Register(nameof(Slot), typeof(FrameworkElement), typeof(FeatureSlide), new PropertyMetadata(null));
+        public static readonly DependencyProperty RightSlotProperty =
+            DependencyProperty.Register(nameof(RightSlot), typeof(FrameworkElement), typeof(FeatureSlide), new PropertyMetadata(null));
     }
 }
