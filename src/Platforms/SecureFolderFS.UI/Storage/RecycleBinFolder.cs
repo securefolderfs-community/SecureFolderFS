@@ -56,17 +56,28 @@ namespace SecureFolderFS.UI.Storage
             if (_specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            var allItems = items.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
-            switch (allItems.Length)
+            var allItems = items.ToArray();
+            var storableItems = allItems.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
+            switch (storableItems.Length)
             {
                 case 1:
                 {
-                    var item = allItems[0];
+                    var item = storableItems[0];
                     var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
                         item,
                         _specifics,
                         StreamSerializer.Instance,
                         cancellationToken);
+
+                    if (destinationFolder is null && allItems[0] is IRecycleBinItem recycleBinItem)
+                    {
+                        var originalParentPath = Path.GetDirectoryName(recycleBinItem.Id);
+                        if (!string.IsNullOrWhiteSpace(originalParentPath))
+                        {
+                            destinationFolder = await SafetyHelpers.NoFailureAsync(async () =>
+                                await AbstractPathHelpers.GetCiphertextItemAsync(originalParentPath, _specifics, cancellationToken) as IModifiableFolder);
+                        }
+                    }
 
                     // Prompt the user to pick the folder when the default destination couldn't be used
                     destinationFolder ??= await GetDestinationFolderAsync();
@@ -90,7 +101,7 @@ namespace SecureFolderFS.UI.Storage
                     if (destinationFolder is null)
                         throw new InvalidOperationException("The destination folder couldn't be chosen.");
 
-                    foreach (var item in allItems)
+                    foreach (var item in storableItems)
                     {
                         await AbstractRecycleBinHelpers.RestoreAsync(
                             item,
