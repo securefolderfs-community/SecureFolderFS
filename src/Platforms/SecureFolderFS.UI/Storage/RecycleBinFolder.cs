@@ -75,7 +75,10 @@ namespace SecureFolderFS.UI.Storage
                         if (!string.IsNullOrWhiteSpace(originalParentPath))
                         {
                             destinationFolder = await SafetyHelpers.NoFailureAsync(async () =>
-                                await AbstractPathHelpers.GetCiphertextItemAsync(originalParentPath, _specifics, cancellationToken) as IModifiableFolder);
+                            {
+                                var ciphertextItem = await AbstractPathHelpers.GetCiphertextItemAsync(originalParentPath, _specifics, cancellationToken);
+                                return ciphertextItem as IModifiableFolder;
+                            });
                         }
                     }
 
