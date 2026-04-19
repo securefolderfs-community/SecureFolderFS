@@ -912,22 +912,31 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 }
             }
 
-            // Close handle first
-            CloseHandle(FileDesc);
-            InvalidateContext(out FileDesc);
-            Trace(STATUS_SUCCESS, FileName);
-
             try
             {
                 if (pathToDelete is null)
                     return;
 
+                var exists = File.Exists(pathToDelete) || Directory.Exists(pathToDelete);
+                if (!exists)
+                {
+                    Trace(STATUS_OBJECT_NAME_NOT_FOUND, FileName);
+                    return;
+                }
+
                 // Then delete
                 NativeRecycleBinHelpers.DeleteOrRecycle(pathToDelete, _specifics, storableType);
+                Trace(STATUS_SUCCESS, FileName);
             }
             catch (Exception)
             {
                 Trace(STATUS_UNSUCCESSFUL, FileName);
+            }
+            finally
+            {
+                // Close handle
+                CloseHandle(FileDesc);
+                InvalidateContext(out FileDesc);
             }
         }
 

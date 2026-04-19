@@ -71,8 +71,9 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             if ((createOptions & FILE_RANDOM_ACCESS) != 0)
                 options |= FileOptions.RandomAccess;
 
-            if ((createOptions & FILE_DELETE_ON_CLOSE) != 0)
-                options |= FileOptions.DeleteOnClose;
+            // Never handle DELETE_ON_CLOSE
+            // WinFsp already tracks the delete disposition and will call Cleanup with CleanupDelete.
+            // Letting the real FileStream have DeleteOnClose bypasses your custom DeleteOrRecycle logic.
 
             return options;
         }
