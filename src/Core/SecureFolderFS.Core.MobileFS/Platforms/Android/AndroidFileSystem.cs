@@ -26,6 +26,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         }
 
         /// <inheritdoc/>
+        public Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(candidateName);
+        }
+
+        /// <inheritdoc/>
         public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;

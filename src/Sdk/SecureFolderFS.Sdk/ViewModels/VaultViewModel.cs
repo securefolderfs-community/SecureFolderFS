@@ -101,7 +101,10 @@ namespace SecureFolderFS.Sdk.ViewModels
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
 
             // Format volume name
-            var volumeName = FormattingHelpers.SanitizeVolumeName(Title ?? vaultFolder.Name, vaultFolder.Name);
+            var candidateVolumeName = FormattingHelpers.SanitizeVolumeName(Title ?? vaultFolder.Name, vaultFolder.Name);
+
+            // Get available volume name
+            var volumeName = await fileSystem.GetVolumeNameAsync(candidateVolumeName);
 
             // Configure options
             var options = new Dictionary<string, object>()

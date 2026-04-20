@@ -31,6 +31,14 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Retrieves the name of the volume based on the provided candidate name.
+        /// </summary>
+        /// <param name="candidateName">The proposed name for the volume.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result is a <see cref="string"/> containing the resolved volume name.</returns>
+        Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Asynchronously mounts a virtual file system instance rooted at the specified vault folder.
         /// </summary>
         /// <param name="vaultFolder">The folder representing the root of the vault to mount.</param>

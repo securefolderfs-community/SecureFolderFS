@@ -1,15 +1,20 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Dispatching;
+using OwlCore.Storage;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.Uno.Helpers;
 
@@ -19,6 +24,22 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
     internal sealed partial class SkiaWebDavFileSystem : WebDavFileSystem
     {
 #if __UNO_SKIA_MACOS__
+        /// <inheritdoc/>
+        public override async Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var folder = new SystemFolderEx("/Volumes");
+                var taken = await folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+
+                return CollisionHelpers.GetAvailableName(candidateName, taken.Select(x => x.Name), "{0}_{1}{2}");
+            }
+            catch (Exception)
+            {
+                return candidateName;
+            }
+        }
+        
         /// <inheritdoc/>
         protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
