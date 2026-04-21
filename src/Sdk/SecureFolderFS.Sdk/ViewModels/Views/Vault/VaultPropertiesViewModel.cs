@@ -10,7 +10,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.Extensions;
@@ -54,8 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown") + $" + {vaultOptions.NameEncodingId}";
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
-
-            _ = UpdateSecurityTextAsync(cancellationToken);
+            SecurityText = await VaultCredentialsService.FromUnlockProcedureAsync(vaultOptions.UnlockProcedure, cancellationToken);
 
             if (!RecycleBinOverlayViewModel.IsInitialized && await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
                 await RecycleBinOverlayViewModel.InitAsync(cancellationToken);
@@ -130,17 +128,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                var loginItems = await VaultCredentialsService
-                    .GetLoginAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken)
-                    .ToArrayAsyncImpl(cancellationToken);
-                SecurityText = string.Join(" + ", loginItems.Select(x => x.Title));
-            }
-            catch (Exception)
-            {
-                SecurityText = "AuthenticationUnavailable".ToLocalized();
-            }
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken);
+            SecurityText = await VaultCredentialsService.FromUnlockProcedureAsync(vaultOptions.UnlockProcedure, cancellationToken);
         }
 
         /// <inheritdoc/>

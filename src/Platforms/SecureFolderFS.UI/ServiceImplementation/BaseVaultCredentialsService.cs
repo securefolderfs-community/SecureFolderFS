@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.MemoryStorageEx;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -32,6 +38,26 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             yield return Core.Cryptography.Constants.CipherId.AES_SIV;
             yield return Core.Cryptography.Constants.CipherId.NONE;
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<string> FromUnlockProcedureAsync(AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var emptyFolder = new MemoryFolderEx(string.Empty, string.Empty, null);
+                var procedures = await GetCreationAsync(emptyFolder, string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                var result = unlockProcedure.Methods
+                    .Select(method => procedures.FirstOrDefault(p => p.Id == method)?.Title)
+                    .Where(title => title is not null);
+
+                procedures.DisposeAll();
+                return string.Join(" + ", result);
+            }
+            catch (Exception)
+            {
+                return "AuthenticationUnavailable".ToLocalized();
+            }
         }
 
         /// <inheritdoc/>

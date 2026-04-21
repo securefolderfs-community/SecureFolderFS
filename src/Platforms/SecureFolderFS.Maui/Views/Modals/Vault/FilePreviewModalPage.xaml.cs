@@ -105,12 +105,25 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             void Presentation_Loaded(object? sender, EventArgs e)
             {
                 presentation.Loaded -= Presentation_Loaded;
-                var panPinchContainer = presentation.GetVisualTreeDescendants()
-                    .OfType<PanPinchContainer>()
-                    .FirstOrDefault();
+                var descendants = presentation.GetVisualTreeDescendants();
+                var found = descendants.FirstOrDefault(x => x is PanPinchContainer or PanRouter);
 
-                panPinchContainer?.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
-                panPinchContainer?.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+                switch (found)
+                {
+                    case PanPinchContainer panPinchContainer:
+                    {
+                        panPinchContainer.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
+                        panPinchContainer.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+                        break;
+                    }
+                    
+                    case PanRouter panRouter:
+                    {
+                        panRouter.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
+                        panRouter.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+                        break;
+                    }
+                }
             }
         }
 

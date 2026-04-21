@@ -17,7 +17,8 @@
     x:Name="ThisPage"
     x:DataType="local:FilePreviewModalPage"
     IsImmersive="True"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    SafeAreaEdges="None">
 
     <md:BaseModalPage.Resources>
         <vc:BoolToScrollOrientationConverter x:Key="BoolToScrollOrientationConverter" />
@@ -36,30 +37,27 @@
         <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
             <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
                 <uc:PanRouter.RouterContent>
-                    <Label
-                        HorizontalTextAlignment="Center"
-                        Text="Video Previewer is disabled. It contains usage of ClickGestureRecognizer which was removed in .NET 10 causing a TypeLoadException in the LibVLC library."
-                        VerticalOptions="Center" />
-
-                    <!-- <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded"> -->
-                    <!--     <vlc:MediaPlayerElement.PlaybackControls> -->
-                    <!--  <vlc:PlaybackControls  -->
-                    <!--  AspectRatioButtonStyle="{StaticResource VideoAspectRatioButtonStyle}"  -->
-                    <!--  BackgroundColor="Transparent"  -->
-                    <!--  ElapsedTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
-                    <!--  Foreground="#ffffff"  -->
-                    <!--  IsTracksButtonVisible="False"  -->
-                    <!--  LockButtonStyle="{StaticResource VideoLockButtonStyle}"  -->
-                    <!--  MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},  -->
-                    <!--  Dark={StaticResource PrimaryDarkColor}}"  -->
-                    <!--  PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"  -->
-                    <!--  RemainingTimeLabelStyle="{StaticResource VideoLabelStyle}"  -->
-                    <!--  RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"  -->
-                    <!--  SeekBarStyle="{StaticResource VideoSeekBarStyle}"  -->
-                    <!--  SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"  -->
-                    <!--  UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />  -->
-                    <!--     </vlc:MediaPlayerElement.PlaybackControls> -->
-                    <!-- </vlc:MediaPlayerElement> -->
+                    <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
+                        <vlc:MediaPlayerElement.PlaybackControls>
+                            <vlc:PlaybackControls
+                                BackgroundColor="Transparent"
+                                ControlsPanelStyle="{StaticResource VideoControlsPanelStyle}"
+                                ElapsedTimeLabelStyle="{StaticResource VideoElapsedTimeLabelStyle}"
+                                Foreground="#FFFFFF"
+                                IsAspectRatioButtonVisible="False"
+                                IsLockButtonVisible="False"
+                                IsTracksButtonVisible="False"
+                                LockButtonStyle="{StaticResource VideoLockButtonStyle}"
+                                MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                            Dark={StaticResource PrimaryDarkColor}}"
+                                PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
+                                RemainingTimeLabelStyle="{StaticResource VideoRemainingTimeLabelStyle}"
+                                RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
+                                SeekBarStyle="{StaticResource VideoSeekBarStyle}"
+                                SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
+                                UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
+                        </vlc:MediaPlayerElement.PlaybackControls>
+                    </vlc:MediaPlayerElement>
                 </uc:PanRouter.RouterContent>
             </uc:PanRouter>
         </DataTemplate>
