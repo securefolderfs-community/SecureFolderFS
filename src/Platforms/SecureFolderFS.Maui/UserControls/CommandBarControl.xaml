@@ -10,23 +10,32 @@
 
     <ContentView.Resources>
         <LinearGradientBrush x:Key="BarGradient" StartPoint="0.5,0" EndPoint="0.5,1">
-            <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
+            <GradientStop Offset="0.65" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
             <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource LightTransparentColor}, Dark={StaticResource DarkTransparentColor}}" />
         </LinearGradientBrush>
     </ContentView.Resources>
 
-    <Grid x:Name="RootGrid">
+    <Grid SafeAreaEdges="None">
         <Grid.RowDefinitions>
             <RowDefinition Height="75" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <ContentView
+            x:Name="MainContent"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
+            HorizontalOptions="Fill"
+            Loaded="MainContent_Loaded"
+            VerticalOptions="Fill" />
+
         <Border
             x:Name="TopBorder"
             Grid.Row="0"
             Background="{OnPlatform Android={StaticResource BarGradient}}"
-            HeightRequest="{OnPlatform Android=150,
-                                       iOS=48}"
+            HeightRequest="{OnPlatform Android=104,
+                                       iOS=192}"
             StrokeThickness="0"
             VerticalOptions="Start"
             ZIndex="5">
@@ -90,7 +99,6 @@
                     <Grid
                         Padding="4,0"
                         Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
-                        HeightRequest="48"
                         VerticalOptions="Start">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -99,7 +107,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!--  Quick Options  -->
-                        <HorizontalStackLayout Grid.Column="1">
+                        <HorizontalStackLayout Grid.Column="0">
                             <Button
                                 Padding="10"
                                 mi:MauiIcon.Value="{mi_cupertino:Cupertino InfoCircle,
@@ -131,7 +139,7 @@
                             VerticalOptions="Center" />
 
                         <Button
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Clicked="Close_Clicked"
                             FontAttributes="Bold"
                             FontSize="17"
@@ -143,14 +151,5 @@
                 </On>
             </OnPlatform>
         </Border>
-
-        <ContentView
-            x:Name="MainContent"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Content="{Binding InnerContent, Source={x:Reference ThisControl}, Mode=OneWay}"
-            HorizontalOptions="Fill"
-            Loaded="MainContent_Loaded"
-            VerticalOptions="Fill" />
     </Grid>
 </ContentView>

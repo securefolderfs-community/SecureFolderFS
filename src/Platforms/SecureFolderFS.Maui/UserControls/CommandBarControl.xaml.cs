@@ -32,7 +32,9 @@ namespace SecureFolderFS.Maui.UserControls
             }
             else
             {
+#if ANDROID
                 TopBorder.Background = Resources["BarGradient"] as Brush;
+#endif
                 Grid.SetRowSpan(TopBorder, 2);
                 Grid.SetRow(MainContent, 0);
                 Grid.SetRowSpan(MainContent, 2);

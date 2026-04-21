@@ -41,7 +41,7 @@
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.37" />
     <PackageVersion Include="Uno.WinUI" Version="5.3.90" />
     <PackageVersion Include="Uno.WinUI.Lottie" Version="5.3.90" />
-    <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.6.5" />
+    <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.7.0-beta" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
     <PackageVersion Include="WinUI.TableView" Version="1.4.0" />
     <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.3" />
