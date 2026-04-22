@@ -1433,4 +1433,7 @@
   <data name="ExitApp" xml:space="preserve">
       <value>Exit</value>
   </data>
+  <data name="Vault" xml:space="preserve">
+      <value>Vault</value>
+  </data>
 </root>
