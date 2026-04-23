@@ -19,6 +19,14 @@ namespace SecureFolderFS.Uno.UserControls
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
+        
+        public bool ShouldSaveCredentials
+        {
+            get => (bool)GetValue(ShouldSaveCredentialsProperty);
+            set => SetValue(ShouldSaveCredentialsProperty, value);
+        }
+        public static readonly DependencyProperty ShouldSaveCredentialsProperty =
+            DependencyProperty.Register(nameof(ShouldSaveCredentials), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
 
         public bool IsReadOnly
         {

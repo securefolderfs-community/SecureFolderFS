@@ -28,6 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _IsConnected;
         [ObservableProperty] private bool _IsProgressing;
+        [ObservableProperty] private bool _ShouldSaveCredentials;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }

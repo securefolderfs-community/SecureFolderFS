@@ -1436,4 +1436,7 @@
   <data name="Vault" xml:space="preserve">
       <value>Vault</value>
   </data>
+  <data name="SaveCredentials" xml:space="preserve">
+      <value>Save credentials</value>
+  </data>
 </root>
