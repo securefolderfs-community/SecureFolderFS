@@ -83,6 +83,7 @@
         <uc2:BrowserControl
             x:Name="Browser"
             Grid.Row="1"
+            IsReadOnly="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay}"
             IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
             RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}"

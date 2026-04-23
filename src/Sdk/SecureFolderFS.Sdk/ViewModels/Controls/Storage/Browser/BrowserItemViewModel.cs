@@ -80,6 +80,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 
@@ -150,6 +153,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task CopyAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 
@@ -217,6 +223,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task RenameAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder?.Folder is not IRenamableFolder renamableFolder)
                 return;
 
@@ -264,6 +273,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task DeleteAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 
