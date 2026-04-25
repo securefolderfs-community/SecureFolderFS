@@ -73,7 +73,7 @@
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <Grid>
                 <ScrollView
-                    Padding="8"
+                    Padding="8,16,8,8"
                     HorizontalScrollBarVisibility="Always"
                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                     Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
