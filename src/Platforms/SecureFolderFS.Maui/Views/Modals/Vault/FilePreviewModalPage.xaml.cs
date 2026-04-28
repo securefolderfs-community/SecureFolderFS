@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         /// <inheritdoc/>
         public async Task HideAsync()
         {
-            _modalTcs.SetResult(Result.Success);
+            _modalTcs.TrySetResult(Result.Success);
             await Shell.Current.GoBackAsync(Navigation.NavigationStack.Count);
         }
 
@@ -140,9 +140,26 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (videoViewModel.VideoSource is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
                 return;
 
-            var libVlc = new LibVLC("--input-repeat=2");
+            var existingMediaPlayer = disposables.OfType<LibVLCSharp.Shared.MediaPlayer>().FirstOrDefault();
+            var existingLibVlc = disposables.OfType<LibVLC>().FirstOrDefault();
+            if (existingMediaPlayer is not null && existingLibVlc is not null)
+            {
+                mediaPlayerElement.LibVLC = existingLibVlc;
+                mediaPlayerElement.MediaPlayer = existingMediaPlayer;
+
+                if (!existingMediaPlayer.IsPlaying)
+                    existingMediaPlayer.Play();
+
+                return;
+            }
+
+            if (stream.CanSeek)
+                stream.Position = 0L;
+
+            var libVlc = new LibVLC("--input-repeat=65545");
             var mediaInput = new StreamMediaInput(stream);
             var media = new Media(libVlc, mediaInput);
+            media.AddOption(":input-repeat=65545");
             var mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(libVlc)
             {
                 Media = media

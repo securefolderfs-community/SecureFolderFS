@@ -45,6 +45,7 @@
                                 ElapsedTimeLabelStyle="{StaticResource VideoElapsedTimeLabelStyle}"
                                 Foreground="#FFFFFF"
                                 IsAspectRatioButtonVisible="False"
+                                IsCastButtonVisible="False"
                                 IsLockButtonVisible="False"
                                 IsTracksButtonVisible="False"
                                 LockButtonStyle="{StaticResource VideoLockButtonStyle}"
@@ -81,6 +82,7 @@
                     <Editor
                         AutoSize="TextChanges"
                         Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
+                        CursorPosition="{Binding CursorPosition, Mode=TwoWay}"
                         HorizontalOptions="Fill"
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Placeholder="{l:ResourceString Rid=WriteHere}"
@@ -95,6 +97,44 @@
                     VerticalOptions="Center"
                     Color="{OnPlatform iOS={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
                                                             Dark={StaticResource PrimaryContrastingDarkColor}}}" />
+
+                <uc:AnimatedRevealLayout
+                    Padding="16,10"
+                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                    HorizontalOptions="Fill"
+                    IsShown="{Binding WasModified, Mode=OneWay}"
+                    RevealSide="Left"
+                    VerticalOptions="End">
+                    <uc:AnimatedRevealLayout.RevealContent>
+                        <HorizontalStackLayout Spacing="16">
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=FileModified}" />
+                            <BoxView
+                                Margin="0,0,16,0"
+                                Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                                VerticalOptions="Fill"
+                                WidthRequest="1" />
+                        </HorizontalStackLayout>
+                    </uc:AnimatedRevealLayout.RevealContent>
+                    <uc:AnimatedRevealLayout.MainContent>
+                        <HorizontalStackLayout Spacing="16">
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{Binding CharacterCount, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|CharacterCount'}" />
+                            <BoxView
+                                Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                                VerticalOptions="Fill"
+                                WidthRequest="1" />
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{Binding CursorPosition, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|CursorPosition'}" />
+                        </HorizontalStackLayout>
+                    </uc:AnimatedRevealLayout.MainContent>
+                </uc:AnimatedRevealLayout>
             </Grid>
         </DataTemplate>
 

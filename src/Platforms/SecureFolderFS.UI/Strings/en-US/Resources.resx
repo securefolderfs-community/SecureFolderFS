@@ -1439,4 +1439,13 @@
   <data name="SaveCredentials" xml:space="preserve">
       <value>Save credentials</value>
   </data>
+  <data name="CharacterCount" xml:space="preserve">
+      <value>Characters: {0}</value>
+  </data>
+  <data name="CursorPosition" xml:space="preserve">
+      <value>Position: {0}</value>
+  </data>
+  <data name="FileModified" xml:space="preserve">
+      <value>Modified</value>
+  </data>
 </root>
