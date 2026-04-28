@@ -73,7 +73,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             if (IsReadOnly)
                 return;
-                
+
             if (sender is not DropGestureRecognizer { Parent: View view })
                 return;
 
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             if (IsReadOnly)
                 return;
-            
+
             if (sender is not ContextMenuContainer { BindingContext: FolderViewModel folderViewModel })
                 return;
 
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             if (IsReadOnly)
                 return;
-            
+
             // Handle internal drag-and-drop (from within the app)
             var draggedItem = GetDraggedItem(e);
             if (draggedItem is not null)

@@ -19,10 +19,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
     {
         /// <inheritdoc/>
         public ICreatedAtProperty CreatedAt => field ??= new IOSCreatedAtProperty(Id, Inner, permissionRoot);
-        
+
         /// <inheritdoc/>
         public ILastModifiedAtProperty LastModifiedAt => field ??= new IOSLastModifiedAtProperty(Id, Inner, permissionRoot);
-        
+
         public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
             : base(url, parent, permissionRoot, bookmarkId)
         {
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         {
             if (!permissionRoot.StartAccessingSecurityScopedResource())
                 throw new UnauthorizedAccessException("Could not get iOS items.");
-            
+
             var coordinator = new NSFileCoordinator();
             try
             {

@@ -34,13 +34,13 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ViewModels
         /// Gets the associated folder of the vault.
         /// </summary>
         protected IFolder VaultFolder { get; }
-        
+
         /// <inheritdoc/>
         public sealed override bool CanComplement { get; } = true;
 
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
-        
+
         protected MacOSBiometricsViewModel(IFolder vaultFolder, string vaultId)
             : base(Constants.Vault.Authentication.AUTH_APPLE_MACOS)
         {

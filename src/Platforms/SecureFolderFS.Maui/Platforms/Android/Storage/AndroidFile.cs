@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
      
         /// <inheritdoc/>
         public ILastModifiedAtProperty LastModifiedAt => field ??= new AndroidLastModifiedAtProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
-        
+
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new AndroidSizeOfProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
 

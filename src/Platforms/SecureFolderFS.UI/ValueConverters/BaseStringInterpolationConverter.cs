@@ -13,7 +13,7 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (value is null)
                 return string.Empty;
-            
+
             var strValue = value.ToString();
             if (parameter is not string formatStringParam)
                 return strValue;

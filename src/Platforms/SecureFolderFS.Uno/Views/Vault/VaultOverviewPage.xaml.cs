@@ -81,11 +81,11 @@ namespace SecureFolderFS.Uno.Views.Vault
         {
             if (ViewModel?.VaultViewModel.VaultModel.VaultFolder is null)
                 return;
-            
+
             var storageRoot = ViewModel.UnlockedVaultViewModel.StorageRoot;
             if (storageRoot is not IWrapper<FileSystemSpecifics> { Inner: var specifics })
                 return;
-            
+
             var deferral = e.GetDeferral();
             try
             {
@@ -121,7 +121,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                         _ => null
                     };
                 }
-                
+
                 if (ciphertextItem is not IStorableChild ciphertextChild)
                     return;
 
@@ -131,12 +131,12 @@ namespace SecureFolderFS.Uno.Views.Vault
 
                 var plaintextItem = await storageRoot.PlaintextRoot.GetItemByRelativePathAsync(plaintextPath);
                 _ = ShowItemDialogAsync();
-                
+
                 async Task ShowItemDialogAsync()
                 {
                     var viewModel = new VaultItemInfoOverlayViewModel(ciphertextItem, plaintextItem);
                     await viewModel.InitAsync();
-                
+
                     var overlayService = DI.Service<IOverlayService>();
                     _ = overlayService.ShowAsync(viewModel);
                 }

@@ -83,7 +83,7 @@ namespace SecureFolderFS.Uno
         {
             Instance = this;
             InitializeComponent();
-            
+
 #if HAS_UNO_SKIA
             Resources.MergedDictionaries.Add(new DesktopDataTemplates());
 #endif

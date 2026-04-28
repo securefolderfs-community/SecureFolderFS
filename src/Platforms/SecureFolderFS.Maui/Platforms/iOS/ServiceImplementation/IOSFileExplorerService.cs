@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSFileExplorerService : IFileExplorerService
     {
         private record struct PickedGalleryItem(NSData Data, string Name, string TypeIdentifier);
-        
+
         /// <inheritdoc/>
         public async Task<IEnumerable<IStorable>> PickGalleryItemsAsync(CancellationToken cancellationToken = default)
         {
@@ -161,7 +161,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         private static Task<PickedGalleryItem?> LoadPickedFileAsync(NSItemProvider itemProvider)
         {
             var tcs = new TaskCompletionSource<PickedGalleryItem?>();
-            
+
             // Try concrete types first, so PreferredFilenameExtension always resolves
             string typeIdentifier;
             if (itemProvider.HasItemConformingTo(UTTypes.Jpeg.Identifier))
@@ -194,7 +194,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             return tcs.Task;
         }
-        
+
         private static string GetExtensionForTypeIdentifier(string? typeIdentifier, ReadOnlySpan<byte> imageBytes64)
         {
             if (typeIdentifier is not null)

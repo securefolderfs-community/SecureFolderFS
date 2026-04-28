@@ -139,8 +139,3 @@ public sealed partial class VaultRunCommand(IVaultManagerService vaultManagerSer
         await stdin.CopyToAsync(destinationStream);
     }
 }
-
-
-
-
-

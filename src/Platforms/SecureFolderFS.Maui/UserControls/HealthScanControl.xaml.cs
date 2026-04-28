@@ -8,15 +8,15 @@ namespace SecureFolderFS.Maui.UserControls
     public partial class HealthScanControl : ContentView, IDisposable
     {
         private CancellationTokenSource? _shimmerCts;
-        
+
         public event EventHandler? Clicked;
-        
+
         public HealthScanControl()
         {
             InitializeComponent();
             GradientBackground.Background = GetGradientBrush(Severity);
         }
-        
+
         private void StartShimmer()
         {
             _shimmerCts?.Cancel();
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.UserControls
             ShimmerOverlay.IsVisible = false;
             ShimmerOverlay.CancelAnimations();
         }
-        
+
         private static LinearGradientBrush GetGradientBrush(Severity severity)
         {
             var (start, end) = severity switch
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Maui.UserControls
                     _ => (Color.FromArgb("#3A3E45"), Color.FromArgb("#52575F"))
                 }
             };
-            
+
             return new LinearGradientBrush([
                     new GradientStop(start, 0f),
                     new GradientStop(end, 1f)
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Maui.UserControls
                 new Point(0, 0.5),
                 new Point(1, 0.5));
         }
-        
+
         private void TouchBehavior_TouchGestureCompleted(object? sender, TouchGestureCompletedEventArgs e)
         {
             Clicked?.Invoke(this, EventArgs.Empty);
@@ -87,7 +87,7 @@ namespace SecureFolderFS.Maui.UserControls
                     if (bindable is HealthScanControl control && newValue is Severity severity)
                         control.GradientBackground.Background = GetGradientBrush(severity);
                 });
-        
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(HealthScanControl));
-        
+
         public string? Subtitle
         {
             get => (string?)GetValue(SubtitleProperty);
@@ -103,7 +103,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty SubtitleProperty =
             BindableProperty.Create(nameof(Subtitle), typeof(string), typeof(HealthScanControl));
-        
+
         public object? IconSlot
         {
             get => (object?)GetValue(IconSlotProperty);
@@ -111,7 +111,7 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty IconSlotProperty =
             BindableProperty.Create(nameof(IconSlot), typeof(object), typeof(HealthScanControl));
-        
+
         public bool IsProgressing
         {
             get => (bool)GetValue(IsProgressingProperty);

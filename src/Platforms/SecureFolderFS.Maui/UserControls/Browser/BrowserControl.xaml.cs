@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             RefreshCommand?.Execute(null);
             refreshView.IsRefreshing = false;
         }
-        
+
         public bool IsReadOnly
         {
             get => (bool)GetValue(IsReadOnlyProperty);

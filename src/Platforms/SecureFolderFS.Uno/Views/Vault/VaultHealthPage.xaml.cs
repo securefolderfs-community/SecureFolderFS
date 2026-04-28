@@ -56,7 +56,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             if (viewModel is null && textBlock is { DataContext: HealthNameIssueViewModel dataContextViewModel })
                 viewModel = dataContextViewModel;
-            
+
             if (viewModel is null)
                 return;
 
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             // we rely on IsEnabled to notify when the IsEditing property changes and set the focus
             if (e.NewValue is not true)
                 return;
-            
+
             if (sender is not TextBox textBox)
                 return;
 
@@ -99,11 +99,11 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             if (sender is not TextBox textBox)
                 return;
-            
+
             ActionBlockControl? actionBlock = null;
             if (textBox.DataContext is ActionBlockControl dataContextActionBlock)
                 actionBlock = dataContextActionBlock;
-            
+
             if (actionBlock is null && textBox.FindAscendant<ActionBlockControl>() is { } foundActionBlock)
                 actionBlock = foundActionBlock;
 

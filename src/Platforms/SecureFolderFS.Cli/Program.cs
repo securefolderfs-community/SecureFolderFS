@@ -8,12 +8,12 @@ namespace SecureFolderFS.Cli
     internal static class Program
     {
         public static CliLifecycleHelper Lifecycle { get; } = new();
-        
+
         private static async Task<int> Main(string[] args)
         {
             await Lifecycle.InitAsync();
             DI.Default.SetServiceProvider(Lifecycle.ServiceCollection.BuildServiceProvider());
-                
+
 #if DEBUG
             if (args.IsEmpty())
             {

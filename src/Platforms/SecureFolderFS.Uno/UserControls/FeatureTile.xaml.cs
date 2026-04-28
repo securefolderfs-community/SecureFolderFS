@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.UserControls
         {
             InitializeComponent();
         }
-        
+
         public string Glyph
         {
             get => (string)GetValue(GlyphProperty);

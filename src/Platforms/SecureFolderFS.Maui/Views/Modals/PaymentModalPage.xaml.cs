@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.Views.Modals
         private readonly TaskCompletionSource<IResult> _modalTcs;
         private bool _isPulseAnimationRunning;
         private bool _stopPulseAnimation;
-        
+
         public PaymentModalPage(INavigation sourceNavigation)
         {
             _sourceNavigation = sourceNavigation;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.Views.Modals
 
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {

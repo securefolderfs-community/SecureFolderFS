@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             CiphertextName = _ciphertextItem.Name;
             PlaintextPath = _plaintextItem.Id;
             PlaintextName = _plaintextItem.Name;
-            
+
             if (!IsFile)
                 return;
 
@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 PlaintextSize = ByteSize.FromBytes(plaintextSize.Value).ToString();
                 PlaintextFullSize = $"{plaintextSize.Value} B";
-                
+
                 if (ciphertextSize.HasValue)
                 {
                     var difference = ciphertextSize.Value - plaintextSize.Value;

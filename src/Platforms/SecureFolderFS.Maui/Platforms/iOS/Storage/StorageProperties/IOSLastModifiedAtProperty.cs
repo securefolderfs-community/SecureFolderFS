@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage.StorageProperties
     {
         private readonly NSUrl _url;
         private readonly NSUrl _permissionRoot;
-        
+
         /// <inheritdoc/>
         public string Id { get; }
 

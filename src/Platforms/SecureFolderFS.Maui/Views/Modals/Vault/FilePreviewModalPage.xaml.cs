@@ -116,7 +116,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                         panPinchContainer.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
                         break;
                     }
-                    
+
                     case PanRouter panRouter:
                     {
                         panRouter.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
@@ -252,7 +252,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.Next = carouselViewModel.CurrentIndex < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, carouselViewModel.CurrentIndex + 1) : null;
             galleryView.RefreshLayout();
         }
-        
+
         private async void Gallery_DismissRequested(object? sender, EventArgs e)
         {
             // The gallery has already translated/faded partway - animate the rest out, then dismiss
@@ -263,7 +263,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             await Task.WhenAll(slideTask, fadeTask);
             await HideAsync();
         }
-        
+
         public GalleryView? GalleryView
         {
             get => (GalleryView?)GetValue(GalleryViewProperty);

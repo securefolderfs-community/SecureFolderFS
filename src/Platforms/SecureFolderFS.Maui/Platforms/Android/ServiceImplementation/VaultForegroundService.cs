@@ -19,7 +19,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         private const string CHANNEL_ID = "securefolderfs_vault_foreground_service";
         private const int NOTIFICATION_ID = 4949;
         public const string LockAll = "securefolderfs.action.LOCK_ALL";
-        
+
         private static TaskCompletionSource<VaultForegroundService> InstanceTcs { get; } = new();
 
         public List<IVaultModel> UnlockedVaults { get; } = new();
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         {
             return await InstanceTcs.Task;
         }
-        
+
         /// <inheritdoc/>
         public override IBinder? OnBind(Intent? intent)
         {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public override void OnCreate()
         {
             InstanceTcs.TrySetResult(this);
-            
+
             base.OnCreate();
             EnsureNotificationChannel();
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var notification = BuildNotification();
             if (notification is null)
                 return StartCommandResult.NotSticky;
-            
+
             StartForeground(NOTIFICATION_ID, notification, ForegroundService.TypeDataSync);
             return StartCommandResult.Sticky;
         }
@@ -86,17 +86,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             UnlockedVaults.Remove(message.VaultModel);
             UpdateNotification();
         }
-        
+
         private void UpdateNotification()
         {
             var manager = NotificationManagerCompat.From(this);
             if (manager is null)
                 return;
-            
+
             var notification = BuildNotification();
             manager.Notify(NOTIFICATION_ID, notification);
         }
-        
+
         private Notification? BuildNotification()
         {
             var count = UnlockedVaults.Count;
@@ -124,7 +124,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var iconRid = MauiApplication.Current.GetDrawableId("app_icon.png");
             if (iconRid == 0)
                 iconRid = 0x0108002f; // ic_lock_lock
-            
+
             return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .SetContentTitle(title)
                 ?.SetContentText("TapToLockAll".ToLocalized())
@@ -135,7 +135,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 ?.SetOnlyAlertOnce(true)
                 ?.Build();
         }
-        
+
         private void EnsureNotificationChannel()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)

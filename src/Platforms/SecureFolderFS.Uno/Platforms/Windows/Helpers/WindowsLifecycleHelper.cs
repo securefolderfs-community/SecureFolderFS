@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 #else
                 .Override<ILocalizationService, WindowsLocalizationService>(AddService.AddSingleton)
 #endif
-                
+
                 .WithUnoServices(settingsFolder)
                 ;
         }

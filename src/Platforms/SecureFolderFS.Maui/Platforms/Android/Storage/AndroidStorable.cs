@@ -27,7 +27,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
         /// <inheritdoc/>
         public string? BookmarkId { get; protected set; }
-        
+
         /// <summary>
         /// Gets the parent folder of the current object.
         /// </summary>
