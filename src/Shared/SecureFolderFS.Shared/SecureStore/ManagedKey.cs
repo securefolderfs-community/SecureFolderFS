@@ -8,6 +8,11 @@ namespace SecureFolderFS.Shared.SecureStore
     /// <inheritdoc cref="IKeyBytes"/>
     public sealed class ManagedKey : IKeyBytes, ICloneable
     {
+        /// <summary>
+        /// Represents an empty key.
+        /// </summary>
+        public static ManagedKey Empty { get; } = new(0);
+
         /// <inheritdoc/>
         public byte[] Key { get; }
 

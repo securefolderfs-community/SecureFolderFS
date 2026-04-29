@@ -53,17 +53,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         /// <inheritdoc/>
-        protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             if (!PersistedCredentialsModel.Instance.Credentials.TryGetValue(_vaultId, out var credentials))
             {
                 PersistedCredentialsModel.Instance.Credentials.Remove(_vaultId);
-                CredentialsProvided?.Invoke(this, new(new ManagedKey(0), null));
-                return Task.CompletedTask;
+                credentials = ManagedKey.Empty;
             }
 
-            CredentialsProvided?.Invoke(this, new(credentials.CreateCopy(), null));
-            return Task.CompletedTask;
+            var tcs = new TaskCompletionSource();
+            CredentialsProvided?.Invoke(this, new(credentials.CreateCopy(), tcs));
+            await tcs.Task;
         }
     }
 }

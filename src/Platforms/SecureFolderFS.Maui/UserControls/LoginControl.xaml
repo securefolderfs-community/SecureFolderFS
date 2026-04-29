@@ -107,6 +107,7 @@
                     <!--  Title  -->
                     <Label
                         HorizontalOptions="Center"
+                        LineBreakMode="WordWrap"
                         Opacity="0.8"
                         Text="{l:ResourceString Rid=CredentialsHaveBeenSaved}" />
 

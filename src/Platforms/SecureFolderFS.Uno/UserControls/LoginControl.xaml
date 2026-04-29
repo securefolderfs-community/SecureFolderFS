@@ -187,7 +187,10 @@
         <DataTemplate x:Key="PersistedAuthenticationTemplate" x:DataType="vm5:PersistedAuthenticationViewModel">
             <StackPanel Spacing="16">
                 <!--  Title  -->
-                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=CredentialsHaveBeenSaved}" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Text="{l:ResourceString Rid=CredentialsHaveBeenSaved}"
+                    TextWrapping="WrapWholeWords" />
 
                 <!--  Continue  -->
                 <Button

@@ -19,6 +19,7 @@
                     <CheckBox
                         Content="{l:ResourceString Rid=SaveCredentials}"
                         IsChecked="{x:Bind ShouldSaveCredentials, Mode=TwoWay}"
+                        IsEnabled="False"
                         Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
 
                     <Button
