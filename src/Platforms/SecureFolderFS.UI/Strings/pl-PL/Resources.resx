@@ -157,10 +157,10 @@
     <value>Lista zmian</value>
   </data>
   <data name="ClearTraces" xml:space="preserve">
-    <value>Clear traces</value>
+    <value>Wyczyść ślady</value>
   </data>
   <data name="ClearTracesDescription" xml:space="preserve">
-    <value>Wipes data from caches and recently accessed list</value>
+    <value>Usuwa dane z pamięci i listy ostatnio używanych</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
     <value>Wspaniale!</value>
@@ -317,7 +317,7 @@
     <value>Otwórz lokalizację dziennika</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-      <value>Opens {0} where the log file is located</value>
+      <value>Otwiera {0} gdzie znajduje się plik dziennika</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
     <value>Otwórz folder sejfu</value>
@@ -335,7 +335,7 @@
     <value>Drukuj</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Polityka Prywatności</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>Zobacz oświadczenie dotyczące polityki prywatności</value>
@@ -396,10 +396,10 @@
     <value>Prywatność</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-      <value>Show in {0}</value>
+      <value>Pokaż w {0}</value>
   </data>
   <data name="CreateShortcut" xml:space="preserve">
-    <value>Create shortcut file</value>
+    <value>Utwórz plik skrótu</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Społeczność</value>
@@ -417,7 +417,7 @@
     <value>Zbieraj anonimowe raporty o awariach i dane użytkowania</value>
   </data>
   <data name="TelemetryInfoBarMessage" xml:space="preserve">
-    <value>Telemetry data is anonymized and helps us improve app stability and performance.</value>
+    <value>Dane telemetryczne są anonimowe i pomagają nam poprawić stabilność i wydajność aplikacji.</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Motyw</value>
@@ -474,7 +474,7 @@
     <value>Pokaż sejf</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-      <value>Show this vault in {0}</value>
+      <value>Pokaż ten sejf w {0}</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Strona internetowa</value>
@@ -867,7 +867,7 @@
     <value>{0} został nieoczekiwanie zamknięty</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-    <value>Select Items</value>
+    <value>Zaznacz elementy</value>
   </data>
   <data name="Done" xml:space="preserve">
     <value>Gotowe</value>
@@ -930,22 +930,22 @@
     <value>Oprócz przechowywania sejfów na Twoim urządzeniu, możesz również połączyć się z innymi dostawcami pamięci w chmurze.</value>
   </data>
   <data name="OnboardingAuthenticationTitle" xml:space="preserve">
-    <value>Authenticate the way you want</value>
+    <value>Uwierzytelniaj sposobem, jakim chcesz</value>
   </data>
   <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
-    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+    <value>Dzięki naszemu solidnemu bezpieczeństwu wybierasz sposób dostępu do swoich plików. Bez względu na to, czy jest to hasło czy plik z kluczem — Twoje dane pozostają chronione i łatwo dostępne, dostosowane do Twoich preferencji.</value>
   </data>
   <data name="OnboardingEncryptionTitle" xml:space="preserve">
-    <value>Your files, always protected</value>
+    <value>Twoje pliki, zawsze chronione</value>
   </data>
   <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
-    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+    <value>Twoje pliki są zaszyfrowane przy użyciu szyfrowania AES-256 o standardzie branżowym. Nawet nazwy plików i folderów są chronione, zapewniając pełną prywatność Twoich wrażliwych dokumentów.</value>
   </data>
   <data name="OnboardingFileSystemTitle" xml:space="preserve">
-    <value>Seamless virtual file system</value>
+    <value>Bezprecedensowy wirtualny system plików</value>
   </data>
   <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
-    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
+    <value>Dzięki naszemu wirtualnemu systemowi plików możesz uzyskać dostęp do swoich danych, nie tracąc na prędkości i bezpieczeństwie. Twój zaszyfrowany sejf pojawia się jako zwykły dysk.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
     <value>Wszystko gotowe!</value>
@@ -1023,226 +1023,226 @@
     <value>Wybierz nową nazwę</value>
   </data>
   <data name="ViewOnboardingDescription" xml:space="preserve">
-    <value>Show the onboarding screen</value>
+    <value>Pokaż ekran wprowadzenia</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Saving</value>
+    <value>Zapisywanie</value>
   </data>
   <data name="Loading" xml:space="preserve">
-    <value>Loading</value>
+    <value>Wczytywanie</value>
   </data>
   <data name="Cancelling" xml:space="preserve">
-    <value>Cancelling</value>
+    <value>Anulowanie</value>
   </data>
   <data name="SizeOptions" xml:space="preserve">
-    <value>Size options</value>
+    <value>Opcje rozmiaru</value>
   </data>
   <data name="OperationTimedOut" xml:space="preserve">
-    <value>Operation timed out</value>
+    <value>Upłynął limit czasu operacji</value>
   </data>
   <data name="DateYesterday" xml:space="preserve">
-    <value>Yesterday, {0}</value>
+    <value>Wczoraj, {0}</value>
   </data>
   <data name="DateWeekAgo" xml:space="preserve">
-    <value>Last week</value>
+    <value>Zeszły tydzień</value>
   </data>
   <data name="DateDaysAgo" xml:space="preserve">
-    <value>{0} days ago</value>
+    <value>{0} dni temu</value>
   </data>
   <data name="VaultUnlocked" xml:space="preserve">
-    <value>Vault is unlocked</value>
+    <value>Sejf jest odblokowany</value>
   </data>
   <data name="AggregatedDataWidget" xml:space="preserve">
-      <value>Data widget</value>
+      <value>Widżet danych</value>
   </data>
   <data name="GraphsWidget" xml:space="preserve">
-      <value>Graphs widget</value>
+      <value>Widżet wykresów</value>
   </data>
   <data name="HealthWidget" xml:space="preserve">
-      <value>Health widget</value>
+      <value>Widżet stanu zdrowia</value>
   </data>
   <data name="SetupYubiKey" xml:space="preserve">
-      <value>Setup YubiKey PIV authentication</value>
+      <value>Skonfiguruj uwierzytelnianie YubiKey PIV</value>
   </data>
   <data name="UseLongPress" xml:space="preserve">
-      <value>Use long press (Slot 2)</value>
+      <value>Użyj długiego naciśnięcia (Pole 2)</value>
   </data>
   <data name="YubiKey" xml:space="preserve">
       <value>YubiKey</value>
   </data>
   <data name="LoginYubiKey" xml:space="preserve">
-      <value>Authenticate with YubiKey PIV</value>
+      <value>Uwierzytelnianie za pomocą YubiKey PIV</value>
   </data>
   <data name="Finder" xml:space="preserve">
       <value>Finder</value>
   </data>
   <data name="FileExplorer" xml:space="preserve">
-      <value>File Explorer</value>
+      <value>Eksplorator Plików</value>
   </data>
   <data name="CorruptedFileChunks" xml:space="preserve">
-      <value>Corrupted file regions</value>
+      <value>Uszkodzone regiony pliku</value>
   </data>
   <data name="FileHasCorruptedChunks" xml:space="preserve">
-      <value>Parts of the file are corrupted and will be reset</value>
+      <value>Części pliku są uszkodzone i zostaną zresetowane</value>
   </data>
   <data name="CorruptedChunks" xml:space="preserve">
-      <value>{0} corrupted region(s)</value>
+      <value>{0} uszkodzonych regionów</value>
   </data>
   <data name="DataLossImminent" xml:space="preserve">
-      <value>Data loss unpreventable</value>
+      <value>Utrata danych niemożliwa do uniknięcia</value>
   </data>
   <data name="IrrecoverableFile" xml:space="preserve">
-      <value>Irrecoverable file</value>
+      <value>Plik niemożliwy do odzyskania</value>
   </data>
   <data name="FileHeaderCorrupted" xml:space="preserve">
-      <value>File header is corrupted and the file will be deleted</value>
+      <value>Nagłówek pliku jest uszkodzony, plik zostanie usunięty</value>
   </data>
   <data name="DeviceLink" xml:space="preserve">
       <value>Device Link</value>
   </data>
   <data name="DeviceLinkInstructions" xml:space="preserve">
-      <value>1. Click "More Options" (three dots) in SecureFolderFS mobile app\n2. Select "Device Link" option\n3. Toggle "Enable Device Link"\n4. Ensure both devices are on the same network</value>
+      <value>1. Kliknij "Więcej opcji" (trzy kropki) w aplikacji mobilnej SecureFolderFS\n2. Wybierz opcję "Device Link"\n3. Przełącz "Włącz łącze urządzenia"\n4. Upewnij się, że oba urządzenia znajdują się w tej samej sieci</value>
   </data>
   <data name="SetupDeviceLink" xml:space="preserve">
-      <value>Setup Device Link authentication</value>
+      <value>Skonfiguruj uwierzytelnianie Device Link</value>
   </data>
   <data name="Accept" xml:space="preserve">
-      <value>Accept</value>
+      <value>Akceptuj</value>
   </data>
   <data name="Reject" xml:space="preserve">
-      <value>Reject</value>
+      <value>Odrzuć</value>
   </data>
   <data name="LoginDeviceLink" xml:space="preserve">
-      <value>Authenticate with Device Link</value>
+      <value>Uwierzytelnij za pomocą Device Link</value>
   </data>
   <data name="ConfirmBothCodesMatch" xml:space="preserve">
-      <value>Confirm that both codes match</value>
+      <value>Potwierdź zgodność obu kodów</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
-      <value>Verification code</value>
+      <value>Kod weryfikacyjny</value>
   </data>
   <data name="DeviceLinkRequest" xml:space="preserve">
-      <value>Device Link request</value>
+      <value>Żądanie Device Link</value>
   </data>
   <data name="DeviceLinkIsRequestingCredentials" xml:space="preserve">
-      <value>This device is requesting to use your Device Link credentials to unlock a vault.</value>
+      <value>To urządzenie żąda użycia danych uwierzytelniających Twojego urządzenia do odblokowania sejfu.</value>
   </data>
   <data name="DeviceLinkAcceptWarning" xml:space="preserve">
-      <value>Only accept if you initiated this request</value>
+      <value>Akceptuj tylko, jeśli Ty zainicjowałeś to żądanie</value>
   </data>
   <data name="CredentialRequested" xml:space="preserve">
-      <value>Credential requested: {0}</value>
+      <value>Żądanie poświadczenia: {0}</value>
   </data>
   <data name="DeleteDeviceLinkCredential" xml:space="preserve">
-      <value>Delete Credential</value>
+      <value>Usuń poświadczenie</value>
   </data>
   <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
-      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
+      <value>Czy na pewno chcesz usunąć poświadczenie '{0}'? To cofnie dostęp do sparowanego urządzenia. Upewnij się, że najpierw usuniesz metodę uwierzytelniania w aplikacji komputerowej.</value>
   </data>
   <data name="DeviceLinkDescription" xml:space="preserve">
-      <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
+      <value>Device Link umożliwia tworzenie poświadczeń, które mogą zostać użyte do zalogowania się do sejfu na komputerze bez potrzeby wprowadzania hasła.</value>
   </data>
   <data name="DeletedAt" xml:space="preserve">
-      <value>Deleted at</value>
+      <value>Usunięte o</value>
   </data>
   <data name="OriginalLocation" xml:space="preserve">
-      <value>Original location</value>
+      <value>Lokalizacja oryginalna</value>
   </data>
   <data name="Install" xml:space="preserve">
-      <value>Install</value>
+      <value>Zainstaluj</value>
   </data>
   <data name="FileSystemOffersImprovedExperience" xml:space="preserve">
-      <value>Improved user experience, reliability, and performance</value>
+      <value>Ulepszona niezawodność i wydajność</value>
   </data>
   <data name="DefaultFileSystem" xml:space="preserve">
-      <value>The default file system</value>
+      <value>Domyślny system plików</value>
   </data>
   <data name="BuiltinFileSystem" xml:space="preserve">
-      <value>One of the built-in file systems</value>
+      <value>Jeden z wbudowanych systemów plików</value>
   </data>
   <data name="DokanyDescription" xml:space="preserve">
-      <value>Dokany offers better integration and reliability</value>
+      <value>Dokany oferują lepszą integrację i niezawodność</value>
   </data>
   <data name="WinFspDescription" xml:space="preserve">
-      <value>WinFsp offers better performance and reliability</value>
+      <value>WinFsp oferuje lepszą wydajność i niezawodność</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-      <value>Refresh</value>
+      <value>Odśwież</value>
   </data>
   <data name="StorageUsed" xml:space="preserve">
-      <value>Storage used</value>
+      <value>Wykorzystana przestrzeń</value>
   </data>
   <data name="SelectAll" xml:space="preserve">
-      <value>Select all</value>
+      <value>Zaznacz wszystko</value>
   </data>
   <data name="ClearSelection" xml:space="preserve">
-      <value>Clear selection</value>
+      <value>Wyczyść zaznaczenie</value>
   </data>
   <data name="CopyingItems" xml:space="preserve">
-      <value>Copying {0} item(s)</value>
+      <value>Kopiowanie {0} element(ów)</value>
   </data>
   <data name="MovingItems" xml:space="preserve">
-      <value>Moving {0} item(s)</value>
+      <value>Przenoszenie {0} element(ów)</value>
   </data>
   <data name="DeletingItems" xml:space="preserve">
-      <value>Deleting {0} item(s)</value>
+      <value>Usuwanie {0} element(ów)</value>
   </data>
   <data name="NotEnoughSpace" xml:space="preserve">
-      <value>Not enough space</value>
+      <value>Zbyt mało miejsca</value>
   </data>
   <data name="ItemDeletionTitle" xml:space="preserve">
-      <value>Deleting item(s)</value>
+      <value>Usuwanie elementu(ów)</value>
   </data>
   <data name="ItemDeletionDescription" xml:space="preserve">
-      <value>Are you sure you want to permanently delete {0} item(s)?</value>
+      <value>Czy na pewno chcesz trwale usunąć {0} element(ów)?</value>
   </data>
   <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
-      <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+      <value>Usunięte elementy przekraczają dostępne miejsce w koszu. Czy zamiast tego chcesz trwale usunąć {0} element(ów)?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
-      <value>By continuing, you agree to our </value>
+      <value>Kontynuując, akceptujesz nasz </value>
   </data>
   <data name="IntroMiddle" xml:space="preserve">
-      <value> and </value>
+      <value> i </value>
   </data>
   <data name="IntroSuffix" xml:space="preserve">
       <value>.</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
-      <value>Terms of Service</value>
+      <value>Warunki Korzystania z Usług</value>
   </data>
   <data name="SelectLocationOfVault" xml:space="preserve">
-      <value>Select a location of your vault</value>
+      <value>Wybierz lokalizację swojego sejfu</value>
   </data>
   <data name="CoreMemoryProtectionEnabled" xml:space="preserve">
-      <value>Core Memory Protection is enabled</value>
+      <value>Ochrona pamięci jest włączona</value>
   </data>
   <data name="EnrolledCredentials" xml:space="preserve">
-      <value>Enrolled credentials</value>
+      <value>Zapisane poświadczenia</value>
   </data>
   <data name="PendingPairingRequest" xml:space="preserve">
-      <value>Pending pairing request</value>
+      <value>Oczekujące żądanie parowania</value>
   </data>
   <data name="DeviceRequestingToPair" xml:space="preserve">
-      <value>{0} is requesting to pair to create credentials</value>
+      <value>{0} prosi o sparowanie w celu utworzenia poświadczeń</value>
   </data>
   <data name="EnableDeviceLink" xml:space="preserve">
-      <value>Enable Device Link</value>
+      <value>Włącz Device Link</value>
   </data>
   <data name="ItemsSelected" xml:space="preserve">
-      <value>{0} item(s) selected</value>
+      <value>{0} zaznaczonych elementów</value>
   </data>
   <data name="ElementsCount" xml:space="preserve">
-      <value>{0} element(s)</value>
+      <value>{0} element(ów)</value>
   </data>
   <data name="FoundIssuesCount" xml:space="preserve">
-      <value>Found {0} issue(s)</value>
+      <value>Znaleziono {0} problem(ów)</value>
   </data>
   <data name="AvailableWidgets" xml:space="preserve">
-      <value>Available widgets</value>
+      <value>Dostępne widżety</value>
   </data>
   <data name="ReorderWidgets" xml:space="preserve">
-      <value>Reorder widgets</value>
+      <value>Zmień kolejność widżetów</value>
   </data>
   <data name="Dropbox" xml:space="preserve">
       <value>Dropbox</value>
@@ -1254,114 +1254,183 @@
       <value>Port</value>
   </data>
   <data name="ArchiveFormatNotSupported" xml:space="preserve">
-      <value>This archive format is not supported for extraction</value>
+      <value>Ten format archiwum nie jest obsługiwany do wyodrębniania</value>
   </data>
   <data name="ExtractingItems" xml:space="preserve">
-      <value>Extracting {0} items</value>
+      <value>Wyodrębnianie {0} elementów</value>
   </data>
   <data name="Extracting" xml:space="preserve">
-      <value>Extracting...</value>
+      <value>Wyodrębnianie...</value>
   </data>
   <data name="Extract" xml:space="preserve">
-      <value>Extract</value>
+      <value>Wyodrębnij</value>
   </data>
   <data name="ConnectToRemoteVault" xml:space="preserve">
-      <value>Before logging in, establish a connection to the remote vault.</value>
+      <value>Przed zalogowaniem nawiąż połączenie ze zdalnym sejfem.</value>
   </data>
   <data name="LoginMacOsBiometrics" xml:space="preserve">
-      <value>Authenticate using Touch ID</value>
+      <value>Uwierzytelnij za pomocą Touch ID</value>
   </data>
   <data name="MacOsBiometrics" xml:space="preserve">
       <value>Touch ID</value>
   </data>
   <data name="SetupMacOsBiometrics" xml:space="preserve">
-      <value>Setup Touch ID authentication</value>
+      <value>Skonfiguruj uwierzytelnianie Touch ID</value>
   </data>
   <data name="PlusAcquireSubscription" xml:space="preserve">
-      <value>{0} per month</value>
+      <value>{0} miesięcznie</value>
   </data>
   <data name="PlusAcquireLifetime" xml:space="preserve">
-      <value>Lifetime, {0}</value>
+      <value>Dożywotnie, {0}</value>
   </data>
   <data name="PlusUpgrade" xml:space="preserve">
-      <value>UPGRADE</value>
+      <value>ULEPSZ</value>
   </data>
   <data name="PlusTitle" xml:space="preserve">
-      <value>Your vaults, fully unleashed.</value>
+      <value>Twoje sejfy, w pełni uwolnione.</value>
   </data>
   <data name="PlusDescription" xml:space="preserve">
-      <value>Support independent development and unlock every feature.</value>
+      <value>Wspomóż niezależny rozwój i odblokuj każdą funkcję.</value>
   </data>
   <data name="PlusUnlimitedVaults" xml:space="preserve">
-      <value>Unlimited vaults</value>
+      <value>Nieograniczona liczba sejfów</value>
   </data>
   <data name="PlusUnlimitedVaultsDescription" xml:space="preserve">
-      <value>Create and manage more than two vaults at a time.</value>
+      <value>Twórz i zarządzaj więcej niż dwoma sejfami naraz.</value>
   </data>
   <data name="PlusDeviceLink" xml:space="preserve">
       <value>Device Link</value>
   </data>
   <data name="PlusDeviceLinkDescription" xml:space="preserve">
-      <value>Sync desktop vault credentials securely with the mobile app.</value>
+      <value>Synchronizuj dane logowania sejfów z aplikacją mobilną.</value>
   </data>
   <data name="PlusSecurityKey" xml:space="preserve">
-      <value>YubiKey authentication</value>
+      <value>Uwierzytelnianie YubiKey</value>
   </data>
   <data name="PlusSecurityKeyDescription" xml:space="preserve">
-      <value>Protect vaults with hardware-grade security keys.</value>
+      <value>Chroń sejfy za pomocą sprzętowych kluczy bezpieczeństwa.</value>
   </data>
   <data name="PlusFileRecovery" xml:space="preserve">
-      <value>Recycle bin</value>
+      <value>Kosz</value>
   </data>
   <data name="PlusFileRecoveryDescription" xml:space="preserve">
-      <value>Recover accidentally deleted files with ease.</value>
+      <value>Odzyskaj przypadkowo usunięte pliki z łatwością.</value>
   </data>
   <data name="PlusVaultShortcuts" xml:space="preserve">
-      <value>Vault shortcuts</value>
+      <value>Skróty sejfów</value>
   </data>
   <data name="PlusVaultShortcutsDescription" xml:space="preserve">
-      <value>Jump straight into any vault from a desktop shortcut.</value>
+      <value>Skocz bezpośrednio do dowolnego sejfu z pulpitu.</value>
   </data>
   <data name="PlusSupportDevelopment" xml:space="preserve">
-      <value>Achieve full potential · Supports independent development</value>
+      <value>Osiągnij pełny potencjał · Wspieranie niezależnego rozwoju</value>
   </data>
   <data name="AcceptFirstSsl" xml:space="preserve">
-      <value>Accept first SSL certificate</value>
+      <value>Akceptuj pierwszy certyfikat SSL</value>
   </data>
   <data name="ManualSslCertificate" xml:space="preserve">
-      <value>Manual certificate fingerprint (SHA-256)</value>
+      <value>Ręczny odcisk certyfikatu (SHA-256)</value>
   </data>
   <data name="SearchIn" xml:space="preserve">
-      <value>Search in: {0}</value>
+      <value>Szukaj w: {0}</value>
   </data>
   <data name="RootFolder" xml:space="preserve">
-      <value>Root folder</value>
+      <value>Folder główny</value>
   </data>
   <data name="CollectingItemsInProgress" xml:space="preserve">
-      <value>Items are being collected</value>
+      <value>Elementy są gromadzone</value>
   </data>
   <data name="CollectingItems" xml:space="preserve">
-      <value>Collecting items...</value>
+      <value>Gromadzenie elementów...</value>
   </data>
   <data name="CollectingItemsCount" xml:space="preserve">
-      <value>Collecting items ({0})</value>
+      <value>Gromadzenie elementów ({0})</value>
   </data>
   <data name="CollectedCountItems" xml:space="preserve">
-      <value>Collected {0} items</value>
+      <value>Zgromadzono {0} elementów</value>
   </data>
   <data name="ScanCompleted" xml:space="preserve">
-      <value>Scan completed</value>
+      <value>Skanowanie zakończone</value>
   </data>
   <data name="ScanningItems" xml:space="preserve">
-      <value>Scanning items</value>
+      <value>Skanowanie elementów</value>
   </data>
   <data name="ScanningItemsCount" xml:space="preserve">
-      <value>Scanning items {0} of {1}</value>
+      <value>Skanowanie elementów {0} z {1}</value>
   </data>
   <data name="ScannedCount" xml:space="preserve">
-      <value>Scanned {0} out of {1}</value>
+      <value>Zeskanowano {0} z {1}</value>
   </data>
   <data name="PerformIntegrityCheck" xml:space="preserve">
-      <value>Perform integrity check</value>
+      <value>Wykonaj sprawdzenie integralności</value>
+  </data>
+  <data name="Gallery" xml:space="preserve">
+      <value>Galeria</value>
+  </data>
+  <data name="EncryptedFile" xml:space="preserve">
+      <value>Zaszyfrowany plik</value>
+  </data>
+  <data name="VirtualFile" xml:space="preserve">
+      <value>Plik wirtualny</value>
+  </data>
+  <data name="VirtualFileName" xml:space="preserve">
+      <value>Wakacje.jpeg</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+      <value>Ścieżka</value>
+  </data>
+  <data name="EncryptedPath" xml:space="preserve">
+      <value>Zaszyfrowana ścieżka</value>
+  </data>
+  <data name="SourceLocalStorageDescription" xml:space="preserve">
+      <value>Przeglądaj foldery pamięci lokalnej</value>
+  </data>
+  <data name="SourceThisDevice" xml:space="preserve">
+      <value>Na tym urządzeniu</value>
+  </data>
+  <data name="SourceCloudAndRemote" xml:space="preserve">
+      <value>Chmura &amp; Źródła zdalne</value>
+  </data>
+  <data name="ChooseNewVaultMode" xml:space="preserve">
+      <value>Wybierz sposób dodawania nowego sejfu.</value>
+  </data>
+  <data name="EndToEndBadge" xml:space="preserve">
+      <value>Poświadczenia są szyfrowane end-to-end.</value>
+  </data>
+  <data name="DeviceLinkSourceDesktop" xml:space="preserve">
+      <value>Komputer</value>
+  </data>
+  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+      <value>To urządzenie</value>
+  </data>
+  <data name="FileInformation" xml:space="preserve">
+      <value>Informacje o pliku</value>
+  </data>
+  <data name="FolderInformation" xml:space="preserve">
+      <value>Informacje o folderze</value>
+  </data>
+  <data name="Encrypted" xml:space="preserve">
+      <value>Zaszyfrowane</value>
+  </data>
+  <data name="Decrypted" xml:space="preserve">
+      <value>Odszyfrowane</value>
+  </data>
+  <data name="ItemAlreadyExists" xml:space="preserve">
+      <value>Element o tej samej nazwie już istnieje</value>
+  </data>
+  <data name="TapToLockAll" xml:space="preserve">
+      <value>Dotknij, aby zablokować wszystkie sejfy</value>
+  </data>
+  <data name="OneVaultIsUnlocked" xml:space="preserve">
+      <value>Jeden sejf jest odblokowany</value>
+  </data>
+  <data name="MultipleVaultsAreUnlocked" xml:space="preserve">
+      <value>Odblokowane sejfy ({0})</value>
+  </data>
+  <data name="ViewInApp" xml:space="preserve">
+      <value>Zobacz w aplikacji</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+      <value>Wyjdź</value>
   </data>
 </root>
