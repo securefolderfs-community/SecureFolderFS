@@ -70,7 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
             await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);
             if (!string.IsNullOrEmpty(configuredOptions.VaultId))
-                PersistedCredentialsModel.Instance.Credentials.Remove(configuredOptions.VaultId);
+                PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

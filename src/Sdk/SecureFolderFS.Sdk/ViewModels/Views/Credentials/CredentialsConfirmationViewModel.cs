@@ -106,7 +106,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             }, cancellationToken);
 
             if (!string.IsNullOrEmpty(configuredOptions.VaultId))
-                PersistedCredentialsModel.Instance.Credentials.Remove(configuredOptions.VaultId);
+                PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
 
             // Revoke (invalidate) old configured credentials if those are different from newly configured ones.
             // If both are the same, the authentication method should override the old ones; otherwise we would be deleting

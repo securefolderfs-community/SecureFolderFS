@@ -174,7 +174,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
                 if (!string.IsNullOrEmpty(vaultOptions.VaultId))
                 {
-                    PersistedCredentialsModel.Instance.Credentials.Remove(vaultOptions.VaultId);
+                    PersistedCredentialsModel.Instance.Remove(vaultOptions.VaultId);
                     AreCredentialsSaved = false;
 
                     _loginSequence?.Dispose();
@@ -184,8 +184,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     RestartLoginProcess();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
             }
         }
 
@@ -215,7 +216,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (_loginViewMode is LoginViewType.Full or LoginViewType.Constrained && ShouldSaveCredentials && !AreCredentialsSaved)
                 {
                     var keySequenceCopy = KeySequence.Key.ToArray();
-                    PersistedCredentialsModel.Instance.Credentials[_vaultOptions.VaultId] = SecureKey.TakeOwnership(keySequenceCopy);
+                    PersistedCredentialsModel.Instance.SetOrAdd(_vaultOptions.VaultId, SecureKey.TakeOwnership(keySequenceCopy));
                 }
 
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, false));

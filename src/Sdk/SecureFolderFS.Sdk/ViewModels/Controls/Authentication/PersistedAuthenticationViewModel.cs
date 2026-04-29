@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         {
             if (!PersistedCredentialsModel.Instance.Credentials.TryGetValue(_vaultId, out var credentials))
             {
-                PersistedCredentialsModel.Instance.Credentials.Remove(_vaultId);
+                PersistedCredentialsModel.Instance.Remove(_vaultId);
                 credentials = ManagedKey.Empty;
             }
 

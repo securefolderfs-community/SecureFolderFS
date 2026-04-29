@@ -99,7 +99,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 
             // Persist last scanned date, and severity
             var serialized = await StreamSerializer.Instance.TrySerializeToStringAsync(new HealthDataModel(lastScanDate, HealthViewModel.Severity)).ConfigureAwait(false);
-            await WidgetModel.SetWidgetDataAsync(serialized).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(serialized))
+                await WidgetModel.SetWidgetDataAsync(serialized).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
