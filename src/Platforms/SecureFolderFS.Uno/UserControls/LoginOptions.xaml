@@ -8,7 +8,6 @@
     mc:Ignorable="d">
 
     <HyperlinkButton
-        x:Name="LoginOptionsButton"
         Padding="4,2"
         HorizontalAlignment="Center"
         Click="LoginOptions_Click"
@@ -20,9 +19,12 @@
                     <CheckBox
                         Content="{l:ResourceString Rid=SaveCredentials}"
                         IsChecked="{x:Bind ShouldSaveCredentials, Mode=TwoWay}"
-                        IsEnabled="False" />
+                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
 
-                    <!--  TODO(uno): #18589  -->
+                    <Button
+                        Command="{x:Bind DiscardSavedCredentialsCommand, Mode=OneWay}"
+                        Content="{l:ResourceString Rid=DiscardSavedCredentials}"
+                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <Button
                         Command="{x:Bind RestartLoginCommand, Mode=OneWay}"
                         Content="{l:ResourceString Rid=RestartLogin}"

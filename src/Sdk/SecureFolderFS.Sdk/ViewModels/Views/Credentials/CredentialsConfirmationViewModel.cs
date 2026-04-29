@@ -1,6 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
@@ -11,11 +17,6 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -104,9 +105,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 UnlockProcedure = unlockProcedure
             }, cancellationToken);
 
+            if (!string.IsNullOrEmpty(configuredOptions.VaultId))
+                PersistedCredentialsModel.Instance.Credentials.Remove(configuredOptions.VaultId);
+
             // Revoke (invalidate) old configured credentials if those are different from newly configured ones.
             // If both are the same, the authentication method should override the old ones; otherwise we would be deleting
-            // the reconfigured ones essentially breaking the vault!
+            // the reconfigured ones, essentially breaking the vault!
             if (RegisterViewModel.CurrentViewModel is not null
                 && ConfiguredViewModel is not null
                 && !RegisterViewModel.CurrentViewModel.Id.Equals(ConfiguredViewModel.Id))

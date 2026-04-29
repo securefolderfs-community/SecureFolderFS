@@ -183,6 +183,22 @@
             </StackPanel>
         </DataTemplate>
 
+        <!--  Persisted Template  -->
+        <DataTemplate x:Key="PersistedAuthenticationTemplate" x:DataType="vm5:PersistedAuthenticationViewModel">
+            <StackPanel Spacing="16">
+                <TextBlock HorizontalAlignment="Center" Text="Credentials have been saved for this vault" />
+
+                <!--  Continue  -->
+                <Button
+                    Margin="0,30,0,0"
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Unlock}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm5:ErrorViewModel">
             <uc:ErrorControl
@@ -218,6 +234,7 @@
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 MigrationTemplate="{StaticResource MigrationTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
+                PersistedAuthenticationTemplate="{StaticResource PersistedAuthenticationTemplate}"
                 UnsupportedTemplate="{StaticResource UnsupportedTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
                 YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />

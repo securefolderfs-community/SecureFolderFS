@@ -3,11 +3,11 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.Cryptography.UnsafeNative;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.PInvoke;
 using static SecureFolderFS.Shared.SharedConfiguration;
 
-namespace SecureFolderFS.Core.Cryptography.SecureStore
+namespace SecureFolderFS.Shared.SecureStore
 {
     /// <summary>
     /// A secure key implementation that protects key material in memory.
@@ -408,7 +408,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             // The buffer is already pinned (allocated on POH), so we can safely get its address
             fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.VirtualLock((nint)ptr, (nuint)buffer.Length);
+                return UnsafeNative.VirtualLock((nint)ptr, (nuint)buffer.Length);
             }
         }
 
@@ -417,7 +417,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         {
             fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.VirtualUnlock((nint)ptr, (nuint)buffer.Length);
+                return UnsafeNative.VirtualUnlock((nint)ptr, (nuint)buffer.Length);
             }
         }
 
@@ -433,7 +433,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
             // The buffer is already pinned (allocated on POH), so we can safely get its address
             fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.mlock((nint)ptr, (nuint)buffer.Length) == 0;
+                return UnsafeNative.mlock((nint)ptr, (nuint)buffer.Length) == 0;
             }
         }
 
@@ -443,7 +443,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         {
             fixed (byte* ptr = buffer)
             {
-                return UnsafeNativeApis.munlock((nint)ptr, (nuint)buffer.Length) == 0;
+                return UnsafeNative.munlock((nint)ptr, (nuint)buffer.Length) == 0;
             }
         }
 

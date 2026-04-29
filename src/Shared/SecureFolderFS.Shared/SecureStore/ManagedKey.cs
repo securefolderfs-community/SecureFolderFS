@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Security.Cryptography;
 using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Core.Cryptography.SecureStore
+namespace SecureFolderFS.Shared.SecureStore
 {
     /// <inheritdoc cref="IKeyBytes"/>
     public sealed class ManagedKey : IKeyBytes, ICloneable

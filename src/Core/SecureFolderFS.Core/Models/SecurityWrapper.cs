@@ -1,11 +1,10 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.Models
 {

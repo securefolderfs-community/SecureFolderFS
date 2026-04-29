@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
@@ -12,14 +16,10 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultManagerService>]
+    [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultManagerService>, Inject<IVaultService>]
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseDesignationViewModel, IVaultViewContext, INavigatable, IAsyncInitialize, IDisposable
     {
@@ -28,7 +28,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _IsConnected;
         [ObservableProperty] private bool _IsProgressing;
-        [ObservableProperty] private bool _ShouldSaveCredentials;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
@@ -72,7 +71,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             #region Test for quick unlock on mobile
 #if DEBUG
-
             if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
                 return;
 
@@ -91,7 +89,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             var unlockContract = await VaultManagerService.RecoverAsync(vaultFolder, recoveryKey, cancellationToken);
             await Task.Delay(200);
             await UnlockAsync(unlockContract);
-
 #endif
            #endregion
         }

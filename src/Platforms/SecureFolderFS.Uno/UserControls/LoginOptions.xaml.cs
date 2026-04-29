@@ -27,6 +27,14 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty ShouldSaveCredentialsProperty =
             DependencyProperty.Register(nameof(ShouldSaveCredentials), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
+        
+        public bool AreCredentialsSaved
+        {
+            get => (bool)GetValue(AreCredentialsSavedProperty);
+            set => SetValue(AreCredentialsSavedProperty, value);
+        }
+        public static readonly DependencyProperty AreCredentialsSavedProperty =
+            DependencyProperty.Register(nameof(AreCredentialsSaved), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
 
         public bool IsReadOnly
         {
@@ -44,6 +52,14 @@ namespace SecureFolderFS.Uno.UserControls
         public static readonly DependencyProperty IsLoginSequenceProperty =
             DependencyProperty.Register(nameof(IsLoginSequence), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
 
+        public ICommand? DiscardSavedCredentialsCommand
+        {
+            get => (ICommand?)GetValue(DiscardSavedCredentialsCommandProperty);
+            set => SetValue(DiscardSavedCredentialsCommandProperty, value);
+        }
+        public static readonly DependencyProperty DiscardSavedCredentialsCommandProperty =
+            DependencyProperty.Register(nameof(DiscardSavedCredentialsCommand), typeof(ICommand), typeof(LoginOptions), new PropertyMetadata(null));
+        
         public ICommand? RestartLoginCommand
         {
             get => (ICommand?)GetValue(RestartLoginCommandProperty);

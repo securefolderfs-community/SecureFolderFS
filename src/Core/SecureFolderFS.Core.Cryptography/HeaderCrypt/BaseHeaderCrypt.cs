@@ -1,6 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
-using System.Security.Cryptography;
+﻿using System;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt

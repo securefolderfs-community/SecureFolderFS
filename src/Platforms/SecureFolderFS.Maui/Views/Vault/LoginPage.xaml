@@ -56,7 +56,7 @@
                             FontSize="22"
                             HorizontalOptions="Center"
                             HorizontalTextAlignment="Center"
-                            Text="{l:ResourceString Rid=VaultLocked}" />
+                            Text="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:localize|VaultLocked:true:localize|VaultUnlocked'}" />
                     </VerticalStackLayout>
 
                     <!--  Remote connection progress indicator  -->
@@ -91,14 +91,17 @@
                 <uco:OptionsContainer VerticalOptions="End">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
-                            <uco:OptionsControl Title="{l:ResourceString Rid=UnlockAsReadOnly}">
+                            <uco:OptionsControl Title="{l:ResourceString Rid=UnlockAsReadOnly}" IsSeparatorVisible="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
                                 <uco:OptionsControl.Slot>
                                     <Switch IsToggled="{Binding ViewModel.IsReadOnly, Mode=TwoWay}" />
                                 </uco:OptionsControl.Slot>
                             </uco:OptionsControl>
-                            <uco:OptionsControl Title="{l:ResourceString Rid=SaveCredentials}" IsSeparatorVisible="False">
+                            <uco:OptionsControl
+                                Title="{l:ResourceString Rid=SaveCredentials}"
+                                IsSeparatorVisible="False"
+                                IsVisible="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
                                 <uco:OptionsControl.Slot>
-                                    <Switch IsToggled="{Binding ViewModel.ShouldSaveCredentials, Mode=TwoWay}" />
+                                    <Switch IsToggled="{Binding ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}" />
                                 </uco:OptionsControl.Slot>
                             </uco:OptionsControl>
                         </VerticalStackLayout>
