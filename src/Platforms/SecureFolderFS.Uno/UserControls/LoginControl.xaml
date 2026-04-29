@@ -186,7 +186,8 @@
         <!--  Persisted Template  -->
         <DataTemplate x:Key="PersistedAuthenticationTemplate" x:DataType="vm5:PersistedAuthenticationViewModel">
             <StackPanel Spacing="16">
-                <TextBlock HorizontalAlignment="Center" Text="Credentials have been saved for this vault" />
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=CredentialsHaveBeenSaved}" />
 
                 <!--  Continue  -->
                 <Button

@@ -30,7 +30,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
         [ObservableProperty] private UnlockedVaultViewModel? _UnlockedVaultViewModel;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
-        [ObservableProperty] private bool _ShouldSaveCredentials;
         [ObservableProperty] private bool _IsReadOnly;
 
         public VaultPreviewViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)

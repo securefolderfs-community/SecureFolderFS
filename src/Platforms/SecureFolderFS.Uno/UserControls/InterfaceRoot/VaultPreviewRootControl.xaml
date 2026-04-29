@@ -51,10 +51,12 @@
                 <StackPanel VerticalAlignment="Center" Spacing="8">
                     <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <uc:LoginOptions
+                        AreCredentialsSaved="{x:Bind ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
+                        DiscardSavedCredentialsCommand="{x:Bind ViewModel.LoginViewModel.DiscardSavedCredentialsCommand, Mode=OneWay}"
                         IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
                         RecoverAccessCommand="{x:Bind ViewModel.RecoverAccessCommand, Mode=OneWay}"
                         RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                        ShouldSaveCredentials="{x:Bind ViewModel.ShouldSaveCredentials, Mode=TwoWay}"
+                        ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
                 </StackPanel>
             </StackPanel>

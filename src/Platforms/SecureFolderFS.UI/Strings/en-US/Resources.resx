@@ -1448,4 +1448,10 @@
   <data name="FileModified" xml:space="preserve">
       <value>Modified</value>
   </data>
+  <data name="CredentialsHaveBeenSaved" xml:space="preserve">
+      <value>Credentials have been saved for this vault</value>
+  </data>
+  <data name="DiscardSavedCredentials" xml:space="preserve">
+      <value>Discard saved credentials</value>
+  </data>
 </root>
