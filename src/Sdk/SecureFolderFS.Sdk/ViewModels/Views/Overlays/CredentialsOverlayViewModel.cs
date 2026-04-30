@@ -99,8 +99,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
                 // Seed the register sequence with the already-authenticated first-stage key
                 // so that when a second-stage method is added, the combined passkey is complete
-                foreach (var key in _loginKeySequence.Keys)
-                    _registerKeySequence.SetOrAdd(0, key); // First-stage lives at index 0
+                var firstStageKey = _loginKeySequence.Keys.FirstOrDefault();
+                if (firstStageKey is not null)
+                    _registerKeySequence.SetOrAdd(0, firstStageKey); // First-stage lives at index 0
 
                 SelectionViewModel.RegisterViewModel = RegisterViewModel;
                 SelectedViewModel = SelectionViewModel;
@@ -130,6 +131,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             (SelectedViewModel as IDisposable)?.Dispose();
             SelectionViewModel.Dispose();
             LoginViewModel.Dispose();
+            RegisterViewModel.Dispose();
             _loginKeySequence.Dispose();
             _registerKeySequence.Dispose();
         }
