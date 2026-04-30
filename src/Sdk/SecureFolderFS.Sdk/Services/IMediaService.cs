@@ -47,6 +47,14 @@ namespace SecureFolderFS.Sdk.Services
         Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Streams audio file, providing a disposable resource for the audio stream.
+        /// </summary>
+        /// <param name="file">The audio file to be streamed.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an <see cref="IDisposable"/> instance used to control the audio stream's lifecycle.</returns>
+        Task<IDisposable> StreamAudioAsync(IFile file, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Generates a thumbnail for the given file based on its type and returns an image stream.
         /// </summary>
         /// <param name="file">The <see cref="IFile"/> to generate the thumbnail for.</param>

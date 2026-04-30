@@ -96,7 +96,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 TemplateSelector = new PreviewerTemplateSelector()
                 {
                     ImageTemplate = Resources["ImageTemplate"] as DataTemplate,
-                    VideoTemplate = Resources["VideoTemplate"] as DataTemplate
+                    VideoTemplate = Resources["VideoTemplate"] as DataTemplate,
+                    AudioTemplate = Resources["AudioTemplate"] as DataTemplate
                 }
             };
             presentation.Loaded += Presentation_Loaded;
@@ -134,10 +135,28 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
         private void MediaPlayerElement_Loaded(object? sender, EventArgs e)
         {
-            if (sender is not MediaPlayerElement { BindingContext: VideoPreviewerViewModel videoViewModel } mediaPlayerElement)
+            if (sender is not MediaPlayerElement mediaPlayerElement)
                 return;
 
-            if (videoViewModel.VideoSource is not ICollection<IDisposable> disposables || disposables.ElementAtOrDefault(0) is not Stream stream)
+            Stream stream;
+            ICollection<IDisposable> disposables;
+            if (mediaPlayerElement.BindingContext is VideoPreviewerViewModel videoViewModel)
+            {
+                if (videoViewModel.VideoSource is not ICollection<IDisposable> videoDisposables || videoDisposables.ElementAtOrDefault(0) is not Stream videoStream)
+                    return;
+
+                disposables = videoDisposables;
+                stream = videoStream;
+            }
+            else if (mediaPlayerElement.BindingContext is AudioPreviewerViewModel audioViewModel)
+            {
+                if (audioViewModel.AudioSource is not ICollection<IDisposable> audioDisposables || audioDisposables.ElementAtOrDefault(0) is not Stream audioStream)
+                    return;
+                
+                disposables = audioDisposables;
+                stream = audioStream;
+            }
+            else
                 return;
 
             var existingMediaPlayer = disposables.OfType<LibVLCSharp.Shared.MediaPlayer>().FirstOrDefault();

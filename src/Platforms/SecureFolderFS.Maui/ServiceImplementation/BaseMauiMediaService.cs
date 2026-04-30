@@ -58,7 +58,14 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         public virtual async Task<IDisposable> StreamVideoAsync(IFile file, CancellationToken cancellationToken)
         {
             var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            return new AggregatedDisposable([stream]);
+            return new AggregatedDisposable([ stream ]);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IDisposable> StreamAudioAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            return new AggregatedDisposable([ stream ]);
         }
 
         /// <inheritdoc/>
