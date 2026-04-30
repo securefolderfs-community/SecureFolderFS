@@ -1,6 +1,4 @@
-using System;
 using System.Text;
-using System.Threading;
 using FluentAssertions;
 using NUnit.Framework;
 using OwlCore.Storage;
@@ -40,7 +38,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             var cacheHits = 0;
             var cacheMisses = 0;
-            _storageRoot.Options.FileSystemStatistics.ChunkCache = new InlineProgress<CacheAccessType>(x =>
+            _storageRoot.Options.FileSystemStatistics.ChunkCache = new Progress<CacheAccessType>(x =>
             {
                 if (x == CacheAccessType.CacheHit)
                     Interlocked.Increment(ref cacheHits);
@@ -61,24 +59,12 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var buffer = new byte[stream.Length];
             var read = await stream.ReadAsync(buffer);
 
-            Console.WriteLine($"Cache Hits: {cacheHits}");
-            Console.WriteLine($"Cache Misses: {cacheMisses}");
+            Console.WriteLine($@"Cache Hits: {cacheHits}");
+            Console.WriteLine($@"Cache Misses: {cacheMisses}");
 
             read.Should().Be((int)stream.Length);
             Encoding.UTF8.GetString(buffer).Should().BeEquivalentTo(dataString + dataString);
             cacheMisses.Should().Be(1);
-        }
-
-        private sealed class InlineProgress<T> : IProgress<T>
-        {
-            private readonly Action<T> _handler;
-
-            public InlineProgress(Action<T> handler)
-            {
-                _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-            }
-
-            public void Report(T value) => _handler(value);
         }
     }
 }
