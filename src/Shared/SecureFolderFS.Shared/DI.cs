@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace SecureFolderFS.Shared
 {
@@ -18,6 +19,17 @@ namespace SecureFolderFS.Shared
         /// Gets the value that indicates whether the <see cref="IServiceProvider"/> is ready to be used.
         /// </summary>
         public bool IsAvailable => _serviceProvider is not null;
+
+        /// <summary>
+        /// Retrieves a logger instance for the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type for which the logger is created.</typeparam>
+        /// <returns>An <see cref="ILogger{T}"/> instance for the specified type.</returns>
+        public ILogger<T> GetLogger<T>()
+            where T : class
+        {
+            return GetService<ILoggerFactory>().CreateLogger<T>();
+        }
 
         /// <inheritdoc/>
         public object? GetService(Type serviceType)
@@ -51,6 +63,17 @@ namespace SecureFolderFS.Shared
                 return null;
 
             return GetService<T>();
+        }
+
+        /// <summary>
+        /// Retrieves a logger instance for the specified type using the default service provider.
+        /// </summary>
+        /// <typeparam name="T">The type for which the logger is created.</typeparam>
+        /// <returns>An <see cref="ILogger{T}"/> instance for the specified type.</returns>
+        public static ILogger<T> Logger<T>()
+            where T : class
+        {
+            return Default.GetLogger<T>();
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.UserControls
     {
         private bool _isBackShown;
 
-        public event RoutedEventHandler Click;
+        public event RoutedEventHandler? Click;
 
         public BackButtonTitleControl()
         {

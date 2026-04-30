@@ -31,7 +31,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         private readonly List<IViewable> _views;
         private readonly INavigation _sourceNavigation;
         private readonly TaskCompletionSource<IResult> _modalTcs;
-        private IStagingView? _previousView;
+        private IViewDesignation? _previousView;
 
         public MainWizardViewModel? ViewModel { get; private set; }
 
@@ -286,7 +286,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                     return;
 
                 _previousView = OverlayViewModel.CurrentViewModel;
-                OverlayViewModel.CurrentViewModel = nextViewModel as IStagingView;
+                OverlayViewModel.CurrentViewModel = nextViewModel as IViewDesignation;
 
                 await Navigation.PushAsync(page, true);
                 e.TaskCompletion?.TrySetResult(true);

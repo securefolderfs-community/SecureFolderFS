@@ -8,11 +8,13 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 {
     public sealed partial class OnDeviceWinFsp
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetCiphertextPath(string plaintextName)
         {
             return NativePathHelpers.GetCiphertextPath(plaintextName, _specifics);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsDirectory(string ciphertextPath)
         {
             return Directory.Exists(ciphertextPath) && !File.Exists(ciphertextPath);
@@ -71,8 +73,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             if ((createOptions & FILE_RANDOM_ACCESS) != 0)
                 options |= FileOptions.RandomAccess;
 
-            if ((createOptions & FILE_DELETE_ON_CLOSE) != 0)
-                options |= FileOptions.DeleteOnClose;
+            // Never handle FILE_DELETE_ON_CLOSE
+            // WinFsp already tracks the delete disposition and will call Cleanup with CleanupDelete
 
             return options;
         }
@@ -82,7 +84,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 #if !DEBUG
             return status;
 #endif
-            if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
+            if (!FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return status;
 
             if (!Debugger.IsAttached)

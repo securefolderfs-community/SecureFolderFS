@@ -15,64 +15,75 @@
     Shell.PresentationMode="ModalAnimated">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            Spacing="24">
-
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <Label
-                FontSize="15"
-                Opacity="0.55"
-                Text="Choose an option to add a new vault" />
+                FontSize="16"
+                Opacity="0.6"
+                Text="{l:ResourceString Rid=ChooseNewVaultMode}" />
 
-            <VerticalStackLayout Spacing="8">
+            <VerticalStackLayout Spacing="10">
 
                 <!--  Add Existing  -->
-                <Border
-                    Background="{StaticResource ThemeSecondaryColorBrush}"
-                    HeightRequest="80"
-                    StrokeThickness="0">
+                <Border StrokeThickness="0">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="14" />
                     </Border.StrokeShape>
+
+                    <!--  Content  -->
                     <Grid
-                        Padding="20,0"
+                        Padding="16,14"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         ColumnDefinitions="Auto,*,Auto"
                         ColumnSpacing="14">
+
                         <Border
                             Grid.Column="0"
-                            Background="{StaticResource ThemePrimaryColorBrush}"
-                            HeightRequest="40"
+                            Background="{StaticResource ThemeSecondaryColorBrush}"
+                            HeightRequest="42"
                             StrokeThickness="0"
-                            WidthRequest="40">
+                            VerticalOptions="Center"
+                            WidthRequest="42">
                             <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="10" />
+                                <RoundRectangle CornerRadius="11" />
                             </Border.StrokeShape>
                             <Grid>
                                 <mi:MauiIcon
                                     HorizontalOptions="Center"
                                     Icon="{mi_material:Material Create}"
-                                    IconColor="White"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}"
                                     IconSize="20"
                                     OnPlatforms="Android"
                                     VerticalOptions="Center" />
                                 <mi:MauiIcon
                                     HorizontalOptions="Center"
                                     Icon="{mi_cupertino:Cupertino PlusCircle}"
-                                    IconColor="White"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}"
                                     IconSize="20"
                                     OnPlatforms="iOS"
                                     VerticalOptions="Center" />
                             </Grid>
                         </Border>
-                        <Label
+
+                        <VerticalStackLayout
                             Grid.Column="1"
-                            FontAttributes="Bold"
-                            FontSize="16"
-                            Text="{l:ResourceString Rid=AddExisting}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
-                            VerticalOptions="Center" />
+                            Spacing="3"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="{l:ResourceString Rid=AddExisting}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                            Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=AddExistingVaultDescription}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                            Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                        </VerticalStackLayout>
+
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_material:Material ChevronRight}"
@@ -89,6 +100,7 @@
                             IconSize="18"
                             OnPlatforms="iOS"
                             VerticalOptions="Center" />
+
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="Existing_Clicked" />
                         </Grid.GestureRecognizers>
@@ -96,52 +108,66 @@
                 </Border>
 
                 <!--  Create New  -->
-                <Border
-                    Background="{StaticResource ThemeSecondaryColorBrush}"
-                    HeightRequest="80"
-                    StrokeThickness="0">
+                <Border StrokeThickness="0">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="14" />
                     </Border.StrokeShape>
+
+                    <!--  Content  -->
                     <Grid
-                        Padding="20,0"
+                        Padding="16,14"
+                        Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
                         ColumnDefinitions="Auto,*,Auto"
                         ColumnSpacing="14">
+
                         <Border
                             Grid.Column="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                              Dark={StaticResource PrimaryDarkColor}}"
-                            HeightRequest="40"
+                            HeightRequest="42"
                             StrokeThickness="0"
-                            WidthRequest="40">
+                            VerticalOptions="Center"
+                            WidthRequest="42">
+                            <Border.Background>
+                                <SolidColorBrush Color="{AppThemeBinding Light=#E1F5EE, Dark=#085041}" />
+                            </Border.Background>
                             <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="10" />
+                                <RoundRectangle CornerRadius="11" />
                             </Border.StrokeShape>
                             <Grid>
                                 <mi:MauiIcon
                                     HorizontalOptions="Center"
                                     Icon="{mi_material:Material CreateNewFolder}"
-                                    IconColor="White"
+                                    IconColor="#0F6E56"
                                     IconSize="20"
                                     OnPlatforms="Android"
                                     VerticalOptions="Center" />
                                 <mi:MauiIcon
                                     HorizontalOptions="Center"
                                     Icon="{mi_cupertino:Cupertino Pencil}"
-                                    IconColor="White"
+                                    IconColor="#0F6E56"
                                     IconSize="20"
                                     OnPlatforms="iOS"
                                     VerticalOptions="Center" />
                             </Grid>
                         </Border>
-                        <Label
+
+                        <VerticalStackLayout
                             Grid.Column="1"
-                            FontAttributes="Bold"
-                            FontSize="16"
-                            Text="{l:ResourceString Rid=CreateNew}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
-                                                        Dark={StaticResource PrimaryContrastingDarkColor}}"
-                            VerticalOptions="Center" />
+                            Spacing="3"
+                            VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="15"
+                                Text="{l:ResourceString Rid=CreateNew}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                            Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=CreateNewVaultDescription}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
+                                                            Dark={StaticResource PrimaryContrastingDarkColor}}" />
+                        </VerticalStackLayout>
+
                         <mi:MauiIcon
                             Grid.Column="2"
                             Icon="{mi_material:Material ChevronRight}"
@@ -158,12 +184,12 @@
                             IconSize="18"
                             OnPlatforms="iOS"
                             VerticalOptions="Center" />
+
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="New_Clicked" />
                         </Grid.GestureRecognizers>
                     </Grid>
                 </Border>
-
             </VerticalStackLayout>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>

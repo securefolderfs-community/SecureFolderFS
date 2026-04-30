@@ -9,25 +9,83 @@
     <Grid
         x:DataType="local:AggregatedDataWidget"
         BindingContext="{x:Reference RootControl}"
-        ColumnSpacing="16">
+        ColumnSpacing="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <VerticalStackLayout Grid.Column="0">
-            <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalRead}" />
-            <Label
-                FontAttributes="Bold"
-                FontSize="22"
-                Text="{Binding TotalRead, Mode=OneWay}" />
-        </VerticalStackLayout>
-        <VerticalStackLayout Grid.Column="1">
-            <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalWrite}" />
-            <Label
-                FontAttributes="Bold"
-                FontSize="22"
-                Text="{Binding TotalWrite, Mode=OneWay}" />
-        </VerticalStackLayout>
+        <!--  Total Read  -->
+        <Border
+            Grid.Column="0"
+            Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+            Stroke="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+            StrokeThickness="1">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Grid Padding="12" ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label
+                        FontSize="12"
+                        Opacity="0.6"
+                        Text="{l:ResourceString Rid=TotalRead}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="{Binding TotalRead, Mode=OneWay}" />
+                </VerticalStackLayout>
+
+                <Ellipse
+                    x:Name="ReadEllipsis"
+                    Grid.Column="1"
+                    Background="Orange"
+                    HeightRequest="8"
+                    Opacity="0"
+                    WidthRequest="8" />
+            </Grid>
+        </Border>
+
+        <!--  Total Write  -->
+        <Border
+            Grid.Column="1"
+            Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+            Stroke="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+            StrokeThickness="1">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Grid Padding="12" ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label
+                        FontSize="12"
+                        Opacity="0.6"
+                        Text="{l:ResourceString Rid=TotalWrite}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="{Binding TotalWrite, Mode=OneWay}" />
+                </VerticalStackLayout>
+
+                <Ellipse
+                    x:Name="WriteEllipsis"
+                    Grid.Column="1"
+                    Background="Orange"
+                    HeightRequest="8"
+                    Opacity="0"
+                    WidthRequest="8" />
+            </Grid>
+        </Border>
+
     </Grid>
 </ContentView>

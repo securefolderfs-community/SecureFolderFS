@@ -11,6 +11,13 @@ namespace SecureFolderFS.Shared.Extensions
             return dictionary.TryGetValue(key, out var value) ? value : null;
         }
 
+        public static TAs? GetAs<TKey, TValue, TAs>(this IDictionary<TKey, TValue> dictionary, TKey key)
+            where TValue : class?
+            where TAs : class?
+        {
+            return dictionary.TryGetValue(key, out var value) ? value.TryCast<TAs>() : null;
+        }
+
         public static TKV? GetByKeyOrValue<TKV>(this IDictionary<TKV, TKV> dictionary, TKV tkv)
             where TKV : class
         {

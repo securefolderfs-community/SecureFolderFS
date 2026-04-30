@@ -25,7 +25,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>, IRecipient<VaultAddedMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<VaultRemovedMessage>
 #if WINDOWS
         , IRecipient<VaultSelectionRequestedMessage>
 #endif
@@ -45,18 +45,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
-        }
-
-        /// <inheritdoc/>
-        public void Receive(VaultAddedMessage message)
-        {
-#if WINDOWS
-            if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
-                && !SettingsService.AppSettings.WasBetaNotificationShown1)
-            {
-                BetaTeachingTip.IsOpen = true;
-            }
-#endif
         }
 
 #if WINDOWS
@@ -160,7 +148,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register<VaultRemovedMessage>(this);
-            WeakReferenceMessenger.Default.Register<VaultAddedMessage>(this);
 #if WINDOWS
             WeakReferenceMessenger.Default.Register<VaultSelectionRequestedMessage>(this);
 #endif
@@ -176,7 +163,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.Title?.Equals(args.ChosenSuggestion) ?? false);
             if (chosenItem is null)
                 return;
 
@@ -188,12 +175,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 await ViewModel!.VaultListViewModel.SearchViewModel.SubmitQueryAsync(sender.Text);
-        }
-
-        private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
-        {
-            SettingsService.AppSettings.WasBetaNotificationShown1 = true;
-            await SettingsService.AppSettings.TrySaveAsync();
         }
 
         #region Drag and Drop
@@ -212,17 +193,25 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             if (!e.DataView.Contains(StandardDataFormats.StorageItems))
                 return;
 
-            // We only want to get the first item
-            // as it is unlikely the user will want to add multiple vaults in batch.
-            var droppedItems = await e.DataView.GetStorageItemsAsync().AsTask();
-            var item = droppedItems.FirstOrDefault();
-            if (item is null)
-                return;
+            var deferral = e.GetDeferral();
+            try
+            {
+                // We only want to get the first item
+                // as it is unlikely the user will want to add multiple vaults in batch.
+                var droppedItems = await e.DataView.GetStorageItemsAsync().AsTask();
+                var item = droppedItems.FirstOrDefault();
+                if (item is null)
+                    return;
 
-            // Recreate as SystemFolder for best performance.
-            // The logic can be changed to handle Platform Storage Items in the future, if needed.
-            var folder = new SystemFolderEx(item.Path);
-            await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
+                // Recreate as SystemFolder for best performance.
+                // The logic can be changed to handle Platform Storage Items in the future, if needed.
+                var folder = new SystemFolderEx(item.Path);
+                await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
         }
 
         #endregion

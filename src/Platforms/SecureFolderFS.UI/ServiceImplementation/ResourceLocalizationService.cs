@@ -35,6 +35,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             "pl-PL",
             "pt-PT",
             "ro-RO",
+            "tr-TR",
             // "ru-RU",
             "uk-UA",
             "zh-CN"

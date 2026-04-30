@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                     var ct = new Span<byte>((byte*)s.ctPtr, s.ctLen);
 
                     // Encrypt
-                    AesGcm128.Encrypt(
+                    AesGcm256.Encrypt(
                         pt.GetHeaderContentKey(),
                         dekKey,
                         pt.GetHeaderNonce(),
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                     var pt = new Span<byte>((byte*)s.ptPtr, s.ptLen);
 
                     // Decrypt
-                    return AesGcm128.TryDecrypt(
+                    return AesGcm256.TryDecrypt(
                         ct.GetHeaderContentKey(),
                         dekKey,
                         ct.GetHeaderNonce(),

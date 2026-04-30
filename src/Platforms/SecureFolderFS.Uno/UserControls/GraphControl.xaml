@@ -53,7 +53,7 @@
             <lvc:CartesianChart
                 x:Name="Chart"
                 Grid.Row="2"
-                Margin="-12,8,-16,-12"
+                Margin="-24,8,0,0"
                 Padding="2"
                 x:Load="False"
                 Background="Transparent"

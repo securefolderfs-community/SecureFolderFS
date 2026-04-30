@@ -16,10 +16,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    [Inject<INavigationService>(Visibility = "public"), Inject<IOverlayService>, Inject<ISettingsService>]
+    [Inject<INavigationService>(Visibility = "public"), Inject<IOverlayService>, Inject<ISettingsService>, Inject<IIapService>]
     [Bindable(true)]
     public sealed partial class MainHostViewModel : BaseDesignationViewModel, IAsyncInitialize, IDisposable
     {
@@ -53,8 +54,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task OpenVaultCredentialsAsync()
+        private async Task OpenDeviceLinkAsync(CancellationToken cancellationToken)
         {
+            // Check Iap Plus requirement
+            if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            {
+                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
+                if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                    return;
+            }
+
             await OverlayService.ShowAsync(DeviceLinkCredentialsOverlayViewModel.Instance);
         }
 

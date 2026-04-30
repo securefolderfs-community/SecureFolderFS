@@ -63,7 +63,7 @@ namespace SecureFolderFS.Uno.UserControls
                     DataPadding = new(0.5f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(0),
                     IsHoverable = false,
-                    GeometrySize = 0d // TODO: Setting this to 0 causes a bug with jumping line series
+                    GeometrySize = 0d // TODO: Setting this to any value other than 0 causes a bug with jumping line series
                 }
             ];
             chart.XAxes =

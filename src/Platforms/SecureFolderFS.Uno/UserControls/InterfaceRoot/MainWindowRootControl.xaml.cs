@@ -48,7 +48,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         public MainWindowRootControl(MainViewModel mainViewModel)
         {
             InitializeComponent();
-            App.Instance.MainWindowSynchronizationContext = SynchronizationContext.Current;
+            App.Instance?.MainWindowSynchronizationContext = SynchronizationContext.Current;
             ViewModel = mainViewModel;
         }
 
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (OperatingSystem.IsMacCatalyst())
                 RootGrid.Margin = new(0, 37, 0, 0);
 
-            ViewModel.RootNavigationService.SetupNavigation(Navigation);
+            ViewModel?.RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
 
@@ -72,16 +72,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
             if (ViewModel is null)
                 return;
-
-            if (!VaultListMigratorHelpers.IsMigrated())
-            {
-                var file = await VaultListMigratorHelpers.TryGetVaultsFileAsync(CancellationToken.None);
-                if (file is not null)
-                {
-                    await VaultListMigratorHelpers.TryMigrateVaultsAsync(file, StreamSerializer.Instance, CancellationToken.None);
-                    VaultListMigratorHelpers.SetMigrated();
-                }
-            }
 
             // Initialize the root view model
             await ViewModel.InitAsync();
@@ -117,7 +107,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (XamlRoot is null)
+            if (ViewModel is null || XamlRoot is null)
                 return;
 
             var focusedElement = FocusManager.GetFocusedElement(XamlRoot);

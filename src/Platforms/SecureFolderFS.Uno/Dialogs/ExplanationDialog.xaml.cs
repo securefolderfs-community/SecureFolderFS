@@ -15,7 +15,7 @@ using System.Linq;
 using Windows.Media.Core;
 #endif
 
-// To learn more about WinUI, the WinUI project structure,D
+// To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.Dialogs

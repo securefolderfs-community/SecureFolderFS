@@ -1,7 +1,11 @@
+using Android.Content;
+using Android.OS;
+using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.Android.ServiceImplementation;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI;
@@ -12,8 +16,10 @@ using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionSer
 namespace SecureFolderFS.Maui.Platforms.Android.Helpers
 {
     /// <inheritdoc cref="BaseLifecycleHelper"/>
-    internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper
+    internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper, IRecipient<VaultUnlockedMessage>
     {
+        private bool _isForegroundServiceStarted;
+        
         /// <inheritdoc/>
         public override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
@@ -25,6 +31,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
+            WeakReferenceMessenger.Default.Register(this);
             return Task.CompletedTask;
         }
 
@@ -32,6 +39,26 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         public override void LogExceptionToFile(Exception? ex)
         {
             _ = ex;
+        }
+        
+        /// <inheritdoc/>
+        public async void Receive(VaultUnlockedMessage message)
+        {
+            if (_isForegroundServiceStarted || MainActivity.Instance is null)
+                return;
+            
+            // Start the vault foreground service so it's ready to receive messenger messages
+            var serviceIntent = new Intent(MainActivity.Instance, typeof(VaultForegroundService));
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                MainActivity.Instance.StartForegroundService(serviceIntent);
+            else
+                MainActivity.Instance.StartService(serviceIntent);
+
+            _isForegroundServiceStarted = true;
+            
+            // Add the initial vault
+            var foregroundService = await VaultForegroundService.GetInstanceAsync();
+            foregroundService.UnlockedVaults.Add(message.VaultModel);
         }
 
         /// <inheritdoc/>

@@ -2,6 +2,7 @@ using AVFoundation;
 using CoreGraphics;
 using CoreMedia;
 using Foundation;
+using ImageIO;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
@@ -51,37 +52,32 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             if (data is null)
                 throw new Exception("Failed to load image data.");
 
-            using var image = UIImage.LoadFromData(data);
-            if (image?.CGImage is null)
-                throw new Exception("Failed to load image.");
+            using var source = CGImageSource.FromData(data);
+            if (source is null)
+                throw new Exception("Failed to create image source.");
 
-            // Apply EXIF orientation
-            var orientedImage = image.Orientation == UIImageOrientation.Up
-                ? image
-                : UIImage.FromImage(image.CGImage, 1.0f, image.Orientation);
+            var options = new CGImageThumbnailOptions
+            {
+                MaxPixelSize = (int)maxSize,
+                ShouldAllowFloat = false,
+                CreateThumbnailWithTransform = true, // handles EXIF orientation
+                CreateThumbnailFromImageAlways = true
+            };
 
-            // Resize
-            var scale = Math.Min(maxSize / orientedImage.Size.Width, maxSize / orientedImage.Size.Height);
-            var newSize = new CGSize(orientedImage.Size.Width * scale, orientedImage.Size.Height * scale);
+            using var cgImage = source.CreateThumbnail(0, options);
+            if (cgImage is null)
+                throw new Exception("Failed to create thumbnail.");
 
-            UIGraphics.BeginImageContextWithOptions(newSize, false, 1.0f);
-            orientedImage.Draw(new CGRect(CGPoint.Empty, newSize));
-            using var resizedImage = UIGraphics.GetImageFromCurrentImageContext();
-            UIGraphics.EndImageContext();
-
-            if (resizedImage is null)
-                throw new Exception("Failed to resize image.");
-
-            // Compress to JPEG
-            using var jpegData = resizedImage.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
+            using var image = UIImage.FromImage(cgImage);
+            using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
             if (jpegData is null)
                 throw new FormatException("Failed to convert image to JPEG.");
 
-            var memoryStream = new MemoryStream();
+            var memoryStream = new MemoryStream((int)jpegData.Length);
             await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
 
-            return new ImageStream(new NonDisposableStream(memoryStream));
+            return new ImageStreamSource(new NonDisposableStream(memoryStream));
         }
 
         private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, string extension, TimeSpan captureTime)
@@ -115,10 +111,18 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 };
 
                 var actualTime = new CMTime((long)captureTime.TotalSeconds, 1);
-                var imageRef = generator.CopyCGImageAtTime(actualTime, out _, out var error);
-                if (imageRef is null || error != null)
-                    throw new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}");
+                var tcs = new TaskCompletionSource<CGImage>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var times = new[] { NSValue.FromCMTime(actualTime) };
 
+                generator.GenerateCGImagesAsynchronously(times, (_, image, _, _, error) =>
+                {
+                    if (error != null || image is null)
+                        tcs.TrySetException(new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}"));
+                    else
+                        tcs.TrySetResult(image);
+                });
+
+                using var imageRef = await tcs.Task.ConfigureAwait(false);
                 using var image = UIImage.FromImage(imageRef);
                 using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
                 if (jpegData is null)
@@ -128,7 +132,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
                 memoryStream.Position = 0L;
 
-                return new ImageStream(new NonDisposableStream(memoryStream));
+                return new ImageStreamSource(new NonDisposableStream(memoryStream));
             }
             finally
             {

@@ -1,14 +1,9 @@
-﻿<Project Sdk="Uno.Sdk">
+<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net10.0-windows10.0.26100</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
-
-    <!-- To build SecureFolderFS (Desktop) on Windows, comment net10.0-windows[...] -->
+    <TargetFrameworks>net10.0-desktop;net10.0-windows10.0.26100.0</TargetFrameworks>
 
     <!-- Uncomment if you want to explicity set a TargetFramework -->
     <!--<TargetFramework>net10.0-desktop</TargetFramework>-->
-    <!--<TargetFramework>net10.0-maccatalyst</TargetFramework>-->
     <!--<TargetFramework>net10.0-windows10.0.26100</TargetFramework>-->
   </PropertyGroup>
 
@@ -59,23 +54,6 @@
 
   <Choose>
 
-    <!-- Mac Catalyst -->
-    <When Condition="'$(TargetFramework)'=='net10.0-maccatalyst'">
-      <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
-      </ItemGroup>
-
-      <ItemGroup>
-        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
-        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
-      </ItemGroup>
-
-      <PropertyGroup>
-        <_RequiresILLinkPack>true</_RequiresILLinkPack>
-        <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
-      </PropertyGroup>
-    </When>
-
     <!-- Skia Desktop -->
     <When Condition="'$(TargetFramework)'=='net10.0-desktop'">
       <PropertyGroup>
@@ -113,11 +91,9 @@
     </When>
 
     <!-- Windows -->
-    <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100'">
+    <When Condition="'$(TargetFramework)'=='net10.0-windows10.0.26100.0'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
-        <PackageReference Include="Vanara.PInvoke.ComCtl32" />
-        <PackageReference Include="Vanara.PInvoke.Shell32" />
       </ItemGroup>
 
       <ItemGroup>
@@ -145,7 +121,6 @@
         <EnableMsixTooling>True</EnableMsixTooling>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-        <TargetFramework>$(DotNetVersion)-net10.0-windows10.0.26100</TargetFramework>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <!--<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>-->
 
@@ -164,7 +139,7 @@
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
 
         <!-- Languages -->
-        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN</AppxDefaultResourceQualifiers>
+        <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ro-RO;ms-MY;id-ID;hi-IN;zh-CN;tr-TR</AppxDefaultResourceQualifiers>
         <DefaultLanguage>en-US</DefaultLanguage>
 
         <!-- Bundle WinAppSDK binaries in SelfContained -->
@@ -358,6 +333,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Dialogs\VaultItemInfoDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -525,6 +504,7 @@
     <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\VaultItemInfoDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ConverterResources.xaml" />

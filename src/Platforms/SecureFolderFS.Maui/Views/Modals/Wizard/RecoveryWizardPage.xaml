@@ -16,10 +16,7 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            Spacing="16">
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <uc:RecoveryPreviewControl
                 ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}"
                 RecoveryKey="{Binding ViewModel.RecoveryViewModel.RecoveryKey, Mode=OneWay}"

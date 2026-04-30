@@ -396,7 +396,7 @@
     <value>隐私</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-      <value>Show in {0}</value>
+      <value>在 {0} 中显示</value>
   </data>
   <data name="CreateShortcut" xml:space="preserve">
     <value>Create shortcut file</value>
@@ -480,7 +480,7 @@
     <value>网站</value>
   </data>
   <data name="WelcomeTo" xml:space="preserve">
-    <value>Welcome to {0}</value>
+    <value>{0} 欢迎你</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>更新内容</value>
@@ -684,7 +684,7 @@
     <value>Recovery key</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>File</value>
+    <value>文件</value>
   </data>
   <data name="Folder" xml:space="preserve">
     <value>Folder</value>
@@ -711,13 +711,13 @@
     <value>View options</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>名字</value>
   </data>
   <data name="Kind" xml:space="preserve">
     <value>Kind</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>尺寸</value>
   </data>
   <data name="ListViewLayout" xml:space="preserve">
     <value>List view</value>
@@ -732,16 +732,16 @@
     <value>Gallery view</value>
   </data>
   <data name="ItemSize" xml:space="preserve">
-    <value>Item size</value>
+    <value>物品的尺寸</value>
   </data>
   <data name="SmallSize" xml:space="preserve">
-    <value>Small</value>
+    <value>小</value>
   </data>
   <data name="MediumSize" xml:space="preserve">
-    <value>Medium</value>
+    <value>中</value>
   </data>
   <data name="LargeSize" xml:space="preserve">
-    <value>Large</value>
+    <value>大</value>
   </data>
   <data name="EmptyRecycleBinDescription" xml:space="preserve">
     <value>Recycle bin is empty. Delete some items to see them here.</value>
@@ -765,7 +765,7 @@
     <value>Name encryption</value>
   </data>
   <data name="NoItems" xml:space="preserve">
-    <value>No items</value>
+    <value>没有物品</value>
   </data>
   <data name="EnableFileThumbnails" xml:space="preserve">
     <value>Enable file thumbnails</value>
@@ -798,7 +798,7 @@
     <value>Export</value>
   </data>
   <data name="MaximumSize" xml:space="preserve">
-    <value>Maximum size</value>
+    <value>最大尺寸</value>
   </data>
   <data name="EnableRecycleBin" xml:space="preserve">
     <value>Enable recycle bin</value>
@@ -810,7 +810,7 @@
     <value>No preview available</value>
   </data>
   <data name="AndroidBiometrics" xml:space="preserve">
-    <value>Android Biometrics</value>
+    <value>Android的生物计</value>
   </data>
   <data name="TransferDone" xml:space="preserve">
     <value>Completed</value>
@@ -849,7 +849,7 @@
     <value>Save</value>
   </data>
   <data name="WriteHere" xml:space="preserve">
-    <value>Write here...</value>
+    <value>在这里写……</value>
   </data>
   <data name="NoIssuesFound" xml:space="preserve">
     <value>No issues found</value>
@@ -888,7 +888,7 @@
     <value>Address</value>
   </data>
   <data name="Username" xml:space="preserve">
-    <value>Username</value>
+    <value>用户名</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
     <value>Add account</value>
@@ -1008,7 +1008,7 @@
     <value>Items in this directory will lose their original name</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-    <value>Welcome, {0}</value>
+    <value>欢迎，{0}</value>
   </data>
   <data name="Connect" xml:space="preserve">
     <value>Connect</value>
@@ -1363,5 +1363,74 @@
   </data>
   <data name="PerformIntegrityCheck" xml:space="preserve">
       <value>Perform integrity check</value>
+  </data>
+  <data name="Gallery" xml:space="preserve">
+      <value>Gallery</value>
+  </data>
+  <data name="EncryptedFile" xml:space="preserve">
+      <value>Encrypted file</value>
+  </data>
+  <data name="VirtualFile" xml:space="preserve">
+      <value>Virtual file</value>
+  </data>
+  <data name="VirtualFileName" xml:space="preserve">
+      <value>Vacations.jpeg</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+      <value>Path</value>
+  </data>
+  <data name="EncryptedPath" xml:space="preserve">
+      <value>Encrypted path</value>
+  </data>
+  <data name="SourceLocalStorageDescription" xml:space="preserve">
+      <value>Browse local storage folders</value>
+  </data>
+  <data name="SourceThisDevice" xml:space="preserve">
+      <value>On this device</value>
+  </data>
+  <data name="SourceCloudAndRemote" xml:space="preserve">
+      <value>Cloud &amp; Remote</value>
+  </data>
+  <data name="ChooseNewVaultMode" xml:space="preserve">
+      <value>Choose how you want to add a new vault.</value>
+  </data>
+  <data name="EndToEndBadge" xml:space="preserve">
+      <value>Credentials are encrypted end-to-end.</value>
+  </data>
+  <data name="DeviceLinkSourceDesktop" xml:space="preserve">
+      <value>Desktop</value>
+  </data>
+  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+      <value>This device</value>
+  </data>
+  <data name="FileInformation" xml:space="preserve">
+      <value>File information</value>
+  </data>
+  <data name="FolderInformation" xml:space="preserve">
+      <value>Folder information</value>
+  </data>
+  <data name="Encrypted" xml:space="preserve">
+      <value>Encrypted</value>
+  </data>
+  <data name="Decrypted" xml:space="preserve">
+      <value>Decrypted</value>
+  </data>
+  <data name="ItemAlreadyExists" xml:space="preserve">
+      <value>Item with the same name already exists</value>
+  </data>
+  <data name="TapToLockAll" xml:space="preserve">
+      <value>Tap to lock all vaults</value>
+  </data>
+  <data name="OneVaultIsUnlocked" xml:space="preserve">
+      <value>One vault is unlocked</value>
+  </data>
+  <data name="MultipleVaultsAreUnlocked" xml:space="preserve">
+      <value>{0} vaults are unlocked</value>
+  </data>
+  <data name="ViewInApp" xml:space="preserve">
+      <value>View in app</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+      <value>Exit</value>
   </data>
 </root>

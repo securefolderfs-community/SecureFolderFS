@@ -37,6 +37,7 @@
     <Resource Language="id-ID"/>
     <Resource Language="hi-IN"/>
     <Resource Language="zh-CN"/>
+    <Resource Language="tr-TR"/>
   </Resources>
 
   <Applications>

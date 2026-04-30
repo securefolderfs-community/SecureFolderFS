@@ -48,14 +48,16 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
-                    <ContentView
+                    <Image
                         x:Name="ImageView"
+                        Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                         BindingContext="{Binding ViewModel, Mode=OneWay}"
-                        Content="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
-                        HeightRequest="36"
+                        HeightRequest="40"
                         HorizontalOptions="Center"
+                        IsOpaque="True"
+                        Source="{Binding Thumbnail, Mode=OneWay, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference ImageView}}"
                         VerticalOptions="Center"
-                        WidthRequest="36" />
+                        WidthRequest="40" />
                 </Border>
 
                 <!--  Title + type hint  -->
@@ -123,6 +125,25 @@
                     CommandParameter="DateModified"
                     IsLastItem="True"
                     Subtitle="{Binding ViewModel.DateModifiedText, Mode=OneWay}" />
+
+                <!--  Path  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=Path}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="Path"
+                    IsLastItem="True"
+                    IsVisible="{Binding ViewModel.Id, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.Id, Mode=OneWay}" />
+
+                <!--  Encrypted Path  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=EncryptedPath}"
+                    Command="{Binding ViewModel.CopyPropertyCommand, Mode=OneWay}"
+                    CommandParameter="EncryptedPath"
+                    IsLastItem="True"
+                    IsVisible="{Binding ViewModel.CiphertextId, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.CiphertextId, Mode=OneWay}"
+                    SubtitleTruncation="HeadTruncation" />
 
             </VerticalStackLayout>
         </VerticalStackLayout>

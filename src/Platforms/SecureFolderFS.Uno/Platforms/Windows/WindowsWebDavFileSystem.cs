@@ -18,6 +18,12 @@ namespace SecureFolderFS.Uno.Platforms.Windows
     public sealed class WindowsWebDavFileSystem : WebDavFileSystem
     {
         /// <inheritdoc/>
+        public override Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(candidateName);
+        }
+        
+        /// <inheritdoc/>
         protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
             HttpListener listener,

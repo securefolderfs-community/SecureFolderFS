@@ -170,12 +170,12 @@
                     <Button Command="{x:Bind ViewModel.RefreshCommand}" Content="{l:ResourceString Rid=Refresh}" />
                     <Button
                         Command="{x:Bind ViewModel.RestoreSelectedCommand}"
-                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems}"
                         Content="{l:ResourceString Rid=Restore}"
                         IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                     <Button
                         Command="{x:Bind ViewModel.DeleteSelectedCommand}"
-                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems, Mode=OneWay}"
+                        CommandParameter="{x:Bind RecycleBinTableView.SelectedItems}"
                         Content="{l:ResourceString Rid=DeleteImmediately}"
                         IsEnabled="{x:Bind ViewModel.IsSelecting, Mode=OneWay}" />
                 </StackPanel>

@@ -10,11 +10,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
         : PickerOptionViewModel(fileSystem.Id, fileSystem.Name)
     {
         /// <summary>
-        /// Gets or sets the icon image associated with this instance.
-        /// </summary>
-        [ObservableProperty] private IImage? _Icon;
-
-        /// <summary>
         /// Gets or sets a value indicating whether this item should be interpreted as the default one.
         /// </summary>
         [ObservableProperty] private bool _IsDefault;

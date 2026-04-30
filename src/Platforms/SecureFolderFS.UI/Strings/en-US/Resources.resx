@@ -1367,4 +1367,70 @@
   <data name="Gallery" xml:space="preserve">
       <value>Gallery</value>
   </data>
+  <data name="EncryptedFile" xml:space="preserve">
+      <value>Encrypted file</value>
+  </data>
+  <data name="VirtualFile" xml:space="preserve">
+      <value>Virtual file</value>
+  </data>
+  <data name="VirtualFileName" xml:space="preserve">
+      <value>Vacations.jpeg</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+      <value>Path</value>
+  </data>
+  <data name="EncryptedPath" xml:space="preserve">
+      <value>Encrypted path</value>
+  </data>
+  <data name="SourceLocalStorageDescription" xml:space="preserve">
+      <value>Browse local storage folders</value>
+  </data>
+  <data name="SourceThisDevice" xml:space="preserve">
+      <value>On this device</value>
+  </data>
+  <data name="SourceCloudAndRemote" xml:space="preserve">
+      <value>Cloud &amp; Remote</value>
+  </data>
+  <data name="ChooseNewVaultMode" xml:space="preserve">
+      <value>Choose how you want to add a new vault.</value>
+  </data>
+  <data name="EndToEndBadge" xml:space="preserve">
+      <value>Credentials are encrypted end-to-end.</value>
+  </data>
+  <data name="DeviceLinkSourceDesktop" xml:space="preserve">
+      <value>Desktop</value>
+  </data>
+  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+      <value>This device</value>
+  </data>
+  <data name="FileInformation" xml:space="preserve">
+      <value>File information</value>
+  </data>
+  <data name="FolderInformation" xml:space="preserve">
+      <value>Folder information</value>
+  </data>
+  <data name="Encrypted" xml:space="preserve">
+      <value>Encrypted</value>
+  </data>
+  <data name="Decrypted" xml:space="preserve">
+      <value>Decrypted</value>
+  </data>
+  <data name="ItemAlreadyExists" xml:space="preserve">
+      <value>Item with the same name already exists</value>
+  </data>
+  <data name="TapToLockAll" xml:space="preserve">
+      <value>Tap to lock all vaults</value>
+  </data>
+  <data name="OneVaultIsUnlocked" xml:space="preserve">
+      <value>One vault is unlocked</value>
+  </data>
+  <data name="MultipleVaultsAreUnlocked" xml:space="preserve">
+      <value>{0} vaults are unlocked</value>
+  </data>
+  <data name="ViewInApp" xml:space="preserve">
+      <value>View in app</value>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+      <value>Exit</value>
+  </data>
 </root>

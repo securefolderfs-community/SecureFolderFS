@@ -68,6 +68,18 @@ namespace SecureFolderFS.Core.WebDav
                 cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public abstract Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Mounts the WebDAV file system and initializes the provided HTTP listener, request dispatcher, and file system settings.
+        /// </summary>
+        /// <param name="specifics">Provides encryption specifics for the file system.</param>
+        /// <param name="listener">The HTTP listener to handle WebDAV requests.</param>
+        /// <param name="options">The configuration options for the WebDAV file system.</param>
+        /// <param name="requestDispatcher">The dispatcher responsible for handling WebDAV requests.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the initialized virtual file system root.</returns>
         protected abstract Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,
             HttpListener listener,

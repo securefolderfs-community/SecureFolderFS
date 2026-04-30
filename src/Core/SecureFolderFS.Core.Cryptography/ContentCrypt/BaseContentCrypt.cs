@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public virtual long CalculatePlaintextSize(long ciphertextSize)
         {
-            if (ciphertextSize == 0L)
+            if (ciphertextSize <= 0L)
                 return 0L;
 
             var chunkOverhead = ChunkCiphertextSize - ChunkPlaintextSize;

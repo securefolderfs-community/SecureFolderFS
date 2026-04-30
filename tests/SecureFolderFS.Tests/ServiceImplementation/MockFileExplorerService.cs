@@ -7,6 +7,8 @@ namespace SecureFolderFS.Tests.ServiceImplementation
 {
     internal sealed class MockFileExplorerService : IFileExplorerService
     {
+        private byte[] _savedFileBytes = [];
+
         /// <inheritdoc/>
         public async Task<IEnumerable<IStorable>> PickGalleryItemsAsync(CancellationToken cancellationToken = default)
         {
@@ -21,8 +23,9 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         {
             await Task.CompletedTask;
             var guid = Guid.NewGuid().ToString();
+            var stream = new MemoryStream(_savedFileBytes, writable: false);
 
-            return new MemoryFileEx(guid, guid, new(), null);
+            return new MemoryFileEx(guid, guid, stream, null);
         }
 
         /// <inheritdoc/>
@@ -43,8 +46,15 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         /// <inheritdoc/>
         public async Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
         {
-            using var streamReader = new StreamReader(dataStream, leaveOpen: true);
-            _ = await streamReader.ReadToEndAsync(cancellationToken);
+            _ = suggestedName;
+            _ = filter;
+
+            if (dataStream.CanSeek)
+                dataStream.Position = 0L;
+
+            await using var memoryStream = new MemoryStream();
+            await dataStream.CopyToAsync(memoryStream, cancellationToken);
+            _savedFileBytes = memoryStream.ToArray();
 
             return true;
         }

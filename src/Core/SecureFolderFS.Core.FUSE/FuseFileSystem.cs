@@ -13,7 +13,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed partial class FuseFileSystem : IFileSystemInfo
     {
         /// <inheritdoc/>
@@ -24,6 +24,12 @@ namespace SecureFolderFS.Core.FUSE
 
         /// <inheritdoc/>
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(candidateName);
+        }
 
         /// <inheritdoc/>
         public async Task<IVfsRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)

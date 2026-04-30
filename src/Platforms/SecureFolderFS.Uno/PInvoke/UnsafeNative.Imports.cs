@@ -8,7 +8,60 @@ namespace SecureFolderFS.Uno.PInvoke
 #if WINDOWS
         public const int CONNECT_TEMPORARY = 4;
         public const int RESOURCETYPE_DISK = 1;
+        private const int SM_CMONITORS = 80;
+        public const int SW_NORMAL = 1;
+        public const int SW_MAXIMIZE = 3;
+        public const int SW_SHOWMINIMIZED = 2;
+        public const uint WPF_RESTORETOMAXIMIZED = 0x0002;
+        public const uint FCSM_ICONFILE = 0x00000010;
+        public const uint FCS_FORCEWRITE = 0x00000002;
+        public const uint SHCNE_UPDATEITEM = 0x00002000;
+        public const uint SHCNF_PATHW = 0x0005;
+        public const uint WM_GETMINMAXINFO = 0x0024;
+        public const uint WM_DPICHANGED = 0x02E0;
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetDpiForWindow(IntPtr hWnd);
+
+        [DllImport("comctl32.dll", SetLastError = true)]
+        public static extern bool SetWindowSubclass(
+            IntPtr hWnd,
+            SUBCLASSPROC pfnSubclass,
+            UIntPtr uIdSubclass,
+            IntPtr dwRefData);
+
+        [DllImport("comctl32.dll", SetLastError = true)]
+        public static extern bool RemoveWindowSubclass(
+            IntPtr hWnd,
+            SUBCLASSPROC pfnSubclass,
+            UIntPtr uIdSubclass);
+
+        [DllImport("comctl32.dll")]
+        public static extern IntPtr DefSubclassProc(
+            IntPtr hWnd,
+            uint uMsg,
+            IntPtr wParam,
+            IntPtr lParam);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetSystemMetrics(int nIndex);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool EnumDisplayMonitors(
+            IntPtr hdc,
+            IntPtr lprcClip,
+            MonitorEnumDelegate lpfnEnum,
+            IntPtr dwData);
+        
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
+        
         [DllImport("Mpr.dll")]
         public static extern int WNetAddConnection2(
             [In] NETRESOURCE lpNetResource,
@@ -34,17 +87,35 @@ namespace SecureFolderFS.Uno.PInvoke
             [In] uint wMsg,
             [In] IntPtr wParam,
             [In] IntPtr lParam);
-
-        /// <summary>
-        /// Adds a document to the Shell's list of recently used documents or clears the list.
-        /// When pv is IntPtr.Zero, the recent documents list is cleared.
-        /// </summary>
-        /// <param name="uFlags">The SHARD (Shell Add Recent Document) flag. Use SHARD_PIDL (0x00000001) to clear.</param>
-        /// <param name="pv">A pointer to the document path or PIDL. Pass IntPtr.Zero to clear the list.</param>
+        
         [DllImport("shell32.dll")]
         public static extern void SHAddToRecentDocs(
             [In] uint uFlags,
             [In] IntPtr pv);
+        
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int SHGetSetFolderCustomSettings(
+            ref SHFOLDERCUSTOMSETTINGS pfcs,
+            [MarshalAs(UnmanagedType.LPWStr)] string pszPath,
+            uint dwReadWrite);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        public static extern void SHChangeNotify(
+            uint wEventId,
+            uint uFlags,
+            [MarshalAs(UnmanagedType.LPWStr)] string dwItem1,
+            IntPtr dwItem2);
+        
+        private delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData);
+        
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate IntPtr SUBCLASSPROC(
+            IntPtr hWnd,
+            uint uMsg,
+            IntPtr wParam,
+            IntPtr lParam,
+            UIntPtr uIdSubclass,
+            IntPtr dwRefData);
 #endif
 
 #if __UNO_SKIA_MACOS__
@@ -81,6 +152,9 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
+        
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
@@ -202,6 +276,77 @@ namespace SecureFolderFS.Uno.PInvoke
         public string lpRemoteName = null!;
         public string lpComment = null!;
         public string lpProvider = null!;
+    }
+    
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    internal struct MONITORINFOEX
+    {
+        public uint cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] // CCHDEVICENAME
+        public string szDevice;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+
+        public bool IsEmpty => Left == 0 && Top == 0 && Right == 0 && Bottom == 0;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct WINDOWPLACEMENT
+    {
+        public uint length;
+        public uint flags;
+        public int showCmd;
+        public POINT ptMinPosition;
+        public POINT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MINMAXINFO
+    {
+        public POINT ptReserved;
+        public POINT ptMaxSize;
+        public POINT ptMaxPosition;
+        public POINT ptMinTrackSize;
+        public POINT ptMaxTrackSize;
+    }
+    
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    internal struct SHFOLDERCUSTOMSETTINGS
+    {
+        public uint dwSize;
+        public uint dwMask;
+        public IntPtr pvid;
+        [MarshalAs(UnmanagedType.LPWStr)] public string pszWebViewTemplate;
+        public uint cchWebViewTemplate;
+        [MarshalAs(UnmanagedType.LPWStr)] public string pszWebViewTemplateVersion;
+        [MarshalAs(UnmanagedType.LPWStr)] public string pszInfoTip;
+        public uint cchInfoTip;
+        public IntPtr pclsid;
+        public uint dwFlags;
+        [MarshalAs(UnmanagedType.LPWStr)] public string pszIconFile;
+        public uint cchIconFile;
+        public int iIconIndex;
+        [MarshalAs(UnmanagedType.LPWStr)] public string pszLogo;
+        public uint cchLogo;
     }
 #endif
 

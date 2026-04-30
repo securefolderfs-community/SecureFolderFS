@@ -9,6 +9,7 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:DataType="md:PaymentModalPage"
+    IsImmersive="True"
     NavigationPage.HasNavigationBar="False"
     SafeAreaEdges="None"
     Shell.PresentationMode="ModalAnimated">
@@ -23,79 +24,63 @@
                     </LinearGradientBrush>
                 </Border.Background>
 
-                <Grid>
-                    <Button
-                        Margin="0,2,0,0"
-                        Padding="0"
-                        Background="Transparent"
-                        Clicked="CloseButton_Clicked"
-                        CornerRadius="16"
-                        HeightRequest="32"
-                        HorizontalOptions="End"
-                        IsVisible="{OnPlatform Android=True,
-                                               iOS=False}"
-                        Text="X"
-                        VerticalOptions="Start"
-                        WidthRequest="32" />
-
-                    <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
-                        <Grid
-                            HeightRequest="94"
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Grid
+                        HeightRequest="94"
+                        HorizontalOptions="Center"
+                        WidthRequest="94">
+                        <Ellipse
+                            x:Name="OuterRing"
+                            HeightRequest="84"
                             HorizontalOptions="Center"
-                            WidthRequest="94">
-                            <Ellipse
-                                x:Name="OuterRing"
-                                HeightRequest="84"
-                                HorizontalOptions="Center"
-                                Opacity="0.35"
-                                Stroke="{StaticResource ThemePrimaryColorBrush}"
-                                StrokeThickness="1"
-                                VerticalOptions="Center"
-                                WidthRequest="84" />
+                            Opacity="0.35"
+                            Stroke="{StaticResource ThemePrimaryColorBrush}"
+                            StrokeThickness="1"
+                            VerticalOptions="Center"
+                            WidthRequest="84" />
 
-                            <Ellipse
-                                x:Name="InnerRing"
-                                HeightRequest="66"
-                                HorizontalOptions="Center"
-                                Opacity="0.65"
-                                Stroke="{StaticResource ThemePrimaryColorBrush}"
-                                StrokeThickness="1.5"
-                                VerticalOptions="Center"
-                                WidthRequest="66" />
+                        <Ellipse
+                            x:Name="InnerRing"
+                            HeightRequest="66"
+                            HorizontalOptions="Center"
+                            Opacity="0.65"
+                            Stroke="{StaticResource ThemePrimaryColorBrush}"
+                            StrokeThickness="1.5"
+                            VerticalOptions="Center"
+                            WidthRequest="66" />
 
-                            <Image
-                                HeightRequest="34"
-                                HorizontalOptions="Center"
-                                Source="app_icon.png"
-                                VerticalOptions="Center"
-                                WidthRequest="34" />
-                        </Grid>
+                        <Image
+                            HeightRequest="34"
+                            HorizontalOptions="Center"
+                            Source="app_icon.png"
+                            VerticalOptions="Center"
+                            WidthRequest="34" />
+                    </Grid>
 
-                        <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="10"
+                            HorizontalTextAlignment="Center"
+                            Opacity="0.85"
+                            Text="{l:ResourceString Rid=PlusUpgrade}"
+                            TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                        Dark={StaticResource PrimaryDarkColor}}" />
+
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="0">
                             <Label
                                 FontAttributes="Bold"
-                                FontSize="10"
-                                HorizontalTextAlignment="Center"
-                                Opacity="0.85"
-                                Text="{l:ResourceString Rid=PlusUpgrade}"
+                                FontSize="22"
+                                Text="SecureFolderFS" />
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="22"
+                                Text="+"
                                 TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
                                                             Dark={StaticResource PrimaryDarkColor}}" />
-
-                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="0">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="22"
-                                    Text="SecureFolderFS" />
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="22"
-                                    Text="+"
-                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
-                                                                Dark={StaticResource PrimaryDarkColor}}" />
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
-                </Grid>
+                </VerticalStackLayout>
             </Border>
 
             <Grid

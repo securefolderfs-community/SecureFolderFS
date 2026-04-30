@@ -8,6 +8,8 @@ namespace SecureFolderFS.Maui.Views.Vault
 {
     public partial class OverviewPage : ContentPage, IQueryAttributable
     {
+        private IDisposable? _healthWidgetDisposable;
+        
         public OverviewPage()
         {
             BindingContext = this;
@@ -36,6 +38,18 @@ namespace SecureFolderFS.Maui.Views.Vault
                 navigationService.SetCurrentViewInternal(ViewModel);
 
             base.OnAppearing();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _healthWidgetDisposable?.Dispose();
+        }
+        
+        private void HealthWidget_Loaded(object? sender, EventArgs e)
+        {
+            _healthWidgetDisposable = sender as IDisposable;
         }
 
         public VaultDashboardViewModel? ViewModel

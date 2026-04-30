@@ -31,11 +31,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not get iOS items.");
+            
             var coordinator = new NSFileCoordinator();
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
-
                 var tcs = new TaskCompletionSource<IReadOnlyList<IStorableChild>>();
                 coordinator.CoordinateRead(Inner,
                     NSFileCoordinatorReadingOptions.WithoutChanges,
@@ -69,10 +70,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not get iOS item.");
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
-
                 var isDirectory = false;
                 var itemPath = Path.Combine(Id, name);
 
@@ -100,9 +101,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             if (item is not IWrapper<NSUrl> iosWrapper)
                 throw new ArgumentException("Storable item must wrap an NSUrl.", nameof(item));
 
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not delete iOS item.");
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
                 if (!NSFileManager.DefaultManager.Remove(iosWrapper.Inner, out var error))
                     throw new NSErrorException(error);
             }
@@ -116,10 +118,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not create iOS folder.");
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
-
                 var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
@@ -141,10 +143,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not create iOS file.");
             try
             {
-                if (!permissionRoot.StartAccessingSecurityScopedResource())
-                    throw new UnauthorizedAccessException("Could not create iOS file.");
 
                 var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
@@ -175,9 +177,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             if (fileToCopy is not IOSFile iosFile)
                 return await fallback(this, fileToCopy, overwrite, newName, cancellationToken);
 
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not copy iOS file.");
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
                 var newPath = Path.Combine(Id, newName);
                 var newUrl = new NSUrl(newPath, false);
 
@@ -230,9 +233,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             if (fileToMove is not IOSFile iosFile)
                 return await fallback(this, fileToMove, source, overwrite, newName, cancellationToken);
 
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not move iOS file.");
             try
             {
-                permissionRoot.StartAccessingSecurityScopedResource();
                 var newPath = Path.Combine(Id, newName);
                 var newUrl = new NSUrl(newPath, false);
 
@@ -273,11 +277,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
         {
+            if (!permissionRoot.StartAccessingSecurityScopedResource())
+                throw new UnauthorizedAccessException("Could not rename iOS item.");
             try
             {
-                if (!permissionRoot.StartAccessingSecurityScopedResource())
-                    throw new UnauthorizedAccessException("Could not rename iOS item.");
-
                 if (storable is not IWrapper<NSUrl> iosWrapper)
                     throw new ArgumentException("Storable item must wrap an NSUrl.", nameof(storable));
 

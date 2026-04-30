@@ -1,16 +1,55 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/skia"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    mc:Ignorable="not_win">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <Style x:Key="AddNewVaultBanner" TargetType="Image">
                 <Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/vault_light.svg" />
             </Style>
+
+            <Style x:Key="AuthDeviceLinkImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_light.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/iphone_light.png" />
+            </Style>
+            <Style x:Key="AuthGooglePixelImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_light.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/gpixel_light.png" />
+            </Style>
+            <Style x:Key="VaultDashboardImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Introduction/intro_light_dashboard.png" />
+            </Style>
         </ResourceDictionary>
+
         <ResourceDictionary x:Key="Dark">
             <Style x:Key="AddNewVaultBanner" TargetType="Image">
                 <Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/vault_dark.svg" />
             </Style>
+
+            <Style x:Key="AuthDeviceLinkImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_dark.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/iphone_dark.png" />
+            </Style>
+            <Style x:Key="AuthGooglePixelImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_dark.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/gpixel_dark.png" />
+            </Style>
+            <Style x:Key="VaultDashboardImage" TargetType="Image">
+                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_dark_dashboard.png" />
+                <not_win:Setter Property="Source" Value="Assets/AppAssets/Introduction/intro_dark_dashboard.png" />
+            </Style>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <!--  YubiKey has no light/dark variant  -->
+    <Style x:Key="AuthYubiKeyImage" TargetType="Image">
+        <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/yubikey.png" />
+        <not_win:Setter Property="Source" Value="Assets/AppAssets/yubikey.png" />
+    </Style>
 
 </ResourceDictionary>

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -24,6 +26,14 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of filename ciphers.</returns>
         IEnumerable<string> GetFileNameCiphers();
+
+        /// <summary>
+        /// Converts the specified unlocking procedure into its corresponding format.
+        /// </summary>
+        /// <param name="unlockProcedure">The authentication method that represents the unlocking procedure.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="string"/> that represents the formatted unlocked procedure.</returns>
+        Task<string> FromUnlockProcedureAsync(AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously retrieves a collection of login authentication methods for a specified vault folder.

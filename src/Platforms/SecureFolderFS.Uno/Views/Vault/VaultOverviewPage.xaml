@@ -166,6 +166,9 @@
 
             <!--  Vault Controls  -->
             <uc:VaultControls
+                AllowDrop="True"
+                DragOver="VaultOptions_DragOver"
+                Drop="VaultOptions_Drop"
                 IsReadOnly="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
                 LockVaultCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
                 OpenPropertiesCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"

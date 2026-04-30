@@ -190,7 +190,6 @@
 
     <md:BaseModalPage.ModalContent>
         <Grid
-            Margin="{OnPlatform iOS='0,16,0,0'}"
             Padding="16,0"
             RowDefinitions="Auto,Auto,*"
             RowSpacing="16">

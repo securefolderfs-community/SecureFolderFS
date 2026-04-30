@@ -37,9 +37,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         [ObservableProperty] private ObservableCollection<AccountViewModel> _Accounts;
 
         /// <inheritdoc/>
-        public override string DataSourceName { get; }
-
-        /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
         public AccountSourceWizardViewModel(string dataSourceType, string dataSourceName, NewVaultMode mode, IVaultCollectionModel vaultCollectionModel)
@@ -117,7 +114,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         [RelayCommand]
         private async Task RemoveAccountAsync(AccountViewModel? accountViewModel, CancellationToken cancellationToken)
         {
-            if (accountViewModel is null)
+            if (accountViewModel is null || DataSourceName is null)
                 return;
 
             // Get the property store
@@ -171,7 +168,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
                 var browser = BrowserHelpers.CreateBrowser(rootFolder, new FileSystemOptions(), accountViewModel, outerNavigator: this);
 
                 // Prompt the user to pick a folder
-                browser.OnAppearing();
                 _selectedFolder = await browser.PickFolderAsync(null, true, cancellationToken);
                 if (_selectedFolder is null)
                     return;
@@ -192,6 +188,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.DataSources
         public override void Dispose()
         {
             NavigationRequested = null;
+            Accounts.Where(x => x != SelectedAccount).DisposeAll();
+            Accounts.Clear();
         }
     }
 }

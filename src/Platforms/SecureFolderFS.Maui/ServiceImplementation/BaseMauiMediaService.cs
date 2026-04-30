@@ -51,7 +51,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         public virtual async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
             var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            return new ImageStream(stream);
+            return new ImageStreamSource(stream);
         }
 
         /// <inheritdoc/>

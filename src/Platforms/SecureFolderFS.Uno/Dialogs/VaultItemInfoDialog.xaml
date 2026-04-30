@@ -1,0 +1,100 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.Uno.Dialogs.VaultItemInfoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    Title="{x:Bind ViewModel.IsFile, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:LOCALIZE|FileInformation:false:LOCALIZE|FolderInformation'}"
+    CloseButtonText="{l:ResourceString Rid=Close}"
+    DefaultButton="Close"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel Width="500" Spacing="4">
+        <!--  Plaintext  -->
+        <ucab:ActionBlockControl Title="{l:ResourceString Rid=Decrypted}" BlockMode="Expandable">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE785;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid Padding="52,0,32,0" ColumnSpacing="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="{l:ResourceString Rid=Name}" />
+                        <TextBlock Text="{l:ResourceString Rid=Path}" />
+                        <TextBlock Text="{l:ResourceString Rid=Size}" Visibility="{x:Bind ViewModel.PlaintextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.PlaintextName, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.PlaintextName, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.PlaintextPath, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.PlaintextPath, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.PlaintextSize, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.PlaintextFullSize, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.PlaintextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+
+        <!--  Ciphertext  -->
+        <ucab:ActionBlockControl Title="{l:ResourceString Rid=Encrypted}" BlockMode="Expandable">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE72E;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid Padding="52,0,32,0" ColumnSpacing="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="{l:ResourceString Rid=Name}" />
+                        <TextBlock Text="{l:ResourceString Rid=Path}" />
+                        <TextBlock Text="{l:ResourceString Rid=Size}" Visibility="{x:Bind ViewModel.CiphertextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.CiphertextName, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CiphertextName, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.CiphertextPath, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CiphertextPath, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.6"
+                            Text="{x:Bind ViewModel.CiphertextSize, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CiphertextFullSize, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.CiphertextSize, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+    </StackPanel>
+</ContentDialog>

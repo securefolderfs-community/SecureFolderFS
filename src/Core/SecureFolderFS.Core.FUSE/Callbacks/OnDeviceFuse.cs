@@ -5,6 +5,7 @@ using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
 using System.Runtime.CompilerServices;
 using System.Text;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using Tmds.Fuse;
 using Tmds.Linux;
 using static SecureFolderFS.Core.FUSE.UnsafeNative.UnsafeNativeApis;
@@ -198,7 +199,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -errno;
 
                 if (File.Exists(ciphertextPath))
-                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculatePlaintextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
+                    stat.st_size = Math.Max(0, specifics.Security.ContentCrypt.CalculatePlaintextSize(stat.st_size - specifics.Security.HeaderCrypt.HeaderCiphertextSize));
 
                 return 0;
             }
@@ -277,7 +278,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             directoryIdStream.Write(directoryId);
 
             // Set DirectoryID to known IDs
-            Specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
+            specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
 
             return 0;
         }
@@ -359,14 +360,15 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             content.AddEntry(".");
             content.AddEntry("..");
 
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
                 if (PathHelpers.IsCoreName(entry))
                     continue;
 
-                var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                var plaintextPath = NativePathHelpers.GetPlaintextPath(entry, Specifics, directoryId);
-                content.AddEntry(Path.GetFileName(plaintextPath));
+                var ciphertextName = Path.GetFileName(entry);
+                var plaintextName = NativePathHelpers.DecryptName(ciphertextName, ciphertextPath, specifics, directoryId);
+                content.AddEntry(plaintextName);
             }
 
             return 0;
@@ -438,7 +440,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             // Remove DirectoryID
             File.Delete(directoryIdPath);
-            Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
+            specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
 
             fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
             {
@@ -617,7 +619,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             fixed (byte *plaintextNamePtr = plaintextName)
             {
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(plaintextNamePtr, plaintextName.Length), Specifics, directoryId);
+                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(plaintextNamePtr, plaintextName.Length), specifics, directoryId);
             }
         }
     }

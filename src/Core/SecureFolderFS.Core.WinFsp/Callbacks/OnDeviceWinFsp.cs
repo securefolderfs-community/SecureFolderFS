@@ -158,14 +158,13 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             {
                 // Add directory entries
                 var directoryId = AbstractPathHelpers.AllocateDirectoryId(_specifics.Security, dirInfo.FullName);
-                foreach (var item in dirInfo.EnumerateFileSystemInfos(Pattern))
+                var itemsEnumerable = _specifics.Security.NameCrypt is null ? dirInfo.EnumerateFileSystemInfos(Pattern) : dirInfo.EnumerateFileSystemInfos();
+                foreach (var item in itemsEnumerable)
                 {
                     if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
-                    var plaintextName = NativePathHelpers.GetPlaintextPath(item.FullName, _specifics, directoryId);
-                    plaintextName = plaintextName is not null ? Path.GetFileName(plaintextName) : null;
-
+                    var plaintextName = NativePathHelpers.DecryptName(item.Name, dirInfo.FullName, _specifics, directoryId);
                     if (string.IsNullOrEmpty(plaintextName))
                         continue;
 
@@ -913,22 +912,31 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 }
             }
 
-            // Close handle first
-            CloseHandle(FileDesc);
-            InvalidateContext(out FileDesc);
-            Trace(STATUS_SUCCESS, FileName);
-
             try
             {
                 if (pathToDelete is null)
                     return;
 
+                var exists = File.Exists(pathToDelete) || Directory.Exists(pathToDelete);
+                if (!exists)
+                {
+                    Trace(STATUS_OBJECT_NAME_NOT_FOUND, FileName);
+                    return;
+                }
+
                 // Then delete
                 NativeRecycleBinHelpers.DeleteOrRecycle(pathToDelete, _specifics, storableType);
+                Trace(STATUS_SUCCESS, FileName);
             }
             catch (Exception)
             {
                 Trace(STATUS_UNSUCCESSFUL, FileName);
+            }
+            finally
+            {
+                // Close handle
+                CloseHandle(FileDesc);
+                InvalidateContext(out FileDesc);
             }
         }
 

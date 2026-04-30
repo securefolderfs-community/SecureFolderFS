@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -13,10 +14,11 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<ISettingsService>]
+    [Inject<ISettingsService>, Inject<ILogger>]
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
@@ -49,10 +51,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // TODO: Load thumbnail
-            return Task.CompletedTask;
+            LastModified = await Folder.GetDateModifiedAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -76,12 +77,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
+            var scope = Logger.GetPerformanceScope();
             SelectedItems.Clear();
             Items.DisposeAll();
             Items.Clear();
 
             var isPickingFolder = BrowserViewModel.TransferViewModel?.IsPickingFolder ?? false;
-            var items = await Folder.GetItemsAsync(StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken: cancellationToken);
+            var items = await Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken: cancellationToken);
             BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
             {
                 IFile file => new FileViewModel(file, BrowserViewModel, this),
@@ -92,6 +94,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             // Apply adaptive layout
             if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
                 ApplyAdaptiveLayout();
+
+            Logger.LogPerformance(scope, minThresholdMs: 200);
         }
 
         /// <inheritdoc/>

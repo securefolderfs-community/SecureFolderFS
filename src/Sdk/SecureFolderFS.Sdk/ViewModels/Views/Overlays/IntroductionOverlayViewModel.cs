@@ -65,6 +65,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             foreach (var sortedItem in items.OrderByDescending(x => x is FileSystemItemViewModel))
                 FileSystems.Add(sortedItem);
+
+            SelectedFileSystem = FileSystems.FirstOrDefault(x => x.Id == SettingsService.UserSettings.PreferredFileSystemId);
+            SelectedFileSystem ??= FileSystems.FirstOrDefault();
         }
 
         public bool Next()

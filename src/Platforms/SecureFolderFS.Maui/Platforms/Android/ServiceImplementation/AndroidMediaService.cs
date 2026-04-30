@@ -28,7 +28,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
                     var imageStream = await ThumbnailHelpers.GenerateImageThumbnailAsync(stream, Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE).ConfigureAwait(false);
 
-                    return new ImageStream(imageStream);
+                    return new ImageStreamSource(imageStream);
                 }
 
                 case TypeHint.Media:
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
                     var imageStream = await GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
 
-                    return new ImageStream(imageStream);
+                    return new ImageStreamSource(imageStream);
                 }
 
                 default: throw new InvalidOperationException("The provided file type is invalid.");

@@ -5,13 +5,39 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material">
 
-    <Style x:Key="VideoLabelStyle" TargetType="Label">
-        <Setter Property="TextColor" Value="#ffffff" />
-    </Style>
-
     <Style x:Key="VideoSeekBarStyle" TargetType="Slider">
         <Setter Property="ThumbColor" Value="Transparent" />
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+    </Style>
+
+    <Style x:Key="VideoControlsPanelStyle" TargetType="Layout">
+        <Setter Property="Padding" Value="2,0,2,2" />
+        <Setter Property="BackgroundColor" Value="{x:Null}" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0" Color="#00000000" />
+                    <GradientStop Offset="0.4" Color="#80000000" />
+                    <GradientStop Offset="1" Color="#BB000000" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="VideoElapsedTimeLabelStyle" TargetType="Label">
+        <Setter Property="HorizontalOptions" Value="StartAndExpand" />
+        <Setter Property="Margin" Value="15,4,15,0" />
+        <Setter Property="FontSize" Value="Small" />
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="VideoRemainingTimeLabelStyle" TargetType="Label">
+        <Setter Property="HorizontalOptions" Value="StartAndExpand" />
+        <Setter Property="Margin" Value="15,4,15,0" />
+        <Setter Property="FontSize" Value="Small" />
+        <Setter Property="TextColor" Value="#FFFFFF" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <Style x:Key="VideoBaseButtonStyle" TargetType="Button">
@@ -26,10 +52,10 @@
         TargetType="Button">
         <OnPlatform x:TypeArguments="Setter">
             <On Platform="Android">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material AspectRatio}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material AspectRatio, IconSize=24}" />
             </On>
             <On Platform="iOS">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino RectangleCompressVertical}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino RectangleCompressVertical, IconSize=24}" />
             </On>
         </OnPlatform>
     </Style>
@@ -38,6 +64,7 @@
         x:Key="VideoLockButtonStyle"
         BasedOn="{StaticResource VideoBaseButtonStyle}"
         TargetType="Button">
+        <Setter Property="Text" Value="{x:Null}" />
         <OnPlatform x:TypeArguments="Setter">
             <On Platform="Android">
                 <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Lock}" />
@@ -52,6 +79,8 @@
         x:Key="VideoUnlockButtonStyle"
         BasedOn="{StaticResource VideoBaseButtonStyle}"
         TargetType="Button">
+        <Setter Property="Text" Value="{x:Null}" />
+
         <OnPlatform x:TypeArguments="Setter">
             <On Platform="Android">
                 <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material LockOpen}" />
@@ -68,10 +97,10 @@
         TargetType="Button">
         <OnPlatform x:TypeArguments="Setter">
             <On Platform="Android">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Replay5}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Replay5, IconSize=24}" />
             </On>
             <On Platform="iOS">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Gobackward}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Gobackward, IconSize=24}" />
             </On>
         </OnPlatform>
     </Style>
@@ -82,10 +111,10 @@
         TargetType="Button">
         <OnPlatform x:TypeArguments="Setter">
             <On Platform="Android">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Forward5}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_material:Material Forward5, IconSize=24}" />
             </On>
             <On Platform="iOS">
-                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Goforward}" />
+                <Setter Property="mi:MauiIcon.Value" Value="{mi_cupertino:Cupertino Goforward, IconSize=24}" />
             </On>
         </OnPlatform>
     </Style>

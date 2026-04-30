@@ -57,6 +57,25 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
+        public static IWrapper<T> GetWrapperAt<T>(this IWrapper<T> wrapper, string typeName)
+        {
+            while (true)
+            {
+                if (wrapper.GetType().Name == typeName)
+                    return wrapper;
+
+                if (wrapper.Inner is IWrapper<T> innerWrapper)
+                {
+                    wrapper = innerWrapper;
+                    continue;
+                }
+
+                break;
+            }
+
+            throw new InvalidOperationException($"Could not find wrapper at {typeName}.");
+        }
+
         public static IWrapper<T> GetWrapperBelow<T, TAbove>(this IWrapper<T> wrapper)
         {
             var aboveWrapper = GetWrapperAt<T, TAbove>(wrapper);

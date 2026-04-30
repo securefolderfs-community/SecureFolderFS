@@ -12,7 +12,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
     [Bindable(true)]
     public abstract partial class ItemInstallationViewModel(string id, string? title) : PickerOptionViewModel(id, title), IAsyncInitialize, IProgress<double>, IProgress<IResult?>, INotifyStateChanged
     {
-        [ObservableProperty] private IImage? _Icon;
         [ObservableProperty] private bool _IsInstalled;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private bool _IsIndeterminate;
@@ -38,7 +37,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Components
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
-
 
         [RelayCommand]
         protected abstract Task InstallAsync(CancellationToken cancellationToken);

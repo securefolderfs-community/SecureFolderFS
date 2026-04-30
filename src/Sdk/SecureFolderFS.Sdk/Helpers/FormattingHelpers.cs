@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace SecureFolderFS.Sdk.Helpers
@@ -25,7 +26,11 @@ namespace SecureFolderFS.Sdk.Helpers
 
         public static string SanitizeVolumeName(string volumeName, string? fallback)
         {
-            return SanitizeItemName(volumeName, fallback ?? "Mounted Volume");
+            var sanitized = SanitizeItemName(volumeName, fallback ?? "Mounted Volume");
+            if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
+                return sanitized.Replace(' ', '_');
+
+            return sanitized;
         }
     }
 }

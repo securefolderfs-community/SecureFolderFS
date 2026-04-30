@@ -8,9 +8,8 @@ using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Uno.PInvoke;
 using SecureFolderFS.Uno.Platforms.Windows.Extensions;
-using Vanara.PInvoke;
 using Windows.Storage;
-using static Vanara.PInvoke.User32;
+using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 {
@@ -87,10 +86,10 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             var windowPlacement = Marshal.PtrToStructure<WINDOWPLACEMENT>(pWindowPlacementBuffer);
             Marshal.FreeHGlobal(pWindowPlacementBuffer);
 
-            if (windowPlacement is { showCmd: ShowWindowCommand.SW_SHOWMINIMIZED, flags: WindowPlacementFlags.WPF_RESTORETOMAXIMIZED })
-                windowPlacement.showCmd = ShowWindowCommand.SW_MAXIMIZE;
-            else if (windowPlacement.showCmd != ShowWindowCommand.SW_MAXIMIZE)
-                windowPlacement.showCmd = ShowWindowCommand.SW_NORMAL;
+            if (windowPlacement is { showCmd: SW_SHOWMINIMIZED, flags: WPF_RESTORETOMAXIMIZED })
+                windowPlacement.showCmd = SW_MAXIMIZE;
+            else if (windowPlacement.showCmd != SW_MAXIMIZE)
+                windowPlacement.showCmd = SW_NORMAL;
 
             _isRestoringWindowState = true;
             _ = SetWindowPlacement(_window.GetWindowHandle(), ref windowPlacement);
@@ -151,9 +150,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 
         private void MessageReceiver_MessageReceived(object? sender, WindowMessageEventArgs e)
         {
-            switch ((WindowMessage)e.NativeMessage.uMsg)
+            switch (e.NativeMessage.uMsg)
             {
-                case WindowMessage.WM_GETMINMAXINFO:
+                case WM_GETMINMAXINFO:
                 unsafe
                 {
                     if (_isRestoringWindowState)
@@ -163,13 +162,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                     var currentDpi = GetDpiForWindow(_hWnd);
 
                     // Restrict min-size
-                    rect2->minTrackSize.cx = (int)Math.Max(MinWidth * (currentDpi / 96f), rect2->minTrackSize.cx);
-                    rect2->minTrackSize.cy = (int)Math.Max(MinHeight * (currentDpi / 96f), rect2->minTrackSize.cy);
+                    rect2->ptMinTrackSize.X = (int)Math.Max(MinWidth * (currentDpi / 96f), rect2->ptMinTrackSize.X);
+                    rect2->ptMinTrackSize.Y = (int)Math.Max(MinHeight * (currentDpi / 96f), rect2->ptMinTrackSize.Y);
 
                     break;
                 }
 
-                case WindowMessage.WM_DPICHANGED:
+                case WM_DPICHANGED:
                 {
                     if (_isRestoringWindowState)
                         e.Handled = true;
@@ -202,7 +201,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     internal sealed class Win32NativeWindowMessageReceiver : IDisposable
     {
         private readonly IntPtr _hWnd;
-        private ComCtl32.SUBCLASSPROC? _subclassprocCallback;
+        private SUBCLASSPROC? _subclassprocCallback;
 
         private event EventHandler<WindowMessageEventArgs>? _messageReceived;
         public event EventHandler<WindowMessageEventArgs>? MessageReceived
@@ -227,14 +226,14 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             _hWnd = hWnd;
         }
 
-        private IntPtr WindowProc(HWND hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, IntPtr dwRefData)
+        private IntPtr WindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, IntPtr dwRefData)
         {
             var args = new WindowMessageEventArgs(new(_hWnd, lParam, wParam, uMsg));
             _messageReceived?.Invoke(this, args);
             if (args.Handled)
                 return args.Result;
 
-            return ComCtl32.DefSubclassProc(hWnd, uMsg, wParam, lParam);
+            return DefSubclassProc(hWnd, uMsg, wParam, lParam);
         }
 
         private void NativeSubscribe()
@@ -243,7 +242,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 return;
 
             _subclassprocCallback = new(WindowProc);
-            var result = ComCtl32.SetWindowSubclass(_hWnd, _subclassprocCallback, 101, 0);
+            SetWindowSubclass(_hWnd, _subclassprocCallback, 101, 0);
         }
 
         private void NativeUnsubscribe()
@@ -251,7 +250,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             if (_subclassprocCallback is null)
                 return;
 
-            ComCtl32.RemoveWindowSubclass(_hWnd, _subclassprocCallback, 101);
+            RemoveWindowSubclass(_hWnd, _subclassprocCallback, 101);
             _subclassprocCallback = null;
         }
 

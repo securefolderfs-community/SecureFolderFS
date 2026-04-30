@@ -66,11 +66,12 @@
                             Padding="12,8"
                             ColumnDefinitions="Auto,*"
                             ColumnSpacing="12">
-                            <ContentView
+                            <Image
                                 Grid.Column="0"
-                                Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                Aspect="{Binding Thumbnail, Converter={StaticResource ThumbnailToAspectConverter}}"
                                 HeightRequest="32"
                                 HorizontalOptions="Center"
+                                Source="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
                                 VerticalOptions="Center"
                                 WidthRequest="32" />
                             <VerticalStackLayout

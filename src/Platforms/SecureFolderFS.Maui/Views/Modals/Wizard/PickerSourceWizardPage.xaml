@@ -18,14 +18,10 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout
-            Margin="{OnPlatform iOS='0,16,0,0'}"
-            Padding="16,0"
-            Spacing="24">
-
+        <VerticalStackLayout Padding="16,0" Spacing="16">
             <Label
-                FontSize="15"
-                Opacity="0.55"
+                FontSize="16"
+                Opacity="0.6"
                 Text="{l:ResourceString Rid=SelectLocationOfVault}" />
 
             <!--  Location picker row  -->
@@ -50,7 +46,7 @@
                         VerticalOptions="Center" />
                     <Border
                         Grid.Column="1"
-                        Background="{StaticResource ThemePrimaryColorBrush}}"
+                        Background="{StaticResource ThemePrimaryColorBrush}"
                         HeightRequest="36"
                         StrokeThickness="0"
                         VerticalOptions="Center"

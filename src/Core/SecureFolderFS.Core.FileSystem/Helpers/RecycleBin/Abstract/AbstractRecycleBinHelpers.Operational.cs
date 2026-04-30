@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 // Destination folder is the same as the original destination
                 // The same name could be used since the Directory IDs match
-                var ciphertextName = Path.ChangeExtension(await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken), Constants.Names.ENCRYPTED_FILE_EXTENSION);
+                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
                 // Get an available name if the destination already exists
                 ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
@@ -235,7 +235,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 do
                 {
                     var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
-                    ciphertextName = Path.ChangeExtension(await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken), Constants.Names.ENCRYPTED_FILE_EXTENSION);
+                    ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
                     existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
                     suffix++;
                 } while (existing is not null);

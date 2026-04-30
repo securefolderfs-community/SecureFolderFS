@@ -58,9 +58,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override async void OnAppearing()
         {
-            if (!Sources.IsEmpty())
-                return;
-
             var sources = await VaultFileSystemService.GetSourcesAsync(_vaultCollectionModel, _mode).ToArrayAsyncImpl();
             Sources.DisposeAll();
             Sources.Clear();

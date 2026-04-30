@@ -122,12 +122,5 @@ namespace SecureFolderFS.Maui.Views.Modals
         }
         public static readonly BindableProperty ViewModelProperty =
             BindableProperty.Create(nameof(ViewModel), typeof(PaymentOverlayViewModel), typeof(PaymentModalPage));
-
-        private async void CloseButton_Clicked(object? sender, EventArgs e)
-        {
-            _ = sender;
-            _ = e;
-            await HideAsync();
-        }
     }
 }

@@ -2,10 +2,16 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     internal sealed partial class SkiaWebDavFileSystem
     {
 #if HAS_UNO_SKIA && !__MACCATALYST__ && !__UNO_SKIA_MACOS__
+        /// <inheritdoc/>
+        public Task<string> GetVolumeNameAsync(string candidateName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(candidateName);
+        }
+
         /// <inheritdoc/>
         protected override async Task<IVFSRoot> MountAsync(
             FileSystemSpecifics specifics,

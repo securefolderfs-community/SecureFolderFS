@@ -12,13 +12,14 @@
             <ColumnDefinition Width="1.4*" />
         </Grid.ColumnDefinitions>
 
-        <Image
+        <ContentControl
             Grid.Column="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Source="{x:Bind ImageSource, Mode=OneWay}"
-            Stretch="UniformToFill"
-            Visibility="{x:Bind ImageSource, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Content="{x:Bind LeftSlot, Mode=OneWay}"
+            Visibility="{x:Bind LeftSlot, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
 
         <Grid
             Grid.Column="1"
@@ -49,8 +50,8 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch"
-                Content="{x:Bind Slot, Mode=OneWay}"
-                Visibility="{x:Bind Slot, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                Content="{x:Bind RightSlot, Mode=OneWay}"
+                Visibility="{x:Bind RightSlot, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
         </Grid>
     </Grid>
 </UserControl>

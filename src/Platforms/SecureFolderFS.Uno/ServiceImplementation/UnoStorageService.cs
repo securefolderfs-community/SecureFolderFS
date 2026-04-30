@@ -6,7 +6,6 @@ using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.SystemStorageEx;
-using Windows.Storage;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
@@ -16,10 +15,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default)
         {
-#if UNPACKAGED || DEBUG
+#if UNPACKAGED || HAS_UNO_SKIA
             return Task.FromResult<IFolder>(new SystemFolder(Path.Combine(Directory.GetCurrentDirectory(), UI.Constants.FileNames.SETTINGS_FOLDER_NAME)));
 #else
-            return Task.FromResult<IFolder>(new SystemFolder(ApplicationData.Current.LocalFolder.Path));
+            return Task.FromResult<IFolder>(new SystemFolder(Windows.Storage.ApplicationData.Current.LocalFolder.Path));
 #endif
         }
 

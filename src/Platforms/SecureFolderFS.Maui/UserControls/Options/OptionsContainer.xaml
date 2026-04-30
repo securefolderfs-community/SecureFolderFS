@@ -25,13 +25,25 @@
         </VerticalStackLayout>
 
         <Border
-            x:Name="ContainerBorder"
             Grid.Row="1"
             Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
             StrokeThickness="0">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
+            <Border.Triggers>
+                <DataTrigger
+                    Binding="{Binding ProvideBackplate, Mode=OneWay, Source={x:Reference ThisControl}}"
+                    TargetType="Border"
+                    Value="False">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="StrokeShape">
+                        <Setter.Value>
+                            <RoundRectangle CornerRadius="0" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Border.Triggers>
             <ContentView Content="{Binding InnerContent, Mode=OneWay, Source={x:Reference ThisControl}}" />
         </Border>
 

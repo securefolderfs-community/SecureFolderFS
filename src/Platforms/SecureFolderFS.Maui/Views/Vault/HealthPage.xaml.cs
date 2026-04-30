@@ -18,7 +18,14 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(ViewModel));
         }
 
-        private void ProgressiveButton_Clicked(object? sender, EventArgs e)
+        /// <inheritdoc/>
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            ScanControl.Dispose();
+        }
+
+        private void HealthScanControl_Clicked(object? sender, EventArgs e)
         {
             if (ViewModel is null)
                 return;
@@ -26,7 +33,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel.HealthViewModel.IsProgressing)
                 ViewModel.HealthViewModel.CancelScanningCommand.Execute(null);
             else
-                ViewModel.HealthViewModel.StartScanningCommand.Execute(null);
+                _ = ViewModel.HealthViewModel.StartScanningCommand.ExecuteAsync(null);
         }
 
         public VaultHealthReportViewModel? ViewModel
@@ -35,6 +42,6 @@ namespace SecureFolderFS.Maui.Views.Vault
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultHealthReportViewModel), typeof(HealthPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultHealthReportViewModel), typeof(HealthPage));
     }
 }

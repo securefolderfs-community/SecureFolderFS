@@ -22,9 +22,9 @@ namespace SecureFolderFS.Sdk.Services
         string ContentFolderName { get; }
 
         /// <summary>
-        /// The file extension for vault shortcut files.
+        /// Gets the file extension for vault shortcut files.
         /// </summary>
-        public string ShortcutFileExtension { get; }
+        string ShortcutFileExtension { get; }
 
         /// <summary>
         /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
