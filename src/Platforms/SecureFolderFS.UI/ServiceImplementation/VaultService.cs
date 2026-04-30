@@ -42,7 +42,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            Shared.Models.AppPlatformVaultOptions? appPlatform = null;
+            AppPlatformVaultOptions? appPlatform = null;
 
             if (config.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
             {

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="winfsp.net" Version="2.1.25156" />
+    <PackageReference Include="winfsp.net" Version="2.2.26112" />
   </ItemGroup>
 
   <ItemGroup>

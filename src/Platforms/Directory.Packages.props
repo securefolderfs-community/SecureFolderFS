@@ -3,7 +3,7 @@
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Cupertino" Version="6.0.0" />
     <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="6.0.0" />
     <PackageVersion Include="AcrylicView.Maui" Version="3.0.1" />
-    <PackageVersion Include="CliFx" Version="2.3.0" />
+    <PackageVersion Include="CliFx" Version="3.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
@@ -12,7 +12,7 @@
     <PackageVersion Include="H.NotifyIcon.Uno.WinUI" Version="2.3.0" />
     <PackageVersion Include="IconPacks.Material" Version="1.0.8940.2-build" />
     <PackageVersion Include="LibVLCSharp.MAUI" Version="3.9.7.1" />
-    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc6.1" />
+    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.2" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.31" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.31" />
     <PackageVersion Include="Microsoft.Maui.Core" Version="10.0.31" />
@@ -24,7 +24,7 @@
     <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
     <PackageVersion Include="Plugin.SegmentedControl.Maui" Version="1.4.36" />
-    <PackageVersion Include="Sentry" Version="6.1.0" />
+    <PackageVersion Include="Sentry" Version="6.4.1" />
     <PackageVersion Include="SkiaSharp" Version="3.119.2" />
     <PackageVersion Include="SkiaSharp.Skottie" Version="3.119.2" />
     <PackageVersion Include="SkiaSharp.Views.Maui.Controls" Version="3.119.2" />
@@ -43,7 +43,7 @@
     <PackageVersion Include="Uno.WinUI.Lottie" Version="5.3.90" />
     <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.7.0-beta" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
-    <PackageVersion Include="WinUI.TableView" Version="1.4.0" />
+    <PackageVersion Include="WinUI.TableView" Version="1.4.1" />
     <PackageVersion Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.3" />
     <PackageVersion Include="Yubico.YubiKey" Version="1.16.0" />
   </ItemGroup>
