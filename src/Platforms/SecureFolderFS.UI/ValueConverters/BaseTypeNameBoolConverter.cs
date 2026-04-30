@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
@@ -11,7 +12,7 @@ namespace SecureFolderFS.UI.ValueConverters
                 return false;
 
             var split = strParam.Split('|');
-            var invert = split[1].Contains("invert", StringComparison.OrdinalIgnoreCase);
+            var invert = split.ElementAtOrDefault(1)?.Contains("invert", StringComparison.OrdinalIgnoreCase) ?? false;
             var result = false;
 
             foreach (var item in split[0].Split(','))

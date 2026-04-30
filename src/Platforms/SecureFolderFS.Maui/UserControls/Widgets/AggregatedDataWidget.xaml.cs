@@ -22,7 +22,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
         }
         public static readonly BindableProperty TotalWriteProperty =
             BindableProperty.Create(nameof(TotalWrite), typeof(string), typeof(AggregatedDataWidget));
-        
+
         public bool IsReading
         {
             get => (bool)GetValue(IsReadingProperty);
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
 
                     widget.ReadEllipsis.FadeToAsync(bValue ? 1d : 0d);
                 });
-        
+
         public bool IsWriting
         {
             get => (bool)GetValue(IsWritingProperty);

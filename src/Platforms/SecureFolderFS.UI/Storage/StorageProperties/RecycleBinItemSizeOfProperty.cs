@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.Storage.StorageProperties
         {
             if (_dataModel.Size < 0L)
                 return Task.FromResult<long?>(null);
-            
+
             return Task.FromResult(_dataModel.Size);
         }
     }

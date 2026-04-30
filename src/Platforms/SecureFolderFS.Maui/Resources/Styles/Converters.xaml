@@ -9,6 +9,7 @@
     <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     <vc:BoolOpacityConverter x:Key="BoolOpacityConverter" />
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
+    <vc:TypeNameBoolConverter x:Key="TypeNameBoolConverter" />
     <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
     <vc:CountToStringConverter x:Key="CountToStringConverter" />
     <vc:NullToOpacityConverter x:Key="NullToOpacityConverter" />

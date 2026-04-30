@@ -1,8 +1,9 @@
 ﻿using System;
-using SecureFolderFS.Core.Cryptography.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.SecureStore;
 
-namespace SecureFolderFS.Core.Cryptography.SecureStore
+namespace SecureFolderFS.Core.Cryptography
 {
     /// <summary>
     /// Represents a chain of secret keys used for encryption and message authentication.

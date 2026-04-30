@@ -1433,4 +1433,28 @@
   <data name="ExitApp" xml:space="preserve">
       <value>Exit</value>
   </data>
+  <data name="Vault" xml:space="preserve">
+      <value>Vault</value>
+  </data>
+  <data name="SaveCredentials" xml:space="preserve">
+      <value>Save credentials</value>
+  </data>
+  <data name="CharacterCount" xml:space="preserve">
+      <value>Characters: {0}</value>
+  </data>
+  <data name="CursorPosition" xml:space="preserve">
+      <value>Position: {0}</value>
+  </data>
+  <data name="FileModified" xml:space="preserve">
+      <value>Modified</value>
+  </data>
+  <data name="CredentialsHaveBeenSaved" xml:space="preserve">
+      <value>Credentials have been saved for this vault</value>
+  </data>
+  <data name="DiscardSavedCredentials" xml:space="preserve">
+      <value>Discard saved credentials</value>
+  </data>
+  <data name="OpenInExternalApp" xml:space="preserve">
+      <value>Open in external app</value>
+  </data>
 </root>

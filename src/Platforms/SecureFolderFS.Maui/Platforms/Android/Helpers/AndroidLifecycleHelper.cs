@@ -19,7 +19,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
     internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper, IRecipient<VaultUnlockedMessage>
     {
         private bool _isForegroundServiceStarted;
-        
+
         /// <inheritdoc/>
         public override string AppDirectory { get; } = FileSystem.Current.AppDataDirectory;
 
@@ -40,13 +40,13 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         {
             _ = ex;
         }
-        
+
         /// <inheritdoc/>
         public async void Receive(VaultUnlockedMessage message)
         {
             if (_isForegroundServiceStarted || MainActivity.Instance is null)
                 return;
-            
+
             // Start the vault foreground service so it's ready to receive messenger messages
             var serviceIntent = new Intent(MainActivity.Instance, typeof(VaultForegroundService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                 MainActivity.Instance.StartService(serviceIntent);
 
             _isForegroundServiceStarted = true;
-            
+
             // Add the initial vault
             var foregroundService = await VaultForegroundService.GetInstanceAsync();
             foregroundService.UnlockedVaults.Add(message.VaultModel);

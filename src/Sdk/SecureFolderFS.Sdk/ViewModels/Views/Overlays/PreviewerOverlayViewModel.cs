@@ -15,7 +15,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -47,9 +46,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(cancellationToken),
                 TypeHint.Document when classification is { MimeType: "application/pdf" } => new PdfPreviewerViewModel(file).WithInitAsync(cancellationToken),
-                TypeHint.Image or TypeHint.Media => new CarouselPreviewerViewModel(
+                TypeHint.Image or TypeHint.Media or TypeHint.Audio => new CarouselPreviewerViewModel(
                     _folderViewModel.Items
-                        .Where(x => x is FileViewModel && FileTypeHelper.GetTypeHint(x.Inner) is TypeHint.Image or TypeHint.Media)
+                        .Where(x => x is FileViewModel && FileTypeHelper.GetTypeHint(x.Inner) is TypeHint.Image or TypeHint.Media or TypeHint.Audio)
                         .Select(x => (FileViewModel)x),
                     (FileViewModel)_itemViewModel).WithInitAsync(cancellationToken),
                 TypeHint.Archive => new ArchivePreviewerViewModel(file, _folderViewModel, _folderViewModel.BrowserViewModel.TransferViewModel).WithInitAsync(cancellationToken),

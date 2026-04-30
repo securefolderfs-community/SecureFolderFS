@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -13,19 +13,19 @@ public sealed partial class CredsAddCommand(IVaultManagerService vaultManagerSer
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
-    [CommandOption("twofa-password", Description = "Prompt for a new second-factor password.")]
-    public bool NewTwoFactorPassword { get; init; }
+    [CommandOption("new-twofa-password", Description = "Prompt for a new second-factor password.")]
+    public bool NewTwoFactorPassword { get; set; }
 
-    [CommandOption("twofa-password-stdin", Description = "Read new second-factor password from stdin.")]
-    public bool NewTwoFactorPasswordStdin { get; init; }
+    [CommandOption("new-twofa-password-stdin", Description = "Read new second-factor password from stdin.")]
+    public bool NewTwoFactorPasswordStdin { get; set; }
 
-    [CommandOption("twofa-keyfile", Description = "Use an existing second-factor keyfile.")]
-    public string? NewTwoFactorKeyFile { get; init; }
+    [CommandOption("new-twofa-keyfile", Description = "Use an existing second-factor keyfile.")]
+    public string? NewTwoFactorKeyFile { get; set; }
 
     [CommandOption("twofa-keyfile-generate", Description = "Generate a new second-factor keyfile.")]
-    public string? NewTwoFactorKeyFileGenerate { get; init; }
+    public string? NewTwoFactorKeyFileGenerate { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -114,8 +114,3 @@ public sealed partial class CredsAddCommand(IVaultManagerService vaultManagerSer
         }
     }
 }
-
-
-
-
-

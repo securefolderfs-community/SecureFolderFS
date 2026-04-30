@@ -23,6 +23,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     [Preserve(AllMembers = true)]
     public class ShareContentProvider : ContentProvider
     {
+        /// <summary>
+        /// How long a registered file is kept alive after the intent is launched,
+        /// to accommodate apps that open multiple streams (e.g. type sniffing + actual read).
+        /// </summary>
+        private static readonly TimeSpan RegistrationTtl = TimeSpan.FromSeconds(20);
+        
         private static readonly Dictionary<string, IFile> _registeredFiles = new();
         private static readonly Lock _lock = new();
 
@@ -30,21 +36,27 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public ShareContentProvider()
         {
         }
-
+        
         /// <summary>
-        /// Registers a file for sharing and returns a unique identifier.
+        /// Registers a file for sharing and returns a content URI suitable for use in an Intent.
+        /// The registration is automatically cleaned up after <see cref="RegistrationTtl"/>.
         /// </summary>
+        /// <param name="context">The application context, used to resolve the authority.</param>
         /// <param name="file">The file to register.</param>
-        /// <returns>A unique identifier for the file.</returns>
-        public static string RegisterFile(IFile file)
+        /// <returns>A content URI pointing to the registered file.</returns>
+        public static Uri? RegisterFileAndBuildUri(Context context, IFile file)
         {
             var fileId = Guid.NewGuid().ToString("N");
             lock (_lock)
-            {
                 _registeredFiles[fileId] = file;
-            }
-
-            return fileId;
+ 
+            // Schedule deferred cleanup - the call site must NOT call UnregisterFile manually,
+            // because some apps open the stream more than once (type sniffing + actual read).
+            _ = Task.Delay(RegistrationTtl)
+                .ContinueWith(_ => UnregisterFile(fileId));
+ 
+            var authority = $"{context.PackageName}.shareProvider";
+            return Uri.Parse($"content://{authority}/{fileId}/{Uri.Encode(file.Name)}");
         }
 
         /// <summary>
@@ -54,9 +66,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public static void UnregisterFile(string fileId)
         {
             lock (_lock)
-            {
                 _registeredFiles.Remove(fileId);
-            }
         }
 
         /// <inheritdoc/>
@@ -80,8 +90,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     return null;
             }
 
-            // Create a pipe and stream the file content through it
-            var pipe = ParcelFileDescriptor.CreatePipe();
+            // Create a reliable pipe and stream the file content through it
+            var pipe = ParcelFileDescriptor.CreateReliablePipe();
             if (pipe is null || pipe.Length < 2)
                 return null;
 
@@ -101,14 +111,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     while ((bytesRead = await fileStream.ReadAsync(buffer)) > 0)
                         await outputStream.WriteAsync(buffer, 0, bytesRead);
                 }
-                catch
+                catch (Java.IO.IOException ex) when (IsBrokenPipe(ex))
                 {
-                    // Silently handle errors during streaming
+                    // Read side closed before we finished writing — normal for apps that
+                    // sniff the stream type before opening it for real. Exit cleanly.
+                    SafetyHelpers.NoFailure(writeSide.Close);
                 }
-                finally
+                catch (Exception ex)
                 {
-                    // Clean up the registration after streaming
-                    UnregisterFile(fileId);
+                    // Signal the read side so the receiving app sees a real error
+                    // instead of an unexpected EOF
+                    SafetyHelpers.NoFailure(() => writeSide.CloseWithError(ex.Message));
                 }
             });
 
@@ -129,7 +142,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     return null;
             }
 
-            // Get the filename from the URI path (second segment)
+            // Get the display name from the URI path (second segment)
             var fileName = uri.PathSegments?.ElementAtOrDefault(1) ?? file.Name;
 
             var columns = projection ?? [ IOpenableColumns.DisplayName, IOpenableColumns.Size ];
@@ -182,6 +195,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
         /// <inheritdoc/>
         public override int Update(Uri uri, ContentValues? values, string? selection, string[]? selectionArgs) => 0;
+        
+        private static bool IsBrokenPipe(Java.IO.IOException ex)
+        {
+            var msg = ex.Message;
+            return msg is not null &&
+                   (msg.Contains("EPIPE", StringComparison.OrdinalIgnoreCase) ||
+                    msg.Contains("Broken pipe", StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
 

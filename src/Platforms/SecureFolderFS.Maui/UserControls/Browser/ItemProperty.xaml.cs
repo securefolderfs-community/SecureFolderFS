@@ -16,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
         public static readonly BindableProperty IsLastItemProperty =
             BindableProperty.Create(nameof(IsLastItem), typeof(bool), typeof(ItemProperty), false);
-        
+
         public LineBreakMode SubtitleTruncation
         {
             get => (LineBreakMode)GetValue(SubtitleTruncationProperty);

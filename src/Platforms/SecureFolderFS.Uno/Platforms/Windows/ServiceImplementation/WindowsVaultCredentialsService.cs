@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Windows.Security.Credentials;
 using OwlCore.Storage;
-using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
@@ -15,49 +16,14 @@ using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.ViewModels.DeviceLink;
 using SecureFolderFS.Uno.ViewModels.WindowsHello;
 using SecureFolderFS.Uno.ViewModels.YubiKey;
-using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
-    /// <inheritdoc cref="IVaultService"/>
+    /// <inheritdoc cref="IVaultCredentialsService"/>
     internal sealed class WindowsVaultCredentialsService : BaseVaultCredentialsService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
-
-            foreach (var item in authenticationMethod.Methods)
-            {
-                yield return item switch
-                {
-                    // Password
-                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
-
-                    // Windows Hello
-                    Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken)
-                            ? new WindowsHelloLoginViewModel(vaultFolder, config.Uid)
-                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
-
-                    // YubiKey
-                    Core.Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uEE7E") },
-
-                    // Key File
-                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
-
-                    // Device Link
-                    Core.Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, config.Uid) { Icon = new ImageGlyph("\uE8EA") },
-
-                    _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
-                };
-            }
-        }
-
-        /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
             yield return new PasswordCreationViewModel() { Icon = new ImageGlyph("\uE8AC") };
@@ -79,6 +45,38 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
             // Device Link
             yield return new DeviceLinkCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") };
+        }
+
+        /// <inheritdoc/>
+        protected override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
+            IFolder vaultFolder,
+            AuthenticationMethod unlockProcedure, string vaultId,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            foreach (var item in unlockProcedure.Methods)
+            {
+                yield return item switch
+                {
+                    // Password
+                    Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
+
+                    // Windows Hello
+                    Constants.Vault.Authentication.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken)
+                        ? new WindowsHelloLoginViewModel(vaultFolder, vaultId)
+                        : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
+
+                    // YubiKey
+                    Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") },
+
+                    // Key File
+                    Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
+
+                    // Device Link
+                    Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") },
+
+                    _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
+                };
+            }
         }
     }
 }

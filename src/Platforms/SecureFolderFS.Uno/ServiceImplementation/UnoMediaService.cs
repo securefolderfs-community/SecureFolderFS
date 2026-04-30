@@ -92,6 +92,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public Task<IDisposable> StreamAudioAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            return Task.FromException<IDisposable>(new NotSupportedException());
+        }
+
+        /// <inheritdoc/>
         public Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
         {
             return Task.FromException<IImageStream>(new NotSupportedException());

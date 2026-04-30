@@ -8,6 +8,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? VideoTemplate { get; set; }
 
+        public DataTemplate? AudioTemplate { get; set; }
+
         public DataTemplate? TextTemplate { get; set; }
 
         public DataTemplate? PdfTemplate { get; set; }
@@ -28,6 +30,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
                 ArchivePreviewerViewModel => ArchiveTemplate,
                 ImagePreviewerViewModel => ImageTemplate,
                 VideoPreviewerViewModel => VideoTemplate,
+                AudioPreviewerViewModel => AudioTemplate,
                 TextPreviewerViewModel => TextTemplate,
                 PdfPreviewerViewModel => PdfTemplate,
                 _ => null

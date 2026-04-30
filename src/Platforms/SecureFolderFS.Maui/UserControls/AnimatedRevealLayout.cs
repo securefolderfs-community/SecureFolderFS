@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.UserControls
     {
         private const uint ANIMATION_DURATION = 250U;
         private static readonly Easing ShowEasing = Easing.CubicOut;
-        private static readonly Easing HideEasing = Easing.CubicIn;
+        private static readonly Easing HideEasing = Easing.CubicInOut;
 
         // Wraps the reveal content and is the thing whose Width/Height we animate
         private readonly ContentView _revealWrapper = new()
@@ -178,11 +178,22 @@ namespace SecureFolderFS.Maui.UserControls
             if (_revealView is null)
                 return 0d;
 
-            return IsHorizontal
-                ? _revealView.WidthRequest > 0d ? _revealView.WidthRequest : _revealView.Width
-                : _revealView.HeightRequest > 0d
-                    ? _revealView.HeightRequest
-                    : _revealView.Height;
+            if (IsHorizontal)
+            {
+                if (_revealView.WidthRequest > 0d)
+                    return _revealView.WidthRequest;
+
+                var measured = _revealView.Measure(double.PositiveInfinity, double.PositiveInfinity);
+                return measured.Width;
+            }
+            else
+            {
+                if (_revealView.HeightRequest > 0d)
+                    return _revealView.HeightRequest;
+
+                var measured = _revealView.Measure(double.PositiveInfinity, double.PositiveInfinity);
+                return measured.Height;
+            }
         }
 
         #endregion

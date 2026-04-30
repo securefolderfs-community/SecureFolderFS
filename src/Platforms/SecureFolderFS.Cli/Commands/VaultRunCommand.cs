@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Helpers;
@@ -15,16 +15,16 @@ public sealed partial class VaultRunCommand(IVaultManagerService vaultManagerSer
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     [CommandOption("read", Description = "Read a file from the vault.")]
-    public string? ReadPath { get; init; }
+    public string? ReadPath { get; set; }
 
     [CommandOption("write", Description = "Write stdin to a file in the vault.")]
-    public string? WritePath { get; init; }
+    public string? WritePath { get; set; }
 
     [CommandOption("out", Description = "When reading, write output to local file instead of stdout.")]
-    public string? OutPath { get; init; }
+    public string? OutPath { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -139,8 +139,3 @@ public sealed partial class VaultRunCommand(IVaultManagerService vaultManagerSer
         await stdin.CopyToAsync(destinationStream);
     }
 }
-
-
-
-
-

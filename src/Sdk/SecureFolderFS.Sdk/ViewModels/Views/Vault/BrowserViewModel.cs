@@ -243,6 +243,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         protected virtual async Task NewItemAsync(string? itemType, CancellationToken cancellationToken)
         {
+            if (Options.IsReadOnly)
+                return;
+
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
@@ -291,6 +294,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         protected virtual async Task ImportItemAsync(string? itemType, CancellationToken cancellationToken)
         {
+            if (Options.IsReadOnly)
+                return;
+
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 

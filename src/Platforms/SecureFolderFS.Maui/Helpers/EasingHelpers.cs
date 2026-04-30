@@ -37,7 +37,8 @@ namespace SecureFolderFS.Maui.Helpers
                         break;
 
                     var derivative = (3d * ax * tEstimate + 2d * bx) * tEstimate + cx;
-                    if (Math.Abs(derivative) < 1e-6) break;
+                    if (Math.Abs(derivative) < 1e-6)
+                        break;
 
                     tEstimate -= dx / derivative;
                     tEstimate = Math.Clamp(tEstimate, 0.0, 1.0);

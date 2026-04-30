@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;

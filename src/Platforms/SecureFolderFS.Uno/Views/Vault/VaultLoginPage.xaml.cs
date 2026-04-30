@@ -73,7 +73,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             await ViewModel.VaultNavigation.ForgetNavigateSpecificViewAsync(dashboardViewModel,
                x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(args.UnlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
-            
+
             e.TaskCompletion?.TrySetResult(true);
         }
     }

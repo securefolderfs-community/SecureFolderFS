@@ -2,8 +2,8 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.SecureStore;
 using static SecureFolderFS.Core.Cryptography.Constants.CipherId;
 
 namespace SecureFolderFS.Core.Cryptography.Helpers

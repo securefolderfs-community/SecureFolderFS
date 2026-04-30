@@ -48,20 +48,20 @@ namespace SecureFolderFS.Uno.PInvoke
             uint uMsg,
             IntPtr wParam,
             IntPtr lParam);
-        
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern int GetSystemMetrics(int nIndex);
-        
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool EnumDisplayMonitors(
             IntPtr hdc,
             IntPtr lprcClip,
             MonitorEnumDelegate lpfnEnum,
             IntPtr dwData);
-        
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
-        
+
         [DllImport("Mpr.dll")]
         public static extern int WNetAddConnection2(
             [In] NETRESOURCE lpNetResource,
@@ -87,12 +87,12 @@ namespace SecureFolderFS.Uno.PInvoke
             [In] uint wMsg,
             [In] IntPtr wParam,
             [In] IntPtr lParam);
-        
+
         [DllImport("shell32.dll")]
         public static extern void SHAddToRecentDocs(
             [In] uint uFlags,
             [In] IntPtr pv);
-        
+
         [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int SHGetSetFolderCustomSettings(
             ref SHFOLDERCUSTOMSETTINGS pfcs,
@@ -105,9 +105,9 @@ namespace SecureFolderFS.Uno.PInvoke
             uint uFlags,
             [MarshalAs(UnmanagedType.LPWStr)] string dwItem1,
             IntPtr dwItem2);
-        
+
         private delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData);
-        
+
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate IntPtr SUBCLASSPROC(
             IntPtr hWnd,
@@ -152,7 +152,7 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
-        
+
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
 
@@ -277,7 +277,7 @@ namespace SecureFolderFS.Uno.PInvoke
         public string lpComment = null!;
         public string lpProvider = null!;
     }
-    
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct MONITORINFOEX
     {
@@ -300,7 +300,7 @@ namespace SecureFolderFS.Uno.PInvoke
 
         public bool IsEmpty => Left == 0 && Top == 0 && Right == 0 && Bottom == 0;
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct WINDOWPLACEMENT
     {
@@ -328,7 +328,7 @@ namespace SecureFolderFS.Uno.PInvoke
         public POINT ptMinTrackSize;
         public POINT ptMaxTrackSize;
     }
-    
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct SHFOLDERCUSTOMSETTINGS
     {

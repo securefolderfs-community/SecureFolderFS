@@ -11,9 +11,10 @@ namespace SecureFolderFS.UI.ValueConverters
         /// <inheritdoc/>
         protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
-            if (value is not string strValue)
+            if (value is null)
                 return string.Empty;
 
+            var strValue = value.ToString();
             if (parameter is not string formatStringParam)
                 return strValue;
 

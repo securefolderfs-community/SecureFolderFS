@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             InitializeComponent();
         }
-        
+
         private void FileSystems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (OverlayViewModel is null)
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 OverlayViewModel.SelectedFileSystem = itemViewModel;
             }
         }
-        
+
         public IntroductionOverlayViewModel? OverlayViewModel
         {
             get => (IntroductionOverlayViewModel?)GetValue(OverlayViewModelProperty);

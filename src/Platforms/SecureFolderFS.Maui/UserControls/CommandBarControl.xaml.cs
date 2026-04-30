@@ -29,6 +29,7 @@ namespace SecureFolderFS.Maui.UserControls
                 Grid.SetRowSpan(TopBorder, 1);
                 Grid.SetRowSpan(MainContent, 1);
                 Grid.SetRow(MainContent, 1);
+                MainContent.Margin = new(0, 24, 0, 0);
             }
             else
             {

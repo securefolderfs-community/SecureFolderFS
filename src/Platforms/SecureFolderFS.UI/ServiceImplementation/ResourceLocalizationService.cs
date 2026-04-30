@@ -63,7 +63,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             try
             {
-                return ResourceManager.GetString(resourceKey);
+                return ResourceManager.GetString(resourceKey, CurrentCulture);
             }
             catch (Exception ex)
             {

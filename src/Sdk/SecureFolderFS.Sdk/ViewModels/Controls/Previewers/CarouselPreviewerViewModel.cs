@@ -54,6 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             {
                 TypeHint.Image => new ImagePreviewerViewModel(file),
                 TypeHint.Media => new VideoPreviewerViewModel(file, true),
+                TypeHint.Audio => new AudioPreviewerViewModel(file, true),
                 _ => null
             };
         }

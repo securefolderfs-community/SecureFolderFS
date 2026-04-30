@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             _sourceNavigation = sourceNavigation;
             _modalTcs = new();
             BindingContext = this;
-            
+
             InitializeComponent();
         }
         
@@ -104,7 +104,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         {
             if (ViewModel is null)
                 return;
-            
+
             await ViewModel.SubmitQueryCommand.ExecuteAsync(SearchInput.Text);
         }
 

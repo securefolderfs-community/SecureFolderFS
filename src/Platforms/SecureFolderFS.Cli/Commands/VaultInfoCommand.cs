@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.SystemStorageEx;
@@ -10,7 +10,7 @@ namespace SecureFolderFS.Cli.Commands
     public sealed partial class VaultInfoCommand(IVaultService vaultService) : CliGlobalOptions, ICommand
     {
         [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-        public required string Path { get; init; }
+        public required string Path { get; set; }
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
@@ -41,7 +41,3 @@ namespace SecureFolderFS.Cli.Commands
         }
     }
 }
-
-
-
-

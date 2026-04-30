@@ -1,13 +1,12 @@
 using System.Security.Cryptography;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.Extensions;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
 {

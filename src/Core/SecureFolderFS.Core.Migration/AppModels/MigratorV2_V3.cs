@@ -1,22 +1,22 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Migration.DataModels;
 using SecureFolderFS.Core.Migration.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 using SecureFolderFS.Storage.Extensions;
-using System;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Migration.AppModels
 {
@@ -146,10 +146,10 @@ namespace SecureFolderFS.Core.Migration.AppModels
             //
             var v3ConfigDataModel = new VaultConfigurationDataModel()
             {
-                AuthenticationMethod = _wasNewPasswordSet ? Core.Constants.Vault.Authentication.AUTH_PASSWORD : _v2ConfigDataModel.AuthenticationMethod,
+                AuthenticationMethod = _wasNewPasswordSet ? Constants.Vault.Authentication.AUTH_PASSWORD : _v2ConfigDataModel.AuthenticationMethod,
                 ContentCipherId = _v2ConfigDataModel.ContentCipherId,
                 FileNameCipherId = _v2ConfigDataModel.FileNameCipherId,
-                FileNameEncodingId = Core.Cryptography.Constants.CipherId.ENCODING_BASE64URL,
+                FileNameEncodingId = Cryptography.Constants.CipherId.ENCODING_BASE64URL,
                 RecycleBinSize = 0L,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes],
                 Uid = _v2ConfigDataModel.Uid,

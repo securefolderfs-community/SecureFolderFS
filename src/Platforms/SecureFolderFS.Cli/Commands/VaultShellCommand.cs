@@ -1,6 +1,6 @@
 using System.Text;
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Helpers;
@@ -15,7 +15,7 @@ public sealed partial class VaultShellCommand(IVaultManagerService vaultManagerS
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
