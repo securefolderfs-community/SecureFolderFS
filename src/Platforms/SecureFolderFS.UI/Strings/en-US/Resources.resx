@@ -1454,4 +1454,7 @@
   <data name="DiscardSavedCredentials" xml:space="preserve">
       <value>Discard saved credentials</value>
   </data>
+  <data name="OpenInExternalApp" xml:space="preserve">
+      <value>Open in external app</value>
+  </data>
 </root>

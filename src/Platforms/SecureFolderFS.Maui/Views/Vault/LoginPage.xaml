@@ -9,13 +9,8 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     Title="{Binding ViewModel.VaultViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
-
-    <ContentPage.Resources>
-        <vc:TypeNameBoolConverter x:Key="TypeNameBoolConverter" />
-    </ContentPage.Resources>
 
     <Grid>
         <ScrollView>

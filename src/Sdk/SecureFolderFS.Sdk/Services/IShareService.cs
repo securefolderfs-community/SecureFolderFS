@@ -22,5 +22,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="file">The file to be shared.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task ShareFileAsync(IFile file);
+
+        /// <summary>
+        /// Opens a file using the platform's associated application for the file type.
+        /// </summary>
+        /// <param name="file">The file to be opened.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task OpenFileWithAsync(IFile file);
     }
 }

@@ -26,7 +26,7 @@ using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>, Inject<IShareService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
@@ -66,6 +66,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 ParentFolder?.SelectedItems.Add(this);
             else
                 ParentFolder?.SelectedItems.Remove(this);
+        }
+
+        [RelayCommand]
+        protected virtual async Task OpenInExternalAppAsync(CancellationToken cancellationToken)
+        {
+            if (Inner is not IFile file)
+                return;
+
+            await ShareService.OpenFileWithAsync(file);
         }
 
         [RelayCommand]

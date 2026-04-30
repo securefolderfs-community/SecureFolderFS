@@ -32,6 +32,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             await PresentActivityControllerAsync(activityController);
         }
 
+        /// <inheritdoc/>
+        public Task OpenFileWithAsync(IFile file)
+        {
+            return Task.FromException(new NotSupportedException("Opening files with associated applications is not supported on iOS. Use ShareFileAsync to share the file instead."));
+        }
+
         private static Task PresentActivityControllerAsync(UIActivityViewController activityController)
         {
             var tcs = new TaskCompletionSource();
