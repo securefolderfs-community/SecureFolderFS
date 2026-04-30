@@ -67,5 +67,17 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             using var result = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }
+
+        /// <inheritdoc/>
+        public virtual async Task ModifyAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKeyUsage oldPasskey, IKeyUsage newPasskey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        {
+            using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
+            await credentialsRoutine.InitAsync(cancellationToken);
+            credentialsRoutine.SetUnlockContract(unlockContract);
+            credentialsRoutine.SetOptions(vaultOptions);
+            credentialsRoutine.SetCredentials(oldPasskey, newPasskey, cancellationToken);
+
+            using var result = await credentialsRoutine.FinalizeAsync(cancellationToken);
+        }
     }
 }

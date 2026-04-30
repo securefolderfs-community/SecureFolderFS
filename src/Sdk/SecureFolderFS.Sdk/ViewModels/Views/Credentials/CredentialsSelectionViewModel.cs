@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -31,6 +32,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
         public IDisposable? UnlockContract { private get; set; }
+
+        public KeySequence? OldPasskey { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
@@ -76,6 +79,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 IsRemoving = true,
                 IsComplementationAvailable = false,
                 UnlockContract = UnlockContract,
+                OldPasskey = OldPasskey,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }
@@ -97,6 +101,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 IsRemoving = false,
                 IsComplementationAvailable = _authenticationStage != AuthenticationStage.FirstStageOnly,
                 UnlockContract = UnlockContract,
+                OldPasskey = OldPasskey,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }

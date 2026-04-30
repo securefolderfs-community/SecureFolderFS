@@ -24,7 +24,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly KeySequence _keySequence;
+        private readonly KeySequence _loginKeySequence;
+        private readonly KeySequence _registerKeySequence;
         private readonly AuthenticationStage _authenticationStage;
 
         [ObservableProperty] private LoginViewModel _LoginViewModel;
@@ -35,12 +36,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage)
         {
             ServiceProvider = DI.Default;
-            _keySequence = new();
+            _loginKeySequence = new();
+            _registerKeySequence = new();
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
 
-            RegisterViewModel = new(authenticationStage, _keySequence);
-            LoginViewModel = new(vaultFolder, LoginViewType.Basic, _keySequence) { Title = vaultName };
+            RegisterViewModel = new(authenticationStage, _registerKeySequence);
+            LoginViewModel = new(vaultFolder, LoginViewType.Basic, _loginKeySequence) { Title = vaultName };
             SelectionViewModel = new(vaultFolder, authenticationStage);
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
@@ -85,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
                 // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
                 // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
-                _keySequence.Dispose();
+                _loginKeySequence.Dispose();
                 SelectedViewModel = new CredentialsResetViewModel(_vaultFolder, e.UnlockContract, RegisterViewModel).WithInitAsync();
             }
             else
@@ -93,6 +95,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 Title = "SelectAuthentication".ToLocalized();
                 PrimaryText = null;
                 SelectionViewModel.UnlockContract = e.UnlockContract;
+                SelectionViewModel.OldPasskey = _loginKeySequence;
+
+                // Seed the register sequence with the already-authenticated first-stage key
+                // so that when a second-stage method is added, the combined passkey is complete
+                foreach (var key in _loginKeySequence.Keys)
+                    _registerKeySequence.SetOrAdd(0, key); // First-stage lives at index 0
+
                 SelectionViewModel.RegisterViewModel = RegisterViewModel;
                 SelectedViewModel = SelectionViewModel;
             }
@@ -121,6 +130,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             (SelectedViewModel as IDisposable)?.Dispose();
             SelectionViewModel.Dispose();
             LoginViewModel.Dispose();
+            _loginKeySequence.Dispose();
+            _registerKeySequence.Dispose();
         }
     }
 }

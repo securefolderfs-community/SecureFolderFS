@@ -41,14 +41,7 @@ namespace SecureFolderFS.Core.DataModels
         /// </remarks>
         [JsonPropertyName(Associations.ASSOC_RECYCLE_SIZE)]
         [DefaultValue(0L)]
-        public long RecycleBinSize { get; set; } = 0L;
-
-        ///// <summary>
-        ///// Gets the specialization of the vault that hints how the user data should be handled.
-        ///// </summary>
-        //[JsonPropertyName(Associations.ASSOC_SPECIALIZATION)]
-        //[DefaultValue("")]
-        //public required string Specialization { get; init; } = string.Empty;
+        public long RecycleBinSize { get; set; }
 
         /// <summary>
         /// Gets the information about the authentication method used for this vault.
