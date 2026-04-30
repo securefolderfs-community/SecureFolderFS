@@ -65,7 +65,3 @@ public sealed partial class CredsRemoveCommand(IVaultManagerService vaultManager
         }
     }
 }
-
-
-
-

@@ -71,6 +71,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void DropGestureRecognizer_DragOver(object? sender, DragEventArgs e)
         {
+            if (IsReadOnly)
+                return;
+
             if (sender is not DropGestureRecognizer { Parent: View view })
                 return;
 
@@ -94,6 +97,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private async void DropGestureRecognizer_Drop(object? sender, DropEventArgs e)
         {
+            if (IsReadOnly)
+                return;
+
             if (sender is not ContextMenuContainer { BindingContext: FolderViewModel folderViewModel })
                 return;
 
@@ -131,6 +137,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private async void CollectionDropGestureRecognizer_Drop(object? sender, DropEventArgs e)
         {
+            if (IsReadOnly)
+                return;
+
             // Handle internal drag-and-drop (from within the app)
             var draggedItem = GetDraggedItem(e);
             if (draggedItem is not null)

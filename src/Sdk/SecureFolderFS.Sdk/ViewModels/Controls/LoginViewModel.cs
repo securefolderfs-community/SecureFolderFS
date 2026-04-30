@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -27,17 +29,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     public sealed partial class LoginViewModel : ObservableObject, IViewable, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly KeySequence _keySequence;
         private readonly LoginViewType _loginViewMode;
         private readonly IVaultWatcherModel _vaultWatcherModel;
+        private VaultOptions? _vaultOptions;
         private Iterator<AuthenticationViewModel>? _loginSequence;
 
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanRecover;
         [ObservableProperty] private bool _IsLoginSequence;
+        [ObservableProperty] private bool _AreCredentialsSaved;
+        [ObservableProperty] private bool _ShouldSaveCredentials;
         [ObservableProperty] private ICommand? _ProvideCredentialsCommand;
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
+        /// <summary>
+        /// Represents a sequence of credentials to be used for authentication.
+        /// </summary>
+        public KeySequence KeySequence { get; }
+
+        /// <summary>
+        /// Occurs when a vault has been successfully unlocked.
+        /// </summary>
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
         public LoginViewModel(IFolder vaultFolder, LoginViewType loginViewMode, KeySequence? keySequence = null)
@@ -45,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _loginViewMode = loginViewMode;
-            _keySequence = keySequence ?? new();
+            KeySequence = keySequence ?? new();
             _vaultWatcherModel = new VaultWatcherModel(_vaultFolder);
             _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
@@ -64,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //
 
             // Dispose previous state, if any
-            _keySequence.Dispose();
+            KeySequence.Dispose();
             _loginSequence?.Dispose();
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
@@ -72,6 +84,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             {
                 try
                 {
+                    if (!PersistedCredentialsModel.Instance.Credentials.IsEmpty()
+                        && _loginViewMode is LoginViewType.Full or LoginViewType.Constrained)
+                    {
+                        _vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+                        if (!string.IsNullOrEmpty(_vaultOptions.VaultId) && PersistedCredentialsModel.Instance.Credentials.ContainsKey(_vaultOptions.VaultId))
+                        {
+                            AreCredentialsSaved = true;
+                            CurrentViewModel = new PersistedAuthenticationViewModel(_vaultOptions.VaultId);
+                            return;
+                        }
+                    }
+
                     // Get the authentication method enumerator for this vault
                     var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
                     _loginSequence = new(loginItems);
@@ -143,26 +167,58 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
+        private async Task DiscardSavedCredentialsAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+                if (!string.IsNullOrEmpty(vaultOptions.VaultId))
+                {
+                    PersistedCredentialsModel.Instance.Remove(vaultOptions.VaultId);
+                    AreCredentialsSaved = false;
+
+                    _loginSequence?.Dispose();
+                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                    _loginSequence = new(loginItems);
+                    IsLoginSequence = _loginSequence.Count > 1;
+                    RestartLoginProcess();
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
+            }
+        }
+
+        [RelayCommand]
         private void RestartLoginProcess()
         {
             // Dispose built key sequence
-            _keySequence.Dispose();
-
-            // Reset login sequence only if chain is longer than one authentication
-            if (_loginSequence?.Count > 1)
-            {
-                _loginSequence?.Reset();
-                var result = ProceedAuthentication();
-                if (!result.Successful)
-                    CurrentViewModel = new ErrorViewModel(result);
-            }
+            KeySequence.Dispose();
+            _loginSequence?.Reset();
+            var result = ProceedAuthentication();
+            if (!result.Successful)
+                CurrentViewModel = new ErrorViewModel(result);
         }
 
         private async Task<bool> TryUnlockAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
+                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, KeySequence, cancellationToken);
+                _vaultOptions ??= await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+                if (string.IsNullOrWhiteSpace(_vaultOptions.VaultId))
+                {
+                    VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, false));
+                    return true;
+                }
+
+                if (_loginViewMode is LoginViewType.Full or LoginViewType.Constrained && ShouldSaveCredentials && !AreCredentialsSaved)
+                {
+                    var keySequenceCopy = KeySequence.Key.ToArray();
+                    PersistedCredentialsModel.Instance.SetOrAdd(_vaultOptions.VaultId, SecureKey.TakeOwnership(keySequenceCopy));
+                }
+
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, false));
                 return true;
             }
@@ -223,8 +279,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
+                // If authentication is empty, restart the process
+                if (e.Authentication.Length == 0)
+                {
+                    await DiscardSavedCredentialsAsync(CancellationToken.None);
+                    return;
+                }
+
                 // Add authentication
-                _keySequence.Add(e.Authentication);
+                KeySequence.Add(e.Authentication);
 
                 var result = ProceedAuthentication();
                 if (!result.Successful && CurrentViewModel is not ErrorViewModel)
@@ -278,7 +341,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
-            _keySequence.Dispose();
+            KeySequence.Dispose();
             _loginSequence?.Dispose();
         }
     }

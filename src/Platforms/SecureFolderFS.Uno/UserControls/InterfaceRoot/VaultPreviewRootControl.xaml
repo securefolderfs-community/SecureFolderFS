@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
-    xmlns:local="using:SecureFolderFS.Uno.UserControls.InterfaceRoot"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
@@ -51,9 +50,12 @@
                 <StackPanel VerticalAlignment="Center" Spacing="8">
                     <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <uc:LoginOptions
-                        IsReadOnly="{x:Bind ViewModel.IsReadOnlyLogin, Mode=TwoWay}"
+                        AreCredentialsSaved="{x:Bind ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
+                        DiscardSavedCredentialsCommand="{x:Bind ViewModel.LoginViewModel.DiscardSavedCredentialsCommand, Mode=OneWay}"
+                        IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
                         RecoverAccessCommand="{x:Bind ViewModel.RecoverAccessCommand, Mode=OneWay}"
                         RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                        ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
                 </StackPanel>
             </StackPanel>

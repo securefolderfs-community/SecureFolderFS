@@ -1,5 +1,4 @@
 using System;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.Empty;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt

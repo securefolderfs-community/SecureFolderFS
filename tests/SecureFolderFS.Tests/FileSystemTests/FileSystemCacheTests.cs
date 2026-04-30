@@ -18,7 +18,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
         public async Task Initialize()
         {
             var vaultFileSystemService = DI.Service<IVaultFileSystemService>();
-            var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync(default);
+            var localFileSystem = await vaultFileSystemService.GetLocalFileSystemAsync();
 
             _storageRoot = await MountVault(localFileSystem, null);
         }
@@ -41,9 +41,9 @@ namespace SecureFolderFS.Tests.FileSystemTests
             _storageRoot.Options.FileSystemStatistics.ChunkCache = new Progress<CacheAccessType>(x =>
             {
                 if (x == CacheAccessType.CacheHit)
-                    cacheHits++;
+                    Interlocked.Increment(ref cacheHits);
                 else if (x == CacheAccessType.CacheMiss)
-                    cacheMisses++;
+                    Interlocked.Increment(ref cacheMisses);
             });
 
             // Act
@@ -59,8 +59,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var buffer = new byte[stream.Length];
             var read = await stream.ReadAsync(buffer);
 
-            Console.WriteLine($"Cache Hits: {cacheHits}");
-            Console.WriteLine($"Cache Misses: {cacheMisses}");
+            Console.WriteLine($@"Cache Hits: {cacheHits}");
+            Console.WriteLine($@"Cache Misses: {cacheMisses}");
 
             read.Should().Be((int)stream.Length);
             Encoding.UTF8.GetString(buffer).Should().BeEquivalentTo(dataString + dataString);

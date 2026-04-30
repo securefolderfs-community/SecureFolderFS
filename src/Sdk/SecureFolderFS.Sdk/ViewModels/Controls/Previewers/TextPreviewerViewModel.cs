@@ -15,6 +15,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         private string? _persistedText;
 
         [ObservableProperty] private string? _Text;
+        [ObservableProperty] private long _CharacterCount;
+        [ObservableProperty] private int _CursorPosition;
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private bool _WasModified;
         [ObservableProperty] private bool _IsProgressing;
@@ -58,6 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         partial void OnTextChanged(string? value)
         {
             WasModified = value != _persistedText;
+            CharacterCount = value?.Length ?? 0L;
         }
     }
 }

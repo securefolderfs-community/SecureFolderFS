@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -13,6 +15,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
@@ -47,15 +50,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             await HealthViewModel.InitAsync(cancellationToken);
 
             // Get persisted last scanned date
-            var rawLastScanDate = await WidgetModel.GetWidgetDataAsync(cancellationToken);
-            if (rawLastScanDate is null)
+            var rawHealthDataModel = await WidgetModel.GetWidgetDataAsync(cancellationToken);
+            if (string.IsNullOrEmpty(rawHealthDataModel))
                 return;
 
-            if (!DateTime.TryParse(rawLastScanDate, out var lastScanDate))
-                return;
+            var dataModel = await StreamSerializer.Instance.TryDeserializeFromStringAsync<HealthDataModel>(rawHealthDataModel, cancellationToken);
+            switch (dataModel?.LastScanDate)
+            {
+                case { } lastScanDate:
+                {
+                    var localizedDate = LocalizationService.LocalizeDate(lastScanDate);
+                    LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
 
-            var localizedDate = LocalizationService.LocalizeDate(lastScanDate);
-            LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
+                    var difference = DateTime.Now - lastScanDate;
+                    if (difference.Days > 7)
+                        HealthViewModel.Severity = Severity.Default;
+                    else
+                        HealthViewModel.Severity = dataModel.Severity ?? Severity.Default;
+
+                    break;
+                }
+
+                default:
+                {
+                    HealthViewModel.Severity = dataModel?.Severity ?? Severity.Default;
+                    break;
+                }
+            }
         }
 
         [RelayCommand]
@@ -69,15 +90,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (e is not ScanningFinishedEventArgs)
                 return;
 
-            var scanDate = DateTime.Now;
+            var lastScanDate = DateTime.Now;
             _context.PostOrExecute(_ =>
             {
-                var localizedDate = LocalizationService.LocalizeDate(scanDate);
+                var localizedDate = LocalizationService.LocalizeDate(lastScanDate);
                 LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
             });
 
-            // Persist last scanned date
-            await WidgetModel.SetWidgetDataAsync(scanDate.ToString("o")).ConfigureAwait(false);
+            // Persist last scanned date, and severity
+            var serialized = await StreamSerializer.Instance.TrySerializeToStringAsync(new HealthDataModel(lastScanDate, HealthViewModel.Severity)).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(serialized))
+                await WidgetModel.SetWidgetDataAsync(serialized).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

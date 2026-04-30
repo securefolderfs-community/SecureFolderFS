@@ -45,6 +45,7 @@
                                 ElapsedTimeLabelStyle="{StaticResource VideoElapsedTimeLabelStyle}"
                                 Foreground="#FFFFFF"
                                 IsAspectRatioButtonVisible="False"
+                                IsCastButtonVisible="False"
                                 IsLockButtonVisible="False"
                                 IsTracksButtonVisible="False"
                                 LockButtonStyle="{StaticResource VideoLockButtonStyle}"
@@ -62,6 +63,64 @@
             </uc:PanRouter>
         </DataTemplate>
 
+        <!--  Audio  -->
+        <DataTemplate x:Key="AudioTemplate" x:DataType="vm:AudioPreviewerViewModel">
+            <uc:PanRouter PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
+                <uc:PanRouter.RouterContent>
+                    <Grid>
+                        <VerticalStackLayout
+                            Padding="16"
+                            HorizontalOptions="Center"
+                            Spacing="24"
+                            VerticalOptions="Center">
+                            <Grid>
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_cupertino:Cupertino Speaker3}"
+                                    IconSize="56"
+                                    OnPlatforms="iOS" />
+                                <mi:MauiIcon
+                                    HorizontalOptions="Center"
+                                    Icon="{mi_material:Material VolumeUp}"
+                                    IconSize="56"
+                                    OnPlatforms="Android" />
+                            </Grid>
+
+                            <Label
+                                FontSize="18"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                Opacity="0.8"
+                                Text="{Binding Title, Mode=OneWay}" />
+                        </VerticalStackLayout>
+
+                        <vlc:MediaPlayerElement Loaded="MediaPlayerElement_Loaded">
+                            <vlc:MediaPlayerElement.PlaybackControls>
+                                <vlc:PlaybackControls
+                                    BackgroundColor="Transparent"
+                                    ControlsPanelStyle="{StaticResource VideoControlsPanelStyle}"
+                                    ElapsedTimeLabelStyle="{StaticResource VideoElapsedTimeLabelStyle}"
+                                    Foreground="#FFFFFF"
+                                    IsAspectRatioButtonVisible="False"
+                                    IsCastButtonVisible="False"
+                                    IsLockButtonVisible="False"
+                                    IsTracksButtonVisible="False"
+                                    LockButtonStyle="{StaticResource VideoLockButtonStyle}"
+                                    MainColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}"
+                                    PlayPauseButtonStyle="{StaticResource VideoPlayPauseButtonStyle}"
+                                    RemainingTimeLabelStyle="{StaticResource VideoRemainingTimeLabelStyle}"
+                                    RewindButtonStyle="{StaticResource VideoRewindButtonStyle}"
+                                    SeekBarStyle="{StaticResource VideoSeekBarStyle}"
+                                    SeekButtonStyle="{StaticResource VideoSeekButtonStyle}"
+                                    UnLockButtonStyle="{StaticResource VideoUnlockButtonStyle}" />
+                            </vlc:MediaPlayerElement.PlaybackControls>
+                        </vlc:MediaPlayerElement>
+                    </Grid>
+                </uc:PanRouter.RouterContent>
+            </uc:PanRouter>
+        </DataTemplate>
+
         <!--  Image  -->
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <ucc:PanPinchContainer PanUpdatedCommand="{Binding GalleryView.PanUpdatedCommand, Mode=OneWay, Source={x:Reference ThisPage}}" TappedCommand="{Binding ViewModel.ToggleImmersionCommand, Mode=OneWay, Source={x:Reference ThisPage}}">
@@ -73,7 +132,7 @@
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <Grid>
                 <ScrollView
-                    Padding="8"
+                    Padding="8,16,8,8"
                     HorizontalScrollBarVisibility="Always"
                     IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                     Orientation="{Binding IsWrappingText, Mode=OneWay, Converter={StaticResource BoolToScrollOrientationConverter}}"
@@ -81,6 +140,7 @@
                     <Editor
                         AutoSize="TextChanges"
                         Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
+                        CursorPosition="{Binding CursorPosition, Mode=TwoWay}"
                         HorizontalOptions="Fill"
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Placeholder="{l:ResourceString Rid=WriteHere}"
@@ -95,6 +155,44 @@
                     VerticalOptions="Center"
                     Color="{OnPlatform iOS={AppThemeBinding Light={StaticResource PrimaryContrastingLightColor},
                                                             Dark={StaticResource PrimaryContrastingDarkColor}}}" />
+
+                <uc:AnimatedRevealLayout
+                    Padding="16,10"
+                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                    HorizontalOptions="Fill"
+                    IsShown="{Binding WasModified, Mode=OneWay}"
+                    RevealSide="Left"
+                    VerticalOptions="End">
+                    <uc:AnimatedRevealLayout.RevealContent>
+                        <HorizontalStackLayout Spacing="16">
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=FileModified}" />
+                            <BoxView
+                                Margin="0,0,16,0"
+                                Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                                VerticalOptions="Fill"
+                                WidthRequest="1" />
+                        </HorizontalStackLayout>
+                    </uc:AnimatedRevealLayout.RevealContent>
+                    <uc:AnimatedRevealLayout.MainContent>
+                        <HorizontalStackLayout Spacing="16">
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{Binding CharacterCount, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|CharacterCount'}" />
+                            <BoxView
+                                Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
+                                VerticalOptions="Fill"
+                                WidthRequest="1" />
+                            <Label
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{Binding CursorPosition, Mode=OneWay, Converter={StaticResource StringInterpolationConverter}, ConverterParameter='inverseMode:LOCALIZE|CursorPosition'}" />
+                        </HorizontalStackLayout>
+                    </uc:AnimatedRevealLayout.MainContent>
+                </uc:AnimatedRevealLayout>
             </Grid>
         </DataTemplate>
 
@@ -107,6 +205,7 @@
                 VerticalOptions="Fill" />
         </DataTemplate>
 
+        <!--  Archive  -->
         <DataTemplate x:Key="ArchiveTemplate" x:DataType="vm:ArchivePreviewerViewModel">
             <Grid>
                 <VerticalStackLayout
@@ -125,9 +224,10 @@
                     <VerticalStackLayout>
                         <!--  Title  -->
                         <Label
-                            FontSize="20"
+                            FontSize="18"
                             HorizontalOptions="Center"
                             HorizontalTextAlignment="Center"
+                            Opacity="0.8"
                             Text="{Binding Title, Mode=OneWay}" />
                         <!--  File Size  -->
                         <Label
@@ -211,6 +311,7 @@
                     <uc:ContentPresentation.TemplateSelector>
                         <ts:PreviewerTemplateSelector
                             ArchiveTemplate="{StaticResource ArchiveTemplate}"
+                            AudioTemplate="{StaticResource AudioTemplate}"
                             CarouselTemplate="{StaticResource CarouselTemplate}"
                             FallbackTemplate="{StaticResource FallbackTemplate}"
                             ImageTemplate="{StaticResource ImageTemplate}"

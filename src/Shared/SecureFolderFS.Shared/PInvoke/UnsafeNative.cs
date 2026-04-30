@@ -2,12 +2,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace SecureFolderFS.Core.Cryptography.UnsafeNative
+namespace SecureFolderFS.Shared.PInvoke
 {
     /// <summary>
     /// Provides access to native platform APIs for memory protection and other security operations.
     /// </summary>
-    internal static class UnsafeNativeApis
+    internal static class UnsafeNative
     {
         #region Windows Memory Locking
 

@@ -158,7 +158,3 @@ public sealed partial class VaultMountCommand(IVaultManagerService vaultManagerS
         return await service.GetBestFileSystemAsync();
     }
 }
-
-
-
-

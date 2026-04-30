@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
         {
             return Task.FromResult(candidateName);
         }
-        
+
         /// <inheritdoc/>
         protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,

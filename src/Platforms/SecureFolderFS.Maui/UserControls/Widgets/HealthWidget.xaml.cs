@@ -9,7 +9,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
         {
             InitializeComponent();
         }
-        
+
         private void HealthScanControl_Clicked(object? sender, EventArgs e)
         {
             OpenVaultHealthCommand?.Execute(null);
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Maui.UserControls.Widgets
         }
         public static readonly BindableProperty OpenVaultHealthCommandProperty =
             BindableProperty.Create(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(HealthWidget));
-        
+
         public bool IsProgressing
         {
             get => (bool)GetValue(IsProgressingProperty);

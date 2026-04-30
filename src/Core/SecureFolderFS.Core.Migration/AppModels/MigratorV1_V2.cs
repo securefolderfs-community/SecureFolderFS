@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Migration.DataModels;
 using SecureFolderFS.Core.Migration.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Core.Migration.AppModels

@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
@@ -80,6 +83,42 @@
 
             <!--  Options list  -->
             <VerticalStackLayout Grid.Row="2" Padding="16,0">
+
+                <!--  Read-only badge  -->
+                <Border
+                    Margin="0,0,0,16"
+                    Padding="12,8"
+                    Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                    IsVisible="{Binding ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
+                    StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0">
+
+                    <HorizontalStackLayout Spacing="8">
+                        <OnPlatform x:TypeArguments="mi:MauiIcon">
+                            <On Platform="Android">
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material Book}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}"
+                                    IconSize="16"
+                                    VerticalOptions="Center" />
+                            </On>
+                            <On Platform="iOS">
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino Book}"
+                                    IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                Dark={StaticResource PrimaryDarkColor}}"
+                                    IconSize="16"
+                                    VerticalOptions="Center" />
+                            </On>
+                        </OnPlatform>
+                        <Label
+                            FontSize="12"
+                            Opacity="0.6"
+                            Text="{l:ResourceString Rid=VaultReadOnlyMode}"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
 
                 <!--  Quick Actions  -->
                 <uco:OptionsContainer Title="{l:ResourceString Rid=QuickActions}" Margin="0,0,0,16">

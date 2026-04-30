@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
                 return candidateName;
             }
         }
-        
+
         /// <inheritdoc/>
         protected override async Task<IVfsRoot> MountAsync(
             FileSystemSpecifics specifics,

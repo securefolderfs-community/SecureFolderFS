@@ -1,8 +1,8 @@
 ﻿using System;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.SecureStore;
 
-namespace SecureFolderFS.Core.Cryptography.Extensions
+namespace SecureFolderFS.Shared.Extensions
 {
     /// <summary>
     /// Provides extension methods for the <see cref="ManagedKey"/> class.

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 #if __UNO_SKIA_MACOS__
 using SecureFolderFS.Uno.PInvoke;
 #endif
@@ -34,13 +34,13 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ViewModels
         /// Gets the associated folder of the vault.
         /// </summary>
         protected IFolder VaultFolder { get; }
-        
+
         /// <inheritdoc/>
         public sealed override bool CanComplement { get; } = true;
 
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
-        
+
         protected MacOSBiometricsViewModel(IFolder vaultFolder, string vaultId)
             : base(Constants.Vault.Authentication.AUTH_APPLE_MACOS)
         {

@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
+﻿using System;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography.Cipher;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.XChaChaHeaderExtensions;
 

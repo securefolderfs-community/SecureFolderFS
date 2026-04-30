@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
         [ObservableProperty] private UnlockedVaultViewModel? _UnlockedVaultViewModel;
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
-        [ObservableProperty] private bool _IsReadOnlyLogin;
+        [ObservableProperty] private bool _IsReadOnly;
 
         public VaultPreviewViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
@@ -130,7 +130,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
             try
             {
                 // Unlock the vault
-                UnlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnlyLogin);
+                UnlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
 
                 // Setup dashboard
                 var dashboardNavigation = DI.Service<INavigationService>();

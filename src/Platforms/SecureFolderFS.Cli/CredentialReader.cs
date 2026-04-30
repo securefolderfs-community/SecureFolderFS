@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Cli;
 

@@ -1,5 +1,5 @@
-﻿using OwlCore.Storage;
-using System;
+﻿using System;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Sdk.EventArguments
 {

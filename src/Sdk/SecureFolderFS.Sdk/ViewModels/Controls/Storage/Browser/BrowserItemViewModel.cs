@@ -26,7 +26,7 @@ using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>, Inject<IShareService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
@@ -69,6 +69,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         }
 
         [RelayCommand]
+        protected virtual async Task OpenInExternalAppAsync(CancellationToken cancellationToken)
+        {
+            if (Inner is not IFile file)
+                return;
+
+            await ShareService.OpenFileWithAsync(file);
+        }
+
+        [RelayCommand]
         protected virtual async Task OpenPropertiesAsync(CancellationToken cancellationToken)
         {
             var propertiesOverlay = new PropertiesOverlayViewModel(Inner);
@@ -80,6 +89,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 
@@ -150,6 +162,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task CopyAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 
@@ -217,6 +232,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task RenameAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder?.Folder is not IRenamableFolder renamableFolder)
                 return;
 
@@ -264,6 +282,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task DeleteAsync(CancellationToken cancellationToken)
         {
+            if (BrowserViewModel.Options.IsReadOnly)
+                return;
+
             if (ParentFolder is null)
                 return;
 

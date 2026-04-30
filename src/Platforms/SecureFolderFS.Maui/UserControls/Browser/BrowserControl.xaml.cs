@@ -24,6 +24,14 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             refreshView.IsRefreshing = false;
         }
 
+        public bool IsReadOnly
+        {
+            get => (bool)GetValue(IsReadOnlyProperty);
+            set => SetValue(IsReadOnlyProperty, value);
+        }
+        public static readonly BindableProperty IsReadOnlyProperty =
+            BindableProperty.Create(nameof(IsReadOnly), typeof(bool), typeof(BrowserControl), defaultValue: false);
+
         public object? EmptyView
         {
             get => (object?)GetValue(EmptyViewProperty);

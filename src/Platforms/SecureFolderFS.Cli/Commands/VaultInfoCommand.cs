@@ -41,7 +41,3 @@ namespace SecureFolderFS.Cli.Commands
         }
     }
 }
-
-
-
-

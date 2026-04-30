@@ -101,7 +101,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (sender is not Button button)
                 return;
-            
+
             if (ViewModel?.SelectedViewModel is not CredentialsResetViewModel credentialsResetViewModel)
                 return;
 
@@ -128,7 +128,7 @@ namespace SecureFolderFS.Maui.Popups
         {
             if (sender is not Button button)
                 return;
-            
+
             if (ViewModel?.SelectedViewModel is not CredentialsConfirmationViewModel credentialsConfirmation)
                 return;
 
@@ -136,7 +136,7 @@ namespace SecureFolderFS.Maui.Popups
             {
                 button.IsEnabled = false;
                 await Task.Delay(100);
-                
+
                 await credentialsConfirmation.ConfirmAsync(default);
                 await HideAsync();
             }

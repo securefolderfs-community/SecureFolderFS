@@ -1,5 +1,4 @@
 using Android.Content;
-using Android.OS;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Helpers;
@@ -29,12 +28,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public async Task ShareFileAsync(IFile file)
         {
-            // Register the file with the ShareContentProvider
-            var fileId = ShareContentProvider.RegisterFile(file);
-
             // Build the content URI for this file
-            var authority = $"{Application.Context.PackageName}.shareProvider";
-            var contentUri = Uri.Parse($"content://{authority}/{fileId}/{file.Name}");
+            var contentUri = ShareContentProvider.RegisterFileAndBuildUri(Application.Context, file);
 
             // Determine MIME type
             var mimeType = FileTypeHelper.GetMimeType(file.Name);
@@ -51,6 +46,26 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             Application.Context.StartActivity(chooserIntent);
             await Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public Task OpenFileWithAsync(IFile file)
+        {
+            // Build the content URI for this file
+            var contentUri = ShareContentProvider.RegisterFileAndBuildUri(Application.Context, file);
+
+            // Determine MIME type
+            var mimeType = FileTypeHelper.GetMimeType(file.Name);
+
+            // Create view intent
+            var intent = new Intent(Intent.ActionView);
+            intent.SetDataAndType(contentUri, mimeType);
+            intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+            var chooserIntent = Intent.CreateChooser(intent, file.Name);
+            chooserIntent?.AddFlags(ActivityFlags.NewTask);
+
+            Application.Context.StartActivity(chooserIntent);
+            return Task.CompletedTask;
+        }
     }
 }
-

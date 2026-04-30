@@ -65,7 +65,3 @@ public sealed partial class VaultUnmountCommand : CliGlobalOptions, ICommand
         return parent is not null && string.Equals(parent, requestedPath, StringComparison.OrdinalIgnoreCase);
     }
 }
-
-
-
-
