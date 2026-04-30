@@ -5,7 +5,6 @@ using AndroidX.Core.Content;
 using Java.Security;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.Platforms.Android.Helpers;
 using SecureFolderFS.Sdk.Enums;
@@ -13,6 +12,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {

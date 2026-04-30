@@ -124,7 +124,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             var sizeWindowPlacement = Marshal.SizeOf<WINDOWPLACEMENT>();
             var pWindowPlacementBuffer = Marshal.AllocHGlobal(sizeWindowPlacement);
             Marshal.StructureToPtr(windowPlacement, pWindowPlacementBuffer, false);
-            
+
             var windowPlacementBuffer = new byte[sizeWindowPlacement];
             Marshal.Copy(pWindowPlacementBuffer, windowPlacementBuffer, 0, sizeWindowPlacement);
             Marshal.FreeHGlobal(pWindowPlacementBuffer);

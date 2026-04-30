@@ -25,6 +25,10 @@
                 BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem
+                        Command="{Binding OpenInExternalAppCommand}"
+                        IsEnabled="{Binding Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='FileViewModel'}"
+                        Text="{l:ResourceString Rid=OpenInExternalApp}" />
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
                     <apesui:ContextMenuItem
                         Command="{Binding RenameCommand}"
@@ -120,6 +124,10 @@
                 BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem
+                        Command="{Binding OpenInExternalAppCommand}"
+                        IsEnabled="{Binding Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='FileViewModel'}"
+                        Text="{l:ResourceString Rid=OpenInExternalApp}" />
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
                     <apesui:ContextMenuItem
                         Command="{Binding RenameCommand}"
@@ -218,6 +226,10 @@
                 BindingContextChanged="ItemContainer_BindingContextChanged"
                 Loaded="ItemContainer_Loaded">
                 <apesui:ContextMenuContainer.MenuItems>
+                    <apesui:ContextMenuItem
+                        Command="{Binding OpenInExternalAppCommand}"
+                        IsEnabled="{Binding Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='FileViewModel'}"
+                        Text="{l:ResourceString Rid=OpenInExternalApp}" />
                     <apesui:ContextMenuItem Command="{Binding OpenPropertiesCommand}" Text="{l:ResourceString Rid=GetInfo}" />
                     <apesui:ContextMenuItem
                         Command="{Binding RenameCommand}"

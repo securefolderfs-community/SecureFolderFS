@@ -51,6 +51,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// <inheritdoc/>
         public abstract Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Provides the necessary credentials required for authentication.
+        /// The implementation of this method should handle the logic for gathering or validating user credentials.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         [RelayCommand]
         protected abstract Task ProvideCredentialsAsync(CancellationToken cancellationToken);
 

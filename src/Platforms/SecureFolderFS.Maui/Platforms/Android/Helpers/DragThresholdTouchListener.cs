@@ -23,7 +23,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         /// This is set when a drag starts and cleared when the drag ends.
         /// </summary>
         internal static BrowserItemViewModel? CurrentDraggedItem { get; set; }
-        
+
         /// <summary>
         /// The MIME type used for internal drag-and-drop operations.
         /// </summary>

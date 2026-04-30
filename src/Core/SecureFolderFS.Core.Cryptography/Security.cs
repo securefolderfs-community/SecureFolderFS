@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
+﻿using System;
+using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
 using static SecureFolderFS.Core.Cryptography.Constants;
 
 namespace SecureFolderFS.Core.Cryptography

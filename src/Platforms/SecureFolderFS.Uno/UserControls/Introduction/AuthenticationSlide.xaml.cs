@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var storyboard = new Storyboard();
 
             // Icon pop animations
-            
+
             // Timings chosen so the icons appear gradually down the S-curve
             AddIconPopAnimation(storyboard, PasswordBorder, beginTimeMs: 50);
             AddIconPopAnimation(storyboard, DeviceLinkBorder, beginTimeMs: 600);
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             AddIconPopAnimation(storyboard, KeyFileBorder, beginTimeMs: 1650);
 
             // Path fade-in
-            
+
             // Last icon ends at ~2000 ms (1650 + 350), so the path begins right after
             var pathFade = new DoubleAnimation
             {
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             await tcs.Task;
             return;
-            
+
             void Storyboard_Completed(object? sender, object e)
             {
                 storyboard.Completed -= Storyboard_Completed;

@@ -104,7 +104,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             ViewModel?.TaskCompletion.SetResult(Result.Success);
         }
-        
+
         private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(IntroductionOverlayViewModel.CurrentIndex))

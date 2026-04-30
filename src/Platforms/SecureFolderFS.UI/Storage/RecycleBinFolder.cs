@@ -38,7 +38,7 @@ namespace SecureFolderFS.UI.Storage
 
         /// <inheritdoc/>
         public string Name => _recycleBin.Name;
-        
+
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new RecycleBinSizeOfProperty(_recycleBin);
 
@@ -183,14 +183,14 @@ namespace SecureFolderFS.UI.Storage
                         IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
                         _ => throw new ArgumentOutOfRangeException(nameof(item))
                     };
-                    
+
                     return new RecycleBinItem(plaintextItem, dataModel, this)
                     {
                         Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
                         Name = plaintextName ?? item.Name
                     };
                 });
-                
+
                 if (recycleBinItem is not null)
                     yield return recycleBinItem;
             }

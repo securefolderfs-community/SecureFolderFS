@@ -30,10 +30,11 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Converts the specified unlocking procedure into its corresponding format.
         /// </summary>
+        /// <param name="vaultFolder">The folder representing the vault for which authentication methods should be retrieved.</param>
         /// <param name="unlockProcedure">The authentication method that represents the unlocking procedure.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a <see cref="string"/> that represents the formatted unlocked procedure.</returns>
-        Task<string> FromUnlockProcedureAsync(AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default);
+        Task<string> FromUnlockProcedureAsync(IFolder vaultFolder, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously retrieves a collection of login authentication methods for a specified vault folder.

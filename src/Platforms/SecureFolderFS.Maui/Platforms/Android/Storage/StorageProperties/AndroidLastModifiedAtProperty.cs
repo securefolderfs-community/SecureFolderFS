@@ -7,7 +7,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties
     internal sealed class AndroidLastModifiedAtProperty : ILastModifiedAtProperty
     {
         private readonly DocumentFile _document;
-        
+
         /// <inheritdoc/>
         public string Id { get; }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties
             Name = nameof(ILastModifiedAt.LastModifiedAt);
             Id = $"{id}/{nameof(ILastModifiedAt.LastModifiedAt)}";
         }
-        
+
         /// <inheritdoc/>
         public Task<DateTime?> GetValueAsync(CancellationToken cancellationToken = default)
         {

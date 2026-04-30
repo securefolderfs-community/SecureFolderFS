@@ -45,7 +45,7 @@ namespace SecureFolderFS.Maui.Handlers
             // Create track images with normal height
             _trackMin = CreateResizableTrackImage(Colors.White.ToPlatform(), NORMAL_HEIGHT);
             _trackMax = CreateResizableTrackImage(UIColor.LightGray, NORMAL_HEIGHT);
-            _transparentThumb = new UIGraphicsImageRenderer(new CGSize(1, 1)).CreateImage(_ => { });
+            _transparentThumb = new UIGraphicsImageRenderer(new CGSize(1, 1)).CreateImage(static _ => { });
         }
 
         private void ApplySliderStyles(UISlider slider)

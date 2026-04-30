@@ -3,16 +3,17 @@ using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Security.Credentials;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.AppModels;
-using Windows.Security.Credentials;
-using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Uno.ViewModels.WindowsHello
 {
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Uno.ViewModels.WindowsHello
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         protected WindowsHelloViewModel(IFolder vaultFolder, string vaultId)
-            : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
+            : base(Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
         {
             Title = "WindowsHello".ToLocalized();
             Icon = new ImageGlyph("\uEB68");
@@ -53,7 +54,7 @@ namespace SecureFolderFS.Uno.ViewModels.WindowsHello
             if (VaultFolder is not IModifiableFolder modifiableFolder)
                 return;
 
-            var authenticationFile = await modifiableFolder.GetFileByNameAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            var authenticationFile = await modifiableFolder.GetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
             await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 

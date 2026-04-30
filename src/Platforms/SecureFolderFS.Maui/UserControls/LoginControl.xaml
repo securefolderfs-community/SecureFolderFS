@@ -100,6 +100,29 @@
             </ContentView>
         </DataTemplate>
 
+        <!--  Persisted Template  -->
+        <DataTemplate x:Key="PersistedAuthenticationTemplate" x:DataType="vm2:PersistedAuthenticationViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="16">
+                    <!--  Title  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        LineBreakMode="WordWrap"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=CredentialsHaveBeenSaved}" />
+
+                    <!--  Unlock button  -->
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
+                        Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Unlock}" />
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <ContentView>
@@ -126,6 +149,7 @@
                     ErrorTemplate="{StaticResource ErrorTemplate}"
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     PasswordTemplate="{StaticResource PasswordTemplate}"
+                    PersistedAuthenticationTemplate="{StaticResource PersistedAuthenticationTemplate}"
                     UnsupportedTemplate="{StaticResource UnsupportedTemplate}" />
             </local:ContentPresentation.TemplateSelector>
         </local:ContentPresentation>

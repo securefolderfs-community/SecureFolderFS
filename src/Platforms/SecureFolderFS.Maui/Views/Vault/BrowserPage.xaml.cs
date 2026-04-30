@@ -130,7 +130,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             ViewModel?.OnDisappearing();
             base.OnDisappearing();
         }
-        
+
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigatedToEventArgs args)
         {

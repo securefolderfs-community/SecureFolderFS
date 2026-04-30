@@ -13,17 +13,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class VideoPreviewerViewModel : FilePreviewerViewModel, IDisposable
+    public sealed partial class AudioPreviewerViewModel : FilePreviewerViewModel, IDisposable
     {
         private bool _isLateInitialized;
 
-        [ObservableProperty] private IDisposable? _VideoSource;
+        [ObservableProperty] private IDisposable? _AudioSource;
 
-        public VideoPreviewerViewModel(IFile file, bool isLateInitialized)
+        public AudioPreviewerViewModel(IFile file, bool isLateInitialized)
             : base(file)
         {
             ServiceProvider = DI.Default;
             Title = file.Name;
+            IsToolbarOnTop = true;
             _isLateInitialized = isLateInitialized;
         }
 
@@ -47,26 +48,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         public override void OnDisappearing()
         {
             if (_isLateInitialized)
-                VideoSource?.Dispose();
+                AudioSource?.Dispose();
 
             base.OnDisappearing();
         }
 
         private async Task CreateSourceAsync(CancellationToken cancellationToken)
         {
-            VideoSource?.Dispose();
+            AudioSource?.Dispose();
 
-            var streamedVideo = await MediaService.StreamVideoAsync(Inner, cancellationToken);
-            if (streamedVideo is IAsyncInitialize asyncInitialize)
+            var streamedAudio = await MediaService.StreamAudioAsync(Inner, cancellationToken);
+            if (streamedAudio is IAsyncInitialize asyncInitialize)
                 await asyncInitialize.InitAsync(cancellationToken);
 
-            VideoSource = streamedVideo;
+            AudioSource = streamedAudio;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            VideoSource?.Dispose();
+            AudioSource?.Dispose();
         }
     }
 }

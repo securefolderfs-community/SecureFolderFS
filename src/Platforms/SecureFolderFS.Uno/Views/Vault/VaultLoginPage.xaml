@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     NavigationCacheMode="Disabled"
@@ -38,7 +37,7 @@
                         HorizontalAlignment="Center"
                         FontSize="14"
                         Opacity="0.6"
-                        Text="{l:ResourceString Rid=VaultLocked}" />
+                        Text="{x:Bind ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:localize|VaultLocked:true:localize|VaultUnlocked'}" />
                 </StackPanel>
 
                 <!--  Login  -->
@@ -50,9 +49,12 @@
                         ProvideContinuationButton="True" />
 
                     <uc:LoginOptions
+                        AreCredentialsSaved="{x:Bind ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
+                        DiscardSavedCredentialsCommand="{x:Bind ViewModel.LoginViewModel.DiscardSavedCredentialsCommand, Mode=OneWay}"
                         IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
                         RecoverAccessCommand="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
                         RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                        ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
                 </StackPanel>
             </StackPanel>

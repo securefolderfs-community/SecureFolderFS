@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -13,19 +13,19 @@ public sealed partial class CredsChangeCommand(IVaultManagerService vaultManager
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     [CommandOption("new-password", Description = "Prompt for the replacement password.")]
-    public bool NewPassword { get; init; }
+    public bool NewPassword { get; set; }
 
     [CommandOption("new-password-stdin", Description = "Read replacement password from stdin.")]
-    public bool NewPasswordStdin { get; init; }
+    public bool NewPasswordStdin { get; set; }
 
     [CommandOption("new-keyfile-generate", Description = "Generate a replacement keyfile at this path.")]
-    public string? NewKeyFileGenerate { get; init; }
+    public string? NewKeyFileGenerate { get; set; }
 
     [CommandOption("factor", Description = "Factor to replace: primary|2fa.")]
-    public string Factor { get; init; } = "primary";
+    public string Factor { get; set; } = "primary";
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -124,7 +124,3 @@ public sealed partial class CredsChangeCommand(IVaultManagerService vaultManager
         }
     }
 }
-
-
-
-

@@ -4,12 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Foundation;
 using LocalAuthentication;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 using Security;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;
 
         public IOSBiometricViewModel(IFolder vaultFolder, string vaultId, string title)
-            : base(Core.Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
+            : base(Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC)
         {
             Title = title;
             Description = "AuthenticateUsing".ToLocalized(Title);

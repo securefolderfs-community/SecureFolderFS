@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.DeviceLink.Enums;
 using SecureFolderFS.Sdk.DeviceLink.Models;
 using SecureFolderFS.Sdk.DeviceLink.Results;
@@ -16,8 +15,10 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.SecureStore;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Uno.DataModels;
+
 #pragma warning disable SYSLIB5006
 
 namespace SecureFolderFS.Uno.ViewModels.DeviceLink
