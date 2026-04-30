@@ -98,7 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                IsComplementationAvailable = _authenticationStage != AuthenticationStage.FirstStageOnly,
+                IsComplementationAvailable = RegisterViewModel.CurrentViewModel?.CanComplement ?? false,
                 UnlockContract = UnlockContract,
                 OldPasskey = OldPasskey,
                 ConfiguredViewModel = ConfiguredViewModel
