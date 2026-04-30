@@ -31,9 +31,9 @@ namespace SecureFolderFS.Cli
                         .Select(static x => x.Replace("--2fa-", "--twofa-", StringComparison.OrdinalIgnoreCase))
                         .ToArray();
 
-                    var app2 = new CliApplicationBuilder()
+                    var app2 = new CommandLineApplicationBuilder()
                         .AddCommandsFromThisAssembly()
-                        .UseTypeActivator(type => ActivatorUtilities.CreateInstance(DI.Default, type))
+                        .UseTypeInstantiator(type => ActivatorUtilities.CreateInstance(DI.Default, type))
                         .Build();
 
                     await app2.RunAsync(normalizedLoopArgs);
@@ -44,9 +44,9 @@ namespace SecureFolderFS.Cli
             }
 #endif
             var normalizedArgs = args.Select(static x => x.Replace("--2fa-", "--twofa-", StringComparison.OrdinalIgnoreCase)).ToArray();
-            var app = new CliApplicationBuilder()
+            var app = new CommandLineApplicationBuilder()
                 .AddCommandsFromThisAssembly()
-                .UseTypeActivator(type => ActivatorUtilities.CreateInstance(DI.Default, type))
+                .UseTypeInstantiator(type => ActivatorUtilities.CreateInstance(DI.Default, type))
                 .Build();
 
             return await app.RunAsync(normalizedArgs);

@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Shared.ComponentModel;
@@ -11,10 +11,10 @@ namespace SecureFolderFS.Cli.Commands;
 public sealed partial class VaultUnmountCommand : CliGlobalOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Vault path or mount path.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     [CommandOption("force", Description = "Force unmount even if files are open.")]
-    public bool Force { get; init; }
+    public bool Force { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

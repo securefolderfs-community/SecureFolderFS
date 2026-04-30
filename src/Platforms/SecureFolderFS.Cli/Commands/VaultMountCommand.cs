@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Extensions;
@@ -16,16 +16,16 @@ public sealed partial class VaultMountCommand(IVaultManagerService vaultManagerS
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     [CommandOption("mount-point", Description = "Filesystem mount point.")]
-    public string? MountPoint { get; init; }
+    public string? MountPoint { get; set; }
 
     [CommandOption("fs", Description = "Filesystem adapter: auto|webdav|dokany|winfsp.")]
-    public string FileSystem { get; init; } = "auto";
+    public string FileSystem { get; set; } = "auto";
 
     [CommandOption("read-only", Description = "Mount in read-only mode.")]
-    public bool ReadOnly { get; init; }
+    public bool ReadOnly { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

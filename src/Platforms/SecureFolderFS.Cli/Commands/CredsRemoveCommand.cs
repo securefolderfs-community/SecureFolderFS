@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -12,7 +12,7 @@ public sealed partial class CredsRemoveCommand(IVaultManagerService vaultManager
     : VaultAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

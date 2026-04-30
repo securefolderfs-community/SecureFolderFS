@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
@@ -12,19 +12,19 @@ namespace SecureFolderFS.Cli.Commands;
 public sealed partial class VaultCreateCommand(IVaultManagerService vaultManagerService, CredentialReader credentialReader) : CreateAuthOptions, ICommand
 {
     [CommandParameter(0, Name = "path", Description = "Path to the vault folder.")]
-    public required string Path { get; init; }
+    public required string Path { get; set; }
 
     [CommandOption("name", Description = "Display name for the vault.")]
-    public string? Name { get; init; }
+    public string? Name { get; set; }
 
     [CommandOption("content-cipher", Description = "Content cipher id (for example: AES-GCM, XChaCha20-Poly1305, none).")]
-    public string? ContentCipher { get; init; }
+    public string? ContentCipher { get; set; }
 
     [CommandOption("filename-cipher", Description = "Filename cipher id (for example: AES-SIV, none).")]
-    public string? FileNameCipher { get; init; }
+    public string? FileNameCipher { get; set; }
 
     [CommandOption("overwrite", Description = "Allow creation when a vault already exists.")]
-    public bool Overwrite { get; init; }
+    public bool Overwrite { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
