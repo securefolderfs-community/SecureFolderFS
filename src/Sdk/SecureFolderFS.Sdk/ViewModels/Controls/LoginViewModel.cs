@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     public sealed partial class LoginViewModel : ObservableObject, IViewable, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
+        private readonly KeySequence _keySequence;
         private readonly LoginViewType _loginViewMode;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private VaultOptions? _vaultOptions;
@@ -43,11 +44,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
         /// <summary>
-        /// Represents a sequence of credentials to be used for authentication.
-        /// </summary>
-        public KeySequence KeySequence { get; }
-
-        /// <summary>
         /// Occurs when a vault has been successfully unlocked.
         /// </summary>
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
@@ -57,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _loginViewMode = loginViewMode;
-            KeySequence = keySequence ?? new();
+            _keySequence = keySequence ?? new();
             _vaultWatcherModel = new VaultWatcherModel(_vaultFolder);
             _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
@@ -76,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //
 
             // Dispose previous state, if any
-            KeySequence.Dispose();
+            _keySequence.Dispose();
             _loginSequence?.Dispose();
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
@@ -194,7 +190,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private void RestartLoginProcess()
         {
             // Dispose built key sequence
-            KeySequence.Dispose();
+            _keySequence.Dispose();
             _loginSequence?.Reset();
             var result = ProceedAuthentication();
             if (!result.Successful)
@@ -205,7 +201,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, KeySequence, cancellationToken);
+                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
                 _vaultOptions ??= await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
                 if (string.IsNullOrWhiteSpace(_vaultOptions.VaultId))
                 {
@@ -215,8 +211,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 if (_loginViewMode is LoginViewType.Full or LoginViewType.Constrained && ShouldSaveCredentials && !AreCredentialsSaved)
                 {
-                    var keySequenceCopy = KeySequence.Key.ToArray();
-                    PersistedCredentialsModel.Instance.SetOrAdd(_vaultOptions.VaultId, SecureKey.TakeOwnership(keySequenceCopy));
+                    byte[]? keySequenceCopy = null;
+                    _keySequence.UseKey(k => keySequenceCopy = k.ToArray());
+                    if (keySequenceCopy is not null)
+                        PersistedCredentialsModel.Instance.SetOrAdd(_vaultOptions.VaultId, SecureKey.TakeOwnership(keySequenceCopy));
                 }
 
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultFolder, false));
@@ -282,12 +280,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 // If authentication is empty, restart the process
                 if (e.Authentication.Length == 0)
                 {
+                    e.Authentication.Dispose();
                     await DiscardSavedCredentialsAsync(CancellationToken.None);
                     return;
                 }
 
                 // Add authentication
-                KeySequence.Add(e.Authentication);
+                _keySequence.Add(e.Authentication);
 
                 var result = ProceedAuthentication();
                 if (!result.Successful && CurrentViewModel is not ErrorViewModel)
@@ -341,7 +340,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
-            KeySequence.Dispose();
+            _keySequence.Dispose();
             _loginSequence?.Dispose();
         }
     }
