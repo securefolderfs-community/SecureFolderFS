@@ -7,6 +7,7 @@ namespace SecureFolderFS.Core.DataModels
     [Serializable]
     public sealed record class VaultSharesDataModel
     {
+        [JsonPropertyName("shares")]
         public List<VaultShareDataModel>? Shares { get; init; }
     }
 
