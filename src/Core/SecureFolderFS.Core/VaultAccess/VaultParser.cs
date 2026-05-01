@@ -265,6 +265,86 @@ namespace SecureFolderFS.Core.VaultAccess
                 softwareEntropy);
         }
 
+        public static void V4DeriveComplementKey(
+            ReadOnlySpan<byte> passkey,
+            string vaultId,
+            string authenticationMethodId,
+            Span<byte> complementKey)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(vaultId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(authenticationMethodId);
+
+            var salt = Encoding.UTF8.GetBytes(vaultId);
+            var info = Encoding.UTF8.GetBytes(authenticationMethodId);
+
+            HKDF.DeriveKey(
+                HashAlgorithmName.SHA256,
+                passkey,
+                complementKey,
+                salt,
+                info);
+        }
+
+        public static VaultShareDataModel V4WrapComplementSecret(
+            ReadOnlySpan<byte> complementSecret,
+            ReadOnlySpan<byte> wrappingKeyMaterial,
+            string vaultId,
+            string authenticationMethodId)
+        {
+            Span<byte> complementWrapKey = stackalloc byte[32];
+            try
+            {
+                V4DeriveComplementKey(wrappingKeyMaterial, vaultId, authenticationMethodId, complementWrapKey);
+
+                var nonce = new byte[12];
+                var tag = new byte[16];
+                var wrapped = new byte[complementSecret.Length];
+                RandomNumberGenerator.Fill(nonce);
+
+                using (var aes = new AesGcm(complementWrapKey, 16))
+                    aes.Encrypt(nonce, complementSecret, wrapped, tag);
+
+                return new()
+                {
+                    AuthenticationMethodId = authenticationMethodId,
+                    Nonce = nonce,
+                    WrappedComplementSecret = wrapped,
+                    Tag = tag
+                };
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(complementWrapKey);
+            }
+        }
+
+        public static byte[] V4UnwrapComplementSecret(
+            ReadOnlySpan<byte> wrappingKeyMaterial,
+            string vaultId,
+            VaultShareDataModel shareDataModel)
+        {
+            ArgumentNullException.ThrowIfNull(shareDataModel.AuthenticationMethodId);
+            ArgumentNullException.ThrowIfNull(shareDataModel.Nonce);
+            ArgumentNullException.ThrowIfNull(shareDataModel.WrappedComplementSecret);
+            ArgumentNullException.ThrowIfNull(shareDataModel.Tag);
+
+            Span<byte> complementWrapKey = stackalloc byte[32];
+            try
+            {
+                V4DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, complementWrapKey);
+
+                var complementSecret = new byte[shareDataModel.WrappedComplementSecret.Length];
+                using (var aes = new AesGcm(complementWrapKey, 16))
+                    aes.Decrypt(shareDataModel.Nonce, shareDataModel.WrappedComplementSecret, shareDataModel.Tag, complementSecret);
+
+                return complementSecret;
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(complementWrapKey);
+            }
+        }
+
         /// <summary>
         /// Shared implementation for both <see cref="V4EncryptKeystore"/> and <see cref="V4ReEncryptKeystore"/>.
         /// Encrypts the provided entropy under the passkey and wraps DEK/MAC under the augmented KEK.

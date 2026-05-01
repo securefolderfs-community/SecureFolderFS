@@ -53,6 +53,19 @@ namespace SecureFolderFS.Core.VaultAccess
             return await ReadDataAsync<V4VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
         }
 
+        public async Task<VaultSharesDataModel?> ReadComplementationAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var complementFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken);
+                return await ReadDataAsync<VaultSharesDataModel?>(complementFile, _serializer, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<VersionDataModel> ReadVersionAsync(CancellationToken cancellationToken)
         {
             // Get configuration file

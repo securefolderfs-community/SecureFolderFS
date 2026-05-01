@@ -57,6 +57,17 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
         }
 
+        public async Task WriteComplementationAsync(VaultSharesDataModel? sharesDataModel, CancellationToken cancellationToken)
+        {
+            var complementFile = _vaultFolder switch
+            {
+                IModifiableFolder modifiableFolder when sharesDataModel is not null => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, true, cancellationToken),
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken) as IFile
+            };
+
+            await WriteDataAsync(complementFile, sharesDataModel, cancellationToken);
+        }
+
         public async Task WriteAuthenticationAsync<TCapability>(string fileName, TCapability? authDataModel, CancellationToken cancellationToken)
             where TCapability : VaultCapabilityDataModel
         {

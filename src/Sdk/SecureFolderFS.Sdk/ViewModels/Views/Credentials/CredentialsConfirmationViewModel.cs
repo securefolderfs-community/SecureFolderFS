@@ -109,7 +109,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             };
 
             if (OldPasskey is not null)
-                await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, key, updatedOptions, cancellationToken);
+            {
+                if (RequiresComplementationRoutine(configuredOptions.UnlockProcedure, unlockProcedure))
+                    await VaultManagerService.ModifyComplementationAsync(_vaultFolder, UnlockContract, CreateComplementationCredentials(key, configuredOptions.UnlockProcedure, unlockProcedure), updatedOptions, cancellationToken);
+                else
+                    await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, key, updatedOptions, cancellationToken);
+            }
             else
                 await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, updatedOptions, cancellationToken);
 
@@ -123,6 +128,66 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 && ConfiguredViewModel is not null
                 && !RegisterViewModel.CurrentViewModel.Id.Equals(ConfiguredViewModel.Id))
                 await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
+        }
+
+        private ComplementationCredentials CreateComplementationCredentials(IKeyUsage key, AuthenticationMethod configuredProcedure, AuthenticationMethod updatedProcedure)
+        {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
+
+            var currentCredential = GetCredentialAt(OldPasskey, 0) ?? OldPasskey;
+            var oldComplementation = configuredProcedure.Complementation;
+            var newComplementation = updatedProcedure.Complementation;
+            var primaryChanged = !configuredProcedure.Methods.SequenceEqual(updatedProcedure.Methods);
+
+            if (string.IsNullOrWhiteSpace(oldComplementation) && !string.IsNullOrWhiteSpace(newComplementation))
+            {
+                return new()
+                {
+                    CurrentCredential = currentCredential,
+                    NewComplementCredential = GetCredentialAt(key, 1) ?? key
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldComplementation) && string.IsNullOrWhiteSpace(newComplementation))
+            {
+                return new()
+                {
+                    CurrentCredential = currentCredential,
+                    NewPrimaryCredential = updatedProcedure.Methods.Length > 1 ? key : null
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldComplementation) && !string.IsNullOrWhiteSpace(newComplementation))
+            {
+                var updatePrimaryCredential = primaryChanged || _authenticationStage == AuthenticationStage.FirstStageOnly;
+                var updateComplementCredential = !string.Equals(oldComplementation, newComplementation, StringComparison.Ordinal) ||
+                                                 _authenticationStage == AuthenticationStage.ProceedingStageOnly;
+
+                return new()
+                {
+                    CurrentCredential = currentCredential,
+                    NewPrimaryCredential = updatePrimaryCredential ? GetCredentialAt(key, 0) ?? key : null,
+                    NewComplementCredential = updateComplementCredential ? GetCredentialAt(key, 1) ?? key : null
+                };
+            }
+
+            throw new InvalidOperationException("The requested authentication change does not involve complementation.");
+        }
+
+        private static bool RequiresComplementationRoutine(AuthenticationMethod configuredProcedure, AuthenticationMethod updatedProcedure)
+        {
+            var wasComplemented = !string.IsNullOrWhiteSpace(configuredProcedure.Complementation);
+            var willBeComplemented = !string.IsNullOrWhiteSpace(updatedProcedure.Complementation);
+            var complementationChanged = !string.Equals(configuredProcedure.Complementation, updatedProcedure.Complementation, StringComparison.Ordinal);
+
+            return complementationChanged || wasComplemented || willBeComplemented;
+        }
+
+        private static IKeyUsage? GetCredentialAt(IKeyUsage key, int index)
+        {
+            return key is KeySequence sequence
+                ? sequence.Keys.ElementAtOrDefault(index)
+                : index == 0 ? key : null;
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

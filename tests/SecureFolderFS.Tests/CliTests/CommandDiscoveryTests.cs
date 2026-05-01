@@ -1,5 +1,5 @@
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using FluentAssertions;
 using NUnit.Framework;
 using SecureFolderFS.Cli.Commands;
@@ -41,4 +41,3 @@ public class CommandDiscoveryTests
         ]);
     }
 }
-

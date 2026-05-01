@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
@@ -7,6 +9,7 @@ using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -17,6 +20,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private V4VaultKeystoreDataModel? _keystoreDataModel;
         private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultSharesDataModel? _sharesDataModel;
         private SecureKey? _dekKey;
         private SecureKey? _macKey;
 
@@ -30,6 +34,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             _configDataModel = await _vaultReader.ReadV4ConfigurationAsync(cancellationToken);
             _keystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+            _sharesDataModel = await _vaultReader.ReadComplementationAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -38,9 +43,60 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            var derived = passkey.UseKey(key => VaultParser.V4DeriveKeystore(key, _keystoreDataModel));
+            var authenticationMethod = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
+            var derived = string.IsNullOrWhiteSpace(authenticationMethod.Complementation)
+                ? passkey.UseKey(key => VaultParser.V4DeriveKeystore(key, _keystoreDataModel))
+                : DeriveComplementedKeystore(passkey, authenticationMethod);
+
             _dekKey = SecureKey.TakeOwnership(derived.dekKey);
             _macKey = SecureKey.TakeOwnership(derived.macKey);
+        }
+
+        private (byte[] dekKey, byte[] macKey) DeriveComplementedKeystore(IKeyUsage passkey, AuthenticationMethod authenticationMethod)
+        {
+            ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+
+            CryptographicException? lastException = null;
+            var primaryMethodId = authenticationMethod.Methods.FirstOrDefault() ?? throw new InvalidOperationException("Primary authentication is missing.");
+
+            try
+            {
+                return passkey.UseKey(key =>
+                {
+                    Span<byte> complementSecret = stackalloc byte[32];
+                    VaultParser.V4DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
+                    return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                });
+            }
+            catch (CryptographicException ex)
+            {
+                lastException = ex;
+            }
+
+            foreach (var share in _sharesDataModel?.Shares ?? [])
+            {
+                if (!string.Equals(share.AuthenticationMethodId, authenticationMethod.Complementation, StringComparison.Ordinal))
+                    continue;
+
+                byte[]? complementSecret = null;
+                try
+                {
+                    complementSecret = passkey.UseKey(key => VaultParser.V4UnwrapComplementSecret(key, _configDataModel.Uid, share));
+                    return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                }
+                catch (CryptographicException ex)
+                {
+                    lastException = ex;
+                }
+                finally
+                {
+                    if (complementSecret is not null)
+                        CryptographicOperations.ZeroMemory(complementSecret);
+                }
+            }
+
+            throw lastException ?? new CryptographicException("The complemented credentials could not unlock this vault.");
         }
 
         /// <inheritdoc/>

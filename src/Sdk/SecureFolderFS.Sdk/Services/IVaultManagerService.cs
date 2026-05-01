@@ -48,6 +48,8 @@ namespace SecureFolderFS.Sdk.Services
         // TODO: Consider using IVaultUnlockingModel
         //Task<IVaultUnlockingModel> GetUnlockingModelAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
+        Task ModifyComplementationAsync(IFolder vaultFolder, IDisposable unlockContract, ComplementationCredentials credentials, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Modifies the configured authentication for the specified <paramref name="vaultFolder"/>.
         /// </summary>

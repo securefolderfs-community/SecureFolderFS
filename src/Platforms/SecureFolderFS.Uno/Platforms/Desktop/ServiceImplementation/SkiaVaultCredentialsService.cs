@@ -58,7 +58,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            foreach (var item in unlockProcedure.Methods)
+            foreach (var item in EnumerateLoginMethods(unlockProcedure))
             {
                 yield return item switch
                 {

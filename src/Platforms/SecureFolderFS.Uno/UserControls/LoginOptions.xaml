@@ -15,6 +15,13 @@
         <FlyoutBase.AttachedFlyout>
             <Flyout>
                 <StackPanel Spacing="4">
+                    <ComboBox
+                        MinWidth="180"
+                        DisplayMemberPath="Title"
+                        ItemsSource="{x:Bind AuthenticationOptions, Mode=OneWay}"
+                        SelectedItem="{x:Bind SelectedAuthenticationOption, Mode=TwoWay}"
+                        SelectionChanged="AuthenticationOptions_SelectionChanged"
+                        Visibility="{x:Bind IsAlternativeLogin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind IsReadOnly, Mode=TwoWay}" />
                     <CheckBox
                         Content="{l:ResourceString Rid=SaveCredentials}"

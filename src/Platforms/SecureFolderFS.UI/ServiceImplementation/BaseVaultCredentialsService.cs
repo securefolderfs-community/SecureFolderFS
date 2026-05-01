@@ -85,5 +85,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
         /// <inheritdoc/>
         public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+
+        protected static IEnumerable<string> EnumerateLoginMethods(AuthenticationMethod unlockProcedure)
+        {
+            foreach (var item in unlockProcedure.Methods)
+                yield return item;
+
+            if (!string.IsNullOrWhiteSpace(unlockProcedure.Complementation))
+                yield return unlockProcedure.Complementation;
+        }
     }
 }
