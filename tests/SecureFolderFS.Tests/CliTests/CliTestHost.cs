@@ -99,19 +99,19 @@ internal static class CliTestHost
         return serviceProvider;
     }
 
-    private static CliApplication BuildApplication(IServiceProvider services)
+    private static CommandLineApplication BuildApplication(IServiceProvider services)
     {
-        return new CliApplicationBuilder()
-            .AddCommand<CredsAddCommand>()
-            .AddCommand<CredsChangeCommand>()
-            .AddCommand<CredsRemoveCommand>()
-            .AddCommand<VaultCreateCommand>()
-            .AddCommand<VaultInfoCommand>()
-            .AddCommand<VaultMountCommand>()
-            .AddCommand<VaultRunCommand>()
-            .AddCommand<VaultShellCommand>()
-            .AddCommand<VaultUnmountCommand>()
-            .UseTypeActivator(type => ActivatorUtilities.CreateInstance(services, type))
+        return new CommandLineApplicationBuilder()
+            .AddCommand(CredsAddCommand.Descriptor)
+            .AddCommand(CredsChangeCommand.Descriptor)
+            .AddCommand(CredsRemoveCommand.Descriptor)
+            .AddCommand(VaultCreateCommand.Descriptor)
+            .AddCommand(VaultInfoCommand.Descriptor)
+            .AddCommand(VaultMountCommand.Descriptor)
+            .AddCommand(VaultRunCommand.Descriptor)
+            .AddCommand(VaultShellCommand.Descriptor)
+            .AddCommand(VaultUnmountCommand.Descriptor)
+            .UseTypeInstantiator(type => ActivatorUtilities.CreateInstance(services, type))
             .Build();
     }
 }
