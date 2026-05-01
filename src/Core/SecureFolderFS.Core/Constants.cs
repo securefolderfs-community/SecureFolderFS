@@ -12,6 +12,7 @@ namespace SecureFolderFS.Core
                 public const string VAULT_CONTENT_FOLDERNAME = "content";
                 public const string VAULT_KEYSTORE_FILENAME = $"keystore{CONFIGURATION_EXTENSION}";
                 public const string VAULT_CONFIGURATION_FILENAME = $"sfconfig{CONFIGURATION_EXTENSION}";
+                public const string VAULT_COMPLEMENTATION_FILENAME = $"sfcomplement{CONFIGURATION_EXTENSION}";
             }
 
             public static class Authentication
