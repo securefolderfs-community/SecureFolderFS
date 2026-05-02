@@ -350,6 +350,40 @@ namespace SecureFolderFS.Tests.VaultTests
             (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
         }
 
+        [Test]
+        public async Task ModifyComplementation_ChangePrimaryWithComplementUsingPrimaryCurrentCredential_PreservesComplementUnlock()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var complementedProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_KEYFILE);
+            using var keyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+
+            using var currentPasswordUnlock = await GetPasswordLoginCredentialAsync("Password#1");
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, currentPasswordUnlock);
+            using var currentPassword = await GetPasswordLoginCredentialAsync("Password#1");
+            using var newPassword = await GetPasswordCreationCredentialAsync("Password#2");
+
+            // Act
+            await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
+            {
+                CurrentCredential = currentPassword,
+                CurrentComplementCredential = keyFile,
+                NewPrimaryCredential = newPassword
+            }, CreateOptions(complementedProcedure, vaultId));
+
+            // Assert
+            using var oldPasswordPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var newPasswordPasskey = await GetPasswordLoginCredentialAsync("Password#2");
+            using var keyFileOnlyPasskey = keyFile.CreateCopy();
+
+            (await CanUnlockAsync(manager, vaultFolder, oldPasswordPasskey)).Should().BeFalse();
+            (await CanUnlockAsync(manager, vaultFolder, newPasswordPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
+        }
+
         private static IFolder CreateVaultFolder()
         {
             var path = Path.Combine(Path.DirectorySeparatorChar.ToString(), $"TestVault-{Guid.NewGuid():N}");

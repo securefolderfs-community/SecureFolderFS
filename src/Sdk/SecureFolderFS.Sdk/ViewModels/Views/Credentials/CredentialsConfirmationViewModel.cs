@@ -166,6 +166,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return new()
                 {
                     CurrentCredential = currentCredential,
+                    CurrentComplementCredential = GetCredentialAt(OldPasskey, 1),
                     NewPrimaryCredential = updatePrimaryCredential ? GetCredentialAt(key, 0) ?? key : null,
                     NewComplementCredential = updateComplementCredential ? GetCredentialAt(key, 1) ?? key : null
                 };

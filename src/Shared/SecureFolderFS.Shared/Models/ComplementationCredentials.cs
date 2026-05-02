@@ -6,6 +6,8 @@ namespace SecureFolderFS.Shared.Models
     {
         public required IKeyUsage CurrentCredential { get; init; }
 
+        public IKeyUsage? CurrentComplementCredential { get; init; }
+
         public IKeyUsage? NewPrimaryCredential { get; init; }
 
         public IKeyUsage? NewComplementCredential { get; init; }

@@ -195,7 +195,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             var oldComplementMethod = oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
-            var currentComplementKey = ExportKey(credentials.CurrentCredential);
+            var currentComplementKey = ExportKey(credentials.CurrentComplementCredential ?? credentials.CurrentCredential);
             var newPrimaryKey = ExportKey(credentials.NewPrimaryCredential ?? throw new InvalidOperationException("New primary credentials are required."));
             byte[]? newComplementKey = null;
             byte[]? oldComplementSecret = null;
