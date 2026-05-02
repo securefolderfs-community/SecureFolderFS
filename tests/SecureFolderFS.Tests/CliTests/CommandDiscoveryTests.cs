@@ -1,9 +1,9 @@
+using System.Reflection;
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using FluentAssertions;
 using NUnit.Framework;
 using SecureFolderFS.Cli.Commands;
-using System.Reflection;
 
 namespace SecureFolderFS.Tests.CliTests;
 
