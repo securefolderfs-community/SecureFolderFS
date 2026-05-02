@@ -57,7 +57,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            CryptographicException? lastException = null;
+            Exception? lastException = null;
             var primaryMethodId = authenticationMethod.Methods.FirstOrDefault() ?? throw new InvalidOperationException("Primary authentication is missing.");
 
             try
@@ -65,8 +65,15 @@ namespace SecureFolderFS.Core.Routines.Operational
                 return passkey.UseKey(key =>
                 {
                     Span<byte> complementSecret = stackalloc byte[32];
-                    VaultParser.V4DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
-                    return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                    try
+                    {
+                        VaultParser.V4DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
+                        return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                    }
+                    finally
+                    {
+                        CryptographicOperations.ZeroMemory(complementSecret);
+                    }
                 });
             }
             catch (CryptographicException ex)
@@ -76,6 +83,12 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             foreach (var share in _sharesDataModel?.Shares ?? [])
             {
+                if (share.WrappedComplementSecret is null
+                    || share.Tag is null
+                    || share.Nonce is null
+                    || share.AuthenticationMethodId is null)
+                    continue;
+
                 if (!string.Equals(share.AuthenticationMethodId, authenticationMethod.Complementation, StringComparison.Ordinal))
                     continue;
 

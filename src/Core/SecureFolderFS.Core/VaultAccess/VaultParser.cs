@@ -334,8 +334,8 @@ namespace SecureFolderFS.Core.VaultAccess
                 V4DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, complementWrapKey);
 
                 var complementSecret = new byte[shareDataModel.WrappedComplementSecret.Length];
-                using (var aes = new AesGcm(complementWrapKey, 16))
-                    aes.Decrypt(shareDataModel.Nonce, shareDataModel.WrappedComplementSecret, shareDataModel.Tag, complementSecret);
+                using var aes = new AesGcm(complementWrapKey, 16);
+                aes.Decrypt(shareDataModel.Nonce, shareDataModel.WrappedComplementSecret, shareDataModel.Tag, complementSecret);
 
                 return complementSecret;
             }
