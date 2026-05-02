@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -27,10 +28,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual IEnumerable<string> GetContentCiphers()
         {
+            // Default to AES-GCM if supported, otherwise use XChaCha20-Poly1305.
+            // This is because AES-NI intrinsics are faster on supported platforms
+            if (AesGcm.IsSupported)
+                yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+
             if (!OperatingSystem.IsIOS())
                 yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
 
-            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
             yield return Core.Cryptography.Constants.CipherId.NONE;
         }
 
