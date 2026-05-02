@@ -57,8 +57,8 @@
                         IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
                         RecoverAccessCommand="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
                         RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                        SelectedAuthenticationOption="{x:Bind ViewModel.LoginViewModel.SelectedAuthenticationOption, Mode=TwoWay}"
                         SelectAuthenticationOptionCommand="{x:Bind ViewModel.LoginViewModel.SelectAuthenticationOptionCommand, Mode=OneWay}"
+                        SelectedAuthenticationOption="{x:Bind ViewModel.LoginViewModel.SelectedAuthenticationOption, Mode=TwoWay}"
                         ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
                 </StackPanel>
