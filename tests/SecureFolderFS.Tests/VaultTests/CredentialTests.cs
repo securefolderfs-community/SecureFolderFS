@@ -9,6 +9,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.ViewModels.Authentication;
 using static SecureFolderFS.Core.Constants.Vault.Authentication;
 
@@ -310,9 +311,11 @@ namespace SecureFolderFS.Tests.VaultTests
 
             var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
             var shares = await new VaultReader(vaultFolder, StreamSerializer.Instance).ReadComplementationAsync(CancellationToken.None);
+            var complementFile = await vaultFolder.TryGetFileByNameAsync(SecureFolderFS.Core.Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME);
 
             configuredOptions.UnlockProcedure.Should().BeEquivalentTo(passwordOnlyProcedure);
             shares.Should().BeNull();
+            complementFile.Should().BeNull();
         }
 
         [Test]

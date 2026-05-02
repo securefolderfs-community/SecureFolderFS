@@ -14,33 +14,38 @@
         Content="{l:ResourceString Rid=LoginOptions}">
         <FlyoutBase.AttachedFlyout>
             <Flyout>
-                <StackPanel Spacing="4">
+                <StackPanel>
                     <ComboBox
+                        x:Name="CredentialOptions"
                         MinWidth="180"
+                        Margin="0,0,0,4"
+                        x:Load="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         DisplayMemberPath="Title"
                         ItemsSource="{x:Bind AuthenticationOptions, Mode=OneWay}"
                         SelectedItem="{x:Bind SelectedAuthenticationOption, Mode=TwoWay}"
                         SelectionChanged="AuthenticationOptions_SelectionChanged"
                         Visibility="{x:Bind IsAlternativeLogin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind IsReadOnly, Mode=TwoWay}" />
-                    <CheckBox
-                        Content="{l:ResourceString Rid=SaveCredentials}"
-                        IsChecked="{x:Bind ShouldSaveCredentials, Mode=TwoWay}"
-                        IsEnabled="False"
-                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
 
-                    <Button
-                        Command="{x:Bind DiscardSavedCredentialsCommand, Mode=OneWay}"
-                        Content="{l:ResourceString Rid=DiscardSavedCredentials}"
-                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <Button
-                        Command="{x:Bind RestartLoginCommand, Mode=OneWay}"
-                        Content="{l:ResourceString Rid=RestartLogin}"
-                        Visibility="{x:Bind IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <Button
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind RecoverAccessCommand, Mode=OneWay}"
-                        Content="{l:ResourceString Rid=RecoverAccess}" />
+                    <StackPanel Spacing="4">
+                        <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind IsReadOnly, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="{l:ResourceString Rid=SaveCredentials}"
+                            IsChecked="{x:Bind ShouldSaveCredentials, Mode=TwoWay}"
+                            Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
+
+                        <Button
+                            Command="{x:Bind DiscardSavedCredentialsCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=DiscardSavedCredentials}"
+                            Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <Button
+                            Command="{x:Bind RestartLoginCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=RestartLogin}"
+                            Visibility="{x:Bind IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind RecoverAccessCommand, Mode=OneWay}"
+                            Content="{l:ResourceString Rid=RecoverAccess}" />
+                    </StackPanel>
                 </StackPanel>
             </Flyout>
         </FlyoutBase.AttachedFlyout>

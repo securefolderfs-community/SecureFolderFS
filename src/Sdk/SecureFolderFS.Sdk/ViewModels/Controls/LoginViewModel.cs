@@ -76,54 +76,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //      2b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
             //
 
-            // Dispose previous state, if any
-            _keySequence.Dispose();
-            _loginSequence?.Dispose();
-            AuthenticationOptions.DisposeAll();
-            AuthenticationOptions.Clear();
-            SelectedAuthenticationOption = null;
-            IsAlternativeLogin = false;
-
+            ResetLoginState();
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
             if (validationResult.Successful)
             {
                 try
                 {
-                    if (!PersistedCredentialsModel.Instance.Credentials.IsEmpty()
-                        && _loginViewMode is LoginViewType.Full or LoginViewType.Constrained)
-                    {
-                        _vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-                        if (!string.IsNullOrEmpty(_vaultOptions.VaultId) && PersistedCredentialsModel.Instance.Credentials.ContainsKey(_vaultOptions.VaultId))
-                        {
-                            AreCredentialsSaved = true;
-                            CurrentViewModel = new PersistedAuthenticationViewModel(_vaultOptions.VaultId);
-                            return;
-                        }
-                    }
-
-                    // Get the authentication method enumerator for this vault
-                    _vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
-                    if (!string.IsNullOrWhiteSpace(_vaultOptions.UnlockProcedure.Complementation))
-                    {
-                        foreach (var item in loginItems)
-                            AuthenticationOptions.Add(item);
-
-                        IsAlternativeLogin = AuthenticationOptions.Count > 1;
-                        IsLoginSequence = false;
-                        SelectedAuthenticationOption = AuthenticationOptions.FirstOrDefault();
-                        CurrentViewModel = SelectedAuthenticationOption is not null
-                            ? SelectedAuthenticationOption
-                            : new ErrorViewModel("No authentication methods available.");
-                        return;
-                    }
-
-                    // Set up the first authentication method
-                    _loginSequence = new(loginItems);
-                    IsLoginSequence = _loginSequence.Count > 1;
-                    var result = ProceedAuthentication();
-                    if (!result.Successful)
-                        CurrentViewModel = new ErrorViewModel(result);
+                    var allowPersistedCredentials = _loginViewMode is LoginViewType.Full or LoginViewType.Constrained;
+                    await InitializeLoginAsync(allowPersistedCredentials, cancellationToken);
                 }
                 catch (NotSupportedException)
                 {
@@ -194,19 +154,64 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (!string.IsNullOrEmpty(vaultOptions.VaultId))
                 {
                     PersistedCredentialsModel.Instance.Remove(vaultOptions.VaultId);
-                    AreCredentialsSaved = false;
-
-                    _loginSequence?.Dispose();
-                    var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
-                    _loginSequence = new(loginItems);
-                    IsLoginSequence = _loginSequence.Count > 1;
-                    RestartLoginProcess();
+                    ResetLoginState();
+                    await InitializeLoginAsync(allowPersistedCredentials: false, cancellationToken);
                 }
             }
             catch (Exception ex)
             {
                 CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
             }
+        }
+
+        private void ResetLoginState()
+        {
+            _keySequence.Dispose();
+            _loginSequence?.Dispose();
+            AuthenticationOptions.DisposeAll();
+            AuthenticationOptions.Clear();
+            SelectedAuthenticationOption = null;
+            IsAlternativeLogin = false;
+            IsLoginSequence = false;
+            AreCredentialsSaved = false;
+            _vaultOptions = null;
+        }
+
+        private async Task InitializeLoginAsync(bool allowPersistedCredentials, CancellationToken cancellationToken)
+        {
+            _vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+            if (allowPersistedCredentials
+                && !PersistedCredentialsModel.Instance.Credentials.IsEmpty()
+                && !string.IsNullOrEmpty(_vaultOptions.VaultId)
+                && PersistedCredentialsModel.Instance.Credentials.ContainsKey(_vaultOptions.VaultId))
+            {
+                AreCredentialsSaved = true;
+                IsAlternativeLogin = !string.IsNullOrWhiteSpace(_vaultOptions.UnlockProcedure.Complementation);
+                CurrentViewModel = new PersistedAuthenticationViewModel(_vaultOptions.VaultId);
+                return;
+            }
+
+            var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+            if (!string.IsNullOrWhiteSpace(_vaultOptions.UnlockProcedure.Complementation))
+            {
+                foreach (var item in loginItems)
+                    AuthenticationOptions.Add(item);
+
+                IsAlternativeLogin = AuthenticationOptions.Count > 1;
+                IsLoginSequence = false;
+                SelectedAuthenticationOption = AuthenticationOptions.FirstOrDefault();
+                CurrentViewModel = SelectedAuthenticationOption is not null
+                    ? SelectedAuthenticationOption
+                    : new ErrorViewModel("No authentication methods available.");
+                return;
+            }
+
+            // Set up the first authentication method
+            _loginSequence = new(loginItems);
+            IsLoginSequence = _loginSequence.Count > 1;
+            var result = ProceedAuthentication();
+            if (!result.Successful)
+                CurrentViewModel = new ErrorViewModel(result);
         }
 
         [RelayCommand]

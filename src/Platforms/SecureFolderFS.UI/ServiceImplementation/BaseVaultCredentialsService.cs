@@ -33,8 +33,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (AesGcm.IsSupported)
                 yield return Core.Cryptography.Constants.CipherId.AES_GCM;
 
+#if DEBUG
             if (!OperatingSystem.IsIOS())
                 yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+#else
+            yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+#endif
 
             yield return Core.Cryptography.Constants.CipherId.NONE;
         }
