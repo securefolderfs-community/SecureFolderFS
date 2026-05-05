@@ -9,6 +9,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal abstract class BaseNameCrypt : INameCrypt
     {
+        protected const NormalizationForm NORMALIZATION = NormalizationForm.FormC;
         protected readonly string fileNameEncodingId;
 
         protected BaseNameCrypt(string fileNameEncodingId)
@@ -40,29 +41,49 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public virtual string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             try
             {
-                // Decode buffer
-                var ciphertextNameBuffer = fileNameEncodingId switch
+                if (!ciphertextName.IsNormalized(NORMALIZATION))
                 {
-                    Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(ciphertextName),
-                    Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(ciphertextName),
+                    var normalizedLength = ciphertextName.GetNormalizedLength(NORMALIZATION);
+                    var destination = normalizedLength < 256 ? stackalloc char[normalizedLength] : new char[normalizedLength];
+
+                    // Try to normalize
+                    if (!ciphertextName.TryNormalize(destination, out var written, NORMALIZATION))
+                        return null;
+
+                    // Decode
+                    return Decode(destination.Slice(0, written), directoryId);
+                }
+
+                // Skip normalization and decode directly
+                return Decode(ciphertextName, directoryId);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            string? Decode(ReadOnlySpan<char> name, ReadOnlySpan<byte> associatedData)
+            {
+                // Decode buffer
+                var decoded = fileNameEncodingId switch
+                {
+                    Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(name),
+                    Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(name),
                     _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
                 };
 
                 // Decrypt
-                var plaintextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
+                var plaintextNameBuffer = DecryptFileName(decoded, associatedData);
                 if (plaintextNameBuffer is null)
                     return null;
 
                 // Get string from plaintext buffer
                 return Encoding.UTF8.GetString(plaintextNameBuffer);
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
 
