@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract

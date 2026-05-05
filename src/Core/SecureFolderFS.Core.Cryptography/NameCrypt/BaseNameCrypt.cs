@@ -2,7 +2,7 @@
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Lex4K;
+using SecureFolderFS.Core.Cryptography.Cipher;
 
 namespace SecureFolderFS.Core.Cryptography.NameCrypt
 {
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             return fileNameEncodingId switch
             {
                 Constants.CipherId.ENCODING_BASE64URL => Base64Url.EncodeToString(ciphertextNameBuffer),
-                Constants.CipherId.ENCODING_BASE4K => Base4K.EncodeChainToString(ciphertextNameBuffer),
+                Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Encode(ciphertextNameBuffer),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
             };
         }
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         {
             try
             {
-                if (!ciphertextName.IsNormalized(NORMALIZATION))
+                if (fileNameEncodingId == Constants.CipherId.ENCODING_BASE4K && !ciphertextName.IsNormalized(NORMALIZATION))
                 {
                     var normalizedLength = ciphertextName.GetNormalizedLength(NORMALIZATION);
                     var destination = normalizedLength < 256 ? stackalloc char[normalizedLength] : new char[normalizedLength];
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
                 var decoded = fileNameEncodingId switch
                 {
                     Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(name),
-                    Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(name),
+                    Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Decode(name),
                     _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
                 };
 
