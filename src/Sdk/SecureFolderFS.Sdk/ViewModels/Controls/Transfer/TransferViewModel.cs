@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -44,23 +45,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 
             Title = TransferType switch
             {
-                TransferType.Copy => "CopyingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
-                TransferType.Move => "MovingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
-                TransferType.Delete => "DeletingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
-                TransferType.Extract => "ExtractingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
+                TransferType.Copy => "CopyingItemsPlural".ToLocalized(GetInterpolation()),
+                TransferType.Move => "MovingItemsPlural".ToLocalized(GetInterpolation()),
+                TransferType.Delete => "DeletingItemsPlural".ToLocalized(GetInterpolation()),
+                TransferType.Extract => "ExtractingItemsPlural".ToLocalized(GetInterpolation()),
                 _ => "Loading".ToLocalized()
             };
-
             return;
 
-            static string GetItemsCount(TotalProgress totalProgress)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            object GetInterpolation()
             {
-                return totalProgress switch
-                {
-                    { Achieved: < 0 } => totalProgress.Total.ToString(),
-                    { Total: <= 0 } => totalProgress.Achieved.ToString(),
-                    _ => $"{totalProgress.Achieved}/{totalProgress.Total}"
-                };
+                return new { value.State, value.Achieved, value.Total };
             }
         }
 

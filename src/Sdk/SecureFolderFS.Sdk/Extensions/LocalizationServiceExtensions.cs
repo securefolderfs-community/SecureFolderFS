@@ -21,8 +21,8 @@ namespace SecureFolderFS.Sdk.Extensions
                 _ when dateTime.Year == 1 => "Unspecified",
                 _ when dateTime.Date == DateTime.Today => "DateToday".ToLocalized(localizationService, interpolate: dateTime.ToString("t", cultureInfo)),
                 _ when daysAgo == 1 => "DateYesterday".ToLocalized(localizationService, interpolate: dateTime.ToString("t", cultureInfo)),
-                _ when daysAgo is >= 2 and <= 6 => "DateDaysAgoPlural".ToLocalized(localizationService, interpolate: daysAgo.ToString()),
-                _ when daysAgo is >= 7 and < 14 => "DateWeekAgoPlural".ToLocalized(localizationService, interpolate: weeksAgo.ToString()),
+                _ when daysAgo is >= 2 and <= 6 => "DateDaysAgoPlural".ToLocalized(localizationService, interpolate: daysAgo),
+                _ when daysAgo is >= 7 and < 14 => "DateWeekAgoPlural".ToLocalized(localizationService, interpolate: weeksAgo),
                 _ => null
             };
 

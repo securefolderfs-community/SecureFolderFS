@@ -461,7 +461,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                                 new FileViewModel(createdFile, browserViewModel, destinationViewModel),
                                 browserViewModel.Layouts.GetSorter());
                         }
-                    }, cts.Token);
+                    }, x => x.Name, cts.Token);
                 }
                 catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
                 {

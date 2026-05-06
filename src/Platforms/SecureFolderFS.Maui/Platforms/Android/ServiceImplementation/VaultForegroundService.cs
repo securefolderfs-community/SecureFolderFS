@@ -103,7 +103,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             var title = count switch
             {
                 0 => "VaultUnlocked".ToLocalized(),
-                1 => "OneVaultIsUnlocked".ToLocalized(),
                 _ => "VaultsUnlockedPlural".ToLocalized(count)
             };
 

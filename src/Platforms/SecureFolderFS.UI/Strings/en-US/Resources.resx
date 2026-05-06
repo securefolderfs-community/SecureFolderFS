@@ -1176,13 +1176,13 @@
       <value>Clear selection</value>
   </data>
   <data name="CopyingItemsPlural" xml:space="preserve">
-      <value>Copying {0:plural:{1}|{} items}</value>
+      <value>Copying {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="MovingItemsPlural" xml:space="preserve">
-      <value>Moving {0:plural:{1}|{} items}</value>
+      <value>Moving {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="DeletingItemsPlural" xml:space="preserve">
-      <value>Deleting {0:plural:{1}|{} items}</value>
+      <value>Deleting {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="NotEnoughSpace" xml:space="preserve">
       <value>Not enough space</value>
@@ -1254,7 +1254,7 @@
       <value>This archive format is not supported for extraction</value>
   </data>
   <data name="ExtractingItemsPlural" xml:space="preserve">
-      <value>Extracting {0:plural:{1}|{} items}</value>
+      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="Extracting" xml:space="preserve">
       <value>Extracting...</value>

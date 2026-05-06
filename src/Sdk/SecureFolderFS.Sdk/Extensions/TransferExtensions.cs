@@ -30,16 +30,27 @@ namespace SecureFolderFS.Sdk.Extensions
             IEnumerable<TTransferred> items,
             Func<TTransferred, IProgress<IStorable>, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
+            where TTransferred : IStorable
+        {
+            await TransferAsync(transferViewModel, items, callback, x => x.Name, cancellationToken);
+        }
+
+        public static async Task TransferAsync<TTransferred>(
+            this TransferViewModel transferViewModel,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, IProgress<IStorable>, CancellationToken, Task> callback,
+            Func<TTransferred, string> itemName,
+            CancellationToken cancellationToken = default)
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
-            transferViewModel.Report(new(0, 0, 0));
+            transferViewModel.Report(new(0, collection.Count, collection.Count));
             var counter = 0;
-            var reporter = new Progress<IStorable>(_ =>
+            var reporter = new Progress<IStorable>(x =>
             {
                 counter++;
-                transferViewModel.Report(new(counter, 0, 1));
+                transferViewModel.Report(new(counter, 0, x.Name));
             });
 
             for (var i = 0; i < collection.Count; i++)
@@ -47,6 +58,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var item = collection.ElementAt(i);
+                transferViewModel.Report(new(i, collection.Count, itemName(item)));
                 await callback(item, reporter, cancellationToken);
             }
 
@@ -62,6 +74,16 @@ namespace SecureFolderFS.Sdk.Extensions
             CancellationToken cancellationToken = default)
             where TTransferred : IStorable
         {
+            await TransferAsync(transferViewModel, items, callback, x => x.Name, cancellationToken);
+        }
+
+        public static async Task TransferAsync<TTransferred>(
+            this TransferViewModel transferViewModel,
+            IEnumerable<TTransferred> items,
+            Func<TTransferred, CancellationToken, Task> callback,
+            Func<TTransferred, string> itemName,
+            CancellationToken cancellationToken = default)
+        {
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
@@ -72,8 +94,8 @@ namespace SecureFolderFS.Sdk.Extensions
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var item = collection.ElementAt(i);
+                transferViewModel.Report(new(i, collection.Count, itemName(item)));
                 await callback(item, cancellationToken);
-                transferViewModel.Report(new((i + 1), collection.Count, item.Name));
             }
 
             await Task.Delay(1000, CancellationToken.None);
