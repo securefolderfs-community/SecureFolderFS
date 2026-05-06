@@ -34,12 +34,12 @@ namespace SecureFolderFS.Sdk.Extensions
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
-            transferViewModel.Report(new(0, 0));
+            transferViewModel.Report(new(0, 0, 0));
             var counter = 0;
             var reporter = new Progress<IStorable>(_ =>
             {
                 counter++;
-                transferViewModel.Report(new(counter, 0));
+                transferViewModel.Report(new(counter, 0, 1));
             });
 
             for (var i = 0; i < collection.Count; i++)
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.Extensions
             var collection = items.ToOrAsCollection();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
-            transferViewModel.Report(new(0, collection.Count));
+            transferViewModel.Report(new(0, collection.Count, collection.Count));
 
             for (var i = 0; i < collection.Count; i++)
             {
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.Extensions
 
                 var item = collection.ElementAt(i);
                 await callback(item, cancellationToken);
-                transferViewModel.Report(new((i + 1), collection.Count));
+                transferViewModel.Report(new((i + 1), collection.Count, item.Name));
             }
 
             await Task.Delay(1000, CancellationToken.None);

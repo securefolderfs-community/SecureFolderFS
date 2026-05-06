@@ -264,7 +264,7 @@
             </Grid.RowDefinitions>
 
             <InfoBar
-                Title="{x:Bind ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|FoundIssuesCount)'}"
+                Title="{x:Bind ViewModel.HealthViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|FoundIssuesCountPlural)'}"
                 Grid.Row="0"
                 VerticalContentAlignment="Center"
                 IsClosable="False"

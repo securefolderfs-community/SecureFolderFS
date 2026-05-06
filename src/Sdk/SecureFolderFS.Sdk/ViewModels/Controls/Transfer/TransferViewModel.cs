@@ -44,10 +44,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 
             Title = TransferType switch
             {
-                TransferType.Copy => "CopyingItems".ToLocalized(GetItemsCount(value)),
-                TransferType.Move => "MovingItems".ToLocalized(GetItemsCount(value)),
-                TransferType.Delete => "DeletingItems".ToLocalized(GetItemsCount(value)),
-                TransferType.Extract => "ExtractingItems".ToLocalized(GetItemsCount(value)),
+                TransferType.Copy => "CopyingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
+                TransferType.Move => "MovingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
+                TransferType.Delete => "DeletingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
+                TransferType.Extract => "ExtractingItemsPlural".ToLocalized(GetItemsCount(value), value.State),
                 _ => "Loading".ToLocalized()
             };
 

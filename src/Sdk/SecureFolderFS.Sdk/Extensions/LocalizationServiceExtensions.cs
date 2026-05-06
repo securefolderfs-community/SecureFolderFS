@@ -15,13 +15,14 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             var cultureInfo = localizationService.CurrentCulture;
             var daysAgo = (DateTime.Today - dateTime.Date).Days;
+            var weeksAgo = daysAgo / 7;
             var dateString = dateTime switch
             {
                 _ when dateTime.Year == 1 => "Unspecified",
                 _ when dateTime.Date == DateTime.Today => "DateToday".ToLocalized(localizationService, interpolate: dateTime.ToString("t", cultureInfo)),
                 _ when daysAgo == 1 => "DateYesterday".ToLocalized(localizationService, interpolate: dateTime.ToString("t", cultureInfo)),
-                _ when daysAgo is >= 2 and <= 6 => "DateDaysAgo".ToLocalized(localizationService, interpolate: daysAgo.ToString()),
-                _ when daysAgo is >= 7 and < 14 => "DateWeekAgo".ToLocalized(localizationService),
+                _ when daysAgo is >= 2 and <= 6 => "DateDaysAgoPlural".ToLocalized(localizationService, interpolate: daysAgo.ToString()),
+                _ when daysAgo is >= 7 and < 14 => "DateWeekAgoPlural".ToLocalized(localizationService, interpolate: weeksAgo.ToString()),
                 _ => null
             };
 

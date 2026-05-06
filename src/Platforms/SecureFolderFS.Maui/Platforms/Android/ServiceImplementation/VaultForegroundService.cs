@@ -104,7 +104,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             {
                 0 => "VaultUnlocked".ToLocalized(),
                 1 => "OneVaultIsUnlocked".ToLocalized(),
-                _ => "MultipleVaultsAreUnlocked".ToLocalized(count)
+                _ => "VaultsUnlockedPlural".ToLocalized(count)
             };
 
             // Tapping the notification brings the app back to foreground
