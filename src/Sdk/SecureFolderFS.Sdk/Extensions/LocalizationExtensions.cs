@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
+using SmartFormat;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
@@ -43,7 +44,7 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, params object?[] interpolate)
         {
             var localized = ToLocalized(resourceKey);
-            return SafetyHelpers.NoFailureResult(() => string.Format(localized, interpolate)) ?? localized;
+            return SafetyHelpers.NoFailureResult(() => Smart.Format(localized, interpolate)) ?? localized;
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, ILocalizationService localizationService, params object?[] interpolate)
         {
             var localized = ToLocalized(resourceKey, localizationService);
-            return SafetyHelpers.NoFailureResult(() => string.Format(localized, interpolate)) ?? localized;
+            return SafetyHelpers.NoFailureResult(() => Smart.Format(localized, interpolate)) ?? localized;
         }
     }
 }

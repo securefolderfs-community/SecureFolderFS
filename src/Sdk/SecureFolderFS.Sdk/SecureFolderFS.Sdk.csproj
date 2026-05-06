@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="ByteSize" Version="2.1.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="SmartFormat" Version="3.6.1" />
   </ItemGroup>
 
   <ItemGroup>
