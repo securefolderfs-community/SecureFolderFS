@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             return fileNameEncodingId switch
             {
                 Constants.CipherId.ENCODING_BASE64URL => Base64Url.EncodeToString(ciphertextNameBuffer),
-                Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Encode(ciphertextNameBuffer),
+                Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Encode(ciphertextNameBuffer).Normalize(NORMALIZATION),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
             };
         }
