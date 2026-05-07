@@ -62,7 +62,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 await callback(item, reporter, cancellationToken);
             }
 
-            transferViewModel.Title = "TransferDone".ToLocalized();
+            transferViewModel.Report(new(collection.Count, collection.Count, string.Empty));
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
         }
@@ -98,6 +98,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 await callback(item, cancellationToken);
             }
 
+            transferViewModel.Report(new(collection.Count, collection.Count, string.Empty));
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
         }
