@@ -1194,7 +1194,7 @@
       <value>Are you sure you want to permanently delete {0:plural:one item|{} items|{} items}?</value>
   </data>
   <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
-      <value>The deleted {0:plural:item exceeds|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items} instead?</value>
+      <value>The deleted {0:plural:item exceeds|{} items exceed|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items|{} items} instead?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
       <value>By continuing, you agree to our </value>
@@ -1230,10 +1230,10 @@
       <value>{0:plural:One item|{} items|{} items} selected</value>
   </data>
   <data name="ElementsCountPlural" xml:space="preserve">
-      <value>{0:plural:{} element|{} elements}</value>
+      <value>{0:plural:{} element|{} elements|{} elements}</value>
   </data>
   <data name="FoundIssuesCountPlural" xml:space="preserve">
-      <value>Found {0:plural:one issue|{} issues}</value>
+      <value>Found {0:plural:one issue|{} issues|{} issues}</value>
   </data>
   <data name="AvailableWidgets" xml:space="preserve">
       <value>Available widgets</value>
