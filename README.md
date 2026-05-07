@@ -50,7 +50,7 @@ This ensures that your data will always remain secure.
 
 > [!TIP]
 > The purpose of SecureFolderFS is to provide a professional, usable 'safe folder' experience that supports all major platforms with a consistent feature set.
-> SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, MAUI and the .NET Runtime).
+> SecureFolderFS can run on a huge range of devices (as supported by Uno Platform, .NET MAUI, and the .NET Runtime).
 
 ### How to use SecureFolderFS
 
@@ -69,8 +69,8 @@ From the app's UI, you can create new vaults to store items securely.
 </p>
 
 > *Upon entering the correct password, the vault will then open.*
-> *You can press 'View vault' to open the vault's mounted file-system in your file manager of choice.*
-> *When you're done accessing your files, you can press the 'Lock vault' button and the vault file-system will close.*
+> *You can press 'View vault' to open the vault's mounted file system in your file manager of choice.*
+> *When you're done accessing your files, you can press the 'Lock vault' button, and the vault file system will close.*
 > *The vault remains on your disk and your data is encrypted in a way that cannot be accessed by any program, past, present or future.*
 
 ## Contributing
@@ -83,7 +83,9 @@ Take a look at our *[contributing guidelines](CONTRIBUTING.md)* to learn about b
 
 You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*.
 To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
-New translations will be synchronized periodically to the source code, and new releases will always contain the latest translations.
+New translations will be synchronized periodically with the source code, and new releases will always contain the latest translations.
+
+For help with translating custom-format strings with pluralization support, refer to the [Localization Playground](https://github.com/securefolderfs-community/LocalizationPlayground) repository. 
 
 ---
 
@@ -91,7 +93,7 @@ New translations will be synchronized periodically to the source code, and new r
 
 > [!NOTE]
 > Below are the instructions for building SecureFolderFS for a cross-platform target.
-> For other projects, such as the SDK, libraries and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
+> For other projects, such as the SDK, libraries, and CLI program, you can build as normal with the latest .NET SDK, without the prerequisites listed below.
 
 ### 1. Prerequisites
 
@@ -104,7 +106,7 @@ New translations will be synchronized periodically to the source code, and new r
 - For iOS builds:
   - Xcode 26.2 (on macOS)
 
-### 2. Set up IDE
+### 2. Set up the IDE
 
 > [!TIP]
 > *Using Visual Studio 2026 is recommended for SecureFolderFS development.*
@@ -130,7 +132,7 @@ New translations will be synchronized periodically to the source code, and new r
 ### 3. Run `Uno.Check`
 
 > [!TIP]
-> *This step is optional, but is good practice to check you installed all the necessary dependencies to build SecureFolderFS on your computer.*
+> *This step is optional, but it is good practice to check that you installed all the necessary dependencies to build SecureFolderFS on your computer.*
 
 Run the following command and follow all of its instructions (you need to have `Uno.Check` installed!)
 
@@ -154,9 +156,9 @@ cd SecureFolderFS
 ### 5. Build the project
 
 - Open the solution `SecureFolderFS.Public.slnx`
-- Set `SecureFolderFS.Uno` as the startup project if you are building for desktop targets (i.e. macOS, Linux or Windows)
-- Set `SecureFolderFS.Maui` as the startup project if you are building for mobile targets (i.e. Android, iOS or iPadOS)
-- Select the appropriate target device / platform
+- Set `SecureFolderFS.Uno` as the startup project if you are building for desktop targets (i.e., macOS, Linux, or Windows)
+- Set `SecureFolderFS.Maui` as the startup project if you are building for mobile targets (i.e., Android, iOS, or iPadOS)
+- Select the appropriate target device/platform
 - Run with debugger
 
 ---

@@ -50,6 +50,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigator? OuterNavigator { get; }
 
         /// <summary>
+        /// Gets a value indicating whether the folder selection process is currently active.
+        /// </summary>
+        public bool IsPickingFolder { get; protected set; }
+
+        /// <summary>
         /// Gets the thumbnail cache for this browser instance.
         /// </summary>
         public ThumbnailCacheModel ThumbnailCache { get; }
@@ -100,6 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             try
             {
+                IsPickingFolder = true;
                 TransferViewModel.IsPickingFolder = true;
                 await OuterNavigator.NavigateAsync(this);
                 using var cts = TransferViewModel.GetCancellation(cancellationToken);
@@ -111,6 +117,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
             finally
             {
+                IsPickingFolder = false;
                 TransferViewModel.IsPickingFolder = false;
                 await OuterNavigator.GoBackAsync();
                 Dispose();

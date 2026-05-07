@@ -112,7 +112,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     StatusTitle = "CollectingItems".ToLocalized();
                     Subtitle = value.Achieved == 0
                         ? "CollectingItemsInProgress".ToLocalized()
-                        : "CollectedCountItems".ToLocalized(value.Achieved);
+                        : "CollectedItemsPlural".ToLocalized(value.Achieved);
                 }
                 else
                 {
