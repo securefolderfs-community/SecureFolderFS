@@ -85,7 +85,7 @@ You can update existing localization strings by heading to our *[Crowdin project
 To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*.
 New translations will be synchronized periodically with the source code, and new releases will always contain the latest translations.
 
-For help with translating custom-format strings with pluralization support, refer to the [Localization Tester](https://github.com/securefolderfs-community/LocalizationTester) repository. 
+For help with translating custom-format strings with pluralization support, refer to the [Localization Playground](https://github.com/securefolderfs-community/LocalizationPlayground) repository. 
 
 ---
 
