@@ -82,7 +82,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             Items.DisposeAll();
             Items.Clear();
 
-            var isPickingFolder = BrowserViewModel.TransferViewModel?.IsPickingFolder ?? false;
+            var isPickingFolder = BrowserViewModel.IsPickingFolder;
             var items = await Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken: cancellationToken);
             BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
             {

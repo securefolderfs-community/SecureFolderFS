@@ -50,7 +50,7 @@
                 FontSize="18"
                 HorizontalOptions="Center"
                 IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay}"
-                Text="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(0:LOCALIZE|SelectItems)|(>0:LOCALIZE|ItemsSelected)'}"
+                Text="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(0:LOCALIZE|SelectItems)|(>0:LOCALIZE|ItemsSelectedPlural)'}"
                 TextColor="#FFFFFF"
                 VerticalOptions="Center" />
             <VerticalStackLayout IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" VerticalOptions="Center">
@@ -62,7 +62,7 @@
                 <Label
                     FontSize="12"
                     Opacity="0.6"
-                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|ElementsCount)'}"
+                    Text="{Binding ViewModel.CurrentFolder.Items.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='(>=0:LOCALIZE|ElementsCountPlural)'}"
                     TextColor="#FFFFFF" />
             </VerticalStackLayout>
         </Grid>

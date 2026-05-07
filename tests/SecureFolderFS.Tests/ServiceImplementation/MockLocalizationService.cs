@@ -10,8 +10,8 @@ namespace SecureFolderFS.Tests.ServiceImplementation
         {
             { "DateToday", "Today, {0}" },
             { "DateYesterday", "Yesterday, {0}" },
-            { "DateDaysAgo", "{0} days ago" },
-            { "DateWeekAgo", "Last week" }
+            { "DateDaysAgoPlural", "{0} days ago" },
+            { "DateWeekAgoPlural", "Last week" }
         };
 
         /// <inheritdoc/>
