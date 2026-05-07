@@ -620,9 +620,6 @@
   <data name="DateToday" xml:space="preserve">
     <value>Today, {0}</value>
   </data>
-  <data name="DateAgo" xml:space="preserve">
-    <value>{0} ago</value>
-  </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>An error occurred</value>
   </data>
@@ -1043,11 +1040,11 @@
   <data name="DateYesterday" xml:space="preserve">
     <value>Yesterday, {0}</value>
   </data>
-  <data name="DateWeekAgo" xml:space="preserve">
-    <value>Last week</value>
+  <data name="DateWeekAgoPlural" xml:space="preserve">
+      <value>{0:plural:Last week|{} weeks ago|{} weeks ago}</value>
   </data>
-  <data name="DateDaysAgo" xml:space="preserve">
-    <value>{0} days ago</value>
+  <data name="DateDaysAgoPlural" xml:space="preserve">
+      <value>{0:plural:{} day ago|{} days ago|{} days ago}</value>
   </data>
   <data name="VaultUnlocked" xml:space="preserve">
     <value>Vault is unlocked</value>
@@ -1085,8 +1082,8 @@
   <data name="FileHasCorruptedChunks" xml:space="preserve">
       <value>Parts of the file are corrupted and will be reset</value>
   </data>
-  <data name="CorruptedChunks" xml:space="preserve">
-      <value>{0} corrupted region(s)</value>
+  <data name="CorruptedChunksPlural" xml:space="preserve">
+      <value>{0:plural:{} corrupted region|{} corrupted regions|{} corrupted regions}</value>
   </data>
   <data name="DataLossImminent" xml:space="preserve">
       <value>Data loss unpreventable</value>
@@ -1178,14 +1175,14 @@
   <data name="ClearSelection" xml:space="preserve">
       <value>Clear selection</value>
   </data>
-  <data name="CopyingItems" xml:space="preserve">
-      <value>Copying {0} item(s)</value>
+  <data name="CopyingItemsPlural" xml:space="preserve">
+      <value>Copying {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
   </data>
-  <data name="MovingItems" xml:space="preserve">
-      <value>Moving {0} item(s)</value>
+  <data name="MovingItemsPlural" xml:space="preserve">
+      <value>Moving {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
   </data>
-  <data name="DeletingItems" xml:space="preserve">
-      <value>Deleting {0} item(s)</value>
+  <data name="DeletingItemsPlural" xml:space="preserve">
+      <value>Deleting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
   </data>
   <data name="NotEnoughSpace" xml:space="preserve">
       <value>Not enough space</value>
@@ -1193,11 +1190,11 @@
   <data name="ItemDeletionTitle" xml:space="preserve">
       <value>Deleting item(s)</value>
   </data>
-  <data name="ItemDeletionDescription" xml:space="preserve">
-      <value>Are you sure you want to permanently delete {0} item(s)?</value>
+  <data name="ItemDeletionDescriptionPlural" xml:space="preserve">
+      <value>Are you sure you want to permanently delete {0:plural:one item|{} items|{} items}?</value>
   </data>
-  <data name="ItemsExceedRecycleBinSize" xml:space="preserve">
-      <value>The deleted items exceed the available space in the recycle bin. Do you want to permanently delete {0} item(s) instead?</value>
+  <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
+      <value>The deleted {0:plural:item exceeds|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items} instead?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
       <value>By continuing, you agree to our </value>
@@ -1229,14 +1226,14 @@
   <data name="EnableDeviceLink" xml:space="preserve">
       <value>Enable Device Link</value>
   </data>
-  <data name="ItemsSelected" xml:space="preserve">
-      <value>{0} item(s) selected</value>
+  <data name="ItemsSelectedPlural" xml:space="preserve">
+      <value>{0:plural:One item|{} items|{} items} selected</value>
   </data>
-  <data name="ElementsCount" xml:space="preserve">
-      <value>{0} element(s)</value>
+  <data name="ElementsCountPlural" xml:space="preserve">
+      <value>{0:plural:{} element|{} elements}</value>
   </data>
-  <data name="FoundIssuesCount" xml:space="preserve">
-      <value>Found {0} issue(s)</value>
+  <data name="FoundIssuesCountPlural" xml:space="preserve">
+      <value>Found {0:plural:one issue|{} issues}</value>
   </data>
   <data name="AvailableWidgets" xml:space="preserve">
       <value>Available widgets</value>
@@ -1256,8 +1253,8 @@
   <data name="ArchiveFormatNotSupported" xml:space="preserve">
       <value>This archive format is not supported for extraction</value>
   </data>
-  <data name="ExtractingItems" xml:space="preserve">
-      <value>Extracting {0} items</value>
+  <data name="ExtractingItemsPlural" xml:space="preserve">
+      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
   </data>
   <data name="Extracting" xml:space="preserve">
       <value>Extracting...</value>
@@ -1332,7 +1329,7 @@
       <value>Manual certificate fingerprint (SHA-256)</value>
   </data>
   <data name="SearchIn" xml:space="preserve">
-      <value>Search in: {0}</value>
+      <value>Search in: '{0}'</value>
   </data>
   <data name="RootFolder" xml:space="preserve">
       <value>Root folder</value>
@@ -1346,8 +1343,8 @@
   <data name="CollectingItemsCount" xml:space="preserve">
       <value>Collecting items ({0})</value>
   </data>
-  <data name="CollectedCountItems" xml:space="preserve">
-      <value>Collected {0} items</value>
+  <data name="CollectedItemsPlural" xml:space="preserve">
+      <value>Collected {0:plural:{} item|{} items|{} items}</value>
   </data>
   <data name="ScanCompleted" xml:space="preserve">
       <value>Scan completed</value>
@@ -1421,16 +1418,37 @@
   <data name="TapToLockAll" xml:space="preserve">
       <value>Tap to lock all vaults</value>
   </data>
-  <data name="OneVaultIsUnlocked" xml:space="preserve">
-      <value>One vault is unlocked</value>
-  </data>
-  <data name="MultipleVaultsAreUnlocked" xml:space="preserve">
-      <value>{0} vaults are unlocked</value>
+  <data name="VaultsUnlockedPlural" xml:space="preserve">
+      <value>{0:plural:One vault is|{} vaults are|{} vaults are} unlocked</value>
   </data>
   <data name="ViewInApp" xml:space="preserve">
       <value>View in app</value>
   </data>
   <data name="ExitApp" xml:space="preserve">
       <value>Exit</value>
+  </data>
+  <data name="Vault" xml:space="preserve">
+      <value>Vault</value>
+  </data>
+  <data name="SaveCredentials" xml:space="preserve">
+      <value>Save credentials</value>
+  </data>
+  <data name="CharacterCount" xml:space="preserve">
+      <value>Characters: {0}</value>
+  </data>
+  <data name="CursorPosition" xml:space="preserve">
+      <value>Position: {0}</value>
+  </data>
+  <data name="FileModified" xml:space="preserve">
+      <value>Modified</value>
+  </data>
+  <data name="CredentialsHaveBeenSaved" xml:space="preserve">
+      <value>Credentials have been saved for this vault</value>
+  </data>
+  <data name="DiscardSavedCredentials" xml:space="preserve">
+      <value>Discard saved credentials</value>
+  </data>
+  <data name="OpenInExternalApp" xml:space="preserve">
+      <value>Open in external app</value>
   </data>
 </root>
