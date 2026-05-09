@@ -36,6 +36,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
 #if DEBUG
             if (!OperatingSystem.IsIOS())
                 yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+            
+            if (!AesGcm.IsSupported)
+                yield return Core.Cryptography.Constants.CipherId.AES_GCM; // Brute-force the branch anyway
 #else
             yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
 #endif

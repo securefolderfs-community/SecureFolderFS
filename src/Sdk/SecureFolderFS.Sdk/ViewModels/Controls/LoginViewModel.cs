@@ -215,7 +215,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 SelectedAuthenticationOption = AuthenticationOptions.FirstOrDefault();
                 CurrentViewModel = SelectedAuthenticationOption is not null
                     ? SelectedAuthenticationOption
-                    : new ErrorViewModel("No authentication methods available.");
+                    : new UnsupportedViewModel("AuthenticationUnavailableOrExpired".ToLocalized());
                 return;
             }
 

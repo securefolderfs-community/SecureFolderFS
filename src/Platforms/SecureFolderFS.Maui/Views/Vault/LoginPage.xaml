@@ -101,7 +101,7 @@
                 <uco:OptionsContainer VerticalOptions="End">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
-                            <uco:OptionsControl Title="Login method" IsVisible="{Binding ViewModel.LoginViewModel.IsAlternativeLogin, Mode=OneWay}">
+                            <uco:OptionsControl Title="{l:ResourceString Rid=LoginMethod}" IsVisible="{Binding ViewModel.LoginViewModel.IsAlternativeLogin, Mode=OneWay}">
                                 <uco:OptionsControl.Slot>
                                     <ucc:ModernPicker
                                         BindingContext="{x:Reference ThisPage}"

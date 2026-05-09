@@ -59,13 +59,13 @@ namespace SecureFolderFS.Core.Routines.Operational
 
         public void SetCredentials(ComplementationCredentials credentials, CancellationToken cancellationToken = default)
         {
-            _ = cancellationToken;
             ArgumentNullException.ThrowIfNull(_keyPair);
             ArgumentNullException.ThrowIfNull(_existingConfigDataModel);
             ArgumentNullException.ThrowIfNull(_existingKeystoreDataModel);
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(credentials);
 
+            cancellationToken.ThrowIfCancellationRequested();
             var oldAuthentication = AuthenticationMethod.FromString(_existingConfigDataModel.AuthenticationMethod);
             var newAuthentication = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
             var primaryChanged = !oldAuthentication.Methods.SequenceEqual(newAuthentication.Methods, StringComparer.Ordinal);
