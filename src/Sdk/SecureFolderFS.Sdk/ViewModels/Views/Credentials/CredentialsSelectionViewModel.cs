@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
@@ -33,6 +34,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         public IDisposable? UnlockContract { private get; set; }
 
         public KeySequence? OldPasskey { private get; set; }
+
+        public IReadOnlyList<string>? OldAuthenticationMethodIds { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
@@ -79,6 +82,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 IsComplementationAvailable = false,
                 UnlockContract = UnlockContract,
                 OldPasskey = OldPasskey,
+                OldAuthenticationMethodIds = OldAuthenticationMethodIds,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }
@@ -101,6 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 IsComplementationAvailable = RegisterViewModel.CurrentViewModel?.CanComplement ?? false,
                 UnlockContract = UnlockContract,
                 OldPasskey = OldPasskey,
+                OldAuthenticationMethodIds = OldAuthenticationMethodIds,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }

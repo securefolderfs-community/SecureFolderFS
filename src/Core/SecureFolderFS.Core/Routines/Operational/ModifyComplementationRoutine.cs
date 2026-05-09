@@ -73,7 +73,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             if (string.IsNullOrWhiteSpace(oldAuthentication.Complementation) &&
                 !string.IsNullOrWhiteSpace(newAuthentication.Complementation))
             {
-                AddComplementation(credentials, newAuthentication);
+                AddComplementation(credentials, oldAuthentication, newAuthentication);
                 return;
             }
 
@@ -103,19 +103,23 @@ namespace SecureFolderFS.Core.Routines.Operational
 
         private void AddComplementation(
             ComplementationCredentials credentials,
+            AuthenticationMethod oldAuthentication,
             AuthenticationMethod newAuthentication)
         {
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
-            var currentKey = ExportKey(credentials.CurrentCredential);
-            var newComplementKey = ExportKey(credentials.NewComplementCredential ?? throw new InvalidOperationException("New complement credentials are required."));
+            var currentKeystoreKey = ExportKey(RequireCredential(credentials.CurrentKeystoreCredential, "Current keystore credentials are required."));
+            var currentPrimaryCredential = credentials.NewPrimaryCredential
+                                           ?? credentials.CurrentPrimaryCredential
+                                           ?? (oldAuthentication.Methods.Length == 1 ? credentials.CurrentKeystoreCredential : null);
+            var newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
             byte[]? newPrimaryKey = null;
             byte[]? softwareEntropy = null;
             byte[]? complementSecret = null;
 
             try
             {
-                newPrimaryKey = credentials.NewPrimaryCredential is null ? currentKey : ExportKey(credentials.NewPrimaryCredential);
-                softwareEntropy = DecryptSoftwareEntropy(currentKey);
+                newPrimaryKey = ExportKey(RequireCredential(currentPrimaryCredential, "Current primary credentials are required."));
+                softwareEntropy = DecryptSoftwareEntropy(currentKeystoreKey);
                 complementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication));
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
@@ -124,11 +128,11 @@ namespace SecureFolderFS.Core.Routines.Operational
             }
             finally
             {
-                Zero(newPrimaryKey, currentKey);
+                Zero(newPrimaryKey, currentKeystoreKey);
                 Zero(complementSecret);
                 Zero(softwareEntropy);
                 Zero(newComplementKey);
-                Zero(currentKey);
+                Zero(currentKeystoreKey);
             }
 
         }
@@ -139,14 +143,18 @@ namespace SecureFolderFS.Core.Routines.Operational
             AuthenticationMethod newAuthentication)
         {
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
-            var currentKey = ExportKey(credentials.CurrentCredential);
-            var newComplementKey = ExportKey(credentials.NewComplementCredential ?? throw new InvalidOperationException("New complement credentials are required."));
+            byte[]? currentPrimaryKey = null;
+            byte[]? currentComplementKey = null;
+            var newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
             byte[]? complementSecret = null;
             byte[]? softwareEntropy = null;
 
             try
             {
-                complementSecret = RecoverComplementSecret(currentKey, oldAuthentication, allowPrimary: true);
+                complementSecret = credentials.CurrentComplementCredential is not null
+                    ? RecoverComplementSecretFromShare(currentComplementKey = ExportKey(credentials.CurrentComplementCredential), oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing."))
+                    : RecoverComplementSecretFromPrimary(currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary or complement credentials are required.")), oldAuthentication);
+
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
@@ -158,13 +166,14 @@ namespace SecureFolderFS.Core.Routines.Operational
                 Zero(softwareEntropy);
                 Zero(complementSecret);
                 Zero(newComplementKey);
-                Zero(currentKey);
+                Zero(currentComplementKey);
+                Zero(currentPrimaryKey);
             }
         }
 
         private void RemoveComplementation(ComplementationCredentials credentials, AuthenticationMethod oldAuthentication)
         {
-            var currentPrimaryKey = ExportKey(credentials.CurrentCredential);
+            var currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary credentials are required."));
             byte[]? targetPasskey = null;
             byte[]? complementSecret = null;
             byte[]? softwareEntropy = null;
@@ -195,8 +204,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             var oldComplementMethod = oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
-            var currentComplementKey = ExportKey(credentials.CurrentComplementCredential ?? credentials.CurrentCredential);
-            var newPrimaryKey = ExportKey(credentials.NewPrimaryCredential ?? throw new InvalidOperationException("New primary credentials are required."));
+            var currentComplementKey = ExportKey(RequireCredential(credentials.CurrentComplementCredential, "Current complement credentials are required."));
+            var newPrimaryKey = ExportKey(RequireCredential(credentials.NewPrimaryCredential, "New primary credentials are required."));
             byte[]? newComplementKey = null;
             byte[]? oldComplementSecret = null;
             byte[]? newComplementSecret = null;
@@ -227,35 +236,26 @@ namespace SecureFolderFS.Core.Routines.Operational
             }
         }
 
-        private byte[] RecoverComplementSecret(byte[] currentKey, AuthenticationMethod oldAuthentication, bool allowPrimary)
+        private byte[] RecoverComplementSecretFromPrimary(byte[] currentPrimaryKey, AuthenticationMethod oldAuthentication)
         {
-            CryptographicException? lastException = null;
+            byte[]? complementSecret = null;
+            byte[]? softwareEntropy = null;
 
-            if (allowPrimary)
+            try
             {
-                byte[]? complementSecret = null;
-                byte[]? softwareEntropy = null;
-                try
-                {
-                    complementSecret = DeriveComplementSecret(currentKey, GetPrimaryMethod(oldAuthentication));
-                    softwareEntropy = DecryptSoftwareEntropy(complementSecret);
-                    return complementSecret;
-                }
-                catch (CryptographicException ex)
-                {
-                    lastException = ex;
-                    Zero(complementSecret);
-                }
-                finally
-                {
-                    Zero(softwareEntropy);
-                }
+                complementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication));
+                softwareEntropy = DecryptSoftwareEntropy(complementSecret);
+                return complementSecret;
             }
-
-            if (!string.IsNullOrWhiteSpace(oldAuthentication.Complementation))
-                return RecoverComplementSecretFromShare(currentKey, oldAuthentication.Complementation, lastException);
-
-            throw lastException ?? new CryptographicException("The complement secret could not be recovered.");
+            catch
+            {
+                Zero(complementSecret);
+                throw;
+            }
+            finally
+            {
+                Zero(softwareEntropy);
+            }
         }
 
         private byte[] RecoverComplementSecretFromShare(byte[] currentKey, string complementMethod, CryptographicException? fallbackException = null)
@@ -353,6 +353,11 @@ namespace SecureFolderFS.Core.Routines.Operational
             {
                 Shares = [ shareDataModel ]
             };
+        }
+
+        private static IKeyUsage RequireCredential(IKeyUsage? key, string message)
+        {
+            return key ?? throw new InvalidOperationException(message);
         }
 
         private static byte[] ExportKey(IKeyUsage key)

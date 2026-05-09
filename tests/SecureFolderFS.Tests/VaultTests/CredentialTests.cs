@@ -3,7 +3,10 @@ using NUnit.Framework;
 using OwlCore.Storage;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -220,7 +223,8 @@ namespace SecureFolderFS.Tests.VaultTests
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentCredential = unlockPasskey,
+                CurrentKeystoreCredential = unlockPasskey,
+                CurrentPrimaryCredential = unlockPasskey,
                 NewComplementCredential = keyFile
             }, CreateOptions(complementedProcedure, vaultId));
 
@@ -236,6 +240,50 @@ namespace SecureFolderFS.Tests.VaultTests
             (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
             (await CanUnlockAsync(manager, vaultFolder, chainedPasskey)).Should().BeFalse();
             (await CanUnlockAsync(manager, vaultFolder, wrongPasswordPasskey)).Should().BeFalse();
+
+            var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
+            var shares = await new VaultReader(vaultFolder, StreamSerializer.Instance).ReadComplementationAsync(CancellationToken.None);
+
+            configuredOptions.UnlockProcedure.Should().BeEquivalentTo(complementedProcedure);
+            shares.Should().NotBeNull();
+            shares!.Shares.Should().ContainSingle(x => x.AuthenticationMethodId == AUTH_KEYFILE);
+        }
+
+        [Test]
+        public async Task ModifyComplementation_AddKeyFileFromChainedPasskey_UsesFullOldPasskey()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultService = DI.Service<IVaultService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var chainedProcedure = new AuthenticationMethod([AUTH_PASSWORD, AUTH_KEYFILE], null);
+            var complementedProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_KEYFILE);
+            using var initialCompositePasskey = await GetCreationCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var _ = await manager.CreateAsync(vaultFolder, initialCompositePasskey, CreateOptions(chainedProcedure, vaultId));
+
+            using var unlockPasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, unlockPasskey);
+            using var currentPrimary = await GetPasswordLoginCredentialAsync("Password#1");
+            using var currentKeyFile = unlockPasskey.Keys.ElementAt(1).CreateCopy();
+
+            // Act
+            await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
+            {
+                CurrentKeystoreCredential = unlockPasskey,
+                CurrentPrimaryCredential = currentPrimary,
+                NewComplementCredential = currentKeyFile
+            }, CreateOptions(complementedProcedure, vaultId));
+
+            // Assert
+            using var passwordOnlyPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var keyFileOnlyPasskey = await GetKeyFileLoginCredentialAsync(vaultFolder, vaultId);
+            using var oldChainedPasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+
+            (await CanUnlockAsync(manager, vaultFolder, passwordOnlyPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, oldChainedPasskey)).Should().BeFalse();
 
             var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
             var shares = await new VaultReader(vaultFolder, StreamSerializer.Instance).ReadComplementationAsync(CancellationToken.None);
@@ -264,7 +312,7 @@ namespace SecureFolderFS.Tests.VaultTests
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentCredential = oldKeyFile,
+                CurrentComplementCredential = oldKeyFile,
                 NewComplementCredential = newComplement
             }, CreateOptions(biometricProcedure, vaultId));
 
@@ -299,7 +347,7 @@ namespace SecureFolderFS.Tests.VaultTests
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentCredential = unlockPasskey
+                CurrentPrimaryCredential = unlockPasskey
             }, CreateOptions(passwordOnlyProcedure, vaultId));
 
             // Assert
@@ -336,7 +384,7 @@ namespace SecureFolderFS.Tests.VaultTests
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentCredential = keyFile,
+                CurrentComplementCredential = keyFile,
                 NewPrimaryCredential = newPassword
             }, CreateOptions(complementedProcedure, vaultId));
 
@@ -369,7 +417,7 @@ namespace SecureFolderFS.Tests.VaultTests
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentCredential = currentPassword,
+                CurrentPrimaryCredential = currentPassword,
                 CurrentComplementCredential = keyFile,
                 NewPrimaryCredential = newPassword
             }, CreateOptions(complementedProcedure, vaultId));
@@ -382,6 +430,139 @@ namespace SecureFolderFS.Tests.VaultTests
             (await CanUnlockAsync(manager, vaultFolder, oldPasswordPasskey)).Should().BeFalse();
             (await CanUnlockAsync(manager, vaultFolder, newPasswordPasskey)).Should().BeTrue();
             (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task ModifyComplementation_ChangePrimaryWithoutComplementCredential_FailsAndPreservesOldCredentials()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var complementedProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_KEYFILE);
+            using var keyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+
+            using var currentPasswordUnlock = await GetPasswordLoginCredentialAsync("Password#1");
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, currentPasswordUnlock);
+            using var currentPassword = await GetPasswordLoginCredentialAsync("Password#1");
+            using var newPassword = await GetPasswordCreationCredentialAsync("Password#2");
+
+            // Act
+            Func<Task> action = () => manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
+            {
+                CurrentPrimaryCredential = currentPassword,
+                NewPrimaryCredential = newPassword
+            }, CreateOptions(complementedProcedure, vaultId));
+
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Current complement credentials*");
+
+            using var oldPasswordPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var newPasswordPasskey = await GetPasswordLoginCredentialAsync("Password#2");
+            using var keyFileOnlyPasskey = keyFile.CreateCopy();
+
+            (await CanUnlockAsync(manager, vaultFolder, oldPasswordPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, newPasswordPasskey)).Should().BeFalse();
+            (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task CredentialsOverlay_FirstStageEditOnComplementedVault_RequiresComplementCredential()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+            using var keyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+            using var overlayViewModel = new CredentialsOverlayViewModel(vaultFolder, "Vault", AuthenticationStage.FirstStageOnly);
+
+            // Act
+            await overlayViewModel.InitAsync(CancellationToken.None);
+
+            // Assert
+            var currentAuthentication = overlayViewModel.LoginViewModel.CurrentViewModel.Should().BeAssignableTo<AuthenticationViewModel>().Subject;
+
+            currentAuthentication.Id.Should().Be(AUTH_KEYFILE);
+            overlayViewModel.LoginViewModel.AuthenticationOptions.Should().ContainSingle(x => x.Id == AUTH_KEYFILE);
+            overlayViewModel.LoginViewModel.AuthenticationOptions.Should().NotContain(x => x.Id == AUTH_PASSWORD);
+        }
+
+        [Test]
+        public async Task CredentialsOverlay_ProceedingStageEditOnComplementedVault_RequiresPrimaryCredential()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+            using var keyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+            using var overlayViewModel = new CredentialsOverlayViewModel(vaultFolder, "Vault", AuthenticationStage.ProceedingStageOnly);
+
+            // Act
+            await overlayViewModel.InitAsync(CancellationToken.None);
+
+            // Assert
+            var currentAuthentication = overlayViewModel.LoginViewModel.CurrentViewModel.Should().BeAssignableTo<AuthenticationViewModel>().Subject;
+
+            currentAuthentication.Id.Should().Be(AUTH_PASSWORD);
+            overlayViewModel.LoginViewModel.AuthenticationOptions.Should().ContainSingle(x => x.Id == AUTH_PASSWORD);
+            overlayViewModel.LoginViewModel.AuthenticationOptions.Should().NotContain(x => x.Id == AUTH_KEYFILE);
+        }
+
+        [Test]
+        public async Task ModifyComplementation_RemoveComplementWithoutPrimaryCredential_FailsAndPreservesComplement()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultService = DI.Service<IVaultService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var passwordOnlyProcedure = new AuthenticationMethod([AUTH_PASSWORD], null);
+            var complementedProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_KEYFILE);
+            using var keyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+
+            using var keyFileUnlock = keyFile.CreateCopy();
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, keyFileUnlock);
+            using var currentComplement = keyFile.CreateCopy();
+
+            // Act
+            Func<Task> action = () => manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
+            {
+                CurrentComplementCredential = currentComplement
+            }, CreateOptions(passwordOnlyProcedure, vaultId));
+
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Current primary credentials*");
+
+            using var passwordOnlyPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var keyFileOnlyPasskey = keyFile.CreateCopy();
+
+            (await CanUnlockAsync(manager, vaultFolder, passwordOnlyPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, keyFileOnlyPasskey)).Should().BeTrue();
+
+            var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
+            configuredOptions.UnlockProcedure.Should().BeEquivalentTo(complementedProcedure);
+        }
+
+        [Test]
+        public async Task FromUnlockProcedureAsync_DistinguishesChainedAndComplementedCredentials()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var credentialsService = DI.Service<IVaultCredentialsService>();
+
+            // Act
+            var chainedText = await credentialsService.FromUnlockProcedureAsync(vaultFolder, new([AUTH_PASSWORD, AUTH_KEYFILE], null));
+            var complementedText = await credentialsService.FromUnlockProcedureAsync(vaultFolder, new([AUTH_PASSWORD], AUTH_KEYFILE));
+
+            // Assert
+            chainedText.Should().Contain(" + ");
+            chainedText.Should().NotContain(" / ");
+            complementedText.Should().Contain(" / ");
+            complementedText.Should().NotContain(" + ");
         }
 
         private static IFolder CreateVaultFolder()
@@ -509,7 +690,8 @@ namespace SecureFolderFS.Tests.VaultTests
             {
                 await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
                 {
-                    CurrentCredential = unlockPasskey,
+                    CurrentKeystoreCredential = unlockPasskey,
+                    CurrentPrimaryCredential = unlockPasskey,
                     NewComplementCredential = keyFile
                 }, CreateOptions(complementedProcedure, vaultId));
 

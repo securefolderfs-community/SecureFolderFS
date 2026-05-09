@@ -4,7 +4,9 @@ namespace SecureFolderFS.Shared.Models
 {
     public sealed record class ComplementationCredentials
     {
-        public required IKeyUsage CurrentCredential { get; init; }
+        public IKeyUsage? CurrentKeystoreCredential { get; init; }
+
+        public IKeyUsage? CurrentPrimaryCredential { get; init; }
 
         public IKeyUsage? CurrentComplementCredential { get; init; }
 

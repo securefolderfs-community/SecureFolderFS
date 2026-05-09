@@ -53,17 +53,32 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<string> FromUnlockProcedureAsync(IFolder vaultFolder, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default)
         {
+            AuthenticationViewModel[]? requiredProcedures = null;
+            AuthenticationViewModel[]? complementedProcedures = null;
+
             try
             {
-                var procedures = await GetLoginAsync(vaultFolder, unlockProcedure, string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
-                var result = string.Join(" + ", procedures.Select(x => x.Title));
+                requiredProcedures = await GetLoginAsync(vaultFolder, unlockProcedure with { Complementation = null }, string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                var requiredText = string.Join(" + ", requiredProcedures.Select(x => x.Title));
 
-                procedures.DisposeAll();
-                return result;
+                if (string.IsNullOrWhiteSpace(unlockProcedure.Complementation))
+                    return requiredText;
+
+                complementedProcedures = await GetLoginAsync(vaultFolder, new([ unlockProcedure.Complementation ], null), string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                var complementedText = string.Join(" + ", complementedProcedures.Select(x => x.Title));
+
+                return string.IsNullOrWhiteSpace(requiredText)
+                    ? complementedText
+                    : $"{requiredText} / {complementedText}";
             }
             catch (Exception)
             {
                 return "AuthenticationUnavailable".ToLocalized();
+            }
+            finally
+            {
+                requiredProcedures?.DisposeAll();
+                complementedProcedures?.DisposeAll();
             }
         }
 
@@ -76,6 +91,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             cancellationToken.ThrowIfCancellationRequested();
             await foreach (var item in GetLoginAsync(vaultFolder, authenticationMethod, config.Uid, cancellationToken))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return item;
+            }
+        }
+
+        /// <inheritdoc/>
+        public virtual async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
+            IFolder vaultFolder,
+            AuthenticationMethod unlockProcedure,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            await foreach (var item in GetLoginAsync(vaultFolder, unlockProcedure, config.Uid, cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return item;

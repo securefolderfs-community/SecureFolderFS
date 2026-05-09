@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -37,6 +38,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         public required IDisposable UnlockContract { private get; init; }
 
         public KeySequence? OldPasskey { private get; init; }
+
+        public IReadOnlyList<string>? OldAuthenticationMethodIds { private get; init; }
 
         public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationStage authenticationStage)
         {
@@ -134,16 +137,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             ArgumentNullException.ThrowIfNull(OldPasskey);
 
-            var currentCredential = GetCredentialAt(OldPasskey, 0) ?? OldPasskey;
             var oldComplementation = configuredProcedure.Complementation;
             var newComplementation = updatedProcedure.Complementation;
             var primaryChanged = !configuredProcedure.Methods.SequenceEqual(updatedProcedure.Methods);
+            var primaryMethod = GetPrimaryMethod(configuredProcedure);
+            var currentPrimaryCredential = GetOldCredentialByMethod(configuredProcedure, primaryMethod);
+            var currentComplementCredential = string.IsNullOrWhiteSpace(oldComplementation)
+                ? null
+                : GetOldCredentialByMethod(configuredProcedure, oldComplementation);
 
             if (string.IsNullOrWhiteSpace(oldComplementation) && !string.IsNullOrWhiteSpace(newComplementation))
             {
                 return new()
                 {
-                    CurrentCredential = currentCredential,
+                    CurrentKeystoreCredential = OldPasskey,
+                    CurrentPrimaryCredential = currentPrimaryCredential,
+                    NewPrimaryCredential = primaryChanged ? GetCredentialAt(key, 0) ?? key : null,
                     NewComplementCredential = GetCredentialAt(key, 1) ?? key
                 };
             }
@@ -152,7 +161,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             {
                 return new()
                 {
-                    CurrentCredential = currentCredential,
+                    CurrentPrimaryCredential = currentPrimaryCredential,
                     NewPrimaryCredential = updatedProcedure.Methods.Length > 1 ? key : null
                 };
             }
@@ -165,8 +174,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
                 return new()
                 {
-                    CurrentCredential = currentCredential,
-                    CurrentComplementCredential = GetCredentialAt(OldPasskey, 1),
+                    CurrentPrimaryCredential = currentPrimaryCredential,
+                    CurrentComplementCredential = currentComplementCredential,
                     NewPrimaryCredential = updatePrimaryCredential ? GetCredentialAt(key, 0) ?? key : null,
                     NewComplementCredential = updateComplementCredential ? GetCredentialAt(key, 1) ?? key : null
                 };
@@ -189,6 +198,36 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             return key is KeySequence sequence
                 ? sequence.Keys.ElementAtOrDefault(index)
                 : index == 0 ? key : null;
+        }
+
+        private IKeyUsage? GetOldCredentialByMethod(AuthenticationMethod configuredProcedure, string authenticationMethodId)
+        {
+            var methodIds = GetOldAuthenticationMethodIds(configuredProcedure);
+            if (methodIds is null)
+                return null;
+
+            for (var i = 0; i < methodIds.Count; i++)
+            {
+                if (string.Equals(methodIds[i], authenticationMethodId, StringComparison.Ordinal))
+                    return GetCredentialAt(OldPasskey!, i);
+            }
+
+            return null;
+        }
+
+        private IReadOnlyList<string>? GetOldAuthenticationMethodIds(AuthenticationMethod configuredProcedure)
+        {
+            if (OldAuthenticationMethodIds is { Count: > 0 })
+                return OldAuthenticationMethodIds;
+
+            return string.IsNullOrWhiteSpace(configuredProcedure.Complementation)
+                ? configuredProcedure.Methods
+                : null;
+        }
+
+        private static string GetPrimaryMethod(AuthenticationMethod authenticationMethod)
+        {
+            return authenticationMethod.Methods.FirstOrDefault() ?? throw new InvalidOperationException("Primary authentication is missing.");
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
