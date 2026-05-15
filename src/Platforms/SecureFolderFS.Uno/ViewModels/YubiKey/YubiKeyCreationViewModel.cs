@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var challenge = CryptHelpers.GenerateChallenge(VaultId, Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_64);
+            using var challenge = CryptHelpers.GenerateChallenge(VaultId, Core.Cryptography.Constants.KeyTraits.KEY_PART_LENGTH_64);
 
             // Write authentication data to the vault, including the slot preference
             await vaultWriter.WriteAuthenticationAsync<VaultChallengeDataModel>(

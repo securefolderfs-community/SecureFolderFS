@@ -10,11 +10,13 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     internal abstract class BaseNameCrypt : INameCrypt
     {
         protected const NormalizationForm NORMALIZATION = NormalizationForm.FormC;
-        protected readonly string fileNameEncodingId;
+
+        /// <inheritdoc/>
+        public virtual string EncodingId { get; }
 
         protected BaseNameCrypt(string fileNameEncodingId)
         {
-            this.fileNameEncodingId = fileNameEncodingId;
+            EncodingId = fileNameEncodingId;
         }
 
         /// <inheritdoc/>
@@ -32,11 +34,11 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             var ciphertextNameBuffer = EncryptFileName(bytes.Slice(0, count), directoryId);
 
             // Encode string
-            return fileNameEncodingId switch
+            return EncodingId switch
             {
                 Constants.CipherId.ENCODING_BASE64URL => Base64Url.EncodeToString(ciphertextNameBuffer),
                 Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Encode(ciphertextNameBuffer).Normalize(NORMALIZATION),
-                _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
+                _ => throw new ArgumentOutOfRangeException(nameof(EncodingId))
             };
         }
 
@@ -46,7 +48,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         {
             try
             {
-                if (fileNameEncodingId == Constants.CipherId.ENCODING_BASE4K && !ciphertextName.IsNormalized(NORMALIZATION))
+                if (EncodingId == Constants.CipherId.ENCODING_BASE4K && !ciphertextName.IsNormalized(NORMALIZATION))
                 {
                     var normalizedLength = ciphertextName.GetNormalizedLength(NORMALIZATION);
                     var destination = normalizedLength < 256 ? stackalloc char[normalizedLength] : new char[normalizedLength];
@@ -70,11 +72,11 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             string? Decode(ReadOnlySpan<char> name, ReadOnlySpan<byte> associatedData)
             {
                 // Decode buffer
-                var decoded = fileNameEncodingId switch
+                var decoded = EncodingId switch
                 {
                     Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(name),
                     Constants.CipherId.ENCODING_BASE4K => SecombaBase4K.Decode(name),
-                    _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
+                    _ => throw new ArgumentOutOfRangeException(nameof(EncodingId))
                 };
 
                 // Decrypt

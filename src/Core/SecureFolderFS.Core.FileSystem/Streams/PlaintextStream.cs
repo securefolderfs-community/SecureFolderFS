@@ -100,7 +100,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             }
 
             // Read header if is not ready
-            if (!_headerBuffer.ReadHeader(Inner, _security))
+            if (!_headerBuffer.ReadHeader(Inner, _security.HeaderCrypt))
                 throw new CryptographicException("Could not read header.");
 
             var positionInBuffer = 0;
@@ -173,7 +173,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 return;
 
             // Make sure the header is ready before we can read/modify chunks
-            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security))
+            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security.HeaderCrypt))
                 throw new CryptographicException();
 
             var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
@@ -274,7 +274,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
         private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
         {
-            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security))
+            if (!TryWriteHeader() && !_headerBuffer.ReadHeader(Inner, _security.HeaderCrypt))
                 throw new CryptographicException("Could not write nor read the header.");
 
             var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
