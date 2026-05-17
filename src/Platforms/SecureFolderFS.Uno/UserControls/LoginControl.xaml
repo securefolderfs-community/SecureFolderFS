@@ -138,6 +138,24 @@
             </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="AppPlatformTemplate" x:DataType="vm:AppPlatformLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Icon  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    Glyph="&#xF69B;" />
+
+                <!--  Info  -->
+                <InfoBar
+                    HorizontalAlignment="Center"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="Authenticating with App Platform is not supported in this version. Please update SecureFolderFS."
+                    Severity="Warning" />
+            </StackPanel>
+        </DataTemplate>
+
         <!--  Migration Template  -->
         <DataTemplate x:Key="MigrationTemplate" x:DataType="vm5:MigrationViewModel">
             <StackPanel Spacing="4">
@@ -233,6 +251,7 @@
         IsTabStop="False">
         <ContentControl.ContentTemplateSelector>
             <ts:LoginTemplateSelector
+                AppPlatformTemplate="{StaticResource AppPlatformTemplate}"
                 DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 ErrorTemplate="{StaticResource ErrorTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
