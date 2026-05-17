@@ -5,7 +5,9 @@ using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -169,6 +171,91 @@ namespace SecureFolderFS.Tests.VaultTests
 
             var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
             configuredOptions.UnlockProcedure.Should().BeEquivalentTo(passwordOnlyProcedure);
+        }
+
+        [Test]
+        public async Task CredentialsConfirmation_ChangeChainedPassword_PreservesKeyFile()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultService = DI.Service<IVaultService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var compositeProcedure = new AuthenticationMethod([AUTH_PASSWORD, AUTH_KEYFILE], null);
+            using var initialCompositePasskey = await GetCreationCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var _ = await manager.CreateAsync(vaultFolder, initialCompositePasskey, CreateOptions(compositeProcedure, vaultId));
+
+            using var unlockPasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, unlockPasskey);
+            using var registerViewModel = new RegisterViewModel(AuthenticationStage.FirstStageOnly);
+            using var confirmationViewModel = new CredentialsConfirmationViewModel(vaultFolder, registerViewModel, AuthenticationStage.FirstStageOnly)
+            {
+                UnlockContract = unlockContract,
+                OldPasskey = unlockPasskey,
+                OldAuthenticationMethodIds = [AUTH_PASSWORD, AUTH_KEYFILE]
+            };
+
+            registerViewModel.CurrentViewModel = CreatePasswordCreationViewModel("Password#2");
+
+            // Act
+            await confirmationViewModel.ConfirmAsync(CancellationToken.None);
+
+            // Assert
+            using var oldCompositePasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var updatedCompositePasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#2", vaultId);
+            using var updatedPasswordOnlyPasskey = await GetPasswordLoginCredentialAsync("Password#2");
+
+            (await CanUnlockAsync(manager, vaultFolder, oldCompositePasskey)).Should().BeFalse();
+            (await CanUnlockAsync(manager, vaultFolder, updatedCompositePasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, updatedPasswordOnlyPasskey)).Should().BeFalse();
+
+            var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
+            configuredOptions.UnlockProcedure.Should().BeEquivalentTo(compositeProcedure);
+        }
+
+        [Test]
+        public async Task CredentialsConfirmation_ChangeChainedKeyFile_PreservesPassword()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultService = DI.Service<IVaultService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var compositeProcedure = new AuthenticationMethod([AUTH_PASSWORD, AUTH_KEYFILE], null);
+            using var initialCompositePasskey = await GetCreationCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var _ = await manager.CreateAsync(vaultFolder, initialCompositePasskey, CreateOptions(compositeProcedure, vaultId));
+
+            using var unlockPasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var oldKeyFile = unlockPasskey.Keys.ElementAt(1).CreateCopy();
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, unlockPasskey);
+            using var registerViewModel = new RegisterViewModel(AuthenticationStage.ProceedingStageOnly);
+            using var confirmationViewModel = new CredentialsConfirmationViewModel(vaultFolder, registerViewModel, AuthenticationStage.ProceedingStageOnly)
+            {
+                UnlockContract = unlockContract,
+                OldPasskey = unlockPasskey,
+                OldAuthenticationMethodIds = [AUTH_PASSWORD, AUTH_KEYFILE]
+            };
+
+            var newKeyFile = await GetKeyFileCreationCredentialAsync(vaultId);
+            registerViewModel.Credentials.Add(newKeyFile);
+            registerViewModel.CurrentViewModel = new KeyFileCreationViewModel(vaultId);
+
+            // Act
+            await confirmationViewModel.ConfirmAsync(CancellationToken.None);
+
+            // Assert
+            using var updatedCompositePasskey = await GetLoginCompositeCredentialAsync(vaultFolder, "Password#1", vaultId);
+            using var oldCompositePasskey = new KeySequence();
+            oldCompositePasskey.Add(await GetPasswordLoginCredentialAsync("Password#1"));
+            oldCompositePasskey.Add(oldKeyFile.CreateCopy());
+
+            (await CanUnlockAsync(manager, vaultFolder, updatedCompositePasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, oldCompositePasskey)).Should().BeFalse();
+
+            var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
+            configuredOptions.UnlockProcedure.Should().BeEquivalentTo(compositeProcedure);
         }
 
         [Test]

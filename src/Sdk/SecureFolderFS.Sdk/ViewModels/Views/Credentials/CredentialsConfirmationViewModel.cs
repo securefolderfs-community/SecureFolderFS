@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,6 +19,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -116,7 +118,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 if (RequiresComplementationRoutine(configuredOptions.UnlockProcedure, unlockProcedure))
                     await VaultManagerService.ModifyComplementationAsync(_vaultFolder, UnlockContract, CreateComplementationCredentials(key, configuredOptions.UnlockProcedure, unlockProcedure), updatedOptions, cancellationToken);
                 else
-                    await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, key, updatedOptions, cancellationToken);
+                {
+                    using var updatedPasskey = CreateUpdatedAuthenticationPasskey(key, unlockProcedure);
+                    await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, updatedPasskey, updatedOptions, cancellationToken);
+                }
             }
             else
                 await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, updatedOptions, cancellationToken);
@@ -191,6 +196,64 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             var complementationChanged = !string.Equals(configuredProcedure.Complementation, updatedProcedure.Complementation, StringComparison.Ordinal);
 
             return complementationChanged || wasComplemented || willBeComplemented;
+        }
+
+        private SecureKey CreateUpdatedAuthenticationPasskey(IKeyUsage providedCredential, AuthenticationMethod updatedProcedure)
+        {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
+
+            var targetCredentials = new List<IKeyUsage>(updatedProcedure.Methods.Length);
+            for (var i = 0; i < updatedProcedure.Methods.Length; i++)
+            {
+                var credential = GetNewCredentialForStage(providedCredential, i)
+                                 ?? GetCredentialAt(OldPasskey, i)
+                                 ?? throw new InvalidOperationException($"Credential material for authentication method '{updatedProcedure.Methods[i]}' is missing.");
+
+                targetCredentials.Add(credential);
+            }
+
+            return CreateStandalonePasskey(targetCredentials);
+        }
+
+        private IKeyUsage? GetNewCredentialForStage(IKeyUsage providedCredential, int targetIndex)
+        {
+            return _authenticationStage switch
+            {
+                AuthenticationStage.FirstStageOnly => targetIndex == 0 ? GetCredentialAt(providedCredential, 0) ?? providedCredential : null,
+                AuthenticationStage.ProceedingStageOnly => targetIndex == 1 ? GetProceedingStageCredential(providedCredential) : null,
+                _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+            };
+        }
+
+        private static IKeyUsage? GetProceedingStageCredential(IKeyUsage providedCredential)
+        {
+            if (providedCredential is not KeySequence sequence)
+                return providedCredential;
+
+            return sequence.Keys.ElementAtOrDefault(1) ?? (sequence.Count == 1 ? sequence.Keys.FirstOrDefault() : null);
+        }
+
+        private static SecureKey CreateStandalonePasskey(IReadOnlyCollection<IKeyUsage> credentials)
+        {
+            var combinedKey = GC.AllocateArray<byte>(credentials.Sum(x => x.Length), pinned: true);
+
+            try
+            {
+                var offset = 0;
+                foreach (var credential in credentials)
+                {
+                    var capturedOffset = offset;
+                    credential.UseKey(span => span.CopyTo(combinedKey.AsSpan(capturedOffset, span.Length)));
+                    offset += credential.Length;
+                }
+
+                return SecureKey.TakeOwnership(combinedKey);
+            }
+            catch
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+                throw;
+            }
         }
 
         private static IKeyUsage? GetCredentialAt(IKeyUsage key, int index)
