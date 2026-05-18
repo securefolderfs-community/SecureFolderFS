@@ -45,7 +45,6 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
                 public const string ASSOC_FILENAME_ENCODING_ID = "filenameEncoding";
                 public const string ASSOC_RECYCLE_SIZE = "recycleBinSize";
-                public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
                 public const string ASSOC_APP_PLATFORM = "appPlatform";
