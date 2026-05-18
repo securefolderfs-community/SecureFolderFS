@@ -55,15 +55,10 @@ namespace SecureFolderFS.Core.VaultAccess
 
         public async Task<VaultSharesDataModel?> ReadComplementationAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                var complementFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken);
-                return await ReadDataAsync<VaultSharesDataModel?>(complementFile, _serializer, cancellationToken);
-            }
-            catch (Exception)
-            {
+            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken) is not IFile complementFile)
                 return null;
-            }
+
+            return await ReadDataAsync<VaultSharesDataModel?>(complementFile, _serializer, cancellationToken);
         }
 
         public async Task<VersionDataModel> ReadVersionAsync(CancellationToken cancellationToken)
