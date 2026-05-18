@@ -148,14 +148,15 @@ namespace SecureFolderFS.Core.Routines.Operational
             var newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
             byte[]? complementSecret = null;
             byte[]? softwareEntropy = null;
+            (byte[] ComplementSecret, byte[] SoftwareEntropy) recoveredSecret;
 
             try
             {
-                complementSecret = credentials.CurrentComplementCredential is not null
+                recoveredSecret = credentials.CurrentComplementCredential is not null
                     ? RecoverComplementSecretFromShare(currentComplementKey = ExportKey(credentials.CurrentComplementCredential), oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing."))
                     : RecoverComplementSecretFromPrimary(currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary or complement credentials are required.")), oldAuthentication);
-
-                softwareEntropy = DecryptSoftwareEntropy(complementSecret);
+                complementSecret = recoveredSecret.ComplementSecret;
+                softwareEntropy = recoveredSecret.SoftwareEntropy;
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
                 _sharesDataModel = CreateShares(VaultParser.V4WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
@@ -210,11 +211,13 @@ namespace SecureFolderFS.Core.Routines.Operational
             byte[]? oldComplementSecret = null;
             byte[]? newComplementSecret = null;
             byte[]? softwareEntropy = null;
+            (byte[] ComplementSecret, byte[] SoftwareEntropy) recoveredSecret;
 
             try
             {
-                oldComplementSecret = RecoverComplementSecretFromShare(currentComplementKey, oldComplementMethod);
-                softwareEntropy = DecryptSoftwareEntropy(oldComplementSecret);
+                recoveredSecret = RecoverComplementSecretFromShare(currentComplementKey, oldComplementMethod);
+                oldComplementSecret = recoveredSecret.ComplementSecret;
+                softwareEntropy = recoveredSecret.SoftwareEntropy;
                 newComplementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication));
 
                 newComplementKey = string.Equals(oldComplementMethod, newComplementMethod, StringComparison.Ordinal)
@@ -236,7 +239,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             }
         }
 
-        private byte[] RecoverComplementSecretFromPrimary(byte[] currentPrimaryKey, AuthenticationMethod oldAuthentication)
+        private (byte[] ComplementSecret, byte[] SoftwareEntropy) RecoverComplementSecretFromPrimary(byte[] currentPrimaryKey, AuthenticationMethod oldAuthentication)
         {
             byte[]? complementSecret = null;
             byte[]? softwareEntropy = null;
@@ -245,20 +248,17 @@ namespace SecureFolderFS.Core.Routines.Operational
             {
                 complementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication));
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
-                return complementSecret;
+                return (complementSecret, softwareEntropy);
             }
             catch
             {
+                Zero(softwareEntropy);
                 Zero(complementSecret);
                 throw;
             }
-            finally
-            {
-                Zero(softwareEntropy);
-            }
         }
 
-        private byte[] RecoverComplementSecretFromShare(byte[] currentKey, string complementMethod, CryptographicException? fallbackException = null)
+        private (byte[] ComplementSecret, byte[] SoftwareEntropy) RecoverComplementSecretFromShare(byte[] currentKey, string complementMethod, CryptographicException? fallbackException = null)
         {
             var share = GetShare(complementMethod);
             byte[]? complementSecret = null;
@@ -268,21 +268,19 @@ namespace SecureFolderFS.Core.Routines.Operational
             {
                 complementSecret = VaultParser.V4UnwrapComplementSecret(currentKey, GetVaultId(), share);
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
-                return complementSecret;
+                return (complementSecret, softwareEntropy);
             }
             catch (CryptographicException) when (fallbackException is not null)
             {
+                Zero(softwareEntropy);
                 Zero(complementSecret);
                 throw fallbackException;
             }
             catch
             {
+                Zero(softwareEntropy);
                 Zero(complementSecret);
                 throw;
-            }
-            finally
-            {
-                Zero(softwareEntropy);
             }
         }
 
