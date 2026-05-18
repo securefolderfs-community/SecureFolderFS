@@ -62,11 +62,24 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             {
                 yield return item switch
                 {
+                    // Password
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel() { Icon = new ImageGlyph("\uE8AC") },
+                    
+                    // Yubikey
                     Constants.Vault.Authentication.AUTH_YUBIKEY => new YubiKeyLoginViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uEE7E") },
+                    
+                    // Key File
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder) { Icon = new ImageGlyph("\uE8D7") },
+                    
+                    // Touch ID
                     Constants.Vault.Authentication.AUTH_APPLE_MACOS => new MacOSBiometricsLoginViewModel(vaultFolder, vaultId),
+                    
+                    // Device Link
                     Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, vaultId).WithInitAsync(cancellationToken),
+                    
+                    // App Platform
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
+                    
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

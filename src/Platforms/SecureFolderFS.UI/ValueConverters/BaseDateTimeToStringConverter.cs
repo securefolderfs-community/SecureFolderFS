@@ -2,7 +2,6 @@ using System;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
@@ -19,7 +18,7 @@ namespace SecureFolderFS.UI.ValueConverters
             if (parameter is string formatString)
             {
                 var split = formatString.Split('|');
-                if (split[0] == "LOCALIZE")
+                if (split[0].Equals("localize", StringComparison.OrdinalIgnoreCase))
                     return string.Format(split[1].ToLocalized(), dateString);
                 else
                     return string.Format(split[1], dateString);

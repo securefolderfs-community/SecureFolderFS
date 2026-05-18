@@ -235,6 +235,7 @@
     <None Remove="Dialogs\PaymentDialog.xaml" />
     <None Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <None Remove="Dialogs\RecoveryDialog.xaml" />
+    <None Remove="Dialogs\RestorationDialog.xaml" />
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
@@ -322,6 +323,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\RecoveryDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\RestorationDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -503,6 +508,7 @@
     <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\RestorationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultItemInfoDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />

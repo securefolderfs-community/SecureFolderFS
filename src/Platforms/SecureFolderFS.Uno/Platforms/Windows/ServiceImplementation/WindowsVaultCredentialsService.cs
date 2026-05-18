@@ -73,6 +73,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
                     // Device Link
                     Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") },
+                    
+                    // App Platform
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
 
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };

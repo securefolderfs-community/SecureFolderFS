@@ -35,7 +35,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
         {
             Severity = Severity.Critical;
             CorruptedChunks = corruptedChunks ?? [];
-            CorruptedChunksText = !isRecoverable ? string.Empty : "CorruptedChunks".ToLocalized(CorruptedChunks.Count);
+            CorruptedChunksText = !isRecoverable ? string.Empty : "CorruptedChunksPlural".ToLocalized(CorruptedChunks.Count);
             IsRecoverable = isRecoverable;
         }
     }

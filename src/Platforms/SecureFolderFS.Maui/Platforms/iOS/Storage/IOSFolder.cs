@@ -125,6 +125,15 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 var path = Path.Combine(Id, name);
                 NSFileAttributes? attributes = null;
 
+                var isDirectory = false;
+                if (overwrite && NSFileManager.DefaultManager.FileExists(path, ref isDirectory))
+                {
+                    if (!isDirectory)
+                        throw new InvalidOperationException("Tried to overwrite an existing file with a directory.");
+
+                    NSFileManager.DefaultManager.Remove(new NSUrl(path, true), out _);
+                }
+
                 if (NSFileManager.DefaultManager.CreateDirectory(path, false, attributes, out var error))
                     return new IOSFolder(new NSUrl(path, true), this, permissionRoot);
 

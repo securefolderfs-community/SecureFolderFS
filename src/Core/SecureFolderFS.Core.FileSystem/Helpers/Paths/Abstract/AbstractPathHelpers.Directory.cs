@@ -12,6 +12,26 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
     {
         public static async Task<bool> GetDirectoryIdAsync(
             IFolder folderOfDirectoryId,
+            IFolder contentFolder,
+            Memory<byte> directoryId,
+            CancellationToken cancellationToken)
+        {
+            if (folderOfDirectoryId.Id == contentFolder.Id)
+                return false;
+
+            var directoryIdFile = await folderOfDirectoryId.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
+            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken).ConfigureAwait(false);
+
+            var read = await directoryIdStream.ReadAsync(directoryId, cancellationToken).ConfigureAwait(false);
+            if (read < Constants.DIRECTORY_ID_SIZE)
+                throw new IOException($"The data inside Directory ID file is of incorrect size: {read}.");
+
+            // The Directory ID is not empty - return true
+            return true;
+        }
+
+        public static async Task<bool> GetDirectoryIdAsync(
+            IFolder folderOfDirectoryId,
             FileSystemSpecifics specifics,
             Memory<byte> directoryId,
             CancellationToken cancellationToken)

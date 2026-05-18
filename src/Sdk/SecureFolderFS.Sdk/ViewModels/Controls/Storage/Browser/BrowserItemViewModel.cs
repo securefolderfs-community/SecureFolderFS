@@ -346,7 +346,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                             var messageOverlay = new MessageOverlayViewModel()
                             {
                                 Title = "NotEnoughSpace".ToLocalized(),
-                                Message = "ItemsExceedRecycleBinSize".ToLocalized(items.Length),
+                                Message = "ItemsExceedRecycleBinSizePlural".ToLocalized(items.Length),
                                 PrimaryText = "Delete".ToLocalized(),
                                 SecondaryText = "Cancel".ToLocalized()
                             };
@@ -377,7 +377,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     var messageOverlay = new MessageOverlayViewModel()
                     {
                         Title = "ItemDeletionTitle".ToLocalized(),
-                        Message = "ItemDeletionDescription".ToLocalized(items.Length),
+                        Message = "ItemDeletionDescriptionPlural".ToLocalized(items.Length),
                         PrimaryText = "Delete".ToLocalized(),
                         SecondaryText = "Cancel".ToLocalized()
                     };

@@ -41,6 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanRecover;
+        [ObservableProperty] private bool _CanRestoreVault;
         [ObservableProperty] private bool _IsLoginSequence;
         [ObservableProperty] private bool _IsAlternativeLogin;
         [ObservableProperty] private bool _AreCredentialsSaved;
@@ -102,6 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 {
                     // Default to an error view
                     CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
+                    CanRestoreVault = true;
                 }
             }
             else
@@ -117,7 +119,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     };
                 }
                 else
+                {
                     CurrentViewModel = new ErrorViewModel(validationResult);
+                    CanRestoreVault = true;
+                }
             }
 
             // TODO: VaultWatcherModel.InitAsync is never called
@@ -169,6 +174,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             catch (Exception ex)
             {
                 CurrentViewModel = new ErrorViewModel(Result.Failure(ex));
+                CanRestoreVault = true;
             }
         }
 
@@ -240,7 +246,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _loginSequence?.Reset();
             var result = ProceedAuthentication();
             if (!result.Successful)
+            {
                 CurrentViewModel = new ErrorViewModel(result);
+                CanRestoreVault = true;
+            }
+        }
+
+        [RelayCommand]
+        private async Task RestoreVaultAsync(CancellationToken cancellationToken)
+        {
+            var restoreOverlay = new VaultRestorationOverlayViewModel(_vaultFolder);
+            var result = await OverlayService.ShowAsync(restoreOverlay);
+            if (!result.Positive() || restoreOverlay.UnlockContract is null)
+            {
+                restoreOverlay.Dispose();
+                return;
+            }
+
+            VaultUnlocked?.Invoke(this, new(restoreOverlay.UnlockContract, _vaultFolder, true));
         }
 
         [RelayCommand]
@@ -314,6 +337,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     return;
 
                 CurrentViewModel = new ErrorViewModel(result);
+                CanRestoreVault = true;
             }
         }
 
@@ -398,6 +422,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         partial void OnCurrentViewModelChanged(ReportableViewModel? oldValue, ReportableViewModel? newValue)
         {
+            CanRestoreVault = false;
+
             // Detach old
             if (oldValue is not null)
                 oldValue.StateChanged -= CurrentViewModel_StateChanged;

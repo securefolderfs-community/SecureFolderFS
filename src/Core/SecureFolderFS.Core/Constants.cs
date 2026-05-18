@@ -18,6 +18,7 @@ namespace SecureFolderFS.Core
             public static class Authentication
             {
                 public const string AUTH_NONE = "none";
+                public const string AUTH_RECOVERY_KEY_REQUIREMENT = "recovery_key_requirement";
                 public const string AUTH_PASSWORD = "password";
                 public const string AUTH_KEYFILE = "key_file";
                 public const string AUTH_WINDOWS_HELLO = "windows_hello";

@@ -45,6 +45,15 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the recovery key used to decrypt the vault.</returns>
         Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Restores the specified <paramref name="vaultFolder"/> using the provided <paramref name="encodedRecoveryKey"/>.
+        /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
+        /// <param name="encodedRecoveryKey">The Base64 encoded recovery key.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the recovery key used to decrypt the vault.</returns>
+        Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default);
+
         // TODO: Consider using IVaultUnlockingModel
         //Task<IVaultUnlockingModel> GetUnlockingModelAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
