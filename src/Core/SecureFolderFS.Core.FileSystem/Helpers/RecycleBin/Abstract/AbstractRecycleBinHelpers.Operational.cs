@@ -194,8 +194,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
 
                 // Encrypt the new plaintext name and parent ID
-                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : []);
-                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : []);
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty);
 
                 // Serialize configuration data model
                 await using var serializedStream = await streamSerializer.SerializeAsync(

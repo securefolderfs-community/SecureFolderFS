@@ -1,4 +1,6 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
@@ -6,8 +8,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 {
@@ -25,13 +25,19 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 return;
             }
 
+            // Allocate Directory ID for later use
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
+
+            // Decrypt the plaintext name
+            var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
+            _ = ciphertextParentPath ?? throw new DirectoryNotFoundException("The parent folder could not be determined.");
+            var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath, specifics, directoryId);
+
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
-                var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
-                var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath ?? string.Empty, specifics);
                 if (plaintextName == ".DS_Store" || (plaintextName?.StartsWith("._", StringComparison.Ordinal) ?? false))
                 {
-                    // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
+                    // .DS_Store and Apple Double files are unsupported by the recycle bin, delete immediately
                     DeleteImmediately(ciphertextPath, storableType);
                     return;
                 }
@@ -58,10 +64,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 }
             }
 
-            // Get source Directory ID
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
-            var directoryIdResult = NativePathHelpers.GetDirectoryIdOfChild(ciphertextPath, specifics, directoryId);
-
             // Move and rename item
             var guid = Guid.NewGuid().ToString();
             var destinationPath = Path.Combine(recycleBinPath, guid);
@@ -77,19 +79,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 if (parentCiphertextPath is null)
                     throw new FileNotFoundException("The parent folder could not be determined.");
 
-                // Decrypt the plaintext name
-                var plaintextName = specifics.Security.NameCrypt is not null
-                    ? specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextPath), directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty)
-                    : Path.GetFileName(ciphertextPath);
-
                 // Decrypt the plaintext parent ID
                 var plaintextParentId = NativePathHelpers.GetPlaintextPath(parentCiphertextPath, specifics);
                 if (plaintextParentId is null || plaintextName is null)
                     throw new FormatException("Could not decrypt paths for recycle bin configuration file.");
 
+                // Determine if Directory ID is present
+                var isDirectoryIdPresent = directoryId.IsEmpty() || directoryId.IsAllZeros();
+
                 // Encrypt the new plaintext name and parent ID
-                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : []);
-                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : []);
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
 
                 // Serialize configuration data model
                 using var serializedStream = StreamSerializer.Instance.SerializeAsync(
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     {
                         Name = newCiphertextName,
                         ParentId = newCiphertextParentId,
-                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DirectoryId = isDirectoryIdPresent ? directoryId : [],
                         DeletionTimestamp = DateTime.Now,
                         Size = sizeHint
                     }).ConfigureAwait(false).GetAwaiter().GetResult();
