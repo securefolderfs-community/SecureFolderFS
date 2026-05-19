@@ -84,7 +84,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     throw new FormatException("Could not decrypt parent path for recycle bin configuration file.");
 
                 // Determine if Directory ID is present
-                var isDirectoryIdPresent = directoryId.IsEmpty() || directoryId.IsAllZeros();
+                var isDirectoryIdPresent = !directoryId.IsEmpty() && !directoryId.IsAllZeros();
 
                 // Encrypt the new plaintext name and parent ID
                 var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
