@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                         continue;
 
                     // Encrypt a new name and rename
-                    var encryptedName = await AbstractPathHelpers.EncryptNewNameAsync(item.Name, directoryId, security, cancellationToken);
+                    var encryptedName = AbstractPathHelpers.EncryptNewName(item.Name, directoryId, security);
                     _ = await renamableFolder.RenameAsync(item, encryptedName, cancellationToken);
                 }
 
