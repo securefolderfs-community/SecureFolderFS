@@ -127,29 +127,33 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             if (!specifics.Options.IsRecycleBinEnabled() || deleteImmediately)
             {
-                await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
+                await DeleteImmediatelyAsync(ciphertextSourceFolder, ciphertextItem, cancellationToken);
                 return;
             }
 
+            // Allocate Directory ID for later use
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextSourceFolder.Id);
+
+            // Decrypt the plaintext name
+            var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
+            if (plaintextName is null)
+                throw new FormatException("Could not decrypt name for recycle bin configuration file.");
+
+            // Check for wildcard file names
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
-                var parentFolder = await ciphertextItem.GetParentAsync(cancellationToken);
-                if (parentFolder is not null)
+                if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
                 {
-                    var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, parentFolder, specifics, cancellationToken) ?? string.Empty;
-                    if (plaintextName == ".DS_Store" || plaintextName.StartsWith("._", StringComparison.Ordinal))
-                    {
-                        // .DS_Store and Apple Double files are not supported by the recycle bin, delete immediately
-                        await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
-                        return;
-                    }
+                    // .DS_Store and Apple Double files are unsupported by the recycle bin, delete immediately
+                    await DeleteImmediatelyAsync(ciphertextSourceFolder, ciphertextItem, cancellationToken);
+                    return;
                 }
 
                 // Check if the file was recently created (likely part of a copy operation)
                 // On macOS, Finder creates files and immediately deletes them during copy operations
                 if (await IsRecentlyCreatedAsync(ciphertextItem, cancellationToken))
                 {
-                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
+                    await DeleteImmediatelyAsync(ciphertextSourceFolder, ciphertextItem, cancellationToken);
                     return;
                 }
             }
@@ -172,14 +176,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
                 if (availableSize < sizeHint)
                 {
-                    await ciphertextSourceFolder.DeleteAsync(ciphertextItem, cancellationToken);
+                    await DeleteImmediatelyAsync(ciphertextSourceFolder, ciphertextItem, cancellationToken);
                     return;
                 }
             }
-
-            // Get source Directory ID
-            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextSourceFolder.Id);
-            var directoryIdResult = await AbstractPathHelpers.GetDirectoryIdAsync(ciphertextSourceFolder, specifics, directoryId, cancellationToken);
 
             // Rename and move item
             var guid = Guid.NewGuid().ToString();
@@ -189,13 +189,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
             await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
             {
-                // Decrypt the plaintext name and parent ID
-                var plaintextName = await AbstractPathHelpers.DecryptNameAsync(ciphertextItem.Name, ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
-                var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken) ?? string.Empty;
+                // Decrypt the plaintext parent ID
+                var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken);
+                if (plaintextParentId is null)
+                    throw new FormatException("Could not decrypt parent path for the recycle bin configuration file.");
+
+                // Determine if Directory ID is present
+                var isDirectoryIdPresent = directoryId.IsEmpty() || directoryId.IsAllZeros();
 
                 // Encrypt the new plaintext name and parent ID
-                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty);
-                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, directoryIdResult ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
 
                 // Serialize configuration data model
                 await using var serializedStream = await streamSerializer.SerializeAsync(
@@ -203,7 +207,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     {
                         Name = newCiphertextName,
                         ParentId = newCiphertextParentId,
-                        DirectoryId = directoryIdResult ? directoryId : [],
+                        DirectoryId = isDirectoryIdPresent ? directoryId : [],
                         DeletionTimestamp = DateTime.Now,
                         Size = sizeHint
                     }, cancellationToken);
@@ -219,6 +223,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
                 var newSize = occupiedSize + sizeHint;
                 await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
+            }
+
+            static async Task DeleteImmediatelyAsync(IModifiableFolder ciphertextSourceFolder, IStorableChild ciphertextItem, CancellationToken cancellationToken)
+            {
+                await ciphertextSourceFolder.DeleteAsync(ciphertextItem, deleteImmediately: true, cancellationToken: cancellationToken);
             }
         }
 

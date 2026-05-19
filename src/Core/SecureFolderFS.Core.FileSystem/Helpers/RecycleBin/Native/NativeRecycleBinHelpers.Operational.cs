@@ -32,7 +32,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
             _ = ciphertextParentPath ?? throw new DirectoryNotFoundException("The parent folder could not be determined.");
             var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath, specifics, directoryId);
+            if (plaintextName is null)
+                throw new FormatException("Could not decrypt name for recycle bin configuration file.");
 
+            // Check for wildcard file names
             if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
             {
                 if (plaintextName == ".DS_Store" || (plaintextName?.StartsWith("._", StringComparison.Ordinal) ?? false))
@@ -75,14 +78,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             // Create the configuration file
             using (var configurationStream = File.Create($"{destinationPath}.json"))
             {
-                var parentCiphertextPath = Path.GetDirectoryName(ciphertextPath);
-                if (parentCiphertextPath is null)
-                    throw new FileNotFoundException("The parent folder could not be determined.");
-
                 // Decrypt the plaintext parent ID
-                var plaintextParentId = NativePathHelpers.GetPlaintextPath(parentCiphertextPath, specifics);
+                var plaintextParentId = NativePathHelpers.GetPlaintextPath(ciphertextParentPath, specifics);
                 if (plaintextParentId is null || plaintextName is null)
-                    throw new FormatException("Could not decrypt paths for recycle bin configuration file.");
+                    throw new FormatException("Could not decrypt parent path for recycle bin configuration file.");
 
                 // Determine if Directory ID is present
                 var isDirectoryIdPresent = directoryId.IsEmpty() || directoryId.IsAllZeros();
