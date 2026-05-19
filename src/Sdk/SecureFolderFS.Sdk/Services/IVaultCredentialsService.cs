@@ -45,6 +45,15 @@ namespace SecureFolderFS.Sdk.Services
         IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Asynchronously retrieves a collection of login authentication methods for a specified vault folder and unlock procedure.
+        /// </summary>
+        /// <param name="vaultFolder">The folder representing the vault for which authentication methods should be retrieved.</param>
+        /// <param name="unlockProcedure">The authentication method that should be represented by login view models.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="AuthenticationViewModel"/> representing available authentication methods.</returns>
+        IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Asynchronously retrieves authentication options for creating a vault.
         /// </summary>
         /// <param name="vaultFolder">The folder associated with the vault.</param>

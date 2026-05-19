@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
             var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
-            foreach (var item in authenticationMethod.Methods)
+            foreach (var item in EnumerateLoginMethods(authenticationMethod))
             {
                 yield return item switch
                 {

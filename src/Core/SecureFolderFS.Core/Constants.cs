@@ -12,6 +12,7 @@ namespace SecureFolderFS.Core
                 public const string VAULT_CONTENT_FOLDERNAME = "content";
                 public const string VAULT_KEYSTORE_FILENAME = $"keystore{CONFIGURATION_EXTENSION}";
                 public const string VAULT_CONFIGURATION_FILENAME = $"sfconfig{CONFIGURATION_EXTENSION}";
+                public const string VAULT_COMPLEMENTATION_FILENAME = $"sfcomplement{CONFIGURATION_EXTENSION}";
             }
 
             public static class Authentication
@@ -45,7 +46,6 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
                 public const string ASSOC_FILENAME_ENCODING_ID = "filenameEncoding";
                 public const string ASSOC_RECYCLE_SIZE = "recycleBinSize";
-                public const string ASSOC_SPECIALIZATION = "spec";
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
                 public const string ASSOC_APP_PLATFORM = "appPlatform";

@@ -27,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly KeySequence _loginKeySequence;
         private readonly KeySequence _registerKeySequence;
         private readonly AuthenticationStage _authenticationStage;
+        private string? _primaryAuthenticationMethodId;
 
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
@@ -58,6 +59,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             try
             {
+                var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+                _primaryAuthenticationMethodId = vaultOptions.UnlockProcedure.Methods.FirstOrDefault();
+                LoginViewModel.RequiredAuthenticationMethodIds = GetRequiredAuthenticationMethodIds(vaultOptions.UnlockProcedure);
+
                 var loginItems = await VaultCredentialsService.GetLoginAsync(_vaultFolder, cancellationToken).ToArrayAsyncImpl(cancellationToken);
                 SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
                 {
@@ -96,10 +101,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 PrimaryText = null;
                 SelectionViewModel.UnlockContract = e.UnlockContract;
                 SelectionViewModel.OldPasskey = _loginKeySequence;
+                SelectionViewModel.OldAuthenticationMethodIds = LoginViewModel.AuthenticatedMethodIds.ToArray();
 
                 // Seed the register sequence with the already-authenticated first-stage key
                 // so that when a second-stage method is added, the combined passkey is complete
-                var firstStageKey = _loginKeySequence.Keys.FirstOrDefault();
+                var firstAuthenticatedMethodId = LoginViewModel.AuthenticatedMethodIds.FirstOrDefault();
+                var firstStageKey = string.Equals(firstAuthenticatedMethodId, _primaryAuthenticationMethodId, StringComparison.Ordinal)
+                    ? _loginKeySequence.Keys.FirstOrDefault()
+                    : null;
                 if (firstStageKey is not null)
                     _registerKeySequence.SetOrAdd(0, firstStageKey); // First-stage lives at index 0
 
@@ -120,6 +129,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             if (e.PropertyName == nameof(RegisterViewModel.CanContinue))
                 CanContinue = RegisterViewModel.CanContinue;
+        }
+
+        private string[]? GetRequiredAuthenticationMethodIds(AuthenticationMethod unlockProcedure)
+        {
+            if (string.IsNullOrWhiteSpace(unlockProcedure.Complementation))
+                return null;
+
+            return _authenticationStage switch
+            {
+                AuthenticationStage.FirstStageOnly => [ unlockProcedure.Complementation ],
+                AuthenticationStage.ProceedingStageOnly => _primaryAuthenticationMethodId is null ? [] : [ _primaryAuthenticationMethodId ],
+                _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+            };
         }
 
         /// <inheritdoc/>

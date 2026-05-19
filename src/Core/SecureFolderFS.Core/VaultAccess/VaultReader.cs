@@ -30,35 +30,36 @@ namespace SecureFolderFS.Core.VaultAccess
             where TKeystore : class
         {
             // Get the keystore file
-            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
-                throw new FileNotFoundException("The keystore file was not found.");
-
+            var keystoreFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
             return await ReadDataAsync<TKeystore>(keystoreFile, _serializer, cancellationToken);
         }
 
         public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
         {
             // Get configuration file
-            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
-                throw new FileNotFoundException("The configuration file was not found.");
-
+            var configFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             return await ReadDataAsync<VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
         }
 
         public async Task<V4VaultConfigurationDataModel> ReadV4ConfigurationAsync(CancellationToken cancellationToken)
         {
-            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
-                throw new FileNotFoundException("The configuration file was not found.");
-
+            var configFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             return await ReadDataAsync<V4VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
+        }
+
+        public async Task<VaultSharesDataModel?> ReadComplementationAsync(CancellationToken cancellationToken)
+        {
+            var complementFile = await _vaultFolder.TryGetFileByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken);
+            if (complementFile is null)
+                return null;
+
+            return await ReadDataAsync<VaultSharesDataModel?>(complementFile, _serializer, cancellationToken);
         }
 
         public async Task<VersionDataModel> ReadVersionAsync(CancellationToken cancellationToken)
         {
             // Get configuration file
-            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
-                throw new FileNotFoundException("The configuration file was not found.");
-
+            var configFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             return await ReadDataAsync<VersionDataModel>(configFile, _serializer, cancellationToken);
         }
 

@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,29 @@ namespace SecureFolderFS.Core.VaultAccess
             };
 
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
+        }
+
+        public async Task WriteComplementationAsync(VaultSharesDataModel? sharesDataModel, CancellationToken cancellationToken)
+        {
+            if (sharesDataModel is null)
+            {
+                if (_vaultFolder is not IModifiableFolder modifiableFolder)
+                    return;
+
+                var existingFile = await modifiableFolder.TryGetFileByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken);
+                if (existingFile is not null)
+                    await modifiableFolder.DeleteAsync(existingFile, cancellationToken);
+
+                return;
+            }
+
+            var complementFile = _vaultFolder switch
+            {
+                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, true, cancellationToken),
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken) as IFile
+            };
+
+            await WriteDataAsync(complementFile, sharesDataModel, cancellationToken);
         }
 
         public async Task WriteAuthenticationAsync<TCapability>(string fileName, TCapability? authDataModel, CancellationToken cancellationToken)

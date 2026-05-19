@@ -51,10 +51,15 @@
 
                     <uc:LoginOptions
                         AreCredentialsSaved="{x:Bind ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
+                        AuthenticationOptions="{x:Bind ViewModel.LoginViewModel.AuthenticationOptions, Mode=OneWay}"
                         DiscardSavedCredentialsCommand="{x:Bind ViewModel.LoginViewModel.DiscardSavedCredentialsCommand, Mode=OneWay}"
+                        IsAlternativeLogin="{x:Bind ViewModel.LoginViewModel.IsAlternativeLogin, Mode=OneWay}"
+                        IsLoginSequence="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay}"
                         IsReadOnly="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}"
                         RecoverAccessCommand="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
                         RestartLoginCommand="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                        SelectAuthenticationOptionCommand="{x:Bind ViewModel.LoginViewModel.SelectAuthenticationOptionCommand, Mode=OneWay}"
+                        SelectedAuthenticationOption="{x:Bind ViewModel.LoginViewModel.SelectedAuthenticationOption, Mode=TwoWay}"
                         ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
 

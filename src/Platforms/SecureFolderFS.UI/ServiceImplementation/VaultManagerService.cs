@@ -55,6 +55,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
+        
+        /// <inheritdoc/>
+        public virtual async Task ModifyComplementationAsync(IFolder vaultFolder, IDisposable unlockContract, ComplementationCredentials credentials, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        {
+            using var complementationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyComplementation();
+            await complementationRoutine.InitAsync(cancellationToken);
+            complementationRoutine.SetUnlockContract(unlockContract);
+            complementationRoutine.SetOptions(vaultOptions);
+            complementationRoutine.SetCredentials(credentials, cancellationToken);
+
+            using var result = await complementationRoutine.FinalizeAsync(cancellationToken);
+        }
 
         /// <inheritdoc/>
         public async Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)

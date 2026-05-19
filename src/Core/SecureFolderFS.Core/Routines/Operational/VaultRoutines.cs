@@ -57,6 +57,12 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new ModifyCredentialsRoutine(VaultReader, VaultWriter);
         }
 
+        public ModifyComplementationRoutine ModifyComplementation()
+        {
+            CheckVaultValidation();
+            return new ModifyComplementationRoutine(VaultReader, VaultWriter);
+        }
+
         private void CheckVaultValidation()
         {
             if (!_validationResult.Successful)

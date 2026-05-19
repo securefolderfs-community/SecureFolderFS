@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             string vaultId,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var item in unlockProcedure.Methods)
+            foreach (var item in EnumerateLoginMethods(unlockProcedure))
             {
                 yield return item switch
                 {

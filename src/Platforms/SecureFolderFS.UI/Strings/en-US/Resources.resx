@@ -1451,4 +1451,10 @@
   <data name="OpenInExternalApp" xml:space="preserve">
       <value>Open in external app</value>
   </data>
+  <data name="UseAsAlternativeLogin" xml:space="preserve">
+      <value>Use as alternative login method</value>
+  </data>
+  <data name="LoginMethod" xml:space="preserve">
+      <value>Login method</value>
+  </data>
 </root>
