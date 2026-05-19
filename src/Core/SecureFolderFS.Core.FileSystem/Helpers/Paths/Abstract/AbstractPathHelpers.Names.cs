@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
         /// <param name="expendableDirectoryId">A buffer of size <see cref="Constants.DIRECTORY_ID_SIZE"/> which will be used to hold the Directory ID data.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name with the appropriate file extension appended.</returns>
         public static async Task<string> EncryptNameAsync(string plaintextName, IFolder ciphertextParentFolder,
             FileSystemSpecifics specifics, byte[]? expendableDirectoryId = null, CancellationToken cancellationToken = default)
         {
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// <param name="contentFolder">The content folder.</param>
         /// <param name="security">The <see cref="Security"/> instance associated with the item.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name with the appropriate file extension appended.</returns>
         public static async Task<string> EncryptNameAsync(string plaintextName, IFolder ciphertextParentFolder, IFolder contentFolder,
             Security security, CancellationToken cancellationToken = default)
         {
@@ -62,8 +62,14 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             return security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }
 
-        public static async Task<string> EncryptNewNameAsync(string plaintextName, byte[] newDirectoryId,
-            Security security, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Encrypts a plaintext name using the specified Directory ID and security parameters.
+        /// </summary>
+        /// <param name="plaintextName">The original plaintext name to encrypt.</param>
+        /// <param name="newDirectoryId">A new Directory ID used for encryption.</param>
+        /// <param name="security">The <see cref="Security"/> instance associated with the item.</param>
+        /// <returns>The encrypted name with the appropriate file extension appended.</returns>
+        public static string EncryptNewName(string plaintextName, byte[] newDirectoryId, Security security)
         {
             if (security.NameCrypt is null)
                 return plaintextName;
@@ -151,7 +157,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// <param name="ciphertextParentFolder">The ciphertext parent folder.</param>
         /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result is an encrypted name, retrieved from the cache if available, or newly encrypted if not.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name with the appropriate file extension appended, retrieved from the cache if available, or newly encrypted if not.</returns>
         public static async Task<string> CacheEncryptNameAsync(string plaintextName, IFolder ciphertextParentFolder,
             FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
