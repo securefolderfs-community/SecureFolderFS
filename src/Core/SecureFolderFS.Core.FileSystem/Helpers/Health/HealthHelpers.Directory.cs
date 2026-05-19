@@ -1,14 +1,15 @@
-﻿using OwlCore.Storage;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 {
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
     {
         public static async Task<IResult> RepairDirectoryAsync(IFolder affected, Security security, CancellationToken cancellationToken)
         {
-            // Return success, if no encryption is used
+            // Return success if no encryption is used
             if (security.NameCrypt is null)
                 return Result.Success;
 
@@ -38,11 +39,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                     if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
-                    // Encrypt a new name
-                    var encryptedName = security.NameCrypt.EncryptName(item.Name, directoryId);
-                    encryptedName = $"{encryptedName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}";
-
-                    // Rename
+                    // Encrypt a new name and rename
+                    var encryptedName = await AbstractPathHelpers.EncryptNewNameAsync(item.Name, directoryId, security, cancellationToken);
                     _ = await renamableFolder.RenameAsync(item, encryptedName, cancellationToken);
                 }
 

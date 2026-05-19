@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.FileNames;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
@@ -38,6 +39,36 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, expendableDirectoryId, cancellationToken);
 
             return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty) + Constants.Names.ENCRYPTED_FILE_EXTENSION;
+        }
+
+        /// <summary>
+        /// Encrypts the provided <paramref name="plaintextName"/>.
+        /// </summary>
+        /// <param name="plaintextName">The name to encrypt.</param>
+        /// <param name="ciphertextParentFolder">The ciphertext parent folder.</param>
+        /// <param name="contentFolder">The content folder.</param>
+        /// <param name="security">The <see cref="Security"/> instance associated with the item.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
+        public static async Task<string> EncryptNameAsync(string plaintextName, IFolder ciphertextParentFolder, IFolder contentFolder,
+            Security security, CancellationToken cancellationToken = default)
+        {
+            if (security.NameCrypt is null)
+                return plaintextName;
+
+            var directoryId = AllocateDirectoryId(security, plaintextName);
+            var result = await GetDirectoryIdAsync(ciphertextParentFolder, contentFolder, directoryId, cancellationToken);
+
+            return security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + Constants.Names.ENCRYPTED_FILE_EXTENSION;
+        }
+
+        public static async Task<string> EncryptNewNameAsync(string plaintextName, byte[] newDirectoryId,
+            Security security, CancellationToken cancellationToken = default)
+        {
+            if (security.NameCrypt is null)
+                return plaintextName;
+
+            return security.NameCrypt.EncryptName(plaintextName, newDirectoryId) + Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }
 
         /// <inheritdoc cref="DecryptNameAsync(string,OwlCore.Storage.IFolder,SecureFolderFS.Core.FileSystem.FileSystemSpecifics,System.Byte[],System.Threading.CancellationToken)"/>
