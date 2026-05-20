@@ -1,15 +1,13 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
-using SecureFolderFS.Storage.Renamable;
-using System;
-using System.IO;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 {
@@ -49,26 +47,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                 if (parentFolder is not IRenamableFolder renamableFolder)
                     return Result.Failure(FolderNotRenamable);
 
-                byte[] directoryId;
-                if (parentFolder.Id != contentFolder.Id) // TODO: Remove code duplication with AbstractPathHelpers
-                {
-                    var directoryIdFile = await parentFolder.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken);
-                    await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-
-                    directoryId = new byte[Constants.DIRECTORY_ID_SIZE];
-                    var read = await directoryIdStream.ReadAsync(directoryId, cancellationToken);
-
-                    if (read < Constants.DIRECTORY_ID_SIZE)
-                        throw new IOException($"The data inside Directory ID file is of incorrect size: {read}.");
-                }
-                else
-                    directoryId = Array.Empty<byte>();
-
-                // Encrypt new name
-                var encryptedName = security.NameCrypt.EncryptName(newName, directoryId);
-                encryptedName = $"{encryptedName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}";
-
-                // Rename
+                // Encrypt new name and rename
+                var encryptedName = await AbstractPathHelpers.EncryptNameAsync(newName, parentFolder, contentFolder, security, cancellationToken);
                 _ = await renamableFolder.RenameAsync(affected, encryptedName, cancellationToken);
             }
             catch (Exception ex)

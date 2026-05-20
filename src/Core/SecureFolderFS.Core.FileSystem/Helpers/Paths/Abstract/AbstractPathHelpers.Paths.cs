@@ -56,17 +56,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             foreach (var item in folderChain)
             {
                 // Walk through plaintext folder chain and retrieve ciphertext folders
-                var subResult = await GetDirectoryIdAsync(finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
-                var subCiphertextName = specifics.Security.NameCrypt.EncryptName(item.Name, subResult ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
-
-                finalFolder = await finalFolder.GetFolderByNameAsync($"{subCiphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", cancellationToken);
+                var subCiphertextName = await EncryptNameAsync(item.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+                finalFolder = await finalFolder.GetFolderByNameAsync(subCiphertextName, cancellationToken);
             }
 
             // Encrypt and retrieve the final item
-            var result = await GetDirectoryIdAsync(finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
-            var ciphertextName = specifics.Security.NameCrypt.EncryptName(plaintextStorable.Name, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
-
-            return await finalFolder.GetFirstByNameAsync($"{ciphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", cancellationToken);
+            var ciphertextName = await EncryptNameAsync(plaintextStorable.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+            return await finalFolder.GetFirstByNameAsync(ciphertextName, cancellationToken);
         }
 
         public static async Task<string?> GetPlaintextPathAsync(IStorableChild ciphertextStorable, FileSystemSpecifics specifics, CancellationToken cancellationToken)
@@ -83,8 +79,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
                 if (!currentParent.Id.Contains(specifics.ContentFolder.Id))
                     break;
 
-                var result = await GetDirectoryIdAsync(currentParent, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
-                var plaintextName = specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(currentStorable.Name), result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+                var plaintextName = await DecryptNameAsync(currentStorable.Name, currentParent, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
                 if (plaintextName is null)
                     return null;
 
