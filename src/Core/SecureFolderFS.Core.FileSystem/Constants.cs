@@ -18,6 +18,8 @@
         public static class Names
         {
             public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
+            public const string SHORTENED_FILE_EXTENSION = ".sffsn";
+            public const string SIDECAR_FILE_EXTENSION = ".sffsi";
             public const string DIRECTORY_ID_FILENAME = "dirid.iv";
             public const string RECYCLE_BIN_NAME = "recycle_bin";
             public const string RECYCLE_BIN_CONFIGURATION_FILENAME = "recycle_bin.cfg";
