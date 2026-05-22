@@ -34,38 +34,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Read configuration
             var configDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            if (configDataModel.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
+            var newConfigDataModel = configDataModel with
             {
-                var v4ConfigDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
-                var newV4ConfigDataModel = v4ConfigDataModel with
-                {
-                    RecycleBinSize = maxSize,
-                    PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-                };
+                RecycleBinSize = maxSize,
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
 
-                specifics.Security.KeyPair.MacKey.UseKey(macKey =>
-                {
-                    VaultParser.V4CalculateConfigMac(newV4ConfigDataModel, macKey, newV4ConfigDataModel.PayloadMac);
-                });
-
-                await vaultWriter.WriteV4ConfigurationAsync(newV4ConfigDataModel, cancellationToken);
-            }
-            else
+            // First, we need to fill in the PayloadMac of the content
+            specifics.Security.KeyPair.MacKey.UseKey(macKey =>
             {
-                var newConfigDataModel = configDataModel with
-                {
-                    RecycleBinSize = maxSize,
-                    PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-                };
+                VaultParser.V4CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+            });
 
-                // First, we need to fill in the PayloadMac of the content
-                specifics.Security.KeyPair.MacKey.UseKey(macKey =>
-                {
-                    VaultParser.V4CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
-                });
-
-                await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
-            }
+            // Then, write the config
+            await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);
 
             // Make sure to also update the file system options
             specifics.Options.DangerousSetRecycleBin(maxSize);

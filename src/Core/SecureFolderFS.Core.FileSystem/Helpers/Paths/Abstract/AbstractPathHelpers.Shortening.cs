@@ -32,21 +32,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// </summary>
         /// <param name="ciphertextItemName">The shortened ciphertext name of the item.</param>
         /// <param name="ciphertextParent">The parent folder where the item is found.</param>
-        /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public static async Task DeleteSidecarFileAsync(string ciphertextItemName, IModifiableFolder ciphertextParent, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        public static async Task DeleteSidecarFileAsync(string ciphertextItemName, IModifiableFolder ciphertextParent, CancellationToken cancellationToken = default)
         {
-            if (specifics.Options.ShorteningThreshold > 0 && ciphertextItemName.Length >= specifics.Options.ShorteningThreshold)
-            {
-                var oldSidecarName = TryGetSidecarName(ciphertextItemName);
-                if (oldSidecarName is null)
-                    return;
+            var oldSidecarName = TryGetSidecarName(ciphertextItemName);
+            if (oldSidecarName is null)
+                return;
 
-                var oldSidecar = await ciphertextParent.TryGetFileByNameAsync(oldSidecarName, cancellationToken);
-                if (oldSidecar is not null)
-                    await ciphertextParent.DeleteAsync(oldSidecar, cancellationToken);
-            }
+            var oldSidecar = await ciphertextParent.TryGetFileByNameAsync(oldSidecarName, cancellationToken);
+            if (oldSidecar is not null)
+                await ciphertextParent.DeleteAsync(oldSidecar, cancellationToken);
         }
 
         /// <summary>
@@ -70,7 +66,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// </remarks>
         public static ReadOnlySpan<char> RemoveShortenedExtension(string shortenedName)
         {
-            return shortenedName.EndsWith(Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.Ordinal)
+            return shortenedName.EndsWith(Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase)
                 ? shortenedName.AsSpan(0, shortenedName.Length - Constants.Names.SHORTENED_FILE_EXTENSION.Length)
                 : shortenedName.AsSpan();
         }

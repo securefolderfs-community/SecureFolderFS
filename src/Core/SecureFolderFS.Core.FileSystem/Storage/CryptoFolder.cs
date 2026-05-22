@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var renamedCiphertextItem = await renamableFolder.RenameAsync(ciphertextItem, newCiphertextName, cancellationToken);
 
             // Clean up old sidecar if the old name was shortened
-            await AbstractPathHelpers.DeleteSidecarFileAsync(ciphertextName, renamableFolder, specifics, cancellationToken);
+            await AbstractPathHelpers.DeleteSidecarFileAsync(ciphertextName, renamableFolder, cancellationToken);
 
             var plaintextId = Path.Combine(Inner.Id, newName);
             return renamedCiphertextItem switch
@@ -141,7 +141,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             }
 
             // Clean up old sidecar if the old name was shortened
-            await AbstractPathHelpers.DeleteSidecarFileAsync(ciphertextName, modifiableFolder, specifics, cancellationToken);
+            await AbstractPathHelpers.DeleteSidecarFileAsync(ciphertextName, modifiableFolder, cancellationToken);
 
             // Remove deleted directory from cache
             if (ciphertextItem is IFolder)
@@ -262,7 +262,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var movedCiphertextFile = await moveRenamedFrom.MoveFromAsync(ciphertextFileToMove, ciphertextSourceModifiableFolder, overwrite, newCiphertextName, cancellationToken, fallback);
 
             // Clean up old sidecar if the old name was shortened
-            await AbstractPathHelpers.DeleteSidecarFileAsync(existingCiphertextName, ciphertextSourceModifiableFolder, specifics, cancellationToken);
+            await AbstractPathHelpers.DeleteSidecarFileAsync(existingCiphertextName, ciphertextSourceModifiableFolder, cancellationToken);
 
             return (IChildFile)Wrap(movedCiphertextFile, newName);
         }
