@@ -78,7 +78,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 // Destination folder is different from the original destination
                 // A new item name should be chosen fit for the new folder (so that Directory ID match)
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+                var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
                 // Get an available name if the destination already exists
                 ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 // Destination folder is the same as the original destination
                 // The same name could be used since the Directory IDs match
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+                var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
                 // Get an available name if the destination already exists
                 ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
@@ -244,7 +244,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 do
                 {
                     var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
-                    ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
+                    ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
                     existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
                     suffix++;
                 } while (existing is not null);

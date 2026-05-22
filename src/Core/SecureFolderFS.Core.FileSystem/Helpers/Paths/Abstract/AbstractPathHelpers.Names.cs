@@ -110,6 +110,49 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
         #endregion
 
+        #region Encrypt Name Discoverability
+
+        /// <inheritdoc cref="EncryptNameForDiscoveryAsync(string,OwlCore.Storage.IFolder,SecureFolderFS.Core.FileSystem.FileSystemSpecifics,System.Byte[],System.Threading.CancellationToken)"/>
+        public static async Task<string> EncryptNameForDiscoveryAsync(string plaintextName, IFolder ciphertextParentFolder,
+            FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return plaintextName;
+
+            var directoryId = AllocateDirectoryId(specifics.Security, plaintextName);
+            return await EncryptNameForDiscoveryAsync(plaintextName, ciphertextParentFolder, specifics, directoryId, cancellationToken);
+        }
+
+        /// <summary>
+        /// Encrypts the provided <paramref name="plaintextName"/> and discovers potential shortening branch.
+        /// </summary>
+        /// <param name="plaintextName">The name to encrypt.</param>
+        /// <param name="ciphertextParentFolder">The ciphertext parent folder.</param>
+        /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
+        /// <param name="expendableDirectoryId">A buffer of size <see cref="Constants.DIRECTORY_ID_SIZE"/> which will be used to hold the Directory ID data.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name with the appropriate file extension appended.</returns>
+        public static async Task<string> EncryptNameForDiscoveryAsync(string plaintextName, IFolder ciphertextParentFolder,
+            FileSystemSpecifics specifics, byte[]? expendableDirectoryId = null, CancellationToken cancellationToken = default)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return plaintextName;
+
+            expendableDirectoryId ??= AllocateDirectoryId(specifics.Security, plaintextName);
+            var result = await GetDirectoryIdAsync(ciphertextParentFolder, specifics, expendableDirectoryId, cancellationToken);
+
+            var encryptedName = specifics.Security.NameCrypt.EncryptName(plaintextName, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty) + Constants.Names.ENCRYPTED_FILE_EXTENSION;
+            if (specifics.Options.ShorteningThreshold > 0 && encryptedName.Length >= specifics.Options.ShorteningThreshold)
+            {
+                var shortenedBase = ComputeShortenedNameBase(encryptedName);
+                return shortenedBase + Constants.Names.SHORTENED_FILE_EXTENSION;
+            }
+
+            return encryptedName;
+        }
+
+        #endregion
+
         /// <summary>
         /// Encrypts a plaintext name using the specified Directory ID and security parameters.
         /// </summary>

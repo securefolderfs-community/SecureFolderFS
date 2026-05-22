@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 
             foreach (var plaintextName in plaintextPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                var ciphertextName = await EncryptNameAsync(plaintextName, currentParent, specifics, cancellationToken);
+                var ciphertextName = await EncryptNameForDiscoveryAsync(plaintextName, currentParent, specifics, cancellationToken);
                 finalItem = await currentParent.GetFirstByNameAsync(ciphertextName, cancellationToken);
 
                 if (finalItem is IFolder nextParent)
@@ -56,12 +56,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             foreach (var item in folderChain)
             {
                 // Walk through plaintext folder chain and retrieve ciphertext folders
-                var subCiphertextName = await EncryptNameAsync(item.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+                var subCiphertextName = await EncryptNameForDiscoveryAsync(item.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
                 finalFolder = await finalFolder.GetFolderByNameAsync(subCiphertextName, cancellationToken);
             }
 
             // Encrypt and retrieve the final item
-            var ciphertextName = await EncryptNameAsync(plaintextStorable.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
+            var ciphertextName = await EncryptNameForDiscoveryAsync(plaintextStorable.Name, finalFolder, specifics, expendableDirectoryId, cancellationToken).ConfigureAwait(false);
             return await finalFolder.GetFirstByNameAsync(ciphertextName, cancellationToken);
         }
 

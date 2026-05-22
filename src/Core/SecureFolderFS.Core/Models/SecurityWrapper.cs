@@ -31,6 +31,7 @@ namespace SecureFolderFS.Core.Models
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             yield return new(nameof(VirtualFileSystemOptions.RecycleBinSize), _configDataModel.RecycleBinSize);
+            yield return new (nameof(VirtualFileSystemOptions.ShorteningThreshold), _configDataModel.ShorteningThreshold);
         }
 
         /// <inheritdoc/>
