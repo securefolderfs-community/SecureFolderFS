@@ -32,8 +32,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            _configDataModel = await _vaultReader.ReadV4ConfigurationAsync(cancellationToken);
-            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+            _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
+            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync(cancellationToken);
             _sharesDataModel = await _vaultReader.ReadComplementationAsync(cancellationToken);
         }
 

@@ -61,6 +61,7 @@ namespace SecureFolderFS.Core.FUSE.AppModels
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
                 IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
                 RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
+                ShorteningThreshold = (int?)options.Get(nameof(ShorteningThreshold)) ?? 0,
 
                 // FUSE specific
                 MountPoint = (string?)options.Get(nameof(MountPoint)),

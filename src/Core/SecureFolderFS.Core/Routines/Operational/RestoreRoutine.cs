@@ -69,12 +69,16 @@ namespace SecureFolderFS.Core.Routines.Operational
             string? foundNameCrypt = null;
             string? foundEncoding = null;
             var noExtensions = 0;
+            var shorteningThreshold = 0;
 
             var folderScanner = new DeepFolderScanner(contentFolder, StorableType.File);
             await foreach (var item in folderScanner.ScanFolderAsync(cancellationToken))
             {
                 if (item is not IFile file)
                     continue;
+
+                if (shorteningThreshold == 0 && item.Name.EndsWith(FileSystem.Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                    shorteningThreshold = 220; // Arbitrary threshold typical for shortened names
 
                 if (!item.Name.EndsWith(FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
                     noExtensions++;
@@ -106,6 +110,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 ContentCipherId = foundContentCrypt,
                 FileNameCipherId = foundNameCrypt,
                 FileNameEncodingId = foundEncoding,
+                ShorteningThreshold = shorteningThreshold,
                 RecycleBinSize = 0L,
                 Uid = Guid.NewGuid().ToString(),
                 Version = Constants.Vault.Versions.LATEST_VERSION,

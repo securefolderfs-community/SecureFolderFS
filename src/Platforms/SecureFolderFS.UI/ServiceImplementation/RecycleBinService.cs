@@ -36,7 +36,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             var configDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
             if (configDataModel.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
             {
-                var v4ConfigDataModel = await vaultReader.ReadV4ConfigurationAsync(cancellationToken);
+                var v4ConfigDataModel = await vaultReader.ReadConfigurationAsync(cancellationToken);
                 var newV4ConfigDataModel = v4ConfigDataModel with
                 {
                     RecycleBinSize = maxSize,
@@ -61,7 +61,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 // First, we need to fill in the PayloadMac of the content
                 specifics.Security.KeyPair.MacKey.UseKey(macKey =>
                 {
-                    VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+                    VaultParser.V4CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
                 });
 
                 await vaultWriter.WriteConfigurationAsync(newConfigDataModel, cancellationToken);

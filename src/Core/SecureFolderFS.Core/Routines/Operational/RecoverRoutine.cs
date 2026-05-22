@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            _configDataModel = await _vaultReader.ReadV4ConfigurationAsync(cancellationToken);
+            _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

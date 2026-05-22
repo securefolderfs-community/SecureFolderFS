@@ -13,7 +13,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
     public static partial class AbstractPathHelpers
     {
-        private const int SHORTENING_THRESHOLD = 220;
         private const int MAX_SIDECAR_BYTES = 4096; // No legitimate ciphertext name approaches this upper bound
 
         /// <summary>

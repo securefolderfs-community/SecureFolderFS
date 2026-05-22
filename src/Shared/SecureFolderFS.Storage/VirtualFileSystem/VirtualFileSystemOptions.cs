@@ -38,6 +38,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
+        /// Gets or sets the threshold for shortening file names.
+        /// </summary>
+        public required int ShorteningThreshold { get; init; }
+
+        /// <summary>
         /// Sets the read-only status of the file system.
         /// </summary>
         /// <param name="value">If true, sets the file system to read-only mode; otherwise, sets it to read-write mode.</param>
@@ -85,6 +90,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
                 IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
                 IsCachingDirectoryIds = GetOption<bool?>(options, nameof(IsCachingDirectoryIds)) ?? true,
+                ShorteningThreshold = GetOption<int?>(options, nameof(ShorteningThreshold)) ?? 0,
                 RecycleBinSize = GetOption<long?>(options, nameof(RecycleBinSize)) ?? 0L
             };
         }
