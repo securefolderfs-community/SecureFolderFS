@@ -1457,4 +1457,10 @@
   <data name="LoginMethod" xml:space="preserve">
       <value>Login method</value>
   </data>
+  <data name="OrphanSidecar" xml:space="preserve">
+      <value>Unlinked shortening file</value>
+  </data>
+  <data name="DeleteOrphanSidecar" xml:space="preserve">
+      <value>The name shortening file has no data file and will be deleted.</value>
+  </data>
 </root>
