@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
             var shortenedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var sidecars = new List<IStorableChild>();
 
-            await foreach (var item in folder.GetItemsAsync(StorableType.File, cancellationToken))
+            await foreach (var item in folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 if (AbstractPathHelpers.IsSidecarName(item.Name))
                     sidecars.Add(item);
