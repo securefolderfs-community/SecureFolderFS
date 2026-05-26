@@ -73,9 +73,16 @@ namespace SecureFolderFS.Core.Routines.Operational
             var minSidecarContentLength = int.MaxValue;
             var hasShortenedNames = false;
 
-            var folderScanner = new DeepFolderScanner(contentFolder, StorableType.File);
+            var folderScanner = new DeepFolderScanner(contentFolder, StorableType.All);
             await foreach (var item in folderScanner.ScanFolderAsync(cancellationToken))
             {
+                // Shortened items are hashes that can't be decrypted directly
+                if (item.Name.EndsWith(FileSystem.Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                {
+                    hasShortenedNames = true;
+                    continue;
+                }
+
                 if (item is not IFile file)
                     continue;
 
@@ -92,13 +99,6 @@ namespace SecureFolderFS.Core.Routines.Operational
                     }
                     catch { }
 
-                    continue;
-                }
-
-                // Shortened files are hashes that can't be decrypted directly
-                if (item.Name.EndsWith(FileSystem.Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                {
-                    hasShortenedNames = true;
                     continue;
                 }
 
