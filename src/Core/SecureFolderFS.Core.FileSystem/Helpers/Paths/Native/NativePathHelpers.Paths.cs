@@ -18,6 +18,54 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
         }
 
         /// <summary>
+        /// Encrypts and gets the ciphertext path from provided <paramref name="plaintextRelativePath"/>,
+        /// writing sidecar files for any name that exceeds the shortening threshold.
+        /// </summary>
+        /// <param name="plaintextRelativePath">The relative plaintext path to an item.</param>
+        /// <param name="specifics">The specifics.</param>
+        /// <returns>A full ciphertext path.</returns>
+        public static string GetCiphertextPathForUse(string plaintextRelativePath, FileSystemSpecifics specifics)
+        {
+            var directoryId = new byte[Constants.DIRECTORY_ID_SIZE];
+            return GetCiphertextPathForUse(plaintextRelativePath, specifics, directoryId);
+        }
+
+        /// <summary>
+        /// Encrypts and gets the ciphertext path from provided <paramref name="plaintextRelativePath"/>,
+        /// writing sidecar files for any name that exceeds the shortening threshold.
+        /// </summary>
+        /// <param name="plaintextRelativePath">The relative plaintext path to an item.</param>
+        /// <param name="specifics">The specifics.</param>
+        /// <param name="expendableDirectoryId">A <see cref="Span{T}"/> of size <see cref="Constants.DIRECTORY_ID_SIZE"/> which will be used to hold the Directory ID data.</param>
+        /// <returns>A full ciphertext path.</returns>
+        public static string GetCiphertextPathForUse(string plaintextRelativePath, FileSystemSpecifics specifics, Span<byte> expendableDirectoryId)
+        {
+            // Make path relative as a precaution (if the path is passed as ContentPath + PlaintextPath)
+            plaintextRelativePath = MakeRelative(plaintextRelativePath, specifics.ContentFolder.Id);
+
+            // Return the (full) path, if not using name encryption
+            if (specifics.Security.NameCrypt is null)
+            {
+                if (plaintextRelativePath.StartsWith(Path.DirectorySeparatorChar))
+                    return specifics.ContentFolder.Id + plaintextRelativePath;
+
+                return Path.Combine(specifics.ContentFolder.Id, plaintextRelativePath);
+            }
+
+            var finalPath = specifics.ContentFolder.Id;
+            foreach (var namePart in plaintextRelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+            {
+                // Encrypt the name part and materialize sidecar if shortened
+                var ciphertextName = EncryptNameForUse(namePart, finalPath, specifics, expendableDirectoryId);
+
+                // Combine the final path
+                finalPath = Path.Combine(finalPath, ciphertextName);
+            }
+
+            return finalPath;
+        }
+
+        /// <summary>
         /// Decrypts and gets the plaintext path from provided <paramref name="ciphertextPath"/>.
         /// </summary>
         /// <param name="ciphertextPath">The relative plaintext path to an item.</param>
@@ -58,8 +106,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
             var finalPath = specifics.ContentFolder.Id;
             foreach (var namePart in plaintextRelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                // Encrypt the name part
-                var ciphertextName = EncryptName(namePart, finalPath, specifics, expendableDirectoryId);
+                // Encrypt the name part (discovery only — no sidecar write)
+                var ciphertextName = EncryptNameForDiscovery(namePart, finalPath, specifics, expendableDirectoryId);
 
                 // Combine the final path
                 finalPath = Path.Combine(finalPath, ciphertextName);

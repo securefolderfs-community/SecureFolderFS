@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
     public static partial class AbstractPathHelpers
     {
-        private const int MAX_SIDECAR_BYTES = 4096; // No legitimate ciphertext name approaches this upper bound
+        internal const int MAX_SIDECAR_BYTES = 4096; // No legitimate ciphertext name approaches this upper bound
 
         /// <summary>
         /// Tries to generate the name of the sidecar file associated with the given disk name.
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
         /// <param name="ciphertextName">The full ciphertext name to compute the base for.</param>
         /// <returns>A deterministic, filesystem-safe name base (no extension) for <paramref name="ciphertextName"/>.</returns>
         [SkipLocalsInit]
-        private static string ComputeShortenedNameBase(string ciphertextName)
+        internal static string ComputeShortenedNameBase(string ciphertextName)
         {
             var nameBytes = Encoding.UTF8.GetBytes(ciphertextName);
             Span<byte> hash = stackalloc byte[32];

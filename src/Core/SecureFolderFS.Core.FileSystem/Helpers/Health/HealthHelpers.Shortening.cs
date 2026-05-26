@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 
             foreach (var sidecar in sidecars)
             {
-                // Derive the expected companion: replace .sffsi → .sffsn
+                // Derive the expected companion (replace .sffsi with .sffsn)
                 var baseName = sidecar.Name[..^Constants.Names.SIDECAR_FILE_EXTENSION.Length];
                 var expectedCompanion = baseName + Constants.Names.SHORTENED_FILE_EXTENSION;
 
