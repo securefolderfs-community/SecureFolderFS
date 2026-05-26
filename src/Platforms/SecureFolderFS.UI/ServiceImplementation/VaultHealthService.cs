@@ -42,6 +42,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 },
                 FormatException => new HealthNameIssueViewModel(storable, result, "InvalidItemName".ToLocalized()) { ErrorMessage = "GenerateNewName".ToLocalized() },
                 OrphanSidecarException => new HealthOrphanSidecarIssueViewModel(storable, result, "OrphanSidecar".ToLocalized()) { ErrorMessage = "DeleteOrphanSidecar".ToLocalized() },
+                NormalizationException => new HealthNormalizationIssueViewModel(storable, result, "NormalizationIssue".ToLocalized()) { ErrorMessage = "RepairNormalization".ToLocalized() },
                 FileHeaderCorruptedException => new HealthFileDataIssueViewModel(storable, result, "IrrecoverableFile".ToLocalized(), isRecoverable: false) { ErrorMessage = "FileHeaderCorrupted".ToLocalized() },
                 FileChunksCorruptedException chunksEx => new HealthFileDataIssueViewModel(storable, result, "CorruptedFileChunks".ToLocalized(), chunksEx.CorruptedChunks, isRecoverable: true) { ErrorMessage = "FileHasCorruptedChunks".ToLocalized(chunksEx.CorruptedChunks.Count) },
                 CryptographicException => new HealthFileDataIssueViewModel(storable, result, "InvalidFileContents".ToLocalized()) { ErrorMessage = "RegenerateFileContents".ToLocalized() },
@@ -109,6 +110,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
                         // Orphan sidecar - delete it
                         HealthOrphanSidecarIssueViewModel => await HealthHelpers.DeleteOrphanSidecarAsync(
+                            item.Inner,
+                            cancellationToken),
+
+                        // Non-normalized Base4K name - rename to NFC
+                        HealthNormalizationIssueViewModel => await HealthHelpers.RepairNormalizationAsync(
                             item.Inner,
                             cancellationToken),
 

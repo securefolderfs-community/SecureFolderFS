@@ -1463,6 +1463,12 @@
   <data name="DeleteOrphanSidecar" xml:space="preserve">
       <value>The name shortening file has no data file and will be deleted.</value>
   </data>
+  <data name="NormalizationIssue" xml:space="preserve">
+      <value>Non-normalized file name</value>
+  </data>
+  <data name="RepairNormalization" xml:space="preserve">
+      <value>The file name uses decomposed Unicode and will be normalized.</value>
+  </data>
   <data name="NameShortening" xml:space="preserve">
       <value>Name shortening</value>
   </data>

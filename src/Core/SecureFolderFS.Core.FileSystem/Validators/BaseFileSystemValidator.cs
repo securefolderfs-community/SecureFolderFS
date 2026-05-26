@@ -1,8 +1,11 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,6 +31,14 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         {
             if (specifics.Security.NameCrypt is null)
                 return;
+
+            // Check NFC normalization for Base4K-encoded .sffs names
+            if (specifics.Security.NameCrypt.EncodingId == Cryptography.Constants.CipherId.ENCODING_BASE4K
+                && storable.Name.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+                && !storable.Name.IsNormalized(NormalizationForm.FormC))
+            {
+                throw new NormalizationException(storable.Name);
+            }
 
             var decryptedName = await DecryptNameAsync(storable, cancellationToken).ConfigureAwait(false);
             if (decryptedName is null)
