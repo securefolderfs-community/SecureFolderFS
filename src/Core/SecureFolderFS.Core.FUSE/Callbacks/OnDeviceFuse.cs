@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
@@ -450,6 +451,22 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             {
                 NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.Folder);
             }
+            catch (FileNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return -EACCES;
+            }
+            catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+            {
+                return -ENOSPC;
+            }
             catch
             {
                 return -EIO;
@@ -556,6 +573,22 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             try
             {
                 NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
+            }
+            catch (FileNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return -EACCES;
+            }
+            catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+            {
+                return -ENOSPC;
             }
             catch
             {

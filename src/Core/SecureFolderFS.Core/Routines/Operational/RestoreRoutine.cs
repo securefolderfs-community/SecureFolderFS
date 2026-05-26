@@ -76,6 +76,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             var folderScanner = new DeepFolderScanner(contentFolder, StorableType.All);
             await foreach (var item in folderScanner.ScanFolderAsync(cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // Shortened items are hashes that can't be decrypted directly
                 if (item.Name.EndsWith(FileSystem.Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
                 {
@@ -91,13 +93,17 @@ namespace SecureFolderFS.Core.Routines.Operational
                 {
                     try
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         await using var sidecarStream = await file.OpenReadAsync(cancellationToken);
                         var buffer = new byte[4097];
                         var bytesRead = await sidecarStream.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken);
                         if (bytesRead is > 0 and <= 4096)
                             minSidecarContentLength = Math.Min(minSidecarContentLength, Encoding.UTF8.GetString(buffer, 0, bytesRead).Length);
                     }
-                    catch { }
+                    catch
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
 
                     continue;
                 }
