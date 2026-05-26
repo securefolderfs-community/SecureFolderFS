@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
         {
             EntryHandler.Mapper.AppendToMapping($"{nameof(CustomMappers)}.{nameof(Entry)}", (handler, view) =>
             {
-                if (view is not ModernEntry)
+                if (view is not ModernEntry modernEntry)
                     return;
 #if ANDROID
                 const float R = 24f;
@@ -33,7 +33,11 @@ namespace SecureFolderFS.Maui.Extensions.Mappers
                 shape.Paint.StrokeWidth = 4;
                 shape.Paint.SetStyle(Paint.Style.Stroke);
                 handler.PlatformView.Background = shape;
-                handler.PlatformView.SetPadding(40, 32,40, 32);
+                
+                if (modernEntry.IsPadded)
+                    handler.PlatformView.SetPadding(40, 32,40, 32);
+                else
+                    handler.PlatformView.SetPadding(16, 8, 16, 8);
 #elif IOS
                 handler.PlatformView.Layer.BorderColor = (App.Current.Resources[MauiThemeHelper.Instance.ActualTheme switch
                 {
