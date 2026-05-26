@@ -683,7 +683,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
             IDisposable? handle = null;
             try
             {
-                var ciphertextPath = GetCiphertextPath(FileName);
+                var ciphertextPath = GetCiphertextPathForUse(FileName);
                 if ((CreateOptions & FILE_DIRECTORY_FILE) == 0)
                 {
                     FileSecurity? fileSecurity = null;
@@ -926,6 +926,12 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
                 // Then delete
                 NativeRecycleBinHelpers.DeleteOrRecycle(pathToDelete, _specifics, storableType);
+
+                // Clean up sidecar after successful delete/recycle
+                NativePathHelpers.DeleteSidecarFile(
+                    Path.GetFileName(pathToDelete),
+                    Path.GetDirectoryName(pathToDelete) ?? string.Empty);
+
                 Trace(STATUS_SUCCESS, FileName);
             }
             catch (Exception)
@@ -998,7 +1004,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_ACCESS_DENIED, FileName);
 
             var oldCiphertextPath = GetCiphertextPath(FileName);
-            var newCiphertextPath = GetCiphertextPath(NewFileName);
+            var newCiphertextPath = GetCiphertextPathForUse(NewFileName);
             var isDirectory = IsDirectory(oldCiphertextPath);
             var newPathExists = isDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
 
@@ -1015,6 +1021,11 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                         File.Move(oldCiphertextPath, newCiphertextPath);
                     }
 
+                    // Clean up old sidecar after successful move
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(oldCiphertextPath),
+                        Path.GetDirectoryName(oldCiphertextPath) ?? string.Empty);
+
                     return Trace(STATUS_SUCCESS, FileName);
                 }
                 else if (ReplaceIfExists)
@@ -1027,6 +1038,11 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
                     File.Delete(newCiphertextPath);
                     File.Move(oldCiphertextPath, newCiphertextPath);
+
+                    // Clean up old sidecar after successful move
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(oldCiphertextPath),
+                        Path.GetDirectoryName(oldCiphertextPath) ?? string.Empty);
 
                     return Trace(STATUS_SUCCESS, FileName);
                 }

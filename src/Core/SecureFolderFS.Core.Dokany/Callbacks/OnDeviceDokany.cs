@@ -90,6 +90,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                             {
                             }
 
+                            // Materialize sidecar for the new directory name if shortened
+                            ciphertextPath = GetCiphertextPathForUse(fileName) ?? ciphertextPath;
+
                             // Create directory
                             _ = Directory.CreateDirectory(ciphertextPath);
 
@@ -172,6 +175,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     if (specifics.Options.IsReadOnly && mode.IsWriteFlag())
                         throw FileSystemExceptions.FileSystemReadOnly;
 
+                    // Materialize sidecar for the new file name if shortened
+                    if (mode is FileMode.CreateNew or FileMode.Create or FileMode.OpenOrCreate)
+                        ciphertextPath = GetCiphertextPathForUse(fileName) ?? ciphertextPath;
+
                     var openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
                     if (mode == FileMode.CreateNew && readAccess)
                         openAccess = System.IO.FileAccess.ReadWrite;
@@ -252,6 +259,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     {
                         NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
                     }
+
+                    // Clean up sidecar after successful delete/recycle
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(ciphertextPath),
+                        Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -537,7 +549,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public override NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
         {
             var oldCiphertextPath = GetCiphertextPath(oldName);
-            var newCiphertextPath = GetCiphertextPath(newName);
+            var newCiphertextPath = GetCiphertextPathForUse(newName);
             var fileNameCombined = $"{oldName} -> {newName}";
 
             if (oldCiphertextPath is null || newCiphertextPath is null)
@@ -564,6 +576,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         File.Move(oldCiphertextPath, newCiphertextPath);
                     }
 
+                    // Clean up old sidecar after successful move
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(oldCiphertextPath),
+                        Path.GetDirectoryName(oldCiphertextPath) ?? string.Empty);
+
                     return Trace(DokanResult.Success, fileNameCombined, info);
                 }
                 else if (replace)
@@ -578,6 +595,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     // File
                     File.Delete(newCiphertextPath);
                     File.Move(oldCiphertextPath, newCiphertextPath);
+
+                    // Clean up old sidecar after successful move
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(oldCiphertextPath),
+                        Path.GetDirectoryName(oldCiphertextPath) ?? string.Empty);
 
                     return Trace(DokanResult.Success, fileNameCombined, info);
                 }
@@ -823,6 +845,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         protected override string? GetCiphertextPath(string plaintextName)
         {
             return NativePathHelpers.GetCiphertextPath(plaintextName, specifics);
+        }
+
+        private string? GetCiphertextPathForUse(string plaintextName)
+        {
+            return NativePathHelpers.GetCiphertextPathForUse(plaintextName, specifics);
         }
     }
 }

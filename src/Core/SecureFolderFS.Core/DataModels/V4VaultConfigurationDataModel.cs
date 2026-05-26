@@ -29,7 +29,14 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
         [DefaultValue("")]
-        public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
+        public required string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
+
+        /// <summary>
+        /// Gets the threshold for shortening file names.
+        /// </summary>
+        [JsonPropertyName(Associations.ASSOC_FILENAME_SHORTENING)]
+        [DefaultValue(0)]
+        public required int ShorteningThreshold { get; init; }
 
         /// <summary>
         /// Gets the size of the recycle bin.
@@ -77,6 +84,7 @@ namespace SecureFolderFS.Core.DataModels
                 ContentCipherId = vaultOptions.ContentCipherId ?? Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
                 FileNameCipherId = vaultOptions.FileNameCipherId ?? Cryptography.Constants.CipherId.AES_SIV,
                 FileNameEncodingId = vaultOptions.NameEncodingId ?? Cryptography.Constants.CipherId.ENCODING_BASE64URL,
+                ShorteningThreshold = vaultOptions.ShorteningThreshold,
                 AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
                 RecycleBinSize = vaultOptions.RecycleBinSize,
                 Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),

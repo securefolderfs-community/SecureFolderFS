@@ -11,6 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
         public static bool IsCoreName(string itemName)
         {
             return
+                itemName.EndsWith(Constants.Names.SIDECAR_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.RECYCLE_BIN_NAME, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase);

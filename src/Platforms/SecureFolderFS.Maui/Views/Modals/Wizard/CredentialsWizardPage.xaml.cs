@@ -24,5 +24,18 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel.CurrentViewModel = ViewModel;
             base.OnAppearing();
         }
+
+        private void Shortening_TextChanged(object? sender, TextChangedEventArgs e)
+        {
+            if (sender is not Entry entry)
+                return;
+
+            if (!int.TryParse(entry.Text, out var value))
+                value = 0;
+            
+            value = Math.Max(0, Math.Min(value, 250));
+            entry.Text = value.ToString();
+            ViewModel.ShorteningThreshold = value;
+        }
     }
 }

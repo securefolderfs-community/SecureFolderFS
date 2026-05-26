@@ -36,7 +36,8 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(keystoreFile, keystoreDataModel, cancellationToken);
         }
 
-        public async Task WriteConfigurationAsync(VaultConfigurationDataModel? configDataModel, CancellationToken cancellationToken)
+        public async Task WriteConfigurationAsync<TConfiguration>(TConfiguration? configDataModel, CancellationToken cancellationToken)
+            where TConfiguration : class
         {
             var configFile = configDataModel is null ? null : _vaultFolder switch
             {

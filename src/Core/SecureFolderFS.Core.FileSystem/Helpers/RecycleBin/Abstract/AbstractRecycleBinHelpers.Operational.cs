@@ -7,7 +7,6 @@ using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -73,31 +72,17 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             if (plaintextOriginalName is null || plaintextParentPath is null)
                 throw new FormatException("Could not decrypt recycle bin configuration file.");
 
-            var ciphertextParentFolder = await SafetyHelpers.NoFailureAsync(async () => await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken) as IFolder);
-            if (string.IsNullOrEmpty(ciphertextParentFolder?.Id) || !ciphertextDestinationFolder.Id.EndsWith(ciphertextParentFolder.Id))
-            {
-                // Destination folder is different from the original destination
-                // A new item name should be chosen fit for the new folder (so that Directory ID match)
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+            // Encrypt the name for discovery (no sidecar side-effects)
+            var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
-                // Get an available name if the destination already exists
-                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
+            // Get an available name if the destination already has an item with that name
+            var (_, finalPlaintextName) = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
 
-                // Rename and move item to destination
-                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
-            }
-            else
-            {
-                // Destination folder is the same as the original destination
-                // The same name could be used since the Directory IDs match
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+            // Materialize the name: writes the sidecar file if the name is shortened
+            ciphertextName = await AbstractPathHelpers.EncryptNameForUseAsync(finalPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
 
-                // Get an available name if the destination already exists
-                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
-
-                // Rename and move item to destination
-                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
-            }
+            // Rename and move item to destination
+            _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
 
             // Delete the old configuration file
             var configurationFile = await recycleBin.GetFileByNameAsync($"{recycleBinItem.Name}.json", cancellationToken);
@@ -231,8 +216,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             }
         }
 
-        private static async Task<string> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        private static async Task<(string CiphertextName, string PlaintextName)> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
+            var finalPlaintextName = plaintextOriginalName;
+
             // Check if the item already exists
             var existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
             if (existing is not null)
@@ -243,14 +230,14 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 var suffix = 1;
                 do
                 {
-                    var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
-                    ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
+                    finalPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
+                    ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(finalPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
                     existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
                     suffix++;
                 } while (existing is not null);
             }
 
-            return ciphertextName;
+            return (ciphertextName, finalPlaintextName);
         }
 
         private static async Task<bool> IsRecentlyCreatedAsync(IStorable storable, CancellationToken cancellationToken)

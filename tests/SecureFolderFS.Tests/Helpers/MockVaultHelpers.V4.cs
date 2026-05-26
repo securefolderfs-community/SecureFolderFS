@@ -6,28 +6,30 @@ namespace SecureFolderFS.Tests.Helpers
     internal static partial class MockVaultHelpers
     {
         // Mock recovery key
-        public const string V4_RECOVERY_KEY = "osNie57du4qOxSkuxcyYd36RsQI3xPVnUpPad/aych4=@@@7wmweOio0sGGljnvBiggxo/65ZlvTnTfVNFmwFZ7W8g=";
+        public const string V4_RECOVERY_KEY = "Ww0/Rx6XHEB87y4WWfw12xo7Xfyk67EB3FNUlWdaG/k=@@@ndVd2mEgV/9Sq9xhLKa4ZaACwQH+7JVzfb7rTLBZK2s=";
 
         private const string V4_KEYSTORE_STRING = """
                                                   {
-                                                    "c_encryptionKey": "d0qVlgnquQr1NID0IdtrTd4pqzHkGxXWhHSpkrPuYtDXjVbm3ODpwQ==",
-                                                    "c_macKey": "ZKhu3nbUjoqV6ZGtU/gitauQBuC76iCwuDnLD6oa3Pav1srYcQN/zw==",
-                                                    "salt": "OEpZjy18/dbbS+i2LlmKjA==",
-                                                    "c_softwareEntropy": "T9dHlJg4WLmuKM4Qz1rcdIn0QsCdiGNNtU6EyzN03OA=",
-                                                    "entropyNonce": "buZqCJGGsukm87mP",
-                                                    "entropyTag": "AvsZawlWTMG3gBpuavmu4g=="
+                                                    "c_encryptionKey": "wALUX7wq5cZ45yB3HncCiiXZ3OiQmOTZj5MU/T03dxldD3pyh11C5g==",
+                                                    "c_macKey": "1DrsQmRH4X6CgM08aRqeANYXxN6NWlNrzsbp6DKeXErrE+KfYRS08g==",
+                                                    "salt": "e5nJCCu+uJZ3uAwio+iXOg==",
+                                                    "c_softwareEntropy": "bYWy61+0lXUb8e9ZLmasECuCZWmUTaKC8BIJvEofix4=",
+                                                    "entropyNonce": "jzd/bdatTE2uOoMa",
+                                                    "entropyTag": "OwjR5RFBmvl7Aaf0rwQ8yw=="
                                                   }
                                                   """;
 
         private const string V4_SFCONFIG_STRING = """
                                                   {
-                                                    "contentCipherScheme": "XChaCha20-Poly1305",
+                                                    "contentCipherScheme": "AES-GCM",
                                                     "filenameCipherScheme": "AES-SIV",
                                                     "filenameEncoding": "Base4K",
-                                                    "recycleBinSize": -1,
+                                                    "filenameShortening": 0,
+                                                    "recycleBinSize": 0,
                                                     "authMode": "password",
-                                                    "vaultId": "8a1fbf8a-b986-4f8a-a3d7-59df8d203e3a",
-                                                    "hmacsha256mac": "/gLIyGTCd8Y/bvj3YxY7JmmFEbCX3iDGYFVmeNMNw8w=",
+                                                    "vaultId": "0b47eb66-1e58-451f-a72f-f1f5b34295b6",
+                                                    "appPlatform": null,
+                                                    "hmacsha256mac": "fpSCs1rfVwtWeCikRcSeJimORlfN3f+MCjed9nobofA=",
                                                     "version": 4
                                                   }
                                                   """;

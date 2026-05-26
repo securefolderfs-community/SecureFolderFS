@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -69,12 +70,43 @@ namespace SecureFolderFS.Core.Routines.Operational
             string? foundNameCrypt = null;
             string? foundEncoding = null;
             var noExtensions = 0;
+            var minSidecarContentLength = int.MaxValue;
+            var hasShortenedNames = false;
 
-            var folderScanner = new DeepFolderScanner(contentFolder, StorableType.File);
+            var folderScanner = new DeepFolderScanner(contentFolder, StorableType.All);
             await foreach (var item in folderScanner.ScanFolderAsync(cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // Shortened items are hashes that can't be decrypted directly
+                if (item.Name.EndsWith(FileSystem.Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                {
+                    hasShortenedNames = true;
+                    continue;
+                }
+
                 if (item is not IFile file)
                     continue;
+
+                // Read sidecar files to determine the shortening threshold from the actual ciphertext name length
+                if (item.Name.EndsWith(FileSystem.Constants.Names.SIDECAR_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await using var sidecarStream = await file.OpenReadAsync(cancellationToken);
+                        var buffer = new byte[4097];
+                        var bytesRead = await sidecarStream.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken);
+                        if (bytesRead is > 0 and <= 4096)
+                            minSidecarContentLength = Math.Min(minSidecarContentLength, Encoding.UTF8.GetString(buffer, 0, bytesRead).Length);
+                    }
+                    catch
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
+                    continue;
+                }
 
                 if (!item.Name.EndsWith(FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
                     noExtensions++;
@@ -98,6 +130,11 @@ namespace SecureFolderFS.Core.Routines.Operational
             if (foundNameCrypt is null || foundEncoding is null || foundContentCrypt is null)
                 throw new InvalidOperationException("Could not find all required cryptographic components.");
 
+            // Determine shortening threshold from sidecar content, with fallback for missing sidecars
+            var shorteningThreshold = minSidecarContentLength < int.MaxValue
+                ? minSidecarContentLength
+                : hasShortenedNames ? 220 : 0;
+
             // Regenerate config
             var configDataModel = new V4VaultConfigurationDataModel()
             {
@@ -106,6 +143,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 ContentCipherId = foundContentCrypt,
                 FileNameCipherId = foundNameCrypt,
                 FileNameEncodingId = foundEncoding,
+                ShorteningThreshold = shorteningThreshold,
                 RecycleBinSize = 0L,
                 Uid = Guid.NewGuid().ToString(),
                 Version = Constants.Vault.Versions.LATEST_VERSION,

@@ -23,6 +23,16 @@ namespace SecureFolderFS.Core.VaultAccess
             _serializer = serializer;
         }
 
+        public async Task<V4VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
+        {
+            return await ReadConfigurationAsync<V4VaultConfigurationDataModel>(cancellationToken);
+        }
+
+        public async Task<V4VaultKeystoreDataModel> ReadKeystoreAsync(CancellationToken cancellationToken)
+        {
+            return await ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+        }
+
         /// <summary>
         /// Reads the keystore as the specified type.
         /// </summary>
@@ -34,17 +44,15 @@ namespace SecureFolderFS.Core.VaultAccess
             return await ReadDataAsync<TKeystore>(keystoreFile, _serializer, cancellationToken);
         }
 
-        public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Reads the configuration file as the specified type.
+        /// </summary>
+        public async Task<TConfiguration> ReadConfigurationAsync<TConfiguration>(CancellationToken cancellationToken)
+            where TConfiguration : class
         {
             // Get configuration file
             var configFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-            return await ReadDataAsync<VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
-        }
-
-        public async Task<V4VaultConfigurationDataModel> ReadV4ConfigurationAsync(CancellationToken cancellationToken)
-        {
-            var configFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-            return await ReadDataAsync<V4VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
+            return await ReadDataAsync<TConfiguration>(configFile, _serializer, cancellationToken);
         }
 
         public async Task<VaultSharesDataModel?> ReadComplementationAsync(CancellationToken cancellationToken)
