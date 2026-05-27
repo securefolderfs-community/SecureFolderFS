@@ -34,8 +34,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly Dictionary<string, IContentCrypt> _contentCrypts;
         private readonly Dictionary<string, IHeaderCrypt> _headerCrypts;
         private List<INameCrypt>? _nameCrypts;
-        private V4VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private KeyPair? _keyPair;
 
         public RestoreRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
@@ -136,7 +136,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 : hasShortenedNames ? 220 : 0;
 
             // Regenerate config
-            var configDataModel = new V4VaultConfigurationDataModel()
+            var configDataModel = new VaultConfigurationDataModel()
             {
                 AppPlatform = null,
                 AuthenticationMethod = Constants.Vault.Authentication.AUTH_RECOVERY_KEY_REQUIREMENT, // Recovery Key is required at first to recover the restored vault
@@ -153,20 +153,20 @@ namespace SecureFolderFS.Core.Routines.Operational
             // Calculate config MAC
             _keyPair.MacKey.UseKey(macKey =>
             {
-                VaultParser.V4CalculateConfigMac(configDataModel, macKey, configDataModel.PayloadMac);
+                VaultParser.CalculateConfigMac(configDataModel, macKey, configDataModel.PayloadMac);
             });
 
             // Regenerate keystore
             var keystore = GenerateKeystore(_keyPair);
 
             // Write the whole configuration
-            await _vaultWriter.WriteV4ConfigurationAsync(configDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(configDataModel, cancellationToken);
             await _vaultWriter.WriteKeystoreAsync(keystore, cancellationToken);
 
             return new SecurityWrapper(_keyPair.CreateCopy(), configDataModel);
         }
 
-        private unsafe V4VaultKeystoreDataModel GenerateKeystore(KeyPair keyPair)
+        private unsafe VaultKeystoreDataModel GenerateKeystore(KeyPair keyPair)
         {
             // A strong, random passkey is generated because the user will
             // be responsible later for resetting credentials
@@ -181,7 +181,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                     return keyPair.UseKeys(state, (dekKey, macKey, s) =>
                     {
                         var pK = new ReadOnlySpan<byte>((byte*)s.pPtr, s.pLen);
-                        return VaultParser.V4EncryptKeystore(pK, dekKey, macKey, salt);
+                        return VaultParser.EncryptKeystore(pK, dekKey, macKey, salt);
                     });
                 }
             });

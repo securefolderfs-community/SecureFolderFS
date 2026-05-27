@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Models
     internal sealed class SecurityWrapper : IWrapper<Security>, IEnumerable<KeyValuePair<string, object>>, IDisposable
     {
         private readonly KeyPair _keyPair;
-        private readonly V4VaultConfigurationDataModel _configDataModel;
+        private readonly VaultConfigurationDataModel _configDataModel;
         private Security? _security;
 
         /// <inheritdoc/>
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.Models
                 fileNameCipherId: _configDataModel.FileNameCipherId,
                 fileNameEncodingId: _configDataModel.FileNameEncodingId);
 
-        public SecurityWrapper(KeyPair keyPair, V4VaultConfigurationDataModel configDataModel)
+        public SecurityWrapper(KeyPair keyPair, VaultConfigurationDataModel configDataModel)
         {
             _keyPair = keyPair;
             _configDataModel = configDataModel;

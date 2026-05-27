@@ -1,14 +1,15 @@
-using SecureFolderFS.Shared.Models;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Core.Constants.Vault;
 
-namespace SecureFolderFS.Core.DataModels
+namespace SecureFolderFS.Core.Migration.DataModels
 {
     [Serializable]
-    public sealed record class V4VaultConfigurationDataModel : VersionDataModel
+    public sealed record class V3VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
         /// Gets the ID for content encryption.
@@ -29,14 +30,7 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
         [DefaultValue("")]
-        public required string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
-
-        /// <summary>
-        /// Gets the threshold for shortening file names.
-        /// </summary>
-        [JsonPropertyName(Associations.ASSOC_FILENAME_SHORTENING)]
-        [DefaultValue(0)]
-        public required int ShorteningThreshold { get; init; }
+        public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
 
         /// <summary>
         /// Gets the size of the recycle bin.
@@ -65,18 +59,12 @@ namespace SecureFolderFS.Core.DataModels
         public required string Uid { get; init; } = string.Empty;
 
         /// <summary>
-        /// Gets the App Platform used by this vault.
-        /// </summary>
-        [JsonPropertyName(Associations.ASSOC_APP_PLATFORM)]
-        public AppPlatformVaultOptions? AppPlatform { get; init; }
-
-        /// <summary>
         /// Gets the HMAC-SHA256 hash of the payload.
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
         public byte[]? PayloadMac { get; set; }
 
-        public static V4VaultConfigurationDataModel V4FromVaultOptions(VaultOptions vaultOptions)
+        public static V3VaultConfigurationDataModel FromVaultOptions(VaultOptions vaultOptions)
         {
             return new()
             {
@@ -84,14 +72,11 @@ namespace SecureFolderFS.Core.DataModels
                 ContentCipherId = vaultOptions.ContentCipherId ?? Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
                 FileNameCipherId = vaultOptions.FileNameCipherId ?? Cryptography.Constants.CipherId.AES_SIV,
                 FileNameEncodingId = vaultOptions.NameEncodingId ?? Cryptography.Constants.CipherId.ENCODING_BASE64URL,
-                ShorteningThreshold = vaultOptions.ShorteningThreshold,
                 AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
                 RecycleBinSize = vaultOptions.RecycleBinSize,
                 Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),
-                AppPlatform = vaultOptions.AppPlatform,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
         }
     }
 }
-

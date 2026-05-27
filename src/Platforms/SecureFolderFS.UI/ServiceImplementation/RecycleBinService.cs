@@ -43,7 +43,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             // First, we need to fill in the PayloadMac of the content
             specifics.Security.KeyPair.MacKey.UseKey(macKey =>
             {
-                VaultParser.V4CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
+                VaultParser.CalculateConfigMac(newConfigDataModel, macKey, newConfigDataModel.PayloadMac);
             });
 
             // Then, write the config

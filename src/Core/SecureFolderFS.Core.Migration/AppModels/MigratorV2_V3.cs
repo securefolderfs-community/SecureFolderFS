@@ -9,7 +9,6 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
-using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Migration.DataModels;
 using SecureFolderFS.Core.Migration.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
@@ -144,7 +143,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
 
             // Vault Configuration ------------------------------------
             //
-            var v3ConfigDataModel = new VaultConfigurationDataModel()
+            var v3ConfigDataModel = new V3VaultConfigurationDataModel()
             {
                 AuthenticationMethod = _wasNewPasswordSet ? Constants.Vault.Authentication.AUTH_PASSWORD : _v2ConfigDataModel.AuthenticationMethod,
                 ContentCipherId = _v2ConfigDataModel.ContentCipherId,

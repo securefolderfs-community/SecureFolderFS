@@ -9,7 +9,7 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Validators
 {
-    internal sealed class ConfigurationValidator : IAsyncValidator<V4VaultConfigurationDataModel>
+    internal sealed class ConfigurationValidator : IAsyncValidator<VaultConfigurationDataModel>
     {
         private readonly IKeyUsage _macKey;
 
@@ -19,19 +19,19 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public async Task ValidateAsync(V4VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
+        public async Task ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
             Validate(value);
             await Task.CompletedTask;
         }
 
         [SkipLocalsInit]
-        private void Validate(V4VaultConfigurationDataModel value)
+        private void Validate(VaultConfigurationDataModel value)
         {
             var isEqual = _macKey.UseKey(macKey =>
             {
                 Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
-                VaultParser.V4CalculateConfigMac(value, macKey, payloadMac);
+                VaultParser.CalculateConfigMac(value, macKey, payloadMac);
 
                 // Check if stored hash equals to computed hash using constant-time comparison to prevent timing attacks
                 return CryptographicOperations.FixedTimeEquals(payloadMac, value.PayloadMac);

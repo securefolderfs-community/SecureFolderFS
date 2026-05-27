@@ -20,10 +20,10 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private readonly VaultWriter _vaultWriter;
         private KeyPair? _keyPair;
-        private V4VaultKeystoreDataModel? _existingKeystoreDataModel;
-        private V4VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultConfigurationDataModel? _existingConfigDataModel;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultKeystoreDataModel? _existingKeystoreDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _existingConfigDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private VaultSharesDataModel? _existingSharesDataModel;
         private VaultSharesDataModel? _sharesDataModel;
         private bool _writeShares;
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
-            _configDataModel = V4VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
+            _configDataModel = VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
         }
 
         public void SetCredentials(ComplementationCredentials credentials, CancellationToken cancellationToken = default)
@@ -123,7 +123,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 complementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication));
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.V4WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
                 _writeShares = true;
             }
             finally
@@ -159,7 +159,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 softwareEntropy = recoveredData.SoftwareEntropy;
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.V4WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
                 _writeShares = true;
             }
             finally
@@ -225,7 +225,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                     : ExportKey(credentials.NewComplementCredential ?? throw new InvalidOperationException("New complement credentials are required."));
 
                 ReEncryptKeystore(newComplementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.V4WrapComplementSecret(newComplementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(newComplementSecret, newComplementKey, GetVaultId(), newComplementMethod));
                 _writeShares = true;
             }
             finally
@@ -266,7 +266,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             try
             {
-                complementSecret = VaultParser.V4UnwrapComplementSecret(currentKey, GetVaultId(), share);
+                complementSecret = VaultParser.UnwrapComplementSecret(currentKey, GetVaultId(), share);
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
                 return (complementSecret, softwareEntropy);
             }
@@ -289,7 +289,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             var complementSecret = new byte[ComplementSecretLength];
             try
             {
-                VaultParser.V4DeriveComplementKey(passkey, GetVaultId(), authenticationMethodId, complementSecret);
+                VaultParser.DeriveComplementKey(passkey, GetVaultId(), authenticationMethodId, complementSecret);
                 return complementSecret;
             }
             catch
@@ -306,7 +306,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             var softwareEntropy = new byte[ComplementSecretLength];
             try
             {
-                VaultParser.V4DecryptSoftwareEntropy(passkey, _existingKeystoreDataModel, softwareEntropy);
+                VaultParser.DecryptSoftwareEntropy(passkey, _existingKeystoreDataModel, softwareEntropy);
                 return softwareEntropy;
             }
             catch
@@ -324,7 +324,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             RandomNumberGenerator.Fill(salt);
 
             _keystoreDataModel = _keyPair.UseKeys((dekKey, macKey) =>
-                VaultParser.V4ReEncryptKeystore(passkey, dekKey, macKey, salt, softwareEntropy));
+                VaultParser.ReEncryptKeystore(passkey, dekKey, macKey, salt, softwareEntropy));
         }
 
         private VaultShareDataModel GetShare(string authenticationMethodId)
@@ -394,11 +394,11 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             _keyPair.MacKey.UseKey(macKey =>
             {
-                VaultParser.V4CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+                VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
             });
 
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
-            await _vaultWriter.WriteV4ConfigurationAsync(_configDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             if (_writeShares)
                 await _vaultWriter.WriteComplementationAsync(_sharesDataModel, cancellationToken);

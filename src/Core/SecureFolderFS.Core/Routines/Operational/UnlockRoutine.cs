@@ -18,8 +18,8 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class UnlockRoutine : ICredentialsRoutine
     {
         private readonly VaultReader _vaultReader;
-        private V4VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private VaultSharesDataModel? _sharesDataModel;
         private SecureKey? _dekKey;
         private SecureKey? _macKey;
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             var authenticationMethod = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
             var derived = string.IsNullOrWhiteSpace(authenticationMethod.Complementation)
-                ? passkey.UseKey(key => VaultParser.V4DeriveKeystore(key, _keystoreDataModel))
+                ? passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel))
                 : DeriveComplementedKeystore(passkey, authenticationMethod);
 
             _dekKey = SecureKey.TakeOwnership(derived.dekKey);
@@ -67,8 +67,8 @@ namespace SecureFolderFS.Core.Routines.Operational
                     Span<byte> complementSecret = stackalloc byte[32];
                     try
                     {
-                        VaultParser.V4DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
-                        return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                        VaultParser.DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
+                        return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
                     }
                     finally
                     {
@@ -95,8 +95,8 @@ namespace SecureFolderFS.Core.Routines.Operational
                 byte[]? complementSecret = null;
                 try
                 {
-                    complementSecret = passkey.UseKey(key => VaultParser.V4UnwrapComplementSecret(key, _configDataModel.Uid, share));
-                    return VaultParser.V4DeriveKeystore(complementSecret, _keystoreDataModel);
+                    complementSecret = passkey.UseKey(key => VaultParser.UnwrapComplementSecret(key, _configDataModel.Uid, share));
+                    return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
                 }
                 catch (CryptographicException ex)
                 {

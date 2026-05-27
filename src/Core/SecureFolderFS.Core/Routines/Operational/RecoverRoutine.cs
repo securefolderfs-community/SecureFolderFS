@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.Routines.Operational
     public sealed class RecoverRoutine : ICredentialsRoutine, IFinalizationRoutine
     {
         private readonly VaultReader _vaultReader;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private KeyPair? _keyPair;
 
         public RecoverRoutine(VaultReader vaultReader)

@@ -19,9 +19,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         private readonly VaultReader _vaultReader;
         private readonly VaultWriter _vaultWriter;
         private KeyPair? _keyPair;
-        private V4VaultKeystoreDataModel? _existingV4KeystoreDataModel;
-        private V4VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultKeystoreDataModel? _existingV4KeystoreDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
 
         public ModifyCredentialsRoutine(VaultReader vaultReader, VaultWriter vaultWriter)
         {
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
-            _configDataModel = V4VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
+            _configDataModel = VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
         }
 
         /// <inheritdoc/>
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                     _keyPair.UseKeys(state, (dekKey, macKey, s) =>
                     {
                         var k = new ReadOnlySpan<byte>((byte*)s.keyPtr, s.keyLen);
-                        _keystoreDataModel = VaultParser.V4EncryptKeystore(k, dekKey, macKey, salt);
+                        _keystoreDataModel = VaultParser.EncryptKeystore(k, dekKey, macKey, salt);
                     });
                 }
             });
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                     oldPasskey.UseKey(state, (oldKey, s) =>
                     {
                         var se = new Span<byte>((byte*)s.sePtr, s.seLen);
-                        VaultParser.V4DecryptSoftwareEntropy(oldKey, _existingV4KeystoreDataModel, se);
+                        VaultParser.DecryptSoftwareEntropy(oldKey, _existingV4KeystoreDataModel, se);
                     });
                 }
 
@@ -116,7 +116,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                                 var nk = new ReadOnlySpan<byte>((byte*)s2.nkPtr, s2.nkLen);
                                 var se = new Span<byte>((byte*)s2.outerState.sePtr, s2.outerState.seLen);
 
-                                _keystoreDataModel = VaultParser.V4ReEncryptKeystore(nk, dekKey, macKey, salt, se);
+                                _keystoreDataModel = VaultParser.ReEncryptKeystore(nk, dekKey, macKey, salt, se);
                             });
                         }
                     });
@@ -138,12 +138,12 @@ namespace SecureFolderFS.Core.Routines.Operational
             // First, we need to fill in the PayloadMac of the content
             _keyPair.MacKey.UseKey(macKey =>
             {
-                VaultParser.V4CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+                VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
             });
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
-            await _vaultWriter.WriteV4ConfigurationAsync(_configDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // Key copies need to be created because the original ones are disposed of here
             using (_keyPair)

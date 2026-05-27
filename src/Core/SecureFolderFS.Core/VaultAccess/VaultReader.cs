@@ -23,14 +23,14 @@ namespace SecureFolderFS.Core.VaultAccess
             _serializer = serializer;
         }
 
-        public async Task<V4VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
+        public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
         {
-            return await ReadConfigurationAsync<V4VaultConfigurationDataModel>(cancellationToken);
+            return await ReadConfigurationAsync<VaultConfigurationDataModel>(cancellationToken);
         }
 
-        public async Task<V4VaultKeystoreDataModel> ReadKeystoreAsync(CancellationToken cancellationToken)
+        public async Task<VaultKeystoreDataModel> ReadKeystoreAsync(CancellationToken cancellationToken)
         {
-            return await ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
+            return await ReadKeystoreAsync<VaultKeystoreDataModel>(cancellationToken);
         }
 
         /// <summary>

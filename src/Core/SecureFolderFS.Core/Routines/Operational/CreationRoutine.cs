@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.Routines.Operational
     {
         private readonly IFolder _vaultFolder;
         private readonly VaultWriter _vaultWriter;
-        private V4VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultConfigurationDataModel? _configDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private IKeyUsage? _dekKey;
         private IKeyUsage? _macKey;
 
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             RandomNumberGenerator.Fill(salt);
 
             // Generate V4 keystore
-            _keystoreDataModel = passkey.UseKey(key => VaultParser.V4EncryptKeystore(key, dekKey, macKey, salt));
+            _keystoreDataModel = passkey.UseKey(key => VaultParser.EncryptKeystore(key, dekKey, macKey, salt));
 
             // Create key copies for later use
             _dekKey = SecureKey.TakeOwnership(dekKey);
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
-            _configDataModel = V4VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
+            _configDataModel = VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
         }
 
         /// <inheritdoc/>
@@ -75,12 +75,12 @@ namespace SecureFolderFS.Core.Routines.Operational
             // First, we need to fill in the PayloadMac of the content
             _macKey.UseKey(macKey =>
             {
-                VaultParser.V4CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
+                VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
             });
 
             // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
-            await _vaultWriter.WriteV4ConfigurationAsync(_configDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // Create the content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
