@@ -24,11 +24,11 @@
             <InfoBar
                 IsClosable="False"
                 IsOpen="True"
-                Message="Important configuration files are corrupted and need to be restored." />
+                Message="{l:ResourceString Rid=RestorationTitle}" />
 
             <TextBlock
                 Opacity="0.6"
-                Text="SecureFolderFS will try to regenerate configuration files based on information from your encrypted data. You will need to reset your credentials after restoring the vault."
+                Text="{l:ResourceString Rid=RestorationDescription}"
                 TextWrapping="WrapWholeWords" />
         </StackPanel>
 

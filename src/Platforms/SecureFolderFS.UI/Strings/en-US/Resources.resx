@@ -1472,4 +1472,10 @@
   <data name="NameShortening" xml:space="preserve">
       <value>Name shortening</value>
   </data>
+  <data name="RestorationTitle" xml:space="preserve">
+      <value>Important configuration files are corrupted and must be restored.</value>
+  </data>
+  <data name="RestorationDescription" xml:space="preserve">
+      <value>SecureFolderFS will attempt to regenerate the configuration files using information from your encrypted data. After the restore process is complete, you will need to reset your credentials.</value>
+  </data>
 </root>

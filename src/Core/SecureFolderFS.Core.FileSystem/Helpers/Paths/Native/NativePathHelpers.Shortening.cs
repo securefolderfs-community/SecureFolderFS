@@ -34,11 +34,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
                 if (!File.Exists(sidecarPath))
                     return null;
 
-                var content = File.ReadAllText(sidecarPath, Encoding.UTF8);
-                if (content.Length > AbstractPathHelpers.MAX_SIDECAR_BYTES)
+                using var stream = File.OpenRead(sidecarPath);
+                var buffer = new byte[AbstractPathHelpers.MAX_SIDECAR_BYTES + 1];
+                var bytesRead = stream.Read(buffer.AsSpan(0, buffer.Length));
+                if (bytesRead > AbstractPathHelpers.MAX_SIDECAR_BYTES)
                     return null; // Reject malformed/malicious sidecar
 
-                return content;
+                return Encoding.UTF8.GetString(buffer.AsSpan(0, bytesRead));
             }
             catch (Exception)
             {
@@ -57,9 +59,16 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
             if (sidecarName is null)
                 return;
 
-            var sidecarPath = Path.Combine(ciphertextParentPath, sidecarName);
-            if (File.Exists(sidecarPath))
-                File.Delete(sidecarPath);
+            try
+            {
+                var sidecarPath = Path.Combine(ciphertextParentPath, sidecarName);
+                if (File.Exists(sidecarPath))
+                    File.Delete(sidecarPath);
+            }
+            catch (Exception)
+            {
+                // Ignore as this should not hinder other file system operations
+            }
         }
     }
 }

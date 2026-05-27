@@ -70,7 +70,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
             {
                 IFile file => new SystemFileEx(file.Id),
                 IFolder folder => new SystemFolderEx(folder.Id),
-                _ => throw new ArgumentOutOfRangeException(nameof(GetItemRecursiveAsync))
+                _ => throw new ArgumentOutOfRangeException(nameof(id))
             };
         }
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
             {
                 IFile file => new SystemFileEx(file.Id),
                 IFolder folder => new SystemFolderEx(folder.Id),
-                _ => throw new ArgumentOutOfRangeException(nameof(GetItemAsync))
+                _ => throw new ArgumentOutOfRangeException(nameof(id))
             };
         }
 
@@ -92,7 +92,7 @@ namespace SecureFolderFS.Storage.SystemStorageEx
             {
                 IFile file => new SystemFileEx(file.Id),
                 IFolder folder => new SystemFolderEx(folder.Id),
-                _ => throw new ArgumentOutOfRangeException(nameof(GetFirstByNameAsync))
+                _ => throw new ArgumentOutOfRangeException(nameof(name))
             };
         }
 
