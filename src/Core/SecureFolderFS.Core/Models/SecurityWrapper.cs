@@ -8,7 +8,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.Models
 {
-    internal sealed class SecurityWrapper : IWrapper<Security>, IEnumerable<KeyValuePair<string, object>>, IDisposable
+    internal sealed class SecurityWrapper : IWrapper<Security>, IWrapper<KeyPair>, IEnumerable<KeyValuePair<string, object>>, IDisposable
     {
         private readonly KeyPair _keyPair;
         private readonly VaultConfigurationDataModel _configDataModel;
@@ -20,6 +20,9 @@ namespace SecureFolderFS.Core.Models
                 contentCipherId: _configDataModel.ContentCipherId,
                 fileNameCipherId: _configDataModel.FileNameCipherId,
                 fileNameEncodingId: _configDataModel.FileNameEncodingId);
+
+        /// <inheritdoc/>
+        KeyPair IWrapper<KeyPair>.Inner => _keyPair;
 
         public SecurityWrapper(KeyPair keyPair, VaultConfigurationDataModel configDataModel)
         {

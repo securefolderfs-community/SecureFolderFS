@@ -50,7 +50,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                     Constants.Vault.Authentication.AUTH_ANDROID_BIOMETRIC => new AndroidBiometricLoginViewModel(vaultFolder, vaultId),
                     
                     // App Platform
-                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder),
                     
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };

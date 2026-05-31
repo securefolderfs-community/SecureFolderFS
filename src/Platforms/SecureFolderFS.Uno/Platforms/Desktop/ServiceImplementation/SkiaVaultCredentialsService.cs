@@ -47,6 +47,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             // Device Link
             yield return new DeviceLinkCreationViewModel(vaultFolder, vaultId) { Icon = new ImageGlyph("\uE8EA") };
 
+            // App Platform
+            yield return new AppPlatformCreationViewModel() { Icon = new ImageGlyph("\uF69B") };
+
             await Task.CompletedTask;
         }
         
@@ -78,7 +81,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
                     Constants.Vault.Authentication.AUTH_DEVICE_LINK => new DeviceLinkLoginViewModel(vaultFolder, vaultId).WithInitAsync(cancellationToken),
                     
                     // App Platform
-                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder),
                     
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };

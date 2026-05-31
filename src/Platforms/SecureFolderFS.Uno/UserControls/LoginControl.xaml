@@ -144,15 +144,19 @@
                 <FontIcon
                     HorizontalAlignment="Center"
                     FontSize="24"
-                    Glyph="&#xF69B;" />
+                    Glyph="&#xE753;" />
 
-                <!--  Info  -->
-                <InfoBar
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="Sign in with App Platform" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
                     HorizontalAlignment="Center"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="Authenticating with App Platform is not supported in this version. Please update SecureFolderFS."
-                    Severity="Warning" />
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Authenticate}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
 

@@ -30,11 +30,7 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.ShorteningThreshold));                              // ShorteningThreshold
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                              // FileNameEncodingId
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                             // Uid
-            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.ServerUrl ?? string.Empty));
-            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.VaultResource ?? string.Empty));
-            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.Organization ?? string.Empty));
-            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.AccessTokenEndpoint ?? string.Empty));
-            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.DeviceRegistrationEndpoint ?? string.Empty));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.ServerUrl ?? string.Empty));           // AppPlatform.ServerUrl
             hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                       // AuthenticationMethod
 
             // Fill the hash to payload

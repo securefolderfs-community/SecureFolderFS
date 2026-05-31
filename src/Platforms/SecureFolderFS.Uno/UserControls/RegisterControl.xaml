@@ -181,11 +181,40 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
+
+        <!--  App Platform Template  -->
+        <DataTemplate x:Key="AppPlatformTemplate" x:DataType="vm:AppPlatformCreationViewModel">
+            <StackPanel Spacing="16">
+                <!--  Icon  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    Glyph="&#xF69B;" />
+
+                <!--  Title  -->
+                <TextBlock HorizontalAlignment="Center" Text="Connect to App Platform" />
+
+                <!--  Server URL  -->
+                <TextBox
+                    Header="Server URL"
+                    PlaceholderText="https://"
+                    Text="{x:Bind ServerUrl, Mode=TwoWay}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Setup}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
     </UserControl.Resources>
 
     <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind CurrentViewModel, Mode=OneWay}">
         <ContentControl.ContentTemplateSelector>
             <ts:RegistrationTemplateSelector
+                AppPlatformTemplate="{StaticResource AppPlatformTemplate}"
                 DeviceLinkTemplate="{StaticResource DeviceLinkTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"

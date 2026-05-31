@@ -57,6 +57,25 @@ namespace SecureFolderFS.Sdk.Services
         // TODO: Consider using IVaultUnlockingModel
         //Task<IVaultUnlockingModel> GetUnlockingModelAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Creates a new App Platform vault. Generates DEK+MAC internally (no password, no keystore.cfg).
+        /// Returns the security wrapper and raw key bytes for encryption and upload to the server.
+        /// </summary>
+        /// <param name="vaultFolder">The folder where the vault should be created.</param>
+        /// <param name="vaultOptions">The required options to set for this vault (must have AppPlatform set).</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a tuple of (unlockContract, dekKey, macKey).</returns>
+        Task<(IDisposable UnlockContract, IKeyUsage DekKey, IKeyUsage MacKey)> CreateAppPlatformAsync(IFolder vaultFolder, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Unlocks an App Platform vault using the combined DEK+MAC key from the server.
+        /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
+        /// <param name="passkey">The combined DEK‖MAC key (64 bytes) obtained from the server-brokered key chain.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the unlock contract.</returns>
+        Task<IDisposable> UnlockAppPlatformAsync(IFolder vaultFolder, IKeyUsage passkey, CancellationToken cancellationToken = default);
+
         Task ModifyComplementationAsync(IFolder vaultFolder, IDisposable unlockContract, ComplementationCredentials credentials, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
 
         /// <summary>

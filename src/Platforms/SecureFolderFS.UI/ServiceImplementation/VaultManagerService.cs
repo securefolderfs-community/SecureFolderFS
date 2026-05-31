@@ -33,10 +33,42 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public virtual async Task<(IDisposable UnlockContract, IKeyUsage DekKey, IKeyUsage MacKey)> CreateAppPlatformAsync(IFolder vaultFolder, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        {
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
+            using var creationRoutine = routines.CreateAppPlatformVault();
+            await creationRoutine.InitAsync(cancellationToken);
+            creationRoutine.SetOptions(vaultOptions);
+
+            if (vaultFolder is IModifiableFolder modifiableFolder)
+            {
+                var readmeFile = await modifiableFolder.CreateFileAsync(Sdk.Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Sdk.Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+            }
+
+            var unlockContract = await creationRoutine.FinalizeAsync(cancellationToken);
+            if (unlockContract is not IWrapper<KeyPair> { Inner: { } keyPair })
+                throw new InvalidOperationException("Could not retrieve the KeyPair from the unlock contract.");
+            
+            return (unlockContract, keyPair.DekKey, keyPair.MacKey);
+        }
+
+        /// <inheritdoc/>
         public virtual async Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKeyUsage passkey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
+
+            await unlockRoutine.InitAsync(cancellationToken);
+            unlockRoutine.SetCredentials(passkey);
+            return await unlockRoutine.FinalizeAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IDisposable> UnlockAppPlatformAsync(IFolder vaultFolder, IKeyUsage passkey, CancellationToken cancellationToken = default)
+        {
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
+            using var unlockRoutine = routines.UnlockAppPlatformVault();
 
             await unlockRoutine.InitAsync(cancellationToken);
             unlockRoutine.SetCredentials(passkey);
