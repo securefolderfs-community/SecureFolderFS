@@ -57,7 +57,7 @@
     <!-- Skia Desktop -->
     <When Condition="'$(TargetFramework)'=='net10.0-desktop'">
       <PropertyGroup>
-        <DefineConstants>HAS_UNO_SKIA</DefineConstants>
+        <DefineConstants>$(DefineConstants);HAS_UNO_SKIA</DefineConstants>
       </PropertyGroup>
 
       <ItemGroup>
@@ -153,7 +153,7 @@
 
       <!-- Define UNPACKAGED constant -->
       <PropertyGroup Condition="'$(WindowsPackageType)' == 'None'">
-        <DefineConstants>UNPACKAGED</DefineConstants>
+        <DefineConstants>$(DefineConstants);UNPACKAGED</DefineConstants>
       </PropertyGroup>
     </When>
   </Choose>

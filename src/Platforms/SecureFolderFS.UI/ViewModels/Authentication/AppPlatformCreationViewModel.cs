@@ -1,3 +1,4 @@
+#if APP_PLATFORM_PRESENT
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             if (string.IsNullOrWhiteSpace(ServerUrl))
                 throw new InvalidOperationException("A server URL is required.");
 
-            var authProvider = DI.Service<IAppPlatformAuthProvider>();
+            var authProvider = DI.Service<IOidcProvider>();
 
             _client?.Dispose();
             _client = new AppPlatformClient(ServerUrl);
@@ -135,3 +136,4 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
     }
 }
+#endif

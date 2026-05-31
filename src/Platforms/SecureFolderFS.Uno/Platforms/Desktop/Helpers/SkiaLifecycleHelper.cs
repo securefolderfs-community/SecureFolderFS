@@ -13,6 +13,10 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
+#if APP_PLATFORM_PRESENT
+using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Shared.ComponentModel;
+#endif
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 {
@@ -65,6 +69,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
                     .Override<IVaultFileSystemService, SkiaVaultFileSystemService>(AddService.AddSingleton)
                     .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
+#if APP_PLATFORM_PRESENT
+                    .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
+#endif
 
                     .WithUnoServices(settingsFolder)
                 ;

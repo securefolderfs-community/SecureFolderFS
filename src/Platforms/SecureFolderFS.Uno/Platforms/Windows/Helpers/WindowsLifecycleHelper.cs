@@ -13,6 +13,10 @@ using SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation;
 using Windows.Storage;
 using SecureFolderFS.Shared.Extensions;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
+#if APP_PLATFORM_PRESENT
+using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Shared.ComponentModel;
+#endif
 
 namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 {
@@ -54,6 +58,10 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 .Override<IApplicationService, WindowsApplicationService>(AddService.AddSingleton)
                 .Override<IVaultFileSystemService, WindowsVaultFileSystemService>(AddService.AddSingleton)
                 .Override<IVaultCredentialsService, WindowsVaultCredentialsService>(AddService.AddSingleton)
+                
+#if APP_PLATFORM_PRESENT
+                .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
+#endif
 
                 // IIapService, IUpdateService
 #if DEBUG || UNPACKAGED

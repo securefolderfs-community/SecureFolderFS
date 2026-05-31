@@ -31,6 +31,19 @@
     <IncludeSourceRevisionInInformationalVersion Condition="'$(Configuration)'=='Debug'">false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
+  <!-- Detect App Platform SDK -->
+  <PropertyGroup>
+    <AppPlatformSdkPath>
+      $(MSBuildThisFileDirectory)..\Sdk\SecureFolderFS.Sdk.AppPlatform\SecureFolderFS.Sdk.AppPlatform.csproj
+    </AppPlatformSdkPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="Exists('$(AppPlatformSdkPath)')">
+    <DefineConstants>
+      $(DefineConstants);APP_PLATFORM_PRESENT
+    </DefineConstants>
+  </PropertyGroup>
+
   <Choose>
     <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
       <PropertyGroup>
