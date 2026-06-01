@@ -39,9 +39,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="Exists('$(AppPlatformSdkPath)')">
-    <DefineConstants>
-      $(DefineConstants);APP_PLATFORM_PRESENT
-    </DefineConstants>
+    <DefineConstants>$(DefineConstants);APP_PLATFORM_PRESENT</DefineConstants>
   </PropertyGroup>
 
   <Choose>
