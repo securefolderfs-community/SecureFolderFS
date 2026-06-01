@@ -1,4 +1,3 @@
-#if APP_PLATFORM_PRESENT
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -172,4 +171,3 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
     }
 }
-#endif

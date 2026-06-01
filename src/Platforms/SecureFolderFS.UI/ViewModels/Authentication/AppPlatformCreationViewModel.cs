@@ -1,10 +1,8 @@
-#if APP_PLATFORM_PRESENT
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Core.Cryptography.Jwe;
-using SecureFolderFS.Sdk.AppPlatform;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
@@ -12,12 +10,17 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+#if APP_PLATFORM_PRESENT
+using SecureFolderFS.Sdk.AppPlatform;
+#endif
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     public sealed partial class AppPlatformCreationViewModel : AuthenticationViewModel, IVaultOptionsProvider, IAppPlatformVaultRegistration
     {
+#if APP_PLATFORM_PRESENT
         private AppPlatformClient? _client;
+#endif
 
         [ObservableProperty] private string? _ServerUrl;
         [ObservableProperty] private bool _IsAuthenticated;
@@ -61,6 +64,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
+#if APP_PLATFORM_PRESENT
             if (string.IsNullOrWhiteSpace(ServerUrl))
                 throw new InvalidOperationException("A server URL is required.");
 
@@ -83,6 +87,9 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             var tcs = new TaskCompletionSource();
             CredentialsProvided?.Invoke(this, new(ManagedKey.Empty, tcs));
             await tcs.Task;
+#else
+            return;
+#endif
         }
 
         /// <inheritdoc/>
@@ -100,6 +107,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         /// <inheritdoc/>
         public async Task RegisterVaultAsync(string vaultId, string? name, IKeyUsage dekKey, IKeyUsage macKey, CancellationToken cancellationToken = default)
         {
+#if APP_PLATFORM_PRESENT
             if (_client is null)
                 throw new InvalidOperationException("The App Platform connection has not been authenticated.");
 
@@ -109,8 +117,10 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
 
             var vaultKeyJwe = GetVaultJweKey(user, dekKey, macKey);
             await _client.RegisterVaultAsync(vaultId, name, vaultKeyJwe, description: null, cancellationToken);
+#endif
         }
 
+#if APP_PLATFORM_PRESENT
         private static unsafe string GetVaultJweKey(AppPlatformClient.UserInfo userInfo, IKeyUsage dekKey, IKeyUsage macKey)
         {
             return dekKey.UseKey(dek =>
@@ -126,14 +136,16 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 }
             });
         }
+#endif
 
         /// <inheritdoc/>
         public override void Dispose()
         {
+#if APP_PLATFORM_PRESENT
             _client?.Dispose();
             _client = null;
+#endif
             base.Dispose();
         }
     }
 }
-#endif
