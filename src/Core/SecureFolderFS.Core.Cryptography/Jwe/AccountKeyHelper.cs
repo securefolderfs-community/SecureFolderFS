@@ -11,14 +11,15 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
     public static class AccountKeyHelper
     {
         /// <summary>
-        /// Wraps an EC private key (in DER format) under a user-provided passphrase using PBES2-HS256+A128KW / A256GCM.
+        /// Wraps an EC private key (in DER format) under a user-provided passphrase using PBES2-HS512+A256KW / A256GCM.
+        /// Uses 256-bit AES key wrapping for post-quantum security margin.
         /// </summary>
         /// <param name="privateKeyBytes">The EC private key bytes (DER-encoded) to wrap.</param>
         /// <param name="passphrase">The user-provided Account Key passphrase.</param>
         /// <returns>A JWE compact serialization string containing the encrypted private key.</returns>
         public static string Wrap(byte[] privateKeyBytes, string passphrase)
         {
-            return JWT.EncodeBytes(privateKeyBytes, passphrase, JweAlgorithm.PBES2_HS256_A128KW, JweEncryption.A256GCM);
+            return JWT.EncodeBytes(privateKeyBytes, passphrase, JweAlgorithm.PBES2_HS512_A256KW, JweEncryption.A256GCM);
         }
 
         /// <summary>
@@ -29,11 +30,11 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
         /// <returns>The EC private key bytes (DER-encoded).</returns>
         public static byte[] Unwrap(string jweCompact, string passphrase)
         {
-            return JWT.DecodeBytes(jweCompact, passphrase, JweAlgorithm.PBES2_HS256_A128KW, JweEncryption.A256GCM);
+            return JWT.DecodeBytes(jweCompact, passphrase, JweAlgorithm.PBES2_HS512_A256KW, JweEncryption.A256GCM);
         }
 
         /// <summary>
-        /// Wraps a user's EC private key for Account Key bootstrap.
+        /// Wraps a user's EC private key for Account Key bootstrap using PBES2-HS512+A256KW / A256GCM.
         /// The private key is stored in JWK format inside the JWE for cross-platform compatibility.
         /// </summary>
         /// <param name="userPrivateKey">The user's EC private key to wrap.</param>
