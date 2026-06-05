@@ -26,6 +26,7 @@
     <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="Plugin.Maui.BottomSheet" Version="9.1.4" />
     <PackageVersion Include="Plugin.SegmentedControl.Maui" Version="1.4.36" />
+    <PackageVersion Include="jose-jwt" Version="5.3.0" />
     <PackageVersion Include="QuestPDF" Version="2024.12.2" />
     <PackageVersion Include="Sentry" Version="6.4.1" />
     <PackageVersion Include="SkiaSharp" Version="3.119.2" />

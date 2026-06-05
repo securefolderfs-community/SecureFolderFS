@@ -13,6 +13,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private string? _Passphrase;
         [ObservableProperty] private string? _ErrorMessage;
 
+        /// <summary>
+        /// Set to true when the user requests an account key reset (forgot passphrase flow)
+        /// instead of providing a passphrase. The caller should handle the reset API call.
+        /// </summary>
+        public bool ResetRequested { get; set; }
+
         public DeviceSetupOverlayViewModel()
         {
             Title = "Device Setup Required";
