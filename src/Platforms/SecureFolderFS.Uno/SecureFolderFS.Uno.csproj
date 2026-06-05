@@ -229,6 +229,7 @@
     <None Remove="Dialogs\AgreementDialog.xaml" />
     <None Remove="Dialogs\ChangelogDialog.xaml" />
     <None Remove="Dialogs\CredentialsDialog.xaml" />
+    <None Remove="Dialogs\DeviceSetupDialog.xaml" />
     <None Remove="Dialogs\ExplanationDialog.xaml" />
     <None Remove="Dialogs\LicensesDialog.xaml" />
     <None Remove="Dialogs\MigrationDialog.xaml" />
@@ -299,6 +300,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\ChangelogDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\DeviceSetupDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -496,12 +501,16 @@
     <Page Update="Views\Vault\VaultPropertiesPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+    <Page Update="Dialogs\DeviceSetupDialog.xaml">
+      <IsDefaultItem>true</IsDefaultItem>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Dialogs\AgreementDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ChangelogDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\DeviceSetupDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\MigrationDialog.xaml" />

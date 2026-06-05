@@ -11,10 +11,16 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+#if APP_PLATFORM_PRESENT
+using SecureFolderFS.Sdk.AppPlatform;
+#endif
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
 {
@@ -65,6 +71,88 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
 
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        {
+#if APP_PLATFORM_PRESENT
+            if (!OperatingSystem.IsBrowser())
+            {
+                await ProvideCredentialsNativeAsync(cancellationToken);
+                return;
+            }
+#endif
+            await ProvideCredentialsViaBrowserAsync(cancellationToken);
+        }
+
+#if APP_PLATFORM_PRESENT
+        /// <summary>
+        /// Native desktop flow: OIDC auth via system browser, then decrypt the vault key
+        /// entirely in .NET (no JS interop, no jose library mismatch).
+        /// If this is the first unlock on this device, prompts for the Account Key passphrase
+        /// to bootstrap the device key chain.
+        /// </summary>
+        private async Task ProvideCredentialsNativeAsync(CancellationToken cancellationToken)
+        {
+            var vaultReader = new VaultReader(_vaultFolder, StreamSerializer.Instance);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            if (config.AppPlatform is null)
+                throw new InvalidOperationException("Vault is not configured for App Platform.");
+
+            var serverUrl = config.AppPlatform.ServerUrl.TrimEnd('/');
+            var vaultId = config.Uid;
+
+            var authProvider = DI.Service<IOidcProvider>();
+            var deviceKeyStore = DI.Service<IDeviceKeyStore>();
+
+            using var client = new AppPlatformClient(serverUrl);
+            var authConfig = await client.GetAuthConfigAsync(cancellationToken);
+            var accessToken = await authProvider.GetAccessTokenAsync(
+                authConfig.Authority, authConfig.ClientId, authConfig.Scopes, cancellationToken);
+            client.SetAccessToken(accessToken);
+
+            var keyManager = new AppPlatformKeyManager(deviceKeyStore, client, authProvider);
+
+            // If no device is registered on this machine, bootstrap one using the Account Key passphrase
+            if (!await deviceKeyStore.HasPrivateKeyAsync(cancellationToken))
+            {
+                StateChanged?.Invoke(this, EventArgs.Empty);
+
+                var overlayService = DI.Service<IOverlayService>();
+                var overlay = new DeviceSetupOverlayViewModel();
+                var result = await overlayService.ShowAsync(overlay);
+
+                if (!result.Successful || string.IsNullOrEmpty(overlay.Passphrase))
+                    throw new OperationCanceledException("Account Key passphrase is required to set up this device.");
+
+                var deviceName = Environment.MachineName;
+                await keyManager.BootstrapDeviceAsync(deviceName, overlay.Passphrase, cancellationToken);
+            }
+
+            var (dekKey, macKey) = await keyManager.DecryptVaultKeyAsync(vaultId, cancellationToken);
+
+            var combined = new byte[dekKey.Length + macKey.Length];
+            try
+            {
+                Array.Copy(dekKey, 0, combined, 0, dekKey.Length);
+                Array.Copy(macKey, 0, combined, dekKey.Length, macKey.Length);
+
+                using var key = ManagedKey.TakeOwnership(combined);
+                var tcs = new TaskCompletionSource();
+                CredentialsProvided?.Invoke(this, new(key, tcs));
+                await tcs.Task;
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(dekKey);
+                CryptographicOperations.ZeroMemory(macKey);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Browser-based fallback: opens the server's unlock page which handles authentication
+        /// and vault key decryption in-browser, then POSTs the decrypted key back to localhost.
+        /// </summary>
+        private async Task ProvideCredentialsViaBrowserAsync(CancellationToken cancellationToken)
         {
             var vaultReader = new VaultReader(_vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);

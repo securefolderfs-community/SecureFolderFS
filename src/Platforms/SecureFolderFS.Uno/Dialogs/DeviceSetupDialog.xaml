@@ -1,0 +1,34 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.Uno.Dialogs.DeviceSetupDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Device Setup Required"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Continue"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel Width="380" Spacing="16">
+        <TextBlock Text="This is the first time unlocking an App Platform vault on this device. Enter your Account Key passphrase to set up this device." TextWrapping="Wrap" />
+
+        <PasswordBox x:Name="PassphraseBox" PlaceholderText="Account Key passphrase" />
+
+        <TextBlock
+            x:Name="ErrorText"
+            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+            Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+            TextWrapping="Wrap"
+            Visibility="Collapsed" />
+
+        <TextBlock
+            FontSize="12"
+            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+            Text="This passphrase was set when you first configured your App Platform account. It is needed once per device to import your private key."
+            TextWrapping="Wrap" />
+    </StackPanel>
+</ContentDialog>
