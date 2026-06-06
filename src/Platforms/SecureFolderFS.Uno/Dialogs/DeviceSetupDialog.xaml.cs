@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -31,6 +33,21 @@ namespace SecureFolderFS.Uno.Dialogs
                 ViewModel.Passphrase = PassphraseBox.Password;
 
             return result.ParseOverlayOption();
+        }
+
+        private void ForgotPassphraseLink_Click(object sender, RoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(ForgotPassphraseLink);
+        }
+
+        private void ConfirmReset_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            ResetFlyout.Hide();
+            ViewModel.ResetRequested = true;
+            Hide();
         }
 
         /// <inheritdoc/>

@@ -30,5 +30,27 @@
             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
             Text="This passphrase was set when you first configured your App Platform account. It is needed once per device to import your private key."
             TextWrapping="Wrap" />
+
+        <HyperlinkButton
+            x:Name="ForgotPassphraseLink"
+            Padding="0"
+            HorizontalAlignment="Center"
+            Click="ForgotPassphraseLink_Click"
+            Content="Forgot your passphrase? Request an account reset">
+            <FlyoutBase.AttachedFlyout>
+                <Flyout x:Name="ResetFlyout" Placement="Top">
+                    <StackPanel Width="300" Spacing="12">
+                        <TextBlock
+                            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                            Text="This will request an administrator to reset your account. All your current keys will be deleted and access to all vaults will be revoked."
+                            TextWrapping="Wrap" />
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Click="ConfirmReset_Click"
+                            Content="Request Reset" />
+                    </StackPanel>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </HyperlinkButton>
     </StackPanel>
 </ContentDialog>
