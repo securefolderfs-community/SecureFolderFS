@@ -89,6 +89,45 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
             return ecdh;
         }
 
+        /// <summary>
+        /// Compares the public EC coordinates in two P-256 JWKs.
+        /// </summary>
+        public static bool PublicJwksEqual(string leftJwk, string rightJwk)
+        {
+            var left = DeserializeJwk(leftJwk);
+            var right = DeserializeJwk(rightJwk);
+
+            return left.Q.X is not null &&
+                   left.Q.Y is not null &&
+                   right.Q.X is not null &&
+                   right.Q.Y is not null &&
+                   CryptographicOperations.FixedTimeEquals(left.Q.X, right.Q.X) &&
+                   CryptographicOperations.FixedTimeEquals(left.Q.Y, right.Q.Y);
+        }
+
+        /// <summary>
+        /// Computes the JWK Thumbprint (RFC 7638) for an EC P-256 public key JWK.
+        /// Uses SHA-256 over the lexicographically-sorted required members: crv, kty, x, y.
+        /// </summary>
+        /// <param name="publicKeyJwk">The public key as a JWK JSON string.</param>
+        /// <returns>A base64url-encoded SHA-256 thumbprint.</returns>
+        public static string ComputeJwkThumbprint(string publicKeyJwk)
+        {
+            using var doc = JsonDocument.Parse(publicKeyJwk);
+            var root = doc.RootElement;
+
+            var crv = root.GetProperty("crv").GetString();
+            var kty = root.GetProperty("kty").GetString();
+            var x = root.GetProperty("x").GetString();
+            var y = root.GetProperty("y").GetString();
+
+            // RFC 7638: canonical JSON with required members in lexicographic order
+            // For EC keys the required members are: crv, kty, x, y
+            var canonical = $"{{\"crv\":\"{crv}\",\"kty\":\"{kty}\",\"x\":\"{x}\",\"y\":\"{y}\"}}";
+            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+            return Base64UrlEncode(hash);
+        }
+
         private static string SerializeJwk(ECParameters parameters, bool includePrivate)
         {
             using var stream = new System.IO.MemoryStream();
@@ -147,6 +186,9 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
         private static byte[] Base64UrlDecode(string base64Url)
         {
             var s = base64Url.Replace('-', '+').Replace('_', '/');
+            if (s.Length % 4 == 1)
+                throw new FormatException("Invalid base64url length.");
+
             switch (s.Length % 4)
             {
                 case 2: s += "=="; break;

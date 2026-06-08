@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using Jose;
 
@@ -11,17 +12,22 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
     {
         /// <summary>
         /// Encrypts a byte payload for a recipient's EC P-256 public key, producing a JWE compact serialization.
+        /// Includes a <c>kid</c> header (JWK Thumbprint, RFC 7638) binding the JWE to the recipient's key.
         /// </summary>
         /// <param name="plaintext">The plaintext bytes to encrypt.</param>
         /// <param name="recipientPublicKey">The recipient's EC P-256 public key (only the public component is used).</param>
+        /// <param name="extraHeaders">Optional additional JWE headers to include.</param>
         /// <returns>A JWE compact serialization string.</returns>
-        public static string Encrypt(byte[] plaintext, ECDiffieHellman recipientPublicKey)
+        public static string Encrypt(byte[] plaintext, ECDiffieHellman recipientPublicKey, IDictionary<string, object>? extraHeaders = null)
         {
-            return JWT.EncodeBytes(plaintext, recipientPublicKey, JweAlgorithm.ECDH_ES_A256KW, JweEncryption.A256GCM);
+            return JWT.EncodeBytes(plaintext, recipientPublicKey, JweAlgorithm.ECDH_ES_A256KW, JweEncryption.A256GCM, extraHeaders: extraHeaders);
         }
 
         /// <summary>
         /// Encrypts a byte payload for a recipient identified by their public key JWK string.
+        /// Includes a <c>kid</c> header (JWK Thumbprint, RFC 7638) to cryptographically bind the JWE
+        /// to the intended recipient's public key. The server uses this to verify the JWE is encrypted
+        /// for the correct user.
         /// </summary>
         /// <param name="plaintext">The plaintext bytes to encrypt.</param>
         /// <param name="recipientPublicKeyJwk">The recipient's public key as a JWK JSON string.</param>
@@ -29,7 +35,9 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
         public static string Encrypt(byte[] plaintext, string recipientPublicKeyJwk)
         {
             using var publicKey = EcKeyHelper.ImportPublicKeyJwk(recipientPublicKeyJwk);
-            return Encrypt(plaintext, publicKey);
+            var kid = EcKeyHelper.ComputeJwkThumbprint(recipientPublicKeyJwk);
+            var headers = new Dictionary<string, object> { ["kid"] = kid };
+            return Encrypt(plaintext, publicKey, headers);
         }
 
         /// <summary>

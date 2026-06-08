@@ -68,6 +68,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             if (string.IsNullOrWhiteSpace(ServerUrl))
                 throw new InvalidOperationException("A server URL is required.");
 
+            ServerUrl = AppPlatformEndpointGuard.NormalizeServerUrl(ServerUrl);
             var authProvider = DI.Service<IOidcProvider>();
 
             _client?.Dispose();

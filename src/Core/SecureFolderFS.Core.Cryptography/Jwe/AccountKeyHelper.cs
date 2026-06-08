@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using Jose;
 
@@ -10,6 +12,10 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
     /// </summary>
     public static class AccountKeyHelper
     {
+        private const int AccountKeyPbes2Iterations = 120_000;
+        private const string AccountKeyAlgorithm = "PBES2-HS512+A256KW";
+        private const string AccountKeyEncryption = "A256GCM";
+
         /// <summary>
         /// Wraps an EC private key (in DER format) under a user-provided passphrase using PBES2-HS512+A256KW / A256GCM.
         /// Uses 256-bit AES key wrapping for post-quantum security margin.
@@ -19,7 +25,12 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
         /// <returns>A JWE compact serialization string containing the encrypted private key.</returns>
         public static string Wrap(byte[] privateKeyBytes, string passphrase)
         {
-            return JWT.EncodeBytes(privateKeyBytes, passphrase, JweAlgorithm.PBES2_HS512_A256KW, JweEncryption.A256GCM);
+            var headers = new Dictionary<string, object>
+            {
+                ["p2c"] = AccountKeyPbes2Iterations
+            };
+
+            return JWT.EncodeBytes(privateKeyBytes, passphrase, JweAlgorithm.PBES2_HS512_A256KW, JweEncryption.A256GCM, extraHeaders: headers);
         }
 
         /// <summary>
@@ -30,7 +41,54 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
         /// <returns>The EC private key bytes (DER-encoded).</returns>
         public static byte[] Unwrap(string jweCompact, string passphrase)
         {
+            ValidateAccountKeyHeader(jweCompact);
             return JWT.DecodeBytes(jweCompact, passphrase, JweAlgorithm.PBES2_HS512_A256KW, JweEncryption.A256GCM);
+        }
+
+        private static void ValidateAccountKeyHeader(string jweCompact)
+        {
+            IDictionary<string, object> headers;
+            try
+            {
+                headers = JWT.Headers(jweCompact);
+            }
+            catch (Exception ex) when (ex is JoseException or ArgumentException or FormatException)
+            {
+                throw new CryptographicException("Invalid Account Key JWE header.", ex);
+            }
+
+            if (!headers.TryGetValue("alg", out var alg) ||
+                !string.Equals(Convert.ToString(alg, CultureInfo.InvariantCulture), AccountKeyAlgorithm, StringComparison.Ordinal))
+            {
+                throw new CryptographicException("Unsupported Account Key JWE algorithm.");
+            }
+
+            if (!headers.TryGetValue("enc", out var enc) ||
+                !string.Equals(Convert.ToString(enc, CultureInfo.InvariantCulture), AccountKeyEncryption, StringComparison.Ordinal))
+            {
+                throw new CryptographicException("Unsupported Account Key JWE content encryption.");
+            }
+
+            if (!headers.TryGetValue("p2c", out var p2c) ||
+                !TryConvertToInt64(p2c, out var iterations) ||
+                iterations != AccountKeyPbes2Iterations)
+            {
+                throw new CryptographicException("Unexpected Account Key PBES2 iteration count.");
+            }
+        }
+
+        private static bool TryConvertToInt64(object value, out long result)
+        {
+            try
+            {
+                result = Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                return true;
+            }
+            catch (Exception ex) when (ex is FormatException or InvalidCastException or OverflowException)
+            {
+                result = 0;
+                return false;
+            }
         }
 
         /// <summary>
