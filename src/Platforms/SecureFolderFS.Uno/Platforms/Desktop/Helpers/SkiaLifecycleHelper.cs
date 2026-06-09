@@ -12,6 +12,7 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
+using SecureFolderFS.Uno.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
@@ -71,7 +72,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
 #if APP_PLATFORM_PRESENT
                     .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
-                    .AddSingleton<IDeviceKeyStore>(new FileDeviceKeyStore(settingsFolderPath))
+                    .AddSingleton<IDeviceKeyStore>(new FileDeviceKeyStore(settingsFolder.Id))
 #endif
 
                     .WithUnoServices(settingsFolder)

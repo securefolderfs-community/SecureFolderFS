@@ -8,11 +8,11 @@ using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation;
 using Windows.Storage;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Uno.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 
 #if APP_PLATFORM_PRESENT
                 .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
-                .AddSingleton<IDeviceKeyStore>(new FileDeviceKeyStore(settingsFolderPath))
+                .AddSingleton<IDeviceKeyStore>(new FileDeviceKeyStore(settingsFolder.Id))
 #endif
 
                 // IIapService, IUpdateService

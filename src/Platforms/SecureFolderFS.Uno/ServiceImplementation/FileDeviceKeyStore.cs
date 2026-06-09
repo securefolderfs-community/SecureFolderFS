@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.AppPlatform;
 
-namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
+namespace SecureFolderFS.Uno.ServiceImplementation
 {
     // TODO: Testing Purposes Only! Store the device key securely later
     
