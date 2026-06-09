@@ -15,6 +15,8 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Sdk.AppPlatform.Helpers;
+using SecureFolderFS.Sdk.AppPlatform.Services;
 #endif
 
 namespace SecureFolderFS.UI.ViewModels.Authentication

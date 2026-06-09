@@ -12,6 +12,8 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Sdk.AppPlatform.Dto;
+using SecureFolderFS.Sdk.AppPlatform.Helpers;
 #endif
 
 namespace SecureFolderFS.UI.ViewModels.Authentication
@@ -122,7 +124,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         }
 
 #if APP_PLATFORM_PRESENT
-        private static unsafe string GetVaultJweKey(AppPlatformClient.UserInfo userInfo, IKeyUsage dekKey, IKeyUsage macKey)
+        private static unsafe string GetVaultJweKey(UserInfoDto userInfoDto, IKeyUsage dekKey, IKeyUsage macKey)
         {
             return dekKey.UseKey(dek =>
             {
@@ -132,7 +134,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                     return macKey.UseKey(state, (mac, s) =>
                     {
                         var localDek = new ReadOnlySpan<byte>((byte*)s.dekPtr, s.dekLen);
-                        return JweHelper.EncryptVaultKey(localDek, mac, userInfo.PublicKeyJwk);
+                        return JweHelper.EncryptVaultKey(localDek, mac, userInfoDto.PublicKeyJwk);
                     });
                 }
             });
