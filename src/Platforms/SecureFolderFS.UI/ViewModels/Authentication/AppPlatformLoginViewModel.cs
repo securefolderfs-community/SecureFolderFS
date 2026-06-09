@@ -134,7 +134,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 Array.Copy(dekKey, 0, combined, 0, dekKey.Length);
                 Array.Copy(macKey, 0, combined, dekKey.Length, macKey.Length);
 
-                using var key = ManagedKey.TakeOwnership(combined);
+                var key = ManagedKey.TakeOwnership(combined);
                 var tcs = new TaskCompletionSource();
                 CredentialsProvided?.Invoke(this, new(key, tcs));
                 await tcs.Task;

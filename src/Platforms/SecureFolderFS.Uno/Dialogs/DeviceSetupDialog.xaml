@@ -19,11 +19,10 @@
         <PasswordBox x:Name="PassphraseBox" PlaceholderText="Account Key passphrase" />
 
         <TextBlock
-            x:Name="ErrorText"
             Foreground="{ThemeResource SystemFillColorCriticalBrush}"
             Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
             TextWrapping="Wrap"
-            Visibility="Collapsed" />
+            Visibility="{x:Bind ViewModel.ErrorMessage, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
 
         <TextBlock
             FontSize="12"

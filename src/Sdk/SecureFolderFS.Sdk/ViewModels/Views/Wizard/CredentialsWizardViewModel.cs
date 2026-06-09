@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -107,11 +106,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
                     // Copies are created because returned DekKey and MacKey are part of the contract
                     // If they were disposed instead, the Recovery Key screen wouldn't show any keys
-                    using var dekCopy = dekKey.CreateCopy();
-                    using var macCopy = macKey.CreateCopy();
+                    using var dekKeyCopy = dekKey.CreateCopy();
+                    using var macKeyCopy = macKey.CreateCopy();
 
                     var vaultName = VaultModel.DataModel.DisplayName ?? VaultModel.VaultFolder?.Name;
-                    await appPlatformRegistration.RegisterVaultAsync(_vaultId, vaultName, dekKey, macKey, cancellationToken);
+                    await appPlatformRegistration.RegisterVaultAsync(_vaultId, vaultName, dekKeyCopy, macKeyCopy, cancellationToken);
 
                     return new CredentialsResult(appPlatformContract, _vaultId);
                 }
