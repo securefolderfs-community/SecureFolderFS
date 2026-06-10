@@ -261,6 +261,12 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                     return;
                 }
 
+                // The verification code confirmed the hybrid key exchange is free of an active MITM,
+                // so encrypt all subsequent pairing messages under the trusted shared secret. The
+                // confirm carries the persistent challenge and the complete carries the HMAC key
+                // contribution - neither may travel in cleartext.
+                using var pairingChannel = new SecureChannelModel(sharedSecret);
+
                 // Now wait for pairing confirmation from desktop (which includes vault info)
                 var confirmMessage = await device.ReceiveMessageAsync(cancellationToken);
                 var confirmType = (MessageType)confirmMessage[0];
@@ -271,8 +277,10 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                 if (confirmType != MessageType.PairingConfirm)
                     return;
 
-                // Parse pairing confirmation
-                ProtocolSerializer.ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
+                // Decrypt and parse pairing confirmation
+                var confirmPayload = confirmMessage.AsSpan(Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
+                var decryptedConfirm = pairingChannel.Decrypt(confirmPayload);
+                ProtocolSerializer.ParsePairingConfirm(decryptedConfirm, out var credentialId, out var vaultName, out var pairingId, out var challenge);
 
                 // Create and enroll credential with persistent challenge
                 var credential = new CredentialViewModel()
@@ -307,9 +315,10 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                     var challengeData = BuildChallengeData(credentialId, challenge);
                     var hmacResult = credential.ComputeHmac(challengeData);
 
-                    // Send pairing complete with HMAC result
+                    // Send pairing complete with HMAC result (encrypted over the pairing channel)
                     var completeMessage = ProtocolSerializer.CreatePairingComplete(hmacResult);
-                    await device.SendMessageAsync(completeMessage, cancellationToken);
+                    var encryptedComplete = pairingChannel.Encrypt(completeMessage);
+                    await device.SendMessageAsync(encryptedComplete, MessageType.PairingComplete, cancellationToken);
 
                     // Clear the decrypted key from memory
                     credential.ClearDecryptedKey();
@@ -386,8 +395,40 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
             desktopNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, desktopNonce.Length);
 
-            session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
-            CryptographicOperations.ZeroMemory(sharedSecret);
+            // Compute the pairing binding secret (== the desktop's stored ExpectedHmac) and fold it
+            // into the channel key. Only a device that holds this credential's HMAC key can reproduce
+            // it, which authenticates this otherwise-anonymous ephemeral handshake to the established
+            // pairing: an active MITM or a device-id impersonator that lacks the secret derives a
+            // different key and is rejected by AES-GCM authentication, so it can neither read the
+            // challenge nor capture the HMAC response.
+            var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
+            if (encryptionKey is null || credential.CredentialId is null || credential.Challenge is null)
+            {
+                CryptographicOperations.ZeroMemory(sharedSecret);
+                if (encryptionKey is not null)
+                    CryptographicOperations.ZeroMemory(encryptionKey);
+
+                await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("Key error"), cancellationToken);
+                return;
+            }
+
+            byte[]? bindingSecret = null;
+            try
+            {
+                credential.DecryptHmacKey(encryptionKey);
+                var bindingData = BuildChallengeData(credential.CredentialId, credential.Challenge);
+                bindingSecret = credential.ComputeHmac(bindingData);
+
+                session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce, bindingSecret);
+            }
+            finally
+            {
+                credential.ClearDecryptedKey();
+                CryptographicOperations.ZeroMemory(encryptionKey);
+                CryptographicOperations.ZeroMemory(sharedSecret);
+                if (bindingSecret is not null)
+                    CryptographicOperations.ZeroMemory(bindingSecret);
+            }
 
             // Send response with our ECDH public key and ML-KEM ciphertext
             var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, myEcdhPublicKey, mlKemCiphertext);

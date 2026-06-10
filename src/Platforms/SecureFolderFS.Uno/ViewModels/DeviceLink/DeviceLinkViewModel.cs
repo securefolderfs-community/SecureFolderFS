@@ -154,8 +154,15 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 var pairingId = Guid.NewGuid().ToString();
                 var credentialId = Guid.NewGuid().ToString();
 
+                // The verification code confirmed the hybrid key exchange is free of an active MITM,
+                // so the shared secret is trusted. Encrypt all subsequent pairing messages with it:
+                // the confirm carries the persistent challenge and the complete carries the HMAC
+                // (which is the device-link key contribution), neither of which may travel in cleartext.
+                using var pairingChannel = new SecureChannelModel(sharedSecret);
+
                 var confirmationMessage = ProtocolSerializer.CreatePairingConfirmMessage(credentialId, VaultName, pairingId, data);
-                await connectedDevice.SendMessageAsync(confirmationMessage, cancellationToken);
+                var encryptedConfirmation = pairingChannel.Encrypt(confirmationMessage);
+                await connectedDevice.SendMessageAsync(encryptedConfirmation, MessageType.PairingConfirm, cancellationToken);
 
                 // Step 9: Receive pairing complete with initial HMAC
                 var completeResponse = await connectedDevice.ReceiveMessageAsync(cancellationToken);
@@ -164,7 +171,9 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                 if (messageType != MessageType.PairingComplete)
                     throw new InvalidOperationException("Unexpected response received during device link enrollment.");
 
-                var initialHmac = ProtocolSerializer.ParsePairingComplete(completeResponse);
+                var completePayload = completeResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
+                var decryptedComplete = pairingChannel.Decrypt(completePayload);
+                var initialHmac = ProtocolSerializer.ParsePairingComplete(decryptedComplete);
 
                 // Return all pairing metadata so DeviceLinkCreationViewModel can persist it
                 return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(initialHmac))
@@ -274,10 +283,16 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             sessionNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, sessionNonce.Length);
 
+            // Bind the session channel to the pairing secret (the stored ExpectedHmac, which only a
+            // device holding the credential's HMAC key can reproduce). Without this, the channel rests
+            // on an anonymous ephemeral handshake that an active MITM could complete with each side
+            // independently, relaying and decrypting the traffic. With it, a peer that cannot derive
+            // ExpectedHmac derives a different channel key and every encrypt/decrypt fails - defeating
+            // MITM, device-id impersonation, and capture of the (static) HMAC response.
             SecureChannelModel secureChannel;
             try
             {
-                secureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
+                secureChannel = new SecureChannelModel(sharedSecret, combinedNonce, dataModel.ExpectedHmac);
             }
             finally
             {
