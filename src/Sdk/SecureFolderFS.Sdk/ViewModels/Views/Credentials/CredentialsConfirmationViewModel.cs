@@ -18,6 +18,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 
@@ -126,6 +127,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             else
                 await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, updatedOptions, cancellationToken);
 
+            // The change has been written. From here on the vault depends on the newly-enrolled credentials,
+            // so any failure must not bubble out of confirmation (which would keep the dialog open and let a
+            // subsequent "Back" revoke the credential the vault now requires), and the credentials must be
+            // locked against revocation.
+            RegisterViewModel.MarkCommitted();
+
             if (!string.IsNullOrEmpty(configuredOptions.VaultId))
                 PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
 
@@ -135,7 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (RegisterViewModel.CurrentViewModel is not null
                 && ConfiguredViewModel is not null
                 && !RegisterViewModel.CurrentViewModel.Id.Equals(ConfiguredViewModel.Id))
-                await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
+                await SafetyHelpers.NoFailureAsync(async () => await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken));
         }
 
         private ComplementationCredentials CreateComplementationCredentials(IKeyUsage key, AuthenticationMethod configuredProcedure, AuthenticationMethod updatedProcedure)
@@ -157,8 +164,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 {
                     CurrentKeystoreCredential = OldPasskey,
                     CurrentPrimaryCredential = currentPrimaryCredential,
-                    NewPrimaryCredential = primaryChanged ? GetCredentialAt(key, 0) ?? key : null,
-                    NewComplementCredential = GetCredentialAt(key, 1) ?? key
+                    NewPrimaryCredential = primaryChanged ? RequireCredentialAt(key, 0) : null,
+                    NewComplementCredential = RequireCredentialAt(key, 1)
                 };
             }
 
@@ -181,8 +188,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 {
                     CurrentPrimaryCredential = currentPrimaryCredential,
                     CurrentComplementCredential = currentComplementCredential,
-                    NewPrimaryCredential = updatePrimaryCredential ? GetCredentialAt(key, 0) ?? key : null,
-                    NewComplementCredential = updateComplementCredential ? GetCredentialAt(key, 1) ?? key : null
+                    NewPrimaryCredential = updatePrimaryCredential ? RequireCredentialAt(key, 0) : null,
+                    NewComplementCredential = updateComplementCredential ? RequireCredentialAt(key, 1) : null
                 };
             }
 
@@ -263,6 +270,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 : index == 0 ? key : null;
         }
 
+        // The provided credential material drives crypto decisions (e.g. which key wraps the complement
+        // secret). Falling back to the whole key sequence when an expected stage is missing would silently
+        // wrap under the wrong material, so demand the exact credential and fail loudly instead.
+        private static IKeyUsage RequireCredentialAt(IKeyUsage key, int index)
+        {
+            return GetCredentialAt(key, index)
+                   ?? throw new InvalidOperationException($"Credential material for authentication stage {index} is missing.");
+        }
+
         private IKeyUsage? GetOldCredentialByMethod(AuthenticationMethod configuredProcedure, string authenticationMethodId)
         {
             var methodIds = GetOldAuthenticationMethodIds(configuredProcedure);
@@ -295,7 +311,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentialsTcs.TrySetResult(e.Authentication);
+            try
+            {
+                _credentialsTcs.TrySetResult(e.Authentication);
+            }
+            finally
+            {
+                // Release RegisterViewModel.ConfirmCredentialsAsync, which awaits this completion source;
+                // otherwise that task would hang forever, leaking on every confirmation.
+                e.TaskCompletion?.TrySetResult();
+            }
         }
 
         /// <inheritdoc/>

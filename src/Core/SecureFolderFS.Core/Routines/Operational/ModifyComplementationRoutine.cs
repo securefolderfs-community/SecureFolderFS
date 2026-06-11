@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
-using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -27,6 +27,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         private VaultSharesDataModel? _existingSharesDataModel;
         private VaultSharesDataModel? _sharesDataModel;
         private bool _writeShares;
+        private bool _writeConfigBeforeKeystore;
+
+        private int ExistingGeneration => _existingConfigDataModel?.ComplementGeneration ?? 0;
 
         public ModifyComplementationRoutine(VaultReader vaultReader, VaultWriter vaultWriter)
         {
@@ -48,13 +51,22 @@ namespace SecureFolderFS.Core.Routines.Operational
             if (unlockContract is not IWrapper<Security> securityWrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            _keyPair = securityWrapper.Inner.KeyPair;
+            // Operate on a private copy so the caller's unlock contract is never disposed by this routine.
+            // This keeps the contract valid for retries if an attempt fails, and valid for the session after success.
+            _keyPair = securityWrapper.Inner.KeyPair.CreateCopy();
         }
 
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
+            ArgumentNullException.ThrowIfNull(_existingConfigDataModel);
+
             _configDataModel = VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
+
+            // Never invent a new vault id while modifying: the complement key derivations are bound to it,
+            // so a regenerated id would silently lock every credential out of the vault.
+            if (!string.Equals(_configDataModel.Uid, _existingConfigDataModel.Uid, StringComparison.Ordinal))
+                _configDataModel = _configDataModel with { Uid = _existingConfigDataModel.Uid };
         }
 
         public void SetCredentials(ComplementationCredentials credentials, CancellationToken cancellationToken = default)
@@ -107,34 +119,47 @@ namespace SecureFolderFS.Core.Routines.Operational
             AuthenticationMethod newAuthentication)
         {
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
-            var currentKeystoreKey = ExportKey(RequireCredential(credentials.CurrentKeystoreCredential, "Current keystore credentials are required."));
-            var currentPrimaryCredential = credentials.NewPrimaryCredential
-                                           ?? credentials.CurrentPrimaryCredential
-                                           ?? (oldAuthentication.Methods.Length == 1 ? credentials.CurrentKeystoreCredential : null);
-            var newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
+
+            // Always derive at a fresh generation. Reusing the existing counter would let a
+            // remove-then-re-add cycle land on a previously issued generation, resurrecting shares
+            // (and thus credentials) revoked under it.
+            var generation = ExistingGeneration + 1;
+            byte[]? currentKeystoreKey = null;
             byte[]? newPrimaryKey = null;
+            byte[]? newComplementKey = null;
             byte[]? softwareEntropy = null;
             byte[]? complementSecret = null;
 
             try
             {
+                currentKeystoreKey = ExportKey(RequireCredential(credentials.CurrentKeystoreCredential, "Current keystore credentials are required."));
+                var currentPrimaryCredential = credentials.NewPrimaryCredential
+                                               ?? credentials.CurrentPrimaryCredential
+                                               ?? (oldAuthentication.Methods.Length == 1 ? credentials.CurrentKeystoreCredential : null);
                 newPrimaryKey = ExportKey(RequireCredential(currentPrimaryCredential, "Current primary credentials are required."));
+                newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
+
                 softwareEntropy = DecryptSoftwareEntropy(currentKeystoreKey);
-                complementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication));
+                complementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication), generation);
 
                 ReEncryptKeystore(complementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod, generation));
+                _configDataModel!.ComplementGeneration = generation;
                 _writeShares = true;
+
+                // Write the (complemented) config before the re-keyed keystore. If interrupted in between,
+                // the on-disk state is "config says complemented, keystore still keyed under the raw primary",
+                // which the unlock routine recovers via its direct-derivation fallback.
+                _writeConfigBeforeKeystore = true;
             }
             finally
             {
-                Zero(newPrimaryKey, currentKeystoreKey);
                 Zero(complementSecret);
                 Zero(softwareEntropy);
                 Zero(newComplementKey);
+                Zero(newPrimaryKey);
                 Zero(currentKeystoreKey);
             }
-
         }
 
         private void ReplaceComplementation(
@@ -143,51 +168,65 @@ namespace SecureFolderFS.Core.Routines.Operational
             AuthenticationMethod newAuthentication)
         {
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
+            var oldGeneration = ExistingGeneration;
+            var newGeneration = oldGeneration + 1;
             byte[]? currentPrimaryKey = null;
-            byte[]? currentComplementKey = null;
-            var newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
-            byte[]? complementSecret = null;
+            byte[]? newComplementKey = null;
+            byte[]? oldComplementSecret = null;
+            byte[]? newComplementSecret = null;
             byte[]? softwareEntropy = null;
-            (byte[] ComplementSecret, byte[] SoftwareEntropy) recoveredData;
 
             try
             {
-                recoveredData = credentials.CurrentComplementCredential is not null
-                    ? RecoverComplementSecretFromShare(currentComplementKey = ExportKey(credentials.CurrentComplementCredential), oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing."))
-                    : RecoverComplementSecretFromPrimary(currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary or complement credentials are required.")), oldAuthentication);
-                complementSecret = recoveredData.ComplementSecret;
-                softwareEntropy = recoveredData.SoftwareEntropy;
+                // Rotating the complement secret requires the primary credential. The "change second factor"
+                // flow always supplies it because its login is constrained to the primary method.
+                currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary credentials are required to rotate complementation."));
+                newComplementKey = ExportKey(RequireCredential(credentials.NewComplementCredential, "New complement credentials are required."));
 
-                ReEncryptKeystore(complementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(complementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                // Recover the preserved entropy via the current (old-generation) secret...
+                oldComplementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication), oldGeneration);
+                softwareEntropy = DecryptSoftwareEntropy(oldComplementSecret);
+
+                // ...then re-key the keystore under a freshly rotated secret so the previous share can no longer unlock it.
+                newComplementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(newAuthentication), newGeneration);
+
+                ReEncryptKeystore(newComplementSecret, softwareEntropy);
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(newComplementSecret, newComplementKey, GetVaultId(), newComplementMethod, newGeneration));
+                _configDataModel!.ComplementGeneration = newGeneration;
                 _writeShares = true;
             }
             finally
             {
                 Zero(softwareEntropy);
-                Zero(complementSecret);
+                Zero(newComplementSecret);
+                Zero(oldComplementSecret);
                 Zero(newComplementKey);
-                Zero(currentComplementKey);
                 Zero(currentPrimaryKey);
             }
         }
 
         private void RemoveComplementation(ComplementationCredentials credentials, AuthenticationMethod oldAuthentication)
         {
-            var currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary credentials are required."));
+            var generation = ExistingGeneration;
+            byte[]? currentPrimaryKey = null;
             byte[]? targetPasskey = null;
             byte[]? complementSecret = null;
             byte[]? softwareEntropy = null;
 
             try
             {
+                currentPrimaryKey = ExportKey(RequireCredential(credentials.CurrentPrimaryCredential, "Current primary credentials are required."));
                 targetPasskey = credentials.NewPrimaryCredential is null ? currentPrimaryKey : ExportKey(credentials.NewPrimaryCredential);
-                complementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication));
+                complementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication), generation);
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
 
                 ReEncryptKeystore(targetPasskey, softwareEntropy);
                 _sharesDataModel = null;
                 _writeShares = true;
+
+                // Preserve the counter through the non-complemented period. It is a monotonic
+                // high-water mark: resetting it would allow a later re-add to reuse an old generation.
+                _configDataModel!.ComplementGeneration = generation;
             }
             finally
             {
@@ -205,27 +244,33 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             var oldComplementMethod = oldAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
             var newComplementMethod = newAuthentication.Complementation ?? throw new InvalidOperationException("Complementation method is missing.");
+
+            // Changing the primary already rotates the complement secret (it is derived from the primary),
+            // but the generation is bumped anyway so that cycling the primary back to a previous credential
+            // can never reproduce a secret that older shares were issued for.
+            var oldGeneration = ExistingGeneration;
+            var newGeneration = oldGeneration + 1;
             var currentComplementKey = ExportKey(RequireCredential(credentials.CurrentComplementCredential, "Current complement credentials are required."));
             var newPrimaryKey = ExportKey(RequireCredential(credentials.NewPrimaryCredential, "New primary credentials are required."));
             byte[]? newComplementKey = null;
             byte[]? oldComplementSecret = null;
             byte[]? newComplementSecret = null;
             byte[]? softwareEntropy = null;
-            (byte[] ComplementSecret, byte[] SoftwareEntropy) recoveredData;
 
             try
             {
-                recoveredData = RecoverComplementSecretFromShare(currentComplementKey, oldComplementMethod);
+                var recoveredData = RecoverComplementSecretFromShare(currentComplementKey, oldComplementMethod, oldGeneration);
                 oldComplementSecret = recoveredData.ComplementSecret;
                 softwareEntropy = recoveredData.SoftwareEntropy;
-                newComplementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication));
+                newComplementSecret = DeriveComplementSecret(newPrimaryKey, GetPrimaryMethod(newAuthentication), newGeneration);
 
                 newComplementKey = string.Equals(oldComplementMethod, newComplementMethod, StringComparison.Ordinal)
                     ? currentComplementKey
                     : ExportKey(credentials.NewComplementCredential ?? throw new InvalidOperationException("New complement credentials are required."));
 
                 ReEncryptKeystore(newComplementSecret, softwareEntropy);
-                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(newComplementSecret, newComplementKey, GetVaultId(), newComplementMethod));
+                _sharesDataModel = CreateShares(VaultParser.WrapComplementSecret(newComplementSecret, newComplementKey, GetVaultId(), newComplementMethod, newGeneration));
+                _configDataModel!.ComplementGeneration = newGeneration;
                 _writeShares = true;
             }
             finally
@@ -239,26 +284,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             }
         }
 
-        private (byte[] ComplementSecret, byte[] SoftwareEntropy) RecoverComplementSecretFromPrimary(byte[] currentPrimaryKey, AuthenticationMethod oldAuthentication)
-        {
-            byte[]? complementSecret = null;
-            byte[]? softwareEntropy = null;
-
-            try
-            {
-                complementSecret = DeriveComplementSecret(currentPrimaryKey, GetPrimaryMethod(oldAuthentication));
-                softwareEntropy = DecryptSoftwareEntropy(complementSecret);
-                return (complementSecret, softwareEntropy);
-            }
-            catch
-            {
-                Zero(complementSecret);
-                Zero(softwareEntropy);
-                throw;
-            }
-        }
-
-        private (byte[] ComplementSecret, byte[] SoftwareEntropy) RecoverComplementSecretFromShare(byte[] currentKey, string complementMethod, CryptographicException? fallbackException = null)
+        [SkipLocalsInit]
+        private (byte[] ComplementSecret, byte[] SoftwareEntropy) RecoverComplementSecretFromShare(byte[] currentKey, string complementMethod, int generation)
         {
             var share = GetShare(complementMethod);
             byte[]? complementSecret = null;
@@ -266,15 +293,9 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             try
             {
-                complementSecret = VaultParser.UnwrapComplementSecret(currentKey, GetVaultId(), share);
+                complementSecret = VaultParser.UnwrapComplementSecret(currentKey, GetVaultId(), share, generation);
                 softwareEntropy = DecryptSoftwareEntropy(complementSecret);
                 return (complementSecret, softwareEntropy);
-            }
-            catch (CryptographicException) when (fallbackException is not null)
-            {
-                Zero(complementSecret);
-                Zero(softwareEntropy);
-                throw fallbackException;
             }
             catch
             {
@@ -284,12 +305,12 @@ namespace SecureFolderFS.Core.Routines.Operational
             }
         }
 
-        private byte[] DeriveComplementSecret(byte[] passkey, string authenticationMethodId)
+        private byte[] DeriveComplementSecret(byte[] passkey, string authenticationMethodId, int generation)
         {
             var complementSecret = new byte[ComplementSecretLength];
             try
             {
-                VaultParser.DeriveComplementKey(passkey, GetVaultId(), authenticationMethodId, complementSecret);
+                VaultParser.DeriveComplementKey(passkey, GetVaultId(), authenticationMethodId, generation, complementSecret);
                 return complementSecret;
             }
             catch
@@ -379,7 +400,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 CryptographicOperations.ZeroMemory(key);
         }
 
-        private static void Zero(byte[]? key, byte[] sameAs)
+        private static void Zero(byte[]? key, byte[]? sameAs)
         {
             if (key is not null && !ReferenceEquals(key, sameAs))
                 CryptographicOperations.ZeroMemory(key);
@@ -397,8 +418,21 @@ namespace SecureFolderFS.Core.Routines.Operational
                 VaultParser.CalculateConfigMac(_configDataModel, macKey, _configDataModel.PayloadMac);
             });
 
-            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
-            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
+            // The keystore and configuration cannot be updated atomically together. Order the two writes
+            // per operation so that an interruption always lands in a state the unlock routine can recover:
+            // the config claims complementation while the keystore is still keyed under the raw primary.
+            // Shares are written last (added) or, for a removal, the file is deleted last - in both cases a
+            // crash before that step leaves a usable vault.
+            if (_writeConfigBeforeKeystore)
+            {
+                await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
+                await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+            }
+            else
+            {
+                await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+                await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
+            }
 
             if (_writeShares)
                 await _vaultWriter.WriteComplementationAsync(_sharesDataModel, cancellationToken);

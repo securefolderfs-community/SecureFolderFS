@@ -32,6 +32,8 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                             // Uid
             if (configDataModel.AppPlatform?.ServerUrl is { } serverUrl)
                 hmacSha256.AppendData(Encoding.UTF8.GetBytes(serverUrl));                                                   // AppPlatform.ServerUrl
+            if (configDataModel.ComplementGeneration > 0)
+                hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.ComplementGeneration));                         // ComplementGeneration (omitted at gen 0 for back-compat)
             hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                       // AuthenticationMethod
 
             // Fill the hash to payload
@@ -195,13 +197,21 @@ namespace SecureFolderFS.Core.VaultAccess
             ReadOnlySpan<byte> passkey,
             string vaultId,
             string authenticationMethodId,
+            int generation,
             Span<byte> complementKey)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(vaultId);
             ArgumentException.ThrowIfNullOrWhiteSpace(authenticationMethodId);
+            ArgumentOutOfRangeException.ThrowIfNegative(generation);
 
             var salt = Encoding.UTF8.GetBytes(vaultId);
-            var info = Encoding.UTF8.GetBytes(authenticationMethodId);
+
+            // Generation 0 reproduces the legacy derivation (no suffix); any later generation mixes in
+            // the counter so rotating it produces an entirely different complement domain, invalidating
+            // shares and keystore material issued under previous generations.
+            var info = generation > 0
+                ? Encoding.UTF8.GetBytes($"{authenticationMethodId}|gen={generation}")
+                : Encoding.UTF8.GetBytes(authenticationMethodId);
 
             HKDF.DeriveKey(
                 HashAlgorithmName.SHA256,
@@ -215,12 +225,13 @@ namespace SecureFolderFS.Core.VaultAccess
             ReadOnlySpan<byte> complementSecret,
             ReadOnlySpan<byte> wrappingKeyMaterial,
             string vaultId,
-            string authenticationMethodId)
+            string authenticationMethodId,
+            int generation)
         {
             Span<byte> complementWrapKey = stackalloc byte[32];
             try
             {
-                DeriveComplementKey(wrappingKeyMaterial, vaultId, authenticationMethodId, complementWrapKey);
+                DeriveComplementKey(wrappingKeyMaterial, vaultId, authenticationMethodId, generation, complementWrapKey);
 
                 var nonce = new byte[12];
                 var tag = new byte[16];
@@ -247,7 +258,8 @@ namespace SecureFolderFS.Core.VaultAccess
         public static byte[] UnwrapComplementSecret(
             ReadOnlySpan<byte> wrappingKeyMaterial,
             string vaultId,
-            VaultShareDataModel shareDataModel)
+            VaultShareDataModel shareDataModel,
+            int generation)
         {
             ArgumentNullException.ThrowIfNull(shareDataModel.AuthenticationMethodId);
             ArgumentNullException.ThrowIfNull(shareDataModel.Nonce);
@@ -257,7 +269,7 @@ namespace SecureFolderFS.Core.VaultAccess
             Span<byte> complementWrapKey = stackalloc byte[32];
             try
             {
-                DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, complementWrapKey);
+                DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, generation, complementWrapKey);
 
                 var complementSecret = new byte[shareDataModel.WrappedComplementSecret.Length];
                 using var aes = new AesGcm(complementWrapKey, 16);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,6 +53,27 @@ namespace SecureFolderFS.Core.Routines.Operational
             _macKey = SecureKey.TakeOwnership(derived.macKey);
         }
 
+        [SkipLocalsInit]
+        private (byte[] dekKey, byte[] macKey) DeriveFromComplementSecret(IKeyUsage passkey, string primaryMethodId)
+        {
+            ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+
+            return passkey.UseKey(key =>
+            {
+                Span<byte> complementSecret = stackalloc byte[32];
+                try
+                {
+                    VaultParser.DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, _configDataModel.ComplementGeneration, complementSecret);
+                    return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(complementSecret);
+                }
+            });
+        }
+
         private (byte[] dekKey, byte[] macKey) DeriveComplementedKeystore(IKeyUsage passkey, AuthenticationMethod authenticationMethod)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
@@ -62,19 +84,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             try
             {
-                return passkey.UseKey(key =>
-                {
-                    Span<byte> complementSecret = stackalloc byte[32];
-                    try
-                    {
-                        VaultParser.DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
-                        return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
-                    }
-                    finally
-                    {
-                        CryptographicOperations.ZeroMemory(complementSecret);
-                    }
-                });
+                return DeriveFromComplementSecret(passkey, primaryMethodId);
             }
             catch (CryptographicException ex)
             {
@@ -95,7 +105,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 byte[]? complementSecret = null;
                 try
                 {
-                    complementSecret = passkey.UseKey(key => VaultParser.UnwrapComplementSecret(key, _configDataModel.Uid, share));
+                    complementSecret = passkey.UseKey(key => VaultParser.UnwrapComplementSecret(key, _configDataModel.Uid, share, _configDataModel.ComplementGeneration));
                     return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
                 }
                 catch (CryptographicException ex)
@@ -107,6 +117,21 @@ namespace SecureFolderFS.Core.Routines.Operational
                     if (complementSecret is not null)
                         CryptographicOperations.ZeroMemory(complementSecret);
                 }
+            }
+
+            try
+            {
+                // Resilience for an interrupted complementation change. The modify routine orders its two
+                // mutations so that a crash always leaves the config claiming complementation while the
+                // keystore is still keyed under the raw primary (remove: keystore written first; add:
+                // config written first). A direct derivation recovers from exactly that window. It is an
+                // authenticated attempt that only succeeds if the keystore is actually keyed this way, so
+                // it never weakens the normal path.
+                return passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel));
+            }
+            catch (CryptographicException ex)
+            {
+                lastException = ex;
             }
 
             throw lastException ?? new CryptographicException("The complemented credentials could not unlock this vault.");
