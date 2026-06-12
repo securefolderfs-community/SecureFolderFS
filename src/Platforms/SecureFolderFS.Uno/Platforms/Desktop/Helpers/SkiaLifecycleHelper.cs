@@ -15,7 +15,8 @@ using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
 using SecureFolderFS.Uno.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
 #if APP_PLATFORM_PRESENT
-using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Sdk.AppPlatform.Helpers;
+using SecureFolderFS.Sdk.AppPlatform.Services;
 using SecureFolderFS.Shared.ComponentModel;
 #endif
 

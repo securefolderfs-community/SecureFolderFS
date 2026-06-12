@@ -173,16 +173,19 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
                 var completePayload = completeResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
                 var decryptedComplete = pairingChannel.Decrypt(completePayload);
-                var initialHmac = ProtocolSerializer.ParsePairingComplete(decryptedComplete);
+                ProtocolSerializer.ParsePairingComplete(decryptedComplete, out var keyContribution, out var bindingSecret);
 
-                // Return all pairing metadata so DeviceLinkCreationViewModel can persist it
-                return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(initialHmac))
+                // Return all pairing metadata so DeviceLinkCreationViewModel can persist it.
+                // The key contribution feeds vault creation transiently; only its hash and the
+                // domain-separated binding secret may be persisted.
+                return new DeviceLinkPairingResult(ManagedKey.TakeOwnership(keyContribution))
                 {
                     CredentialId = credentialId,
                     PairingId = pairingId,
                     MobileDeviceId = discoveredDevice.DeviceId,
                     MobileDeviceName = discoveredDevice.DeviceName,
                     MobileDeviceType = discoveredDevice.DeviceType,
+                    BindingSecret = bindingSecret
                 };
             }
             finally
@@ -283,16 +286,17 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
             sessionNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, sessionNonce.Length);
 
-            // Bind the session channel to the pairing secret (the stored ExpectedHmac, which only a
-            // device holding the credential's HMAC key can reproduce). Without this, the channel rests
-            // on an anonymous ephemeral handshake that an active MITM could complete with each side
-            // independently, relaying and decrypting the traffic. With it, a peer that cannot derive
-            // ExpectedHmac derives a different channel key and every encrypt/decrypt fails - defeating
-            // MITM, device-id impersonation, and capture of the (static) HMAC response.
+            // Bind the session channel to the pairing's binding secret, which only a device holding
+            // the credential's HMAC key can reproduce. Without this, the channel rests on an anonymous
+            // ephemeral handshake that an active MITM could complete with each side independently,
+            // relaying and decrypting the traffic. With it, a peer that cannot derive the binding
+            // secret derives a different channel key and every encrypt/decrypt fails - defeating MITM
+            // and device-id impersonation. The binding secret is domain-separated from the vault key
+            // contribution, so persisting it on this device reveals no vault key material.
             SecureChannelModel secureChannel;
             try
             {
-                secureChannel = new SecureChannelModel(sharedSecret, combinedNonce, dataModel.ExpectedHmac);
+                secureChannel = new SecureChannelModel(sharedSecret, combinedNonce, dataModel.BindingSecret);
             }
             finally
             {
@@ -301,9 +305,14 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
             using (secureChannel)
             {
-                // Send authentication request encrypted over the hybrid-secured channel
+                // Send authentication request encrypted over the hybrid-secured channel.
+                // The fresh request nonce must be echoed in the response, proving the mobile
+                // produced it for this exact request rather than any earlier one.
+                var requestNonce = new byte[16];
+                RandomNumberGenerator.Fill(requestNonce);
+
                 var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-                var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp);
+                var authRequest = ProtocolSerializer.CreateSecureAuthRequest(dataModel.CredentialId, dataModel.Challenge, timestamp, requestNonce);
                 var encryptedRequest = secureChannel.Encrypt(authRequest);
                 await connectedDevice.SendMessageAsync(encryptedRequest, MessageType.SecureAuthRequest, cancellationToken);
 
@@ -319,13 +328,19 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
 
                 // Decrypt response
                 var responsePayload = encryptedResponse.AsSpan(Sdk.DeviceLink.Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
-                var decryptedHmac = secureChannel.Decrypt(responsePayload);
+                var decryptedResponse = secureChannel.Decrypt(responsePayload);
+                ProtocolSerializer.ParseSecureAuthResponse(decryptedResponse, out var keyContribution, out var echoedNonce);
 
-                // Verify HMAC matches expected value
-                if (!CryptographicOperations.FixedTimeEquals(decryptedHmac, dataModel.ExpectedHmac))
-                    throw new CryptographicException("HMAC verification failed.");
+                // Verify the response answers this request
+                if (!CryptographicOperations.FixedTimeEquals(echoedNonce, requestNonce))
+                    throw new CryptographicException("Request nonce verification failed.");
 
-                return new DeviceLinkAuthenticationResult(ManagedKey.TakeOwnership(decryptedHmac))
+                // Verify the key contribution against the stored hash; the contribution itself is never persisted
+                var contributionHash = SHA256.HashData(keyContribution);
+                if (!CryptographicOperations.FixedTimeEquals(contributionHash, dataModel.KeyVerifier))
+                    throw new CryptographicException("Key contribution verification failed.");
+
+                return new DeviceLinkAuthenticationResult(ManagedKey.TakeOwnership(keyContribution))
                 {
                     CredentialId = dataModel.CredentialId
                 };

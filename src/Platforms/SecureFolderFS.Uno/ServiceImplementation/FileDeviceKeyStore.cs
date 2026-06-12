@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.AppPlatform;
+using SecureFolderFS.Sdk.AppPlatform.Services;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
