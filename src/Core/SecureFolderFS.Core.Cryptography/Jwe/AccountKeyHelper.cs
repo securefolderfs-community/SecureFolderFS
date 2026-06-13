@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.Cryptography.Jwe
     /// </summary>
     public static class AccountKeyHelper
     {
-        private const int AccountKeyPbes2Iterations = 210_000;
+        private const int AccountKeyPbes2Iterations = 120_000;
         private const string AccountKeyAlgorithm = "PBES2-HS512+A256KW";
         private const string AccountKeyEncryption = "A256GCM";
 
