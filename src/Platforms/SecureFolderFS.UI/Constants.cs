@@ -16,13 +16,26 @@ namespace SecureFolderFS.UI
         public static class FileNames
         {
             public const string KEY_FILE_EXTENSION = ".key";
-            public const string VAULTS_WIDGETS_FOLDERNAME = "vaults_widgets";
-            public const string SETTINGS_FOLDER_NAME = "settings";
-            public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
-            public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
-            public const string USER_SETTINGS_FILENAME = "user_settings.json";
-            public const string ICON_ASSET_PATH = "Assets/AppAssets/app_icon.ico";
             public const string VAULT_SHORTCUT_FILE_EXTENSION = ".sfvault";
+            public const string ICON_ASSET_PATH = "Assets/AppAssets/app_icon.ico";
+
+            public static class Accounts
+            {
+                public const string ACCOUNTS_FOLDER_NAME = "accounts";
+                public const string ACCOUNT_DEVICE_KEY_FILENAME = "device_key.dat";
+                public const string ACCOUNT_DEVICE_ID_FILENAME = "device_id.dat";
+                public const string ACCOUNT_METADATA_FILENAME = "account_metadata.dat";
+                public const string ACCOUNT_CLIENT_DEVICE_ID_FILENAME = "client_device_id.dat";
+            }
+
+            public static class Settings
+            {
+                public const string VAULTS_WIDGETS_FOLDERNAME = "vaults_widgets";
+                public const string SETTINGS_FOLDER_NAME = "settings";
+                public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
+                public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
+                public const string USER_SETTINGS_FILENAME = "user_settings.json";
+            }
         }
 
         public static class AppThemes

@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
 #endif
 #if APP_PLATFORM_PRESENT && !WINDOWS
-                    .AddSingleton<IDeviceKeyStore>(new SkiaDeviceKeyStore(settingsFolder.Id))
+                    .AddSingleton<IDeviceKeyStore>(new SkiaDeviceKeyStore(settingsFolder))
                     .AddSingleton<IAccountProvider>(sp => new AppPlatformAccountProvider(sp.GetRequiredService<IDeviceKeyStore>()))
 #endif
 

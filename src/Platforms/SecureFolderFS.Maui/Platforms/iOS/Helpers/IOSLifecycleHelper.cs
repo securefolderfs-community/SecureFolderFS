@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize settings
-            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 

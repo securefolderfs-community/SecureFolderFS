@@ -1,76 +1,208 @@
 #if APP_PLATFORM_PRESENT
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppPlatform.Services;
+using SecureFolderFS.Storage.Extensions;
+using static SecureFolderFS.UI.Constants.FileNames.Accounts;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
-    // TODO: Testing Purposes Only! Store the device key securely later
-    
     /// <summary>
-    /// File-based <see cref="IDeviceKeyStore"/> for desktop platforms.
-    /// Stores the device private key and device ID in the application directory.
+    /// File-based <see cref="IDeviceKeyStore"/>. Stores device key material for one or more accounts, each in its own subfolder under a base folder.
     /// </summary>
-    internal sealed class FileDeviceKeyStore : IDeviceKeyStore
+    internal abstract class FileDeviceKeyStore : IDeviceKeyStore
     {
-        private const string DeviceKeyFileName = ".appplatform-device-key";
-        private const string DeviceIdFileName = ".appplatform-device-id";
+        private readonly IModifiableFolder _baseFolder;
 
-        private readonly string _basePath;
-
-        public FileDeviceKeyStore(string basePath)
+        protected FileDeviceKeyStore(IModifiableFolder baseFolder)
         {
-            _basePath = basePath;
+            _baseFolder = baseFolder;
         }
 
-        public Task<bool> HasPrivateKeyAsync(CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task<Guid> GetOrCreateClientDeviceIdAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(File.Exists(Path.Combine(_basePath, DeviceKeyFileName)));
+            var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
+            if (accountsFolder is not IModifiableFolder modifiableFolder)
+                throw new InvalidOperationException("The accounts folder is not modifiable.");
+            
+            var file = await modifiableFolder.TryGetFileByNameAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, cancellationToken);
+            if (file is not null && Guid.TryParse(await file.ReadAllTextAsync(cancellationToken: cancellationToken), out var existing))
+                return existing;
+
+            file ??= await modifiableFolder.CreateFileAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, true, cancellationToken);
+
+            var clientDeviceId = Guid.NewGuid();
+            await file.WriteAllTextAsync(clientDeviceId.ToString(), cancellationToken: cancellationToken);
+            
+            return clientDeviceId;
         }
 
-        public Task<byte[]> GetPrivateKeyAsync(CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task<IReadOnlyList<DeviceKeyAccount>> GetAccountsAsync(CancellationToken cancellationToken = default)
         {
-            var path = Path.Combine(_basePath, DeviceKeyFileName);
-            if (!File.Exists(path))
+            var accounts = new List<DeviceKeyAccount>();
+            var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
+            if (accountsFolder is null)
+                return accounts;
+
+            await foreach (var item in accountsFolder.GetItemsAsync(StorableType.Folder, cancellationToken))
+            {
+                if (item is not IFolder accountFolder)
+                    continue;
+
+                if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is null)
+                    continue;
+
+                var fallbackId = Uri.UnescapeDataString(accountFolder.Name);
+                if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
+                {
+                    var lines = (await metaFile.ReadAllTextAsync(cancellationToken: cancellationToken)).Split(Environment.NewLine);
+                    accounts.Add(new DeviceKeyAccount
+                    {
+                        Id = Get(lines, 0) ?? fallbackId,
+                        DisplayName = Get(lines, 1),
+                        ServerUrl = Get(lines, 2),
+                        UserId = Get(lines, 3)
+                    });
+                }
+                else
+                {
+                    accounts.Add(new DeviceKeyAccount { Id = fallbackId });
+                }
+            }
+
+            return accounts;
+
+            static string? Get(string[] lines, int index)
+                => index < lines.Length && !string.IsNullOrEmpty(lines[index]) ? lines[index] : null;
+        }
+
+        /// <inheritdoc/>
+        public async Task SetAccountAsync(DeviceKeyAccount account, CancellationToken cancellationToken = default)
+        {
+            var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
+            if (accountsFolder is not IModifiableFolder modifiableAccountsFolder)
+                throw new InvalidOperationException("The accounts folder is not modifiable.");
+
+            var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(account.Id, false, cancellationToken);
+            if (accountFolder is not IModifiableFolder modifiableAccountFolder)
+                throw new InvalidOperationException("The account folder is not modifiable.");
+            
+            var metadataFile = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_METADATA_FILENAME, true, cancellationToken);
+            var content = string.Join(Environment.NewLine,
+                account.Id,
+                account.DisplayName ?? string.Empty,
+                account.ServerUrl ?? string.Empty,
+                account.UserId ?? string.Empty);
+
+            await metadataFile.WriteAllTextAsync(content, cancellationToken: cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> HasPrivateKeyAsync(string accountId, CancellationToken cancellationToken = default)
+        {
+            var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
+            if (accountsFolder is null)
+                return false;
+            
+            var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
+            if (accountFolder is null)
+                return false;
+
+            return await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<byte[]> GetPrivateKeyAsync(string accountId, CancellationToken cancellationToken = default)
+        {
+            var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
+            if (accountsFolder is null)
                 throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
-
-            return File.ReadAllBytesAsync(path, ct);
+            
+            var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
+            if (accountFolder is null || await accountFolder.TryGetFileByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not { } file)
+                throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
+            
+            var protectedBytes = await file.ReadBytesAsync(cancellationToken);
+            return await UnprotectAsync(protectedBytes, cancellationToken);
         }
 
-        public async Task StorePrivateKeyAsync(byte[] privateKey, CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task StorePrivateKeyAsync(string accountId, byte[] privateKey, CancellationToken cancellationToken = default)
         {
-            var path = Path.Combine(_basePath, DeviceKeyFileName);
-            await File.WriteAllBytesAsync(path, privateKey, ct);
+            var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
+            if (accountsFolder is not IModifiableFolder modifiableAccountsFolder)
+                throw new InvalidOperationException("The accounts folder is not modifiable.");
+            
+            var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(accountId, false, cancellationToken);
+            if (accountFolder is not IModifiableFolder modifiableAccountFolder)
+                throw new InvalidOperationException("The account folder is not modifiable.");
+            
+            var file = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_DEVICE_KEY_FILENAME, true, cancellationToken);
+            var protectedBytes = await ProtectAsync(privateKey, cancellationToken);
+            await file.WriteBytesAsync(protectedBytes, cancellationToken);
         }
 
-        public Task<Guid?> GetDeviceIdAsync(CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task<Guid?> GetDeviceIdAsync(string accountId, CancellationToken cancellationToken = default)
         {
-            var path = Path.Combine(_basePath, DeviceIdFileName);
-            if (!File.Exists(path))
-                return Task.FromResult<Guid?>(null);
+            var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
+            if (accountsFolder is null)
+                return null;
+            
+            var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
+            if (accountFolder is null || await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_ID_FILENAME, cancellationToken) is not IFile file)
+                return null;
 
-            var text = File.ReadAllText(path);
-            return Task.FromResult<Guid?>(Guid.TryParse(text, out var id) ? id : null);
+            var text = await file.ReadAllTextAsync(cancellationToken: cancellationToken);
+            return Guid.TryParse(text, out var id) ? id : null;
         }
 
-        public async Task StoreDeviceIdAsync(Guid deviceId, CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task StoreDeviceIdAsync(string accountId, Guid deviceId, CancellationToken cancellationToken = default)
         {
-            var path = Path.Combine(_basePath, DeviceIdFileName);
-            await File.WriteAllTextAsync(path, deviceId.ToString(), ct);
+            var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
+            if (accountsFolder is not IModifiableFolder modifiableAccountsFolder)
+                throw new InvalidOperationException("The accounts folder is not modifiable.");
+            
+            var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(accountId, false, cancellationToken);
+            if (accountFolder is not IModifiableFolder modifiableAccountFolder)
+                throw new InvalidOperationException("The account folder is not modifiable.");
+            
+            var file = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_DEVICE_ID_FILENAME, false, cancellationToken);
+            await file.WriteAllTextAsync(deviceId.ToString(), cancellationToken: cancellationToken);
         }
 
-        public Task ClearAsync(CancellationToken ct = default)
+        /// <inheritdoc/>
+        public async Task ClearAsync(string accountId, CancellationToken cancellationToken = default)
         {
-            var keyPath = Path.Combine(_basePath, DeviceKeyFileName);
-            var idPath = Path.Combine(_basePath, DeviceIdFileName);
+            var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
+            if (accountsFolder is not IModifiableFolder modifiableFolder)
+                return;
 
-            if (File.Exists(keyPath)) File.Delete(keyPath);
-            if (File.Exists(idPath)) File.Delete(idPath);
-
-            return Task.CompletedTask;
+            if (await modifiableFolder.TryGetFirstByNameAsync(accountId, cancellationToken) is { } accountFolder)
+                await modifiableFolder.DeleteAsync(accountFolder, cancellationToken);
         }
+
+        /// <summary>
+        /// Protects sensitive data before it is written to disk.
+        /// </summary>
+        /// <param name="data">The data to protect.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the protected data.</returns>
+        protected abstract Task<byte[]> ProtectAsync(byte[] data, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Reverses <see cref="ProtectAsync"/>, recovering the original data read from disk.
+        /// </summary>
+        /// <param name="data">The data to unprotect.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the unprotected data.</returns>
+        protected abstract Task<byte[]> UnprotectAsync(byte[] data, CancellationToken cancellationToken);
     }
 }
 #endif

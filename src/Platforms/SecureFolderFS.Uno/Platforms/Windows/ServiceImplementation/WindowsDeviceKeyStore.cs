@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Uno.ServiceImplementation;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.DataProtection;
@@ -15,8 +16,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     {
         private const string PROTECTION_DESCRIPTOR = "LOCAL=user";
 
-        public WindowsDeviceKeyStore(string basePath)
-            : base(basePath)
+        public WindowsDeviceKeyStore(IModifiableFolder baseFolder)
+            : base(baseFolder)
         {
         }
 

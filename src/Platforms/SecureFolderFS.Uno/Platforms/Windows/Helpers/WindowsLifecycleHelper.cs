@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Initialize settings
-            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, UI.Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
 #endif
 #if APP_PLATFORM_PRESENT && WINDOWS
-                .AddSingleton<IDeviceKeyStore>(new WindowsDeviceKeyStore(settingsFolder.Id))
+                .AddSingleton<IDeviceKeyStore>(new WindowsDeviceKeyStore(settingsFolder))
                 .AddSingleton<IAccountProvider>(sp => new AppPlatformAccountProvider(sp.GetRequiredService<IDeviceKeyStore>()))
 #endif
 

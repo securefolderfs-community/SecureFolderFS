@@ -1,6 +1,7 @@
 #if APP_PLATFORM_PRESENT && !WINDOWS
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Uno.ServiceImplementation;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
@@ -8,8 +9,8 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
     /// <inheritdoc cref="FileDeviceKeyStore"/>
     internal sealed class SkiaDeviceKeyStore : FileDeviceKeyStore
     {
-        public SkiaDeviceKeyStore(string basePath)
-            : base(basePath)
+        public SkiaDeviceKeyStore(IModifiableFolder baseFolder)
+            : base(baseFolder)
         {
         }
 
