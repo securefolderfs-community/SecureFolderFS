@@ -56,14 +56,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is null)
                     continue;
-
-                var fallbackId = Uri.UnescapeDataString(accountFolder.Name);
+                
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
                 {
                     var lines = (await metaFile.ReadAllTextAsync(cancellationToken: cancellationToken)).Split(Environment.NewLine);
                     accounts.Add(new DeviceKeyAccount
                     {
-                        Id = Get(lines, 0) ?? fallbackId,
+                        Id = Get(lines, 0) ?? accountFolder.Name,
                         DisplayName = Get(lines, 1),
                         ServerUrl = Get(lines, 2),
                         UserId = Get(lines, 3)
@@ -71,7 +70,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 }
                 else
                 {
-                    accounts.Add(new DeviceKeyAccount { Id = fallbackId });
+                    accounts.Add(new DeviceKeyAccount { Id = accountFolder.Name });
                 }
             }
 
