@@ -73,7 +73,10 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
 #if APP_PLATFORM_PRESENT
                     .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
-                    .AddSingleton<IDeviceKeyStore>(new FileDeviceKeyStore(settingsFolder.Id))
+#endif
+#if APP_PLATFORM_PRESENT && !WINDOWS
+                    .AddSingleton<IDeviceKeyStore>(new SkiaDeviceKeyStore(settingsFolder.Id))
+                    .AddSingleton<IAccountProvider>(sp => new AppPlatformAccountProvider(sp.GetRequiredService<IDeviceKeyStore>()))
 #endif
 
                     .WithUnoServices(settingsFolder)

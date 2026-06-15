@@ -84,7 +84,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
                     
 #if APP_PLATFORM_PRESENT
                     // App Platform
-                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder),
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder).WithInitAsync(cancellationToken),
 #endif
                     
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")

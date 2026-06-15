@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -81,7 +82,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                     
 #if APP_PLATFORM_PRESENT
                     // App Platform
-                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder),
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(vaultFolder).WithInitAsync(cancellationToken),
 #endif
 
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")

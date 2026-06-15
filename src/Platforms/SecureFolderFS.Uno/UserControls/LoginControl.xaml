@@ -14,6 +14,7 @@
     xmlns:vm3="using:SecureFolderFS.Uno.ViewModels.YubiKey"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels.DeviceLink"
     xmlns:vm5="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
+    xmlns:vmc="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Name="ThisLoginControl"
     mc:Ignorable="d not_win">
@@ -148,6 +149,51 @@
 
                 <!--  Title  -->
                 <TextBlock HorizontalAlignment="Center" Text="Sign in with App Platform" />
+
+                <!--  Account picker  -->
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Spacing="4"
+                    Visibility="{x:Bind Accounts.Count, Mode=OneWay, Converter={StaticResource CountToVisibilityConverter}}">
+                    <TextBlock
+                        FontSize="12"
+                        Opacity="0.6"
+                        Text="{l:ResourceString Rid=Account}" />
+                    <ComboBox
+                        MinWidth="240"
+                        ItemsSource="{x:Bind Accounts, Mode=OneWay}"
+                        SelectedItem="{x:Bind SelectedAccount, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vmc:AccountItemViewModel">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Icon  -->
+                                    <Image
+                                        Grid.Column="0"
+                                        Width="20"
+                                        Height="20"
+                                        VerticalAlignment="Center"
+                                        Source="{x:Bind Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                                        Visibility="{x:Bind Icon, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                                    <!--  Title + subtitle  -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Opacity="0.6"
+                                            Text="{x:Bind Subtitle, Mode=OneWay}"
+                                            Visibility="{x:Bind Subtitle, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
 
                 <!--  Authenticate  -->
                 <Button

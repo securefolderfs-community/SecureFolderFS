@@ -19,7 +19,7 @@
     <ProjectReference Include="..\..\Core\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk.DeviceLink\SecureFolderFS.Sdk.DeviceLink.csproj" />
     <ProjectReference Include="..\..\Sdk\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
-  
+
     <!-- Detect App Platform SDK -->
     <ProjectReference Include="$(AppPlatformSdkPath)" Condition="Exists('$(AppPlatformSdkPath)')" />
   </ItemGroup>
@@ -30,6 +30,8 @@
     <None Remove="Assets\AppAssets\app_icon.svg" />
     <None Remove="Assets\AppAssets\app_title.png" />
     <None Remove="Assets\AppAssets\app_title.svg" />
+    <None Remove="Assets\AppAssets\app_platform_icon.png" />
+    <None Remove="Assets\AppAssets\app_platform_icon.svg" />
     <None Remove="Assets\AppAssets\vault_dark.svg" />
     <None Remove="Assets\AppAssets\vault_light.svg" />
     <None Remove="Assets\AppAssets\Devices\gpixel_dark.png" />
