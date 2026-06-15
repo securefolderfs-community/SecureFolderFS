@@ -96,8 +96,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
                 Accounts.Add(new AccountItemViewModel(new AccountModel(account.Id, account.DisplayName ?? account.Id, account.ServerUrl, icon, AUTH_APP_PLATFORM)));
             }
 
-            // Default to the first matching account if one exists; otherwise fall back to a new account.
-            SelectedAccount = !Accounts.IsEmpty() ? Accounts[1] : newAccountOption;
+            SelectedAccount = Accounts.Count > 1 ? Accounts[1] : newAccountOption;
 #else
             await Task.CompletedTask;
 #endif
