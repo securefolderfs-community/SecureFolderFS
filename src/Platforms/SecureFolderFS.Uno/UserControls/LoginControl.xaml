@@ -203,6 +203,22 @@
                     Content="{l:ResourceString Rid=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <!--  Waiting for browser sign-in  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    Opacity="0.6"
+                    Text="Waiting for browser sign-in..."
+                    Visibility="{x:Bind ProvideCredentialsCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <!--  Cancel  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCancelCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=Cancel}"
+                    Visibility="{x:Bind ProvideCredentialsCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
 

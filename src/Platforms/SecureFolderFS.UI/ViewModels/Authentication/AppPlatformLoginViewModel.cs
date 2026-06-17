@@ -124,7 +124,15 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
 #if APP_PLATFORM_PRESENT
-            await ProvideCredentialsNativeAsync(cancellationToken);
+            try
+            {
+                await ProvideCredentialsNativeAsync(cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The user canceled the in-progress browser sign-in (e.g. closed the browser).
+                // Treat it as a no-op so the command resets and the Authenticate button re-enables.
+            }
 #else
             await Task.FromException(new NotSupportedException("App Platform authentication requires the SecureFolderFS.Sdk.AppPlatform project."));
 #endif
@@ -148,20 +156,25 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             var authProvider = DI.Service<IOidcProvider>();
             var deviceKeyStore = DI.Service<IDeviceKeyStore>();
 
+            // Resolve the picker selection up-front. A null/empty selection means "use a new account".
+            var selectedAccountId = SelectedAccount?.Id;
+            var isNewAccount = string.IsNullOrEmpty(selectedAccountId);
+
             using var client = new AppPlatformClient(serverUrl);
             var authConfig = await client.GetAuthConfigAsync(cancellationToken);
+
+            // For a new account, force a fresh Keycloak login so the user can pick a different identity
+            // instead of silently reusing the existing SSO session.
             var accessToken = await authProvider.GetAccessTokenAsync(
-                authConfig.Authority, authConfig.ClientId, authConfig.Scopes, cancellationToken);
+                authConfig.Authority, authConfig.ClientId, authConfig.Scopes, forceLogin: isNewAccount, cancellationToken: cancellationToken);
             client.SetAccessToken(accessToken);
 
-            // Resolve the account to use. A null/empty selection means "use a new account".
-            var selectedAccountId = SelectedAccount?.Id;
             UserInfoDto? user = null;
             string accountId;
 
-            if (!string.IsNullOrEmpty(selectedAccountId))
+            if (!isNewAccount)
             {
-                accountId = selectedAccountId;
+                accountId = selectedAccountId!;
             }
             else
             {

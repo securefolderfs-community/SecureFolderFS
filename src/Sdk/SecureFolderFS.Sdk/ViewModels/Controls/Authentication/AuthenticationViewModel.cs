@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        [RelayCommand]
+        [RelayCommand(IncludeCancelCommand = true)]
         protected abstract Task ProvideCredentialsAsync(CancellationToken cancellationToken);
 
         /// <inheritdoc/>

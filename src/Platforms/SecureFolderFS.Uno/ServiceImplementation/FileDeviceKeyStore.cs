@@ -1,6 +1,7 @@
 #if APP_PLATFORM_PRESENT
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -30,14 +31,14 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 throw new InvalidOperationException("The accounts folder is not modifiable.");
             
             var file = await modifiableFolder.TryGetFileByNameAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, cancellationToken);
-            if (file is not null && Guid.TryParse(await file.ReadAllTextAsync(cancellationToken: cancellationToken), out var existing))
+            if (file is not null && Guid.TryParse(await ReadProtectedTextAsync(file, cancellationToken), out var existing))
                 return existing;
 
             file ??= await modifiableFolder.CreateFileAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, true, cancellationToken);
 
             var clientDeviceId = Guid.NewGuid();
-            await file.WriteAllTextAsync(clientDeviceId.ToString(), cancellationToken: cancellationToken);
-            
+            await WriteProtectedTextAsync(file, clientDeviceId.ToString(), cancellationToken);
+
             return clientDeviceId;
         }
 
@@ -59,7 +60,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
                 {
-                    var lines = (await metaFile.ReadAllTextAsync(cancellationToken: cancellationToken)).Split(Environment.NewLine);
+                    var lines = (await ReadProtectedTextAsync(metaFile, cancellationToken)).Split(Environment.NewLine);
                     accounts.Add(new DeviceKeyAccount
                     {
                         Id = Get(lines, 0) ?? accountFolder.Name,
@@ -98,7 +99,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 account.ServerUrl ?? string.Empty,
                 account.UserId ?? string.Empty);
 
-            await metadataFile.WriteAllTextAsync(content, cancellationToken: cancellationToken);
+            await WriteProtectedTextAsync(metadataFile, content, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -157,7 +158,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (accountFolder is null || await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_ID_FILENAME, cancellationToken) is not IFile file)
                 return null;
 
-            var text = await file.ReadAllTextAsync(cancellationToken: cancellationToken);
+            var text = await ReadProtectedTextAsync(file, cancellationToken);
             return Guid.TryParse(text, out var id) ? id : null;
         }
 
@@ -173,7 +174,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 throw new InvalidOperationException("The account folder is not modifiable.");
             
             var file = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_DEVICE_ID_FILENAME, false, cancellationToken);
-            await file.WriteAllTextAsync(deviceId.ToString(), cancellationToken: cancellationToken);
+            await WriteProtectedTextAsync(file, deviceId.ToString(), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -185,6 +186,20 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             if (await modifiableFolder.TryGetFirstByNameAsync(accountId, cancellationToken) is { } accountFolder)
                 await modifiableFolder.DeleteAsync(accountFolder, cancellationToken);
+        }
+        
+        private async Task<string> ReadProtectedTextAsync(IFile file, CancellationToken cancellationToken)
+        {
+            var protectedBytes = await file.ReadBytesAsync(cancellationToken);
+            var data = await UnprotectAsync(protectedBytes, cancellationToken);
+
+            return Encoding.UTF8.GetString(data);
+        }
+        
+        private async Task WriteProtectedTextAsync(IFile file, string text, CancellationToken cancellationToken)
+        {
+            var protectedBytes = await ProtectAsync(Encoding.UTF8.GetBytes(text), cancellationToken);
+            await file.WriteBytesAsync(protectedBytes, cancellationToken);
         }
 
         /// <summary>

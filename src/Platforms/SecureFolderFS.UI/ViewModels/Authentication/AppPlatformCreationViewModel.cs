@@ -78,7 +78,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
 
             var authConfig = await _client.GetAuthConfigAsync(cancellationToken);
             var accessToken = await authProvider.GetAccessTokenAsync(
-                authConfig.Authority, authConfig.ClientId, authConfig.Scopes, cancellationToken);
+                authConfig.Authority, authConfig.ClientId, authConfig.Scopes, cancellationToken: cancellationToken);
             _client.SetAccessToken(accessToken);
 
             var user = await _client.GetMeAsync(cancellationToken);
