@@ -1403,7 +1403,7 @@
   <data name="DeviceLinkSourceDesktop" xml:space="preserve">
       <value>Desktop</value>
   </data>
-  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+  <data name="ThisDevice" xml:space="preserve">
       <value>This device</value>
   </data>
   <data name="FileInformation" xml:space="preserve">
@@ -1486,5 +1486,464 @@
   </data>
   <data name="AppPlatformManagesThisVault" xml:space="preserve">
       <value>SecureFolderFS App Platform manages this vault</value>
+  </data>
+  <data name="Vaults" xml:space="preserve">
+      <value>Vaults</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+      <value>Devices</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+      <value>Sign out</value>
+  </data>
+  <data name="Permissions" xml:space="preserve">
+      <value>Permissions</value>
+  </data>
+  <data name="PermissionReference" xml:space="preserve">
+      <value>Permission Reference</value>
+  </data>
+  <data name="GroupPermissions" xml:space="preserve">
+      <value>Group Permissions</value>
+  </data>
+  <data name="UserPermissions" xml:space="preserve">
+      <value>User Permissions</value>
+  </data>
+  <data name="DirectPermissions" xml:space="preserve">
+      <value>Direct Permissions</value>
+  </data>
+  <data name="SearchByNameEmailId" xml:space="preserve">
+      <value>Search by name, email, or ID</value>
+  </data>
+  <data name="NoGroupsYet" xml:space="preserve">
+      <value>No groups created yet</value>
+  </data>
+  <data name="UsersAndGroups" xml:space="preserve">
+      <value>Users &amp; Groups</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+      <value>Groups</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+      <value>Users</value>
+  </data>
+  <data name="CreateGroup" xml:space="preserve">
+      <value>Create group</value>
+  </data>
+  <data name="NoGroupsAvailableInfo" xml:space="preserve">
+      <value>No groups available. Create groups from the Users &amp; Groups page first</value>
+  </data>
+  <data name="SelectGroupToManage" xml:space="preserve">
+      <value>Select a group to manage members</value>
+  </data>
+  <data name="SelectGroup" xml:space="preserve">
+      <value>Select a group</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+      <value>Edit</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+      <value>Members</value>
+  </data>
+  <data name="NoUsersFound" xml:space="preserve">
+      <value>No users found</value>
+  </data>
+  <data name="RemoveAll" xml:space="preserve">
+      <value>Remove all</value>
+  </data>
+  <data name="NoVaultsFound" xml:space="preserve">
+      <value>No vaults found</value>
+  </data>
+  <data name="SelectVaultToManage" xml:space="preserve">
+      <value>Select a vault to manage</value>
+  </data>
+  <data name="Siem" xml:space="preserve">
+      <value>SIEM</value>
+  </data>
+  <data name="EventsOneMonth" xml:space="preserve">
+      <value>Events (30d)</value>
+  </data>
+  <data name="VaultUnlockEvents" xml:space="preserve">
+      <value>Vault Unlocks</value>
+  </data>
+  <data name="AccessGrantsEvents" xml:space="preserve">
+      <value>Access Grants</value>
+  </data>
+  <data name="RevocationEvents" xml:space="preserve">
+      <value>Revocations</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+      <value>Show all</value>
+  </data>
+  <data name="DevicesCountPlural" xml:space="preserve">
+      <value>{0:plural:{} device|{} devices|{} devices}</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+      <value>Action</value>
+  </data>
+  <data name="AllActions" xml:space="preserve">
+      <value>All actions</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+      <value>Timestamp</value>
+  </data>
+  <data name="User" xml:space="preserve">
+      <value>User</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+      <value>Details</value>
+  </data>
+  <data name="Resource" xml:space="preserve">
+      <value>Resource</value>
+  </data>
+  <data name="SiemEmpty" xml:space="preserve">
+      <value>No SIEM log entries found</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+      <value>Apply</value>
+  </data>
+  <data name="Device" xml:space="preserve">
+      <value>Device</value>
+  </data>
+  <data name="ManageAccountIn" xml:space="preserve">
+      <value>Manage account in {0}</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+      <value>Profile</value>
+  </data>
+  <data name="BillingPlan" xml:space="preserve">
+      <value>Plan</value>
+  </data>
+  <data name="FreeSlots" xml:space="preserve">
+      <value>Free slots</value>
+  </data>
+  <data name="UsedSlots" xml:space="preserve">
+      <value>Used slots</value>
+  </data>
+  <data name="ChangeAccountKey" xml:space="preserve">
+      <value>Change Account Key passphrase</value>
+  </data>
+  <data name="UpdateLicense" xml:space="preserve">
+      <value>Update license</value>
+  </data>
+  <data name="AdminsUsersPermissionInfo" xml:space="preserve">
+      <value>Admins (app-platform-admin role) always have all permissions implicitly. These controls only affect standard users (app-platform-user role) and groups.</value>
+  </data>
+  <data name="Permission_compliance.read" xml:space="preserve">
+      <value>View the Compliance reporting dashboard and export compliance reports. Provides read-only visibility into vault compliance status, recovery key coverage, and access grant health.</value>
+  </data>
+  <data name="Permission_devices.manage" xml:space="preserve">
+      <value>Manage devices across all users: revoke device registrations and enforce device policies. Without this, users can only manage their own devices.</value>
+  </data>
+  <data name="Permission_devices.read_all" xml:space="preserve">
+      <value>View all registered devices across all users. Without this, users only see their own devices.</value>
+  </data>
+  <data name="Permission_policies.manage" xml:space="preserve">
+      <value>Create and manage conditional access policies (max device count, vault device whitelists). Vault ownership alone does not grant policy management — this permission is required.</value>
+  </data>
+  <data name="Permission_siem.manage" xml:space="preserve">
+      <value>Configure webhook providers for SIEM event forwarding. Create, edit, delete, and test webhook endpoints. Requires siem.read to access the SIEM page.</value>
+  </data>
+  <data name="Permission_siem.read" xml:space="preserve">
+      <value>View all SIEM/audit logs across the platform. Without this, users only see logs for their own actions and vaults.</value>
+  </data>
+  <data name="Permission_users.manage" xml:space="preserve">
+      <value>Manage all user groups regardless of ownership. Grants access to the Users navigation section.</value>
+  </data>
+  <data name="Permission_vaults.manage_all" xml:space="preserve">
+      <value>Manage all vaults regardless of ownership. Bypasses owner-only restrictions on vault operations.</value>
+  </data>
+  <data name="UserHasAdminRole" xml:space="preserve">
+      <value>This user has the app-platform-admin role and implicitly has all permissions. Permission toggles are disabled.</value>
+  </data>
+  <data name="Event_user_auto_provisioned" xml:space="preserve">
+      <value>User auto-provisioned</value>
+  </data>
+  <data name="Event_user_setup" xml:space="preserve">
+      <value>User setup</value>
+  </data>
+  <data name="Event_account_key_changed" xml:space="preserve">
+      <value>Account key changed</value>
+  </data>
+  <data name="Event_user_keys_reset" xml:space="preserve">
+      <value>User keys reset</value>
+  </data>
+  <data name="Event_user_key_reset_requested" xml:space="preserve">
+      <value>Key reset requested</value>
+  </data>
+  <data name="Event_user_key_reset_approved" xml:space="preserve">
+      <value>Key reset approved</value>
+  </data>
+  <data name="Event_user_key_reset_denied" xml:space="preserve">
+      <value>Key reset denied</value>
+  </data>
+  <data name="Event_vault_registered" xml:space="preserve">
+      <value>Vault registered</value>
+  </data>
+  <data name="Event_vault_updated" xml:space="preserve">
+      <value>Vault updated</value>
+  </data>
+  <data name="Event_vault_deleted" xml:space="preserve">
+      <value>Vault deleted</value>
+  </data>
+  <data name="Event_vault_key_retrieved" xml:space="preserve">
+      <value>Vault key retrieved</value>
+  </data>
+  <data name="Event_vault_access_granted" xml:space="preserve">
+      <value>Access granted</value>
+  </data>
+  <data name="Event_vault_access_revoked" xml:space="preserve">
+      <value>Access revoked</value>
+  </data>
+  <data name="Event_vault_access_requested" xml:space="preserve">
+      <value>Access requested</value>
+  </data>
+  <data name="Event_vault_access_request_approved" xml:space="preserve">
+      <value>Access request approved</value>
+  </data>
+  <data name="Event_vault_access_request_denied" xml:space="preserve">
+      <value>Access request denied</value>
+  </data>
+  <data name="Event_vault_access_request_canceled" xml:space="preserve">
+      <value>Access request cancelled</value>
+  </data>
+  <data name="Event_recovery_key_created" xml:space="preserve">
+      <value>Recovery key created</value>
+  </data>
+  <data name="Event_recovery_key_deleted" xml:space="preserve">
+      <value>Recovery key deleted</value>
+  </data>
+  <data name="Event_vault_recovered" xml:space="preserve">
+      <value>Vault recovered</value>
+  </data>
+  <data name="Event_group_created" xml:space="preserve">
+      <value>Group created</value>
+  </data>
+  <data name="Event_group_deleted" xml:space="preserve">
+      <value>Group deleted</value>
+  </data>
+  <data name="Event_group_member_added" xml:space="preserve">
+      <value>Group member added</value>
+  </data>
+  <data name="Event_group_member_removed" xml:space="preserve">
+      <value>Group member removed</value>
+  </data>
+  <data name="Event_permissions_updated" xml:space="preserve">
+      <value>Permissions updated</value>
+  </data>
+  <data name="Event_group_permissions_updated" xml:space="preserve">
+      <value>Group permissions updated</value>
+  </data>
+  <data name="Event_device_registered" xml:space="preserve">
+      <value>Device registered</value>
+  </data>
+  <data name="Event_device_reregistered" xml:space="preserve">
+      <value>Device re-registered</value>
+  </data>
+  <data name="Event_device_deregistered" xml:space="preserve">
+      <value>Device deregistered</value>
+  </data>
+  <data name="Event_webhook_created" xml:space="preserve">
+      <value>Webhook created</value>
+  </data>
+  <data name="Event_webhook_updated" xml:space="preserve">
+      <value>Webhook updated</value>
+  </data>
+  <data name="Event_webhook_deleted" xml:space="preserve">
+      <value>Webhook deleted</value>
+  </data>
+  <data name="Event_webhook_tested" xml:space="preserve">
+      <value>Webhook tested</value>
+  </data>
+  <data name="Event_compliance_report_exported" xml:space="preserve">
+      <value>Compliance report exported</value>
+  </data>
+  <data name="Event_policy_created" xml:space="preserve">
+      <value>Policy created</value>
+  </data>
+  <data name="Event_policy_updated" xml:space="preserve">
+      <value>Policy updated</value>
+  </data>
+  <data name="Event_policy_deleted" xml:space="preserve">
+      <value>Policy deleted</value>
+  </data>
+  <data name="Event_policy_setting_added" xml:space="preserve">
+      <value>Policy setting added</value>
+  </data>
+  <data name="Event_policy_setting_removed" xml:space="preserve">
+      <value>Policy setting removed</value>
+  </data>
+  <data name="Event_license_updated" xml:space="preserve">
+      <value>License updated</value>
+  </data>
+  <data name="Event_pull_token_issued" xml:space="preserve">
+      <value>Pull token issued</value>
+  </data>
+  <data name="FilterByVaultOptional" xml:space="preserve">
+      <value>Filter by vault name or ID (optional)</value>
+  </data>
+  <data name="EventInfo_SomeUser" xml:space="preserve">
+      <value>a user</value>
+  </data>
+  <data name="EventInfo_vault_key_retrieved" xml:space="preserve">
+      <value>Keys provisioned for {0}</value>
+  </data>
+  <data name="EventInfo_vault_access_granted" xml:space="preserve">
+      <value>Granted access to {0}</value>
+  </data>
+  <data name="EventInfo_vault_access_granted_generic" xml:space="preserve">
+      <value>Granted vault access</value>
+  </data>
+  <data name="EventInfo_vault_access_revoked" xml:space="preserve">
+      <value>Revoked access from {0}</value>
+  </data>
+  <data name="EventInfo_vault_access_revoked_generic" xml:space="preserve">
+      <value>Revoked vault access</value>
+  </data>
+  <data name="EventInfo_vault_registered" xml:space="preserve">
+      <value>Registered a new vault</value>
+  </data>
+  <data name="EventInfo_vault_updated" xml:space="preserve">
+      <value>Updated vault settings</value>
+  </data>
+  <data name="EventInfo_vault_deleted" xml:space="preserve">
+      <value>Deleted the vault</value>
+  </data>
+  <data name="EventInfo_vault_access_requested" xml:space="preserve">
+      <value>{0} requested access</value>
+  </data>
+  <data name="EventInfo_vault_access_request_approved" xml:space="preserve">
+      <value>Approved access request for {0}</value>
+  </data>
+  <data name="EventInfo_vault_access_request_approved_generic" xml:space="preserve">
+      <value>Approved an access request</value>
+  </data>
+  <data name="EventInfo_vault_access_request_denied" xml:space="preserve">
+      <value>Denied an access request</value>
+  </data>
+  <data name="EventInfo_vault_access_request_canceled" xml:space="preserve">
+      <value>Canceled an access request</value>
+  </data>
+  <data name="EventInfo_recovery_key_created" xml:space="preserve">
+      <value>Set a recovery key</value>
+  </data>
+  <data name="EventInfo_recovery_key_deleted" xml:space="preserve">
+      <value>Removed the recovery key</value>
+  </data>
+  <data name="EventInfo_vault_recovered" xml:space="preserve">
+      <value>{0} recovered vault access</value>
+  </data>
+  <data name="EventInfo_group_created" xml:space="preserve">
+      <value>Created the group</value>
+  </data>
+  <data name="EventInfo_group_deleted" xml:space="preserve">
+      <value>Removed a group with {0:plural:{} member|{} members|{} members}</value>
+  </data>
+  <data name="EventInfo_group_deleted_generic" xml:space="preserve">
+      <value>Removed the group</value>
+  </data>
+  <data name="EventInfo_group_member_added" xml:space="preserve">
+      <value>Added {0}</value>
+  </data>
+  <data name="EventInfo_group_member_added_generic" xml:space="preserve">
+      <value>Added a member</value>
+  </data>
+  <data name="EventInfo_group_member_removed" xml:space="preserve">
+      <value>Removed {0}</value>
+  </data>
+  <data name="EventInfo_group_member_removed_generic" xml:space="preserve">
+      <value>Removed a member</value>
+  </data>
+  <data name="EventInfo_permissions_updated" xml:space="preserve">
+      <value>Updated permissions</value>
+  </data>
+  <data name="EventInfo_group_permissions_updated" xml:space="preserve">
+      <value>Updated group permissions</value>
+  </data>
+  <data name="EventInfo_permission_added" xml:space="preserve">
+      <value>Added {0}</value>
+  </data>
+  <data name="EventInfo_permission_removed" xml:space="preserve">
+      <value>Removed {0}</value>
+  </data>
+  <data name="EventInfo_permissions_added" xml:space="preserve">
+      <value>Added {0:plural:{} permission|{} permissions|{} permissions}</value>
+  </data>
+  <data name="EventInfo_permissions_removed" xml:space="preserve">
+      <value>Removed {0:plural:{} permission|{} permissions|{} permissions}</value>
+  </data>
+  <data name="EventInfo_permissions_added_and_removed" xml:space="preserve">
+      <value>Added {0}, removed {1} permissions</value>
+  </data>
+  <data name="EventInfo_user_auto_provisioned" xml:space="preserve">
+      <value>{0} signed in for the first time</value>
+  </data>
+  <data name="EventInfo_user_setup" xml:space="preserve">
+      <value>{0} completed App Platform setup</value>
+  </data>
+  <data name="EventInfo_account_key_changed" xml:space="preserve">
+      <value>Changed the account key passphrase</value>
+  </data>
+  <data name="EventInfo_user_keys_reset" xml:space="preserve">
+      <value>Reset their cryptographic keys</value>
+  </data>
+  <data name="EventInfo_user_key_reset_requested" xml:space="preserve">
+      <value>Requested an admin key reset</value>
+  </data>
+  <data name="EventInfo_user_key_reset_approved" xml:space="preserve">
+      <value>Approved a key reset request</value>
+  </data>
+  <data name="EventInfo_user_key_reset_denied" xml:space="preserve">
+      <value>Denied a key reset request</value>
+  </data>
+  <data name="EventInfo_device_registered" xml:space="preserve">
+      <value>Registered a new device</value>
+  </data>
+  <data name="EventInfo_device_reregistered" xml:space="preserve">
+      <value>Re-registered an existing device</value>
+  </data>
+  <data name="EventInfo_device_deregistered" xml:space="preserve">
+      <value>Removed a device</value>
+  </data>
+  <data name="EventInfo_webhook_created" xml:space="preserve">
+      <value>Created a webhook provider</value>
+  </data>
+  <data name="EventInfo_webhook_updated" xml:space="preserve">
+      <value>Updated a webhook provider</value>
+  </data>
+  <data name="EventInfo_webhook_deleted" xml:space="preserve">
+      <value>Deleted a webhook provider</value>
+  </data>
+  <data name="EventInfo_webhook_tested" xml:space="preserve">
+      <value>Sent a webhook test event</value>
+  </data>
+  <data name="EventInfo_compliance_report_viewed" xml:space="preserve">
+      <value>Viewed the compliance report</value>
+  </data>
+  <data name="EventInfo_compliance_report_exported" xml:space="preserve">
+      <value>Exported the compliance report as PDF</value>
+  </data>
+  <data name="EventInfo_policy_created" xml:space="preserve">
+      <value>Created a conditional access policy</value>
+  </data>
+  <data name="EventInfo_policy_updated" xml:space="preserve">
+      <value>Updated a conditional access policy</value>
+  </data>
+  <data name="EventInfo_policy_deleted" xml:space="preserve">
+      <value>Deleted a conditional access policy</value>
+  </data>
+  <data name="EventInfo_policy_setting_added" xml:space="preserve">
+      <value>Added policy setting {0}</value>
+  </data>
+  <data name="EventInfo_policy_setting_added_generic" xml:space="preserve">
+      <value>Added a policy setting</value>
+  </data>
+  <data name="EventInfo_policy_setting_removed" xml:space="preserve">
+      <value>Removed policy setting {0}</value>
+  </data>
+  <data name="EventInfo_policy_setting_removed_generic" xml:space="preserve">
+      <value>Removed a policy setting</value>
+  </data>
+  <data name="EventInfo_license_updated" xml:space="preserve">
+      <value>Updated the license key</value>
   </data>
 </root>
