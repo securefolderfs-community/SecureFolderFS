@@ -16,15 +16,14 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using static SecureFolderFS.Core.Constants.Vault.Authentication;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
 using SecureFolderFS.Sdk.AppPlatform.Dto;
 using SecureFolderFS.Sdk.AppPlatform.Helpers;
 using SecureFolderFS.Sdk.AppPlatform.Services;
-using static SecureFolderFS.Core.Constants.Vault.Authentication;
 #endif
 
 namespace SecureFolderFS.UI.ViewModels.Authentication

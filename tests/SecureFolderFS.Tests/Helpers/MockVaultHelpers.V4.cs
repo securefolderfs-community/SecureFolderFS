@@ -6,16 +6,16 @@ namespace SecureFolderFS.Tests.Helpers
     internal static partial class MockVaultHelpers
     {
         // Mock recovery key
-        public const string V4_RECOVERY_KEY = "Ww0/Rx6XHEB87y4WWfw12xo7Xfyk67EB3FNUlWdaG/k=@@@ndVd2mEgV/9Sq9xhLKa4ZaACwQH+7JVzfb7rTLBZK2s=";
+        public const string V4_RECOVERY_KEY = "xkniDwR94w55X9x4hf7xktz0IwGGal/2JKDMn1w2r9c=@@@KgiXI8E9dZo9K8LshLAnEDbGV8EQs3TQn6MRUGfOmVQ=";
 
         private const string V4_KEYSTORE_STRING = """
                                                   {
-                                                    "c_encryptionKey": "wALUX7wq5cZ45yB3HncCiiXZ3OiQmOTZj5MU/T03dxldD3pyh11C5g==",
-                                                    "c_macKey": "1DrsQmRH4X6CgM08aRqeANYXxN6NWlNrzsbp6DKeXErrE+KfYRS08g==",
-                                                    "salt": "e5nJCCu+uJZ3uAwio+iXOg==",
-                                                    "c_softwareEntropy": "bYWy61+0lXUb8e9ZLmasECuCZWmUTaKC8BIJvEofix4=",
-                                                    "entropyNonce": "jzd/bdatTE2uOoMa",
-                                                    "entropyTag": "OwjR5RFBmvl7Aaf0rwQ8yw=="
+                                                    "c_encryptionKey": "GK/Gc0UphVHpb/utm61odQJGH6j7IIc9RAGWQTTrcugxTOXwOxkwhA==",
+                                                    "c_macKey": "A7jTnbT9RHfZ466cU/DLHIp7164L4iXqnWTpGOT5ast9pgnrccAi7A==",
+                                                    "salt": "aSNkObtR5gXuR5uNkeSygw==",
+                                                    "c_softwareEntropy": "SRM8vmYDfy0F8EWGzN1/5YAuMRxvGsXH6eiQhwJJ6/s=",
+                                                    "entropyNonce": "tsuXKhJA6SvzlB8+",
+                                                    "entropyTag": "2dD9acgmpY9/xQoW6I6kmA=="
                                                   }
                                                   """;
 
@@ -27,9 +27,10 @@ namespace SecureFolderFS.Tests.Helpers
                                                     "filenameShortening": 0,
                                                     "recycleBinSize": 0,
                                                     "authMode": "password",
-                                                    "vaultId": "0b47eb66-1e58-451f-a72f-f1f5b34295b6",
+                                                    "vaultId": "2ecbdd1f-3cd3-4b4f-88d9-d54da869aa3c",
                                                     "appPlatform": null,
-                                                    "hmacsha256mac": "fpSCs1rfVwtWeCikRcSeJimORlfN3f+MCjed9nobofA=",
+                                                    "complementGeneration": 0,
+                                                    "hmacsha256mac": "ZkYPf3EMwVhS7bjGasakr3CrN54bMRmlZUBvg7hZycw=",
                                                     "version": 4
                                                   }
                                                   """;

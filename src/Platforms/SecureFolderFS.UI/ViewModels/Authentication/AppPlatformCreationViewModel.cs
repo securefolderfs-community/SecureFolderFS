@@ -10,6 +10,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using static SecureFolderFS.Core.Constants.Vault.Authentication;
 #if APP_PLATFORM_PRESENT
 using SecureFolderFS.Sdk.AppPlatform;
 using SecureFolderFS.Sdk.AppPlatform.Dto;
@@ -40,7 +41,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         public override AuthenticationStage Availability { get; } = AuthenticationStage.FirstStageOnly;
 
         public AppPlatformCreationViewModel()
-            : base(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM)
+            : base(AUTH_APP_PLATFORM)
         {
             Title = "App Platform";
         }
