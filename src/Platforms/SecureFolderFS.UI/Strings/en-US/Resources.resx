@@ -1946,4 +1946,10 @@
   <data name="EventInfo_license_updated" xml:space="preserve">
       <value>Updated the license key</value>
   </data>
+  <data name="SessionTimeRemaining" xml:space="preserve">
+      <value>Session: {0}:{1}</value>
+  </data>
+  <data name="SessionExpired" xml:space="preserve">
+      <value>Session expired</value>
+  </data>
 </root>
