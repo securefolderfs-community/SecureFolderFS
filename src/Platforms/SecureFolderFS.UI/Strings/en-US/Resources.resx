@@ -1628,8 +1628,8 @@
   <data name="AdminsUsersPermissionInfo" xml:space="preserve">
       <value>Admins (app-platform-admin role) always have all permissions implicitly. These controls only affect standard users (app-platform-user role) and groups.</value>
   </data>
-  <data name="Permission_compliance.read" xml:space="preserve">
-      <value>View the Compliance reporting dashboard and export compliance reports. Provides read-only visibility into vault compliance status, recovery key coverage, and access grant health.</value>
+  <data name="Permission_insights.read" xml:space="preserve">
+      <value>View the Insights reporting dashboard and export user and vault insight reports. Provides read-only overview of vaults, its members, device policies, access expiry, and recovery key coverage. Also granted implicitly to holders of vaults.manage_all.</value>
   </data>
   <data name="Permission_devices.manage" xml:space="preserve">
       <value>Manage devices across all users: revoke device registrations and enforce device policies. Without this, users can only manage their own devices.</value>
@@ -1951,5 +1951,65 @@
   </data>
   <data name="SessionExpired" xml:space="preserve">
       <value>Session expired</value>
+  </data>
+  <data name="Insights" xml:space="preserve">
+      <value>Insights</value>
+  </data>
+  <data name="Recovery" xml:space="preserve">
+      <value>Recovery</value>
+  </data>
+  <data name="Expiry" xml:space="preserve">
+      <value>Expiry</value>
+  </data>
+  <data name="DevicePolicy" xml:space="preserve">
+      <value>Device Policy</value>
+  </data>
+  <data name="ExpiryPolicy" xml:space="preserve">
+      <value>Expiry Policy</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+      <value>Show more</value>
+  </data>
+  <data name="OpenInVaults" xml:space="preserve">
+      <value>Open in Vaults</value>
+  </data>
+  <data name="SelectVaultToInspect" xml:space="preserve">
+      <value>Select a vault to inspect</value>
+  </data>
+  <data name="SortByName" xml:space="preserve">
+      <value>Name</value>
+  </data>
+  <data name="SortByUsers" xml:space="preserve">
+      <value>Users</value>
+  </data>
+  <data name="SortByExpiry" xml:space="preserve">
+      <value>Expiry</value>
+  </data>
+  <data name="SortByRecovery" xml:space="preserve">
+      <value>Recovery</value>
+  </data>
+  <data name="Membership" xml:space="preserve">
+      <value>Membership</value>
+  </data>
+  <data name="SortByPermissions" xml:space="preserve">
+      <value>Permissions</value>
+  </data>
+  <data name="SortByMembership" xml:space="preserve">
+      <value>Membership</value>
+  </data>
+  <data name="OpenInPermissions" xml:space="preserve">
+      <value>Open in Permissions</value>
+  </data>
+  <data name="SelectUserToInspect" xml:space="preserve">
+      <value>Select a user to inspect</value>
+  </data>
+  <data name="LastAccess" xml:space="preserve">
+      <value>Last access</value>
+  </data>
+  <data name="NoMembersInGroupYet" xml:space="preserve">
+      <value>No members in this group yet</value>
+  </data>
+  <data name="Revocaations" xml:space="preserve">
+      <value>Revocations</value>
   </data>
 </root>
