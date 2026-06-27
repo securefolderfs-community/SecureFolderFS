@@ -1647,7 +1647,7 @@
       <value>View all SIEM/audit logs across the platform. Without this, users only see logs for their own actions and vaults.</value>
   </data>
   <data name="Permission_users.manage" xml:space="preserve">
-      <value>Manage all user groups regardless of ownership. Grants access to the Users navigation section.</value>
+      <value>Manage all user groups regardless of ownership. Grants access to the Users &amp; Groups navigation section.</value>
   </data>
   <data name="Permission_vaults.manage_all" xml:space="preserve">
       <value>Manage all vaults regardless of ownership. Bypasses owner-only restrictions on vault operations.</value>
@@ -2009,7 +2009,13 @@
   <data name="NoMembersInGroupYet" xml:space="preserve">
       <value>No members in this group yet</value>
   </data>
-  <data name="Revocaations" xml:space="preserve">
+  <data name="Revocations" xml:space="preserve">
       <value>Revocations</value>
+  </data>
+  <data name="GrantAccess" xml:space="preserve">
+      <value>Grant Access</value>
+  </data>
+  <data name="Grant" xml:space="preserve">
+      <value>Grant</value>
   </data>
 </root>
