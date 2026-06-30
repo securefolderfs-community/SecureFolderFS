@@ -776,6 +776,12 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Delete user</value>
+  </data>
+  <data name="Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
   <data name="GetInfo" xml:space="preserve">
     <value>Get info</value>
   </data>
@@ -1577,6 +1583,9 @@
   <data name="DevicesCountPlural" xml:space="preserve">
       <value>{0:plural:{} device|{} devices|{} devices}</value>
   </data>
+  <data name="MembersCountPlural" xml:space="preserve">
+      <value>{0:plural:{} member|{} members|{} members}</value>
+  </data>
   <data name="Action" xml:space="preserve">
       <value>Action</value>
   </data>
@@ -1880,6 +1889,12 @@
   <data name="EventInfo_user_setup" xml:space="preserve">
       <value>{0} completed App Platform setup</value>
   </data>
+  <data name="EventInfo_user_deleted" xml:space="preserve">
+      <value>Deleted user {0}</value>
+  </data>
+  <data name="EventInfo_user_deleted_generic" xml:space="preserve">
+      <value>Deleted a user</value>
+  </data>
   <data name="EventInfo_account_key_changed" xml:space="preserve">
       <value>Changed the account key passphrase</value>
   </data>
@@ -2017,5 +2032,8 @@
   </data>
   <data name="Grant" xml:space="preserve">
       <value>Grant</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+      <value>Approve</value>
   </data>
 </root>
