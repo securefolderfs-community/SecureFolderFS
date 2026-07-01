@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Dokany.AppModels
                 FileSystemStatistics = (IFileSystemStatistics?)options.Get(nameof(FileSystemStatistics)) ?? new FileSystemStatistics(),
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
-                IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+                IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? false,
                 IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
                 RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
 

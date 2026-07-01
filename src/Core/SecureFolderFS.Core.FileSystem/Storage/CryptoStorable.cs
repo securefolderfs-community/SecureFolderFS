@@ -44,8 +44,8 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IStorableChild storableChild)
                 throw new NotSupportedException("Retrieving the parent folder is not supported.");
 
-            // Make sure we don't go outside the root
-            if (storableChild.Id == specifics.ContentFolder.Id || !specifics.ContentFolder.Id.Contains(storableChild.Id))
+            // Make sure we don't go outside the root (the item must be located inside the content folder)
+            if (storableChild.Id == specifics.ContentFolder.Id || !storableChild.Id.StartsWith(specifics.ContentFolder.Id, StringComparison.Ordinal))
                 return null;
 
             var ciphertextParent = await storableChild.GetParentAsync(cancellationToken);

@@ -10,6 +10,15 @@ namespace SecureFolderFS.Core.FileSystem.Buffers
         /// </summary>
         public bool IsHeaderReady { get; set; }
 
+        /// <summary>
+        /// Gets the synchronization root that guards header initialization.
+        /// </summary>
+        /// <remarks>
+        /// The header buffer is shared by all streams opened on the same file,
+        /// so reading or creating the header must be synchronized across streams.
+        /// </remarks>
+        public object SyncRoot { get; } = new();
+
         public HeaderBuffer(byte[] buffer)
             : base(buffer)
         {
