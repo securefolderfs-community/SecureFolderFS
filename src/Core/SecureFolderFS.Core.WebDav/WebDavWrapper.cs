@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using NWebDav.Server.Dispatching;
-using SecureFolderFS.Core.WebDav.Helpers;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using NWebDav.Server.Dispatching;
+using SecureFolderFS.Core.WebDav.Helpers;
 
 namespace SecureFolderFS.Core.WebDav
 {
