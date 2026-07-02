@@ -1,17 +1,21 @@
-﻿using SecureFolderFS.Core.FileSystem.Extensions;
+﻿using System.IO;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System.IO;
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
+        private readonly Security _security;
+
+        public DokanyHandlesManager(Security security, StreamsAccess streamsAccess, VirtualFileSystemOptions fileSystemOptions)
             : base(streamsAccess, fileSystemOptions)
         {
+            _security = security;
         }
 
         /// <inheritdoc/>
@@ -37,7 +41,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
                 plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new DokanyFileHandle(plaintextStream);
+            var fileHandle = new DokanyFileHandle(plaintextStream, _security);
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle
