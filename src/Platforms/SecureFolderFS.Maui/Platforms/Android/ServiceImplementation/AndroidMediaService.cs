@@ -31,8 +31,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
                 case TypeHint.Media:
                 {
+                    // Capture at one second rather than the very first frame, which is often
+                    // black (fade-ins). ClosestSync clamps the position for shorter videos
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                    var imageStream = await ThumbnailHelpers.GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
+                    var imageStream = await ThumbnailHelpers.GenerateVideoThumbnailAsync(stream, TimeSpan.FromSeconds(1)).ConfigureAwait(false);
 
                     return new ImageStreamSource(imageStream);
                 }

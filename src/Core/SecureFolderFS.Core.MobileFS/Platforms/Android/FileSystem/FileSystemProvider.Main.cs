@@ -418,9 +418,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     ? (uint)Math.Max(sizeHint.X, sizeHint.Y)
                     : 300U;
 
+                // Capture at one second rather than the very first frame, which is often
+                // black (fade-ins). ClosestSync clamps the position for shorter videos
                 using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
                 var thumbnailStream = typeHint is TypeHint.Media
-                    ? ThumbnailHelpers.GenerateVideoThumbnailAsync(inputStream, TimeSpan.FromSeconds(0), (int)size, (int)size).ConfigureAwait(false).GetAwaiter().GetResult()
+                    ? ThumbnailHelpers.GenerateVideoThumbnailAsync(inputStream, TimeSpan.FromSeconds(1), (int)size, (int)size).ConfigureAwait(false).GetAwaiter().GetResult()
                     : ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, size).ConfigureAwait(false).GetAwaiter().GetResult();
 
                 if (signal?.IsCanceled ?? false)

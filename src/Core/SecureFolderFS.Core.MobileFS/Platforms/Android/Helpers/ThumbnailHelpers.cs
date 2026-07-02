@@ -55,8 +55,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             if (bitmap is null)
                 throw new Exception("Failed to decode image.");
 
-            using var rotated = ApplyExifOrientation(bitmap, exif);
-            return await CompressBitmapAsync(rotated).ConfigureAwait(false);
+            // ApplyExifOrientation returns the same instance when no transformation is
+            // needed - only dispose the result when a new bitmap was actually created
+            var oriented = ApplyExifOrientation(bitmap, exif);
+            try
+            {
+                return await CompressBitmapAsync(oriented).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (!ReferenceEquals(oriented, bitmap))
+                    oriented.Dispose();
+            }
         }
 
         /// <summary>
@@ -72,8 +82,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             using var retriever = new MediaMetadataRetriever();
             await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
 
+            // The retriever expects the timestamp in microseconds, not in ticks (100ns units).
+            // ClosestSync clamps to the nearest sync frame, so a capture time past the end is safe
+            var captureTimeUs = captureTime.Ticks / TimeSpan.TicksPerMicrosecond;
+
             // Use scaled frame for efficiency
-            using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, width, height);
+            using var bitmap = retriever.GetScaledFrameAtTime(captureTimeUs, Option.ClosestSync, width, height);
             if (bitmap is null)
                 throw new NotSupportedException("Could not retrieve scaled frame.");
 
@@ -89,10 +103,17 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             return inSampleSize;
         }
 
+        /// <summary>
+        /// Applies the EXIF orientation to <paramref name="bitmap"/>.
+        /// </summary>
+        /// <remarks>
+        /// The caller retains ownership of <paramref name="bitmap"/>. When a transformation is
+        /// applied, a new bitmap (owned by the caller) is returned; otherwise the same instance.
+        /// </remarks>
         private static Bitmap ApplyExifOrientation(Bitmap bitmap, ExifInterface exif)
         {
             var orientation = (Orientation)exif.GetAttributeInt(ExifInterface.TagOrientation, (int)Orientation.Normal);
-            var matrix = new Matrix();
+            using var matrix = new Matrix();
 
             switch (orientation)
             {
@@ -133,17 +154,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
                     return bitmap;
             }
 
-            var rotated = Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
-            bitmap.Dispose();
-            return rotated;
+            return Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
         }
 
+        /// <summary>
+        /// Compresses <paramref name="bitmap"/> into an image stream. The caller retains ownership of the bitmap.
+        /// </summary>
         private static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
         {
+            var format = bitmap.HasAlpha ? Bitmap.CompressFormat.Png! : Bitmap.CompressFormat.Jpeg!;
             var memoryStream = new MemoryStream();
-            await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg!, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
+            await bitmap.CompressAsync(format, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
-            bitmap.Dispose();
 
             return new NonDisposableStream(memoryStream);
         }
