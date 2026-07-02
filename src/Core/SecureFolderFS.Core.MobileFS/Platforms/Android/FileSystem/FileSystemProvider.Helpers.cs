@@ -1,4 +1,4 @@
-﻿using Android.Database;
+using Android.Database;
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
@@ -18,30 +18,28 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
-            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.PlaintextRoot, safRoot.RootId);
+            var rootFolderId = BuildDocumentId(safRoot, safRoot.StorageRoot.PlaintextRoot);
             row.Add(Root.ColumnRootId, safRoot.RootId);
             row.Add(Root.ColumnDocumentId, rootFolderId);
             row.Add(Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
             row.Add(Root.ColumnIcon, iconRid);
-            row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+
+            // SupportsIsChild is required for ACTION_OPEN_DOCUMENT_TREE to work against this root
+            row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate | DocumentRootFlags.SupportsIsChild));
 
             return true;
         }
 
-        private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, string? documentId)
+        private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, SafRoot safRoot, string documentId)
         {
-            documentId ??= GetDocumentIdForStorable(storable, null);
             var row = matrix.NewRow();
             if (row is null)
-                return false;
-
-            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
-            if (safRoot is null)
                 return false;
 
             AddDocumentId();
             AddDisplayName();
             await AddSizeAsync();
+            await AddLastModifiedAsync();
             AddMimeType();
             AddFlags();
 
@@ -57,6 +55,15 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
                 var size = await file.GetSizeAsync();
                 row.Add(Document.ColumnSize, size);
+            }
+            async Task AddLastModifiedAsync()
+            {
+                if (storable is not ILastModifiedAt lastModifiedAt)
+                    return;
+
+                var dateModified = await SafetyHelpers.NoFailureAsync(() => lastModifiedAt.LastModifiedAt.GetValueAsync());
+                if (dateModified is not null)
+                    row.Add(Document.ColumnLastModified, new DateTimeOffset(dateModified.Value.ToUniversalTime()).ToUnixTimeMilliseconds());
             }
             void AddFlags()
             {
@@ -95,18 +102,45 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 : storable.Name);
         }
 
-        private string? GetDocumentIdForStorable(IStorable storable, string? rootId)
+        /// <summary>
+        /// Builds the document ID (in 'rootId:plaintextPath' format) of <paramref name="storable"/> under <paramref name="safRoot"/>.
+        /// </summary>
+        private static string BuildDocumentId(SafRoot safRoot, IStorable storable)
         {
-            var safRoot = rootId is not null
-                ? _rootCollection?.GetSafRootForRootId(rootId)
-                : _rootCollection?.GetSafRootForStorable(storable);
-
-            if (safRoot is null)
-                return null;
-
             return storable.Id == safRoot.StorageRoot.PlaintextRoot.Id
                 ? $"{safRoot.RootId}:"
                 : $"{safRoot.RootId}:{storable.Id}";
+        }
+
+        /// <summary>
+        /// Gets the document ID of the parent of the item identified by <paramref name="documentId"/>.
+        /// </summary>
+        private static string? GetParentDocumentId(string documentId)
+        {
+            var split = documentId.Split(':', 2);
+            if (split.Length < 2)
+                return null;
+
+            var path = split[1].TrimEnd('/');
+            var separatorIndex = path.LastIndexOf('/');
+
+            return separatorIndex <= 0 ? $"{split[0]}:" : $"{split[0]}:{path[..separatorIndex]}";
+        }
+
+        /// <summary>
+        /// Resolves the <see cref="SafRoot"/> that the document identified by <paramref name="documentId"/> belongs to.
+        /// </summary>
+        /// <remarks>
+        /// The root is always derived from the document ID. It must never be inferred from a storable's
+        /// path, because plaintext paths are not unique across roots (every root starts at '/').
+        /// </remarks>
+        private SafRoot? GetSafRootForDocumentId(string documentId)
+        {
+            var split = documentId.Split(':', 2);
+            if (split.Length < 2)
+                return null;
+
+            return _rootCollection?.GetSafRootForRootId(split[0]);
         }
 
         private IStorable? GetStorableForDocumentId(string documentId)
@@ -137,6 +171,19 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             return SafetyHelpers.NoFailureResult(() => safRoot.StorageRoot.PlaintextRoot.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult());
         }
 
+        /// <summary>
+        /// Notifies content observers that the children of <paramref name="parentDocumentId"/> have changed.
+        /// </summary>
+        private void NotifyChildDocumentsChange(string? parentDocumentId)
+        {
+            if (parentDocumentId is null)
+                return;
+
+            var childrenUri = BuildChildDocumentsUri(Constants.Android.FileSystem.AUTHORITY, parentDocumentId);
+            if (childrenUri is not null)
+                Context?.ContentResolver?.NotifyChange(childrenUri, null);
+        }
+
         private static string GetMimeForStorable(IStorable storable)
         {
             if (storable is IFolder)
@@ -148,7 +195,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return "application/octet-stream";
 
             // Remove the starting dot
-            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1)) ?? string.Empty;
+            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1).ToLowerInvariant()) ?? "application/octet-stream";
         }
     }
 }

@@ -1,4 +1,5 @@
 using Android.OS;
+using Android.Systems;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -16,7 +17,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override long OnGetSize()
         {
-            return _stream.Length;
+            try
+            {
+                return _stream.Length;
+            }
+            catch (Exception)
+            {
+                throw new ErrnoException(nameof(OnGetSize), OsConstants.Eio);
+            }
         }
 
         /// <inheritdoc/>
@@ -35,9 +43,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             }
             catch (Exception)
             {
-                // TODO: Implement more exception handlers
-                return 0;
-                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                // Returning 0 would signal EOF and silently truncate the read
+                throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
             }
         }
 
@@ -57,12 +64,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
                 return size;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // TODO: Implement more exception handlers
-                _ = ex;
-                return 0;
-                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                // Returning 0 would signal a successful zero-byte write and silently lose data
+                throw new ErrnoException(nameof(OnWrite), OsConstants.Eio);
             }
         }
 
@@ -71,13 +76,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             try
             {
-                _stream.Flush();
+                if (_stream.CanWrite)
+                    _stream.Flush();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
-                // TODO: Implement more exception handlers
-                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                throw new ErrnoException(nameof(OnFsync), OsConstants.Eio);
             }
         }
 

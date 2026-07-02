@@ -64,14 +64,16 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
         /// </summary>
         /// <param name="stream">The video file stream from which the thumbnail is generated.</param>
         /// <param name="captureTime">The time position in the video to capture the thumbnail frame.</param>
+        /// <param name="width">The width of the thumbnail image.</param>
+        /// <param name="height">The height of the thumbnail image.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a stream containing the compressed thumbnail image.</returns>
-        public static async Task<Stream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
+        public static async Task<Stream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime, int width = 320, int height = 240)
         {
             using var retriever = new MediaMetadataRetriever();
             await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
 
             // Use scaled frame for efficiency
-            using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, 320, 240);
+            using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, width, height);
             if (bitmap is null)
                 throw new NotSupportedException("Could not retrieve scaled frame.");
 
