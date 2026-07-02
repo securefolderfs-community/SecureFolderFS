@@ -1,10 +1,10 @@
-using OwlCore.Storage;
-using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
