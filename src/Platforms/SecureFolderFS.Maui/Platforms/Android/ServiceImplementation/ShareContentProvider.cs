@@ -28,7 +28,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// to accommodate apps that open multiple streams (e.g. type sniffing + actual read).
         /// </summary>
         private static readonly TimeSpan RegistrationTtl = TimeSpan.FromSeconds(20);
-        
+
         private static readonly Dictionary<string, IFile> _registeredFiles = new();
         private static readonly Lock _lock = new();
 
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public ShareContentProvider()
         {
         }
-        
+
         /// <summary>
         /// Registers a file for sharing and returns a content URI suitable for use in an Intent.
         /// The registration is automatically cleaned up after <see cref="RegistrationTtl"/>.
@@ -195,7 +195,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
         /// <inheritdoc/>
         public override int Update(Uri uri, ContentValues? values, string? selection, string[]? selectionArgs) => 0;
-        
+
         private static bool IsBrokenPipe(Java.IO.IOException ex)
         {
             var msg = ex.Message;

@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.UserControls
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
-        
+
         public bool ShouldSaveCredentials
         {
             get => (bool)GetValue(ShouldSaveCredentialsProperty);
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty ShouldSaveCredentialsProperty =
             DependencyProperty.Register(nameof(ShouldSaveCredentials), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
-        
+
         public bool AreCredentialsSaved
         {
             get => (bool)GetValue(AreCredentialsSavedProperty);
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty DiscardSavedCredentialsCommandProperty =
             DependencyProperty.Register(nameof(DiscardSavedCredentialsCommand), typeof(ICommand), typeof(LoginOptions), new PropertyMetadata(null));
-        
+
         public ICommand? RestartLoginCommand
         {
             get => (ICommand?)GetValue(RestartLoginCommandProperty);

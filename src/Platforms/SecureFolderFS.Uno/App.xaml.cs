@@ -194,7 +194,7 @@ namespace SecureFolderFS.Uno
             return file is IStorageFile storageFile && 
                    storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
         }
-        
+
         private static bool IsUriActivation(AppActivationArguments? args)
         {
             return args is { Kind: ExtendedActivationKind.Protocol, Data: IProtocolActivatedEventArgs };

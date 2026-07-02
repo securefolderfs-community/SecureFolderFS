@@ -147,5 +147,3 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         }
     }
 }
-
-

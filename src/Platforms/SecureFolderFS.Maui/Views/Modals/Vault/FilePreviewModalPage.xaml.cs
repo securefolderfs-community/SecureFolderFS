@@ -152,7 +152,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             {
                 if (audioViewModel.AudioSource is not ICollection<IDisposable> audioDisposables || audioDisposables.ElementAtOrDefault(0) is not Stream audioStream)
                     return;
-                
+
                 disposables = audioDisposables;
                 stream = audioStream;
             }

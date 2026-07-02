@@ -35,5 +35,3 @@ public class VaultInfoCommandTests : BaseCliCommandTests
         Assert.Pass();
     }
 }
-
-
