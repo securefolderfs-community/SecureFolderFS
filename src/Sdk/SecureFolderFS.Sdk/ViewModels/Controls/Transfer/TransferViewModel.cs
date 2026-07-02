@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Pickers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
@@ -19,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
     public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>, IFolderPicker
     {
         private readonly BrowserViewModel _browserViewModel;
+        private readonly SynchronizationContext? _synchronizationContext;
         private TaskCompletionSource<IFolder?>? _tcs;
         private CancellationTokenSource? _cts;
 
@@ -32,10 +34,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         public TransferViewModel(BrowserViewModel browserViewModel)
         {
             _browserViewModel = browserViewModel;
+            _synchronizationContext = SynchronizationContext.Current;
         }
 
         /// <inheritdoc/>
         public void Report(TotalProgress value)
+        {
+            // Progress is reported from worker threads, but Title is UI-bound.
+            // Marshal the update back to the context this view model was created on
+            if (_synchronizationContext != SynchronizationContext.Current)
+            {
+                _synchronizationContext.PostOrExecute(static state =>
+                {
+                    var (self, progress) = ((TransferViewModel, TotalProgress))state!;
+                    self.ReportCore(progress);
+                }, (this, value));
+
+                return;
+            }
+
+            ReportCore(value);
+        }
+
+        private void ReportCore(TotalProgress value)
         {
             if (value.Achieved >= value.Total && value.Total > 0)
             {
@@ -94,6 +115,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                 IsPickingFolder = false;
                 if (_tcs?.TrySetCanceled(CancellationToken.None) ?? false)
                     await this.HideAsync();
+
+                // Clear the completed source, otherwise a later Cancel would be routed
+                // to the finished pick instead of cancelling the running transfer
+                _tcs = null;
             }
         }
 
