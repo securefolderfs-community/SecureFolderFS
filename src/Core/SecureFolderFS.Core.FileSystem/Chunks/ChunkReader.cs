@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.Cryptography;
@@ -91,10 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 // Check if the chunk is authentic
                 if (!result)
-                {
-                    Debugger.Break();
                     return -1;
-                }
 
                 return read - (ciphertextSize - plaintextSize);
             }
