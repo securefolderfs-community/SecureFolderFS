@@ -117,12 +117,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (destinationViewModel is null || destinationViewModel.Inner.Id != destination.Id)
                     return;
 
-                if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
+                if (items.Any(item => IsAncestorOrSelf(destination.Id, item.Inner.Id)))
                     return;
 
-                // Ensure the destination has content already loaded
+                // Ensure the destination has content already loaded before collision checks
                 if (destinationViewModel.Items.IsEmpty())
-                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+                    await destinationViewModel.ListContentsAsync(cts.Token);
 
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
@@ -190,12 +190,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (destinationViewModel is null || destinationViewModel.Inner.Id != destination.Id)
                     return;
 
-                if (items.Any(item => destination.Id.Contains(item.Inner.Id, StringComparison.InvariantCultureIgnoreCase)))
+                if (items.Any(item => IsAncestorOrSelf(destination.Id, item.Inner.Id)))
                     return;
 
-                // Ensure the destination has content already loaded
+                // Ensure the destination has content already loaded before collision checks
                 if (destinationViewModel.Items.IsEmpty())
-                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+                    await destinationViewModel.ListContentsAsync(cts.Token);
 
                 await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
                 {
@@ -204,10 +204,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
                     // Copy
                     var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, availableName, reporter, token);
-
-                    // Ensure the destination has content already loaded
-                    if (destinationViewModel.Items.IsEmpty())
-                        _ = destinationViewModel.ListContentsAsync(cts.Token);
 
                     // Add to destination
                     destinationViewModel.Items.Insert(copiedItem switch
@@ -312,23 +308,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     if (recycleBin is null)
                         return;
 
-                    var sizes = new List<long>();
+                    // Key the sizes by item ID - the transfer callback receives the storable,
+                    // so positional lookups against the view model array would not match
+                    var sizes = new Dictionary<string, long>();
                     foreach (var item in items)
                     {
-                        sizes.Add(item.Inner switch
+                        sizes[item.Inner.Id] = item.Inner switch
                         {
                             IFile file => await file.GetSizeAsync(cts.Token) ?? 0L,
                             IFolder folder => await folder.GetSizeAsync(cts.Token) ?? 0L,
                             _ => 0L
-                        });
+                        };
                     }
 
                     if (BrowserViewModel.Options.IsRecycleBinUnlimited())
                     {
                         await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, token) =>
                         {
-                            var idx = Array.IndexOf(items, item);
-                            await recyclableFolder.DeleteAsync(item, sizes[idx], false, token);
+                            await recyclableFolder.DeleteAsync(item, sizes.GetValueOrDefault(item.Id, 0L), false, token);
 
                             var itemToRemove = ParentFolder.Items.FirstOrDefault(x => x.Inner.Id == item.Id);
                             if (itemToRemove is not null)
@@ -339,7 +336,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     {
                         var occupiedSize = await recycleBin.GetSizeAsync(cts.Token);
                         var availableSize = BrowserViewModel.Options.RecycleBinSize - occupiedSize;
-                        var permanently = availableSize < sizes.Sum();
+                        var permanently = availableSize < sizes.Values.Sum();
 
                         if (permanently)
                         {
@@ -356,16 +353,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                                 return;
                         }
 
-                        var idx = 0;
                         await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, token) =>
                         {
-                            await recyclableFolder.DeleteAsync(item, sizes[idx], permanently, token);
+                            await recyclableFolder.DeleteAsync(item, sizes.GetValueOrDefault(item.Id, 0L), permanently, token);
 
                             var itemToRemove = ParentFolder.Items.FirstOrDefault(x => x.Inner.Id == item.Id);
                             if (itemToRemove is not null)
                                 ParentFolder.Items.RemoveAndGet(itemToRemove)?.Dispose();
-
-                            idx++;
                         }, cts.Token);
                     }
                 }
@@ -410,7 +404,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         [RelayCommand]
         protected virtual async Task ExportAsync(CancellationToken cancellationToken)
         {
-            if (ParentFolder?.Folder is not IModifiableFolder parentModifiableFolder)
+            if (ParentFolder is null)
                 return;
 
             if (BrowserViewModel.TransferViewModel is not { IsProgressing: false } transferViewModel)
@@ -424,19 +418,56 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (destination is not IModifiableFolder destinationFolder)
                 return;
 
-            transferViewModel.TransferType = TransferType.Move;
-            using var cts = transferViewModel.GetCancellation(cancellationToken);
-            await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
-            {
-                // Copy and delete
-                await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, token);
-                await parentModifiableFolder.DeleteAsync((IStorableChild)item, token);
+            // Sources in read-only vaults cannot be removed - export becomes a copy
+            var removeSource = !BrowserViewModel.Options.IsReadOnly && ParentFolder.Folder is IModifiableFolder;
 
-                ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
-            }, cts.Token);
+            try
+            {
+                transferViewModel.TransferType = removeSource ? TransferType.Move : TransferType.Copy;
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
+                await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
+                {
+                    // Copy and delete
+                    await destinationFolder.CreateCopyOfStorableAsync(item, false, reporter, token);
+                    if (removeSource && ParentFolder.Folder is IModifiableFolder parentModifiableFolder)
+                    {
+                        await parentModifiableFolder.DeleteAsync((IStorableChild)item, token);
+                        ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
+                    }
+                }, cts.Token);
+            }
+            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            {
+                _ = ex;
+                // TODO: Report error
+            }
+            finally
+            {
+                await transferViewModel.HideAsync();
+            }
         }
 
         [RelayCommand]
         protected abstract Task OpenAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Determines whether <paramref name="destinationId"/> points to <paramref name="itemId"/> itself
+        /// or to a descendant of it, respecting path segment boundaries.
+        /// </summary>
+        /// <remarks>
+        /// A plain substring check would misclassify sibling paths that share a prefix (e.g. '/a/bc' and '/a/b').
+        /// </remarks>
+        private static bool IsAncestorOrSelf(string destinationId, string itemId)
+        {
+            if (destinationId.Equals(itemId, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (!destinationId.StartsWith(itemId, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // The prefix must end exactly at a path separator boundary
+            return itemId.EndsWith('/') || itemId.EndsWith('\\')
+                   || destinationId[itemId.Length] is '/' or '\\';
+        }
     }
 }
