@@ -196,14 +196,17 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
         private void GalleryView_Loaded(object? sender, EventArgs e)
         {
-            if (GalleryView is not null)
-                return;
-
             if (sender is not GalleryView { BindingContext: CarouselPreviewerViewModel carouselViewModel } galleryView)
                 return;
 
-            GalleryView = galleryView;
+            // Track parent size on every invocation - the one-time setup below may run
+            // before the first layout pass, when the parent is not measured yet
             galleryView.FitToParent();
+
+            if (GalleryView is not null)
+                return;
+
+            GalleryView = galleryView;
 
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;

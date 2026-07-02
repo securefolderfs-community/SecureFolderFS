@@ -1418,6 +1418,9 @@
   <data name="TapToLockAll" xml:space="preserve">
       <value>Tap to lock all vaults</value>
   </data>
+  <data name="LockAll" xml:space="preserve">
+      <value>Lock all</value>
+  </data>
   <data name="VaultsUnlockedPlural" xml:space="preserve">
       <value>{0:plural:One vault is|{} vaults are|{} vaults are} unlocked</value>
   </data>
