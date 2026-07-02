@@ -93,7 +93,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     TransferViewModel?.CancelCommand.Execute(null);
             }
 
-            CurrentFolder?.Dispose();
+            // Do not dispose CurrentFolder here because the page may reappear (e.g., after an
+            // overlay closes) and its items are still bound. Disposal happens in Dispose()
             base.OnDisappearing();
         }
 
@@ -400,6 +401,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Dispose()
         {
             ThumbnailCache.Dispose();
+
+            // Dispose every folder accumulated in the navigation stack
+            if (InnerNavigator is INavigationService navigationService)
+            {
+                foreach (var view in navigationService.Views)
+                {
+                    if (view is not FolderViewModel folderViewModel || folderViewModel == CurrentFolder)
+                        continue;
+
+                    folderViewModel.Items.DisposeAll();
+                    folderViewModel.Items.Clear();
+                    folderViewModel.Dispose();
+                }
+            }
+
             CurrentFolder?.Dispose();
             CurrentFolder?.Items.DisposeAll();
             CurrentFolder?.Items.Clear();
