@@ -12,8 +12,8 @@
 
 */
 
+using System.Runtime.CompilerServices;
 using Foundation;
-using UIKit;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 {
@@ -22,17 +22,31 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
     {
         private readonly NSUrl _url;
         private readonly FileStream _stream;
-        private readonly UIDocument _document;
+        private readonly bool _accessStarted;
         private readonly NSUrl _securityScopedAncestorUrl;
 
-        internal IOSSecurityScopedStream(NSUrl url, NSUrl securityScopedAncestorUrl, FileAccess access, FileShare share = FileShare.None)
+        internal IOSSecurityScopedStream(NSUrl url, NSUrl securityScopedAncestorUrl, FileAccess access, FileShare share)
         {
-            _document = new UIDocument(url);
-            var path = _document.FileUrl.Path!;
             _url = url;
             _securityScopedAncestorUrl = securityScopedAncestorUrl;
-            _securityScopedAncestorUrl.StartAccessingSecurityScopedResource();
-            _stream = File.Open(path, FileMode.Open, access, share);
+
+            // Track whether access was actually granted. Security scope access is reference
+            // counted per URL, and an unbalanced Stop could revoke access held elsewhere
+            _accessStarted = _securityScopedAncestorUrl.StartAccessingSecurityScopedResource();
+            try
+            {
+                var path = url.FilePathUrl?.Path ?? url.Path!;
+                _stream = File.Open(path, FileMode.Open, access, share);
+            }
+            catch (Exception)
+            {
+                // Stop the security scope when the stream could not be opened,
+                // as Dispose will never run for a failed constructor
+                if (_accessStarted)
+                    _securityScopedAncestorUrl.StopAccessingSecurityScopedResource();
+
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -75,15 +89,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
             _stream.Write(buffer, offset, count);
 
         /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
         protected override void Dispose(bool disposing)
         {
+            _ = _url; // _url is kept intentionally
             base.Dispose(disposing);
 
             if (disposing)
             {
                 _stream.Dispose();
-                _document.Dispose();
-                _securityScopedAncestorUrl.StopAccessingSecurityScopedResource();
+                if (_accessStarted)
+                    _securityScopedAncestorUrl.StopAccessingSecurityScopedResource();
             }
         }
     }
