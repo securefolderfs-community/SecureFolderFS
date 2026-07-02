@@ -1,7 +1,7 @@
 using Android.Media;
 using Stream = System.IO.Stream;
 
-namespace SecureFolderFS.Maui.AppModels
+namespace SecureFolderFS.Core.MobileFS.AppModels
 {
     /// <inheritdoc cref="MediaDataSource"/>
     internal sealed class StreamedMediaSource : MediaDataSource

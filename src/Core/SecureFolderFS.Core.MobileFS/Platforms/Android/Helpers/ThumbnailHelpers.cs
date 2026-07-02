@@ -1,5 +1,6 @@
 using Android.Graphics;
 using Android.Media;
+using SecureFolderFS.Core.MobileFS.AppModels;
 using SecureFolderFS.Storage.Streams;
 using ExifInterface = AndroidX.ExifInterface.Media.ExifInterface;
 using Stream = System.IO.Stream;
@@ -8,6 +9,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
 {
     public static class ThumbnailHelpers
     {
+        private const int IMAGE_THUMBNAIL_QUALITY = 70;
+
+        /// <summary>
+        /// Generates a scaled-down thumbnail from the provided image file stream with a maximum size constraint.
+        /// </summary>
+        /// <param name="stream">The image file stream from which the thumbnail is generated.</param>
+        /// <param name="maxSize">The maximum size (width or height) that the thumbnail should not exceed.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a stream containing the compressed thumbnail image.</returns>
         public static async Task<Stream> GenerateImageThumbnailAsync(Stream stream, uint maxSize)
         {
             // Read EXIF
@@ -48,6 +57,25 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
 
             using var rotated = ApplyExifOrientation(bitmap, exif);
             return await CompressBitmapAsync(rotated).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Generates a video thumbnail as a compressed stream by capturing a frame at the specified timestamp.
+        /// </summary>
+        /// <param name="stream">The video file stream from which the thumbnail is generated.</param>
+        /// <param name="captureTime">The time position in the video to capture the thumbnail frame.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a stream containing the compressed thumbnail image.</returns>
+        public static async Task<Stream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime)
+        {
+            using var retriever = new MediaMetadataRetriever();
+            await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
+
+            // Use scaled frame for efficiency
+            using var bitmap = retriever.GetScaledFrameAtTime(captureTime.Ticks, Option.ClosestSync, 320, 240);
+            if (bitmap is null)
+                throw new NotSupportedException("Could not retrieve scaled frame.");
+
+            return await CompressBitmapAsync(bitmap).ConfigureAwait(false);
         }
 
         private static int CalculateInSampleSize(int width, int height, int reqSize)
@@ -108,10 +136,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             return rotated;
         }
 
-        public static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
+        private static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
         {
-            const int IMAGE_THUMBNAIL_QUALITY = 70;
-
             var memoryStream = new MemoryStream();
             await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg!, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
