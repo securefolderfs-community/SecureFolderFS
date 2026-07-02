@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.FileSystem
 
             lock (threadLock)
             {
-                // Evict the oldest entry when the capacity is reached
+                // Evict an arbitrary entry when the capacity is reached (Dictionary enumeration order is not guaranteed)
                 if (capacity > 0 && cache.Count >= capacity && !cache.ContainsKey(key))
                 {
                     using var enumerator = cache.Keys.GetEnumerator();
