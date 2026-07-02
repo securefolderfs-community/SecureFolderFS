@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
                     .Select(item => $"{item}:")
                     .FirstOrDefault();
             }
-            else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsMacOS())
             {
                 return $"{Path.DirectorySeparatorChar}{Path.Combine("Volumes", nameHint)}{Path.DirectorySeparatorChar}";
             }
