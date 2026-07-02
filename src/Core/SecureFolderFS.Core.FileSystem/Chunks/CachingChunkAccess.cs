@@ -18,8 +18,18 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             get
             {
+                // Hold the cache lock for the entire operation
                 lock (_chunkCache)
-                    return _chunkCache.Count > 0;
+                {
+                    // Only chunks that were actually modified need flushing
+                    foreach (var item in _chunkCache)
+                    {
+                        if (item.Value.WasModified)
+                            return true;
+                    }
+
+                    return false;
+                }
             }
         }
 
@@ -32,90 +42,109 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// <inheritdoc/>
         public override int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
         {
-            // Get chunk
-            var plaintextChunk = GetChunk(chunkNumber);
-            if (plaintextChunk is null)
-                return -1;
+            // Hold the cache lock for the entire operation
+            lock (_chunkCache)
+            {
+                // Get chunk
+                var plaintextChunk = GetChunk(chunkNumber);
+                if (plaintextChunk is null)
+                    return -1;
 
-            // Copy from chunk
-            var count = Math.Min(plaintextChunk.ActualLength - offsetInChunk, destination.Length);
-            if (count < 0)
-                return -1;
+                // Copy from chunk
+                var count = Math.Min(plaintextChunk.ActualLength - offsetInChunk, destination.Length);
+                if (count < 0)
+                    return -1;
 
-            plaintextChunk.Buffer.AsSpan(offsetInChunk, count).CopyTo(destination);
+                plaintextChunk.Buffer.AsSpan(offsetInChunk, count).CopyTo(destination);
 
-            return count;
+                return count;
+            }
         }
 
         /// <inheritdoc/>
         public override int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
         {
-            // Get chunk
-            var plaintextChunk = GetChunk(chunkNumber);
-            if (plaintextChunk is null)
-                return -1;
+            // Hold the cache lock for the entire operation
+            lock (_chunkCache)
+            {
+                // Get chunk
+                var plaintextChunk = GetChunk(chunkNumber);
+                if (plaintextChunk is null)
+                    return -1;
 
-            // Update state of chunk
-            plaintextChunk.WasModified = true;
+                // Update state of chunk
+                plaintextChunk.WasModified = true;
 
-            // Copy to chunk
-            var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
-            if (count < 0)
-                return -1;
+                // Copy to chunk
+                var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
+                if (count < 0)
+                    return -1;
 
-            var destination = plaintextChunk.Buffer.AsSpan(offsetInChunk, count);
-            source.Slice(0, count).CopyTo(destination);
+                var destination = plaintextChunk.Buffer.AsSpan(offsetInChunk, count);
+                source.Slice(0, count).CopyTo(destination);
 
-            // Update actual length
-            plaintextChunk.ActualLength = Math.Max(plaintextChunk.ActualLength, count + offsetInChunk);
+                // Update actual length
+                plaintextChunk.ActualLength = Math.Max(plaintextChunk.ActualLength, count + offsetInChunk);
 
-            return count;
+                return count;
+            }
         }
 
         /// <inheritdoc/>
         public override void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
-            // Get chunk
-            var plaintextChunk = GetChunk(chunkNumber);
-            if (plaintextChunk is null)
-                return;
-
-            // Add read length of existing chunk data to the full length if specified
-            length += includeCurrentLength ? plaintextChunk.ActualLength : 0;
-            length = Math.Max(length, 0);
-
-            // Determine whether to extend or truncate the chunk
-            if (length < plaintextChunk.ActualLength)
+            // Hold the cache lock for the entire operation
+            lock (_chunkCache)
             {
-                // Truncate chunk
-                plaintextChunk.ActualLength = Math.Min(plaintextChunk.ActualLength, length);
-            }
-            else if (plaintextChunk.ActualLength < length)
-            {
-                // Extend chunk
-                plaintextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
-            }
-            else
-                return; // Ignore resizing the same length
+                // Get chunk
+                var plaintextChunk = GetChunk(chunkNumber);
+                if (plaintextChunk is null)
+                    return;
 
-            plaintextChunk.WasModified = true;
+                // Add read length of existing chunk data to the full length if specified
+                length += includeCurrentLength ? plaintextChunk.ActualLength : 0;
+                length = Math.Max(length, 0);
+
+                // Determine whether to extend or truncate the chunk
+                if (length < plaintextChunk.ActualLength)
+                {
+                    // Truncate chunk
+                    plaintextChunk.ActualLength = Math.Min(plaintextChunk.ActualLength, length);
+                }
+                else if (plaintextChunk.ActualLength < length)
+                {
+                    // Extend chunk
+                    plaintextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
+                }
+                else
+                    return; // Ignore resizing the same length
+
+                plaintextChunk.WasModified = true;
+            }
         }
 
         /// <inheritdoc/>
         public override void Flush()
         {
+            // Hold the cache lock for the entire operation
             lock (_chunkCache)
             {
                 foreach (var item in _chunkCache)
                 {
                     if (item.Value.WasModified)
+                    {
                         chunkWriter.WriteChunk(item.Key, item.Value.Buffer.AsSpan(0, item.Value.ActualLength));
+
+                        // Mark the chunk as clean so subsequent flushes don't rewrite it
+                        item.Value.WasModified = false;
+                    }
                 }
             }
         }
 
         private ChunkBuffer? GetChunk(long chunkNumber)
         {
+            // Hold the cache lock for the entire operation
             lock (_chunkCache)
             {
                 if (!_chunkCache.TryGetValue(chunkNumber, out var plaintextChunk))
@@ -147,6 +176,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
         private void SetChunk(long chunkNumber, ChunkBuffer plaintextChunk)
         {
+            // Hold the cache lock for the entire operation
             lock (_chunkCache)
             {
                 if (_chunkCache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNKS)
@@ -171,6 +201,17 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             lock (_chunkCache)
             {
+                try
+                {
+                    // Flush outstanding modified chunks so data is not lost when
+                    // the chunk access is disposed without a prior flush
+                    Flush();
+                }
+                catch (Exception)
+                {
+                    // Dispose must not throw (the backing stream may already be unavailable)
+                }
+
                 base.Dispose();
                 _chunkCache.Clear();
             }

@@ -17,6 +17,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         protected readonly IFileSystemStatistics fileSystemStatistics;
 
         /// <summary>
+        /// The synchronization root guarding chunk operations.
+        /// </summary>
+        /// <remarks>
+        /// A chunk access instance can be shared by multiple streams of the same file,
+        /// and the reader/writer also share the position of one ciphertext stream,
+        /// so chunk operations must not interleave.
+        /// </remarks>
+        protected readonly object chunkLock = new();
+
+        /// <summary>
         /// Determines whether there are outstanding chunks ready to be flushed to disk.
         /// </summary>
         public virtual bool FlushAvailable { get; } = false;
@@ -42,24 +52,28 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // ArrayPool may return a larger array than requested
-                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
+                // Hold the cache lock for the entire operation
+                lock (chunkLock)
+                {
+                    // ArrayPool may return a larger array than requested
+                    var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
-                // Read chunk
-                var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
+                    // Read chunk
+                    var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
 
-                // Check for any errors
-                if (read < 0)
-                    return read;
+                    // Check for any errors
+                    if (read < 0)
+                        return read;
 
-                // Copy from chunk
-                var count = Math.Min(read - offsetInChunk, destination.Length);
-                if (count <= 0)
-                    return 0;
+                    // Copy from chunk
+                    var count = Math.Min(read - offsetInChunk, destination.Length);
+                    if (count <= 0)
+                        return 0;
 
-                realPlaintextChunk.Slice(offsetInChunk, count).CopyTo(destination);
+                    realPlaintextChunk.Slice(offsetInChunk, count).CopyTo(destination);
 
-                return count;
+                    return count;
+                }
             }
             finally
             {
@@ -84,28 +98,32 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // ArrayPool may return larger array than requested
-                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
+                // Hold the cache lock for the entire operation
+                lock (chunkLock)
+                {
+                    // ArrayPool may return larger array than requested
+                    var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
-                // Read chunk
-                var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
+                    // Read chunk
+                    var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
 
-                // Check for any errors
-                if (read < 0)
-                    return read;
+                    // Check for any errors
+                    if (read < 0)
+                        return read;
 
-                // Copy to chunk
-                var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
-                if (count <= 0)
-                    return 0;
+                    // Copy to chunk
+                    var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
+                    if (count <= 0)
+                        return 0;
 
-                var destination = realPlaintextChunk.Slice(offsetInChunk, count);
-                source.Slice(0, count).CopyTo(destination);
+                    var destination = realPlaintextChunk.Slice(offsetInChunk, count);
+                    source.Slice(0, count).CopyTo(destination);
 
-                // Write to chunk
-                chunkWriter.WriteChunk(chunkNumber, destination);
+                    // Write to chunk
+                    chunkWriter.WriteChunk(chunkNumber, destination);
 
-                return count;
+                    return count;
+                }
             }
             finally
             {
@@ -129,41 +147,45 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // ArrayPool may return larger array than requested
-                var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
-
-                // Read chunk
-                var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
-
-                // Check for any errors
-                if (read < 0)
-                    throw new CryptographicException();
-
-                // Add read length of existing chunk data to the full length if specified
-                length += includeCurrentLength ? read : 0;
-                length = Math.Max(length, 0);
-
-                Span<byte> newPlaintextChunk;
-
-                // Determine whether to extend or truncate the chunk
-                if (length < read)
+                // Hold the cache lock for the entire operation
+                lock (chunkLock)
                 {
-                    // Truncate chunk
-                    newPlaintextChunk = realPlaintextChunk.Slice(0, Math.Min(read, length));
-                }
-                else if (read < length)
-                {
-                    // Clear residual data from ArrayPool and append zeros
-                    realPlaintextChunk.Slice(read).Clear();
+                    // ArrayPool may return larger array than requested
+                    var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
 
-                    // Extend chunk
-                    newPlaintextChunk = realPlaintextChunk.Slice(0, Math.Min(length, contentCrypt.ChunkPlaintextSize));
-                }
-                else
-                    return; // Ignore resizing the same length
+                    // Read chunk
+                    var read = chunkReader.ReadChunk(chunkNumber, realPlaintextChunk);
 
-                // Save newly modified chunk
-                chunkWriter.WriteChunk(chunkNumber, newPlaintextChunk);
+                    // Check for any errors
+                    if (read < 0)
+                        throw new CryptographicException();
+
+                    // Add read length of existing chunk data to the full length if specified
+                    length += includeCurrentLength ? read : 0;
+                    length = Math.Max(length, 0);
+
+                    Span<byte> newPlaintextChunk;
+
+                    // Determine whether to extend or truncate the chunk
+                    if (length < read)
+                    {
+                        // Truncate chunk
+                        newPlaintextChunk = realPlaintextChunk.Slice(0, Math.Min(read, length));
+                    }
+                    else if (read < length)
+                    {
+                        // Clear residual data from ArrayPool and append zeros
+                        realPlaintextChunk.Slice(read).Clear();
+
+                        // Extend chunk
+                        newPlaintextChunk = realPlaintextChunk.Slice(0, Math.Min(length, contentCrypt.ChunkPlaintextSize));
+                    }
+                    else
+                        return; // Ignore resizing the same length
+
+                    // Save newly modified chunk
+                    chunkWriter.WriteChunk(chunkNumber, newPlaintextChunk);
+                }
             }
             finally
             {
