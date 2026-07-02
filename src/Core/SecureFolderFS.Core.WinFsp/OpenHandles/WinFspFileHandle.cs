@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.IO;
 using FileInfo = Fsp.Interop.FileInfo;
@@ -22,12 +23,19 @@ namespace SecureFolderFS.Core.WinFsp.OpenHandles
 
         public FileInfo GetFileInfo()
         {
-            return ToFileInfo(FileInfo, _security);
+            // System.IO.FileInfo caches its state on first access so refresh is needed to avoid returning
+            // stale metadata after the file was modified through this (or another) handle
+            FileInfo.Refresh();
+
+            // The plaintext stream tracks the up-to-date length including data that
+            // has not been flushed to the ciphertext file yet
+            var plaintextSize = SafetyHelpers.NoFailureResult<long?>(() => Stream.Length);
+            return ToFileInfo(FileInfo, _security, plaintextSize);
         }
 
-        public static FileInfo ToFileInfo(System.IO.FileInfo fileInfo, Security security)
+        public static FileInfo ToFileInfo(System.IO.FileInfo fileInfo, Security security, long? plaintextSize = null)
         {
-            var size = (ulong)security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo.Length - security.HeaderCrypt.HeaderCiphertextSize));
+            var size = (ulong)(plaintextSize ?? security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo.Length - security.HeaderCrypt.HeaderCiphertextSize)));
             return new()
             {
                 FileAttributes = (uint)(fileInfo.Attributes == 0 ? FileAttributes.Normal : fileInfo.Attributes),
