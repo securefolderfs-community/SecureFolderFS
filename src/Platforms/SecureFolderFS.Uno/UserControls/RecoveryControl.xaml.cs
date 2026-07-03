@@ -28,5 +28,13 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty PasteRecoveryKeyCommandProperty =
             DependencyProperty.Register(nameof(PasteRecoveryKeyCommand), typeof(ICommand), typeof(RecoveryControl), new PropertyMetadata(null));
+
+        public string? ErrorMessage
+        {
+            get => (string?)GetValue(ErrorMessageProperty);
+            set => SetValue(ErrorMessageProperty, value);
+        }
+        public static readonly DependencyProperty ErrorMessageProperty =
+            DependencyProperty.Register(nameof(ErrorMessage), typeof(string), typeof(RecoveryControl), new PropertyMetadata(null));
     }
 }

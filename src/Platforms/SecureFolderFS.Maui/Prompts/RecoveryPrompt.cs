@@ -23,9 +23,21 @@ namespace SecureFolderFS.Maui.Prompts
                 "Confirm".ToLocalized(),
                 "Cancel".ToLocalized());
 
+            // A null result means the user dismissed the prompt. Treat this as a cancellation
+            if (ViewModel.RecoveryKey is null)
+                return Result.Failure(null);
+
             var result = await ViewModel.RecoverAsync(default);
             if (!result.Successful)
+            {
+                // The native prompt cannot show the error inline, so surface it explicitly
+                await page.DisplayAlertAsync(
+                    ViewModel.Title,
+                    ViewModel.ErrorMessage ?? "UnknownError".ToLocalized(),
+                    "Close".ToLocalized());
+
                 return result;
+            }
 
             return Result.Success;
         }
