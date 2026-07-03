@@ -22,18 +22,34 @@
             Orientation="Vertical"
             Spacing="8">
             <Grid Width="32" Height="32">
-                <Ellipse Margin="0,-4,0,2" Fill="LimeGreen" />
-                <not_win:FontIcon FontSize="18" Glyph="&#xE73E;" />
-                <win:AnimatedVisualPlayer
-                    x:Name="VisualPlayer"
-                    AutoPlay="False"
-                    Loaded="VisualPlayer_Loaded">
-                    <AnimatedVisualPlayer.Source>
-                        <animvis:AnimatedAcceptVisualSource x:Name="CheckVisualSource" />
-                    </AnimatedVisualPlayer.Source>
-                </win:AnimatedVisualPlayer>
+                <!--  Success indicator  -->
+                <Grid Visibility="{x:Bind ViewModel.IsError, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
+                    <Ellipse Margin="0,-4,0,2" Fill="LimeGreen" />
+                    <not_win:FontIcon FontSize="18" Glyph="&#xE73E;" />
+                    <win:AnimatedVisualPlayer
+                        x:Name="VisualPlayer"
+                        AutoPlay="False"
+                        Loaded="VisualPlayer_Loaded">
+                        <AnimatedVisualPlayer.Source>
+                            <animvis:AnimatedAcceptVisualSource x:Name="CheckVisualSource" />
+                        </AnimatedVisualPlayer.Source>
+                    </win:AnimatedVisualPlayer>
+                </Grid>
+
+                <!--  Error indicator  -->
+                <FontIcon
+                    FontSize="24"
+                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                    Glyph="&#xE7BA;"
+                    Visibility="{x:Bind ViewModel.IsError, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </Grid>
-            <TextBlock FontSize="20" Text="{x:Bind ViewModel.Message, Mode=OneWay}" />
+            <TextBlock
+                MaxWidth="400"
+                HorizontalAlignment="Center"
+                FontSize="20"
+                HorizontalTextAlignment="Center"
+                Text="{x:Bind ViewModel.Message, Mode=OneWay}"
+                TextWrapping="Wrap" />
         </StackPanel>
 
         <TextBlock
