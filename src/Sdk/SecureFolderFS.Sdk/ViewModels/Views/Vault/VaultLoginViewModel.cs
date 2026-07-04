@@ -223,7 +223,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Report(IResult result)
         {
             StatusInfoBar.Title = "ErrorOccurred".ToLocalized();
-            StatusInfoBar.Message = result.GetMessage("UnknownError".ToLocalized());
+            StatusInfoBar.Message = result.GetMessage(result.Exception?.Message ?? "UnknownError".ToLocalized());
             StatusInfoBar.Severity = Severity.Critical;
             StatusInfoBar.IsCloseable = true;
             StatusInfoBar.IsOpen = true;
