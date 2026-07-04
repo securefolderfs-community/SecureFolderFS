@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             try
             {
                 // Get or create the encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderPlaintextSize));
+                var openCryptFile = _cryptFileManager.GetOrCreate(id, static security => new HeaderBuffer(security.HeaderCrypt.HeaderPlaintextSize));
 
                 // Open a new stream for that file registering the existing ciphertext stream
                 return openCryptFile.OpenStream(wrappedStream);
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             try
             {
                 // Get or create the encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderPlaintextSize));
+                var openCryptFile = _cryptFileManager.GetOrCreate(id, static security => new HeaderBuffer(security.HeaderCrypt.HeaderPlaintextSize));
 
                 // Check if the header is ready or if it can be read at a later time
                 var headerBuffer = openCryptFile.HeaderBuffer;

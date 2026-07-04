@@ -80,10 +80,10 @@ namespace SecureFolderFS.Sdk.AppModels
                 var data = new byte[thumbnailStream.Inner.Length];
                 var savedPosition = thumbnailStream.Inner.Position;
                 thumbnailStream.Inner.Position = 0L;
-                var read = await thumbnailStream.Inner.ReadAsync(data, cancellationToken);
+
+                // A single call to ReadAsync is not guaranteed to fill the buffer
+                await thumbnailStream.Inner.ReadExactlyAsync(data, cancellationToken);
                 thumbnailStream.Inner.Position = savedPosition;
-                if (read != data.Length)
-                    return;
 
                 await _database.SetValueAsync(cacheKey, data, cancellationToken);
             }
@@ -113,8 +113,19 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <returns>A unique cache key string.</returns>
         public static async Task<string> GetCacheKeyAsync(IFile file, CancellationToken cancellationToken)
         {
-            var pathHash = GetPathHash(file.Id);
             var dateModified = await file.GetDateModifiedAsync(cancellationToken);
+            return GetCacheKey(file.Id, dateModified);
+        }
+
+        /// <summary>
+        /// Generates a cache key from an already-known file ID and modification date.
+        /// </summary>
+        /// <param name="id">The unique ID of the file.</param>
+        /// <param name="dateModified">The file's last modification date, if known.</param>
+        /// <returns>A unique cache key string.</returns>
+        public static string GetCacheKey(string id, DateTime? dateModified)
+        {
+            var pathHash = GetPathHash(id);
             if (dateModified is null)
                 return pathHash;
 
@@ -126,11 +137,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <summary>
         /// Generates a hash of the file path using SHA256.
         /// </summary>
-        /// <param name="filePath">The file path to hash.</param>
+        /// <param name="id">The file path to hash.</param>
         /// <returns>A hexadecimal hash string.</returns>
-        private static string GetPathHash(string filePath)
+        private static string GetPathHash(string id)
         {
-            var bytes = Encoding.UTF8.GetBytes(filePath);
+            var bytes = Encoding.UTF8.GetBytes(id);
             var hash = SHA256.HashData(bytes);
 
             return Convert.ToHexString(hash).ToLowerInvariant();

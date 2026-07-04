@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
@@ -100,8 +101,8 @@ namespace SecureFolderFS.Sdk.AppModels
                 }
                 catch (Exception ex)
                 {
-                    _ = ex;
-                    continue;
+                    // A single unreadable vault entry must not prevent the rest of the list from loading
+                    DI.OptionalService<ILogger>()?.LogWarning(ex, "Skipped a vault entry that could not be loaded.");
                 }
             }
         }

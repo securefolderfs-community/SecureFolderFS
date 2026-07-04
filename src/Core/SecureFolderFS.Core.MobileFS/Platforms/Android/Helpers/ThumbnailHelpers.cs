@@ -1,5 +1,6 @@
 using Android.Graphics;
 using Android.Media;
+using SecureFolderFS.Core.MobileFS.AppModels;
 using SecureFolderFS.Storage.Streams;
 using ExifInterface = AndroidX.ExifInterface.Media.ExifInterface;
 using Stream = System.IO.Stream;
@@ -8,6 +9,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
 {
     public static class ThumbnailHelpers
     {
+        private const int IMAGE_THUMBNAIL_QUALITY = 70;
+
+        /// <summary>
+        /// Generates a scaled-down thumbnail from the provided image file stream with a maximum size constraint.
+        /// </summary>
+        /// <param name="stream">The image file stream from which the thumbnail is generated.</param>
+        /// <param name="maxSize">The maximum size (width or height) that the thumbnail should not exceed.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a stream containing the compressed thumbnail image.</returns>
         public static async Task<Stream> GenerateImageThumbnailAsync(Stream stream, uint maxSize)
         {
             // Read EXIF
@@ -46,8 +55,43 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             if (bitmap is null)
                 throw new Exception("Failed to decode image.");
 
-            using var rotated = ApplyExifOrientation(bitmap, exif);
-            return await CompressBitmapAsync(rotated).ConfigureAwait(false);
+            // ApplyExifOrientation returns the same instance when no transformation is
+            // needed - only dispose the result when a new bitmap was actually created
+            var oriented = ApplyExifOrientation(bitmap, exif);
+            try
+            {
+                return await CompressBitmapAsync(oriented).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (!ReferenceEquals(oriented, bitmap))
+                    oriented.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Generates a video thumbnail as a compressed stream by capturing a frame at the specified timestamp.
+        /// </summary>
+        /// <param name="stream">The video file stream from which the thumbnail is generated.</param>
+        /// <param name="captureTime">The time position in the video to capture the thumbnail frame.</param>
+        /// <param name="width">The width of the thumbnail image.</param>
+        /// <param name="height">The height of the thumbnail image.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a stream containing the compressed thumbnail image.</returns>
+        public static async Task<Stream> GenerateVideoThumbnailAsync(Stream stream, TimeSpan captureTime, int width = 320, int height = 240)
+        {
+            using var retriever = new MediaMetadataRetriever();
+            await retriever.SetDataSourceAsync(new StreamedMediaSource(stream)).ConfigureAwait(false);
+
+            // The retriever expects the timestamp in microseconds, not in ticks (100ns units).
+            // ClosestSync clamps to the nearest sync frame, so a capture time past the end is safe
+            var captureTimeUs = captureTime.Ticks / TimeSpan.TicksPerMicrosecond;
+
+            // Use scaled frame for efficiency
+            using var bitmap = retriever.GetScaledFrameAtTime(captureTimeUs, Option.ClosestSync, width, height);
+            if (bitmap is null)
+                throw new NotSupportedException("Could not retrieve scaled frame.");
+
+            return await CompressBitmapAsync(bitmap).ConfigureAwait(false);
         }
 
         private static int CalculateInSampleSize(int width, int height, int reqSize)
@@ -59,10 +103,17 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
             return inSampleSize;
         }
 
+        /// <summary>
+        /// Applies the EXIF orientation to <paramref name="bitmap"/>.
+        /// </summary>
+        /// <remarks>
+        /// The caller retains ownership of <paramref name="bitmap"/>. When a transformation is
+        /// applied, a new bitmap (owned by the caller) is returned; otherwise the same instance.
+        /// </remarks>
         private static Bitmap ApplyExifOrientation(Bitmap bitmap, ExifInterface exif)
         {
             var orientation = (Orientation)exif.GetAttributeInt(ExifInterface.TagOrientation, (int)Orientation.Normal);
-            var matrix = new Matrix();
+            using var matrix = new Matrix();
 
             switch (orientation)
             {
@@ -103,19 +154,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers
                     return bitmap;
             }
 
-            var rotated = Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
-            bitmap.Dispose();
-            return rotated;
+            return Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
         }
 
-        public static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
+        /// <summary>
+        /// Compresses <paramref name="bitmap"/> into an image stream. The caller retains ownership of the bitmap.
+        /// </summary>
+        private static async Task<Stream> CompressBitmapAsync(Bitmap bitmap)
         {
-            const int IMAGE_THUMBNAIL_QUALITY = 70;
-
+            var format = bitmap.HasAlpha ? Bitmap.CompressFormat.Png! : Bitmap.CompressFormat.Jpeg!;
             var memoryStream = new MemoryStream();
-            await bitmap.CompressAsync(Bitmap.CompressFormat.Jpeg!, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
+            await bitmap.CompressAsync(format, IMAGE_THUMBNAIL_QUALITY, memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0L;
-            bitmap.Dispose();
 
             return new NonDisposableStream(memoryStream);
         }

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.Helpers;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Enums;
 
@@ -15,6 +16,20 @@ namespace SecureFolderFS.Maui.ValueConverters
             return value switch
             {
                 ImageStreamSource imageStream => imageStream.Source,
+
+                // Cached thumbnails arrive as StreamImageModel. Without this case they
+                // would silently convert to null and never render
+                StreamImageModel streamImage => ImageSource.FromStream(() =>
+                {
+                    // Serve a fresh stream per request - the platform image loader disposes
+                    // the stream after decoding and may request it again (recycled views).
+                    // MemoryStream.ToArray is safe to call even on a disposed instance
+                    if (streamImage.Inner is MemoryStream memoryStream)
+                        return new MemoryStream(memoryStream.ToArray(), writable: false);
+
+                    streamImage.Inner.TrySetPositionOrAdvance(0L);
+                    return streamImage.Inner;
+                }),
                 ImageIcon iconImage => new FontImageSource()
                 {
                     Glyph = GetDescription(iconImage.MauiIcon.Icon),

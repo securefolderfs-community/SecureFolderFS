@@ -23,6 +23,8 @@ namespace SecureFolderFS.Uno.Views.Settings
     [INotifyPropertyChanged]
     public sealed partial class PreferencesSettingsPage : Page
     {
+        [ObservableProperty] private bool _IsWebDavApplyVisible;
+
         public PreferencesSettingsViewModel? ViewModel
         {
             get => DataContext.TryCast<PreferencesSettingsViewModel>();
@@ -69,14 +71,34 @@ namespace SecureFolderFS.Uno.Views.Settings
             if (fileSystem is null)
                 return;
 
+            // The Apply action only accompanies the WebDav file size limit suggestion
+            IsWebDavApplyVisible = false;
+
             switch (fileSystem.Id)
             {
                 case Core.WebDav.Constants.FileSystem.FS_ID:
                 {
+#if WINDOWS
+                    // The WebDAV redirector rejects transfers of files larger than the configured
+                    // allocation limit (~47MB by default), so suggest raising it to the maximum (4GB)
+                    var fileSizeLimit = Helpers.WebDavRedirectorHelpers.GetFileSizeLimit();
+                    if (fileSizeLimit >= Helpers.WebDavRedirectorHelpers.MAX_FILE_SIZE_LIMIT)
+                    {
+                        ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
+                        break;
+                    }
+
+                    IsWebDavApplyVisible = true;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Default;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.Message = "Windows limits the size of files transferred over WebDav. Increase the allocation size to the maximum limit (4GB) to copy larger files.";
+#else
                     ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
                     ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
                     ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Warning;
                     ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
+#endif
                     break;
                 }
 
@@ -119,6 +141,25 @@ namespace SecureFolderFS.Uno.Views.Settings
                     ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
                     break;
             }
+        }
+
+        private async void WebDavApply_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel is null || sender is not Button button)
+                return;
+
+            // Prevent double activation while the elevation prompt is shown
+            button.IsEnabled = false;
+
+            var applied = await Helpers.WebDavRedirectorHelpers.TrySetMaxFileSizeLimitAsync();
+            button.IsEnabled = true;
+
+            if (!applied)
+                return;
+
+            IsWebDavApplyVisible = false;
+            ViewModel.BannerViewModel.FileSystemInfoBar.Severity = Severity.Success;
+            ViewModel.BannerViewModel.FileSystemInfoBar.Message = "The maximum allocation size has been applied. The change will take effect after the WebClient service is restarted or Windows is rebooted.";
         }
 
         private void Root_Loaded(object sender, RoutedEventArgs e)

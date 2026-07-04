@@ -163,6 +163,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <uco:OptionsContainer Title="{l:ResourceString Rid=RecentlyDeleted}" Grid.Row="0">
@@ -217,9 +218,31 @@
                     </uco:OptionsContainer.InnerContent>
                 </uco:OptionsContainer>
 
-                <!--  Selection action buttons  -->
+                <!--  Status notification  -->
                 <Border
                     Grid.Row="1"
+                    Margin="0,0,0,8"
+                    Padding="16,12"
+                    Background="{StaticResource ThemeSecondaryColorBrush}"
+                    IsVisible="{Binding ViewModel.StatusInfoBar.IsOpen, Mode=OneWay}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0">
+                    <VerticalStackLayout Spacing="2">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="{Binding ViewModel.StatusInfoBar.Title, Mode=OneWay}" />
+                        <Label
+                            FontSize="13"
+                            LineBreakMode="WordWrap"
+                            Opacity="0.7"
+                            Text="{Binding ViewModel.StatusInfoBar.Message, Mode=OneWay}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--  Selection action buttons  -->
+                <Border
+                    Grid.Row="2"
                     Margin="0,0,0,16"
                     Padding="4"
                     BackgroundColor="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor},

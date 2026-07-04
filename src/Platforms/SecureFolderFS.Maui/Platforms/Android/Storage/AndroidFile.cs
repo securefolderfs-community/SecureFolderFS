@@ -6,6 +6,7 @@ using Java.IO;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
 using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.StorageProperties;
 using AndroidUri = Android.Net.Uri;
 
@@ -26,11 +27,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public ISizeOfProperty SizeOf => field ??= new AndroidSizeOfProperty(Id, Document ?? throw new ArgumentNullException(nameof(Document)));
 
-        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
+        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null, string? name = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromSingleUri(activity, uri);
-            Name = Document?.Name ?? base.Name;
+            Name = name ?? Document?.Name ?? base.Name;
         }
 
         /// <inheritdoc/>
@@ -47,6 +48,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             if (accessMode == FileAccess.Read)
             {
+                // Prefer a file-descriptor-backed stream which is seekable - random access
+                // is required both by the crypto layer and by consumers seeking within files
+                var readFd = SafetyHelpers.NoFailureResult(() => activity.ContentResolver?.OpenFileDescriptor(Inner, "r"));
+                if (readFd is not null)
+                {
+                    var readChannel = new FileInputStream(readFd.FileDescriptor).Channel;
+                    if (readChannel is not null)
+                        return Task.FromResult<Stream>(new ChannelledStream(readChannel, null, readFd));
+
+                    readFd.Close();
+                }
+
+                // Fall back to a plain (forward-only) input stream for providers
+                // that cannot supply a seekable file descriptor
                 var inStream = activity.ContentResolver?.OpenInputStream(Inner);
                 if (inStream is null)
                     return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open input stream."));
@@ -55,7 +70,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
             else
             {
-                var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, "rwt");
+                // Open in "rw" mode - "rwt" would truncate the existing content on open.
+                // Truncation is a deliberate operation performed by the caller, never a side effect
+                var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, "rw");
                 if (fd is null)
                     return Task.FromException<Stream>(new UnauthorizedAccessException("Could not open file descriptor."));
 

@@ -19,5 +19,3 @@ public class CredsChangeCommandTests : BaseCliCommandTests
         result.ProcessExitCode.Should().Be(CliExpectedExitCodes.BadArguments);
     }
 }
-
-

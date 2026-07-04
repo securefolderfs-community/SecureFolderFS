@@ -1,6 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
@@ -17,11 +23,6 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage;
 using SecureFolderFS.Storage.Extensions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
@@ -93,15 +94,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     if (sourceIconFile is null)
                         return;
 
-                    // TODO: Configured icon causes a crash when debugger is not attached
-                    // Update vault icon
-                    //var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
-                    //await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken); // TODO: Resize icon (don't load large icons)
-                    //await UpdateIconAsync(cancellationToken);
-
-                    // Update folder icon
-                    await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
-                    await MediaService.TrySetFolderIconAsync(modifiableFolder, iconStream, cancellationToken);
+                    // Guard the icon update so a decode/IO failure (e.g., an unsupported or oversized image)
+                    // degrades gracefully instead of crashing the command
+                    try
+                    {
+                        await using var iconStream = await sourceIconFile.OpenReadAsync(cancellationToken);
+                        await MediaService.TrySetFolderIconAsync(modifiableFolder, iconStream, cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Cancellation. Nothing to report
+                    }
+                    catch (Exception ex)
+                    {
+                        DI.OptionalService<ILogger>()?.LogError(ex, "Failed to set the vault folder icon.");
+                    }
 
                     break;
                 }
@@ -155,7 +162,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task CreateShortcutAsync(CancellationToken cancellationToken)
         {
-            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
+            if (VaultViewModel.VaultModel.VaultFolder is null)
                 return;
 
             // Check Iap Plus requirement
@@ -172,7 +179,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             var filter = new Dictionary<string, string>
             {
-                { "SecureFolderFS Vault", VaultService.ShortcutFileExtension }
+                { $"{"Vault".ToLocalized()} ({nameof(SecureFolderFS)})", VaultService.ShortcutFileExtension }
             };
 
             await FileExplorerService.SaveFileAsync(suggestedName, dataStream, filter, cancellationToken);

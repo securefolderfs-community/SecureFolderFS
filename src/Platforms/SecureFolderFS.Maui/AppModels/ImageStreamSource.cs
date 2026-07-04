@@ -28,6 +28,18 @@ namespace SecureFolderFS.Maui.AppModels
             };
         }
 
+        public ImageStreamSource(byte[] imageData)
+        {
+            // Serve a fresh stream per request - the platform image loader disposes the
+            // stream after decoding and may request it again (recycled views, re-layouts).
+            // A single shared stream would be dead by the time a second request arrives
+            Inner = new MemoryStream(imageData, writable: false);
+            Source = new StreamImageSource
+            {
+                Stream = _ => Task.FromResult<Stream>(new MemoryStream(imageData, writable: false))
+            };
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {

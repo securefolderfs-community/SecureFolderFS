@@ -56,13 +56,15 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
-                // Check position bounds
-                if (streamPosition > _ciphertextStream.Length)
-                    return;
+                // Extend the stream when the chunk starts beyond the current end.
+                // The zero-filled region decrypts as valid zero chunks, so out-of-order
+                // chunk writes must not be dropped as that would silently lose data
+                if (_ciphertextStream.CanSeek && streamPosition > _ciphertextStream.Length)
+                    _ciphertextStream.SetLength(streamPosition);
 
                 // Set the correct stream position
                 if (!_ciphertextStream.TrySetPositionOrAdvance(streamPosition))
-                    return;
+                    throw new IOException($"The stream position could not be set to the chunk at {streamPosition}.");
 
                 // Write to stream at the correct chunk
                 _ciphertextStream.Write(realCiphertextChunk);

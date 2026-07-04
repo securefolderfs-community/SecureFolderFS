@@ -28,7 +28,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             await Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         protected override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
             IFolder vaultFolder,

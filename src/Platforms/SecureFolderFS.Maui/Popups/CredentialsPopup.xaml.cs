@@ -110,13 +110,10 @@ namespace SecureFolderFS.Maui.Popups
                 button.IsEnabled = false;
                 await Task.Delay(100);
 
-                await credentialsResetViewModel.ConfirmAsync(default);
-                await HideAsync();
-            }
-            catch (Exception ex)
-            {
-                // TODO: Report to user
-                _ = ex;
+                var result = await credentialsResetViewModel.ConfirmAsync(default);
+                ViewModel?.Report(result);
+                if (result.Successful)
+                    await HideAsync();
             }
             finally
             {
@@ -137,13 +134,10 @@ namespace SecureFolderFS.Maui.Popups
                 button.IsEnabled = false;
                 await Task.Delay(100);
 
-                await credentialsConfirmation.ConfirmAsync(default);
-                await HideAsync();
-            }
-            catch (Exception ex)
-            {
-                // TODO: Report to user
-                _ = ex;
+                var result = await credentialsConfirmation.ConfirmAsync();
+                ViewModel?.Report(result);
+                if (result.Successful)
+                    await HideAsync();
             }
             finally
             {

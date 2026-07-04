@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
@@ -86,9 +87,10 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // Acquire before entering the try so a canceled wait does not release a permit we never obtained
+            await storageSemaphore.WaitAsync(cancellationToken);
             try
             {
-                await storageSemaphore.WaitAsync(cancellationToken);
                 await EnsureSettingsFolderAsync(cancellationToken);
 
                 _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
@@ -110,8 +112,8 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         if (string.IsNullOrEmpty(typeString))
                             continue;
 
-                        // Get original type
-                        var originalType = Type.GetType(typeString);
+                        // Get original type, restricting resolution to trusted assemblies
+                        var originalType = SafeTypeResolver.Resolve(typeString);
                         if (originalType is null)
                             continue;
 
@@ -124,9 +126,8 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     }
                     catch (Exception ex)
                     {
-                        // TODO: Re-throw exceptions in some cases?
-                        _ = ex;
-                        Debugger.Break();
+                        // A single corrupt setting must not prevent the remaining ones from loading
+                        DI.OptionalService<ILogger>()?.LogWarning(ex, "Failed to load the setting '{SettingName}'.", dataFile.Name);
                     }
                 }
             }
@@ -139,9 +140,11 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         /// <inheritdoc/>
         public override async Task SaveAsync(CancellationToken cancellationToken = default)
         {
+            // Acquire before entering the try so a canceled wait does not release a permit we never obtained
+            await storageSemaphore.WaitAsync(cancellationToken);
+            List<Exception>? failures = null;
             try
             {
-                await storageSemaphore.WaitAsync(cancellationToken);
                 await EnsureSettingsFolderAsync(cancellationToken);
 
                 _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
@@ -192,9 +195,10 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     }
                     catch (Exception ex)
                     {
-                        // TODO: Re-throw exceptions in some cases?
-                        _ = ex;
-                        Debugger.Break();
+                        // Continue persisting the remaining settings, but remember the failure so the
+                        // caller can observe that the save did not fully succeed
+                        DI.OptionalService<ILogger>()?.LogError(ex, "Failed to save the setting '{SettingName}'.", item.Key);
+                        (failures ??= new()).Add(ex);
                     }
                 }
             }
@@ -202,6 +206,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             {
                 _ = storageSemaphore.Release();
             }
+
+            if (failures is not null)
+                throw new AggregateException("One or more settings could not be saved.", failures);
         }
 
         private async Task EnsureSettingsFolderAsync(CancellationToken cancellationToken)

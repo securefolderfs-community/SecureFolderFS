@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             InitializeComponent();
         }
-        
+
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
         {
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             _modalTcs.TrySetResult(Result.Success);
         }
-        
+
         [RelayCommand]
         private async Task CloseAsync()
         {
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
 
             await ViewModel.OpenSearchResultCommand.ExecuteAsync(selectedItem);
         }
-        
+
         private async void SearchInput_SearchButtonPressed(object? sender, EventArgs e)
         {
             if (ViewModel is null)
@@ -112,7 +112,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         {
             await HideAsync();
         }
-        
+
         public BrowserSearchOverlayViewModel? ViewModel
         {
             get => (BrowserSearchOverlayViewModel?)GetValue(ViewModelProperty);

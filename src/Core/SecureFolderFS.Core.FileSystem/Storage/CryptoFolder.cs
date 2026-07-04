@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var newCiphertextName = await AbstractPathHelpers.EncryptNameAsync(newName, Inner, specifics, cancellationToken);
             var renamedCiphertextItem = await renamableFolder.RenameAsync(ciphertextItem, newCiphertextName, cancellationToken);
 
-            var plaintextId = Path.Combine(Inner.Id, newName);
+            var plaintextId = Path.Combine(Id, newName);
             return renamedCiphertextItem switch
             {
                 IFile file => new CryptoFile(plaintextId, file, specifics, this),

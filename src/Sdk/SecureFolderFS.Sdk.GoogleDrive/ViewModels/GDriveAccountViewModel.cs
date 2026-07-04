@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using Google;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
@@ -17,6 +18,7 @@ using SecureFolderFS.Sdk.Accounts.ViewModels;
 using SecureFolderFS.Sdk.GoogleDrive.AppModels;
 using SecureFolderFS.Sdk.GoogleDrive.DataModels;
 using SecureFolderFS.Sdk.GoogleDrive.Storage;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Api;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -222,8 +224,13 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
                 await ConnectFromUserInputAsync(cancellationToken);
                 // User info is already fetched in ConnectFromUserInputAsync
             }
-            catch (Exception)
+            catch (OperationCanceledException)
             {
+                // The user dismissed the authorization prompt
+            }
+            catch (Exception ex)
+            {
+                DI.OptionalService<ILogger>()?.LogError(ex, "Failed to connect the Google Drive account.");
                 UserDisplayName = null;
                 UserPhotoUri = null;
                 UserEmail = null;
@@ -253,14 +260,18 @@ namespace SecureFolderFS.Sdk.GoogleDrive.ViewModels
             }
             catch (Exception ex)
             {
-                // TODO: Log or handle the error appropriately
-                // For now, just set default values
+                // Fall back to a best-effort display name while keeping the account usable
                 UserDisplayName = _credential?.UserId ?? "Unknown user";
                 UserEmail = null;
 
-                // Re-throw if it's a critical error
-                if (ex is GoogleApiException apiEx && apiEx.HttpStatusCode == HttpStatusCode.Unauthorized)
+                // Surface an expired/revoked token so the caller can trigger re-authentication and update the stored config
+                if (ex is GoogleApiException { HttpStatusCode: HttpStatusCode.Unauthorized })
+                {
+                    DI.OptionalService<ILogger>()?.LogWarning(ex, "Google Drive authorization expired; re-authentication is required.");
                     throw;
+                }
+
+                DI.OptionalService<ILogger>()?.LogError(ex, "Failed to fetch Google Drive user information.");
             }
         }
 

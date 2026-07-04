@@ -10,6 +10,7 @@ namespace SecureFolderFS.Core.FileSystem
         protected readonly Dictionary<TKey, TValue> cache;
         protected readonly IProgress<CacheAccessType>? cacheStatistics;
         protected readonly object threadLock = new();
+        protected readonly int capacity;
 
         /// <summary>
         /// Determines whether caching is enabled.
@@ -25,6 +26,7 @@ namespace SecureFolderFS.Core.FileSystem
         {
             this.cache = capacity < 0 ? new() : new(capacity);
             this.cacheStatistics = cacheStatistics;
+            this.capacity = capacity;
             IsAvailable = capacity < 0 || capacity > 0;
         }
 
@@ -65,6 +67,14 @@ namespace SecureFolderFS.Core.FileSystem
 
             lock (threadLock)
             {
+                // Evict an arbitrary entry when the capacity is reached (Dictionary enumeration order is not guaranteed)
+                if (capacity > 0 && cache.Count >= capacity && !cache.ContainsKey(key))
+                {
+                    using var enumerator = cache.Keys.GetEnumerator();
+                    if (enumerator.MoveNext())
+                        cache.Remove(enumerator.Current);
+                }
+
                 if (!skipExistingCheck)
                     return cache.TryAdd(key, value);
 
