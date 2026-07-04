@@ -19,16 +19,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
     [Bindable(true)]
     public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>, IFolderPicker
     {
+        private const int ERROR_DISPLAY_DURATION_MS = 5000;
+
         private readonly BrowserViewModel _browserViewModel;
         private readonly SynchronizationContext? _synchronizationContext;
         private TaskCompletionSource<IFolder?>? _tcs;
         private CancellationTokenSource? _cts;
+        private CancellationTokenSource? _errorCts;
 
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _IsVisible;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private bool _IsPickingFolder;
+        [ObservableProperty] private bool _IsErrorVisible;
         [ObservableProperty] private TransferType _TransferType;
 
         public TransferViewModel(BrowserViewModel browserViewModel)
@@ -56,8 +60,76 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             ReportCore(value);
         }
 
+        /// <summary>
+        /// Shows an indeterminate progress state, e.g. while item sizes are being calculated before a transfer.
+        /// </summary>
+        /// <param name="title">The title to display while the operation is running.</param>
+        public void ShowIndeterminate(string title)
+        {
+            ClearError();
+            Title = title;
+            IsProgressing = true;
+            IsVisible = true;
+        }
+
+        /// <summary>
+        /// Dismisses any operation UI and shows <paramref name="message"/> as a transient error banner.
+        /// The banner disappears on its own or when dismissed by the user.
+        /// </summary>
+        /// <param name="message">The error message to display.</param>
+        /// <returns>A <see cref="Task"/> that completes once the banner is shown.</returns>
+        public async Task ReportErrorAsync(string message)
+        {
+            ClearError();
+            _errorCts = new();
+            var token = _errorCts.Token;
+
+            // Finish and dismiss the current operation UI before revealing the error
+            if (IsVisible)
+                await this.HideAsync();
+
+            if (token.IsCancellationRequested)
+                return;
+
+            Title = message;
+            IsErrorVisible = true;
+            IsProgressing = false;
+            CanCancel = true;
+            IsVisible = true;
+
+            _ = DismissErrorLaterAsync(token);
+        }
+
+        private async Task DismissErrorLaterAsync(CancellationToken token)
+        {
+            try
+            {
+                await Task.Delay(ERROR_DISPLAY_DURATION_MS, token);
+                IsErrorVisible = false;
+                await this.HideAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                // A newer operation or an explicit dismissal took over the control
+            }
+        }
+
+        /// <summary>
+        /// Clears the error state, if any, allowing the control to display a new operation.
+        /// </summary>
+        public void ClearError()
+        {
+            _errorCts?.TryCancel();
+            _errorCts?.Dispose();
+            _errorCts = null;
+            IsErrorVisible = false;
+        }
+
         private void ReportCore(TotalProgress value)
         {
+            if (IsErrorVisible)
+                return;
+
             if (value.Achieved >= value.Total && value.Total > 0)
             {
                 Title = "TransferDone".ToLocalized();
@@ -83,6 +155,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 
         public CancellationTokenSource GetCancellation(CancellationToken? linkToken = null)
         {
+            ClearError();
             _cts?.Dispose();
             _cts = linkToken is not null
                 ? CancellationTokenSource.CreateLinkedTokenSource(linkToken.Value)
@@ -132,6 +205,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         [RelayCommand]
         private async Task CancelAsync()
         {
+            if (IsErrorVisible)
+            {
+                // Dismiss the error banner since there is no operation left to cancel
+                ClearError();
+                await this.HideAsync();
+                return;
+            }
+
             if (_tcs is not null)
             {
                 _tcs.TrySetCanceled(CancellationToken.None);

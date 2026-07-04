@@ -21,6 +21,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 if (_isDismissing)
                     return;
 
+                // Swipe-down dismiss cancels the operation. Disallow it for non-cancellable operations
+                if (!CanCancel)
+                {
+                    if (RootPanel.TranslationY != 0d)
+                        await RootPanel.TranslateToAsync(0, 0, 250U, Easing.SpringOut);
+
+                    return;
+                }
+
                 switch (e.StatusType)
                 {
                     case GestureStatus.Running:
@@ -120,6 +129,22 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
         public static readonly BindableProperty IsProgressingProperty =
             BindableProperty.Create(nameof(IsProgressing), typeof(bool), typeof(TransferControl), false);
+
+        public bool IsConfirmShown
+        {
+            get => (bool)GetValue(IsConfirmShownProperty);
+            set => SetValue(IsConfirmShownProperty, value);
+        }
+        public static readonly BindableProperty IsConfirmShownProperty =
+            BindableProperty.Create(nameof(IsConfirmShown), typeof(bool), typeof(TransferControl), false);
+
+        public bool IsError
+        {
+            get => (bool)GetValue(IsErrorProperty);
+            set => SetValue(IsErrorProperty, value);
+        }
+        public static readonly BindableProperty IsErrorProperty =
+            BindableProperty.Create(nameof(IsError), typeof(bool), typeof(TransferControl), false);
 
         public string? Title
         {

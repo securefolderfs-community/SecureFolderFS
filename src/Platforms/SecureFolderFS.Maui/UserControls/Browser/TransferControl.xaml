@@ -5,6 +5,9 @@
     xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
     xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="ThisControl">
 
@@ -54,11 +57,26 @@
                             WidthRequest="32" />
                     </uc:AnimatedRevealLayout.RevealContent>
                     <uc:AnimatedRevealLayout.MainContent>
-                        <Label
-                            FontSize="16"
-                            LineBreakMode="TailTruncation"
-                            Text="{Binding Title, Mode=OneWay}"
-                            VerticalOptions="Center" />
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                            <mi:MauiIcon
+                                Icon="{mi_material:Material ErrorOutline}"
+                                IconSize="20"
+                                IsVisible="{Binding IsError, Mode=OneWay}"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Icon="{mi_cupertino:Cupertino ExclamationmarkCircle}"
+                                IconSize="20"
+                                IsVisible="{Binding IsError, Mode=OneWay}"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+                            <Label
+                                FontSize="14"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="2"
+                                Text="{Binding Title, Mode=OneWay}"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
                     </uc:AnimatedRevealLayout.MainContent>
                 </uc:AnimatedRevealLayout>
 
@@ -67,7 +85,7 @@
                     Padding="16,8"
                     Command="{Binding PrimaryCommand, Mode=OneWay}"
                     CornerRadius="10"
-                    IsVisible="{Binding IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                    IsVisible="{Binding IsConfirmShown, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}"
                     Text="{Binding PrimaryButtonText, Mode=OneWay}" />
             </Grid>
