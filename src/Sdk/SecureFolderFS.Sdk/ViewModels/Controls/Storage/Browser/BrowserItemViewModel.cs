@@ -74,7 +74,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (Inner is not IFile file)
                 return;
 
-            await ShareService.OpenFileWithAsync(file);
+            try
+            {
+                await ShareService.OpenFileWithAsync(file);
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+            }
         }
 
         [RelayCommand]
@@ -148,10 +160,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     }, BrowserViewModel.Layouts.GetSorter());
                 }, cts.Token);
             }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            catch (OperationCanceledException)
             {
-                _ = ex;
-                // TODO: Report error
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
             finally
             {
@@ -214,10 +229,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     }, BrowserViewModel.Layouts.GetSorter());
                 }, cts.Token);
             }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            catch (OperationCanceledException)
             {
-                _ = ex;
-                // TODO: Report error
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
             finally
             {
@@ -268,10 +286,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 UpdateStorable(renamedStorable);
                 _ = InitAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch (OperationCanceledException)
             {
-                // TODO: Report error
-                _ = ex;
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
         }
 
@@ -308,11 +330,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     if (recycleBin is null)
                         return;
 
+                    // Size calculation may take a while for large folders - show a cancellable indeterminate state
+                    transferViewModel.ShowIndeterminate("Calculating".ToLocalized());
+
                     // Key the sizes by item ID - the transfer callback receives the storable,
                     // so positional lookups against the view model array would not match
                     var sizes = new Dictionary<string, long>();
                     foreach (var item in items)
                     {
+                        cts.Token.ThrowIfCancellationRequested();
                         sizes[item.Inner.Id] = item.Inner switch
                         {
                             IFile file => await file.GetSizeAsync(cts.Token) ?? 0L,
@@ -390,10 +416,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     }, cts.Token);
                 }
             }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            catch (OperationCanceledException)
             {
-                _ = ex;
-                // TODO: Report error
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
             finally
             {
@@ -436,10 +465,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                     }
                 }, cts.Token);
             }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            catch (OperationCanceledException)
             {
-                _ = ex;
-                // TODO: Report error
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
             finally
             {
