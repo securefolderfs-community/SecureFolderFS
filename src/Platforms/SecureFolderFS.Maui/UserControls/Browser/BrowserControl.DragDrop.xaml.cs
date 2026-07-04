@@ -235,7 +235,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             }
             catch (OperationCanceledException)
             {
-                // Cancellation is user intent - nothing to report
+                // Cancellation, nothing to report
             }
             catch (Exception)
             {
@@ -468,7 +468,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 }
                 catch (OperationCanceledException)
                 {
-                    // Cancellation is user intent - nothing to report
+                    // Cancellation, nothing to report
                 }
                 catch (Exception)
                 {
