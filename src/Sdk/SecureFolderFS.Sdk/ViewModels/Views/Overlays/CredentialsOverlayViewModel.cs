@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
     [Inject<IVaultService>, Inject<IVaultCredentialsService>]
-    public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
+    public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IProgress<IResult>, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly KeySequence _keySequence;
@@ -31,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
+        [ObservableProperty] private InfoBarViewModel _StatusInfoBar = new();
 
         public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage)
         {
@@ -47,8 +48,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             PrimaryText = "Continue".ToLocalized();
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+            LoginViewModel.StateChanged += LoginViewModel_StateChanged;
             RegisterViewModel.PropertyChanged += RegisterViewModel_PropertyChanged;
             SelectionViewModel.ConfirmationRequested += SelectionViewModel_ConfirmationRequested;
+        }
+
+        /// <inheritdoc/>
+        public void Report(IResult result)
+        {
+            if (result.Successful)
+            {
+                StatusInfoBar.IsOpen = false;
+                return;
+            }
+
+            StatusInfoBar.Title = "CredentialsChangeFailed".ToLocalized();
+            StatusInfoBar.Message = result.GetMessage("UnknownError".ToLocalized());
+            StatusInfoBar.Severity = Severity.Critical;
+            StatusInfoBar.IsCloseable = true;
+            StatusInfoBar.IsOpen = true;
+        }
+
+        private void LoginViewModel_StateChanged(object? sender, EventArgs e)
+        {
+            if (e is ErrorReportedEventArgs args)
+                Report(args.Result);
         }
 
         /// <inheritdoc/>
@@ -118,6 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             RegisterViewModel.PropertyChanged -= RegisterViewModel_PropertyChanged;
             SelectionViewModel.ConfirmationRequested -= SelectionViewModel_ConfirmationRequested;
             LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
+            LoginViewModel.StateChanged -= LoginViewModel_StateChanged;
             (SelectedViewModel as IDisposable)?.Dispose();
             SelectionViewModel.Dispose();
             LoginViewModel.Dispose();
