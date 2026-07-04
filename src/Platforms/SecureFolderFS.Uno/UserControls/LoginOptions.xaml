@@ -20,7 +20,7 @@
                         Content="{l:ResourceString Rid=SaveCredentials}"
                         IsChecked="{x:Bind ShouldSaveCredentials, Mode=TwoWay}"
                         IsEnabled="False"
-                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
+                        Visibility="{x:Bind AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
 
                     <Button
                         Command="{x:Bind DiscardSavedCredentialsCommand, Mode=OneWay}"

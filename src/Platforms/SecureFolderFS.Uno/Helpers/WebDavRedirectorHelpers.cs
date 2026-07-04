@@ -35,7 +35,8 @@ namespace SecureFolderFS.Uno.Helpers
                 using var parametersKey = Registry.LocalMachine.OpenSubKey(WEBCLIENT_PARAMETERS_KEY);
                 return parametersKey?.GetValue(FILE_SIZE_LIMIT_VALUE) switch
                 {
-                    int value => unchecked((uint)value),
+                    int value when value < 0 => null,
+                    int value => value > 0 ? unchecked((uint)value) : null,
 
                     // The WebDAV redirector falls back to the default limit when the value is not present
                     null => DEFAULT_FILE_SIZE_LIMIT,
