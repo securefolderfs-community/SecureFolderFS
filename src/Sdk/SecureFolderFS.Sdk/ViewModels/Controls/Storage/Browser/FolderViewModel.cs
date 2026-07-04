@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
@@ -116,6 +117,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             catch (OperationCanceledException)
             {
                 // A newer listing superseded this one (or the caller canceled)
+            }
+            catch (Exception ex)
+            {
+                // Only inform the user that the refresh failed and leave existing contents intact
+                Logger.LogError(ex, "Failed to list the contents of a folder.");
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    await transferViewModel.ReportErrorAsync("FolderLoadFailed".ToLocalized());
             }
         }
 
