@@ -336,16 +336,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         partial void OnCurrentViewModelChanged(ReportableViewModel? oldValue, ReportableViewModel? newValue)
         {
             // Detach old
-            if (oldValue is not null)
-                oldValue.StateChanged -= CurrentViewModel_StateChanged;
-
+            oldValue?.StateChanged -= CurrentViewModel_StateChanged;
             if (oldValue is AuthenticationViewModel oldViewModel)
                 oldViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
             // Attach new
-            if (newValue is not null)
-                newValue.StateChanged += CurrentViewModel_StateChanged;
-
+            newValue?.StateChanged += CurrentViewModel_StateChanged;
             if (newValue is AuthenticationViewModel newViewModel)
             {
                 newViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
@@ -363,9 +359,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
 
             (CurrentViewModel as IDisposable)?.Dispose();
-            if (CurrentViewModel is not null)
-                CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
-
+            CurrentViewModel?.StateChanged -= CurrentViewModel_StateChanged;
             if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
