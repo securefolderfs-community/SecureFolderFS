@@ -22,6 +22,8 @@ namespace SecureFolderFS.Core.WebDav
     /// <inheritdoc cref="IFileSystemInfo"/>
     public abstract class WebDavFileSystem : IFileSystemInfo
     {
+        private const int MAX_LISTENER_START_ATTEMPTS = 10;
+
         /// <inheritdoc/>
         public string Id { get; } = Constants.FileSystem.FS_ID;
 
@@ -49,13 +51,12 @@ namespace SecureFolderFS.Core.WebDav
             if (!PortHelpers.IsPortAvailable(webDavOptions.Port))
                 webDavOptions.SetPortInternal(PortHelpers.GetNextAvailablePort(webDavOptions.Port));
 
-            var prefix = $"{webDavOptions.Protocol}://{webDavOptions.Domain}:{webDavOptions.Port}/";
-            var httpListener = new HttpListener();
+            // Start the listener up-front (self-healing onto another port if the bind fails) so a genuine
+            // failure surfaces to the caller and fails the unlocking operation, instead of leaving a silently-dead server.
+            // Starting here also fixes webDavOptions.Port to the actually bound port before the platform
+            // implementation derives the mount URL from it.
+            var httpListener = StartListener(webDavOptions);
 
-            httpListener.Prefixes.Add(prefix);
-            httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-
-            //var store = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.Options.IsReadOnly);
             var rootFolder = new CryptoFolder(specifics.ContentFolder.Id, specifics.ContentFolder, specifics);
             var store = new BackedDavStore(rootFolder, !specifics.Options.IsReadOnly);
             var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.Options.VolumeName, store), new RequestHandlerProvider(), null);
@@ -66,6 +67,38 @@ namespace SecureFolderFS.Core.WebDav
                 webDavOptions,
                 dispatcher,
                 cancellationToken);
+        }
+
+        /// <summary>
+        /// Creates and starts an <see cref="HttpListener"/> for the configured WebDAV endpoint, with a fallback to
+        /// the next available port if the bind fails (e.g., the port was taken between the availability check and the bind).
+        /// </summary>
+        /// <param name="options">The WebDAV options. The <see cref="WebDavOptions.Port"/> is updated to the actually bound port.</param>
+        /// <returns>A started <see cref="HttpListener"/> bound to the resolved port.</returns>
+        private static HttpListener StartListener(WebDavOptions options)
+        {
+            HttpListenerException? lastException = null;
+            for (var attempt = 0; attempt < MAX_LISTENER_START_ATTEMPTS; attempt++)
+            {
+                var listener = new HttpListener();
+                listener.Prefixes.Add($"{options.Protocol}://{options.Domain}:{options.Port}/");
+                listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+
+                try
+                {
+                    listener.Start();
+                    return listener;
+                }
+                catch (HttpListenerException ex)
+                {
+                    // The port became unavailable between the check and the bind, proceed with self-heal onto the next free port
+                    lastException = ex;
+                    listener.Close();
+                    options.SetPortInternal(PortHelpers.GetNextAvailablePort(options.Port + 1));
+                }
+            }
+
+            throw lastException ?? new HttpListenerException();
         }
 
         /// <inheritdoc/>
