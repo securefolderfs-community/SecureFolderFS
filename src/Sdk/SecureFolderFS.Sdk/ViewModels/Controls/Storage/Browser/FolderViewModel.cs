@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
@@ -22,6 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
+        private CancellationTokenSource? _listingCts;
+
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
@@ -67,7 +70,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <inheritdoc/>
         public virtual void OnDisappearing()
         {
-            Items.DisposeAll();
         }
 
         /// <summary>
@@ -77,25 +79,52 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
-            var scope = Logger.GetPerformanceScope();
-            SelectedItems.Clear();
-            Items.DisposeAll();
-            Items.Clear();
+            // Cancel any listing already in flight
+            if (_listingCts is not null)
+                await _listingCts.CancelAsync();
 
-            var isPickingFolder = BrowserViewModel.IsPickingFolder;
-            var items = await Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, cancellationToken).ToArrayAsyncImpl(cancellationToken: cancellationToken);
-            BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
+            _listingCts?.Dispose();
+            _listingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var token = _listingCts.Token;
+
+            try
             {
-                IFile file => new FileViewModel(file, BrowserViewModel, this),
-                IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),
-                _ => throw new ArgumentOutOfRangeException(nameof(x))
-            })), Items);
+                var scope = Logger.GetPerformanceScope();
 
-            // Apply adaptive layout
-            if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
-                ApplyAdaptiveLayout();
+                // Enumerate before mutating the collection, so a canceled or failed
+                // enumeration leaves the current contents intact
+                var isPickingFolder = BrowserViewModel.IsPickingFolder;
+                var items = await Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, token).ToArrayAsyncImpl(cancellationToken: token);
+                token.ThrowIfCancellationRequested();
 
-            Logger.LogPerformance(scope, minThresholdMs: 200);
+                SelectedItems.Clear();
+                Items.DisposeAll();
+                Items.Clear();
+
+                BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
+                {
+                    IFile file => new FileViewModel(file, BrowserViewModel, this),
+                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),
+                    _ => throw new ArgumentOutOfRangeException(nameof(x))
+                })), Items);
+
+                // Apply adaptive layout
+                if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
+                    ApplyAdaptiveLayout();
+
+                Logger.LogPerformance(scope, minThresholdMs: 200);
+            }
+            catch (OperationCanceledException)
+            {
+                // A newer listing superseded this one (or the caller canceled)
+            }
+            catch (Exception ex)
+            {
+                // Only inform the user that the refresh failed and leave existing contents intact
+                Logger.LogError(ex, "Failed to list the contents of a folder.");
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    await transferViewModel.ReportErrorAsync("FolderLoadFailed".ToLocalized());
+            }
         }
 
         /// <inheritdoc/>
@@ -116,10 +145,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         private void ApplyAdaptiveLayout()
         {
             var itemCount = Items.Count;
-            var folderPercentage = 100f * Items.Count(IsFolder) / itemCount;
-            var imagePercentage = 100f * Items.Count(IsImage) / itemCount;
-            var mediaPercentage = 100f * Items.Count(IsMedia) / itemCount;
-            var documentPercentage = 100f * Items.Count(IsDocument) / itemCount;
+            if (itemCount == 0)
+                return;
+
+            // Classify each item once
+            int folders = 0, images = 0, media = 0, documents = 0;
+            foreach (var item in Items)
+            {
+                if (item.Inner is IFolder)
+                {
+                    folders++;
+                    continue;
+                }
+
+                switch (FileTypeHelper.GetTypeHint(item.Inner))
+                {
+                    case TypeHint.Image: images++; break;
+                    case TypeHint.Media: media++; break;
+                    case TypeHint.Document or TypeHint.Plaintext: documents++; break;
+                }
+            }
+
+            var folderPercentage = 100f * folders / itemCount;
+            var imagePercentage = 100f * images / itemCount;
+            var mediaPercentage = 100f * media / itemCount;
+            var documentPercentage = 100f * documents / itemCount;
             var otherPercentage = 100f - (folderPercentage + imagePercentage + mediaPercentage + documentPercentage);
 
             var galleryView = BrowserViewModel.Layouts.ViewOptions.FirstOrDefault(x => x.Id == "GalleryView");
@@ -154,18 +204,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 // ListView
                 BrowserViewModel.Layouts.CurrentViewOption = listView;
             }
-
-            static bool IsFolder(BrowserItemViewModel item)
-                => item.Inner is IFolder;
-
-            static bool IsImage(BrowserItemViewModel item)
-                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Image;
-
-            static bool IsMedia(BrowserItemViewModel item)
-                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Media;
-
-            static bool IsDocument(BrowserItemViewModel item)
-                => FileTypeHelper.GetTypeHint(item.Inner) is TypeHint.Document or TypeHint.Plaintext;
         }
     }
 }

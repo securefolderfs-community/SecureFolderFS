@@ -209,9 +209,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 transferViewModel.TransferType = TransferType.Move;
                 using var cts = transferViewModel.GetCancellation();
 
-                // Ensure the destination has content already loaded
+                // Ensure the destination has content already loaded before collision checks
                 if (destinationViewModel.Items.IsEmpty())
-                    _ = destinationViewModel.ListContentsAsync(cts.Token);
+                    await destinationViewModel.ListContentsAsync(cts.Token);
 
                 await transferViewModel.TransferAsync([ itemToMove ], async (item, reporter, token) =>
                 {
@@ -233,10 +233,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     }, browserViewModel.Layouts.GetSorter());
                 }, cts.Token);
             }
-            catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+            catch (OperationCanceledException)
             {
-                _ = ex;
-                // TODO: Report error
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
             finally
             {
@@ -426,9 +429,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     transferViewModel.TransferType = TransferType.Copy;
                     using var cts = transferViewModel.GetCancellation();
 
-                    // Ensure the destination has content already loaded
+                    // Ensure the destination has content already loaded before collision checks
                     if (destinationViewModel.Items.IsEmpty())
-                        _ = destinationViewModel.ListContentsAsync(cts.Token);
+                        await destinationViewModel.ListContentsAsync(cts.Token);
 
                     await transferViewModel.TransferAsync(itemsToProcess, async (item, reporter, token) =>
                     {
@@ -463,10 +466,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         }
                     }, x => x.Name, cts.Token);
                 }
-                catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException)
+                catch (OperationCanceledException)
                 {
-                    _ = ex;
-                    // TODO: Report error
+                    // Cancellation, nothing to report
+                }
+                catch (Exception)
+                {
+                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
                 }
                 finally
                 {

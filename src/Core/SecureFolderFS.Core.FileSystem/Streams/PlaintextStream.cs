@@ -1,4 +1,9 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using System;
+using System.Buffers;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Extensions;
@@ -6,11 +11,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -21,7 +21,6 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         private readonly ChunkAccess _chunkAccess;
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
-        private readonly Lock _writeLock = new();
         private long _length;
         private long _position;
 
@@ -142,21 +141,35 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             if (CanSeek && Position > Length)
             {
-                // Write gap
-                var gapLength = Position - Length;
+                // Fill the gap between the current length and the write position with zeros.
+                // Zeros keep sparse semantics consistent with SetLength-based extension,
+                // where a zeroed region also reads back as zeros.
+                var writePosition = Position;
+                var gapBuffer = ArrayPool<byte>.Shared.Rent(_security.ContentCrypt.ChunkPlaintextSize);
+                try
+                {
+                    Array.Clear(gapBuffer, 0, gapBuffer.Length);
 
-                // Generate cryptographically secure random bytes for gap filling
-                var secureNoise = new byte[gapLength];
-                RandomNumberGenerator.Fill(secureNoise);
+                    var gapPosition = Length;
+                    while (gapPosition < writePosition)
+                    {
+                        var gapPart = (int)Math.Min(writePosition - gapPosition, gapBuffer.Length);
+                        WriteInternal(gapBuffer.AsSpan(0, gapPart), gapPosition);
+                        gapPosition += gapPart;
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(gapBuffer);
+                }
 
-                // Write contents of a secure noise array
-                WriteInternal(secureNoise, Length);
+                // WriteInternal advances the position by the amount written - restore
+                // it so the actual contents are written at the requested position
+                _position = writePosition;
             }
-            else
-            {
-                // Write contents
-                WriteInternal(buffer, Position);
-            }
+
+            // Write contents
+            WriteInternal(buffer, Position);
         }
 
         /// <inheritdoc/>
@@ -316,7 +329,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (_headerBuffer.IsHeaderReady)
                 return true;
 
-            lock (_writeLock)
+            // The header buffer is shared by all streams of the same file,
+            // so lock on the buffer's synchronization root
+            lock (_headerBuffer.SyncRoot)
             {
                 // Re-check after lock
                 if (_headerBuffer.IsHeaderReady)

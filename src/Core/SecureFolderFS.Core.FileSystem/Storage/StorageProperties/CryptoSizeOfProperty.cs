@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Storage.StorageProperties;
@@ -34,7 +35,8 @@ namespace SecureFolderFS.Core.FileSystem.Storage.StorageProperties
             if (ciphertextSize is null)
                 return null;
 
-            return _specifics.Security.ContentCrypt.CalculatePlaintextSize(ciphertextSize.Value - _specifics.Security.HeaderCrypt.HeaderCiphertextSize);
+            // Clamp to zero in case a new file may not have its header written yet
+            return _specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextSize.Value - _specifics.Security.HeaderCrypt.HeaderCiphertextSize));
         }
     }
 }

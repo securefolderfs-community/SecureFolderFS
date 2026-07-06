@@ -1,10 +1,12 @@
 using AVFoundation;
+using CoreFoundation;
 using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using ImageIO;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.AppModels;
+using SecureFolderFS.Maui.Platforms.iOS.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -36,10 +38,12 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
                 case TypeHint.Media:
                 {
+                    // Capture at one second rather than the very first frame, which is often
+                    // black (fade-ins). The generator clamps the position for shorter videos
                     await using var stream = await file.OpenReadAsync(cancellationToken).ConfigureAwait(false);
 
                     var extension = Path.GetExtension(file.Name);
-                    return await GenerateVideoThumbnailAsync(stream, extension, TimeSpan.FromSeconds(0)).ConfigureAwait(false);
+                    return await GenerateVideoThumbnailAsync(stream, extension, TimeSpan.FromSeconds(1)).ConfigureAwait(false);
                 }
 
                 default: throw new InvalidOperationException("The provided file type is invalid.");
@@ -69,75 +73,77 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 throw new Exception("Failed to create thumbnail.");
 
             using var image = UIImage.FromImage(cgImage);
-            using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
-            if (jpegData is null)
-                throw new FormatException("Failed to convert image to JPEG.");
+            using var encodedData = EncodeImage(image, cgImage.AlphaInfo);
+            if (encodedData is null)
+                throw new FormatException("Failed to encode the thumbnail.");
 
-            var memoryStream = new MemoryStream((int)jpegData.Length);
-            await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
-            memoryStream.Position = 0L;
-
-            return new ImageStreamSource(new NonDisposableStream(memoryStream));
+            return await ToImageStreamAsync(encodedData).ConfigureAwait(false);
         }
 
         private static async Task<IImageStream> GenerateVideoThumbnailAsync(Stream stream, string extension, TimeSpan captureTime)
         {
-            var tempPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{extension}");
-            try
+            // Resolve the UTI of the container format for the resource loader
+            var normalizedExtension = extension.TrimStart('.').ToLowerInvariant();
+            var contentType = normalizedExtension switch
             {
-                // Only read up to a limited prefix of the file. AVFoundation can typically
-                // decode the first keyframe from the first few MBs of a well-formed MP4,
-                // since moov/stbl metadata is usually at the front.
-                const int maxPrefixBytes = 4 * 1024 * 1024; // 4 MB
-                await using (var fileStream = File.OpenWrite(tempPath))
-                {
-                    var buffer = new byte[81920];
-                    int totalRead = 0, read;
-                    while (totalRead < maxPrefixBytes &&
-                           (read = await stream
-                                .ReadAsync(buffer.AsMemory(0, Math.Min(buffer.Length, maxPrefixBytes - totalRead)))
-                               .ConfigureAwait(false)) > 0)
-                    {
-                        await fileStream.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                        totalRead += read;
-                    }
-                }
+                "mp4" or "m4v" => "public.mpeg-4",
+                "mov" or "qt" => "com.apple.quicktime-movie",
+                "mpg" or "mpeg" => "public.mpeg",
+                "avi" => "public.avi",
+                "3gp" => "public.3gpp",
+                _ => "public.movie"
+            };
 
-                var asset = AVAsset.FromUrl(NSUrl.FromFilename(tempPath));
-                var generator = new AVAssetImageGenerator(asset)
-                {
-                    AppliesPreferredTrackTransform = true,
-                    MaximumSize = new CGSize(320, 240)
-                };
+            // A custom URL scheme forces AVFoundation to consult the resource loader delegate,
+            // which serves byte ranges directly from the (decrypted) stream. This avoids writing
+            // plaintext to a temporary file and supports videos with metadata at the end of the file
+            var url = NSUrl.FromString($"securefolderfs-stream://thumbnail/video.{normalizedExtension}");
+            if (url is null)
+                throw new FormatException("Failed to create the resource URL.");
 
-                var actualTime = new CMTime((long)captureTime.TotalSeconds, 1);
-                var tcs = new TaskCompletionSource<CGImage>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var times = new[] { NSValue.FromCMTime(actualTime) };
+            using var loaderQueue = new DispatchQueue($"{nameof(SecureFolderFS)}.{nameof(Maui)}.ResourceLoader");
+            using var loaderDelegate = new StreamedResourceLoaderDelegate(stream, contentType);
+            using var asset = AVUrlAsset.Create(url);
+            asset.ResourceLoader.SetDelegate(loaderDelegate, loaderQueue);
 
-                generator.GenerateCGImagesAsynchronously(times, (_, image, _, _, error) =>
-                {
-                    if (error != null || image is null)
-                        tcs.TrySetException(new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}"));
-                    else
-                        tcs.TrySetResult(image);
-                });
+            using var generator = new AVAssetImageGenerator(asset);
+            generator.AppliesPreferredTrackTransform = true;
+            generator.MaximumSize = new CGSize(320, 320);
 
-                using var imageRef = await tcs.Task.ConfigureAwait(false);
-                using var image = UIImage.FromImage(imageRef);
-                using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
-                if (jpegData is null)
-                    throw new FormatException("Failed to convert image to JPEG.");
+            var tcs = new TaskCompletionSource<CGImage>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var times = new[] { NSValue.FromCMTime(CMTime.FromSeconds(captureTime.TotalSeconds, 600)) };
 
-                var memoryStream = new MemoryStream();
-                await jpegData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
-                memoryStream.Position = 0L;
-
-                return new ImageStreamSource(new NonDisposableStream(memoryStream));
-            }
-            finally
+            generator.GenerateCGImagesAsynchronously(times, (_, image, _, _, error) =>
             {
-                File.Delete(tempPath);
-            }
+                if (error is not null || image is null)
+                    tcs.TrySetException(new FormatException($"Failed to generate thumbnail: {error?.LocalizedDescription}"));
+                else
+                    tcs.TrySetResult(image);
+            });
+
+            using var imageRef = await tcs.Task.ConfigureAwait(false);
+            using var image = UIImage.FromImage(imageRef);
+            using var jpegData = image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY / 100f);
+            if (jpegData is null)
+                throw new FormatException("Failed to convert image to JPEG.");
+
+            return await ToImageStreamAsync(jpegData).ConfigureAwait(false);
+        }
+
+        private static NSData? EncodeImage(UIImage image, CGImageAlphaInfo alphaInfo)
+        {
+            // Use PNG for images with transparency. AsJPEG() expects the compression quality in the 0..1f range
+            var hasAlpha = alphaInfo is not (CGImageAlphaInfo.None or CGImageAlphaInfo.NoneSkipFirst or CGImageAlphaInfo.NoneSkipLast);
+            return hasAlpha ? image.AsPNG() : image.AsJPEG(Constants.Browser.IMAGE_THUMBNAIL_QUALITY / 100f);
+        }
+
+        private static async Task<IImageStream> ToImageStreamAsync(NSData imageData)
+        {
+            var memoryStream = new MemoryStream((int)imageData.Length);
+            await imageData.AsStream().CopyToAsync(memoryStream).ConfigureAwait(false);
+            memoryStream.Position = 0L;
+
+            return new ImageStreamSource(new NonDisposableStream(memoryStream));
         }
     }
 }

@@ -20,7 +20,14 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
             if (other is null)
                 return false;
 
-            return DirectoryId.AsSpan() == other.DirectoryId.AsSpan() && FileName == other.FileName;
+            // Compare the Directory ID contents (the span equality operator only compares references)
+            return DirectoryId.AsSpan().SequenceEqual(other.DirectoryId.AsSpan()) && FileName == other.FileName;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as NameWithDirectoryId);
         }
 
         /// <inheritdoc/>
@@ -29,8 +36,8 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
             unchecked
             {
                 var hash = 17;
-                hash *= 23 + FileName.GetHashCode();
-                hash *= 23 + ComputeHash(DirectoryId);
+                hash = hash * 23 + FileName.GetHashCode();
+                hash = hash * 23 + ComputeHash(DirectoryId);
 
                 return hash;
             }

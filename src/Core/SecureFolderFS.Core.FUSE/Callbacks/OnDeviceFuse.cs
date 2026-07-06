@@ -1,4 +1,6 @@
-using System.Runtime.CompilerServices;
+using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
@@ -86,7 +88,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
         {
             if (FuseOptions!.IsReadOnly)
@@ -100,39 +101,53 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
+            // Only the default mode (extend allocation and size) is supported.
+            // FALLOC_FL_KEEP_SIZE and other flags arrive in 'mode', not in fi.flags
             if (mode != 0)
                 return -EOPNOTSUPP;
 
             var newLength = (long)offset + length;
-            if ((fi.flags & FALLOC_FL_KEEP_SIZE) == 0 && newLength > handle.Stream.Length)
-                handle.Stream.SetLength(newLength);
+            lock (handle.Stream)
+            {
+                if (newLength > handle.Stream.Length)
+                    handle.Stream.SetLength(newLength);
+            }
 
             return 0;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Flush(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
-            if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
+            if (handle is null)
                 return -EBADF;
 
-            handle.Stream.Flush();
+            // Flush is invoked for every close(2), including read-only descriptors
+            if (!handle.FileAccess.HasFlag(FileAccess.Write))
+                return 0;
+
+            lock (handle.Stream)
+                handle.Stream.Flush();
+
             return 0;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSync(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
-            if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
+            if (handle is null)
                 return -EBADF;
+
+            // fsync(2) is valid on read-only descriptors - there is nothing to flush
+            if (!handle.FileAccess.HasFlag(FileAccess.Write))
+                return 0;
 
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            handle.Stream.Flush();
+            lock (handle.Stream)
+                handle.Stream.Flush();
 
             if (onlyData)
                 return 0;
@@ -152,20 +167,20 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSyncDir(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
-            if (FuseOptions!.IsReadOnly)
-                return -EROFS;
-
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
 
+            // Flush writable handles of files located inside the directory being synced
             foreach (var handle in handlesManager.OpenHandles)
             {
-                if (handle is FuseFileHandle fuseFileHandle && Path.GetDirectoryName(ciphertextPath)!.StartsWith(fuseFileHandle.Directory))
-                    fuseFileHandle.Stream.Flush();
+                if (handle is FuseFileHandle { Stream.CanWrite: true } fuseFileHandle && fuseFileHandle.Directory.StartsWith(ciphertextPath, StringComparison.Ordinal))
+                {
+                    lock (fuseFileHandle.Stream)
+                        fuseFileHandle.Stream.Flush();
+                }
             }
 
             if (onlyData)
@@ -201,8 +216,17 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 if (LibC.stat(ciphertextPathPtr, statPtr) == -1)
                     return -errno;
 
-                if (File.Exists(ciphertextPath))
+                // Prefer the open handle's stream length. It may include data that
+                // has not been flushed to the ciphertext file yet
+                if (!fiRef.IsNull && handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) is { } handle)
+                {
+                    lock (handle.Stream)
+                        stat.st_size = handle.Stream.Length;
+                }
+                else if (File.Exists(ciphertextPath))
+                {
                     stat.st_size = Math.Max(0, specifics.Security.ContentCrypt.CalculatePlaintextSize(stat.st_size - specifics.Security.HeaderCrypt.HeaderCiphertextSize));
+                }
 
                 return 0;
             }
@@ -295,10 +319,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var mode = FileMode.Open;
             if ((fi.flags & O_APPEND) != 0)
                 mode = FileMode.Append;
-            else if ((fi.flags & O_CREAT) != 0)
-                mode = FileMode.Create;
             else if ((fi.flags & O_TRUNC) != 0)
-                mode = FileMode.Truncate;
+                mode = (fi.flags & O_CREAT) != 0 ? FileMode.Create : FileMode.Truncate;
+            else if ((fi.flags & O_CREAT) != 0)
+                mode = FileMode.OpenOrCreate; // O_CREAT without O_TRUNC must not truncate an existing file
 
             var options = FileOptions.None;
             if ((fi.flags & O_ASYNC) != 0)
@@ -313,10 +337,19 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if ((fi.flags & O_TMPFILE) != 0)
                 options |= FileOptions.DeleteOnClose;
 
-            if (FuseOptions!.IsReadOnly && (mode == FileMode.Create || mode == FileMode.Truncate || (fi.flags & O_WRONLY) != 0 || (fi.flags & O_RDWR) != 0))
+            var wantsWrite = (fi.flags & (O_WRONLY | O_RDWR)) != 0;
+            if (FuseOptions!.IsReadOnly && (mode is FileMode.Create or FileMode.Truncate or FileMode.OpenOrCreate || wantsWrite))
                 return -EROFS;
 
-            var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
+            // Read-only opens must not request write access. Otherwise, files with
+            // read-only permissions (or on read-only media) cannot be opened at all
+            var access = mode switch
+            {
+                FileMode.Append => FileAccess.Write,
+                FileMode.Create or FileMode.Truncate => FileAccess.ReadWrite,
+                _ => wantsWrite ? FileAccess.ReadWrite : FileAccess.Read
+            };
+
             var handle = handlesManager.OpenFileHandle(ciphertextPath, mode, access, FileShare.ReadWrite, options);
             if (handle == FileSystem.Constants.INVALID_HANDLE)
                 return -EACCES;
@@ -340,18 +373,22 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Read(ReadOnlySpan<byte> path, ulong offset, Span<byte> buffer, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
             if (handle is null)
                 return -EBADF;
 
-            if ((long)offset > handle.Stream.Length)
-                return 0;
+            // Lock on the handle's stream. The kernel can issue concurrent operations
+            // on the same handle, and setting the position and reading must be atomic
+            lock (handle.Stream)
+            {
+                if ((long)offset > handle.Stream.Length)
+                    return 0;
 
-            handle.Stream.Position = (long)offset;
-            return handle.Stream.Read(buffer);
+                handle.Stream.Position = (long)offset;
+                return handle.Stream.Read(buffer);
+            }
         }
 
         public override int ReadDir(ReadOnlySpan<byte> path, ulong offset, ReadDirFlags flags, DirectoryContent content, ref FuseFileInfo fi)
@@ -366,18 +403,21 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
-                if (PathHelpers.IsCoreName(entry))
+                var ciphertextName = Path.GetFileName(entry);
+                if (PathHelpers.IsCoreName(ciphertextName))
                     continue;
 
-                var ciphertextName = Path.GetFileName(entry);
+                // Skip entries whose names cannot be decrypted
                 var plaintextName = NativePathHelpers.DecryptName(ciphertextName, ciphertextPath, specifics, directoryId);
+                if (string.IsNullOrEmpty(plaintextName))
+                    continue;
+
                 content.AddEntry(plaintextName);
             }
 
             return 0;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override void Release(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
         {
             handlesManager.CloseHandle(fi.fh);
@@ -516,7 +556,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
             if (FuseOptions!.IsReadOnly)
@@ -533,13 +572,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             FuseFileHandle? handle;
+            var temporaryHandleId = FileSystem.Constants.INVALID_HANDLE;
             if (fiRef.IsNull)
             {
-                var newHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
-                if (newHandle == FileSystem.Constants.INVALID_HANDLE)
+                temporaryHandleId = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
+                if (temporaryHandleId == FileSystem.Constants.INVALID_HANDLE)
                     return -EIO;
 
-                handle = handlesManager.GetHandle<FuseFileHandle>(newHandle)!;
+                handle = handlesManager.GetHandle<FuseFileHandle>(temporaryHandleId)!;
             }
             else
             {
@@ -548,11 +588,23 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -EBADF;
             }
 
-            var position = handle.Stream.Position;
-            handle.Stream.SetLength((long)length);
-            handle.Stream.Position = position;
+            try
+            {
+                lock (handle.Stream)
+                {
+                    var position = handle.Stream.Position;
+                    handle.Stream.SetLength((long)length);
+                    handle.Stream.Position = position;
+                }
 
-            return 0;
+                return 0;
+            }
+            finally
+            {
+                // Close the temporary handle
+                if (temporaryHandleId != FileSystem.Constants.INVALID_HANDLE)
+                    handlesManager.CloseHandle(temporaryHandleId);
+            }
         }
 
         /// <remarks>
@@ -629,6 +681,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
                     return 0;
                 }
+
                 if (File.Exists(ciphertextPath))
                 {
                     var fd = open(ciphertextPathPtr, O_WRONLY);
@@ -648,21 +701,24 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Write(ReadOnlySpan<byte> path, ulong offset, ReadOnlySpan<byte> buffer, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
             if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
-            if (handle.FileMode == FileMode.Append)
-                offset = (ulong)handle.Stream.Length;
+            // Lock on the handle's stream. The kernel can issue concurrent operations
+            // on the same handle, and setting the position and writing must be atomic
+            lock (handle.Stream)
+            {
+                if (handle.FileMode == FileMode.Append)
+                    offset = (ulong)handle.Stream.Length;
 
-            if ((long)offset + buffer.Length > handle.Stream.Length)
-                handle.Stream.SetLength((long)offset + buffer.Length);
-
-            handle.Stream.Position = (long)offset;
-            handle.Stream.Write(buffer);
+                // No SetLength needed here as the plaintext stream extends itself and
+                // fills any gap with zeros when writing past the end of the file
+                handle.Stream.Position = (long)offset;
+                handle.Stream.Write(buffer);
+            }
 
             return buffer.Length;
         }

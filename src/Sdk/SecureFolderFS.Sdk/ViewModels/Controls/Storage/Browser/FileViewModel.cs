@@ -81,9 +81,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (!SettingsService.UserSettings.AreThumbnailsEnabled || !CanLoadThumbnail())
                 return;
 
-            // Try to get from the cache first
+            // Try to get from the cache first and reuse the already-fetched modification date instead of querying it again
             Thumbnail?.Dispose();
-            var cacheKey = await ThumbnailCacheModel.GetCacheKeyAsync(File, cancellationToken);
+            var cacheKey = ThumbnailCacheModel.GetCacheKey(File.Id, LastModified);
             var cachedStream = await BrowserViewModel.ThumbnailCache.TryGetCachedThumbnailAsync(cacheKey, cancellationToken);
             if (cachedStream is not null)
             {
@@ -97,9 +97,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (generatedThumbnail is null)
                 return;
 
-            // Show and cache the generated thumbnail
+            // Cache the thumbnail BEFORE handing the stream to the UI (use await) because both the cache copy
+            // and the image decoder reposition the same stream, so they must not overlap
+            await BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
+
+            // Show the generated thumbnail
             Thumbnail = generatedThumbnail;
-            _ = BrowserViewModel.ThumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
         }
 
         /// <summary>
@@ -133,41 +136,53 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (BrowserViewModel.TransferViewModel?.IsPickingItems() ?? false)
                 return;
 
-            using var viewModel = new PreviewerOverlayViewModel(this, ParentFolder);
-            await viewModel.InitAsync(cancellationToken);
-            await OverlayService.ShowAsync(viewModel);
-
-            if (BrowserViewModel.Options.IsReadOnly)
-                return;
-
-            if (viewModel.PreviewerViewModel is IChangeTracker { WasModified: true } and IPersistable persistable)
+            try
             {
-                var messageOverlay = new MessageOverlayViewModel()
-                {
-                    Title = "UnsavedChanges".ToLocalized(),
-                    Message = "UnsavedChangesDescription".ToLocalized(),
-                    PrimaryText = "Save".ToLocalized(),
-                    SecondaryText = "Cancel".ToLocalized()
-                };
+                using var viewModel = new PreviewerOverlayViewModel(this, ParentFolder);
+                await viewModel.InitAsync(cancellationToken);
+                await OverlayService.ShowAsync(viewModel);
 
-                await Task.Delay(700);
-                var result = await OverlayService.ShowAsync(messageOverlay);
-                if (!result.Positive())
+                if (BrowserViewModel.Options.IsReadOnly)
                     return;
 
-                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                if (viewModel.PreviewerViewModel is IChangeTracker { WasModified: true } and IPersistable persistable)
                 {
-                    transferViewModel.TransferType = TransferType.Save;
-                    using var saveCancellation = transferViewModel.GetCancellation();
-                    await transferViewModel.PerformOperationAsync(async ct =>
+                    var messageOverlay = new MessageOverlayViewModel()
                     {
-                        await persistable.SaveAsync(ct);
-                    }, saveCancellation.Token);
-                }
-                else
-                    await persistable.SaveAsync(cancellationToken);
+                        Title = "UnsavedChanges".ToLocalized(),
+                        Message = "UnsavedChangesDescription".ToLocalized(),
+                        PrimaryText = "Save".ToLocalized(),
+                        SecondaryText = "Cancel".ToLocalized()
+                    };
 
-                await PerformFileLoadAsync(cancellationToken);
+                    await Task.Delay(700, CancellationToken.None);
+                    var result = await OverlayService.ShowAsync(messageOverlay);
+                    if (!result.Positive())
+                        return;
+
+                    if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    {
+                        transferViewModel.TransferType = TransferType.Save;
+                        using var saveCancellation = transferViewModel.GetCancellation();
+                        await transferViewModel.PerformOperationAsync(async ct =>
+                        {
+                            await persistable.SaveAsync(ct);
+                        }, saveCancellation.Token);
+                    }
+                    else
+                        await persistable.SaveAsync(cancellationToken);
+
+                    await PerformFileLoadAsync(cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                if (BrowserViewModel.TransferViewModel is { } transferViewModel)
+                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
         }
     }

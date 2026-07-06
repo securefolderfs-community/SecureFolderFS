@@ -36,6 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public async Task<IResult> RecoverAsync(CancellationToken cancellationToken)
         {
+            ErrorMessage = null;
             try
             {
                 var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, RecoveryKey ?? string.Empty, cancellationToken);

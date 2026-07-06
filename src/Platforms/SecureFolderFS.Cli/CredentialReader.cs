@@ -98,5 +98,3 @@ public sealed class CredentialReader
         return buffer.Length == 0 ? null : buffer.ToString();
     }
 }
-
-

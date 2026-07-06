@@ -1,10 +1,4 @@
-﻿using DokanNet;
-using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,6 +6,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using DokanNet;
+using SecureFolderFS.Core.Dokany.Helpers;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -64,12 +65,20 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
             try
             {
-                fileHandle.Stream.Flush();
+                lock (fileHandle.Stream)
+                    fileHandle.Stream.Flush();
+
                 return Trace(DokanResult.Success, fileName, info);
             }
-            catch (IOException)
+            catch (IOException ioEx)
             {
-                return DokanResult.DiskFull;
+                if (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+                    return Trace(DokanResult.DiskFull, fileName, info);
+
+                if (DokanyErrorHelpers.NtStatusFromException(ioEx, out var ntStatus))
+                    return Trace((NtStatus)ntStatus, fileName, info);
+
+                return Trace(DokanResult.Unsuccessful, fileName, info);
             }
         }
 
@@ -88,7 +97,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
                 return Trace(DokanResult.InvalidHandle, fileName, info);
 
-            fileHandle.Stream.SetLength(length);
+            lock (fileHandle.Stream)
+                fileHandle.Stream.SetLength(length);
+
             return Trace(DokanResult.Success, fileName, info);
         }
 
@@ -131,7 +142,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
             IDokanFileInfo info)
         {
@@ -164,19 +174,24 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
             try
             {
-                // Check EOF
-                if (offset >= fileHandle.Stream.Length)
+                // Lock on the handle's stream. The kernel can issue concurrent operations
+                // on the same handle, and setting the position and reading must be atomic
+                lock (fileHandle.Stream)
                 {
-                    bytesRead = 0;
-                    return NtStatus.EndOfFile;
+                    // Check EOF
+                    if (offset >= fileHandle.Stream.Length)
+                    {
+                        bytesRead = 0;
+                        return NtStatus.EndOfFile;
+                    }
+
+                    // Align position
+                    fileHandle.Stream.Position = offset;
+
+                    // Read file
+                    var bufferSpan = new Span<byte>(buffer.ToPointer(), (int)bufferLength);
+                    bytesRead = fileHandle.Stream.Read(bufferSpan);
                 }
-
-                // Align position
-                fileHandle.Stream.Position = offset;
-
-                // Read file
-                var bufferSpan = new Span<byte>(buffer.ToPointer(), (int)bufferLength);
-                bytesRead = fileHandle.Stream.Read(bufferSpan);
 
                 return Trace(DokanResult.Success, fileName, info);
             }
@@ -203,7 +218,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             if (specifics.Options.IsReadOnly)
@@ -228,7 +242,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handlesManager.OpenFileHandle(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
+                // FileMode.Append cannot be combined with FileAccess.ReadWrite - open normally
+                // and seek to the end instead (the append position is aligned below)
+                contextHandle = handlesManager.OpenFileHandle(ciphertextPath, appendToFile ? FileMode.OpenOrCreate : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
                 fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle);
                 openedNewHandle = true;
             }
@@ -242,19 +258,24 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
             try
             {
-                // Align for Paging I/O
-                var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.Stream.Length, info);
+                // Lock on the handle's stream as the kernel can issue concurrent operations
+                // on the same handle, and setting the position and writing must be atomic
+                lock (fileHandle.Stream)
+                {
+                    // Align for Paging I/O
+                    var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.Stream.Length, info);
 
-                // Align position for offset
-                var alignedPosition = appendToFile ? fileHandle.Stream.Length : offset;
+                    // Align position for offset
+                    var alignedPosition = appendToFile ? fileHandle.Stream.Length : offset;
 
-                // Align position
-                fileHandle.Stream.Position = alignedPosition;
+                    // Align position
+                    fileHandle.Stream.Position = alignedPosition;
 
-                // Write file
-                var bufferSpan = new ReadOnlySpan<byte>(buffer.ToPointer(), alignedBytesToCopy);
-                fileHandle.Stream.Write(bufferSpan);
-                bytesWritten = alignedBytesToCopy;
+                    // Write file
+                    var bufferSpan = new ReadOnlySpan<byte>(buffer.ToPointer(), alignedBytesToCopy);
+                    fileHandle.Stream.Write(bufferSpan);
+                    bytesWritten = alignedBytesToCopy;
+                }
 
                 return Trace(DokanResult.Success, fileName, info);
             }
@@ -376,6 +397,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 return bufferLength;
 
             var longDistanceToEnd = streamLength - offset;
+
+            // Paging I/O must not write beyond the end of the file
+            if (longDistanceToEnd <= 0L)
+                return 0;
+
             if (longDistanceToEnd > int.MaxValue)
                 return bufferLength;
 
@@ -394,7 +420,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (Debugger.IsAttached)
                 return result;
 
-            if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
+            if (!FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return result;
 
             if (DisallowedTraceMethods.Contains(methodName))
@@ -413,7 +439,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return result;
 #endif
 
-            if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
+            if (!FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return result;
 
             if (!Debugger.IsAttached)
@@ -434,7 +460,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         private static string[] DisallowedTraceMethods { get; } =
         {
-            "GetVolumeInformation"
+            nameof(GetVolumeInformation)
         };
     }
 }

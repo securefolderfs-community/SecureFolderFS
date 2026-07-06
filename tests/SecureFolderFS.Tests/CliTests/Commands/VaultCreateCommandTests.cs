@@ -40,5 +40,3 @@ public class VaultCreateCommandTests : BaseCliCommandTests
         File.Exists(configPath).Should().BeTrue();
     }
 }
-
-

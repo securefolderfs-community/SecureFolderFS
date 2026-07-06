@@ -19,5 +19,3 @@ public class VaultShellCommandTests : BaseCliCommandTests
         result.ProcessExitCode.Should().Be(CliExpectedExitCodes.BadArguments);
     }
 }
-
-

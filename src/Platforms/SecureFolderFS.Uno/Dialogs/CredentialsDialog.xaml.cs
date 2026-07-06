@@ -66,32 +66,20 @@ namespace SecureFolderFS.Uno.Dialogs
 
                 case CredentialsResetViewModel credentialsReset:
                 {
-                    try
-                    {
-                        await credentialsReset.ConfirmAsync(default);
+                    var result = await credentialsReset.ConfirmAsync(default);
+                    ViewModel.Report(result);
+                    if (result.Successful)
                         await HideAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        // TODO: Report to user
-                        _ = ex;
-                    }
 
                     break;
                 }
 
                 case CredentialsConfirmationViewModel credentialsConfirmation:
                 {
-                    try
-                    {
-                        await credentialsConfirmation.ConfirmAsync(default);
+                    var result = await credentialsConfirmation.ConfirmAsync();
+                    ViewModel.Report(result);
+                    if (result.Successful)
                         await HideAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        // TODO: Report to user
-                        _ = ex;
-                    }
 
                     break;
                 }

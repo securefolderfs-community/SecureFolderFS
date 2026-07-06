@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -55,13 +54,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             RegisterViewModel.CredentialsProvided += RegisterViewModel_CredentialsProvided;
         }
 
-        [RelayCommand]
-        public async Task ConfirmAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Confirms the credentials by performing either a removal or modification operation, depending on the current context.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a result of type <see cref="IResult"/> indicating the success or failure of the operation.</returns>
+        public async Task<IResult> ConfirmAsync(CancellationToken cancellationToken = default)
         {
-            if (IsRemoving)
-                await RemoveAsync(cancellationToken);
-            else
-                await ModifyAsync(cancellationToken);
+            try
+            {
+                if (IsRemoving)
+                    await RemoveAsync(cancellationToken);
+                else
+                    await ModifyAsync(cancellationToken);
+
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
         }
 
         private async Task ModifyAsync(CancellationToken cancellationToken)

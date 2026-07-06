@@ -20,6 +20,19 @@ namespace SecureFolderFS.Shared.Models
         {
             Message = message;
         }
+
+        /// <summary>
+        /// Creates an instance of <see cref="IResultWithMessage"/> by combining the given base result and an additional message.
+        /// </summary>
+        /// <param name="baseResult">The base result, which contains the success state or an exception.</param>
+        /// <param name="message">The additional message to include in the result.</param>
+        /// <returns>A new instance of <see cref="IResultWithMessage"/> containing the provided base result and message.</returns>
+        public static IResultWithMessage WithMessage(IResult baseResult, string message)
+        {
+            return baseResult.Exception is not null
+                ? new MessageResult(baseResult.Exception, message)
+                : new MessageResult(baseResult.Successful, message);
+        }
     }
 
     /// <inheritdoc cref="IResultWithMessage{T}"/>

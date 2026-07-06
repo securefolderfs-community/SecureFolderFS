@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? AppPlatformTemplate { get; set; }
 
         public DataTemplate? MigrationTemplate { get; set; }
-        
+
         public DataTemplate? PersistedAuthenticationTemplate { get; set; }
 
         public DataTemplate? ErrorTemplate { get; set; }

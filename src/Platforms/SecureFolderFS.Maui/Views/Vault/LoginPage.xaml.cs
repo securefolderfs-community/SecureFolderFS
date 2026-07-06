@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.AppModels;
@@ -6,6 +7,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
@@ -36,6 +38,8 @@ namespace SecureFolderFS.Maui.Views.Vault
             {
                 ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
                 ViewModel.NavigationRequested += ViewModel_NavigationRequested;
+                ViewModel.StatusInfoBar.PropertyChanged -= StatusInfoBar_PropertyChanged;
+                ViewModel.StatusInfoBar.PropertyChanged += StatusInfoBar_PropertyChanged;
 
                 if (ViewModel.VaultViewModel.VaultModel.IsRemote)
                 {
@@ -54,11 +58,26 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(ViewModel));
         }
 
+        private async void StatusInfoBar_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not InfoBarViewModel infoBarViewModel)
+                return;
+
+            // Report login errors when it is expected
+            if (infoBarViewModel.IsOpen)
+            {
+                infoBarViewModel.IsOpen = false;
+                await DisplayAlertAsync(
+                    infoBarViewModel.Title,
+                    infoBarViewModel.Message,
+                    "Close".ToLocalized());
+            }
+        }
+
         protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
         {
-            if (ViewModel is not null)
-                ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
-
+            ViewModel?.NavigationRequested -= ViewModel_NavigationRequested;
+            ViewModel?.StatusInfoBar.PropertyChanged -= StatusInfoBar_PropertyChanged;
             base.OnNavigatingFrom(args);
         }
 

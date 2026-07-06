@@ -14,6 +14,7 @@
         <TextBox
             AcceptsReturn="True"
             FontFamily="Consolas"
+            PlaceholderText="lZbz5sWme..."
             Text="{x:Bind RecoveryKey, Mode=TwoWay}"
             TextWrapping="Wrap" />
 
@@ -26,5 +27,12 @@
                 <TextBlock Text="{l:ResourceString Rid=Paste}" />
             </StackPanel>
         </Button>
+
+        <!--  Error notification  -->
+        <InfoBar
+            IsClosable="False"
+            IsOpen="{x:Bind ErrorMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            Message="{x:Bind ErrorMessage, Mode=OneWay}"
+            Severity="Error" />
     </StackPanel>
 </UserControl>

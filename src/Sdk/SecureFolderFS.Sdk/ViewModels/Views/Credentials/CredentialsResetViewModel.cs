@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -55,22 +54,35 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             RegisterViewModel.CurrentViewModel = AuthenticationOptions.FirstOrDefault();
         }
 
-        [RelayCommand]
-        public async Task ConfirmAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Confirms the credentials reset process and applies the updated authentication configuration for the vault.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an <see cref="IResult"/> indicating the success or failure of the confirmation process.</returns>
+        public async Task<IResult> ConfirmAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
-            RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
-
-            var key = await _credentialsTcs.Task;
-            var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-            var newOptions = configuredOptions with
+            try
             {
-                UnlockProcedure = new AuthenticationMethod([ RegisterViewModel.CurrentViewModel.Id ], null)
-            };
+                ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
+                RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
 
-            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);
-            if (!string.IsNullOrEmpty(configuredOptions.VaultId))
-                PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
+                var key = await _credentialsTcs.Task;
+                var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+                var newOptions = configuredOptions with
+                {
+                    UnlockProcedure = new AuthenticationMethod([ RegisterViewModel.CurrentViewModel.Id ], null)
+                };
+
+                await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);
+                if (!string.IsNullOrEmpty(configuredOptions.VaultId))
+                    PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
+
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

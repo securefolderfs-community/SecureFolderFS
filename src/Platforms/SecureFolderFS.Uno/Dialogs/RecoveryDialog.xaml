@@ -24,5 +24,8 @@
         <x:Double x:Key="ContentDialogMinWidth">500</x:Double>
     </ContentDialog.Resources>
 
-    <uc:RecoveryControl PasteRecoveryKeyCommand="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}" RecoveryKey="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}" />
+    <uc:RecoveryControl
+        ErrorMessage="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+        PasteRecoveryKeyCommand="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}"
+        RecoveryKey="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}" />
 </ContentDialog>

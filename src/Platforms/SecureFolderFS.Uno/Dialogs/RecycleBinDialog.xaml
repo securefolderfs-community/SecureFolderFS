@@ -119,6 +119,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock
@@ -162,8 +163,19 @@
                     </tbv:TableView.Columns>
                 </tbv:TableView>
 
-                <StackPanel
+                <InfoBar
+                    Title="{x:Bind ViewModel.StatusInfoBar.Title, Mode=OneWay}"
                     Grid.Row="2"
+                    Margin="0,0,0,8"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Bottom"
+                    IsClosable="{x:Bind ViewModel.StatusInfoBar.IsCloseable, Mode=OneWay}"
+                    IsOpen="{x:Bind ViewModel.StatusInfoBar.IsOpen, Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.StatusInfoBar.Message, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.StatusInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+
+                <StackPanel
+                    Grid.Row="3"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="4">

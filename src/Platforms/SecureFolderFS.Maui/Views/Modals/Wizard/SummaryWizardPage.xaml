@@ -33,12 +33,14 @@
                     <RoundRectangle CornerRadius="24" />
                 </Border.StrokeShape>
                 <Grid>
+                    <!--  Success indicator  -->
                     <mi:MauiIcon
                         HorizontalOptions="Center"
                         Icon="{mi_material:Material Icon=Check,
                                                     IconSize=48}"
                         IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
                                                     Dark={StaticResource PrimaryDarkColor}}"
+                        IsVisible="{Binding ViewModel.IsError, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                         OnPlatforms="Android"
                         VerticalOptions="Center" />
                     <mi:MauiIcon
@@ -47,6 +49,27 @@
                                                       IconSize=48}"
                         IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
                                                     Dark={StaticResource PrimaryDarkColor}}"
+                        IsVisible="{Binding ViewModel.IsError, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        OnPlatforms="iOS"
+                        VerticalOptions="Center" />
+
+                    <!--  Error indicator  -->
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_material:Material Icon=ErrorOutline,
+                                                    IconSize=48}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
+                        IsVisible="{Binding ViewModel.IsError, Mode=OneWay}"
+                        OnPlatforms="Android"
+                        VerticalOptions="Center" />
+                    <mi:MauiIcon
+                        HorizontalOptions="Center"
+                        Icon="{mi_cupertino:Cupertino Icon=ExclamationmarkCircle,
+                                                      IconSize=48}"
+                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                    Dark={StaticResource PrimaryDarkColor}}"
+                        IsVisible="{Binding ViewModel.IsError, Mode=OneWay}"
                         OnPlatforms="iOS"
                         VerticalOptions="Center" />
                 </Grid>

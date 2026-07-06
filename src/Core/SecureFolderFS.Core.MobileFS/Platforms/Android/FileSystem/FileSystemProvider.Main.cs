@@ -1,4 +1,4 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content;
 using Android.Content.Res;
 using Android.Database;
@@ -8,7 +8,6 @@ using Android.Util;
 using Microsoft.Maui.Platform;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Helpers;
-using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -16,7 +15,6 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 using Point = Android.Graphics.Point;
-using Uri = Android.Net.Uri;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -59,6 +57,36 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         }
 
         /// <inheritdoc/>
+        public override bool IsChildDocument(string? parentDocumentId, string? documentId)
+        {
+            // Required for ACTION_OPEN_DOCUMENT_TREE - the system validates every access
+            // through a tree grant by checking the ancestry of the target document
+            parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
+            documentId = documentId == "null" ? null : documentId;
+            if (parentDocumentId is null || documentId is null)
+                return false;
+
+            var parentSplit = parentDocumentId.Split(':', 2);
+            var childSplit = documentId.Split(':', 2);
+            if (parentSplit.Length < 2 || childSplit.Length < 2)
+                return false;
+
+            // Both documents must belong to the same root
+            if (parentSplit[0] != childSplit[0])
+                return false;
+
+            var parentPath = parentSplit[1].TrimEnd('/');
+            var childPath = childSplit[1];
+
+            // The root folder is an ancestor of every document within it
+            if (parentPath.Length == 0)
+                return true;
+
+            return childPath.StartsWith(parentPath, StringComparison.Ordinal)
+                   && (childPath.Length == parentPath.Length || childPath[parentPath.Length] == '/');
+        }
+
+        /// <inheritdoc/>
         public override string? CreateDocument(string? parentDocumentId, string? mimeType, string? displayName)
         {
             parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
@@ -69,18 +97,27 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parentStorable is not IModifiableFolder parentFolder)
                 return null;
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(parentStorable);
+            var safRoot = GetSafRootForDocumentId(parentDocumentId);
             if (safRoot is null)
                 return null;
 
             if (safRoot.StorageRoot.Options.IsReadOnly)
                 return null;
 
+            // De-duplicate the display name, as creating over an existing document
+            // would return the existing item and its contents would get overwritten
+            var finalName = displayName;
+            var counter = 1;
+            while (counter < 32 && parentFolder.TryGetFirstByNameAsync(finalName).ConfigureAwait(false).GetAwaiter().GetResult() is not null)
+                finalName = $"{Path.GetFileNameWithoutExtension(displayName)} ({counter++}){Path.GetExtension(displayName)}";
+
             var createdItem = (IStorableChild)(mimeType switch
             {
-                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult(),
-                _ => parentFolder.CreateFileAsync(displayName).ConfigureAwait(false).GetAwaiter().GetResult()
+                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(finalName).ConfigureAwait(false).GetAwaiter().GetResult(),
+                _ => parentFolder.CreateFileAsync(finalName).ConfigureAwait(false).GetAwaiter().GetResult()
             });
+
+            NotifyChildDocumentsChange(parentDocumentId);
 
             var rootId = parentDocumentId.Split(':', 2)[0];
             return $"{rootId}:{createdItem.Id}";
@@ -95,11 +132,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var file = GetStorableForDocumentId(documentId);
             if (file is not IChildFile childFile)
-                return null;
+                throw new Java.IO.FileNotFoundException($"No document found for '{documentId}'.");
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(file);
+            var safRoot = GetSafRootForDocumentId(documentId);
             if (safRoot is null)
-                return null;
+                throw new Java.IO.FileNotFoundException($"No root found for '{documentId}'.");
 
             var fileAccess = ToFileAccess(mode);
             if (safRoot.StorageRoot.Options.IsReadOnly && fileAccess.HasFlag(FileAccess.Write))
@@ -109,24 +146,30 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (stream is null)
                 return null;
 
-            var parcelFileMode = ToParcelFileMode(mode);
-            if (safRoot.StorageRoot.Options.IsReadOnly && parcelFileMode is ParcelFileMode.WriteOnly or ParcelFileMode.ReadWrite)
-                return null;
+            // The 'w' family of modes replaces the existing content
+            if (IsTruncateMode(mode))
+                stream.SetLength(0L);
 
             var handlerThread = new HandlerThread("ProxyFD-" + documentId);
             handlerThread.Start();
             return _storageManager.OpenProxyFileDescriptor(
-                parcelFileMode,
+                ToParcelFileMode(mode),
                 new ReadWriteCallbacks(stream, handlerThread),
                 new Handler(handlerThread.Looper!));
+
+            static bool IsTruncateMode(string? fileMode)
+            {
+                return fileMode is "w" or "wt" or "rwt";
+            }
 
             static ParcelFileMode ToParcelFileMode(string? fileMode)
             {
                 return fileMode switch
                 {
                     "r" => ParcelFileMode.ReadOnly,
-                    "w" => ParcelFileMode.WriteOnly,
-                    "rw" => ParcelFileMode.ReadWrite,
+                    "w" or "wt" => ParcelFileMode.WriteOnly,
+                    "wa" => ParcelFileMode.WriteOnly | ParcelFileMode.Append,
+                    "rw" or "rwt" => ParcelFileMode.ReadWrite,
                     _ => throw new ArgumentException($"Unsupported mode: {fileMode}.")
                 };
             }
@@ -136,8 +179,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return fileMode switch
                 {
                     "r" => FileAccess.Read,
-                    "w" => FileAccess.Write,
-                    "rw" => FileAccess.ReadWrite,
+                    // Writes require read access as well (encrypted chunks are read-modify-write)
+                    "w" or "wt" or "wa" => FileAccess.ReadWrite,
+                    "rw" or "rwt" => FileAccess.ReadWrite,
                     _ => throw new ArgumentException($"Unsupported mode: {fileMode}.")
                 };
             }
@@ -152,10 +196,11 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return matrix;
 
             var storable = GetStorableForDocumentId(documentId);
-            if (storable is null)
-                return matrix;
+            var safRoot = GetSafRootForDocumentId(documentId);
+            if (storable is null || safRoot is null)
+                throw new Java.IO.FileNotFoundException($"No document found for '{documentId}'.");
 
-            AddDocumentAsync(matrix, storable, documentId).ConfigureAwait(false).GetAwaiter().GetResult();
+            AddDocumentAsync(matrix, storable, safRoot, documentId).ConfigureAwait(false).GetAwaiter().GetResult();
             return matrix;
         }
 
@@ -168,14 +213,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return matrix;
 
             var parent = GetStorableForDocumentId(parentDocumentId);
-            if (parent is not IFolder folder)
-                return matrix;
+            var safRoot = GetSafRootForDocumentId(parentDocumentId);
+            if (parent is not IFolder folder || safRoot is null)
+                throw new Java.IO.FileNotFoundException($"No document found for '{parentDocumentId}'.");
 
             var items = folder.GetItemsAsync().ToArrayAsyncImpl().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
-                AddDocumentAsync(matrix, item, null).ConfigureAwait(false).GetAwaiter().GetResult();
+                // Build the child ID from the parent's root. Inferring the root from
+                // the item is ambiguous when multiple vaults are unlocked
+                var childDocumentId = BuildDocumentId(safRoot, item);
+                AddDocumentAsync(matrix, item, safRoot, childDocumentId).ConfigureAwait(false).GetAwaiter().GetResult();
             }
+
+            // Register for change notifications so file managers refresh automatically
+            var childrenUri = DocumentsContract.BuildChildDocumentsUri(Constants.Android.FileSystem.AUTHORITY, parentDocumentId);
+            if (childrenUri is not null && Context?.ContentResolver is { } contentResolver)
+                matrix.SetNotificationUri(contentResolver, childrenUri);
 
             return matrix;
         }
@@ -195,9 +249,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var storable = GetStorableForDocumentId(documentId);
             if (storable is not IStorableChild storableChild)
-                return;
+                throw new Java.IO.FileNotFoundException($"No document found for '{documentId}'.");
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            var safRoot = GetSafRootForDocumentId(documentId);
             if (safRoot is null)
                 return;
 
@@ -213,6 +267,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             // Perform deletion
             modifiableFolder.DeleteAsync(storableChild).ConfigureAwait(false).GetAwaiter().GetResult();
+            NotifyChildDocumentsChange(GetParentDocumentId(documentId));
         }
 
         /// <inheritdoc/>
@@ -228,7 +283,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (destinationStorable is not IModifiableFolder destinationFolder)
                 return null;
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(destinationStorable);
+            var safRoot = GetSafRootForDocumentId(targetParentDocumentId);
             if (safRoot is null)
                 return null;
 
@@ -245,13 +300,19 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 case IChildFile file:
                 {
                     var movedFile = destinationFolder.MoveFileImmediatelyFrom(file, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
-                    return Path.Combine(targetParentDocumentId, movedFile.Name);
+                    NotifyChildDocumentsChange(sourceParentDocumentId);
+                    NotifyChildDocumentsChange(targetParentDocumentId);
+
+                    return BuildDocumentId(safRoot, movedFile);
                 }
 
                 case IModifiableFolder folder:
                 {
                     var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
-                    return Path.Combine(targetParentDocumentId, movedFolder.Name);
+                    NotifyChildDocumentsChange(sourceParentDocumentId);
+                    NotifyChildDocumentsChange(targetParentDocumentId);
+
+                    return BuildDocumentId(safRoot, movedFolder);
                 }
 
                 default: return null;
@@ -270,9 +331,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             var storable = GetStorableForDocumentId(documentId);
             if (storable is not IStorableChild storableChild)
-                return null;
+                throw new Java.IO.FileNotFoundException($"No document found for '{documentId}'.");
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            var safRoot = GetSafRootForDocumentId(documentId);
             if (safRoot is null)
                 return null;
 
@@ -284,13 +345,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
-            if (renamedItem is IWrapper<IFile> { Inner: IWrapper<Uri> fileUriWrapper })
-                return fileUriWrapper.Inner.ToString();
+            NotifyChildDocumentsChange(GetParentDocumentId(documentId));
 
-            if (renamedItem is IWrapper<IFolder> { Inner: IWrapper<Uri> folderUriWrapper })
-                return folderUriWrapper.Inner.ToString();
-
-            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<Uri>)}.");
+            // The contract expects the new document ID (never an underlying URI)
+            return BuildDocumentId(safRoot, renamedItem);
         }
 
         /// <inheritdoc/>
@@ -305,7 +363,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (destinationStorable is not IModifiableFolder destinationFolder)
                 return null;
 
-            var safRoot = _rootCollection?.GetSafRootForStorable(destinationStorable);
+            var safRoot = GetSafRootForDocumentId(targetParentDocumentId);
             if (safRoot is null)
                 return null;
 
@@ -318,13 +376,17 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 case IFile file:
                 {
                     var copiedFile = destinationFolder.CreateCopyOfAsync(file, false).ConfigureAwait(false).GetAwaiter().GetResult();
-                    return Path.Combine(targetParentDocumentId, copiedFile.Name);
+                    NotifyChildDocumentsChange(targetParentDocumentId);
+
+                    return BuildDocumentId(safRoot, copiedFile);
                 }
 
                 case IFolder folder:
                 {
                     var copiedFolder = destinationFolder.CreateCopyOfAsync(folder, false).ConfigureAwait(false).GetAwaiter().GetResult();
-                    return Path.Combine(targetParentDocumentId, copiedFolder.Name);
+                    NotifyChildDocumentsChange(targetParentDocumentId);
+
+                    return BuildDocumentId(safRoot, copiedFolder);
                 }
 
                 default: return null;
@@ -348,13 +410,26 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             try
             {
+                if (signal?.IsCanceled ?? false)
+                    return null;
+
                 // Honor sizeHint from the caller instead of always using a fixed size
                 var size = sizeHint is not null
                     ? (uint)Math.Max(sizeHint.X, sizeHint.Y)
                     : 300U;
 
+                // Capture at one second rather than the very first frame, which is often
+                // black (fade-ins). ClosestSync clamps the position for shorter videos
                 using var inputStream = file.OpenReadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-                var thumbnailStream = ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, size).ConfigureAwait(false).GetAwaiter().GetResult();
+                var thumbnailStream = typeHint is TypeHint.Media
+                    ? ThumbnailHelpers.GenerateVideoThumbnailAsync(inputStream, TimeSpan.FromSeconds(1), (int)size, (int)size).ConfigureAwait(false).GetAwaiter().GetResult()
+                    : ThumbnailHelpers.GenerateImageThumbnailAsync(inputStream, size).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                if (signal?.IsCanceled ?? false)
+                {
+                    thumbnailStream.Dispose();
+                    return null;
+                }
 
                 var twoWayPipe = ParcelFileDescriptor.CreatePipe();
                 if (twoWayPipe is null)

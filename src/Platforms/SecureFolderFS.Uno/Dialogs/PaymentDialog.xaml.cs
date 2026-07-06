@@ -45,7 +45,7 @@ namespace SecureFolderFS.Uno.Dialogs
             ((Storyboard)Resources["OuterRingBreathe"]).Begin();
             ((Storyboard)Resources["InnerRingBreathe"]).Begin();
         }
-        
+
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Hide();

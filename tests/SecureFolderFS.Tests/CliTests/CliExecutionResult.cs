@@ -5,5 +5,3 @@ public sealed record CliExecutionResult(
     int ProcessExitCode,
     string StandardOutput,
     string StandardError);
-
-

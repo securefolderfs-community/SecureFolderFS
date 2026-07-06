@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // Clean up old sidecar if the old name was shortened
             await AbstractPathHelpers.DeleteSidecarFileAsync(ciphertextName, renamableFolder, cancellationToken);
 
-            var plaintextId = Path.Combine(Inner.Id, newName);
+            var plaintextId = Path.Combine(Id, newName);
             return renamedCiphertextItem switch
             {
                 IFile file => new CryptoFile(plaintextId, file, specifics, this),
