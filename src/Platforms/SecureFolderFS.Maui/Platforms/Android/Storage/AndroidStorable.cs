@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Android.Content;
 using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
@@ -108,7 +107,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             catch (Exception ex)
             {
                 _ = ex;
-                Debugger.Break();
             }
 
             return null;

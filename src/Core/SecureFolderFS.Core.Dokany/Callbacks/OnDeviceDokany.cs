@@ -1,4 +1,11 @@
-﻿using DokanNet;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Cryptography;
+using DokanNet;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
@@ -13,15 +20,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Security.Cryptography;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -530,15 +528,26 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (ciphertextPath is null)
                 return Trace(NtStatus.ObjectPathInvalid, fileName, info);
 
-            using var directoryEnumerator = Directory.EnumerateFileSystemEntries(ciphertextPath).GetEnumerator();
-            while (directoryEnumerator.MoveNext())
+            try
             {
-                // Check for any files except core files
-                canDelete &= PathHelpers.IsCoreName(Path.GetFileName(directoryEnumerator.Current));
+                using var directoryEnumerator = Directory.EnumerateFileSystemEntries(ciphertextPath).GetEnumerator();
+                while (directoryEnumerator.MoveNext())
+                {
+                    // Check for any files except core files
+                    canDelete &= PathHelpers.IsCoreName(Path.GetFileName(directoryEnumerator.Current));
 
-                // If the flag changed (directory is not empty), break the loop
-                if (!canDelete)
-                    break;
+                    // If the flag changed (directory is not empty), break the loop
+                    if (!canDelete)
+                        break;
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return Trace(DokanResult.PathNotFound, fileName, info);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
 
             var result = canDelete ? DokanResult.Success : DokanResult.DirectoryNotEmpty;
@@ -592,9 +601,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         return Trace(DokanResult.AccessDenied, fileNameCombined, info);
                     }
 
-                    // File
-                    File.Delete(newCiphertextPath);
-                    File.Move(oldCiphertextPath, newCiphertextPath);
+                    // Replace the destination file atomically. A separate delete and move
+                    // could lose the destination file if the operation is interrupted in between
+                    File.Replace(oldCiphertextPath, newCiphertextPath, null, true);
 
                     // Clean up old sidecar after successful move
                     NativePathHelpers.DeleteSidecarFile(
@@ -780,7 +789,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             try
@@ -797,18 +805,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
                 bytesRead = 0;
-                Debugger.Break();
-
                 return Trace(DokanResult.InternalError, fileName, info);
             }
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             try
@@ -825,12 +829,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
                 bytesWritten = 0;
-
-                Debugger.Break();
                 return Trace(DokanResult.InternalError, fileName, info);
             }
         }

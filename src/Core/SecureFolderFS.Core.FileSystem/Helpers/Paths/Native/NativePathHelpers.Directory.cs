@@ -31,12 +31,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
                 return true;
             }
 
-            // Read the Directory ID from the file
+            // Read the Directory ID from the file.
+            // A single call to ReadAsync is not guaranteed to fill the buffer
             using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (specifics.DirectoryIdCache.IsAvailable)
             {
                 cachedDirectoryId = new(Constants.DIRECTORY_ID_SIZE);
-                var read = directoryIdStream.Read(cachedDirectoryId);
+                var read = directoryIdStream.ReadAtLeast(cachedDirectoryId.Buffer, Constants.DIRECTORY_ID_SIZE, false);
                 if (read < Constants.DIRECTORY_ID_SIZE)
                     throw new IOException($"The data inside the Directory ID file is of incorrect size: {read}.");
 
@@ -45,7 +46,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
             }
             else
             {
-                var read = directoryIdStream.Read(directoryId);
+                var read = directoryIdStream.ReadAtLeast(directoryId, Constants.DIRECTORY_ID_SIZE, false);
                 if (read < Constants.DIRECTORY_ID_SIZE)
                     throw new IOException($"The data inside the Directory ID file is of incorrect size: {read}.");
             }

@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>, Inject<IOverlayService>]
     [Bindable(true)]
-    public sealed partial class LoginViewModel : ObservableObject, IViewable, IAsyncInitialize, IDisposable
+    public sealed partial class LoginViewModel : ObservableObject, IViewable, IAsyncInitialize, INotifyStateChanged, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly KeySequence _keySequence;
@@ -55,6 +55,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// Occurs when a vault has been successfully unlocked.
         /// </summary>
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
+
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs>? StateChanged;
 
         public LoginViewModel(IFolder vaultFolder, LoginViewType loginViewMode, KeySequence? keySequence = null)
         {
@@ -152,8 +155,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 }
                 catch (Exception ex)
                 {
-                    // TODO: Report to user
-                    _ = ex;
+                    // Notify both the current authentication view and any listening host
+                    var result = Result.Failure(ex);
+                    CurrentViewModel?.Report(result);
+                    StateChanged?.Invoke(this, new ErrorReportedEventArgs(result));
                 }
             }
         }
@@ -228,9 +233,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // Set up the first authentication method
             _loginSequence = new(loginItems);
             IsLoginSequence = _loginSequence.Count > 1;
-            var result = ProceedAuthentication();
-            if (!result.Successful)
-                CurrentViewModel = new ErrorViewModel(result);
+            CurrentViewModel = ProceedAuthentication(out var result) switch
+            {
+                AuthenticationStep.Faulted => new ErrorViewModel(result),
+                AuthenticationStep.Completed => new ErrorViewModel(new MessageResult(false, "No authentication methods available.")),
+                _ => CurrentViewModel
+            };
         }
 
         [RelayCommand]
@@ -244,12 +252,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 return;
 
             _loginSequence?.Reset();
-            var result = ProceedAuthentication();
-            if (!result.Successful)
+            var step = ProceedAuthentication(out var result);
+            CurrentViewModel = step switch
             {
-                CurrentViewModel = new ErrorViewModel(result);
+                AuthenticationStep.Faulted => new ErrorViewModel(result),
+                AuthenticationStep.Completed => new ErrorViewModel(new MessageResult(false, "No authentication methods available.")),
+                _ => CurrentViewModel
+            };
+
+            if (step is AuthenticationStep.Faulted or AuthenticationStep.Completed)
                 CanRestoreVault = true;
-            }
         }
 
         [RelayCommand]
@@ -309,22 +321,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        private IResult ProceedAuthentication()
+        /// <summary>
+        /// Advances the authentication sequence to the next method.
+        /// </summary>
+        /// <param name="result">
+        /// When the step is <see cref="AuthenticationStep.Faulted"/>, contains the failure; otherwise <see cref="Result.Success"/>.
+        /// </param>
+        /// <returns>The outcome of advancing the sequence.</returns>
+        private AuthenticationStep ProceedAuthentication(out IResult result)
         {
+            result = Result.Success;
             try
             {
+                // MoveNext returning false is the legitimate end-of-sequence signal, not an error
                 if (_loginSequence is null || !_loginSequence.MoveNext())
-                    return new MessageResult(false, "No authentication methods available.");
+                    return AuthenticationStep.Completed;
 
                 // Get the appropriate method
                 var viewModel = _loginSequence.Current;
                 CurrentViewModel = viewModel;
 
-                return Result.Success;
+                return AuthenticationStep.Advanced;
             }
             catch (Exception ex)
             {
-                return Result.Failure(ex);
+                result = Result.Failure(ex);
+                return AuthenticationStep.Faulted;
             }
         }
 
@@ -382,15 +404,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     return;
                 }
 
-                var result = ProceedAuthentication();
-                if (!result.Successful && CurrentViewModel is not ErrorViewModel)
+                var step = ProceedAuthentication(out var result);
+                switch (step)
                 {
-                    // Reached the end in which case we should try to unlock the vault
-                    if (!await TryUnlockAsync())
-                    {
-                        // If login failed, restart the process
-                        RestartLoginProcess();
-                    }
+                    case AuthenticationStep.Faulted:
+                        // A genuine error while advancing - report it
+                        CurrentViewModel?.Report(result);
+                        break;
+
+                    case AuthenticationStep.Completed:
+                        // Reached the end of the sequence - try to unlock the vault
+                        if (!await TryUnlockAsync())
+                            RestartLoginProcess();
+                        break;
+
+                    // AuthenticationStep.Advanced: the next method's view is now shown, nothing to do
                 }
             }
             finally
@@ -425,16 +453,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             CanRestoreVault = false;
 
             // Detach old
-            if (oldValue is not null)
-                oldValue.StateChanged -= CurrentViewModel_StateChanged;
-
+            oldValue?.StateChanged -= CurrentViewModel_StateChanged;
             if (oldValue is AuthenticationViewModel oldViewModel)
                 oldViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
             // Attach new
-            if (newValue is not null)
-                newValue.StateChanged += CurrentViewModel_StateChanged;
-
+            newValue?.StateChanged += CurrentViewModel_StateChanged;
             if (newValue is AuthenticationViewModel newViewModel)
             {
                 newViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
@@ -448,12 +472,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public void Dispose()
         {
             VaultUnlocked = null;
+            StateChanged = null;
             _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
 
             (CurrentViewModel as IDisposable)?.Dispose();
-            if (CurrentViewModel is not null)
-                CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
-
+            CurrentViewModel?.StateChanged -= CurrentViewModel_StateChanged;
             if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 

@@ -81,9 +81,10 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // Acquire before entering the try so a canceled wait does not release a permit we never obtained
+            await storageSemaphore.WaitAsync(cancellationToken);
             try
             {
-                await storageSemaphore.WaitAsync(cancellationToken);
                 await EnsureSettingsFileAsync(cancellationToken);
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
@@ -117,9 +118,10 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         /// <inheritdoc/>
         public override async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
+            // Acquire before entering the try so a canceled wait does not release a permit we never obtained
+            await storageSemaphore.WaitAsync(cancellationToken);
             try
             {
-                await storageSemaphore.WaitAsync(cancellationToken);
                 await EnsureSettingsFileAsync(cancellationToken);
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");

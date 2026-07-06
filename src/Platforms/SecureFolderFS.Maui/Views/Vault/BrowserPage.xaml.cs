@@ -53,8 +53,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel?.InnerNavigator is not MauiNavigationService navigationService)
                 return false;
 
+            // Already at the bottom of the navigation stack, return false
             var index = navigationService.IndexInNavigation;
-            if (navigationService.Views[Math.Max(--index, 0)] is not FolderViewModel folderViewModel)
+            if (index <= 0)
+                return false;
+
+            if (navigationService.Views[index - 1] is not FolderViewModel folderViewModel)
                 return false;
 
             // Remove the last navigated-to breadcrumb
@@ -78,8 +82,12 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel?.InnerNavigator is not MauiNavigationService navigationService)
                 return false;
 
+            // Already at the top of the navigation stack, return false
             var index = navigationService.IndexInNavigation;
-            if (navigationService.Views[Math.Min(++index, Math.Max(navigationService.Views.Count, 0))] is not FolderViewModel folderViewModel)
+            if (index + 1 >= navigationService.Views.Count)
+                return false;
+
+            if (navigationService.Views[index + 1] is not FolderViewModel folderViewModel)
                 return false;
 
             // Animate navigation

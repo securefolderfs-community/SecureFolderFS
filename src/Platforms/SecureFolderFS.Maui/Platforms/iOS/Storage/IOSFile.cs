@@ -27,10 +27,11 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public Task<Stream> OpenStreamAsync(FileAccess accessMode, CancellationToken cancellationToken = default)
         {
+            // Allow concurrent readers by default (FileShare.Read)
             var iosStream = accessMode switch
             {
-                FileAccess.ReadWrite or FileAccess.Write => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.ReadWrite),
-                _ => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.Read)
+                FileAccess.ReadWrite or FileAccess.Write => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.ReadWrite, FileShare.Read),
+                _ => new IOSSecurityScopedStream(Inner, permissionRoot, FileAccess.Read, FileShare.Read)
             };
 
             return Task.FromResult<Stream>(iosStream);

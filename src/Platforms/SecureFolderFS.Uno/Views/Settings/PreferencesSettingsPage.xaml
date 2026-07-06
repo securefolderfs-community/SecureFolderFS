@@ -54,6 +54,13 @@
                     Message="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.Message, Mode=OneWay}"
                     Severity="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
                     Visibility="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <InfoBar.ActionButton>
+                        <Button
+                            HorizontalAlignment="Right"
+                            Click="WebDavApply_Click"
+                            Content="Apply"
+                            Visibility="{x:Bind IsWebDavApplyVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </InfoBar.ActionButton>
                     <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"

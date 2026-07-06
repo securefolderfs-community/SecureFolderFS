@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -19,6 +18,10 @@ namespace SecureFolderFS.Sdk.Extensions
 
         public static async Task HideAsync(this TransferViewModel transferViewModel)
         {
+            // An error banner is in control of its own dismissal (see TransferViewModel.ReportErrorAsync)
+            if (transferViewModel.IsErrorVisible)
+                return;
+
             transferViewModel.IsPickingFolder = false;
             transferViewModel.IsVisible = false;
             await Task.Delay(350);
@@ -43,6 +46,7 @@ namespace SecureFolderFS.Sdk.Extensions
             CancellationToken cancellationToken = default)
         {
             var collection = items.ToOrAsCollection();
+            transferViewModel.ClearError();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count, collection.Count));
@@ -53,18 +57,34 @@ namespace SecureFolderFS.Sdk.Extensions
                 transferViewModel.Report(new(counter, 0, x.Name));
             });
 
-            for (var i = 0; i < collection.Count; i++)
+            var failedCount = 0;
+            var index = 0;
+            foreach (var item in collection)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                transferViewModel.Report(new(index++, collection.Count, itemName(item)));
 
-                var item = collection.ElementAt(i);
-                transferViewModel.Report(new(i, collection.Count, itemName(item)));
-                await callback(item, reporter, cancellationToken);
+                try
+                {
+                    await callback(item, reporter, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception)
+                {
+                    // A failed item must not abandon the remaining ones
+                    failedCount++;
+                }
             }
 
             transferViewModel.Report(new(collection.Count, collection.Count, string.Empty));
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
+
+            if (failedCount > 0)
+                await transferViewModel.ReportErrorAsync("TransferItemsFailedPlural".ToLocalized(failedCount));
         }
 
         public static async Task TransferAsync<TTransferred>(
@@ -85,22 +105,39 @@ namespace SecureFolderFS.Sdk.Extensions
             CancellationToken cancellationToken = default)
         {
             var collection = items.ToOrAsCollection();
+            transferViewModel.ClearError();
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count, collection.Count));
 
-            for (var i = 0; i < collection.Count; i++)
+            var failedCount = 0;
+            var index = 0;
+            foreach (var item in collection)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                transferViewModel.Report(new(index++, collection.Count, itemName(item)));
 
-                var item = collection.ElementAt(i);
-                transferViewModel.Report(new(i, collection.Count, itemName(item)));
-                await callback(item, cancellationToken);
+                try
+                {
+                    await callback(item, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception)
+                {
+                    // A failed item must not abandon the remaining ones
+                    failedCount++;
+                }
             }
 
             transferViewModel.Report(new(collection.Count, collection.Count, string.Empty));
             await Task.Delay(1000, CancellationToken.None);
             await transferViewModel.HideAsync();
+
+            if (failedCount > 0)
+                await transferViewModel.ReportErrorAsync("TransferItemsFailedPlural".ToLocalized(failedCount));
         }
 
         public static async Task PerformOperationAsync(this TransferViewModel transferViewModel, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
@@ -132,7 +169,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 if (uiShown)
                 {
                     transferViewModel.Title = "TransferDone".ToLocalized();
-                    await Task.Delay(300, showUiCts.Token); // Allow user to see the "Done" message
+                    await Task.Delay(300, CancellationToken.None); // Allow user to see the "Done" message
                 }
             }
             catch (OperationCanceledException)

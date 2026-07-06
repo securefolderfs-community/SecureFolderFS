@@ -49,10 +49,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             if (offset < 0 || count < 0 || offset + count > buffer.Length)
                 throw new ArgumentOutOfRangeException();
 
-            var byteBuffer = ByteBuffer.Wrap(buffer, offset, count);
+            // Do NOT use ByteBuffer.Wrap(buffer) here. Managed arrays are marshaled to Java
+            // by copy, and the copy-back into the managed array happens when the invoked
+            // method (Wrap) returns, even before the channel has read anything. The channel would
+            // fill the retained Java-side copy while the managed buffer stays untouched.
+            using var byteBuffer = ByteBuffer.Allocate(count);
             var read = _inputChannel.Read(byteBuffer);
-            if (read < 0)
+            if (read <= 0)
                 return 0;
+
+            // Copy the data back into the managed buffer
+            byteBuffer.Flip();
+            byteBuffer.Get(buffer, offset, read);
 
             return read;
         }
@@ -66,8 +74,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.Streams
             if (offset < 0 || count < 0 || offset + count > buffer.Length)
                 throw new ArgumentOutOfRangeException();
 
-            var byteBuffer = ByteBuffer.Wrap(buffer, offset, count);
-            _outputChannel!.Write(byteBuffer);
+            // Wrap is safe for writing - the managed data is copied into the Java-side
+            // array when Wrap is invoked, which is all the write direction needs
+            using var byteBuffer = ByteBuffer.Wrap(buffer, offset, count);
+
+            // A single write is not guaranteed to consume the whole buffer
+            while (byteBuffer.HasRemaining)
+                _outputChannel!.Write(byteBuffer);
         }
 
         /// <inheritdoc/>

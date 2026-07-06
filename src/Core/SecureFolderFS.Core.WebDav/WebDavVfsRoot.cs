@@ -1,7 +1,7 @@
-﻿using OwlCore.Storage;
+﻿using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
 {

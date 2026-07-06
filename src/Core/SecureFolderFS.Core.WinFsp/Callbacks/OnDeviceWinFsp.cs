@@ -1,4 +1,9 @@
-﻿using Fsp;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Security.AccessControl;
+using Fsp;
 using Fsp.Interop;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
@@ -9,15 +14,12 @@ using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.WinFsp.AppModels;
 using SecureFolderFS.Core.WinFsp.OpenHandles;
 using SecureFolderFS.Core.WinFsp.UnsafeNative;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
 using FileInfo = Fsp.Interop.FileInfo;
+
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace SecureFolderFS.Core.WinFsp.Callbacks
 {
@@ -148,75 +150,76 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return false;
             }
 
-            // Default pattern = "*"
-            Pattern = !string.IsNullOrEmpty(Pattern) ? Pattern.Replace('<', '*').Replace('>', '?').Replace('"', '.') : "*";
-
-            var entries = new List<(string plaintextName, FileSystemInfo info)>();
-            var dirInfo = dirHandle.DirectoryInfo;
-
-            try
+            // The directory contents are enumerated once per session and kept in the Context.
+            // Re-enumerating (and re-decrypting every name) on each produced entry would make
+            // directory listings quadratic in the number of items.
+            if (Context is not DirectoryEnumerationContext enumerationContext)
             {
-                // Add directory entries
-                var directoryId = AbstractPathHelpers.AllocateDirectoryId(_specifics.Security, dirInfo.FullName);
-                var itemsEnumerable = _specifics.Security.NameCrypt is null ? dirInfo.EnumerateFileSystemInfos(Pattern) : dirInfo.EnumerateFileSystemInfos();
-                foreach (var item in itemsEnumerable)
+                // Default pattern: "*"
+                Pattern = !string.IsNullOrEmpty(Pattern) ? Pattern.Replace('<', '*').Replace('>', '?').Replace('"', '.') : "*";
+
+                var entries = new List<(string PlaintextName, FileInfo FileInfo)>();
+                var dirInfo = dirHandle.DirectoryInfo;
+
+                try
                 {
-                    if (PathHelpers.IsCoreName(item.Name))
-                        continue;
+                    // Add directory entries
+                    var directoryId = AbstractPathHelpers.AllocateDirectoryId(_specifics.Security, dirInfo.FullName);
+                    var itemsEnumerable = _specifics.Security.NameCrypt is null ? dirInfo.EnumerateFileSystemInfos(Pattern) : dirInfo.EnumerateFileSystemInfos();
+                    foreach (var item in itemsEnumerable)
+                    {
+                        if (PathHelpers.IsCoreName(item.Name))
+                            continue;
 
-                    var plaintextName = NativePathHelpers.DecryptName(item.Name, dirInfo.FullName, _specifics, directoryId);
-                    if (string.IsNullOrEmpty(plaintextName))
-                        continue;
+                        var plaintextName = NativePathHelpers.DecryptName(item.Name, dirInfo.FullName, _specifics, directoryId);
+                        if (string.IsNullOrEmpty(plaintextName))
+                            continue;
 
-                    if (_specifics.Security.NameCrypt is not null && !UnsafeNativeApis.PathMatchSpec(plaintextName, Pattern))
-                        continue;
+                        if (_specifics.Security.NameCrypt is not null && !UnsafeNativeApis.PathMatchSpec(plaintextName, Pattern))
+                            continue;
 
-                    entries.Add((plaintextName, item));
+                        entries.Add(item switch
+                        {
+                            System.IO.FileInfo fi => (plaintextName, WinFspFileHandle.ToFileInfo(fi, _specifics.Security)),
+                            DirectoryInfo di => (plaintextName, WinFspDirectoryHandle.ToFileInfo(di)),
+                            _ => throw new ArgumentOutOfRangeException(nameof(item))
+                        });
+                    }
                 }
-            }
-            catch (Exception)
-            {
-                FileName = null;
-                FileInfo = default;
+                catch (Exception)
+                {
+                    FileName = null;
+                    FileInfo = default;
 
-                return false;
-            }
+                    return false;
+                }
 
-            // Sort alphabetically for consistent enumeration
-            entries.Sort((a, b) => string.Compare(a.info.Name, b.info.Name, StringComparison.OrdinalIgnoreCase));
+                // Sort by the names reported to the caller for consistent enumeration.
+                // The marker WinFsp passes when resuming is the last *plaintext* name returned,
+                // so both sorting and marker matching must use plaintext names.
+                entries.Sort((a, b) => string.CompareOrdinal(a.PlaintextName, b.PlaintextName));
 
-            // Determine current enumeration index
-            int index;
-            if (Context is null)
-            {
-                index = 0;
-
-                // If a marker was provided, start *after* that entry
+                // If a marker was provided, resume after that entry. When the marker is gone
+                // (e.g., the item was deleted in the meantime), resume at the next greater name.
+                var index = 0;
                 if (!string.IsNullOrEmpty(Marker))
                 {
-                    index = entries.FindIndex(e => string.Equals(e.info.Name, Marker, StringComparison.OrdinalIgnoreCase));
-                    if (index >= 0)
-                        index++;
-                    else
-                        index = 0;
+                    index = entries.FindIndex(e => string.CompareOrdinal(e.PlaintextName, Marker) > 0);
+                    if (index < 0)
+                        index = entries.Count;
                 }
+
+                Context = enumerationContext = new DirectoryEnumerationContext(entries) { Index = index };
             }
-            else
-                index = (int)Context;
 
             // Produce the next entry, if any
-            if (index < entries.Count)
+            if (enumerationContext.Index < enumerationContext.Entries.Count)
             {
-                var entry = entries[index];
-                FileName = entry.plaintextName;
-                FileInfo = entry.info switch
-                {
-                    System.IO.FileInfo fi => WinFspFileHandle.ToFileInfo(fi, _specifics.Security),
-                    DirectoryInfo di => WinFspDirectoryHandle.ToFileInfo(di),
-                    _ => throw new ArgumentOutOfRangeException(nameof(entry.info))
-                };
+                var entry = enumerationContext.Entries[enumerationContext.Index];
+                FileName = entry.PlaintextName;
+                FileInfo = entry.FileInfo;
 
-                Context = index + 1;
+                enumerationContext.Index++;
                 return true;
             }
 
@@ -293,6 +296,11 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 FileAttributes = 0;
                 return Trace(STATUS_OBJECT_PATH_NOT_FOUND, FileName);
             }
+            catch (UnauthorizedAccessException)
+            {
+                FileAttributes = 0;
+                return Trace(STATUS_ACCESS_DENIED, FileName);
+            }
         }
 
         /// <inheritdoc/>
@@ -316,7 +324,6 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int Read(
             object FileNode,
             object FileDesc,
@@ -332,21 +339,26 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_INVALID_HANDLE);
             }
 
-            // Check EOF
-            if (Offset >= (ulong)fileHandle.Stream.Length)
-            {
-                BytesTransferred = 0u;
-                return Trace(STATUS_END_OF_FILE);
-            }
-
             try
             {
-                // Align position
-                fileHandle.Stream.Position = (long)Offset;
+                // Lock on the handle's stream. The kernel can issue concurrent operations
+                // on the same handle, and setting the position and reading must be atomic
+                lock (fileHandle.Stream)
+                {
+                    // Check EOF
+                    if (Offset >= (ulong)fileHandle.Stream.Length)
+                    {
+                        BytesTransferred = 0u;
+                        return Trace(STATUS_END_OF_FILE);
+                    }
 
-                // Read file
-                var bufferSpan = new Span<byte>(Buffer.ToPointer(), (int)Length);
-                BytesTransferred = (uint)fileHandle.Stream.Read(bufferSpan);
+                    // Align position
+                    fileHandle.Stream.Position = (long)Offset;
+
+                    // Read file
+                    var bufferSpan = new Span<byte>(Buffer.ToPointer(), (int)Length);
+                    BytesTransferred = (uint)fileHandle.Stream.Read(bufferSpan);
+                }
 
                 return Trace(STATUS_SUCCESS);
             }
@@ -361,7 +373,6 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         }
 
         /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int Write(
             object FileNode,
             object FileDesc,
@@ -390,34 +401,39 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_INVALID_HANDLE);
             }
 
-            // Check constrained I/O
-            if (ConstrainedIo)
-            {
-                // If offset is beyond EOF, no bytes can be written in Constrained I/O mode
-                if (Offset >= (ulong)fileHandle.Stream.Length)
-                {
-                    FileInfo = default;
-                    BytesTransferred = 0u;
-
-                    return Trace(STATUS_SUCCESS);
-                }
-
-                if ((Offset + Length) > (ulong)fileHandle.Stream.Length)
-                    Length = (uint)((ulong)fileHandle.Stream.Length - Offset);
-            }
-
             try
             {
-                // Align position
-                fileHandle.Stream.Position = WriteToEndOfFile ? fileHandle.Stream.Length : (long)Offset;
+                // Lock on the handle's stream. The kernel can issue concurrent operations
+                // on the same handle, and setting the position and writing must be atomic
+                lock (fileHandle.Stream)
+                {
+                    // Check constrained I/O
+                    if (ConstrainedIo)
+                    {
+                        // If offset is beyond EOF, no bytes can be written in Constrained I/O mode
+                        if (Offset >= (ulong)fileHandle.Stream.Length)
+                        {
+                            FileInfo = default;
+                            BytesTransferred = 0u;
 
-                // Write file
-                var bufferSpan = new ReadOnlySpan<byte>(Buffer.ToPointer(), (int)Length);
-                fileHandle.Stream.Write(bufferSpan);
+                            return Trace(STATUS_SUCCESS);
+                        }
 
-                // Set transferred bytes and update file info
-                BytesTransferred = Length;
-                FileInfo = fileHandle.GetFileInfo();
+                        if ((Offset + Length) > (ulong)fileHandle.Stream.Length)
+                            Length = (uint)((ulong)fileHandle.Stream.Length - Offset);
+                    }
+
+                    // Align position
+                    fileHandle.Stream.Position = WriteToEndOfFile ? fileHandle.Stream.Length : (long)Offset;
+
+                    // Write file
+                    var bufferSpan = new ReadOnlySpan<byte>(Buffer.ToPointer(), (int)Length);
+                    fileHandle.Stream.Write(bufferSpan);
+
+                    // Set transferred bytes and update file info
+                    BytesTransferred = Length;
+                    FileInfo = fileHandle.GetFileInfo();
+                }
 
                 return Trace(STATUS_SUCCESS);
             }
@@ -485,43 +501,39 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_ACCESS_DENIED);
             }
 
-            FileAttributes = FileAttributes switch
+            var handle = _handlesManager.GetHandle<IDisposable>(GetContextValue(FileDesc));
+            FileSystemInfo? info = handle switch
             {
-                Constants.UnsafeNative.INVALID_FILE_ATTRIBUTES => (uint)System.IO.FileAttributes.None,
-                (uint)System.IO.FileAttributes.None => (uint)System.IO.FileAttributes.Normal,
-                _ => FileAttributes
+                WinFspFileHandle fileHandle => fileHandle.FileInfo,
+                WinFspDirectoryHandle dirHandle => dirHandle.DirectoryInfo,
+                _ => null
             };
 
-            switch (_handlesManager.GetHandle<IDisposable>(GetContextValue(FileDesc)))
+            if (info is null)
             {
-                case WinFspFileHandle fileHandle:
-                {
-                    fileHandle.FileInfo.CreationTimeUtc = DateTime.FromFileTimeUtc((long)CreationTime);
-                    fileHandle.FileInfo.LastWriteTimeUtc = DateTime.FromFileTimeUtc((long)LastWriteTime);
-                    fileHandle.FileInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
-                    fileHandle.FileInfo.Attributes = (FileAttributes)FileAttributes;
-                    FileInfo = fileHandle.GetFileInfo();
-
-                    break;
-                }
-
-                case WinFspDirectoryHandle dirHandle:
-                {
-                    dirHandle.DirectoryInfo.CreationTimeUtc = DateTime.FromFileTimeUtc((long)CreationTime);
-                    dirHandle.DirectoryInfo.LastWriteTimeUtc = DateTime.FromFileTimeUtc((long)LastWriteTime);
-                    dirHandle.DirectoryInfo.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
-                    dirHandle.DirectoryInfo.Attributes = (FileAttributes)FileAttributes;
-                    FileInfo = dirHandle.GetFileInfo();
-
-                    break;
-                }
-
-                default:
-                {
-                    FileInfo = default;
-                    return Trace(STATUS_INVALID_HANDLE);
-                }
+                FileInfo = default;
+                return Trace(STATUS_INVALID_HANDLE);
             }
+
+            // A zero time value and INVALID_FILE_ATTRIBUTES indicate that the field must not be changed
+            if (FileAttributes != Constants.UnsafeNative.INVALID_FILE_ATTRIBUTES)
+                info.Attributes = FileAttributes == (uint)System.IO.FileAttributes.None ? System.IO.FileAttributes.Normal : (FileAttributes)FileAttributes;
+
+            if (CreationTime != 0UL)
+                info.CreationTimeUtc = DateTime.FromFileTimeUtc((long)CreationTime);
+
+            if (LastAccessTime != 0UL)
+                info.LastAccessTimeUtc = DateTime.FromFileTimeUtc((long)LastAccessTime);
+
+            if (LastWriteTime != 0UL)
+                info.LastWriteTimeUtc = DateTime.FromFileTimeUtc((long)LastWriteTime);
+
+            FileInfo = handle switch
+            {
+                WinFspFileHandle fileHandle => fileHandle.GetFileInfo(),
+                WinFspDirectoryHandle dirHandle => dirHandle.GetFileInfo(),
+                _ => default
+            };
 
             return Trace(STATUS_SUCCESS);
         }
@@ -549,11 +561,15 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
             try
             {
-                // If the new AllocationSize is less than the current FileSize we must truncate the file
-                if (!SetAllocationSize || (ulong)fileHandle.Stream.Length > NewSize)
-                    fileHandle.Stream.SetLength((long)NewSize);
+                lock (fileHandle.Stream)
+                {
+                    // If the new AllocationSize is less than the current FileSize we must truncate the file
+                    if (!SetAllocationSize || (ulong)fileHandle.Stream.Length > NewSize)
+                        fileHandle.Stream.SetLength((long)NewSize);
 
-                FileInfo = fileHandle.GetFileInfo();
+                    FileInfo = fileHandle.GetFileInfo();
+                }
+
                 return Trace(STATUS_SUCCESS);
             }
             catch (IOException ioEx)
@@ -639,8 +655,11 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
 
             try
             {
-                fileHandle.Stream.Flush();
-                FileInfo = fileHandle.GetFileInfo();
+                lock (fileHandle.Stream)
+                {
+                    fileHandle.Stream.Flush();
+                    FileInfo = fileHandle.GetFileInfo();
+                }
 
                 return Trace(STATUS_SUCCESS);
             }
@@ -680,7 +699,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_ACCESS_DENIED, FileName);
             }
 
-            IDisposable? handle = null;
+            IDisposable? handle;
+            var createdHandleId = FileSystem.Constants.INVALID_HANDLE;
             try
             {
                 var ciphertextPath = GetCiphertextPathForUse(FileName);
@@ -700,6 +720,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                         fileAccess,
                         FileShare.ReadWrite | FileShare.Delete,
                         FileOptions.None);
+                    createdHandleId = handleId;
 
                     if (_handlesManager.GetHandle<WinFspFileHandle>(handleId) is not { } fileHandle)
                     {
@@ -726,8 +747,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                         }
                     }
 
-                    fileHandle.FileInfo.Attributes =
-                        (System.IO.FileAttributes)(FileAttributes | (uint)System.IO.FileAttributes.Archive);
+                    fileHandle.FileInfo.Attributes = (FileAttributes)(FileAttributes | (uint)System.IO.FileAttributes.Archive);
                     handle = fileHandle;
                 }
                 else
@@ -765,6 +785,8 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                     _specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
 
                     var handleId = _handlesManager.OpenDirectoryHandle(ciphertextPath);
+                    createdHandleId = handleId;
+
                     if (_handlesManager.GetHandle<WinFspDirectoryHandle>(handleId) is not { } dirHandle)
                     {
                         FileNode = null;
@@ -790,7 +812,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                         }
                     }
 
-                    directoryInfo.Attributes = (System.IO.FileAttributes)FileAttributes;
+                    directoryInfo.Attributes = (FileAttributes)FileAttributes;
                     handle = dirHandle;
                 }
 
@@ -820,7 +842,7 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 FileInfo = default;
                 NormalizedName = null;
 
-                handle?.Dispose();
+                _handlesManager.CloseHandle(createdHandleId);
                 if (ErrorHandlingHelpers.IsFileAlreadyExistsException(ioEx))
                     return Trace(STATUS_OBJECT_NAME_COLLISION, FileName);
 
@@ -853,23 +875,40 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_INVALID_HANDLE);
             }
 
-            if (ReplaceFileAttributes)
+            try
             {
-                fileHandle.FileInfo.Attributes = (System.IO.FileAttributes)(FileAttributes | (uint)System.IO.FileAttributes.Archive);
+                if (ReplaceFileAttributes)
+                {
+                    fileHandle.FileInfo.Attributes = (FileAttributes)(FileAttributes | (uint)System.IO.FileAttributes.Archive);
+                }
+                else if (FileAttributes != 0u)
+                {
+                    var existingAttributes = fileHandle.FileInfo.Attributes;
+                    existingAttributes |= (FileAttributes)FileAttributes;
+                    existingAttributes |= System.IO.FileAttributes.Archive;
+
+                    fileHandle.FileInfo.Attributes = existingAttributes;
+                }
+
+                lock (fileHandle.Stream)
+                {
+                    fileHandle.Stream.SetLength(0L);
+                    FileInfo = fileHandle.GetFileInfo();
+                }
+
+                return Trace(STATUS_SUCCESS);
             }
-            else if (FileAttributes != 0u)
+            catch (Exception ex)
             {
-                var existingAttributes = fileHandle.FileInfo.Attributes;
-                existingAttributes |= (System.IO.FileAttributes)FileAttributes;
-                existingAttributes |= System.IO.FileAttributes.Archive;
+                FileInfo = default;
+                if (ex is IOException ioEx && ErrorHandlingHelpers.IsDiskFullException(ioEx))
+                    return Trace(STATUS_DISK_FULL);
 
-                fileHandle.FileInfo.Attributes = existingAttributes;
+                if (ErrorHandlingHelpers.Win32ErrorFromException(ex, out var win32error))
+                    return Trace(NtStatusFromWin32(win32error));
+
+                return Trace(STATUS_ACCESS_DENIED);
             }
-
-            fileHandle.Stream.SetLength(0L);
-            FileInfo = fileHandle.GetFileInfo();
-
-            return Trace(STATUS_SUCCESS);
         }
 
         /// <inheritdoc/>
@@ -1036,8 +1075,9 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                         return Trace(STATUS_ACCESS_DENIED, FileName);
                     }
 
-                    File.Delete(newCiphertextPath);
-                    File.Move(oldCiphertextPath, newCiphertextPath);
+                    // Replace the destination file atomically. A separate delete and move
+                    // could lose the destination file if the operation is interrupted in between
+                    File.Replace(oldCiphertextPath, newCiphertextPath, null, true);
 
                     // Clean up old sidecar after successful move
                     NativePathHelpers.DeleteSidecarFile(

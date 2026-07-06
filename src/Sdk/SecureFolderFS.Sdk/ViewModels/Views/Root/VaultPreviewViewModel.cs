@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
@@ -14,16 +18,13 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Root
 {
     [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IFileExplorerService>]
     [Bindable(true)]
-    public sealed partial class VaultPreviewViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>, IDisposable
+    public sealed partial class VaultPreviewViewModel : ObservableObject, IAsyncInitialize, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>, IProgress<IResult>, IDisposable
     {
         private readonly INavigationService _vaultNavigation;
 
@@ -31,6 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
         [ObservableProperty] private LoginViewModel? _LoginViewModel;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private bool _IsReadOnly;
+        [ObservableProperty] private InfoBarViewModel _StatusInfoBar = new();
 
         public VaultPreviewViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
         {
@@ -113,8 +115,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
             if (UnlockedVaultViewModel is null)
                 return;
 
-            // Lock vault
-            await UnlockedVaultViewModel.DisposeAsync();
+            try
+            {
+                // Lock vault
+                await UnlockedVaultViewModel.DisposeAsync();
+            }
+            catch (Exception ex)
+            {
+                // Unmounting failed (e.g. files are still open) - the vault remains unlocked,
+                // so don't navigate away or announce a lock that didn't happen
+                Report(new MessageResult(ex, "LockFailed".ToLocalized()));
+                return;
+            }
+
+            StatusInfoBar.IsOpen = false;
 
             // Prepare login page
             var loginPageViewModel = new VaultLoginViewModel(UnlockedVaultViewModel.VaultViewModel, _vaultNavigation);
@@ -127,11 +141,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
 
         private async Task UnlockAsync(IDisposable unlockContract)
         {
+            StatusInfoBar.IsOpen = false;
+
             try
             {
                 // Unlock the vault
                 UnlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
+            }
+            catch (Exception ex)
+            {
+                // Mounting failed - the credentials were correct, so keep this view alive for a retry
+                unlockContract.Dispose();
+                Report(new MessageResult(ex, "UnlockFailed".ToLocalized()));
 
+                // Reset the login state so the user can attempt to unlock again
+                if (LoginViewModel is not null)
+                    await LoginViewModel.InitAsync();
+
+                return;
+            }
+
+            try
+            {
                 // Setup dashboard
                 var dashboardNavigation = DI.Service<INavigationService>();
                 var dashboardViewModel = new VaultDashboardViewModel(UnlockedVaultViewModel, _vaultNavigation, dashboardNavigation);
@@ -161,9 +192,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
             }
         }
 
+        /// <inheritdoc/>
+        public void Report(IResult result)
+        {
+            StatusInfoBar.Title = result.GetMessage("UnknownError".ToLocalized());
+            StatusInfoBar.Severity = Severity.Critical;
+            StatusInfoBar.IsCloseable = true;
+            StatusInfoBar.IsOpen = true;
+        }
+
+        private void LoginViewModel_StateChanged(object? sender, EventArgs e)
+        {
+            if (e is ErrorReportedEventArgs args)
+                Report(MessageResult.WithMessage(args.Result, "RecoveryFailed".ToLocalized()));
+        }
+
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
             await UnlockAsync(e.UnlockContract);
+        }
+
+        partial void OnLoginViewModelChanged(LoginViewModel? oldValue, LoginViewModel? newValue)
+        {
+            oldValue?.StateChanged -= LoginViewModel_StateChanged;
+            newValue?.StateChanged += LoginViewModel_StateChanged;
         }
 
         /// <inheritdoc/>
@@ -173,6 +225,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Root
             if (LoginViewModel is not null)
             {
                 LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
+                LoginViewModel.StateChanged -= LoginViewModel_StateChanged;
                 LoginViewModel.Dispose();
             }
         }

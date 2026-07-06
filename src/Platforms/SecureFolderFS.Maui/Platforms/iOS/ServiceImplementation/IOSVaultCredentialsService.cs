@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 
             await Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         protected override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
             IFolder vaultFolder,

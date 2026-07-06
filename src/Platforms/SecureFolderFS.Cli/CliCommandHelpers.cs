@@ -77,5 +77,3 @@ internal static class CliCommandHelpers
         }
     }
 }
-
-

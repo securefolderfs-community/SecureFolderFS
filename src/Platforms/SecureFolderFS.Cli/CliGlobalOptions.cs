@@ -14,5 +14,3 @@ public abstract class CliGlobalOptions : ICommand
 
     public abstract ValueTask ExecuteAsync(IConsole console);
 }
-
-

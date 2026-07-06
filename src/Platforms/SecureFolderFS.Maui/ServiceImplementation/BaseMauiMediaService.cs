@@ -50,8 +50,26 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken)
         {
-            var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            return new ImageStreamSource(stream);
+            // Buffer the decrypted image and serve a fresh stream per request. Handing the
+            // live stream to the UI is fragile: the platform image loader disposes the stream
+            // after decoding and may request it again (re-layouts, recycled views), and large
+            // non-buffered streams cannot be rewound by Android's image pipeline
+            await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+
+            byte[] imageData;
+            if (stream.CanSeek)
+            {
+                imageData = new byte[stream.Length];
+                await stream.ReadExactlyAsync(imageData, cancellationToken);
+            }
+            else
+            {
+                await using var buffered = new MemoryStream();
+                await stream.CopyToAsync(buffered, cancellationToken);
+                imageData = buffered.ToArray();
+            }
+
+            return new ImageStreamSource(imageData);
         }
 
         /// <inheritdoc/>

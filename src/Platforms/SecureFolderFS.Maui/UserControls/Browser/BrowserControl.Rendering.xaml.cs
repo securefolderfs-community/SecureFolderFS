@@ -143,10 +143,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void ItemContainer_BindingContextChanged(object? sender, EventArgs e)
         {
-#if IOS
-            // Also handle BindingContextChanged for virtualized/recycled items on iOS
+            // Recycled containers do not re-fire Loaded (RecyclerView on Android, UICollectionView
+            // on iOS), so items scrolled into view in reused cells would never initialize.
+            // Duplicate calls for freshly loaded containers are deduplicated by the item's InitAsync
             TryEnqueueItem(sender);
-#endif
         }
 
         private void ItemsCollectionView_Loaded(object? sender, EventArgs e)

@@ -19,6 +19,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             Document.ColumnDisplayName,
             Document.ColumnMimeType,
             Document.ColumnSize,
+            Document.ColumnLastModified,
             Document.ColumnFlags
         ];
     }

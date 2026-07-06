@@ -93,7 +93,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                     TransferViewModel?.CancelCommand.Execute(null);
             }
 
-            CurrentFolder?.Dispose();
+            // Do not dispose CurrentFolder here because the page may reappear (e.g., after an
+            // overlay closes) and its items are still bound. Disposal happens in Dispose()
             base.OnDisappearing();
         }
 
@@ -280,21 +281,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             var formattedName = CollisionHelpers.GetAvailableName(
                     FormattingHelpers.SanitizeItemName(newItemViewModel.ItemName, "New item"),
                     CurrentFolder.Items.Select(x => x.Inner.Name));
-            switch (itemType)
+            try
             {
-                case "File":
+                switch (itemType)
                 {
-                    var file = await modifiableFolder.CreateFileAsync(formattedName, false, cancellationToken);
-                    CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
-                    break;
-                }
+                    case "File":
+                    {
+                        var file = await modifiableFolder.CreateFileAsync(formattedName, false, cancellationToken);
+                        CurrentFolder.Items.Insert(new FileViewModel(file, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+                        break;
+                    }
 
-                case "Folder":
-                {
-                    var folder = await modifiableFolder.CreateFolderAsync(formattedName, false, cancellationToken);
-                    CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
-                    break;
+                    case "Folder":
+                    {
+                        var folder = await modifiableFolder.CreateFolderAsync(formattedName, false, cancellationToken);
+                        CurrentFolder.Items.Insert(new FolderViewModel(folder, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+                        break;
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                if (TransferViewModel is not null)
+                    await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
             }
         }
 
@@ -323,76 +336,91 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 itemType = storableTypeViewModel.SelectedOption ?? storableTypeViewModel.StorableType.ToString();
             }
 
-            switch (itemType)
+            try
             {
-                case "File":
+                switch (itemType)
                 {
-                    var file = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
-                    if (file is null)
-                        return;
-
-                    TransferViewModel.TransferType = TransferType.Copy;
-                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
-                    await TransferViewModel.TransferAsync([ file ], async (item, token) =>
+                    case "File":
                     {
-                        // Get available name to avoid collision
-                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+                        var file = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
+                        if (file is null)
+                            return;
 
-                        // Copy
-                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+                        TransferViewModel.TransferType = TransferType.Copy;
+                        using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                        await TransferViewModel.TransferAsync([ file ], async (item, token) =>
+                        {
+                            // Get available name to avoid collision
+                            var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
 
-                        // Add to destination
-                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
-                    }, cts.Token);
+                            // Copy
+                            var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
 
-                    break;
-                }
+                            // Add to destination
+                            CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+                        }, cts.Token);
 
-                case "Folder":
-                {
-                    var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
-                    if (folder is null)
-                        return;
+                        break;
+                    }
 
-                    TransferViewModel.TransferType = TransferType.Copy;
-                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
-                    await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
+                    case "Folder":
                     {
-                        // Get available name to avoid collision
-                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+                        var folder = await FileExplorerService.PickFolderAsync(null, false, cancellationToken);
+                        if (folder is null)
+                            return;
 
-                        // Copy
-                        var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, reporter, token);
+                        TransferViewModel.TransferType = TransferType.Copy;
+                        using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                        await TransferViewModel.TransferAsync([ folder ], async (item, reporter, token) =>
+                        {
+                            // Get available name to avoid collision
+                            var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
 
-                        // Add to destination
-                        CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
-                    }, cts.Token);
+                            // Copy
+                            var copiedFolder = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, reporter, token);
 
-                    break;
-                }
+                            // Add to destination
+                            CurrentFolder.Items.Insert(new FolderViewModel(copiedFolder, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+                        }, cts.Token);
 
-                case var t when t == "Gallery".ToLocalized():
-                {
-                    var galleryItems = (await FileExplorerService.PickGalleryItemsAsync(cancellationToken)).OfType<IFile>().ToArray();
-                    if (galleryItems.Length == 0)
-                        return;
+                        break;
+                    }
 
-                    TransferViewModel.TransferType = TransferType.Copy;
-                    using var cts = TransferViewModel.GetCancellation(cancellationToken);
-                    await TransferViewModel.TransferAsync(galleryItems, async (item, token) =>
+                    case var t when t == "Gallery".ToLocalized():
                     {
-                        // Get available name to avoid collision
-                        var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+                        var galleryItems = (await FileExplorerService.PickGalleryItemsAsync(cancellationToken)).OfType<IFile>().ToArray();
+                        if (galleryItems.Length == 0)
+                            return;
 
-                        // Copy
-                        var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+                        TransferViewModel.TransferType = TransferType.Copy;
+                        using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                        await TransferViewModel.TransferAsync(galleryItems, async (item, token) =>
+                        {
+                            // Get available name to avoid collision
+                            var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
 
-                        // Add to destination
-                        CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
-                    }, cts.Token);
+                            // Copy
+                            var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
 
-                    break;
+                            // Add to destination
+                            CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+                        }, cts.Token);
+
+                        break;
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation, nothing to report
+            }
+            catch (Exception)
+            {
+                await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+            }
+            finally
+            {
+                await TransferViewModel.HideAsync();
             }
         }
 
@@ -400,6 +428,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Dispose()
         {
             ThumbnailCache.Dispose();
+
+            // Dispose every folder accumulated in the navigation stack
+            if (InnerNavigator is INavigationService navigationService)
+            {
+                foreach (var view in navigationService.Views)
+                {
+                    if (view is not FolderViewModel folderViewModel || folderViewModel == CurrentFolder)
+                        continue;
+
+                    folderViewModel.Items.DisposeAll();
+                    folderViewModel.Items.Clear();
+                    folderViewModel.Dispose();
+                }
+            }
+
             CurrentFolder?.Dispose();
             CurrentFolder?.Items.DisposeAll();
             CurrentFolder?.Items.Clear();

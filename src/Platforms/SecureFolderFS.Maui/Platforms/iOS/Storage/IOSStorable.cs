@@ -2,7 +2,6 @@ using Foundation;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
-using UIKit;
 using Constants = SecureFolderFS.UI.Constants;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.Storage
@@ -47,21 +46,24 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
         /// <inheritdoc/>
         public virtual async Task AddBookmarkAsync(CancellationToken cancellationToken = default)
         {
+            // StartAccessingSecurityScopedResource returns false for URLs that are not
+            // security-scoped (e.g., items in the app sandbox) - proceed in that case,
+            // and only balance with a Stop call when access was actually started
+            var accessStarted = permissionRoot.StartAccessingSecurityScopedResource();
             try
             {
-                if (!permissionRoot.StartAccessingSecurityScopedResource())
-                    return;
-
                 var nsDataBookmark = Inner.CreateBookmarkData(NSUrlBookmarkCreationOptions.SuitableForBookmarkFile, Array.Empty<string>(), null, out var error);
                 if (error is not null)
-                    return;
+                    throw new NSErrorException(error);
 
                 var nsEncodedBookmark = nsDataBookmark.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
                 BookmarkId = $"{Constants.STORABLE_BOOKMARK_RID}{nsEncodedBookmark}";
             }
             finally
             {
-                permissionRoot.StopAccessingSecurityScopedResource();
+                if (accessStarted)
+                    permissionRoot.StopAccessingSecurityScopedResource();
+
                 await Task.CompletedTask;
             }
         }
@@ -75,10 +77,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
 
         protected static void GetImmediateProperties(NSUrl url, out string? id, out string? name)
         {
-            using var document = new UIDocument(url);
-            id = document.FileUrl?.Path ?? url.FilePathUrl?.Path;
-            name = !string.IsNullOrEmpty(document.LocalizedName) 
-                ? document.LocalizedName : (Path.GetFileName(id) ?? url.FilePathUrl?.LastPathComponent);
+            // Resolve the path directly from the URL
+            id = url.FilePathUrl?.Path ?? url.Path;
+            name = Path.GetFileName(id?.TrimEnd('/')) ?? url.LastPathComponent;
         }
 
         protected static IStorableChild NewStorage(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null)

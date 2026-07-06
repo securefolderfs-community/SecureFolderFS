@@ -50,4 +50,3 @@ internal static partial class CliOutput
     [GeneratedRegex("\\x1B\\[[0-9;]*[A-Za-z]")]
     private static partial Regex AnsiRegex();
 }
-

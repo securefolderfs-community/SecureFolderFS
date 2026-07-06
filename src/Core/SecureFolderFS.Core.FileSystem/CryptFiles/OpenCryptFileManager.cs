@@ -58,6 +58,30 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         }
 
         /// <summary>
+        /// Atomically gets an existing <see cref="OpenCryptFile"/> or creates a new one.
+        /// </summary>
+        /// <param name="id">The unique ID of the file.</param>
+        /// <param name="headerBufferFactory">The factory invoked to create the plaintext header buffer for a new file.</param>
+        /// <returns>An instance of <see cref="OpenCryptFile"/>.</returns>
+        /// <remarks>
+        /// Getting and creating must happen under one lock, otherwise two threads opening the same
+        /// file simultaneously would create two instances with independent header buffers.
+        /// </remarks>
+        public OpenCryptFile GetOrCreate(string id, Func<Security, HeaderBuffer> headerBufferFactory)
+        {
+            lock (_openCryptFiles)
+            {
+                if (_openCryptFiles.TryGetValue(id, out var existing) && !existing.IsDisposed)
+                    return existing;
+
+                var cryptFile = new OpenCryptFile(id, _security, headerBufferFactory.Invoke(_security), this, NotifyClosed);
+                _openCryptFiles[id] = cryptFile;
+
+                return cryptFile;
+            }
+        }
+
+        /// <summary>
         /// Creates a new <see cref="ChunkAccess"/> bound exclusively to <paramref name="ciphertextStream"/>.
         /// </summary>
         internal ChunkAccess CreateChunkAccess(Stream ciphertextStream, HeaderBuffer headerBuffer)

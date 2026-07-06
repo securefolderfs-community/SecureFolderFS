@@ -19,6 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _VaultName;
+        [ObservableProperty] private bool _IsError;
 
         public SummaryWizardViewModel(IVaultModel vaultModel, IVaultCollectionModel vaultCollectionModel)
         {
@@ -50,12 +51,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             // Add the newly created vault
             _vaultCollectionModel.Add(_vaultModel);
 
-            // Try to save the new vault
-            var result = await _vaultCollectionModel.TrySaveAsync();
-            _ = result; // TODO: Maybe use the result to indicate whether the save was successful or not
-
-            // Display result as message
-            Message = "VaultAdded".ToLocalized();
+            // Try to save the new vault and reflect the outcome to the user. A silent failure here would
+            // leave the vault absent after the next app restart, so it must be surfaced
+            var saved = await _vaultCollectionModel.TrySaveAsync();
+            IsError = !saved;
+            Message = saved
+                ? "VaultAdded".ToLocalized()
+                : "VaultAddedSaveFailed".ToLocalized();
         }
     }
 }

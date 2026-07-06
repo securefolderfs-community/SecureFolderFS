@@ -49,7 +49,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 
             await Task.CompletedTask;
         }
-        
+
         /// <inheritdoc/>
         protected override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
             IFolder vaultFolder,

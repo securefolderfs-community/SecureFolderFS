@@ -18,34 +18,42 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
             if (!ciphertextStream.CanRead)
                 throw FileSystemExceptions.StreamNotReadable;
 
-            // Allocate ciphertext header
-            Span<byte> ciphertextHeader = stackalloc byte[headerCrypt.HeaderCiphertextSize];
-
-            // Read header
-            int read;
-            if (ciphertextStream.CanSeek && ciphertextStream.Position != 0L)
+            // The header buffer is shared by all streams of the same file, so a lock is needed
+            lock (headerBuffer.SyncRoot)
             {
-                var ciphertextPosition = ciphertextStream.Position;
-                ciphertextStream.Position = 0L;
+                // Re-check after lock
+                if (headerBuffer.IsHeaderReady)
+                    return true;
 
-                read = ciphertextStream.Read(ciphertextHeader);
-                ciphertextStream.Position = ciphertextPosition;
+                // Allocate ciphertext header
+                Span<byte> ciphertextHeader = stackalloc byte[headerCrypt.HeaderCiphertextSize];
+
+                // Read header
+                int read;
+                if (ciphertextStream.CanSeek && ciphertextStream.Position != 0L)
+                {
+                    var ciphertextPosition = ciphertextStream.Position;
+                    ciphertextStream.Position = 0L;
+
+                    read = ciphertextStream.Read(ciphertextHeader);
+                    ciphertextStream.Position = ciphertextPosition;
+                }
+                else
+                {
+                    // Non-seekable streams must be at position 0 - header is always read first sequentially.
+                    // There is no way to rewind, so we simply read and continue.
+                    read = ciphertextStream.Read(ciphertextHeader);
+                }
+
+                // Check if the read amount is correct
+                if (read < ciphertextHeader.Length)
+                    return false;
+
+                // Decrypt header
+                headerBuffer.IsHeaderReady = headerCrypt.DecryptHeader(ciphertextHeader, headerBuffer);
+
+                return headerBuffer.IsHeaderReady;
             }
-            else
-            {
-                // Non-seekable streams must be at position 0 - header is always read first sequentially.
-                // There is no way to rewind, so we simply read and continue.
-                read = ciphertextStream.Read(ciphertextHeader);
-            }
-
-            // Check if the read amount is correct
-            if (read < ciphertextHeader.Length)
-                return false;
-
-            // Decrypt header
-            headerBuffer.IsHeaderReady = headerCrypt.DecryptHeader(ciphertextHeader, headerBuffer);
-
-            return headerBuffer.IsHeaderReady;
         }
     }
 }

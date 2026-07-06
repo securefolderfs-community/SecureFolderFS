@@ -35,7 +35,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <summary>
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
         /// </summary>
-        public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
+        /// <remarks>
+        /// File name caching is disabled by default. Enabling it requires cache invalidation
+        /// for renames, moves, and deletions across all file system layers.
+        /// </remarks>
+        public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = false;
 
         /// <summary>
         /// Gets or sets the threshold for shortening file names.
@@ -88,7 +92,7 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
                 FileSystemStatistics = GetOption<IFileSystemStatistics>(options, nameof(FileSystemStatistics)) ?? fileSystemStatistics.Invoke(),
                 IsReadOnly = GetOption<bool?>(options, nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
-                IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
+                IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? false,
                 IsCachingDirectoryIds = GetOption<bool?>(options, nameof(IsCachingDirectoryIds)) ?? true,
                 ShorteningThreshold = GetOption<int?>(options, nameof(ShorteningThreshold)) ?? 0,
                 RecycleBinSize = GetOption<long?>(options, nameof(RecycleBinSize)) ?? 0L

@@ -19,5 +19,3 @@ public class CredsRemoveCommandTests : BaseCliCommandTests
         result.ProcessExitCode.Should().Be(CliExpectedExitCodes.BadArguments);
     }
 }
-
-

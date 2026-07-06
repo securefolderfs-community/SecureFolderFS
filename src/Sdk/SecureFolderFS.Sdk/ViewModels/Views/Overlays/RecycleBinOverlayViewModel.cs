@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
@@ -20,6 +21,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -28,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
     [Inject<IRecycleBinService>, Inject<ISystemService>]
-    public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize, IDisposable
+    public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize, IProgress<IResult>, IDisposable
     {
         private readonly SynchronizationContext? _synchronizationContext;
         private long _occupiedSize;
@@ -43,6 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private UnlockedVaultViewModel _UnlockedVaultViewModel;
         [ObservableProperty] private ObservableCollection<RecycleBinItemViewModel> _Items;
         [ObservableProperty] private ObservableCollection<PickerOptionViewModel> _SizeOptions;
+        [ObservableProperty] private InfoBarViewModel _StatusInfoBar = new();
 
         public INavigator OuterNavigator { get; }
 
@@ -205,9 +208,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var folderPicker = DI.Service<IFileExplorerService>();
             if (await _recycleBin.TryRestoreItemsAsync(itemsToRestore, folderPicker, cancellationToken))
             {
+                StatusInfoBar.IsOpen = false;
                 foreach (var item in items)
                     Items.Remove(item);
             }
+            else
+                Report(new MessageResult(false, "ItemsFailedToRestorePlural".ToLocalized(items.Length)));
 
             ToggleSelectionCommand.Execute(false);
             await UpdateSizesAsync(false, cancellationToken);
@@ -223,6 +229,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (items.Length == 0)
                 return;
 
+            var failedCount = 0;
+            Exception? lastException = null;
             foreach (var item in items)
             {
                 if (item.AsWrapper<IStorable>().GetWrapperAt(1).Inner is not IStorableChild innerChild)
@@ -235,12 +243,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 }
                 catch (Exception ex)
                 {
-                    _ = ex;
+                    // A failed item must not abandon the remaining ones - aggregate and report once
+                    failedCount++;
+                    lastException = ex;
                 }
             }
 
+            if (failedCount > 0)
+                Report(Result.Failure(lastException));
+            else
+                StatusInfoBar.IsOpen = false;
+
             ToggleSelectionCommand.Execute(false);
             await UpdateSizesAsync(false, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public void Report(IResult result)
+        {
+            StatusInfoBar.Title = "ErrorOccurred".ToLocalized();
+            StatusInfoBar.Message = result.GetMessage(result.Exception?.Message ?? "UnknownError".ToLocalized());
+            StatusInfoBar.Severity = Severity.Critical;
+            StatusInfoBar.IsCloseable = true;
+            StatusInfoBar.IsOpen = true;
         }
 
         private void UpdateSizeBar(PickerOptionViewModel? value)

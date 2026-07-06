@@ -1,6 +1,5 @@
 ﻿using Android.Content;
 using Android.Provider;
-using OwlCore.Storage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.Specialized;
@@ -12,13 +11,26 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public static RootCollection? Instance { get; private set; }
 
         private readonly Context _context;
+        private readonly List<SafRoot> _roots;
+        private readonly object _rootsLock = new();
 
-        public List<SafRoot> Roots { get; }
+        /// <remarks>
+        /// The returned collection is a point-in-time snapshot. Roots are added and removed
+        /// on vault lock/unlock while provider binder threads enumerate them concurrently.
+        /// </remarks>
+        public IReadOnlyList<SafRoot> Roots
+        {
+            get
+            {
+                lock (_rootsLock)
+                    return _roots.ToArray();
+            }
+        }
 
         public RootCollection(Context context)
         {
             _context = context;
-            Roots = new();
+            _roots = new();
             Instance = this;
 
             FileSystemManager.Instance.FileSystems.CollectionChanged += FileSystemManager_CollectionChanged;
@@ -26,18 +38,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
         public SafRoot? GetSafRootForRootId(string rootId)
         {
-            return Roots.FirstOrDefault(x => x.RootId == rootId);
-        }
-
-        public SafRoot? GetSafRootForStorable(IStorable storable)
-        {
-            foreach (var safRoot in Roots)
-            {
-                if (storable.Id.StartsWith(safRoot.StorageRoot.PlaintextRoot.Id))
-                    return safRoot;
-            }
-
-            return null;
+            lock (_rootsLock)
+                return _roots.FirstOrDefault(x => x.RootId == rootId);
         }
 
         private void FileSystemManager_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -50,9 +52,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                         return;
 
                     // Add to available roots
-                    Roots.Add(new(storageRoot, Guid.NewGuid().ToString()));
-                    NotifySafChange();
+                    lock (_rootsLock)
+                        _roots.Add(new(storageRoot, Guid.NewGuid().ToString()));
 
+                    NotifySafChange();
                     break;
                 }
 
@@ -62,9 +65,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                         return;
 
                     // Remove from available roots
-                    Roots.RemoveMatch(x => x.StorageRoot == storageRoot);
-                    NotifySafChange();
+                    lock (_rootsLock)
+                        _roots.RemoveMatch(x => x.StorageRoot == storageRoot);
 
+                    NotifySafChange();
                     break;
                 }
             }

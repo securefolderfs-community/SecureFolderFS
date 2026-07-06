@@ -25,10 +25,15 @@
         <vc:FileServerWebViewSourceConverter x:Key="FileServerWebViewSourceConverter" />
 
         <!--  Carousel  -->
+        <!--  The setup handler is attached to several events - on Android the first SizeChanged
+              can fire before the BindingContext is applied, in which case the handler must be
+              retried once the context arrives. The handler itself is idempotent.  -->
         <DataTemplate x:Key="CarouselTemplate" x:DataType="vm:CarouselPreviewerViewModel">
             <ucc:GalleryView
+                BindingContextChanged="GalleryView_Loaded"
                 HeightRequest="400"
                 IsDismissible="True"
+                Loaded="GalleryView_Loaded"
                 SizeChanged="GalleryView_Loaded"
                 WidthRequest="300" />
         </DataTemplate>

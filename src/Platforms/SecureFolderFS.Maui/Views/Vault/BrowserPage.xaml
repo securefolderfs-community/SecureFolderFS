@@ -103,6 +103,8 @@
             Grid.RowSpan="2"
             CanCancel="{Binding ViewModel.TransferViewModel.CanCancel, Mode=OneWay}"
             CancelCommand="{Binding ViewModel.TransferViewModel.CancelCommand, Mode=OneWay}"
+            IsConfirmShown="{Binding ViewModel.TransferViewModel.IsPickingFolder, Mode=OneWay}"
+            IsError="{Binding ViewModel.TransferViewModel.IsErrorVisible, Mode=OneWay}"
             IsProgressing="{Binding ViewModel.TransferViewModel.IsProgressing, Mode=OneWay}"
             IsShown="{Binding ViewModel.TransferViewModel.IsVisible, Mode=OneWay}"
             PrimaryButtonText="{Binding ViewModel.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
 {
@@ -15,7 +15,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
         /// <returns>A relative path with a leading directory separator.</returns>
         public static string MakeRelative(string fullPath, string basePath)
         {
-            return PathHelpers.EnsureNoLeadingPathSeparator(Path.DirectorySeparatorChar + fullPath.Replace(basePath, string.Empty));
+            // Only strip the base path when it is an actual prefix of the full path.
+            // Replacing all occurrences could corrupt paths that contain the base path elsewhere
+            var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            if (fullPath.StartsWith(basePath, comparison))
+                fullPath = fullPath.Substring(basePath.Length);
+
+            return PathHelpers.EnsureNoLeadingPathSeparator(fullPath);
         }
     }
 }
