@@ -1,3 +1,4 @@
+using System;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.OpenHandles;
