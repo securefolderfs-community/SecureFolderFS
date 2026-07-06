@@ -1480,6 +1480,7 @@
   </data>
   <data name="RestorationDescription" xml:space="preserve">
       <value>SecureFolderFS will attempt to regenerate the configuration files using information from your encrypted data. After the restore process is complete, you will need to reset your credentials.</value>
+  </data>
   <data name="Calculating" xml:space="preserve">
       <value>Calculating...</value>
   </data>
