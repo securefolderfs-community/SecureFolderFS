@@ -1493,4 +1493,7 @@
   <data name="ItemsFailedToRestorePlural" xml:space="preserve">
       <value>Couldn't restore {0:plural:one item|{} items|{} items}</value>
   </data>
+  <data name="RecycleBinSpaceTaken" xml:space="preserve">
+      <value>Taken {0} out of {1}</value>
+  </data>
 </root>
