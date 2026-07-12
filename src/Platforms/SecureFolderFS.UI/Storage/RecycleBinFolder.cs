@@ -57,19 +57,52 @@ namespace SecureFolderFS.UI.Storage
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             var allItems = items.ToArray();
-            var storableItems = allItems.Select(x => x is IRecycleBinItem recycleBinItem ? recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner : x).Cast<IStorableChild>().ToArray();
-            switch (storableItems.Length)
+            if (allItems.IsEmpty())
+                throw new InvalidOperationException("Sequence contains no elements.");
+
+            // The folder picker is only shown (at most once) for items whose original location is gone
+            IModifiableFolder? pickedFolder = null;
+            var exceptions = new List<Exception>();
+
+            // Read and validate every configuration file up front so that unrestorable items
+            // fail immediately instead of after prompting the user for a destination
+            var restoreQueue = new List<(IStorableChild Item, IStorableChild OriginalItem, string? PlaintextParentPath)>();
+            foreach (var originalItem in allItems)
             {
-                case 1:
+                cancellationToken.ThrowIfCancellationRequested();
+                if ((originalItem is IRecycleBinItem unwrappable ? unwrappable.AsWrapper<IStorable>().GetWrapperAt(1).Inner : originalItem) is not IStorableChild item)
+                    continue;
+
+                try
                 {
-                    var item = storableItems[0];
-                    var destinationFolder = await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, _serializer, cancellationToken);
+                    var plaintextParentPath = SafetyHelpers.NoFailureResult(() => dataModel.DecryptParentId(_specifics.Security));
+                    restoreQueue.Add((item, originalItem, plaintextParentPath));
+                }
+                catch (Exception ex)
+                {
+                    // A failed item must not abandon the remaining ones - aggregate and report once
+                    exceptions.Add(ex);
+                }
+            }
+
+            // Restore shallow destinations first. Folder trees deleted member-by-member (e.g., by
+            // OS WebDav or FUSE clients, which issue one delete per item) end up as separate
+            // entries; restoring parents before children reconstructs the original hierarchy
+            foreach (var (item, originalItem, _) in restoreQueue.OrderBy(x => GetPathDepth(x.PlaintextParentPath)))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                try
+                {
+                    // Prefer the item's original location
+                    var destinationFolder = await SafetyHelpers.NoFailureAsync(async () => await AbstractRecycleBinHelpers.GetDestinationFolderAsync(
                         item,
                         _specifics,
                         StreamSerializer.Instance,
-                        cancellationToken);
+                        cancellationToken));
 
-                    if (destinationFolder is null && allItems[0] is IRecycleBinItem recycleBinItem)
+                    if (destinationFolder is null && originalItem is IRecycleBinItem recycleBinItem)
                     {
                         var originalParentPath = Path.GetDirectoryName(recycleBinItem.Id);
                         if (!string.IsNullOrWhiteSpace(originalParentPath))
@@ -83,9 +116,11 @@ namespace SecureFolderFS.UI.Storage
                     }
 
                     // Prompt the user to pick the folder when the default destination couldn't be used
-                    destinationFolder ??= await GetDestinationFolderAsync();
                     if (destinationFolder is null)
-                        throw new InvalidOperationException("The destination folder couldn't be chosen.");
+                    {
+                        pickedFolder ??= await GetDestinationFolderAsync();
+                        destinationFolder = pickedFolder ?? throw new InvalidOperationException("The destination folder couldn't be chosen.");
+                    }
 
                     // Restore the item to chosen destination
                     await AbstractRecycleBinHelpers.RestoreAsync(
@@ -94,34 +129,32 @@ namespace SecureFolderFS.UI.Storage
                         _specifics,
                         StreamSerializer.Instance,
                         cancellationToken);
-
-                    break;
                 }
-
-                case > 1:
+                catch (OperationCanceledException)
                 {
-                    var destinationFolder = await GetDestinationFolderAsync();
-                    if (destinationFolder is null)
-                        throw new InvalidOperationException("The destination folder couldn't be chosen.");
-
-                    foreach (var item in storableItems)
-                    {
-                        await AbstractRecycleBinHelpers.RestoreAsync(
-                            item,
-                            destinationFolder,
-                            _specifics,
-                            StreamSerializer.Instance,
-                            cancellationToken);
-                    }
-
-                    break;
+                    // The user canceled the picker (or the operation was canceled) - abort the remaining items
+                    throw;
                 }
-
-                default:
-                    throw new InvalidOperationException("Sequence contains no elements.");
+                catch (Exception ex)
+                {
+                    // A failed item must not abandon the remaining ones
+                    exceptions.Add(ex);
+                }
             }
 
+            if (exceptions.Count > 0)
+                throw new AggregateException("One or more items could not be restored.", exceptions);
+
             return;
+
+            static int GetPathDepth(string? plaintextPath)
+            {
+                // Unknown destinations are restored last; the vault root has a depth of zero
+                if (plaintextPath is null)
+                    return int.MaxValue;
+
+                return plaintextPath.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries).Length;
+            }
 
             async Task<IModifiableFolder?> GetDestinationFolderAsync()
             {
@@ -167,33 +200,21 @@ namespace SecureFolderFS.UI.Storage
                 if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var recycleBinItem = await SafetyHelpers.NoFailureAsync(async () =>
-                {
-                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
-                    if (dataModel.ParentId is null || dataModel.Name is null)
-                        return null;
-
-                    // Decrypt name and parent path
-                    var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
-                    var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
-
-                    IStorable plaintextItem = item switch
-                    {
-                        IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
-                        IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
-                        _ => throw new ArgumentOutOfRangeException(nameof(item))
-                    };
-
-                    return new RecycleBinItem(plaintextItem, dataModel, this)
-                    {
-                        Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
-                        Name = plaintextName ?? item.Name
-                    };
-                });
-
-                if (recycleBinItem is not null)
-                    yield return recycleBinItem;
+                yield return await MaterializeItemAsync(item, cancellationToken);
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStorableChild?> TryGetItemAsync(string ciphertextName, CancellationToken cancellationToken = default)
+        {
+            if (ciphertextName.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || PathHelpers.IsCoreName(ciphertextName))
+                return null;
+
+            var item = await _recycleBin.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
+            if (item is null)
+                return null;
+
+            return await MaterializeItemAsync(item, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -202,26 +223,37 @@ namespace SecureFolderFS.UI.Storage
             if (_specifics.Options.IsReadOnly)
                 throw FileSystemExceptions.FileSystemReadOnly;
 
-            // Get the associated configuration file
-            var configurationFile = await _recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
+            // Get the associated configuration file. Orphaned payloads (no configuration file)
+            // must still be deletable, so a missing configuration is not an error here
+            var configurationFile = await _recycleBin.TryGetFileByNameAsync($"{item.Name}.json", cancellationToken);
 
             // Deserialize configuration
-            RecycleBinItemDataModel? itemDataModel;
-            await using (var configurationStream = await configurationFile.OpenReadAsync(cancellationToken))
-                itemDataModel = await _serializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
+            RecycleBinItemDataModel? itemDataModel = null;
+            if (configurationFile is not null)
+            {
+                itemDataModel = await SafetyHelpers.NoFailureAsync(async () =>
+                {
+                    await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
+                    return await _serializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
+                });
+            }
+
+            // Determine the size to subtract before the payload is gone
+            var size = itemDataModel?.Size is { } configuredSize and >= 0L
+                ? configuredSize
+                : await SafetyHelpers.NoFailureAsync(async () => await AbstractRecycleBinHelpers.GetPlaintextSizeAsync(item, _specifics, cancellationToken));
 
             // Delete both items
             await _recycleBin.DeleteAsync(item, cancellationToken);
-            await _recycleBin.DeleteAsync(configurationFile, cancellationToken);
+            if (configurationFile is not null)
+                await _recycleBin.DeleteAsync(configurationFile, cancellationToken);
 
             // Check if the item had any size
-            if (itemDataModel is not { Size: { } size and > 0L })
+            if (size <= 0L)
                 return;
 
             // Update occupied size
-            var occupiedSize = await AbstractRecycleBinHelpers.GetOccupiedSizeAsync(_recycleBin, cancellationToken);
-            var newSize = occupiedSize - size;
-            await AbstractRecycleBinHelpers.SetOccupiedSizeAsync(_recycleBin, newSize, cancellationToken);
+            await AbstractRecycleBinHelpers.AdjustOccupiedSizeAsync(_recycleBin, _specifics, -size, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -240,6 +272,56 @@ namespace SecureFolderFS.UI.Storage
         public async Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
             return await _recycleBin.GetFolderWatcherAsync(cancellationToken);
+        }
+        
+        private async Task<IRecycleBinItem> MaterializeItemAsync(IStorableChild item, CancellationToken cancellationToken)
+        {
+            var recycleBinItem = await SafetyHelpers.NoFailureAsync(async () =>
+            {
+                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
+                if (dataModel.ParentId is null || dataModel.Name is null)
+                    return null;
+
+                // Decrypt name and parent path
+                var plaintextName = dataModel.DecryptName(_specifics.Security) ?? dataModel.Name;
+                var plaintextParentId = dataModel.DecryptParentId(_specifics.Security) ?? dataModel.ParentId;
+
+                return new RecycleBinItem(WrapCiphertextItem(item, plaintextName), dataModel, this)
+                {
+                    Id = string.IsNullOrEmpty(plaintextParentId) || string.IsNullOrEmpty(plaintextName) ? string.Empty : Path.Combine(plaintextParentId, plaintextName),
+                    Name = plaintextName ?? item.Name
+                };
+            });
+
+            // Payloads with a missing or corrupt configuration file are surfaced as unnamed
+            // items so they can still be permanently deleted instead of silently occupying space
+            return recycleBinItem ?? new RecycleBinItem(WrapCiphertextItem(item, item.Name), OrphanedItemDataModel(), this)
+            {
+                Id = string.Empty,
+                Name = item.Name
+            };
+
+            IStorable WrapCiphertextItem(IStorableChild ciphertextItem, string plaintextName)
+            {
+                return ciphertextItem switch
+                {
+                    IFile ciphertextFile => new CryptoFile($"/{plaintextName}", ciphertextFile, _specifics),
+                    IFolder ciphertextFolder => new CryptoFolder($"/{plaintextName}", ciphertextFolder, _specifics),
+                    _ => throw new ArgumentOutOfRangeException(nameof(ciphertextItem))
+                };
+            }
+
+            static RecycleBinItemDataModel OrphanedItemDataModel()
+            {
+                return new()
+                {
+                    Name = null,
+                    ParentId = null,
+                    DirectoryId = null,
+                    DeletionTimestamp = null,
+                    Size = -1L
+                };
+            }
         }
     }
 }

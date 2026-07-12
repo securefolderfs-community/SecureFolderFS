@@ -76,8 +76,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             SizeOptions.Clear();
             SizeOptions.AddMultiple(sizeOptions);
 
-            // Choose the saved size option
-            CurrentSizeOption = SizeOptions.FirstOrDefault(x => long.Parse(x.Id) == UnlockedVaultViewModel.StorageRoot.Options.RecycleBinSize)
+            // Choose the saved size option. If the configured size does not match any of the
+            // generated options (e.g., the vault was configured on a device with more free space),
+            // a custom option is added so that toggling the recycle bin never silently rewrites
+            // the user's configured quota
+            var configuredSize = UnlockedVaultViewModel.StorageRoot.Options.RecycleBinSize;
+            var matchedOption = SizeOptions.FirstOrDefault(x => long.Parse(x.Id) == configuredSize);
+            if (matchedOption is null && configuredSize > 0L)
+            {
+                matchedOption = new(configuredSize.ToString(), ByteSize.FromBytes(configuredSize).ToBinaryString());
+                SizeOptions.Add(matchedOption);
+            }
+
+            CurrentSizeOption = matchedOption
                 ?? SizeOptions.ElementAtOrDefault(1)
                 ?? SizeOptions.FirstOrDefault();
 
@@ -211,12 +222,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 StatusInfoBar.IsOpen = false;
                 foreach (var item in items)
                     Items.Remove(item);
+
+                ToggleSelectionCommand.Execute(false);
+                await UpdateSizesAsync(false, cancellationToken);
             }
             else
+            {
                 Report(new MessageResult(false, "ItemsFailedToRestorePlural".ToLocalized(items.Length)));
 
-            ToggleSelectionCommand.Execute(false);
-            await UpdateSizesAsync(false, cancellationToken);
+                // Some items may have been restored before the failure - refresh the
+                // listing so the view matches the on-disk state
+                ToggleSelectionCommand.Execute(false);
+                await InitAsync(cancellationToken);
+            }
         }
 
         [RelayCommand]
@@ -270,11 +288,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void UpdateSizeBar(PickerOptionViewModel? value)
         {
-            if (value is not null && value.Id != "-1")
+            if (value is not null && value.Id != "-1" && long.Parse(value.Id) is > 0L and var totalSize)
             {
-                var totalSize = long.Parse(value.Id);
-                PercentageTaken = (double)_occupiedSize / totalSize * 100d;
-                SpaceTakenText = $"Taken {ByteSize.FromBytes(_occupiedSize).ToBinaryString()} out of {ByteSize.FromBytes(totalSize).ToBinaryString()}";
+                PercentageTaken = Math.Clamp((double)_occupiedSize / totalSize * 100d, 0d, 100d);
+                SpaceTakenText = "RecycleBinSpaceTaken".ToLocalized(ByteSize.FromBytes(_occupiedSize).ToBinaryString(), ByteSize.FromBytes(totalSize).ToBinaryString());
             }
             else
                 SpaceTakenText = null;
@@ -306,17 +323,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                                 if (Items.Any(x => x.AsWrapper<IStorable>().GetWrapperAt(1).Inner.Id == newItem.Id))
                                     continue;
 
-                                await Task.Delay(200); // Delay to ensure the item is fully available
-
-                                // Get the recycle bin item wrapper
-                                await foreach (var item in _recycleBin.GetItemsAsync())
-                                {
-                                    if (item is not IRecycleBinItem recycleBinItem || recycleBinItem.AsWrapper<IStorable>().GetWrapperAt(1).Inner.Id != newItem.Id)
-                                        continue;
-
+                                // The configuration file is written before the payload is moved, so the
+                                // item is materializable as soon as its event arrives. Core files (e.g.
+                                // the occupied-size file, which changes on every delete) resolve to null
+                                if (await _recycleBin.TryGetItemAsync(newItem.Name) is IRecycleBinItem recycleBinItem)
                                     Items.Add(new RecycleBinItemViewModel(this, recycleBinItem, _recycleBin).WithInitAsync());
-                                    break;
-                                }
                             }
 
                             // Update size bar after changes
@@ -348,11 +359,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (_folderWatcher is not null)
-            {
-                _folderWatcher.CollectionChanged -= FolderWatcher_CollectionChanged;
-                _folderWatcher.Dispose();
-            }
+            _folderWatcher?.CollectionChanged -= FolderWatcher_CollectionChanged;
+            _folderWatcher?.Dispose();
         }
     }
 }
