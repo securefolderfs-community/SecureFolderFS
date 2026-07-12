@@ -251,8 +251,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
                     }
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception)
                 {
+                    // An exception must never escape into the driver callback. Concurrent deletes
+                    // can surface IOException (sharing violations) besides UnauthorizedAccessException.
                 }
             }
         }
@@ -492,6 +494,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (ciphertextPath is null)
                 return Trace(NtStatus.ObjectPathInvalid, fileName, info);
 
+            // Protect core files from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             // Perform checks
             if (Directory.Exists(ciphertextPath))
                 return Trace(DokanResult.AccessDenied, fileName, info);
@@ -515,6 +521,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             var ciphertextPath = GetCiphertextPath(fileName);
             if (ciphertextPath is null)
                 return Trace(NtStatus.ObjectPathInvalid, fileName, info);
+
+            // Protect core folders from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
+                return Trace(DokanResult.AccessDenied, fileName, info);
 
             try
             {
