@@ -16,8 +16,8 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// Restores a collection of items from the recycle bin.
         /// </summary>
         /// <remarks>
-        /// If the collection contains more than one element, the <paramref name="folderPicker"/> is always invoked once, otherwise,
-        /// the recycle bin tries to restore the item into its original location resorting to the <see cref="IFolderPicker"/> when necessary.
+        /// Every item is restored to its original location when it still exists. The <paramref name="folderPicker"/>
+        /// is invoked at most once for the items whose original location could not be used.
         /// <br/><br/>
         /// The <paramref name="items"/> may only accept the ciphertext implementation or <see cref="IRecycleBinItem"/>.
         /// </remarks>
@@ -26,5 +26,13 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task RestoreItemsAsync(IEnumerable<IStorableChild> items, IFolderPicker folderPicker, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets a single recycle bin item that matches the given ciphertext (on-disk) name, if one exists.
+        /// </summary>
+        /// <param name="ciphertextName">The on-disk name of the payload inside the recycle bin.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the matched item, or null.</returns>
+        Task<IStorableChild?> TryGetItemAsync(string ciphertextName, CancellationToken cancellationToken = default);
     }
 }
