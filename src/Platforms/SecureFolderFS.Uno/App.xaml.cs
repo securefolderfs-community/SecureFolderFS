@@ -67,8 +67,6 @@ namespace SecureFolderFS.Uno
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
             new Platforms.Windows.Helpers.WindowsLifecycleHelper();
-#elif MACCATALYST || __MACOS__
-            new Platforms.MacCatalyst.Helpers.MacOsLifecycleHelper();
 #elif HAS_UNO_SKIA
             new SkiaLifecycleHelper();
 #else
@@ -373,7 +371,7 @@ namespace SecureFolderFS.Uno
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             window.SetTitleBar(titleBar);
 
-#if __UNO_SKIA_MACOS__
+#if __UNO_SKIA_MACOS__ || __MACCATALYST__
             // Use native macOS APIs to configure the window
             MacOsWindowHelper.ConfigureFullSizeContentView(window);
             MacOsWindowHelper.CenterWindow(window);
@@ -391,7 +389,6 @@ namespace SecureFolderFS.Uno
                 overlappedPresenter.IsMaximizable = true;
             }
 #endif
-
 
 #if WINDOWS
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())

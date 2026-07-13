@@ -1,3 +1,4 @@
+#if __UNO_SKIA_MACOS__ || __MACCATALYST__
 using System;
 using System.Reflection;
 using Microsoft.UI.Xaml;
@@ -96,7 +97,6 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 
         private static IntPtr GetNativeWindowHandle(Window window)
         {
-#if __UNO_SKIA_MACOS__
             try
             {
                 // Get the MacOSWindowNative instance
@@ -118,9 +118,6 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
             {
                 return IntPtr.Zero;
             }
-#else
-            return IntPtr.Zero;
-#endif
         }
 
         private static ulong GetStyleMask(IntPtr nsWindow)
@@ -148,4 +145,4 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         }
     }
 }
-
+#endif

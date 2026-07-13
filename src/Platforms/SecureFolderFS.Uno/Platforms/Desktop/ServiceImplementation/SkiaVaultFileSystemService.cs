@@ -12,6 +12,10 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 
+#if !__UNO_SKIA_MACOS__
+using SecureFolderFS.Core.FUSE;
+#endif
+
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultFileSystemService"/>
