@@ -1,17 +1,20 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Storage;
 
@@ -84,49 +87,91 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 return;
 
-            var totalSize = 0L;
-            await foreach (var item in recycleBin.GetItemsAsync(StorableType.File, cancellationToken))
+            // Split the recycle bin contents into payloads and their configuration files
+            var payloadItems = new List<IStorableChild>();
+            var configurationFiles = new Dictionary<string, IChildFile>(StringComparer.OrdinalIgnoreCase);
+            await foreach (var item in recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
             {
-                if (item.Name.EndsWith(".json"))
+                if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, recycleBin, StreamSerializer.Instance, cancellationToken);
-                if (dataModel.Size is { } size and >= 0L)
+                if (item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 {
-                    totalSize += size;
+                    if (item is IChildFile configurationFile)
+                        configurationFiles[Path.GetFileNameWithoutExtension(item.Name)] = configurationFile;
+
                     continue;
                 }
 
-                // Get the configuration file
-                var configurationFile = await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken);
-
-                // Read configuration file
-                await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
-
-                // Calculate new size
-                var sizeHint = item switch
-                {
-                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
-                    _ => 0L
-                };
-                totalSize += sizeHint;
-
-                // Create new configuration with updated size
-                var newConfigurationDataModel = dataModel with
-                {
-                    Size = sizeHint
-                };
-
-                // Serialize configuration data model
-                await using var serializedStream = await StreamSerializer.Instance.SerializeAsync(newConfigurationDataModel, cancellationToken);
-
-                // Write to destination stream
-                await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-                await configurationStream.FlushAsync(cancellationToken);
+                payloadItems.Add(item);
             }
 
-            await AbstractRecycleBinHelpers.SetOccupiedSizeAsync(modifiableRecycleBin, totalSize, cancellationToken);
+            var totalSize = 0L;
+            foreach (var payloadItem in payloadItems)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // Payloads without a configuration file cannot be restored, but they still
+                // occupy space and are surfaced in the recycle bin view for manual deletion
+                if (!configurationFiles.Remove(payloadItem.Name, out var configurationFile))
+                {
+                    totalSize += await SafetyHelpers.NoFailureAsync(async () => await AbstractRecycleBinHelpers.GetPlaintextSizeAsync(payloadItem, specifics, cancellationToken));
+                    continue;
+                }
+
+                // A single corrupt entry must not abandon the recalculation of the remaining ones
+                try
+                {
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(configurationFile, recycleBin, StreamSerializer.Instance, cancellationToken);
+                    if (dataModel.Size is { } size and >= 0L)
+                    {
+                        totalSize += size;
+                        continue;
+                    }
+
+                    // Calculate new size
+                    var sizeHint = await AbstractRecycleBinHelpers.GetPlaintextSizeAsync(payloadItem, specifics, cancellationToken);
+                    totalSize += sizeHint;
+
+                    // Create new configuration with updated size
+                    var newConfigurationDataModel = dataModel with
+                    {
+                        Size = sizeHint
+                    };
+
+                    // Rewrite the configuration file, truncating any previous content
+                    await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
+                    if (configurationStream.CanSeek)
+                        configurationStream.SetLength(0L);
+
+                    await using var serializedStream = await StreamSerializer.Instance.SerializeAsync(newConfigurationDataModel, cancellationToken);
+                    await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+                    await configurationStream.FlushAsync(cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception)
+                {
+                    totalSize += await SafetyHelpers.NoFailureAsync(async () => await AbstractRecycleBinHelpers.GetPlaintextSizeAsync(payloadItem, specifics, cancellationToken));
+                }
+            }
+
+            // Any remaining configuration files have no payload (e.g., after an interrupted
+            // recycle operation) and are safe to remove
+            foreach (var orphanedConfiguration in configurationFiles.Values)
+                await SafetyHelpers.NoFailureAsync(async () => await modifiableRecycleBin.DeleteAsync(orphanedConfiguration, cancellationToken));
+
+            await specifics.RecycleBinSemaphore.WaitAsync(cancellationToken);
+            try
+            {
+                await AbstractRecycleBinHelpers.SetOccupiedSizeAsync(modifiableRecycleBin, totalSize, cancellationToken);
+            }
+            finally
+            {
+                _ = specifics.RecycleBinSemaphore.Release();
+            }
         }
 
         /// <inheritdoc/>
