@@ -40,7 +40,7 @@ namespace SecureFolderFS.UI.Storage
         public string Name => _recycleBin.Name;
 
         /// <inheritdoc/>
-        public ISizeOfProperty SizeOf => field ??= new RecycleBinSizeOfProperty(_recycleBin);
+        public ISizeOfProperty SizeOf => field ??= new RecycleBinSizeOfProperty(_recycleBin, _specifics);
 
         public RecycleBinFolder(IModifiableFolder recycleBin, IVfsRoot vfsRoot, FileSystemSpecifics specifics, IAsyncSerializer<Stream> serializer)
         {

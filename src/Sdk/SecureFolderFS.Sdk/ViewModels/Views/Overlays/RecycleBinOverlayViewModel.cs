@@ -29,7 +29,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IRecycleBinService>, Inject<ISystemService>]
+    [Inject<IRecycleBinService>, Inject<ISystemService>, Inject<IIapService>]
     public sealed partial class RecycleBinOverlayViewModel : BaseDesignationViewModel, IAsyncInitialize, IProgress<IResult>, IDisposable
     {
         private readonly SynchronizationContext? _synchronizationContext;
@@ -38,7 +38,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private IFolderWatcher? _folderWatcher;
 
         [ObservableProperty] private bool _IsSelecting;
-        [ObservableProperty] private bool _IsRecycleBinEnabled;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanChangeSizeOption))] private bool _IsRecycleBinEnabled;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanChangeSizeOption))] private bool _CanConfigure;
         [ObservableProperty] private string? _SpaceTakenText;
         [ObservableProperty] private double _PercentageTaken;
         [ObservableProperty] private PickerOptionViewModel? _CurrentSizeOption;
@@ -50,6 +51,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public INavigator OuterNavigator { get; }
 
         public bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Gets whether the size limit picker should be interactable. Changing the limit requires
+        /// the recycle bin to be enabled and an active subscription (see <see cref="CanConfigure"/>).
+        /// </summary>
+        public bool CanChangeSizeOption => IsRecycleBinEnabled && CanConfigure;
 
         public RecycleBinOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator outerNavigator)
         {
@@ -65,6 +72,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // Configuration (toggling the recycle bin, changing its size limit) requires an
+            // active subscription. Viewing, restoring, and deleting existing items does not,
+            // so that users whose subscription expired can always get their files back
+            CanConfigure = await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken);
+
             // Get storage root folder
             var rootFolder = UnlockedVaultViewModel.VaultFolder;
             if (rootFolder is IChildFolder childFolder)
@@ -132,12 +144,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         /// <summary>
+        /// Determines whether the recycle bin exists and contains any items.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is true if the recycle bin contains at least one item.</returns>
+        public async Task<bool> HasItemsAsync(CancellationToken cancellationToken = default)
+        {
+            _recycleBin ??= await RecycleBinService.TryGetRecycleBinAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
+            if (_recycleBin is null)
+                return false;
+
+            await foreach (var _ in _recycleBin.GetItemsAsync(StorableType.All, cancellationToken))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Toggles the recycle bin on or off updating the configuration file.
         /// </summary>
         /// <param name="value">The value that determines whether to enable or disable the recycle bin.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         public async Task ToggleRecycleBinAsync(bool value, CancellationToken cancellationToken = default)
         {
+            // Configuration requires an active subscription
+            if (!CanConfigure)
+                return;
+
             if (!long.TryParse(CurrentSizeOption?.Id, out var size))
                 return;
 

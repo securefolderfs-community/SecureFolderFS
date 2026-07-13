@@ -55,7 +55,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
             SecurityText = await VaultCredentialsService.FromUnlockProcedureAsync(UnlockedVaultViewModel.VaultFolder, vaultOptions.UnlockProcedure, cancellationToken);
 
-            if (!RecycleBinOverlayViewModel.IsInitialized && await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+            if (!RecycleBinOverlayViewModel.IsInitialized
+                && (await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken) || await RecycleBinOverlayViewModel.HasItemsAsync(cancellationToken)))
                 await RecycleBinOverlayViewModel.InitAsync(cancellationToken);
         }
 
@@ -106,9 +107,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await Task.Delay(100, cancellationToken);
             if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
             {
-                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
-                if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
-                    return;
+                // Users whose subscription expired must still be able to access items already
+                // present in the recycle bin (the dialog opens with configuration locked).
+                // The paywall is only shown when there is nothing to view
+                if (!await RecycleBinOverlayViewModel.HasItemsAsync(cancellationToken))
+                {
+                    await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance.WithInitAsync(cancellationToken));
+                    if (!await IapService.IsOwnedAsync(IapProductType.Any, cancellationToken))
+                        return;
+                }
             }
 
             if (!RecycleBinOverlayViewModel.IsInitialized)

@@ -16,39 +16,86 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 {
     public static partial class AbstractRecycleBinHelpers
     {
-        public static async Task<long> GetOccupiedSizeAsync(IModifiableFolder recycleBin, CancellationToken cancellationToken = default)
+        private const int TRANSIENT_IO_RETRIES = 3;
+        private const int TRANSIENT_IO_RETRY_DELAY_MS = 60;
+
+        /// <summary>
+        /// Reads the occupied size while holding <see cref="FileSystemSpecifics.RecycleBinSemaphore"/>,
+        /// so the read never collides with an in-flight occupied-size update.
+        /// </summary>
+        public static async Task<long> GetOccupiedSizeAsync(IModifiableFolder recycleBin, FileSystemSpecifics specifics, CancellationToken cancellationToken = default)
         {
-            // Reading must not create the configuration file - reads can happen on read-only file systems
-            var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
-            if (recycleBinConfig is null)
-                return 0L;
-
-            await using var configStream = await recycleBinConfig.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            var deserialized = await StreamSerializer.Instance.TryDeserializeAsync<Stream, RecycleBinDataModel>(configStream, cancellationToken);
-            if (deserialized is null)
-                return 0L;
-
-            return Math.Max(0L, deserialized.OccupiedSize);
+            await specifics.RecycleBinSemaphore.WaitAsync(cancellationToken);
+            try
+            {
+                return await GetOccupiedSizeAsync(recycleBin, cancellationToken);
+            }
+            finally
+            {
+                _ = specifics.RecycleBinSemaphore.Release();
+            }
         }
 
-        public static async Task SetOccupiedSizeAsync(IModifiableFolder recycleBin, long value, CancellationToken cancellationToken = default)
+        public static Task<long> GetOccupiedSizeAsync(IModifiableFolder recycleBin, CancellationToken cancellationToken = default)
         {
-            // Recreate the file instead of opening it for write - streams returned by
-            // OpenWriteAsync do not truncate, which leaves stale tail bytes (and therefore
-            // unparseable JSON) whenever the serialized payload shrinks
-            var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, true, cancellationToken);
-
-            await using var configStream = await recycleBinConfig.OpenWriteAsync(cancellationToken);
-            if (configStream.CanSeek)
-                configStream.SetLength(0L);
-
-            await using var serialized = await StreamSerializer.Instance.SerializeAsync(new RecycleBinDataModel()
+            return WithTransientIoRetryAsync(async () =>
             {
-                OccupiedSize = Math.Max(0L, value)
-            }, cancellationToken);
+                // Reading must not create the configuration file - reads can happen on read-only file systems
+                var recycleBinConfig = await recycleBin.TryGetFileByNameAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, cancellationToken);
+                if (recycleBinConfig is null)
+                    return 0L;
 
-            await serialized.CopyToAsync(configStream, cancellationToken);
-            await configStream.FlushAsync(cancellationToken);
+                await using var configStream = await recycleBinConfig.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+                var deserialized = await StreamSerializer.Instance.TryDeserializeAsync<Stream, RecycleBinDataModel>(configStream, cancellationToken);
+                if (deserialized is null)
+                    return 0L;
+
+                return Math.Max(0L, deserialized.OccupiedSize);
+            }, cancellationToken);
+        }
+
+        public static Task SetOccupiedSizeAsync(IModifiableFolder recycleBin, long value, CancellationToken cancellationToken = default)
+        {
+            return WithTransientIoRetryAsync<object?>(async () =>
+            {
+                // Recreate the file instead of opening it for write - streams returned by
+                // OpenWriteAsync do not truncate, which leaves stale tail bytes (and therefore
+                // unparseable JSON) whenever the serialized payload shrinks
+                var recycleBinConfig = await recycleBin.CreateFileAsync(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, true, cancellationToken);
+
+                await using var configStream = await recycleBinConfig.OpenWriteAsync(cancellationToken);
+                if (configStream.CanSeek)
+                    configStream.SetLength(0L);
+
+                await using var serialized = await StreamSerializer.Instance.SerializeAsync(new RecycleBinDataModel()
+                {
+                    OccupiedSize = Math.Max(0L, value)
+                }, cancellationToken);
+
+                await serialized.CopyToAsync(configStream, cancellationToken);
+                await configStream.FlushAsync(cancellationToken);
+                return null;
+            }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retries <paramref name="action"/> on sharing violations. File handles can be held briefly
+        /// by parties outside the <see cref="FileSystemSpecifics.RecycleBinSemaphore"/> (e.g. antivirus
+        /// or indexing services), which must not surface as errors for an otherwise valid operation.
+        /// </summary>
+        private static async Task<T> WithTransientIoRetryAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+        {
+            for (var attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    return await action();
+                }
+                catch (Exception ex) when (attempt < TRANSIENT_IO_RETRIES && ex is IOException or UnauthorizedAccessException)
+                {
+                    await Task.Delay(TRANSIENT_IO_RETRY_DELAY_MS * attempt, cancellationToken);
+                }
+            }
         }
 
         /// <summary>
@@ -135,15 +182,19 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         /// <summary>
         /// Serializes <paramref name="dataModel"/> into <paramref name="configurationFile"/>, truncating any previous content.
         /// </summary>
-        internal static async Task WriteItemDataModelAsync(IFile configurationFile, RecycleBinItemDataModel dataModel, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken)
+        internal static Task WriteItemDataModelAsync(IFile configurationFile, RecycleBinItemDataModel dataModel, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken)
         {
-            await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
-            if (configurationStream.CanSeek)
-                configurationStream.SetLength(0L);
+            return WithTransientIoRetryAsync<object?>(async () =>
+            {
+                await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
+                if (configurationStream.CanSeek)
+                    configurationStream.SetLength(0L);
 
-            await using var serializedStream = await streamSerializer.SerializeAsync(dataModel, cancellationToken);
-            await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-            await configurationStream.FlushAsync(cancellationToken);
+                await using var serializedStream = await streamSerializer.SerializeAsync(dataModel, cancellationToken);
+                await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+                await configurationStream.FlushAsync(cancellationToken);
+                return null;
+            }, cancellationToken);
         }
 
         public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
@@ -153,11 +204,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 ? await recycleBin.GetFileByNameAsync($"{item.Name}.json", cancellationToken)
                 : (IFile)item;
 
-            // Read configuration file
-            await using var configurationStream = await configurationFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            var deserialized = await WithTransientIoRetryAsync(async () =>
+            {
+                // Read configuration file
+                await using var configurationStream = await configurationFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
 
-            // Deserialize configuration
-            var deserialized = await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
+                // Deserialize configuration
+                return await streamSerializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
+            }, cancellationToken);
+
             if (deserialized is not { ParentId: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 

@@ -33,6 +33,7 @@
             <ucab:ActionBlockControl.ActionElement>
                 <ToggleSwitch
                     MinWidth="0"
+                    IsEnabled="{x:Bind ViewModel.CanConfigure, Mode=OneWay}"
                     IsOn="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
                     Toggled="ToggleSwitch_Toggled" />
             </ucab:ActionBlockControl.ActionElement>
@@ -59,7 +60,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         VerticalAlignment="Center"
-                        IsEnabled="{x:Bind ViewModel.IsRecycleBinEnabled, Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.CanChangeSizeOption, Mode=OneWay}"
                         ItemsSource="{x:Bind ViewModel.SizeOptions, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.CurrentSizeOption, Mode=TwoWay}"
                         SelectionChanged="SizeOptions_SelectionChanged">
