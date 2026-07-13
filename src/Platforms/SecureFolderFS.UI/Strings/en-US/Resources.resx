@@ -1061,6 +1061,15 @@
   <data name="SetupYubiKey" xml:space="preserve">
       <value>Setup YubiKey PIV authentication</value>
   </data>
+  <data name="Overwrite" xml:space="preserve">
+      <value>Overwrite</value>
+  </data>
+  <data name="OverwriteYubiKeySlot" xml:space="preserve">
+      <value>Overwrite YubiKey slot?</value>
+  </data>
+  <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
+      <value>The selected slot already holds a configuration that is not HMAC-SHA1 challenge-response. Overwriting it will permanently erase the existing configuration and break anything that still uses it.</value>
+  </data>
   <data name="UseLongPress" xml:space="preserve">
       <value>Use long press (Slot 2)</value>
   </data>
