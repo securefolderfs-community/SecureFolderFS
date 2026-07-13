@@ -89,43 +89,41 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     return;
                 }
 
+                // Decrypt the plaintext parent ID
+                var plaintextParentId = NativePathHelpers.GetPlaintextPath(ciphertextParentPath, specifics);
+                if (plaintextParentId is null)
+                    throw new FormatException("Could not decrypt parent path for recycle bin configuration file.");
+
+                // Determine if Directory ID is present (i.e., the source folder is not the content root)
+                var normalizedParentPath = Path.TrimEndingDirectorySeparator(ciphertextParentPath);
+                var isDirectoryIdPresent = normalizedParentPath != Path.DirectorySeparatorChar.ToString()
+                                           && normalizedParentPath != Path.TrimEndingDirectorySeparator(specifics.ContentFolder.Id);
+
+                // Encrypt the new plaintext name and parent ID
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var dataModel = new RecycleBinItemDataModel()
+                {
+                    Name = newCiphertextName,
+                    ParentId = newCiphertextParentId,
+                    DirectoryId = isDirectoryIdPresent ? directoryId : Array.Empty<byte>(),
+                    DeletionTimestamp = DateTime.Now,
+                    Size = sizeHint
+                };
+
                 // Create the configuration file before moving the payload. If the move fails,
                 // the leftover configuration file is harmless and gets cleaned up on recalculation,
                 // whereas a payload without a configuration file would be unrestorable.
                 var guid = Guid.NewGuid().ToString();
                 var destinationPath = Path.Combine(recycleBinPath, guid);
                 var configurationPath = $"{destinationPath}.json";
-                using (var configurationStream = File.Create(configurationPath))
-                {
-                    // Decrypt the plaintext parent ID
-                    var plaintextParentId = NativePathHelpers.GetPlaintextPath(ciphertextParentPath, specifics);
-                    if (plaintextParentId is null)
-                        throw new FormatException("Could not decrypt parent path for recycle bin configuration file.");
+                WriteItemDataModel(configurationPath, dataModel);
 
-                    // Determine if Directory ID is present (i.e., the source folder is not the content root)
-                    var normalizedParentPath = Path.TrimEndingDirectorySeparator(ciphertextParentPath);
-                    var isDirectoryIdPresent = normalizedParentPath != Path.DirectorySeparatorChar.ToString()
-                                               && normalizedParentPath != Path.TrimEndingDirectorySeparator(specifics.ContentFolder.Id);
-
-                    // Encrypt the new plaintext name and parent ID
-                    var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-                    var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-
-                    // Serialize configuration data model
-                    using var serializedStream = StreamSerializer.Instance.SerializeAsync(
-                        new RecycleBinItemDataModel()
-                        {
-                            Name = newCiphertextName,
-                            ParentId = newCiphertextParentId,
-                            DirectoryId = isDirectoryIdPresent ? directoryId : Array.Empty<byte>(),
-                            DeletionTimestamp = DateTime.Now,
-                            Size = sizeHint
-                        }).ConfigureAwait(false).GetAwaiter().GetResult();
-
-                    // Write to destination stream
-                    serializedStream.CopyTo(configurationStream);
-                    configurationStream.Flush();
-                }
+                // The folder's original plaintext path must be captured before the move - it is
+                // the key that previously recycled children are folded back in by
+                var plaintextFolderPath = storableType == StorableType.Folder
+                    ? SafetyHelpers.NoFailureResult(() => NativePathHelpers.GetPlaintextPath(ciphertextPath, specifics))
+                    : null;
 
                 try
                 {
@@ -140,6 +138,19 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     // Best-effort cleanup of the now-orphaned configuration file
                     SafetyHelpers.NoFailure(() => File.Delete(configurationPath));
                     throw;
+                }
+
+                // Reattach previously recycled children of this folder so that trees deleted
+                // member-by-member appear as a single restorable entry
+                if (plaintextFolderPath is not null)
+                {
+                    var foldedSize = SafetyHelpers.NoFailureResult(() => FoldDescendantEntries(recycleBinPath, destinationPath, plaintextFolderPath, specifics));
+                    if (foldedSize > 0L)
+                    {
+                        // The folded sizes were already part of the occupied total; only the
+                        // folder's own entry needs to account for its regained contents
+                        SafetyHelpers.NoFailure(() => WriteItemDataModel(configurationPath, dataModel with { Size = sizeHint + foldedSize }));
+                    }
                 }
 
                 // Update occupied size
@@ -196,6 +207,106 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     return false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Serializes <paramref name="dataModel"/> into the file at <paramref name="configurationPath"/>, truncating any previous content.
+        /// </summary>
+        private static void WriteItemDataModel(string configurationPath, RecycleBinItemDataModel dataModel)
+        {
+            using var configurationStream = File.Create(configurationPath);
+            using var serializedStream = StreamSerializer.Instance.SerializeAsync(dataModel).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            serializedStream.CopyTo(configurationStream);
+            configurationStream.Flush();
+        }
+
+        /// <summary>
+        /// Folds previously recycled children of the folder at <paramref name="plaintextFolderPath"/> back into
+        /// its recycled payload at <paramref name="recycledFolderPath"/>. OS clients (Finder, Explorer, WebDav/FUSE
+        /// drivers) delete folder trees member-by-member, bottom-up; when the parent folder itself arrives at the
+        /// recycle bin, every entry that was deleted out of it can be reattached so the tree appears as a single
+        /// restorable entry.
+        /// <br/><br/>
+        /// Membership is proven by comparing each entry's stored Directory ID with the recycled folder's
+        /// <c>dirid.iv</c> - an exact lineage match that a recreated folder at the same path cannot satisfy.
+        /// The original ciphertext names are reproduced exactly because name encryption is deterministic.
+        /// </summary>
+        /// <remarks>
+        /// This method must be invoked while holding <see cref="FileSystemSpecifics.RecycleBinSemaphore"/>.
+        /// </remarks>
+        /// <returns>The accumulated size in bytes of all folded entries.</returns>
+        private static long FoldDescendantEntries(string recycleBinPath, string recycledFolderPath, string plaintextFolderPath, FileSystemSpecifics specifics)
+        {
+            // Read the recycled folder's Directory ID - children of this exact folder
+            // incarnation carry it in their configuration files
+            var directoryIdPath = Path.Combine(recycledFolderPath, Constants.Names.DIRECTORY_ID_FILENAME);
+            if (!File.Exists(directoryIdPath))
+                return 0L;
+
+            var folderDirectoryId = File.ReadAllBytes(directoryIdPath);
+            if (folderDirectoryId.Length != Constants.DIRECTORY_ID_SIZE)
+                return 0L;
+
+            var foldedSize = 0L;
+            var normalizedFolderPath = Path.TrimEndingDirectorySeparator(plaintextFolderPath);
+
+            // Snapshot the configuration files first - folding mutates the recycle bin contents
+            foreach (var configurationPath in Directory.GetFiles(recycleBinPath, "*.json"))
+            {
+                // A single unreadable entry must not abandon the remaining ones
+                SafetyHelpers.NoFailure(() =>
+                {
+                    RecycleBinItemDataModel? dataModel;
+                    using (var configurationStream = File.Open(configurationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        dataModel = StreamSerializer.Instance.TryDeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                    if (dataModel is not { Name: not null, ParentId: not null, DirectoryId: { Length: Constants.DIRECTORY_ID_SIZE } childDirectoryId })
+                        return;
+
+                    // Lineage check: the entry must have been deleted out of this exact folder incarnation
+                    if (!childDirectoryId.AsSpan().SequenceEqual(folderDirectoryId))
+                        return;
+
+                    // Recency check: don't silently pull in unrelated deletions from long ago
+                    if (dataModel.DeletionTimestamp is not { } deletionTimestamp
+                        || Math.Abs((DateTime.Now - deletionTimestamp).TotalMilliseconds) > Constants.RECYCLE_BIN_FOLD_WINDOW_MS)
+                        return;
+
+                    // Sanity check: the original parent path must match the folder being recycled
+                    var plaintextParentPath = dataModel.DecryptParentId(specifics.Security);
+                    if (plaintextParentPath is null || Path.TrimEndingDirectorySeparator(plaintextParentPath) != normalizedFolderPath)
+                        return;
+
+                    var childPlaintextName = dataModel.DecryptName(specifics.Security);
+                    if (childPlaintextName is null)
+                        return;
+
+                    // Reconstruct the child's original ciphertext name (deterministic for the folder's Directory ID).
+                    // On a name collision the entry is left standalone instead of being overwritten
+                    var ciphertextChildName = AbstractPathHelpers.EncryptNewName(childPlaintextName, folderDirectoryId, specifics.Security);
+                    var reattachedPath = Path.Combine(recycledFolderPath, ciphertextChildName);
+                    if (Path.Exists(reattachedPath))
+                        return;
+
+                    // Reattach the payload; configurations without one are cleaned up on recalculation
+                    var payloadPath = Path.Combine(recycleBinPath, Path.GetFileNameWithoutExtension(configurationPath));
+                    if (Directory.Exists(payloadPath))
+                        Directory.Move(payloadPath, reattachedPath);
+                    else if (File.Exists(payloadPath))
+                        File.Move(payloadPath, reattachedPath);
+                    else
+                        return;
+
+                    // Discard the now-redundant configuration file
+                    File.Delete(configurationPath);
+
+                    if (dataModel.Size is { } size and > 0L)
+                        foldedSize += size;
+                });
+            }
+
+            return foldedSize;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -162,51 +162,63 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     return;
                 }
 
+                // The folder's original plaintext path must be captured before the move as it is
+                // the key that previously recycled children are folded back in by
+                var plaintextFolderPath = ciphertextItem is IFolder
+                    ? await SafetyHelpers.NoFailureAsync(async () => await AbstractPathHelpers.GetPlaintextPathAsync(ciphertextItem, specifics, cancellationToken))
+                    : null;
+
+                // Decrypt the plaintext parent ID
+                var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken);
+                if (plaintextParentId is null)
+                    throw new FormatException("Could not decrypt parent path for the recycle bin configuration file.");
+
+                // Determine if Directory ID is present
+                var isDirectoryIdPresent = ciphertextSourceFolder.Id != specifics.ContentFolder.Id;
+
+                // Encrypt the new plaintext name and parent ID
+                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                var dataModel = new RecycleBinItemDataModel()
+                {
+                    Name = newCiphertextName,
+                    ParentId = newCiphertextParentId,
+                    DirectoryId = isDirectoryIdPresent ? directoryId : [],
+                    DeletionTimestamp = DateTime.Now,
+                    Size = sizeHint
+                };
+
                 // Create the configuration file before moving the payload. If the move fails,
                 // the leftover configuration file is harmless and gets cleaned up on recalculation,
                 // whereas a payload without a configuration file would be unrestorable.
                 var guid = Guid.NewGuid().ToString();
                 var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-                await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
-                {
-                    // Decrypt the plaintext parent ID
-                    var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken);
-                    if (plaintextParentId is null)
-                        throw new FormatException("Could not decrypt parent path for the recycle bin configuration file.");
+                await WriteItemDataModelAsync(configurationFile, dataModel, streamSerializer, cancellationToken);
 
-                    // Determine if Directory ID is present
-                    var isDirectoryIdPresent = ciphertextSourceFolder.Id != specifics.ContentFolder.Id;
-
-                    // Encrypt the new plaintext name and parent ID
-                    var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-                    var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-
-                    // Serialize configuration data model
-                    await using var serializedStream = await streamSerializer.SerializeAsync(
-                        new RecycleBinItemDataModel()
-                        {
-                            Name = newCiphertextName,
-                            ParentId = newCiphertextParentId,
-                            DirectoryId = isDirectoryIdPresent ? directoryId : [],
-                            DeletionTimestamp = DateTime.Now,
-                            Size = sizeHint
-                        }, cancellationToken);
-
-                    // Write to destination stream
-                    await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-                    await configurationStream.FlushAsync(cancellationToken);
-                }
-
+                IStorableChild movedItem;
                 try
                 {
                     // Rename and move item
-                    _ = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
+                    movedItem = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
                 }
                 catch (Exception)
                 {
                     // Best-effort cleanup of the now-orphaned configuration file
                     await SafetyHelpers.NoFailureAsync(async () => await modifiableRecycleBin.DeleteAsync(configurationFile, CancellationToken.None));
                     throw;
+                }
+
+                // Reattach previously recycled children of this folder so that trees deleted
+                // member-by-member appear as a single restorable entry
+                if (plaintextFolderPath is not null && movedItem is IModifiableFolder recycledFolder)
+                {
+                    var foldedSize = await SafetyHelpers.NoFailureAsync(async () =>
+                        await FoldDescendantEntriesAsync(modifiableRecycleBin, recycledFolder, plaintextFolderPath, specifics, streamSerializer, cancellationToken));
+
+                    // The folded sizes were already part of the occupied total; only the
+                    // folder's own entry needs to account for its regained contents
+                    if (foldedSize > 0L)
+                        await WriteItemDataModelAsync(configurationFile, dataModel with { Size = sizeHint + foldedSize }, streamSerializer, cancellationToken);
                 }
 
                 // Update occupied size
@@ -221,6 +233,103 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             {
                 await ciphertextSourceFolder.DeleteAsync(ciphertextItem, deleteImmediately: true, cancellationToken: cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Folds previously recycled children of the folder at <paramref name="plaintextFolderPath"/> back into
+        /// its recycled payload. OS clients (Finder, Explorer, WebDav/FUSE drivers) delete folder trees
+        /// member-by-member, bottom-up; when the parent folder itself arrives at the recycle bin, every entry
+        /// that was deleted out of it can be reattached so the tree appears as a single restorable entry.
+        /// <br/><br/>
+        /// Membership is proven by comparing each entry's stored Directory ID with the recycled folder's
+        /// <c>dirid.iv</c> - an exact lineage match that a recreated folder at the same path cannot satisfy.
+        /// The original ciphertext names are reproduced exactly because name encryption is deterministic.
+        /// </summary>
+        /// <remarks>
+        /// This method must be invoked while holding <see cref="FileSystemSpecifics.RecycleBinSemaphore"/>.
+        /// </remarks>
+        /// <returns>The accumulated size in bytes of all folded entries.</returns>
+        internal static async Task<long> FoldDescendantEntriesAsync(
+            IModifiableFolder recycleBin,
+            IModifiableFolder recycledFolder,
+            string plaintextFolderPath,
+            FileSystemSpecifics specifics,
+            IAsyncSerializer<Stream> streamSerializer,
+            CancellationToken cancellationToken)
+        {
+            // Read the recycled folder's Directory ID - children of this exact folder
+            // incarnation carry it in their configuration files
+            var directoryIdFile = await recycledFolder.TryGetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken);
+            if (directoryIdFile is null)
+                return 0L;
+
+            var folderDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
+            await using (var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken))
+            {
+                if (await directoryIdStream.ReadAtLeastAsync(folderDirectoryId, Constants.DIRECTORY_ID_SIZE, false, cancellationToken) < Constants.DIRECTORY_ID_SIZE)
+                    return 0L;
+            }
+
+            // Snapshot the configuration files first - folding mutates the recycle bin contents
+            var configurationFiles = new List<IChildFile>();
+            await foreach (var item in recycleBin.GetItemsAsync(StorableType.File, cancellationToken))
+            {
+                if (item is IChildFile file && file.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    configurationFiles.Add(file);
+            }
+
+            var foldedSize = 0L;
+            var normalizedFolderPath = Path.TrimEndingDirectorySeparator(plaintextFolderPath);
+            foreach (var configurationFile in configurationFiles)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // A single unreadable entry must not abandon the remaining ones
+                await SafetyHelpers.NoFailureAsync(async () =>
+                {
+                    var dataModel = await GetItemDataModelAsync(configurationFile, recycleBin, streamSerializer, cancellationToken);
+                    if (dataModel is not { Name: not null, ParentId: not null, DirectoryId: { Length: Constants.DIRECTORY_ID_SIZE } childDirectoryId })
+                        return;
+
+                    // Lineage check: the entry must have been deleted out of this exact folder incarnation
+                    if (!childDirectoryId.AsSpan().SequenceEqual(folderDirectoryId))
+                        return;
+
+                    // Recency check: don't silently pull in unrelated deletions from long ago
+                    if (dataModel.DeletionTimestamp is not { } deletionTimestamp
+                        || Math.Abs((DateTime.Now - deletionTimestamp).TotalMilliseconds) > Constants.RECYCLE_BIN_FOLD_WINDOW_MS)
+                        return;
+
+                    // Sanity check: the original parent path must match the folder being recycled
+                    var plaintextParentPath = dataModel.DecryptParentId(specifics.Security);
+                    if (plaintextParentPath is null || Path.TrimEndingDirectorySeparator(plaintextParentPath) != normalizedFolderPath)
+                        return;
+
+                    var childPlaintextName = dataModel.DecryptName(specifics.Security);
+                    if (childPlaintextName is null)
+                        return;
+
+                    // Get the payload; configurations without one are cleaned up on recalculation
+                    var payloadName = Path.GetFileNameWithoutExtension(configurationFile.Name);
+                    if (await recycleBin.TryGetFirstByNameAsync(payloadName, cancellationToken) is not IStorableChild payload)
+                        return;
+
+                    // Reconstruct the child's original ciphertext name (deterministic for the folder's Directory ID).
+                    // On a name collision the entry is left standalone instead of being overwritten
+                    var ciphertextChildName = AbstractPathHelpers.EncryptNewName(childPlaintextName, folderDirectoryId, specifics.Security);
+                    if (await recycledFolder.TryGetFirstByNameAsync(ciphertextChildName, cancellationToken) is not null)
+                        return;
+
+                    // Reattach the payload and discard the now-redundant configuration file
+                    _ = await recycledFolder.MoveStorableFromAsync(payload, recycleBin, false, ciphertextChildName, null, cancellationToken);
+                    await recycleBin.DeleteAsync(configurationFile, cancellationToken);
+
+                    if (dataModel.Size is { } size and > 0L)
+                        foldedSize += size;
+                });
+            }
+
+            return foldedSize;
         }
 
         private static async Task<string> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)

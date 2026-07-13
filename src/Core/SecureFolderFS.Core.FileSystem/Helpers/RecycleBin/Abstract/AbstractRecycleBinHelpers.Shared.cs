@@ -132,6 +132,20 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             return totalSize;
         }
 
+        /// <summary>
+        /// Serializes <paramref name="dataModel"/> into <paramref name="configurationFile"/>, truncating any previous content.
+        /// </summary>
+        internal static async Task WriteItemDataModelAsync(IFile configurationFile, RecycleBinItemDataModel dataModel, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken)
+        {
+            await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
+            if (configurationStream.CanSeek)
+                configurationStream.SetLength(0L);
+
+            await using var serializedStream = await streamSerializer.SerializeAsync(dataModel, cancellationToken);
+            await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+            await configurationStream.FlushAsync(cancellationToken);
+        }
+
         public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get the configuration file
