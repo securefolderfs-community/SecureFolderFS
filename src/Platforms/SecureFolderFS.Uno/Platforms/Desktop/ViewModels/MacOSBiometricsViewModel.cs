@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using SecureFolderFS.Storage.Extensions;
 #if __UNO_SKIA_MACOS__
 using SecureFolderFS.Uno.PInvoke;
 #endif
@@ -63,14 +64,19 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        public override async Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
 #if __UNO_SKIA_MACOS__
             id ??= VaultId;
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
             UnsafeNative.Biometrics.DeleteKey(alias);
 #endif
-            return Task.CompletedTask;
+            if (VaultFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (authenticationFile is not null)
+                await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -86,33 +92,56 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ViewModels
             if (!authenticated)
                 throw new CryptographicException("Biometric authentication failed.");
 
-            // Get or create the Secure Enclave key pair
-            var privateKey = UnsafeNative.Biometrics.GetPrivateKey(alias);
-            if (privateKey == IntPtr.Zero)
-                privateKey = UnsafeNative.Biometrics.CreateSecureEnclaveKey(alias);
+            // Keychain and Secure Enclave calls can block, so keep them off the UI thread
+            return await Task.Run<IResult<IKeyBytes>>(() =>
+            {
+                // Get or create the Secure Enclave key pair
+                var privateKey = UnsafeNative.Biometrics.GetPrivateKey(alias);
+                if (privateKey == IntPtr.Zero)
+                    privateKey = UnsafeNative.Biometrics.CreateSecureEnclaveKey(alias);
 
-            // Encrypt the key material with the public key
-            var encrypted = UnsafeNative.Biometrics.Encrypt(privateKey, data);
-            return Result<IKeyBytes>.Success(ManagedKey.TakeOwnership(encrypted));
+                try
+                {
+                    // Encrypt the key material with the public key
+                    var encrypted = UnsafeNative.Biometrics.Encrypt(privateKey, data);
+                    return Result<IKeyBytes>.Success(ManagedKey.TakeOwnership(encrypted));
+                }
+                finally
+                {
+                    UnsafeNative.CFRelease(privateKey);
+                }
+            }, cancellationToken);
 #else
             throw new PlatformNotSupportedException("macOS biometrics are only supported on macOS.");
 #endif
         }
 
         /// <inheritdoc/>
-        public override Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
+        public override async Task<IResult<IKeyBytes>> AcquireAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
 #if __UNO_SKIA_MACOS__
             ArgumentNullException.ThrowIfNull(data);
 
             var alias = $"{KEY_ALIAS_PREFIX}{id}";
-            var privateKey = UnsafeNative.Biometrics.GetPrivateKey(alias);
-            if (privateKey == IntPtr.Zero)
-                throw new CryptographicException("Private key could not be found.");
 
-            // Decryption with Secure Enclave key will trigger the biometric prompt automatically
-            var decrypted = UnsafeNative.Biometrics.Decrypt(privateKey, data);
-            return Task.FromResult<IResult<IKeyBytes>>(Result<IKeyBytes>.Success(ManagedKey.TakeOwnership(decrypted)));
+            // Decryption with the Secure Enclave key triggers the biometric prompt automatically
+            // and blocks until it is dismissed, so it must not run on the UI thread
+            return await Task.Run<IResult<IKeyBytes>>(() =>
+            {
+                var privateKey = UnsafeNative.Biometrics.GetPrivateKey(alias);
+                if (privateKey == IntPtr.Zero)
+                    throw new CryptographicException("Private key could not be found.");
+
+                try
+                {
+                    var decrypted = UnsafeNative.Biometrics.Decrypt(privateKey, data);
+                    return Result<IKeyBytes>.Success(ManagedKey.TakeOwnership(decrypted));
+                }
+                finally
+                {
+                    UnsafeNative.CFRelease(privateKey);
+                }
+            }, cancellationToken);
 #else
             throw new PlatformNotSupportedException("macOS biometrics are only supported on macOS.");
 #endif
