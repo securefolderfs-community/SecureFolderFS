@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
     public static partial class AbstractRecycleBinHelpers
     {
         /// <summary>
-        /// The threshold in seconds for detecting recently created files.
+        /// The threshold in milliseconds for detecting recently created files.
         /// Files created within this threshold will be deleted immediately instead of recycled.
         /// This helps work around macOS Finder behavior during copy operations.
         /// </summary>
@@ -68,49 +68,31 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
             // Get the plaintext name and parent ID
-            var plaintextParentPath = deserialized.DecryptParentId(specifics.Security);
             var plaintextOriginalName = deserialized.DecryptName(specifics.Security);
-            if (plaintextOriginalName is null || plaintextParentPath is null)
+            if (plaintextOriginalName is null)
                 throw new FormatException("Could not decrypt recycle bin configuration file.");
 
-            var ciphertextParentFolder = await SafetyHelpers.NoFailureAsync(async () => await AbstractPathHelpers.GetCiphertextItemAsync(plaintextParentPath, specifics, cancellationToken) as IFolder);
-            if (string.IsNullOrEmpty(ciphertextParentFolder?.Id) || !ciphertextDestinationFolder.Id.EndsWith(ciphertextParentFolder.Id))
-            {
-                // Destination folder is different from the original destination
-                // A new item name should be chosen fit for the new folder (so that Directory ID match)
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+            // The name is always re-encrypted for the destination folder so that the
+            // ciphertext name matches the destination's Directory ID, whether the destination is the original parent.
+            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
-                // Get an available name if the destination already exists
-                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
+            // Get an available name if the destination already exists
+            ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
 
-                // Rename and move item to destination
-                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
-            }
-            else
-            {
-                // Destination folder is the same as the original destination
-                // The same name could be used since the Directory IDs match
-                var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
-
-                // Get an available name if the destination already exists
-                ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
-
-                // Rename and move item to destination
-                _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
-            }
+            // Rename and move item to destination
+            _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
 
             // Delete the old configuration file
-            var configurationFile = await recycleBin.GetFileByNameAsync($"{recycleBinItem.Name}.json", cancellationToken);
-            await modifiableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
+            var configurationFile = await recycleBin.TryGetFileByNameAsync($"{recycleBinItem.Name}.json", cancellationToken);
+            if (configurationFile is not null)
+                await modifiableRecycleBin.DeleteAsync(configurationFile, cancellationToken);
 
             // Check if the item had any size
             if (deserialized.Size is not ({ } size and > 0L))
                 return;
 
             // Update occupied size
-            var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
-            var newSize = occupiedSize - size;
-            await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
+            await AdjustOccupiedSizeAsync(modifiableRecycleBin, specifics, -size, cancellationToken);
         }
 
         public static async Task DeleteOrRecycleAsync(
@@ -163,66 +145,76 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             if (recycleBin is not IModifiableFolder modifiableRecycleBin)
                 throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
-            if (sizeHint < 0L && specifics.Options.RecycleBinSize > 0L)
-            {
-                sizeHint = ciphertextItem switch
-                {
-                    IFile file => await file.GetSizeAsync(cancellationToken) ?? 0L,
-                    IFolder folder => await folder.GetSizeAsync(cancellationToken) ?? 0L,
-                    _ => 0L
-                };
+            // The size is always calculated (even for unlimited-capacity bins) so that
+            // the occupied-size accounting stays accurate if a limit is set later on.
+            // Sizes are measured in plaintext bytes on every code path.
+            if (sizeHint < 0L)
+                sizeHint = await GetPlaintextSizeAsync(ciphertextItem, specifics, cancellationToken);
+            sizeHint = Math.Max(0L, sizeHint);
 
+            await specifics.RecycleBinSemaphore.WaitAsync(cancellationToken);
+            try
+            {
                 var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
-                var availableSize = specifics.Options.RecycleBinSize - occupiedSize;
-                if (availableSize < sizeHint)
+                if (specifics.Options.RecycleBinSize > 0L && specifics.Options.RecycleBinSize - occupiedSize < sizeHint)
                 {
                     await DeleteImmediatelyAsync(ciphertextSourceFolder, ciphertextItem, cancellationToken);
                     return;
                 }
+
+                // Create the configuration file before moving the payload. If the move fails,
+                // the leftover configuration file is harmless and gets cleaned up on recalculation,
+                // whereas a payload without a configuration file would be unrestorable.
+                var guid = Guid.NewGuid().ToString();
+                var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
+                await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
+                {
+                    // Decrypt the plaintext parent ID
+                    var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken);
+                    if (plaintextParentId is null)
+                        throw new FormatException("Could not decrypt parent path for the recycle bin configuration file.");
+
+                    // Determine if Directory ID is present
+                    var isDirectoryIdPresent = ciphertextSourceFolder.Id != specifics.ContentFolder.Id;
+
+                    // Encrypt the new plaintext name and parent ID
+                    var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+                    var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
+
+                    // Serialize configuration data model
+                    await using var serializedStream = await streamSerializer.SerializeAsync(
+                        new RecycleBinItemDataModel()
+                        {
+                            Name = newCiphertextName,
+                            ParentId = newCiphertextParentId,
+                            DirectoryId = isDirectoryIdPresent ? directoryId : [],
+                            DeletionTimestamp = DateTime.Now,
+                            Size = sizeHint
+                        }, cancellationToken);
+
+                    // Write to destination stream
+                    await serializedStream.CopyToAsync(configurationStream, cancellationToken);
+                    await configurationStream.FlushAsync(cancellationToken);
+                }
+
+                try
+                {
+                    // Rename and move item
+                    _ = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
+                }
+                catch (Exception)
+                {
+                    // Best-effort cleanup of the now-orphaned configuration file
+                    await SafetyHelpers.NoFailureAsync(async () => await modifiableRecycleBin.DeleteAsync(configurationFile, CancellationToken.None));
+                    throw;
+                }
+
+                // Update occupied size
+                await SetOccupiedSizeAsync(modifiableRecycleBin, occupiedSize + sizeHint, cancellationToken);
             }
-
-            // Rename and move item
-            var guid = Guid.NewGuid().ToString();
-            _ = await modifiableRecycleBin.MoveStorableFromAsync(ciphertextItem, ciphertextSourceFolder, false, guid, null, cancellationToken);
-
-            // Create configuration file
-            var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-            await using (var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken))
+            finally
             {
-                // Decrypt the plaintext parent ID
-                var plaintextParentId = await AbstractPathHelpers.GetPlaintextPathAsync((IStorableChild)ciphertextSourceFolder, specifics, cancellationToken);
-                if (plaintextParentId is null)
-                    throw new FormatException("Could not decrypt parent path for the recycle bin configuration file.");
-
-                // Determine if Directory ID is present
-                var isDirectoryIdPresent = ciphertextSourceFolder.Id != specifics.ContentFolder.Id;
-
-                // Encrypt the new plaintext name and parent ID
-                var newCiphertextName = RecycleBinItemDataModel.Encrypt(plaintextName, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-                var newCiphertextParentId = RecycleBinItemDataModel.Encrypt(plaintextParentId, specifics.Security, isDirectoryIdPresent ? directoryId : ReadOnlySpan<byte>.Empty);
-
-                // Serialize configuration data model
-                await using var serializedStream = await streamSerializer.SerializeAsync(
-                    new RecycleBinItemDataModel()
-                    {
-                        Name = newCiphertextName,
-                        ParentId = newCiphertextParentId,
-                        DirectoryId = isDirectoryIdPresent ? directoryId : [],
-                        DeletionTimestamp = DateTime.Now,
-                        Size = sizeHint
-                    }, cancellationToken);
-
-                // Write to destination stream
-                await serializedStream.CopyToAsync(configurationStream, cancellationToken);
-                await configurationStream.FlushAsync(cancellationToken);
-            }
-
-            // Update occupied size
-            if (specifics.Options.IsRecycleBinEnabled())
-            {
-                var occupiedSize = await GetOccupiedSizeAsync(modifiableRecycleBin, cancellationToken);
-                var newSize = occupiedSize + sizeHint;
-                await SetOccupiedSizeAsync(modifiableRecycleBin, newSize, cancellationToken);
+                _ = specifics.RecycleBinSemaphore.Release();
             }
 
             static async Task DeleteImmediatelyAsync(IModifiableFolder ciphertextSourceFolder, IStorableChild ciphertextItem, CancellationToken cancellationToken)
@@ -235,20 +227,20 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         {
             // Check if the item already exists
             var existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
-            if (existing is not null)
+            if (existing is null)
+                return ciphertextName;
+
+            // If the item already exists, append a suffix to the name
+            var nameWithoutExtension = Path.GetFileNameWithoutExtension(plaintextOriginalName);
+            var extension = Path.GetExtension(plaintextOriginalName);
+            var suffix = 1;
+            do
             {
-                // If the item already exists, append a suffix to the name
-                var nameWithoutExtension = Path.GetFileNameWithoutExtension(plaintextOriginalName);
-                var extension = Path.GetExtension(plaintextOriginalName);
-                var suffix = 1;
-                do
-                {
-                    var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
-                    ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
-                    existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
-                    suffix++;
-                } while (existing is not null);
-            }
+                var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
+                ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
+                existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
+                suffix++;
+            } while (existing is not null);
 
             return ciphertextName;
         }
@@ -262,8 +254,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     return false;
 
                 var dateCreatedUtc = dateCreated.Value.ToUniversalTime();
-                var timeSinceCreation = DateTime.UtcNow - dateCreatedUtc;
-                return timeSinceCreation.Seconds <= RECENT_FILE_THRESHOLD_MS / 1000;
+                var elapsedMilliseconds = (DateTime.UtcNow - dateCreatedUtc).TotalMilliseconds;
+
+                // Negative elapsed time indicates clock skew.
+                // Never treat such files as recently created, as that would permanently delete them
+                return elapsedMilliseconds is >= 0d and <= RECENT_FILE_THRESHOLD_MS;
             }
             catch
             {
