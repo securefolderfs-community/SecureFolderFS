@@ -440,13 +440,18 @@ namespace SecureFolderFS.Uno
             }
 #endif
             var settingsService = DI.Service<ISettingsService>();
-            var useForceClose = Instance!.UseForceClose;
+#if !WINDOWS
+            var useForceClose = true;
+#else
+            var useForceClose = Instance?.UseForceClose ?? false;
+#endif
             var reduceToBackground = settingsService.UserSettings.ReduceToBackground;
+            
 
             if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
-                Instance.MainWindow?.Hide(enableEfficiencyMode: false);
+                Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
             }
             else
             {

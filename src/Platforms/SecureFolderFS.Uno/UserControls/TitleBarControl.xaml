@@ -7,18 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <Style x:Key="WindowCaptionButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="46" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="CornerRadius" Value="0" />
-        </Style>
-    </UserControl.Resources>
-
     <Grid Canvas.ZIndex="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -70,24 +58,39 @@
             Orientation="Horizontal">
 
             <Button
+                Width="46"
+                Height="32"
                 AutomationProperties.Name="{l:ResourceString Rid=Minimize}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                BorderThickness="0"
                 Click="MinimizeButton_Click"
-                Style="{StaticResource WindowCaptionButtonStyle}">
+                CornerRadius="0">
                 <FontIcon FontSize="10" Glyph="&#xE921;" />
             </Button>
             <Button
+                Width="46"
+                Height="32"
                 AutomationProperties.Name="{l:ResourceString Rid=Maximize}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                BorderThickness="0"
                 Click="MaximizeButton_Click"
-                Style="{StaticResource WindowCaptionButtonStyle}">
+                CornerRadius="0">
                 <FontIcon
                     x:Name="MaximizeRestoreIcon"
                     FontSize="10"
                     Glyph="&#xE922;" />
             </Button>
             <Button
+                Width="46"
+                Height="32"
                 AutomationProperties.Name="{l:ResourceString Rid=Close}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                BorderThickness="0"
                 Click="CloseButton_Click"
-                Style="{StaticResource WindowCaptionButtonStyle}">
+                CornerRadius="0">
                 <Button.Resources>
                     <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#C42B1C" />
                     <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#E5C42B1C" />
