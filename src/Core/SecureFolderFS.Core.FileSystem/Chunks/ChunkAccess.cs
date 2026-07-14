@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -23,8 +25,10 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// A chunk access instance can be shared by multiple streams of the same file,
         /// and the reader/writer also share the position of one ciphertext stream,
         /// so chunk operations must not interleave.
+        /// A <see cref="SemaphoreSlim"/> is used instead of a monitor lock
+        /// so both synchronous and asynchronous code paths can participate.
         /// </remarks>
-        protected readonly object chunkLock = new();
+        protected readonly SemaphoreSlim chunkLock = new(1, 1);
 
         /// <summary>
         /// Determines whether there are outstanding chunks ready to be flushed to disk.
@@ -52,8 +56,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // Hold the cache lock for the entire operation
-                lock (chunkLock)
+                // Hold the chunk lock for the entire operation
+                chunkLock.Wait();
+                try
                 {
                     // ArrayPool may return a larger array than requested
                     var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
@@ -73,6 +78,55 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     realPlaintextChunk.Slice(offsetInChunk, count).CopyTo(destination);
 
                     return count;
+                }
+                finally
+                {
+                    chunkLock.Release();
+                }
+            }
+            finally
+            {
+                // Clear sensitive plaintext data before returning the buffer to the pool
+                CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
+
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(plaintextChunk);
+            }
+        }
+
+        /// <inheritdoc cref="CopyFromChunk"/>
+        public virtual async ValueTask<int> CopyFromChunkAsync(long chunkNumber, Memory<byte> destination, int offsetInChunk, CancellationToken cancellationToken = default)
+        {
+            // Rent buffer
+            var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
+            try
+            {
+                // Hold the chunk lock for the entire operation
+                await chunkLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    // ArrayPool may return a larger array than requested
+                    var realPlaintextChunk = plaintextChunk.AsMemory(0, contentCrypt.ChunkPlaintextSize);
+
+                    // Read chunk
+                    var read = await chunkReader.ReadChunkAsync(chunkNumber, realPlaintextChunk, cancellationToken).ConfigureAwait(false);
+
+                    // Check for any errors
+                    if (read < 0)
+                        return read;
+
+                    // Copy from chunk
+                    var count = Math.Min(read - offsetInChunk, destination.Length);
+                    if (count <= 0)
+                        return 0;
+
+                    realPlaintextChunk.Span.Slice(offsetInChunk, count).CopyTo(destination.Span);
+
+                    return count;
+                }
+                finally
+                {
+                    chunkLock.Release();
                 }
             }
             finally
@@ -98,8 +152,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // Hold the cache lock for the entire operation
-                lock (chunkLock)
+                // Hold the chunk lock for the entire operation
+                chunkLock.Wait();
+                try
                 {
                     // ArrayPool may return larger array than requested
                     var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
@@ -124,6 +179,59 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                     return count;
                 }
+                finally
+                {
+                    chunkLock.Release();
+                }
+            }
+            finally
+            {
+                // Clear sensitive plaintext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize));
+
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(plaintextChunk);
+            }
+        }
+
+        /// <inheritdoc cref="CopyToChunk"/>
+        public virtual async ValueTask<int> CopyToChunkAsync(long chunkNumber, ReadOnlyMemory<byte> source, int offsetInChunk, CancellationToken cancellationToken = default)
+        {
+            // Rent buffer
+            var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
+            try
+            {
+                // Hold the chunk lock for the entire operation
+                await chunkLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    // ArrayPool may return larger array than requested
+                    var realPlaintextChunk = plaintextChunk.AsMemory(0, contentCrypt.ChunkPlaintextSize);
+
+                    // Read chunk
+                    var read = await chunkReader.ReadChunkAsync(chunkNumber, realPlaintextChunk, cancellationToken).ConfigureAwait(false);
+
+                    // Check for any errors
+                    if (read < 0)
+                        return read;
+
+                    // Copy to chunk
+                    var count = Math.Min(contentCrypt.ChunkPlaintextSize - offsetInChunk, source.Length);
+                    if (count <= 0)
+                        return 0;
+
+                    var destination = realPlaintextChunk.Slice(offsetInChunk, count);
+                    source.Span.Slice(0, count).CopyTo(destination.Span);
+
+                    // Write to chunk
+                    await chunkWriter.WriteChunkAsync(chunkNumber, destination, cancellationToken).ConfigureAwait(false);
+
+                    return count;
+                }
+                finally
+                {
+                    chunkLock.Release();
+                }
             }
             finally
             {
@@ -147,8 +255,9 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             var plaintextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkPlaintextSize);
             try
             {
-                // Hold the cache lock for the entire operation
-                lock (chunkLock)
+                // Hold the chunk lock for the entire operation
+                chunkLock.Wait();
+                try
                 {
                     // ArrayPool may return larger array than requested
                     var realPlaintextChunk = plaintextChunk.AsSpan(0, contentCrypt.ChunkPlaintextSize);
@@ -186,6 +295,10 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     // Save newly modified chunk
                     chunkWriter.WriteChunk(chunkNumber, newPlaintextChunk);
                 }
+                finally
+                {
+                    chunkLock.Release();
+                }
             }
             finally
             {
@@ -202,6 +315,12 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// </summary>
         public virtual void Flush()
         {
+        }
+
+        /// <inheritdoc cref="Flush"/>
+        public virtual ValueTask FlushAsync(CancellationToken cancellationToken = default)
+        {
+            return ValueTask.CompletedTask;
         }
 
         /// <inheritdoc/>

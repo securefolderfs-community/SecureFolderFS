@@ -3,6 +3,8 @@ using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
@@ -77,6 +79,18 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         }
 
         /// <inheritdoc/>
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+        }
+
+        /// <inheritdoc/>
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return WriteAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+        }
+
+        /// <inheritdoc/>
         public override int Read(Span<byte> buffer)
         {
             if (!CanRead)
@@ -115,6 +129,58 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 var offsetInChunk = (int)(readPosition % plaintextChunkSize);
 
                 var copied = _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
+                if (copied < 0)
+                    throw new CryptographicException();
+
+                if (copied == 0)
+                    break;
+
+                positionInBuffer += copied;
+            }
+
+            _position += positionInBuffer;
+            return positionInBuffer == 0 ? Constants.FILE_EOF : positionInBuffer;
+        }
+
+        /// <inheritdoc/>
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            if (!CanRead)
+                throw FileSystemExceptions.StreamNotReadable;
+
+            if (buffer.IsEmpty)
+                return 0;
+
+            // For seekable streams, perform EOF checks up front
+            if (Inner.CanSeek)
+            {
+                if (Inner.IsEndOfStream())
+                    return Constants.FILE_EOF;
+
+                if (Inner.Length < _security.HeaderCrypt.HeaderCiphertextSize)
+                    return Constants.FILE_EOF;
+
+                if (Length - Position <= 0L)
+                    return Constants.FILE_EOF;
+            }
+
+            // Read header if is not ready
+            if (!await _headerBuffer.ReadHeaderAsync(Inner, _security.HeaderCrypt, cancellationToken).ConfigureAwait(false))
+                throw new CryptographicException("Could not read header.");
+
+            var positionInBuffer = 0;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
+            var adjustedBuffer = Inner.CanSeek
+                ? buffer.Slice(0, (int)Math.Min(buffer.Length, Length - Position))
+                : buffer;
+
+            while (positionInBuffer < adjustedBuffer.Length)
+            {
+                var readPosition = Position + positionInBuffer;
+                var chunkNumber = readPosition / plaintextChunkSize;
+                var offsetInChunk = (int)(readPosition % plaintextChunkSize);
+
+                var copied = await _chunkAccess.CopyFromChunkAsync(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk, cancellationToken).ConfigureAwait(false);
                 if (copied < 0)
                     throw new CryptographicException();
 
@@ -170,6 +236,49 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             // Write contents
             WriteInternal(buffer, Position);
+        }
+
+        /// <inheritdoc/>
+        public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
+            // Don't initiate writing if the buffer is empty
+            if (buffer.IsEmpty)
+                return;
+
+            if (CanSeek && Position > Length)
+            {
+                // Fill the gap between the current length and the write position with zeros.
+                // Zeros keep sparse semantics consistent with SetLength-based extension,
+                // where a zeroed region also reads back as zeros.
+                var writePosition = Position;
+                var gapBuffer = ArrayPool<byte>.Shared.Rent(_security.ContentCrypt.ChunkPlaintextSize);
+                try
+                {
+                    Array.Clear(gapBuffer, 0, gapBuffer.Length);
+
+                    var gapPosition = Length;
+                    while (gapPosition < writePosition)
+                    {
+                        var gapPart = (int)Math.Min(writePosition - gapPosition, gapBuffer.Length);
+                        await WriteInternalAsync(gapBuffer.AsMemory(0, gapPart), gapPosition, cancellationToken).ConfigureAwait(false);
+                        gapPosition += gapPart;
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(gapBuffer);
+                }
+
+                // WriteInternal advances the position by the amount written - restore
+                // it so the actual contents are written at the requested position
+                _position = writePosition;
+            }
+
+            // Write contents
+            await WriteInternalAsync(buffer, Position, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -272,6 +381,21 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         }
 
         /// <inheritdoc/>
+        public override async ValueTask DisposeAsync()
+        {
+            try
+            {
+                if (CanWrite)
+                    await FlushAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                // Calls Dispose (and in turn Close) which notifies about the closed stream
+                await base.DisposeAsync().ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
         public override void Flush()
         {
             if (!CanWrite)
@@ -282,6 +406,20 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             {
                 TryWriteHeader();
                 _chunkAccess.Flush();
+            }
+        }
+
+        /// <inheritdoc/>
+        public override async Task FlushAsync(CancellationToken cancellationToken)
+        {
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
+            // Only flush when there's a need to
+            if (_chunkAccess.FlushAvailable)
+            {
+                await TryWriteHeaderAsync(cancellationToken).ConfigureAwait(false);
+                await _chunkAccess.FlushAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -323,6 +461,45 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
         }
 
+        private async ValueTask WriteInternalAsync(ReadOnlyMemory<byte> buffer, long position, CancellationToken cancellationToken)
+        {
+            if (!await TryWriteHeaderAsync(cancellationToken).ConfigureAwait(false) && !await _headerBuffer.ReadHeaderAsync(Inner, _security.HeaderCrypt, cancellationToken).ConfigureAwait(false))
+                throw new CryptographicException("Could not write nor read the header.");
+
+            var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
+            var written = 0;
+            var positionInBuffer = 0;
+
+            while (positionInBuffer < buffer.Length)
+            {
+                var currentPosition = position + written;
+                var chunkNumber = currentPosition / plaintextChunkSize;
+                var offsetInChunk = (int)(currentPosition % plaintextChunkSize);
+                var length = Math.Min(buffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
+                var copy = await _chunkAccess.CopyToChunkAsync(
+                    chunkNumber,
+                    buffer.Slice(positionInBuffer),
+                    (offsetInChunk == 0 && length == plaintextChunkSize) ? 0 : offsetInChunk,
+                    cancellationToken).ConfigureAwait(false);
+
+                if (copy < 0)
+                    throw new CryptographicException();
+
+                positionInBuffer += copy;
+                written += length;
+            }
+
+            // Update length after writing
+            _length = Math.Max(position + written, Length);
+
+            // Update position after writing
+            _position += written;
+
+            // Update last write time
+            if (Inner is FileStream fileStream)
+                File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
+        }
+
         [SkipLocalsInit]
         private bool TryWriteHeader()
         {
@@ -331,7 +508,8 @@ namespace SecureFolderFS.Core.FileSystem.Streams
 
             // The header buffer is shared by all streams of the same file,
             // so lock on the buffer's synchronization root
-            lock (_headerBuffer.SyncRoot)
+            _headerBuffer.SyncRoot.Wait();
+            try
             {
                 // Re-check after lock
                 if (_headerBuffer.IsHeaderReady)
@@ -365,6 +543,68 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 _headerBuffer.IsHeaderReady = true;
 
                 return true;
+            }
+            finally
+            {
+                _headerBuffer.SyncRoot.Release();
+            }
+        }
+
+        private async ValueTask<bool> TryWriteHeaderAsync(CancellationToken cancellationToken)
+        {
+            if (_headerBuffer.IsHeaderReady)
+                return true;
+
+            // The header buffer is shared by all streams of the same file,
+            // so lock on the buffer's synchronization root
+            await _headerBuffer.SyncRoot.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                // Re-check after lock
+                if (_headerBuffer.IsHeaderReady)
+                    return true;
+
+                // Check if there is data already written only when we can seek
+                if (Inner.Length > 0L)
+                    return false;
+
+                // Rent ciphertext header buffer (asynchronous methods cannot use stackalloc)
+                var ciphertextHeader = ArrayPool<byte>.Shared.Rent(_security.HeaderCrypt.HeaderCiphertextSize);
+                try
+                {
+                    // ArrayPool may return a larger array than requested
+                    var realCiphertextHeader = ciphertextHeader.AsMemory(0, _security.HeaderCrypt.HeaderCiphertextSize);
+
+                    // Get and encrypt the header
+                    _security.HeaderCrypt.CreateHeader(_headerBuffer);
+                    _security.HeaderCrypt.EncryptHeader(_headerBuffer, realCiphertextHeader.Span);
+
+                    // Write header
+                    if (CanSeek)
+                    {
+                        var savedPosition = Inner.Position;
+                        Inner.Position = 0L;
+                        await Inner.WriteAsync(realCiphertextHeader, cancellationToken).ConfigureAwait(false);
+                        Inner.Position = savedPosition + realCiphertextHeader.Length;
+                    }
+                    else
+                    {
+                        await Inner.WriteAsync(realCiphertextHeader, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    // Make sure we save the header state
+                    _headerBuffer.IsHeaderReady = true;
+
+                    return true;
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(ciphertextHeader);
+                }
+            }
+            finally
+            {
+                _headerBuffer.SyncRoot.Release();
             }
         }
 
