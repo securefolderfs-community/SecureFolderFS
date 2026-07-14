@@ -6,6 +6,7 @@ namespace SecureFolderFS.UI
         public const string MAIN_INSTANCE_ID = "SecureFolderFS_maininstance";
         public const string DATA_CONTAINER_ID = "SecureFolderFS_datacontainer";
         public const string STORABLE_BOOKMARK_RID = "bookmark:";
+        public const string AUTOSTART_ARGUMENT = "--autostart";
 
         public static class GitHub
         {

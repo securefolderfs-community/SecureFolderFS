@@ -90,8 +90,7 @@
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=AutoStart}"
                 BlockMode="Default"
-                Description="{l:ResourceString Rid=AutoStartDescription}"
-                IsEnabled="False">
+                Description="{l:ResourceString Rid=AutoStartDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>

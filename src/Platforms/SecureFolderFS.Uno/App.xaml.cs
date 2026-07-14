@@ -156,12 +156,13 @@ namespace SecureFolderFS.Uno
             // Check if the app was launched via file activation (shortcut file)
             var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
             var isUriActivation = IsUriActivation(Program.InitialActivationArgs);
+            var isStartupActivation = IsStartupActivation(Program.InitialActivationArgs);
 
             // Activate MainWindow (required for initialization)
             MainWindow.Activate();
 
-            // If launched via shortcut file, hide the main window immediately
-            if (isShortcutActivation || isUriActivation)
+            // If launched via shortcut file or on system startup, hide the main window immediately
+            if (isShortcutActivation || isUriActivation || isStartupActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
 
             // Process initial file activation if the app was launched via file association
@@ -196,6 +197,19 @@ namespace SecureFolderFS.Uno
         private static bool IsUriActivation(AppActivationArguments? args)
         {
             return args is { Kind: ExtendedActivationKind.Protocol, Data: IProtocolActivatedEventArgs };
+        }
+
+        /// <summary>
+        /// Checks if the app was launched on system startup, in which case it should start in the background (System Tray).
+        /// </summary>
+        private static bool IsStartupActivation(AppActivationArguments? args)
+        {
+            // Packaged apps are launched through the StartupTask registration
+            if (args is { Kind: ExtendedActivationKind.StartupTask })
+                return true;
+
+            // Unpackaged auto start is registered in the Run registry key with a command-line argument
+            return Environment.GetCommandLineArgs().Contains(UI.Constants.AUTOSTART_ARGUMENT, StringComparer.OrdinalIgnoreCase);
         }
 #endif
 
