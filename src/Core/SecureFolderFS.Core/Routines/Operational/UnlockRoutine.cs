@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +21,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
         private VaultSharesDataModel? _sharesDataModel;
+        private byte[]? _passkeyBytes;
         private SecureKey? _dekKey;
         private SecureKey? _macKey;
 
@@ -44,37 +44,30 @@ namespace SecureFolderFS.Core.Routines.Operational
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            var authenticationMethod = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
-            var derived = string.IsNullOrWhiteSpace(authenticationMethod.Complementation)
-                ? passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel))
-                : DeriveComplementedKeystore(passkey, authenticationMethod);
-
-            _dekKey = SecureKey.TakeOwnership(derived.dekKey);
-            _macKey = SecureKey.TakeOwnership(derived.macKey);
+            // The Argon2id is asynchronous, and SetCredentials is synchronous, thus blocking
+            // on the KDF's worker tasks deadlocks single-threaded runtimes (browser WASM). Keep a
+            // copy of the passkey and derive in FinalizeAsync, where the KDF can be awaited.
+            _passkeyBytes = passkey.UseKey(static key => key.ToArray());
         }
 
-        [SkipLocalsInit]
-        private (byte[] dekKey, byte[] macKey) DeriveFromComplementSecret(IKeyUsage passkey, string primaryMethodId)
+        private async Task<(byte[] dekKey, byte[] macKey)> DeriveFromComplementSecretAsync(byte[] passkeyBytes, string primaryMethodId)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            return passkey.UseKey(key =>
+            var complementSecret = new byte[32];
+            try
             {
-                Span<byte> complementSecret = stackalloc byte[32];
-                try
-                {
-                    VaultParser.DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, _configDataModel.ComplementGeneration, complementSecret);
-                    return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
-                }
-                finally
-                {
-                    CryptographicOperations.ZeroMemory(complementSecret);
-                }
-            });
+                VaultParser.DeriveComplementKey(passkeyBytes, _configDataModel.Uid, primaryMethodId, _configDataModel.ComplementGeneration, complementSecret);
+                return await VaultParser.DeriveKeystoreAsync(complementSecret, _keystoreDataModel);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(complementSecret);
+            }
         }
 
-        private (byte[] dekKey, byte[] macKey) DeriveComplementedKeystore(IKeyUsage passkey, AuthenticationMethod authenticationMethod)
+        private async Task<(byte[] dekKey, byte[] macKey)> DeriveComplementedKeystoreAsync(byte[] passkeyBytes, AuthenticationMethod authenticationMethod)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
@@ -84,7 +77,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             try
             {
-                return DeriveFromComplementSecret(passkey, primaryMethodId);
+                return await DeriveFromComplementSecretAsync(passkeyBytes, primaryMethodId);
             }
             catch (CryptographicException ex)
             {
@@ -105,8 +98,8 @@ namespace SecureFolderFS.Core.Routines.Operational
                 byte[]? complementSecret = null;
                 try
                 {
-                    complementSecret = passkey.UseKey(key => VaultParser.UnwrapComplementSecret(key, _configDataModel.Uid, share, _configDataModel.ComplementGeneration));
-                    return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
+                    complementSecret = VaultParser.UnwrapComplementSecret(passkeyBytes, _configDataModel.Uid, share, _configDataModel.ComplementGeneration);
+                    return await VaultParser.DeriveKeystoreAsync(complementSecret, _keystoreDataModel);
                 }
                 catch (CryptographicException ex)
                 {
@@ -127,7 +120,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 // config written first). A direct derivation recovers from exactly that window. It is an
                 // authenticated attempt that only succeeds if the keystore is actually keyed this way, so
                 // it never weakens the normal path.
-                return passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel));
+                return await VaultParser.DeriveKeystoreAsync(passkeyBytes, _keystoreDataModel);
             }
             catch (CryptographicException ex)
             {
@@ -140,10 +133,25 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_dekKey);
-            ArgumentNullException.ThrowIfNull(_macKey);
+            ArgumentNullException.ThrowIfNull(_passkeyBytes);
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+
+            try
+            {
+                var authenticationMethod = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
+                var derived = string.IsNullOrWhiteSpace(authenticationMethod.Complementation)
+                    ? await VaultParser.DeriveKeystoreAsync(_passkeyBytes, _keystoreDataModel)
+                    : await DeriveComplementedKeystoreAsync(_passkeyBytes, authenticationMethod);
+
+                _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+                _macKey = SecureKey.TakeOwnership(derived.macKey);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(_passkeyBytes);
+                _passkeyBytes = null;
+            }
 
             using (_dekKey)
             using (_macKey)
@@ -161,6 +169,12 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void Dispose()
         {
+            if (_passkeyBytes is not null)
+            {
+                CryptographicOperations.ZeroMemory(_passkeyBytes);
+                _passkeyBytes = null;
+            }
+
             _dekKey?.Dispose();
             _macKey?.Dispose();
         }

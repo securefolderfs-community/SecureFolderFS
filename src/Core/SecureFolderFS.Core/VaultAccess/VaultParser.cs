@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.DataModels;
@@ -50,8 +51,27 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="passkey">The passkey credential that combines all active auth factor outputs.</param>
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
-        [SkipLocalsInit]
         public static (byte[] dekKey, byte[] macKey) DeriveKeystore(ReadOnlySpan<byte> passkey, VaultKeystoreDataModel keystoreDataModel)
+        {
+            var passkeyCopy = passkey.ToArray();
+            try
+            {
+                return DeriveKeystoreAsync(passkeyCopy, keystoreDataModel).ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(passkeyCopy);
+            }
+        }
+
+        /// <inheritdoc cref="DeriveKeystore"/>
+        /// <remarks>
+        /// The awaitable form exists because the Argon2id step must not block the calling thread on
+        /// single-threaded runtimes (browser WASM). Heap buffers replace stackalloc since spans
+        /// cannot live across the await; all intermediates are zeroed. Caller retains ownership of
+        /// <paramref name="passkey"/>.
+        /// </remarks>
+        public static async Task<(byte[] dekKey, byte[] macKey)> DeriveKeystoreAsync(byte[] passkey, VaultKeystoreDataModel keystoreDataModel)
         {
             ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
             ArgumentNullException.ThrowIfNull(keystoreDataModel.EncryptedSoftwareEntropy);
@@ -61,33 +81,33 @@ namespace SecureFolderFS.Core.VaultAccess
             var dekKey = new byte[Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH];
             var macKey = new byte[Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH];
 
-            // Step 1: Decrypt SoftwareEntropy using a key derived from the raw passkey.
-            //   The bootstrap key is derived from the passkey alone (not the augmented key)
-            //   so that recovering SoftwareEntropy always requires all active auth factors.
-            Span<byte> bootstrapKey = stackalloc byte[32];
-            HKDF.DeriveKey(
-                HashAlgorithmName.SHA256,
-                passkey,
-                bootstrapKey,
-                keystoreDataModel.Salt, // Salt ties the bootstrap key to this specific keystore
-                "SFFSv4-EntropyBootstrap-v1"u8);
-
-            Span<byte> softwareEntropy = stackalloc byte[keystoreDataModel.EncryptedSoftwareEntropy.Length];
-            using (var aes = new AesGcm(bootstrapKey, 16))
-            {
-                aes.Decrypt(
-                    keystoreDataModel.SoftwareEntropyNonce,
-                    keystoreDataModel.EncryptedSoftwareEntropy,
-                    keystoreDataModel.SoftwareEntropyTag,
-                    softwareEntropy);
-            }
-
+            var bootstrapKey = new byte[32];
+            var softwareEntropy = new byte[keystoreDataModel.EncryptedSoftwareEntropy.Length];
+            var augmentedPasskey = new byte[32];
+            var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             try
             {
+                // Step 1: Decrypt SoftwareEntropy using a key derived from the raw passkey.
+                //   The bootstrap key is derived from the passkey alone (not the augmented key)
+                //   so that recovering SoftwareEntropy always requires all active auth factors.
+                HKDF.DeriveKey(
+                    HashAlgorithmName.SHA256,
+                    passkey,
+                    bootstrapKey,
+                    keystoreDataModel.Salt, // Salt ties the bootstrap key to this specific keystore
+                    "SFFSv4-EntropyBootstrap-v1"u8);
+
+                AesGcm256.Decrypt(
+                    keystoreDataModel.EncryptedSoftwareEntropy,
+                    bootstrapKey,
+                    keystoreDataModel.SoftwareEntropyNonce,
+                    keystoreDataModel.SoftwareEntropyTag,
+                    softwareEntropy,
+                    ReadOnlySpan<byte>.Empty);
+
                 // Step 2: Mix passkey and SoftwareEntropy via HKDF-Extract.
                 //   passkey is IKM; SoftwareEntropy is salt.
                 //   Breaking either alone is insufficient to reproduce the augmented key.
-                Span<byte> augmentedPasskey = stackalloc byte[32];
                 HKDF.DeriveKey(
                     HashAlgorithmName.SHA256,
                     passkey,
@@ -96,8 +116,7 @@ namespace SecureFolderFS.Core.VaultAccess
                     "SFFSv4-AugmentedPasskey-v1"u8);
 
                 // Step 3: Derive KEK from the augmented passkey
-                Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-                Argon2id.DeriveKey(augmentedPasskey, keystoreDataModel.Salt, kek);
+                await Argon2id.DeriveKeyAsync(augmentedPasskey, keystoreDataModel.Salt, kek).ConfigureAwait(false);
 
                 // Step 4: Unwrap keys
                 using var rfc3394 = new Rfc3394KeyWrap();
@@ -106,7 +125,10 @@ namespace SecureFolderFS.Core.VaultAccess
             }
             finally
             {
+                CryptographicOperations.ZeroMemory(bootstrapKey);
                 CryptographicOperations.ZeroMemory(softwareEntropy);
+                CryptographicOperations.ZeroMemory(augmentedPasskey);
+                CryptographicOperations.ZeroMemory(kek);
             }
 
             return (dekKey, macKey);
@@ -185,12 +207,13 @@ namespace SecureFolderFS.Core.VaultAccess
                 keystoreDataModel.Salt,
                 "SFFSv4-EntropyBootstrap-v1"u8);
 
-            using var aes = new AesGcm(bootstrapKey, 16);
-            aes.Decrypt(
-                keystoreDataModel.SoftwareEntropyNonce,
+            AesGcm256.Decrypt(
                 keystoreDataModel.EncryptedSoftwareEntropy,
+                bootstrapKey,
+                keystoreDataModel.SoftwareEntropyNonce,
                 keystoreDataModel.SoftwareEntropyTag,
-                softwareEntropy);
+                softwareEntropy,
+                ReadOnlySpan<byte>.Empty);
         }
 
         public static void DeriveComplementKey(
@@ -238,8 +261,7 @@ namespace SecureFolderFS.Core.VaultAccess
                 var wrapped = new byte[complementSecret.Length];
                 RandomNumberGenerator.Fill(nonce);
 
-                using (var aes = new AesGcm(complementWrapKey, 16))
-                    aes.Encrypt(nonce, complementSecret, wrapped, tag);
+                AesGcm256.Encrypt(complementSecret, complementWrapKey, nonce, tag, wrapped, ReadOnlySpan<byte>.Empty);
 
                 return new()
                 {
@@ -272,8 +294,13 @@ namespace SecureFolderFS.Core.VaultAccess
                 DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, generation, complementWrapKey);
 
                 var complementSecret = new byte[shareDataModel.WrappedComplementSecret.Length];
-                using var aes = new AesGcm(complementWrapKey, 16);
-                aes.Decrypt(shareDataModel.Nonce, shareDataModel.WrappedComplementSecret, shareDataModel.Tag, complementSecret);
+                AesGcm256.Decrypt(
+                    shareDataModel.WrappedComplementSecret,
+                    complementWrapKey,
+                    shareDataModel.Nonce,
+                    shareDataModel.Tag,
+                    complementSecret,
+                    ReadOnlySpan<byte>.Empty);
 
                 return complementSecret;
             }
@@ -311,10 +338,7 @@ namespace SecureFolderFS.Core.VaultAccess
             var encryptedEntropy = new byte[softwareEntropy.Length];
             RandomNumberGenerator.Fill(entropyNonce);
 
-            using (var aes = new AesGcm(bootstrapKey, 16))
-            {
-                aes.Encrypt(entropyNonce, softwareEntropy, encryptedEntropy, entropyTag);
-            }
+            AesGcm256.Encrypt(softwareEntropy, bootstrapKey, entropyNonce, entropyTag, encryptedEntropy, ReadOnlySpan<byte>.Empty);
 
             // Step 2: Augment passkey with SoftwareEntropy via HKDF-Extract before Argon2id.
             //   This is the same derivation performed at unlock in V4DeriveKeystore.

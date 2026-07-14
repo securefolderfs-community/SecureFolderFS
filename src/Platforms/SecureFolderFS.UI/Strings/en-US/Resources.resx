@@ -1589,6 +1589,9 @@
   <data name="MembersCountPlural" xml:space="preserve">
       <value>{0:plural:{} member|{} members|{} members}</value>
   </data>
+  <data name="PendingCountPlural" xml:space="preserve">
+      <value>{0:plural:{} pending|{} pending|{} pending}</value>
+  </data>
   <data name="Action" xml:space="preserve">
       <value>Action</value>
   </data>
@@ -1718,6 +1721,9 @@
   <data name="Event_vault_access_request_canceled" xml:space="preserve">
       <value>Access request cancelled</value>
   </data>
+  <data name="Event_recovery_key_viewed" xml:space="preserve">
+      <value>Recovery key viewed</value>
+  </data>
   <data name="Event_recovery_key_created" xml:space="preserve">
       <value>Recovery key created</value>
   </data>
@@ -1834,6 +1840,9 @@
   </data>
   <data name="EventInfo_vault_access_request_canceled" xml:space="preserve">
       <value>Canceled an access request</value>
+  </data>
+  <data name="EventInfo_recovery_key_viewed" xml:space="preserve">
+      <value>Viewed a vault recovery key</value>
   </data>
   <data name="EventInfo_recovery_key_created" xml:space="preserve">
       <value>Set a recovery key</value>
@@ -2077,5 +2086,65 @@
   </data>
   <data name="ItemsFailedToRestorePlural" xml:space="preserve">
       <value>Couldn't restore {0:plural:one item|{} items|{} items}</value>
+  </data>
+  <data name="RemoteVaults" xml:space="preserve">
+      <value>Remote Vaults</value>
+  </data>
+  <data name="NewTab" xml:space="preserve">
+      <value>New tab</value>
+  </data>
+  <data name="AddVault" xml:space="preserve">
+      <value>Add vault</value>
+  </data>
+  <data name="RemoveVault" xml:space="preserve">
+      <value>Remove vault</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+      <value>Download</value>
+  </data>
+  <data name="UseRecoveryKey" xml:space="preserve">
+      <value>Use recovery key instead</value>
+  </data>
+  <data name="SelectVaultHint" xml:space="preserve">
+      <value>Select a vault from the list to unlock it</value>
+  </data>
+  <data name="VaultUnlockedHint" xml:space="preserve">
+      <value>This vault is already unlocked in another tab</value>
+  </data>
+  <data name="ChooseProvider" xml:space="preserve">
+      <value>Choose a storage provider</value>
+  </data>
+  <data name="ConnectToProvider" xml:space="preserve">
+      <value>Connect to the provider</value>
+  </data>
+  <data name="ChooseVaultFolder" xml:space="preserve">
+      <value>Choose the vault folder</value>
+  </data>
+  <data name="AddThisFolder" xml:space="preserve">
+      <value>Add this folder</value>
+  </data>
+  <data name="RecoveryKeyFallbackHint" xml:space="preserve">
+      <value>This sign-in method isn't available in the browser. Enter the vault's recovery key to unlock it.</value>
+  </data>
+  <data name="UnlockWithAppPlatform" xml:space="preserve">
+      <value>Unlock with your App Platform account</value>
+  </data>
+  <data name="NoRemoteVaultsHint" xml:space="preserve">
+      <value>No vaults yet. Use "Add vault" to connect a storage provider and add an existing vault.</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+      <value>Properties</value>
+  </data>
+  <data name="DownloadFolder" xml:space="preserve">
+      <value>Download folder</value>
+  </data>
+  <data name="Compressing" xml:space="preserve">
+      <value>Compressing...</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+      <value>Type</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+      <value>Location</value>
   </data>
 </root>
