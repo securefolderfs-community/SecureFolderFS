@@ -20,6 +20,7 @@
             Height="32"
             Padding="16,6"
             x:FieldModifier="public"
+            Background="Transparent"
             IsHitTestVisible="True"
             IsTabStop="False">
 

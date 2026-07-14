@@ -1,6 +1,10 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+#if __UNO_SKIA_X11__
+using Microsoft.UI.Xaml.Input;
+using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
+#endif
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,7 +34,27 @@ namespace SecureFolderFS.Uno.UserControls
             _window.AppWindow.Changed += AppWindow_Changed;
             IsWindowButtonsVisible = true;
             UpdateMaximizeRestoreGlyph();
+
+#if __UNO_SKIA_X11__
+            // Uno's X11 backend does not implement SetTitleBar dragging, so initiate the move manually
+            DragRegion.PointerPressed -= DragRegion_PointerPressed;
+            DragRegion.PointerPressed += DragRegion_PointerPressed;
+#endif
         }
+
+#if __UNO_SKIA_X11__
+        private void DragRegion_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (_window is null)
+                return;
+
+            if (!e.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
+                return;
+
+            if (X11WindowHelper.TryBeginWindowDrag(_window))
+                e.Handled = true;
+        }
+#endif
 
         private void UpdateMaximizeRestoreGlyph()
         {
@@ -59,13 +83,24 @@ namespace SecureFolderFS.Uno.UserControls
 
         private void MaximizeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_window?.AppWindow.Presenter is not OverlappedPresenter presenter)
+            if (_window is not { } window || window.AppWindow.Presenter is not OverlappedPresenter presenter)
                 return;
 
             if (presenter.State == OverlappedPresenterState.Maximized)
-                presenter.Restore();
+            {
+                var restored = false;
+#if __UNO_SKIA_X11__
+                // Uno's X11 OverlappedPresenter.Restore only un-minimizes and never leaves
+                // the maximized state, so clear the window manager's maximized state directly
+                restored = X11WindowHelper.TryUnmaximizeWindow(window);
+#endif
+                if (!restored)
+                    presenter.Restore();
+            }
             else
+            {
                 presenter.Maximize();
+            }
 
             UpdateMaximizeRestoreGlyph();
         }

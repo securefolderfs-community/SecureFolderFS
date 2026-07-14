@@ -166,7 +166,7 @@
   -->
   <Target Name="_AdjustSkiaPlatformDefines"
           Condition="'$(TargetFramework)' == 'net10.0-desktop'"
-          BeforeTargets="GenerateMSBuildEditorConfigFile;CoreCompile">
+          BeforeTargets="_GenerateCompileDependencyCache;GenerateMSBuildEditorConfigFile;CoreCompile">
     <PropertyGroup>
       <_SkiaTargetOS>$(DesktopTargetOS.ToLowerInvariant())</_SkiaTargetOS>
       <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $(RuntimeIdentifier.StartsWith('osx'))">macos</_SkiaTargetOS>
