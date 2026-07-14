@@ -1,39 +1,101 @@
-﻿<UserControl
+<UserControl
     x:Class="SecureFolderFS.Uno.UserControls.TitleBarControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Border
-        Height="32"
-        Padding="16,6"
-        Canvas.ZIndex="10"
-        IsHitTestVisible="True"
-        IsTabStop="False">
+    <UserControl.Resources>
+        <Style x:Key="WindowCaptionButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="46" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+    </UserControl.Resources>
 
-        <StackPanel
-            x:Name="TitlePanel"
-            HorizontalAlignment="Left"
+    <Grid Canvas.ZIndex="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Drag region  -->
+        <Border
+            x:Name="DragRegion"
+            Grid.Column="0"
+            Height="32"
+            Padding="16,6"
             x:FieldModifier="public"
-            Orientation="Horizontal"
-            Spacing="6">
+            IsHitTestVisible="True"
+            IsTabStop="False">
 
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="12"
-                Text="{x:Bind PrimaryTitle, Mode=OneWay}" />
-            <TextBlock
-                x:Name="SecondaryTitleText"
-                Margin="0,0,0,2"
-                VerticalAlignment="Bottom"
-                x:Load="{x:Bind SecondaryTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                CharacterSpacing="32"
-                FontSize="9"
-                FontWeight="Thin"
-                Opacity="0.8"
-                Text="{x:Bind SecondaryTitle, Mode=OneWay}" />
+            <StackPanel
+                x:Name="TitlePanel"
+                HorizontalAlignment="Left"
+                x:FieldModifier="public"
+                Orientation="Horizontal"
+                Spacing="6">
+
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Text="{x:Bind PrimaryTitle, Mode=OneWay}" />
+                <TextBlock
+                    x:Name="SecondaryTitleText"
+                    Margin="0,0,0,2"
+                    VerticalAlignment="Bottom"
+                    x:Load="{x:Bind SecondaryTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    CharacterSpacing="32"
+                    FontSize="9"
+                    FontWeight="Thin"
+                    Opacity="0.8"
+                    Text="{x:Bind SecondaryTitle, Mode=OneWay}" />
+            </StackPanel>
+        </Border>
+
+        <!--  Window caption buttons, shown on platforms where the OS does not paint them  -->
+        <StackPanel
+            x:Name="WindowButtons"
+            Grid.Column="1"
+            VerticalAlignment="Top"
+            x:FieldModifier="public"
+            x:Load="{x:Bind IsWindowButtonsVisible, Mode=OneWay}"
+            Loaded="WindowButtons_Loaded"
+            Orientation="Horizontal">
+
+            <Button
+                AutomationProperties.Name="{l:ResourceString Rid=Minimize}"
+                Click="MinimizeButton_Click"
+                Style="{StaticResource WindowCaptionButtonStyle}">
+                <FontIcon FontSize="10" Glyph="&#xE921;" />
+            </Button>
+            <Button
+                AutomationProperties.Name="{l:ResourceString Rid=Maximize}"
+                Click="MaximizeButton_Click"
+                Style="{StaticResource WindowCaptionButtonStyle}">
+                <FontIcon
+                    x:Name="MaximizeRestoreIcon"
+                    FontSize="10"
+                    Glyph="&#xE922;" />
+            </Button>
+            <Button
+                AutomationProperties.Name="{l:ResourceString Rid=Close}"
+                Click="CloseButton_Click"
+                Style="{StaticResource WindowCaptionButtonStyle}">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#C42B1C" />
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#E5C42B1C" />
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                </Button.Resources>
+                <FontIcon FontSize="10" Glyph="&#xE8BB;" />
+            </Button>
         </StackPanel>
-    </Border>
+    </Grid>
 </UserControl>

@@ -158,6 +158,36 @@
     </When>
   </Choose>
 
+  <!--
+    Each Uno.WinUI.Runtime.Skia.* package defines its platform constant (__UNO_SKIA_MACOS__, __UNO_SKIA_X11__, ...)
+    unconditionally for the desktop target, so all of them are active at once no matter which OS is being targeted.
+    Remove the constants that do not match the target OS so that platform #if directives are reliable.
+    The target OS is inferred from the RuntimeIdentifier when specified, otherwise from the build host.
+  -->
+  <Target Name="_AdjustSkiaPlatformDefines"
+          Condition="'$(TargetFramework)' == 'net10.0-desktop'"
+          BeforeTargets="GenerateMSBuildEditorConfigFile;CoreCompile">
+    <PropertyGroup>
+      <_SkiaTargetOS>$(DesktopTargetOS.ToLowerInvariant())</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $(RuntimeIdentifier.StartsWith('osx'))">macos</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $(RuntimeIdentifier.StartsWith('linux'))">linux</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $(RuntimeIdentifier.StartsWith('win'))">windows</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $([MSBuild]::IsOSPlatform('OSX'))">macos</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $([MSBuild]::IsOSPlatform('Linux'))">linux</_SkiaTargetOS>
+      <_SkiaTargetOS Condition="'$(_SkiaTargetOS)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">windows</_SkiaTargetOS>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(_SkiaTargetOS)' != 'macos'">
+      <DefineConstants>$(DefineConstants.Replace('__UNO_SKIA_MACOS__', '').Replace('HAS_UNO_SKIA_MACOS', ''))</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(_SkiaTargetOS)' != 'linux'">
+      <DefineConstants>$(DefineConstants.Replace('__UNO_SKIA_X11__', '').Replace('HAS_UNO_SKIA_X11', '').Replace('__UNO_SKIA_LINUX_FB__', '').Replace('HAS_UNO_SKIA_LINUX_FB', ''))</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(_SkiaTargetOS)' != 'windows'">
+      <DefineConstants>$(DefineConstants.Replace('__UNO_SKIA_WIN32__', '').Replace('HAS_UNO_SKIA_WIN32', '').Replace('__UNO_SKIA_WPF__', '').Replace('HAS_UNO_SKIA_WPF', ''))</DefineConstants>
+    </PropertyGroup>
+  </Target>
+
   <!-- Codesign the macOS .app bundle with entitlements for Keychain/Secure Enclave (Touch ID) access -->
   <Target Name="CodesignMacOSAppBundle" AfterTargets="Build"
           Condition="'$(TargetFramework)' == 'net10.0-desktop' AND '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">

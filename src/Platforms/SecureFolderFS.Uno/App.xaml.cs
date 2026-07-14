@@ -369,7 +369,7 @@ namespace SecureFolderFS.Uno
 
             window.ExtendsContentIntoTitleBar = true;
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            window.SetTitleBar(titleBar);
+            window.SetTitleBar(titleBar?.DragRegion);
 
 #if __UNO_SKIA_MACOS__ || __MACCATALYST__
             // Use native macOS APIs to configure the window
@@ -379,15 +379,19 @@ namespace SecureFolderFS.Uno
 
             // Add left padding for traffic light buttons
             var (leftPadding, _) = MacOsWindowHelper.GetTrafficLightButtonsInset();
-            titleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
+            titleBar?.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
             // For other non-Windows platforms, use OverlappedPresenter
-            if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+            if (appWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter)
             {
                 overlappedPresenter.SetBorderAndTitleBar(true, false);
                 overlappedPresenter.IsMinimizable = true;
                 overlappedPresenter.IsMaximizable = true;
             }
+
+            // The OS does not paint caption buttons when the title bar is client-drawn,
+            // so show our own minimize/maximize/close buttons
+            titleBar?.ShowWindowButtons(window);
 #endif
 
 #if WINDOWS

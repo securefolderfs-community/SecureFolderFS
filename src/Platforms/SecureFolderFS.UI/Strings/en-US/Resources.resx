@@ -294,6 +294,12 @@
   <data name="MasterKeyDescription" xml:space="preserve">
     <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
   </data>
+  <data name="Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
   </data>
