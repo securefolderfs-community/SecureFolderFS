@@ -150,7 +150,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             try
             {
                 if (Items.Remove(itemToRemove))
+                {
+                    itemToRemove.Dispose();
                     itemToRemove.VaultViewModel.Dispose();
+                }
             }
             catch (Exception)
             {

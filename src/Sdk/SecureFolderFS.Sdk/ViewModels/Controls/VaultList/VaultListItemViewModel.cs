@@ -26,9 +26,9 @@ using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>, Inject<IIapService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IMediaService>, Inject<IVaultService>, Inject<IIapService>, Inject<ISettingsService>]
     [Bindable(true)]
-    public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize
+    public sealed partial class VaultListItemViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
@@ -48,6 +48,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             _vaultCollectionModel = vaultCollectionModel;
 
             UpdateCanMove();
+            SettingsService.UserSettings.PropertyChanged += UserSettings_PropertyChanged;
+        }
+
+        public bool IsAutoUnlockEnabled
+        {
+            get
+            {
+                var persistableId = VaultViewModel.VaultModel.DataModel.PersistableId;
+                return persistableId is not null && persistableId.Equals(SettingsService.UserSettings.AutoUnlockVaultId);
+            }
+            set
+            {
+                var persistableId = VaultViewModel.VaultModel.DataModel.PersistableId;
+                if (persistableId is null)
+                    return;
+
+                if (value)
+                {
+                    // Marking this vault automatically unmarks the previously chosen one, since only one vault can participate at a time
+                    SettingsService.UserSettings.AutoUnlockVaultId = persistableId;
+                }
+                else if (persistableId.Equals(SettingsService.UserSettings.AutoUnlockVaultId))
+                    SettingsService.UserSettings.AutoUnlockVaultId = null;
+
+                _ = SettingsService.UserSettings.TrySaveAsync();
+            }
         }
 
         /// <inheritdoc/>
@@ -144,6 +170,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
+            // Unmark the vault from auto unlock when it is removed from the list
+            if (IsAutoUnlockEnabled)
+                IsAutoUnlockEnabled = false;
+
             CustomIcon?.Dispose();
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
             if (VaultViewModel.VaultModel.VaultFolder is IBookmark bookmark)
@@ -203,6 +233,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             CanMoveDown = itemIndex < _vaultCollectionModel.Count - 1;
             CanMoveUp = itemIndex > 0;
             CanMove = CanMoveUp && CanMoveDown;
+        }
+
+        private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Update the check state of every item when another vault is chosen for auto unlock
+            if (e.PropertyName == nameof(SettingsService.UserSettings.AutoUnlockVaultId))
+                OnPropertyChanged(nameof(IsAutoUnlockEnabled));
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            SettingsService.UserSettings.PropertyChanged -= UserSettings_PropertyChanged;
         }
     }
 }

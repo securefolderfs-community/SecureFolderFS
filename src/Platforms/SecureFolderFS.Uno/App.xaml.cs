@@ -165,12 +165,19 @@ namespace SecureFolderFS.Uno
             if (isShortcutActivation || isUriActivation || isStartupActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
 
+            // Show the auto-unlock vault prompt, unless another activation already presents vault UI
+            if (!isShortcutActivation && !isUriActivation)
+                _ = ShowAutoUnlockVaultAsync();
+
             // Process initial file activation if the app was launched via file association
             if (Program.InitialActivationArgs is { } initialArgs)
                 await OnActivatedAsync(initialArgs);
 #else
             // Activate MainWindow
             MainWindow.Activate();
+
+            // Show the auto-unlock vault prompt
+            _ = ShowAutoUnlockVaultAsync();
 #endif
         }
 
@@ -305,6 +312,22 @@ namespace SecureFolderFS.Uno
                 window.Closed -= PreviewWindow_Closed;
                 (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Shows the unlock prompt (vault preview window) for the vault marked for automatic unlocking, if any.
+        /// </summary>
+        private async Task ShowAutoUnlockVaultAsync()
+        {
+            // Wait for initialization so that the settings and the vault list are loaded
+            await MainWindowInitialized.Task;
+
+            var settingsService = DI.Service<ISettingsService>();
+            var autoUnlockVaultId = settingsService.UserSettings.AutoUnlockVaultId;
+            if (string.IsNullOrEmpty(autoUnlockVaultId))
+                return;
+
+            await HandleVaultPreviewActivationAsync(autoUnlockVaultId);
         }
 
         private async Task HandleVaultLockActivationAsync(string persistableId)

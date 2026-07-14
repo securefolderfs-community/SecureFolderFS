@@ -63,6 +63,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
+        public virtual string? AutoUnlockVaultId
+        {
+            get => GetSetting<string?>();
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public virtual bool OpenFolderOnUnlock
         {
             get => GetSetting(static () => true);

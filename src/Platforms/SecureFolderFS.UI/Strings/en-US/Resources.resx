@@ -147,6 +147,9 @@
   <data name="AutoStartDescription" xml:space="preserve">
     <value>Launch SecureFolderFS on system startup</value>
   </data>
+  <data name="AutoUnlock" xml:space="preserve">
+    <value>Automatically unlock</value>
+  </data>
   <data name="Back" xml:space="preserve">
     <value>Back</value>
   </data>

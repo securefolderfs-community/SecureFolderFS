@@ -34,6 +34,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool ContinueOnLastVault { get; set; }
 
         /// <summary>
+        /// Gets or sets the ID of the vault to prompt the user to unlock when the app is started. Only one vault can be set at a time.
+        /// </summary>
+        string? AutoUnlockVaultId { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to open the vault root folder when it is unlocked.
         /// </summary>
         bool OpenFolderOnUnlock { get; set; }
