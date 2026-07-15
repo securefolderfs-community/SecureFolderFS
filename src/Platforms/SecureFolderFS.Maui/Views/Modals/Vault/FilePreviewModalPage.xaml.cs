@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using LibVLCSharp.MAUI;
 using LibVLCSharp.Shared;
 using SecureFolderFS.Maui.Extensions;
@@ -55,8 +56,19 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
+            if (ViewModel is not null)
+                ViewModel.CloseRequested -= ViewModel_CloseRequested;
+
             ViewModel = viewable as PreviewerOverlayViewModel;
+            if (ViewModel is not null)
+                ViewModel.CloseRequested += ViewModel_CloseRequested;
+
             OnPropertyChanged(nameof(ViewModel));
+        }
+
+        private async void ViewModel_CloseRequested(object? sender, EventArgs e)
+        {
+            await HideAsync();
         }
 
         /// <inheritdoc/>
@@ -70,9 +82,22 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+
+            // OnDisappearing also fires when the page is merely covered (share sheet,
+            // app switch, nested prompt). Only tear down when the modal was actually
+            // dismissed, otherwise the gallery would come back with dead gestures
+            if (IsStillPresented())
+                return;
+
             _modalTcs.TrySetResult(Result.Success);
+            if (ViewModel is not null)
+                ViewModel.CloseRequested -= ViewModel_CloseRequested;
+
             if (GalleryView is not null)
             {
+                if (GalleryView.BindingContext is CarouselPreviewerViewModel carouselViewModel)
+                    carouselViewModel.Slides.CollectionChanged -= Slides_CollectionChanged;
+
                 GalleryView.PreviousRequested -= Gallery_PreviousRequested;
                 GalleryView.NextRequested -= Gallery_NextRequested;
                 GalleryView.DismissRequested -= Gallery_DismissRequested;
@@ -82,6 +107,12 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                 (GalleryView.Current as IDisposable)?.Dispose();
                 (GalleryView.Next as IDisposable)?.Dispose();
             }
+        }
+
+        private bool IsStillPresented()
+        {
+            // The page is wrapped in a NavigationPage before being pushed modally
+            return _sourceNavigation.ModalStack.Any(page => page == this || (page as NavigationPage)?.CurrentPage == this);
         }
 
         private View? CreateGalleryView(CarouselPreviewerViewModel carouselViewModel, int index)
@@ -100,30 +131,41 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
                     AudioTemplate = Resources["AudioTemplate"] as DataTemplate
                 }
             };
+
+            // The template content is created synchronously, so the gesture commands can be
+            // wired immediately. Relying on Loaded alone was racy on Android, where the event
+            // can fire at unpredictable times (or the x:Reference bindings may not have
+            // resolved yet), leaving the gallery without swipe handling
+            WirePresentationCommands(presentation);
             presentation.Loaded += Presentation_Loaded;
             return presentation;
 
             void Presentation_Loaded(object? sender, EventArgs e)
             {
                 presentation.Loaded -= Presentation_Loaded;
-                var descendants = presentation.GetVisualTreeDescendants();
-                var found = descendants.FirstOrDefault(x => x is PanPinchContainer or PanRouter);
+                WirePresentationCommands(presentation);
+            }
+        }
 
-                switch (found)
+        private void WirePresentationCommands(ContentPresentation presentation)
+        {
+            var descendants = presentation.GetVisualTreeDescendants();
+            var found = descendants.FirstOrDefault(x => x is PanPinchContainer or PanRouter);
+
+            switch (found)
+            {
+                case PanPinchContainer panPinchContainer:
                 {
-                    case PanPinchContainer panPinchContainer:
-                    {
-                        panPinchContainer.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
-                        panPinchContainer.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
-                        break;
-                    }
+                    panPinchContainer.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
+                    panPinchContainer.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+                    break;
+                }
 
-                    case PanRouter panRouter:
-                    {
-                        panRouter.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
-                        panRouter.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
-                        break;
-                    }
+                case PanRouter panRouter:
+                {
+                    panRouter.TappedCommand ??= ViewModel?.ToggleImmersionCommand;
+                    panRouter.PanUpdatedCommand ??= GalleryView?.PanUpdatedCommand;
+                    break;
                 }
             }
         }
@@ -211,6 +253,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.PreviousRequested += Gallery_PreviousRequested;
             galleryView.NextRequested += Gallery_NextRequested;
             galleryView.DismissRequested += Gallery_DismissRequested;
+            carouselViewModel.Slides.CollectionChanged += Slides_CollectionChanged;
 
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex - 1) as IAsyncInitialize)?.InitAsync();
             (carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex) as IAsyncInitialize)?.InitAsync();
@@ -223,6 +266,31 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             galleryView.RefreshLayout();
 
             carouselViewModel.Title = carouselViewModel.Slides.ElementAtOrDefault(carouselViewModel.CurrentIndex)?.Title;
+        }
+
+        private void Slides_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Rebuild the visible views around the (already adjusted) current index,
+            // e.g. after the current slide was deleted
+            if (GalleryView is not { BindingContext: CarouselPreviewerViewModel carouselViewModel } galleryView)
+                return;
+
+            if (carouselViewModel.Slides.Count == 0)
+                return; // The view model requests the overlay to close
+
+            var index = carouselViewModel.CurrentIndex;
+            (carouselViewModel.Slides.ElementAtOrDefault(index - 1) as IAsyncInitialize)?.InitAsync();
+            (carouselViewModel.Slides.ElementAtOrDefault(index + 1) as IAsyncInitialize)?.InitAsync();
+            (carouselViewModel.Slides.ElementAtOrDefault(index) as IViewDesignation)?.OnAppearing();
+
+            (galleryView.Previous as IDisposable)?.Dispose();
+            (galleryView.Current as IDisposable)?.Dispose();
+            (galleryView.Next as IDisposable)?.Dispose();
+
+            galleryView.Previous = index > 0 ? CreateGalleryView(carouselViewModel, index - 1) : null;
+            galleryView.Current = CreateGalleryView(carouselViewModel, index);
+            galleryView.Next = index < carouselViewModel.Slides.Count - 1 ? CreateGalleryView(carouselViewModel, index + 1) : null;
+            galleryView.RefreshLayout();
         }
 
         private void Gallery_PreviousRequested(object? sender, EventArgs e)

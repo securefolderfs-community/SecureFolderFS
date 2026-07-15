@@ -25,20 +25,32 @@ namespace SecureFolderFS.Maui.UserControls
         {
             if (value)
             {
+                // Content sits below the toolbar: size the toolbar row to the actual toolbar
+                // height instead of the fixed overlay height, otherwise a large gap appears
+                // between the toolbar and the content
                 TopBorder.Background = Colors.Transparent;
+                TopBorder.HeightRequest = -1d;
+                ToolbarRow.Height = GridLength.Auto;
                 Grid.SetRowSpan(TopBorder, 1);
                 Grid.SetRowSpan(MainContent, 1);
                 Grid.SetRow(MainContent, 1);
-                MainContent.Margin = new(0, 24, 0, 0);
+                MainContent.Margin = new(0);
             }
             else
             {
+                // Toolbar overlays the content (e.g. media previews) - restore the taller
+                // plate that hosts the fade-out gradient
 #if ANDROID
                 TopBorder.Background = Resources["BarGradient"] as Brush;
+                TopBorder.HeightRequest = 104d;
+#else
+                TopBorder.HeightRequest = 192d;
 #endif
+                ToolbarRow.Height = new GridLength(75d);
                 Grid.SetRowSpan(TopBorder, 2);
                 Grid.SetRow(MainContent, 0);
                 Grid.SetRowSpan(MainContent, 2);
+                MainContent.Margin = new(0);
             }
         }
 
@@ -102,6 +114,14 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty PropertiesCommandProperty =
             BindableProperty.Create(nameof(PropertiesCommand), typeof(ICommand), typeof(CommandBarControl));
+
+        public ICommand? DeleteCommand
+        {
+            get => (ICommand?)GetValue(DeleteCommandProperty);
+            set => SetValue(DeleteCommandProperty, value);
+        }
+        public static readonly BindableProperty DeleteCommandProperty =
+            BindableProperty.Create(nameof(DeleteCommand), typeof(ICommand), typeof(CommandBarControl));
 
         public ICommand? ShareCommand
         {
