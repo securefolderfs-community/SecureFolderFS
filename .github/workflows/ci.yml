@@ -353,8 +353,6 @@ jobs:
             desktopTargetOS: macos
           - tfm: net10.0-desktop
             desktopTargetOS: linux
-          - tfm: net10.0-desktop
-            desktopTargetOS: windows
           - tfm: net10.0-windows10.0.26100.0
             desktopTargetOS: ''
     env:
