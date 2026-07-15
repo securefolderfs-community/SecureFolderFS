@@ -47,18 +47,23 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         if (RootPanel.TranslationY >= DISMISS_THRESHOLD)
                         {
                             _isDismissing = true;
+                            try
+                            {
+                                // Animate out from the current dragged position
+                                var currentY = RootPanel.TranslationY;
+                                var remainingDistance = HIDE_TRANSLATION - currentY;
+                                var duration = (uint)Math.Max(300d * (remainingDistance / HIDE_TRANSLATION), 150d);
+                                await RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
 
-                            // Animate out from the current dragged position
-                            var currentY = RootPanel.TranslationY;
-                            var remainingDistance = HIDE_TRANSLATION - currentY;
-                            var duration = (uint)Math.Max(300d * (remainingDistance / HIDE_TRANSLATION), 150d);
-                            await RootPanel.TranslateToAsync(0, HIDE_TRANSLATION, duration, Easing.CubicInOut);
-
-                            // Clean up visual state
-                            RootPanel.IsVisible = false;
-                            RootPanel.TranslationY = 0d;
-
-                            _isDismissing = false;
+                                // Clean up visual state
+                                RootPanel.IsVisible = false;
+                                RootPanel.TranslationY = 0d;
+                            }
+                            finally
+                            {
+                                // Always reset, otherwise a failed animation would wedge the control
+                                _isDismissing = false;
+                            }
 
                             // Tell the caller - they will set IsShown=false, which the guard will skip animating.
                             // This also ensures the backing value is actually false, so the next IsShown=true fires propertyChanged.
