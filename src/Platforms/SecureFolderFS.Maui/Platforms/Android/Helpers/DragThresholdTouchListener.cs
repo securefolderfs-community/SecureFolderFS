@@ -78,6 +78,15 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                         break;
                     }
 
+                    // While selection mode is active, horizontal movement belongs to
+                    // swipe-selection (SwipeSelectionItemTouchListener) - never start a drag
+                    if (_mauiView.BindingContext is BrowserItemViewModel { BrowserViewModel.IsSelecting: true })
+                    {
+                        _isTracking = false;
+                        e.Handled = false;
+                        break;
+                    }
+
                     var deltaX = motionEvent.RawX - _startX;
                     var deltaY = motionEvent.RawY - _startY;
                     var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);

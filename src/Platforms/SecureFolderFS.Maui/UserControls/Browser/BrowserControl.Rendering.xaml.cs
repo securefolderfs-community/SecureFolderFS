@@ -13,6 +13,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
         private BrowserViewType? _appliedViewType;
+#if ANDROID
+        private Platforms.Android.Helpers.SwipeSelectionItemTouchListener? _swipeSelectionTouchListener;
+        private AndroidX.RecyclerView.Widget.RecyclerView? _swipeSelectionRecyclerView;
+#endif
 
         /// <summary>
         /// Determines if the CollectionView can be reloaded.
@@ -189,6 +193,60 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             _collectionView?.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
                     converter: GetConverter(nameof(BoolSelectionModeConverter))));
+#endif
+
+            AttachPlatformSwipeSelection();
+        }
+
+        /// <summary>
+        /// Attaches the native swipe-selection handler to the CollectionView's backing list.
+        /// On Android this hooks an item-touch listener into the RecyclerView; MAUI gesture
+        /// recognizers cannot claim the gesture there (see SwipeSelectionItemTouchListener).
+        /// On other platforms this is a no-op - selection uses per-item pan gestures.
+        /// </summary>
+        private void AttachPlatformSwipeSelection()
+        {
+#if ANDROID
+            if (_collectionView?.Handler?.PlatformView is not AndroidX.RecyclerView.Widget.RecyclerView recyclerView)
+                return;
+
+            if (ReferenceEquals(_swipeSelectionRecyclerView, recyclerView))
+                return;
+
+            // Detach from the previous RecyclerView - a recreated CollectionView gets a new one
+            if (_swipeSelectionRecyclerView is not null && _swipeSelectionTouchListener is not null)
+            {
+                try
+                {
+                    _swipeSelectionRecyclerView.RemoveOnItemTouchListener(_swipeSelectionTouchListener);
+                }
+                catch (Exception)
+                {
+                    // The old RecyclerView may already be disposed along with its handler
+                }
+            }
+
+            _swipeSelectionTouchListener ??= new(this);
+            recyclerView.AddOnItemTouchListener(_swipeSelectionTouchListener);
+            _swipeSelectionRecyclerView = recyclerView;
+#endif
+        }
+
+        /// <summary>
+        /// Enables or disables pull-to-refresh based on the selection mode.
+        /// </summary>
+        /// <remarks>
+        /// On Android, SwipeRefreshLayout deliberately ignores RequestDisallowInterceptTouchEvent
+        /// (legacy AndroidX behavior), so dragging the selection rectangle downward would still
+        /// trigger a refresh and cancel the gesture. The refresh gesture is therefore turned off
+        /// entirely at the native level while selecting. Other platforms are unaffected - their
+        /// selection gesture never reaches the refresh control.
+        /// </remarks>
+        private void UpdatePullToRefreshState()
+        {
+#if ANDROID
+            if (RootRefreshView.Handler?.PlatformView is AndroidX.SwipeRefreshLayout.Widget.SwipeRefreshLayout swipeRefreshLayout)
+                swipeRefreshLayout.Enabled = !IsSelecting;
 #endif
         }
 

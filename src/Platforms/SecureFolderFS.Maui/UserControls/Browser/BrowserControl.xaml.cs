@@ -70,8 +70,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             BindableProperty.Create(nameof(IsSelecting), typeof(bool), typeof(BrowserControl), defaultValue: false,
                 propertyChanged: static (bindable, _, _) =>
                 {
-                    if (bindable is BrowserControl control)
-                        control.UpdateAllItemContainerPanGestures();
+                    if (bindable is not BrowserControl control)
+                        return;
+
+                    control.UpdateAllItemContainerPanGestures();
+                    control.UpdatePullToRefreshState();
                 });
 
         public ICommand? RefreshCommand

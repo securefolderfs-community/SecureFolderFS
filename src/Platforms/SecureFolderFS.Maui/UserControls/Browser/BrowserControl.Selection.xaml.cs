@@ -5,10 +5,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 {
     public partial class BrowserControl
     {
-        private const double SWIPE_SELECTION_MIN_HORIZONTAL_THRESHOLD = 10d;
+        internal const double SWIPE_SELECTION_MIN_HORIZONTAL_THRESHOLD = 10d;
+
         private readonly SwipeSelectionManager _swipeSelectionManager = new();
         private Point _swipeOriginCenterPoint;
         private Point? _swipeStartPan;
+        private double _swipeOriginItemHeight;
         private double _currentScrollY;
         private Dictionary<BrowserItemViewModel, int>? _swipeIndexMap;
 
@@ -76,10 +78,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                             return;
 
                         _swipeSelectionManager.Begin(originItem);
-                        BeginSelectionRectangle(originView, originItem, e.TotalX, e.TotalY);
+                        BeginSelectionRectangle(originItem, originView.Height, e.TotalX, e.TotalY);
                     }
 
-                    UpdateSelectionRectangle(originView, e.TotalX, e.TotalY);
+                    UpdateSelectionRectangle(e.TotalX, e.TotalY);
                     break;
 
                 case GestureStatus.Completed:
@@ -90,12 +92,57 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             }
         }
 
-        private void BeginSelectionRectangle(View originView, BrowserItemViewModel originItem, double totalX, double totalY)
+        /// <summary>
+        /// Begins a swipe selection driven by platform (native) touch events. Used on Android,
+        /// where the gesture is claimed at the RecyclerView level instead of via MAUI gestures.
+        /// </summary>
+        /// <param name="originIndex">The index of the item the gesture started on.</param>
+        /// <param name="originItemHeight">The height of the origin item, in device-independent units.</param>
+        /// <param name="totalX">The horizontal pan total at the time selection was claimed.</param>
+        /// <param name="totalY">The vertical pan total at the time selection was claimed.</param>
+        /// <returns>True when the selection was started; otherwise false.</returns>
+        internal bool TryBeginPlatformSwipeSelection(int originIndex, double originItemHeight, double totalX, double totalY)
+        {
+            if (!IsSelecting || ItemsSource is null)
+                return false;
+
+            if (originIndex < 0 || originIndex >= ItemsSource.Count)
+                return false;
+
+            var originItem = ItemsSource[originIndex];
+            _swipeSelectionManager.Begin(originItem);
+            BeginSelectionRectangle(originItem, originItemHeight, totalX, totalY);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Updates a swipe selection started with <see cref="TryBeginPlatformSwipeSelection"/>.
+        /// </summary>
+        internal void UpdatePlatformSwipeSelection(double totalX, double totalY)
+        {
+            if (!_swipeSelectionManager.IsActive)
+                return;
+
+            UpdateSelectionRectangle(totalX, totalY);
+        }
+
+        /// <summary>
+        /// Ends a swipe selection started with <see cref="TryBeginPlatformSwipeSelection"/>.
+        /// </summary>
+        internal void EndPlatformSwipeSelection()
+        {
+            _swipeSelectionManager.End();
+            EndSelectionRectangle();
+        }
+
+        private void BeginSelectionRectangle(BrowserItemViewModel originItem, double originItemHeight, double totalX, double totalY)
         {
             if (_collectionView is null || ItemsSource is null)
                 return;
 
-            GetItemLayout(originView, out var columns, out var itemWidth, out var itemHeight,
+            _swipeOriginItemHeight = originItemHeight;
+            GetItemLayout(out var columns, out var itemWidth, out var itemHeight,
                 out var hSpacing, out var vSpacing, out var offsetX, out var offsetY);
 
             // Snapshot item positions once per gesture - looking indices up per item on
@@ -121,12 +168,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             SelectionRectangleCanvas.IsVisible = true;
         }
 
-        private void UpdateSelectionRectangle(View originView, double totalX, double totalY)
+        private void UpdateSelectionRectangle(double totalX, double totalY)
         {
             if (_collectionView is null || ItemsSource is null || _swipeStartPan is null)
                 return;
 
-            GetItemLayout(originView, out var columns, out var itemWidth, out var itemHeight,
+            GetItemLayout(out var columns, out var itemWidth, out var itemHeight,
                 out var hSpacing, out var vSpacing, out var offsetX, out var offsetY);
 
             var deltaX = totalX - _swipeStartPan.Value.X;
@@ -145,7 +192,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             PositionSelectionRectangle(hitRectCanvas);
 
             // Get current scroll offset again (it might have changed during the gesture)
-            double scrollY = GetCurrentScrollY();
+            var scrollY = GetCurrentScrollY();
 
             // Transform hit rectangle into CONTENT coordinates by adding scroll offset
             var hitRectContent = new Rect(
@@ -187,7 +234,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             SelectionRectangleView.HeightRequest = rect.Height;
         }
 
-        private void GetItemLayout(View originView, out int columns, out double itemWidth, out double itemHeight,
+        private void GetItemLayout(out int columns, out double itemWidth, out double itemHeight,
             out double hSpacing, out double vSpacing, out double contentOffsetX, out double contentOffsetY)
         {
             hSpacing = 0;
@@ -206,14 +253,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             var availableWidth = _collectionView.Width - _collectionView.Margin.Left - _collectionView.Margin.Right;
             itemWidth = (availableWidth - hSpacing * (columns - 1)) / columns;
-            itemHeight = columns == 1 ? originView.Height : itemWidth;
+            itemHeight = columns == 1 ? _swipeOriginItemHeight : itemWidth;
         }
 
-        /// <summary>Retrieves the current vertical scroll offset of the CollectionView.</summary>
+        /// <summary>Retrieves the current vertical scroll offset of the CollectionView, in device-independent units.</summary>
         /// <remarks>
         /// The offset is tracked via the Scrolled event - the CollectionView is backed by a native
-        /// list (UICollectionView/RecyclerView), so there is no MAUI ScrollView in its visual tree
-        /// to query. Swipe selection is iOS-only, where VerticalOffset is already in DIPs.
+        /// list (UICollectionView/RecyclerView), so there is no MAUI ScrollView in its visual tree to query.
         /// </remarks>
         private double GetCurrentScrollY()
         {
@@ -222,7 +268,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
         private void ItemsCollectionView_Scrolled(object? sender, ItemsViewScrolledEventArgs e)
         {
+#if ANDROID
+            // On Android the CollectionView reports scroll offsets in pixels
+            _currentScrollY = e.VerticalOffset / DeviceDisplay.MainDisplayInfo.Density;
+#else
             _currentScrollY = e.VerticalOffset;
+#endif
         }
 
         private void RegisterItemContainerPanGesture(object? sender)
@@ -245,8 +296,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 #if ANDROID
             View _)
         {
-            // On Android, PanGestureRecognizer conflicts with TapGestureRecognizer,
-            // preventing tap-to-select from working. Skip swipe-selection on Android.
+            // On Android, MAUI's PanGestureRecognizer conflicts with the TapGestureRecognizer and
+            // loses the gesture to RecyclerView scrolling and SwipeRefreshLayout interception.
+            // Swipe-selection is instead implemented natively at the RecyclerView level
+            // (see SwipeSelectionItemTouchListener, attached in BrowserControl.Rendering)
         }
 #else
             View view)

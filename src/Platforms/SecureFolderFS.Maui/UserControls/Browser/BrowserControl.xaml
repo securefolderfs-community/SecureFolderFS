@@ -341,7 +341,7 @@
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
-        <RefreshView Refreshing="RefreshView_Refreshing">
+        <RefreshView x:Name="RootRefreshView" Refreshing="RefreshView_Refreshing">
             <Grid x:Name="CollectionViewContainer">
                 <Grid.GestureRecognizers>
                     <DropGestureRecognizer
