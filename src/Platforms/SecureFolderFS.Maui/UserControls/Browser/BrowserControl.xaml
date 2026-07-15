@@ -298,9 +298,12 @@
                             </Grid>
                         </Border>
 
+                        <!--  The checkbox is shown for every item while selecting, so the mode is
+                              visually discoverable even before anything is selected  -->
                         <Grid
                             Margin="0,0,4,4"
                             HorizontalOptions="End"
+                            IsVisible="{Binding ParentFolder.BrowserViewModel.IsSelecting, Mode=OneWay}"
                             VerticalOptions="End">
                             <OnPlatform x:TypeArguments="Shape">
                                 <On Platform="iOS">
@@ -320,7 +323,7 @@
                                 </On>
                             </OnPlatform>
 
-                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" IsVisible="{Binding IsSelected, Mode=OneWay}" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                         </Grid>
                     </Grid>
                 </apesui:ContextMenuContainer.Content>
@@ -357,9 +360,10 @@
                 <CollectionView
                     x:Name="ItemsCollectionView"
                     IsVisible="{Binding ItemsSource.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
-                    ItemSizingStrategy="MeasureAllItems"
+                    ItemSizingStrategy="MeasureFirstItem"
                     ItemsSource="{Binding ItemsSource, Mode=OneWay}"
                     Loaded="ItemsCollectionView_Loaded"
+                    Scrolled="ItemsCollectionView_Scrolled"
                     SizeChanged="ItemsCollectionView_SizeChanged"
                     ZIndex="0">
                     <CollectionView.ItemTemplate>

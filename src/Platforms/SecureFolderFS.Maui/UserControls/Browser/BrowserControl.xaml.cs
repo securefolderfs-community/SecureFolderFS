@@ -1,7 +1,9 @@
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Maui.UserControls.Browser
@@ -11,18 +13,37 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         public BrowserControl()
         {
             _thumbnailSemaphore = new SemaphoreSlim(4, 4);
+            _thumbnailCts = new CancellationTokenSource();
             _settingsService = DI.Service<ISettingsService>();
             InitializeComponent();
         }
 
-        private void RefreshView_Refreshing(object? sender, EventArgs e)
+        private async void RefreshView_Refreshing(object? sender, EventArgs e)
         {
             if (sender is not RefreshView refreshView)
                 return;
 
-            RefreshCommand?.Execute(null);
-            refreshView.IsRefreshing = false;
+            try
+            {
+                // Keep the spinner visible until the refresh actually completes
+                if (RefreshCommand is IAsyncRelayCommand asyncRefreshCommand)
+                    await asyncRefreshCommand.ExecuteAsync(null);
+                else
+                    RefreshCommand?.Execute(null);
+            }
+            finally
+            {
+                refreshView.IsRefreshing = false;
+            }
         }
+
+        public BrowserViewModel? ViewModel
+        {
+            get => (BrowserViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly BindableProperty ViewModelProperty =
+            BindableProperty.Create(nameof(ViewModel), typeof(BrowserViewModel), typeof(BrowserControl), defaultValue: null);
 
         public bool IsReadOnly
         {

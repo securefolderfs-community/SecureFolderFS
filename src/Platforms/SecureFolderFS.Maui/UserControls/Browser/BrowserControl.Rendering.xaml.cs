@@ -12,6 +12,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private readonly ISettingsService _settingsService;
         private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
+        private BrowserViewType? _appliedViewType;
 
         /// <summary>
         /// Determines if the CollectionView can be reloaded.
@@ -20,6 +21,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         public bool CanReloadCollection()
         {
             return _skipCollectionViewLayoutPass == 0;
+        }
+
+        /// <summary>
+        /// Determines whether a reload would actually recreate the CollectionView,
+        /// i.e. whether the applied layout differs from the requested <see cref="ViewType"/>.
+        /// </summary>
+        /// <returns>Returns true if a reload is needed; otherwise, false.</returns>
+        public bool NeedsCollectionReload()
+        {
+            return _appliedViewType != ViewType;
         }
 
         /// <summary>
@@ -35,6 +46,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             }
 
             if (_collectionView is null)
+                return;
+
+            // Recreating the native list is expensive - skip when the layout did not change
+            if (_appliedViewType == ViewType)
                 return;
 
             // Find the parent container
@@ -56,7 +71,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             var newCollectionView = new CollectionView()
             {
                 ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType),
-                ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                // Items are uniformly sized within every layout, so measuring one is enough
+                ItemSizingStrategy = ItemSizingStrategy.MeasureFirstItem,
                 ItemTemplate = itemTemplate,
                 Margin = ViewType is BrowserViewType.SmallGridView or BrowserViewType.MediumGridView or BrowserViewType.LargeGridView
                     ? new(16d)
@@ -85,12 +101,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Wire up the events
             newCollectionView.Loaded += ItemsCollectionView_Loaded;
             newCollectionView.SizeChanged += ItemsCollectionView_SizeChanged;
+            newCollectionView.Scrolled += ItemsCollectionView_Scrolled;
 
             // Add the new CollectionView to the container
             container.Children.Add(newCollectionView);
 
             // Update our reference
             _collectionView = newCollectionView;
+            _appliedViewType = ViewType;
+            _currentScrollY = 0d;
 
             // Fade in
             await _collectionView.FadeToAsync(1, 100);
@@ -153,8 +172,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             _collectionView = sender as CollectionView;
 
-            // Set initial ItemsLayout since we removed the binding from XAML
-            _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+            // Set initial ItemsLayout since we removed the binding from XAML.
+            // Recreated collection views already arrive with the correct layout applied
+            if (_appliedViewType != ViewType)
+                _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+
+            _appliedViewType = ViewType;
 
 #if ANDROID
             // On Android, keep SelectionMode as None to prevent CollectionView re-layout
