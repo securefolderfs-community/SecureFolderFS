@@ -21,6 +21,8 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -201,6 +203,98 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         protected virtual Task DeleteSelectedAsync(CancellationToken cancellationToken)
         {
             return ExecuteOnSelectionAsync(static item => item.DeleteCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual async Task CompressSelectedAsync(CancellationToken cancellationToken)
+        {
+            if (Options.IsReadOnly)
+                return;
+
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                return;
+
+            if (TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+
+            var items = CurrentFolder.SelectedItems.ToArray();
+            if (items.IsEmpty())
+                return;
+
+            IsSelecting = false;
+
+            var desiredName = items.Length == 1
+                ? $"{Path.GetFileNameWithoutExtension(items[0].Inner.Name)}.zip"
+                : "Archive.zip";
+            var archiveName = CollisionHelpers.GetAvailableName(desiredName, CurrentFolder.Items.Select(x => x.Inner.Name));
+
+            IFile? archiveFile = null;
+            try
+            {
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
+                transferViewModel.ShowIndeterminate("Compressing".ToLocalized());
+
+                archiveFile = await modifiableFolder.CreateFileAsync(archiveName, false, cts.Token);
+                await using (var archiveStream = await archiveFile.OpenWriteAsync(cts.Token))
+                await using (var zipArchive = new ZipArchive(archiveStream, ZipArchiveMode.Create))
+                {
+                    foreach (var item in items)
+                        await AddToArchiveAsync(zipArchive, item.Inner, string.Empty, cts.Token);
+                }
+
+                CurrentFolder.Items.Insert(new FileViewModel(archiveFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+            }
+            catch (OperationCanceledException)
+            {
+                await CleanupPartialArchiveAsync(archiveFile);
+            }
+            catch (Exception ex)
+            {
+                await CleanupPartialArchiveAsync(archiveFile);
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
+            }
+            finally
+            {
+                await transferViewModel.HideAsync();
+            }
+        }
+
+        private static async Task AddToArchiveAsync(ZipArchive zipArchive, IStorable storable, string basePath, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            switch (storable)
+            {
+                case IFile file:
+                {
+                    var entry = zipArchive.CreateEntry($"{basePath}{file.Name}", CompressionLevel.Optimal);
+                    await using var entryStream = entry.Open();
+                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
+                    await sourceStream.CopyToAsync(entryStream, cancellationToken);
+                    break;
+                }
+
+                case IFolder folder:
+                {
+                    await foreach (var item in folder.GetItemsAsync(StorableType.All, cancellationToken))
+                        await AddToArchiveAsync(zipArchive, item, $"{basePath}{folder.Name}/", cancellationToken);
+                    break;
+                }
+            }
+        }
+
+        private async Task CleanupPartialArchiveAsync(IFile? archiveFile)
+        {
+            if (archiveFile is not IStorableChild archiveChild || CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                return;
+
+            try
+            {
+                await modifiableFolder.DeleteAsync(archiveChild, CancellationToken.None);
+            }
+            catch (Exception)
+            {
+                // The partial archive could not be removed - it will show up on the next refresh
+            }
         }
 
         private async Task ExecuteOnSelectionAsync(Func<BrowserItemViewModel, Task> action)
