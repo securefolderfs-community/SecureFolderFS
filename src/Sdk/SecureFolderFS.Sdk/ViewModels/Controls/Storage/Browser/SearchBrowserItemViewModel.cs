@@ -84,13 +84,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (generatedThumbnail is null)
                 return;
 
+            // Cache the thumbnail BEFORE handing the stream to the UI (use await) because both the cache copy
+            // and the image decoder reposition the same stream, so they must not overlap
+            await _thumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken).ConfigureAwait(false);
+
             await _uiContext.PostOrExecuteAsync(() =>
             {
                 Thumbnail = generatedThumbnail;
                 return Task.CompletedTask;
             });
-
-            _ = _thumbnailCache.CacheThumbnailAsync(cacheKey, generatedThumbnail, cancellationToken);
         }
 
         public bool CanLoadThumbnail()

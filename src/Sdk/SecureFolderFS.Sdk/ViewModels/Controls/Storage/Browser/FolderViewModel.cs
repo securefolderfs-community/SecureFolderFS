@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels.Sorters;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -23,6 +25,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
     [Bindable(true)]
     public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
+        private const int LISTING_BATCH_SIZE = 32;
+
         private CancellationTokenSource? _listingCts;
 
         /// <summary>
@@ -87,26 +91,66 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             _listingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             var token = _listingCts.Token;
 
+            // The existing contents are only cleared once the first batch is ready, so a
+            // canceled or failed enumeration that produced nothing leaves them intact
+            var cleared = false;
+
             try
             {
                 var scope = Logger.GetPerformanceScope();
 
-                // Enumerate before mutating the collection, so a canceled or failed
-                // enumeration leaves the current contents intact
                 var isPickingFolder = BrowserViewModel.IsPickingFolder;
-                var items = await Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, token).ToArrayAsyncImpl(cancellationToken: token);
-                token.ThrowIfCancellationRequested();
+                var sorter = BrowserViewModel.Layouts.GetSorter();
 
-                SelectedItems.Clear();
-                Items.DisposeAll();
-                Items.Clear();
+                // Sorting by date needs the modification date before the item is inserted;
+                // for other sorters it is loaded lazily when the item scrolls into view
+                var needsDates = sorter is DateSorter;
 
-                BrowserViewModel.Layouts.GetSorter().SortCollection(items.Where(x => !isPickingFolder || x is IFolder).Select(x => (BrowserItemViewModel)(x switch
+                var batch = new List<BrowserItemViewModel>(LISTING_BATCH_SIZE);
+                await foreach (var item in Folder.GetItemsAsync(isPickingFolder ? StorableType.Folder : StorableType.All, token))
                 {
-                    IFile file => new FileViewModel(file, BrowserViewModel, this),
-                    IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),
-                    _ => throw new ArgumentOutOfRangeException(nameof(x))
-                })), Items);
+                    if (isPickingFolder && item is not IFolder)
+                        continue;
+
+                    var itemViewModel = (BrowserItemViewModel)(item switch
+                    {
+                        IFile file => new FileViewModel(file, BrowserViewModel, this),
+                        IFolder folder => new FolderViewModel(folder, BrowserViewModel, this),
+                        _ => throw new ArgumentOutOfRangeException(nameof(item))
+                    });
+
+                    if (needsDates)
+                    {
+                        itemViewModel.LastModified = item switch
+                        {
+                            IFile file => await file.GetDateModifiedAsync(token),
+                            IFolder folder => await folder.GetDateModifiedAsync(token),
+                            _ => null
+                        };
+                    }
+
+                    batch.Add(itemViewModel);
+                    if (batch.Count < LISTING_BATCH_SIZE)
+                        continue;
+
+                    FlushBatch(batch, sorter, ref cleared);
+
+                    // Let the UI render the batch and stay responsive even when
+                    // the enumeration completes synchronously (e.g. local storage)
+                    await Task.Yield();
+                    token.ThrowIfCancellationRequested();
+                }
+
+                token.ThrowIfCancellationRequested();
+                FlushBatch(batch, sorter, ref cleared);
+
+                // An empty enumeration never flushed - the folder no longer has any items
+                if (!cleared)
+                {
+                    SelectedItems.Clear();
+                    Items.DisposeAll();
+                    Items.Clear();
+                }
 
                 // Apply adaptive layout
                 if (SettingsService.UserSettings.IsAdaptiveLayoutEnabled && BrowserViewModel.TransferViewModel is { IsPickingFolder: false })
@@ -120,11 +164,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             }
             catch (Exception ex)
             {
-                // Only inform the user that the refresh failed and leave existing contents intact
                 Logger.LogError(ex, "Failed to list the contents of a folder.");
                 if (BrowserViewModel.TransferViewModel is { } transferViewModel)
                     await transferViewModel.ReportErrorAsync("FolderLoadFailed".ToLocalized());
             }
+        }
+
+        private void FlushBatch(List<BrowserItemViewModel> batch, IItemSorter<BrowserItemViewModel> sorter, ref bool cleared)
+        {
+            if (batch.Count == 0)
+                return;
+
+            if (!cleared)
+            {
+                SelectedItems.Clear();
+                Items.DisposeAll();
+                Items.Clear();
+                cleared = true;
+            }
+
+            foreach (var itemViewModel in batch)
+                Items.Insert(itemViewModel, sorter);
+
+            batch.Clear();
         }
 
         /// <inheritdoc/>
@@ -142,8 +204,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             await BrowserViewModel.InnerNavigator.NavigateAsync(this);
         }
 
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            // Stop an in-flight listing so it does not keep mutating Items after disposal
+            _listingCts?.TryCancel();
+            _listingCts?.Dispose();
+            _listingCts = null;
+            base.Dispose();
+        }
+
         private void ApplyAdaptiveLayout()
         {
+            // The user picked a layout manually - respect their choice
+            if (BrowserViewModel.Layouts.IsAdaptiveLayoutSuspended)
+                return;
+
             var itemCount = Items.Count;
             if (itemCount == 0)
                 return;
@@ -180,29 +256,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             if (imagePercentage + mediaPercentage >= 90f)
             {
                 // GalleryView or GridView
-                BrowserViewModel.Layouts.CurrentViewOption = SettingsService.UserSettings.AreThumbnailsEnabled
+                BrowserViewModel.Layouts.ApplyAdaptiveViewOption(SettingsService.UserSettings.AreThumbnailsEnabled
                     ? galleryView
-                    : gridView;
+                    : gridView);
             }
             else if (imagePercentage + mediaPercentage >= 70f)
             {
                 // GridView
-                BrowserViewModel.Layouts.CurrentViewOption = gridView;
+                BrowserViewModel.Layouts.ApplyAdaptiveViewOption(gridView);
             }
             else if (documentPercentage + folderPercentage >= 50f)
             {
                 // GridView
-                BrowserViewModel.Layouts.CurrentViewOption = gridView;
+                BrowserViewModel.Layouts.ApplyAdaptiveViewOption(gridView);
             }
             else if (otherPercentage + folderPercentage >= 50f)
             {
                 // ColumnView
-                BrowserViewModel.Layouts.CurrentViewOption = columnView;
+                BrowserViewModel.Layouts.ApplyAdaptiveViewOption(columnView);
             }
             else
             {
                 // ListView
-                BrowserViewModel.Layouts.CurrentViewOption = listView;
+                BrowserViewModel.Layouts.ApplyAdaptiveViewOption(listView);
             }
         }
     }
