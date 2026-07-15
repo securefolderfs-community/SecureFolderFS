@@ -9,7 +9,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private readonly SwipeSelectionManager _swipeSelectionManager = new();
         private Point _swipeOriginCenterPoint;
         private Point? _swipeStartPan;
-        private ScrollView? _scrollView;
+        private double _currentScrollY;
+        private Dictionary<BrowserItemViewModel, int>? _swipeIndexMap;
 
         private async void TapGestureRecognizer_Tapped(object? sender, TappedEventArgs e)
         {
@@ -24,11 +25,24 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             else
             {
                 view.IsEnabled = false;
-                if (itemViewModel is not FolderViewModel)
+                var skipReload = itemViewModel is not FolderViewModel;
+                if (skipReload)
                     _skipCollectionViewLayoutPass++;
 
-                await itemViewModel.OpenCommand.ExecuteAsync(null);
-                view.IsEnabled = true;
+                try
+                {
+                    await itemViewModel.OpenCommand.ExecuteAsync(null);
+                }
+                catch (Exception)
+                {
+                    // The open failed, so no navigation will consume the skipped layout pass
+                    if (skipReload && _skipCollectionViewLayoutPass > 0)
+                        _skipCollectionViewLayoutPass--;
+                }
+                finally
+                {
+                    view.IsEnabled = true;
+                }
             }
         }
 
@@ -84,7 +98,13 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             GetItemLayout(originView, out var columns, out var itemWidth, out var itemHeight,
                 out var hSpacing, out var vSpacing, out var offsetX, out var offsetY);
 
-            var originIndex = ItemsSource.IndexOf(originItem);
+            // Snapshot item positions once per gesture - looking indices up per item on
+            // every pan update would be quadratic in the number of items
+            _swipeIndexMap = new Dictionary<BrowserItemViewModel, int>(ItemsSource.Count);
+            for (var i = 0; i < ItemsSource.Count; i++)
+                _swipeIndexMap[ItemsSource[i]] = i;
+
+            var originIndex = _swipeIndexMap.GetValueOrDefault(originItem, 0);
             var originCol = originIndex % columns;
             var originRow = originIndex / columns;
 
@@ -136,7 +156,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
 
             _swipeSelectionManager.UpdateFromRectangle(ItemsSource, item =>
             {
-                var index = ItemsSource.IndexOf(item);
+                if (_swipeIndexMap is null || !_swipeIndexMap.TryGetValue(item, out var index))
+                    return false;
+
                 var col = index % columns;
                 var row = index / columns;
 
@@ -155,6 +177,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             SelectionRectangleCanvas.IsVisible = false;
             _swipeStartPan = null;
+            _swipeIndexMap = null;
         }
 
         private void PositionSelectionRectangle(Rect rect)
@@ -187,33 +210,19 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         }
 
         /// <summary>Retrieves the current vertical scroll offset of the CollectionView.</summary>
+        /// <remarks>
+        /// The offset is tracked via the Scrolled event - the CollectionView is backed by a native
+        /// list (UICollectionView/RecyclerView), so there is no MAUI ScrollView in its visual tree
+        /// to query. Swipe selection is iOS-only, where VerticalOffset is already in DIPs.
+        /// </remarks>
         private double GetCurrentScrollY()
         {
-            if (_collectionView == null)
-                return 0;
-
-            // Lazy‑load the internal ScrollView
-            if (_scrollView == null)
-            {
-                _scrollView = GetInternalScrollView(_collectionView);
-            }
-
-            return _scrollView?.ScrollY ?? 0;
+            return _currentScrollY;
         }
 
-        /// <summary>Finds the internal ScrollView of a CollectionView via the visual tree.</summary>
-        private static ScrollView? GetInternalScrollView(CollectionView collectionView)
+        private void ItemsCollectionView_Scrolled(object? sender, ItemsViewScrolledEventArgs e)
         {
-            if (collectionView is not IVisualTreeElement vte)
-                return null;
-
-            // Search the first‑level children – in practice the ScrollView is a direct child.
-            foreach (var child in vte.GetVisualChildren())
-            {
-                if (child is ScrollView sv)
-                    return sv;
-            }
-            return null;
+            _currentScrollY = e.VerticalOffset;
         }
 
         private void RegisterItemContainerPanGesture(object? sender)
