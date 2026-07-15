@@ -61,6 +61,7 @@
                             mi:MauiIcon.Value="{mi_material:Material Close,
                                                                      IconSize=20}"
                             Clicked="Close_Clicked"
+                            SemanticProperties.Description="{l:ResourceString Rid=Close}"
                             Style="{StaticResource TransparentButtonStyle}"
                             VerticalOptions="Center" />
 
@@ -82,6 +83,7 @@
                                                                          IconSize=20}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=GetInfo}"
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
@@ -90,6 +92,7 @@
                                                                          IconSize=20}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Share}"
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
@@ -115,6 +118,7 @@
                                                                            IconColor='#007bff'}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=GetInfo}"
                                 Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
@@ -124,6 +128,7 @@
                                                                            IconColor='#007bff'}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Share}"
                                 Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
