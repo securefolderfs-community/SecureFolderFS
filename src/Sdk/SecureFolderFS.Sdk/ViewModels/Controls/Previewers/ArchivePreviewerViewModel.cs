@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +20,8 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
+using SharpCompress.Archives;
+using SharpCompress.Readers;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
@@ -28,6 +29,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
     [Bindable(true)]
     public sealed partial class ArchivePreviewerViewModel : FilePreviewerViewModel
     {
+        // Formats readable through SharpCompress (7z and rar are read-only formats)
+        private static readonly string[] SupportedExtensions = [ ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".bz2", ".xz" ];
+
         private readonly FolderViewModel _folderViewModel;
         private readonly TransferViewModel? _transferViewModel;
 
@@ -48,9 +52,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // Only zip is supported via System.IO.Compression
             var extension = Path.GetExtension(Inner.Name).ToLowerInvariant();
-            IsSupported = extension == ".zip";
+            IsSupported = SupportedExtensions.Contains(extension);
 
             var size = await Inner.GetSizeAsync(cancellationToken);
             if (size is not null)
@@ -66,17 +69,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             IsProgressing = true;
             try
             {
+                // Protected archives need a password before extraction starts
+                string? password = null;
+                if (await IsPasswordProtectedAsync(cancellationToken))
+                {
+                    password = await RequestPasswordAsync();
+                    if (password is null)
+                        return;
+                }
+
                 if (_transferViewModel is not null)
                 {
                     _transferViewModel.TransferType = TransferType.Extract;
                     await _transferViewModel.PerformOperationAsync(async ct =>
                     {
-                        await ExtractArchiveAsync(ct);
+                        await ExtractArchiveAsync(password, ct);
                     }, cancellationToken);
                 }
                 else
                 {
-                    await ExtractArchiveAsync(cancellationToken);
+                    await ExtractArchiveAsync(password, cancellationToken);
                 }
 
                 if (OverlayService.CurrentView is PreviewerOverlayViewModel { PreviewerViewModel: { } viewModel } && viewModel == this)
@@ -97,13 +109,47 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
             }
         }
 
-        private async Task ExtractArchiveAsync(CancellationToken cancellationToken)
+        private async Task<bool> IsPasswordProtectedAsync(CancellationToken cancellationToken)
+        {
+            await using var fileStream = await Inner.OpenReadAsync(cancellationToken);
+            try
+            {
+                using var archive = ArchiveFactory.OpenArchive(fileStream, new ReaderOptions() { LeaveStreamOpen = true });
+                return archive.Entries.Any(static entry => entry.IsEncrypted);
+            }
+            catch (Exception)
+            {
+                // Archives with encrypted headers (e.g. rar, 7z) cannot even be enumerated
+                // without a password - treat open failures of supported formats as protected
+                return true;
+            }
+        }
+
+        private async Task<string?> RequestPasswordAsync()
+        {
+            var passwordViewModel = new RenameOverlayViewModel("EnterPassword".ToLocalized())
+            {
+                Message = "Password".ToLocalized()
+            };
+
+            var result = await OverlayService.ShowAsync(passwordViewModel);
+            if (!result.Positive() || string.IsNullOrEmpty(passwordViewModel.NewName))
+                return null;
+
+            return passwordViewModel.NewName;
+        }
+
+        private async Task ExtractArchiveAsync(string? password, CancellationToken cancellationToken)
         {
             if (_folderViewModel.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
             await using var fileStream = await Inner.OpenReadAsync(cancellationToken);
-            await using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+            using var archive = ArchiveFactory.OpenArchive(fileStream, new ReaderOptions()
+            {
+                Password = password,
+                LeaveStreamOpen = true
+            });
 
             // Map each root-level name in the archive to a collision-free name in the destination,
             // so extraction never silently merges with or overwrites existing items
@@ -117,10 +163,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 cancellationToken.ThrowIfCancellationRequested();
 
                 // Skip directory-only entries
-                if (string.IsNullOrEmpty(entry.Name))
+                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
                     continue;
 
-                var parts = entry.FullName.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+                var parts = entry.Key.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
 
                 // Guard against zip-slip: skip entries that could escape the destination folder
                 if (parts.Length == 0 || Array.Exists(parts, static part => part is ".." or "."))
@@ -180,14 +226,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 if (!hierarchyCreated)
                     continue;
 
-                var newFile = await targetFolder.CreateFileAsync(entry.Name, true, cancellationToken);
+                var newFile = await targetFolder.CreateFileAsync(parts[^1], true, cancellationToken);
                 await CopyEntryAsync(entry, newFile, cancellationToken);
             }
         }
 
-        private static async Task CopyEntryAsync(ZipArchiveEntry entry, IFile destinationFile, CancellationToken cancellationToken)
+        private static async Task CopyEntryAsync(IArchiveEntry entry, IFile destinationFile, CancellationToken cancellationToken)
         {
-            await using var entryStream = await entry.OpenAsync(cancellationToken);
+            await using var entryStream = await entry.OpenEntryStreamAsync(cancellationToken);
             await using var destinationStream = await destinationFile.OpenWriteAsync(cancellationToken);
             await entryStream.CopyToAsync(destinationStream, cancellationToken);
         }

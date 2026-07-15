@@ -236,10 +236,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                 archiveFile = await modifiableFolder.CreateFileAsync(archiveName, false, cts.Token);
                 await using (var archiveStream = await archiveFile.OpenWriteAsync(cts.Token))
-                await using (var zipArchive = new ZipArchive(archiveStream, ZipArchiveMode.Create))
                 {
-                    foreach (var item in items)
-                        await AddToArchiveAsync(zipArchive, item.Inner, string.Empty, cts.Token);
+                    // Wrap in a forward-only stream so ZipArchive never seeks back to patch headers.
+                    // Seeking back would force a read-modify-write on the write-only encrypting stream, corrupting already-written data
+                    await using var forwardOnlyStream = new ForwardOnlyWriteStream(archiveStream);
+                    await using (var zipArchive = new ZipArchive(forwardOnlyStream, ZipArchiveMode.Create))
+                    {
+                        foreach (var item in items)
+                            await AddToArchiveAsync(zipArchive, item.Inner, string.Empty, cts.Token);
+                    }
                 }
 
                 CurrentFolder.Items.Insert(new FileViewModel(archiveFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
