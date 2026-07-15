@@ -175,10 +175,10 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             if (stream.CanSeek)
                 stream.Position = 0L;
 
-            var libVlc = new LibVLC("--input-repeat=65545");
+            var libVlc = new LibVLC("--input-repeat=65535");
             var mediaInput = new StreamMediaInput(stream);
             var media = new Media(libVlc, mediaInput);
-            media.AddOption(":input-repeat=65545");
+            media.AddOption(":input-repeat=65535");
             var mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(libVlc)
             {
                 Media = media

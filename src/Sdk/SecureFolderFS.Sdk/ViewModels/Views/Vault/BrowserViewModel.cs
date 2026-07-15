@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.AppModels.Sorters;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -170,6 +171,50 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         [RelayCommand]
+        protected virtual void SelectAll()
+        {
+            if (!IsSelecting || CurrentFolder is null)
+                return;
+
+            CurrentFolder.Items.SelectAll();
+        }
+
+        [RelayCommand]
+        protected virtual Task MoveSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.MoveCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task CopySelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.CopyCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task ExportSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.ExportCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task DeleteSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.DeleteCommand.ExecuteAsync(null));
+        }
+
+        private async Task ExecuteOnSelectionAsync(Func<BrowserItemViewModel, Task> action)
+        {
+            // The item-level commands already operate on the whole selection
+            // when IsSelecting is active - delegate to any selected item
+            var selectedItem = CurrentFolder?.SelectedItems.FirstOrDefault();
+            if (selectedItem is null)
+                return;
+
+            await action(selectedItem);
+        }
+
+        [RelayCommand]
         protected virtual async Task SearchAsync()
         {
             if (CurrentFolder?.Inner is not IFolder searchedFolder)
@@ -242,10 +287,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 return;
 
             var originalSortOption = Layouts.CurrentSortOption;
+            var originalIsAscending = Layouts.IsAscending;
             await OverlayService.ShowAsync(Layouts);
 
-            if (originalSortOption != Layouts.CurrentSortOption)
-                Layouts.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            if (originalSortOption != Layouts.CurrentSortOption || originalIsAscending != Layouts.IsAscending)
+            {
+                // Date sorting needs modification dates, which are loaded lazily and may be
+                // missing for items that were never scrolled into view - relist to fetch them
+                if (Layouts.GetSorter() is DateSorter && CurrentFolder.Items.Any(x => x.LastModified is null))
+                    await CurrentFolder.ListContentsAsync(cancellationToken);
+                else
+                    Layouts.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            }
         }
 
         [RelayCommand]
@@ -278,6 +331,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (result.Aborted() || newItemViewModel.ItemName is null)
                 return;
 
+            // The collision check below runs against the loaded items, so make sure
+            // the listing is complete - otherwise CreateFileAsync(overwrite: false)
+            // could silently return an existing item instead of creating a new one
+            if (CurrentFolder.Items.IsEmpty())
+                await CurrentFolder.ListContentsAsync(cancellationToken);
+
             var formattedName = CollisionHelpers.GetAvailableName(
                     FormattingHelpers.SanitizeItemName(newItemViewModel.ItemName, "New item"),
                     CurrentFolder.Items.Select(x => x.Inner.Name));
@@ -304,10 +363,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (TransferViewModel is not null)
-                    await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await TransferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
         }
 
@@ -394,13 +453,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                         TransferViewModel.TransferType = TransferType.Copy;
                         using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                        var existingNames = new HashSet<string>(CurrentFolder.Items.Select(x => x.Inner.Name), StringComparer.OrdinalIgnoreCase);
                         await TransferViewModel.TransferAsync(galleryItems, async (item, token) =>
                         {
                             // Get available name to avoid collision
-                            var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+                            var availableName = CollisionHelpers.GetAvailableName(item.Name, existingNames);
 
                             // Copy
                             var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+                            existingNames.Add(availableName);
 
                             // Add to destination
                             CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
@@ -414,9 +475,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await TransferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {

@@ -26,12 +26,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         [ObservableProperty] private bool _IsAscending;
         [ObservableProperty] private string? _Title;
 
+        private bool _isInitialized;
+        private bool _isAdaptiveChange;
+
+        /// <summary>
+        /// Gets a value indicating whether the user manually picked a view option.
+        /// Once set, the adaptive layout no longer overrides the user's choice.
+        /// </summary>
+        public bool IsAdaptiveLayoutSuspended { get; private set; }
+
         public LayoutsViewModel()
         {
             SortOptions = new([
                 new(nameof(NameSorter), "Name".ToLocalized()),
                 new(nameof(KindSorter), "Kind".ToLocalized()),
-                new(nameof(SizeSorter), "Size".ToLocalized())
+                new(nameof(SizeSorter), "Size".ToLocalized()),
+                new(nameof(DateSorter), "DateModified".ToLocalized())
             ]);
             SizeOptions = new([
                 new("Small", "SmallSize".ToLocalized()),
@@ -50,6 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             CurrentSizeOption = SizeOptions[1];
             CurrentViewOption = ViewOptions[2];
             Title = "ViewOptions".ToLocalized();
+            _isInitialized = true;
         }
 
         public IItemSorter<BrowserItemViewModel> GetSorter()
@@ -59,12 +70,36 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 nameof(NameSorter) => IsAscending ? NameSorter.Ascending : NameSorter.Descending,
                 nameof(KindSorter) => IsAscending ? KindSorter.Ascending : KindSorter.Descending,
                 nameof(SizeSorter) => IsAscending ? SizeSorter.Ascending : SizeSorter.Descending,
-                _ => NameSorter.Descending
+                nameof(DateSorter) => IsAscending ? DateSorter.Ascending : DateSorter.Descending,
+                _ => NameSorter.Ascending
             };
+        }
+
+        /// <summary>
+        /// Changes <see cref="CurrentViewOption"/> on behalf of the adaptive layout,
+        /// without counting the change as a manual user override.
+        /// </summary>
+        /// <param name="viewOption">The view option to apply.</param>
+        public void ApplyAdaptiveViewOption(PickerOptionViewModel? viewOption)
+        {
+            _isAdaptiveChange = true;
+            try
+            {
+                CurrentViewOption = viewOption;
+            }
+            finally
+            {
+                _isAdaptiveChange = false;
+            }
         }
 
         partial void OnCurrentViewOptionChanged(PickerOptionViewModel? value)
         {
+            // A view option set after construction that did not come from the adaptive
+            // layout is a manual user choice - stop the adaptive layout from fighting it
+            if (_isInitialized && !_isAdaptiveChange)
+                IsAdaptiveLayoutSuspended = true;
+
             switch (value?.Id)
             {
                 case nameof(BrowserViewType.ListView):
