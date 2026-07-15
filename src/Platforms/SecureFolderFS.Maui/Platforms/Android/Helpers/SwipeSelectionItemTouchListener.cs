@@ -1,3 +1,4 @@
+using Android.Runtime;
 using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using SecureFolderFS.Maui.UserControls.Browser;
@@ -17,9 +18,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
     /// untouched and scroll the list normally. Taps and long-presses (context menu) never move
     /// past the intent threshold and keep working unchanged.
     /// </remarks>
-    internal sealed class SwipeSelectionItemTouchListener : Java.Lang.Object, RecyclerView.IOnItemTouchListener
+    public sealed class SwipeSelectionItemTouchListener : Java.Lang.Object, RecyclerView.IOnItemTouchListener
     {
-        private readonly BrowserControl _browserControl;
+        private readonly BrowserControl? _browserControl;
         private float _downX;
         private float _downY;
         private bool _isTracking;
@@ -30,10 +31,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             _browserControl = browserControl;
         }
 
+        // Activation constructor used when the Android runtime marshals an existing Java peer
+        // back into managed code. Required boilerplate for Java.Lang.Object subclasses.
+        public SwipeSelectionItemTouchListener(nint javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer)
+        {
+        }
+
         /// <inheritdoc/>
         public bool OnInterceptTouchEvent(RecyclerView rv, MotionEvent e)
         {
-            if (!_browserControl.IsSelecting)
+            if (_browserControl is null || !_browserControl.IsSelecting)
                 return false;
 
             switch (e.ActionMasked)
@@ -101,7 +109,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         /// <inheritdoc/>
         public void OnTouchEvent(RecyclerView rv, MotionEvent e)
         {
-            if (!_isSelectionActive)
+            if (!_isSelectionActive || _browserControl is null)
                 return;
 
             switch (e.ActionMasked)
