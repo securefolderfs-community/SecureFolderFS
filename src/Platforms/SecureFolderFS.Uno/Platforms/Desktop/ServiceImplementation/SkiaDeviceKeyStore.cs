@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Uno.ServiceImplementation;
+using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {

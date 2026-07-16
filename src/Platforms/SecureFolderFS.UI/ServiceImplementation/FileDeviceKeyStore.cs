@@ -9,12 +9,12 @@ using SecureFolderFS.Sdk.AppPlatform.Services;
 using SecureFolderFS.Storage.Extensions;
 using static SecureFolderFS.UI.Constants.FileNames.Accounts;
 
-namespace SecureFolderFS.Uno.ServiceImplementation
+namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <summary>
     /// File-based <see cref="IDeviceKeyStore"/>. Stores device key material for one or more accounts, each in its own subfolder under a base folder.
     /// </summary>
-    internal abstract class FileDeviceKeyStore : IDeviceKeyStore
+    public abstract class FileDeviceKeyStore : IDeviceKeyStore
     {
         private readonly IModifiableFolder _baseFolder;
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
             if (accountsFolder is not IModifiableFolder modifiableFolder)
                 throw new InvalidOperationException("The accounts folder is not modifiable.");
-            
+
             var file = await modifiableFolder.TryGetFileByNameAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, cancellationToken);
             if (file is not null && Guid.TryParse(await ReadProtectedTextAsync(file, cancellationToken), out var existing))
                 return existing;
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is null)
                     continue;
-                
+
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
                 {
                     var lines = (await ReadProtectedTextAsync(metaFile, cancellationToken)).Split(Environment.NewLine);
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(account.Id, false, cancellationToken);
             if (accountFolder is not IModifiableFolder modifiableAccountFolder)
                 throw new InvalidOperationException("The account folder is not modifiable.");
-            
+
             var metadataFile = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_METADATA_FILENAME, true, cancellationToken);
             var content = string.Join(Environment.NewLine,
                 account.Id,
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
             if (accountsFolder is null)
                 return false;
-            
+
             var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
             if (accountFolder is null)
                 return false;
@@ -122,11 +122,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
             if (accountsFolder is null)
                 throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
-            
+
             var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
             if (accountFolder is null || await accountFolder.TryGetFileByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not { } file)
                 throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
-            
+
             var protectedBytes = await file.ReadBytesAsync(cancellationToken);
             return await UnprotectAsync(protectedBytes, cancellationToken);
         }
@@ -137,11 +137,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
             if (accountsFolder is not IModifiableFolder modifiableAccountsFolder)
                 throw new InvalidOperationException("The accounts folder is not modifiable.");
-            
+
             var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(accountId, false, cancellationToken);
             if (accountFolder is not IModifiableFolder modifiableAccountFolder)
                 throw new InvalidOperationException("The account folder is not modifiable.");
-            
+
             var file = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_DEVICE_KEY_FILENAME, true, cancellationToken);
             var protectedBytes = await ProtectAsync(privateKey, cancellationToken);
             await file.WriteBytesAsync(protectedBytes, cancellationToken);
@@ -153,7 +153,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.TryGetFolderByNameAsync(ACCOUNTS_FOLDER_NAME, cancellationToken);
             if (accountsFolder is null)
                 return null;
-            
+
             var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
             if (accountFolder is null || await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_ID_FILENAME, cancellationToken) is not IFile file)
                 return null;
@@ -168,11 +168,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             var accountsFolder = await _baseFolder.CreateFolderAsync(ACCOUNTS_FOLDER_NAME, false, cancellationToken);
             if (accountsFolder is not IModifiableFolder modifiableAccountsFolder)
                 throw new InvalidOperationException("The accounts folder is not modifiable.");
-            
+
             var accountFolder = await modifiableAccountsFolder.CreateFolderAsync(accountId, false, cancellationToken);
             if (accountFolder is not IModifiableFolder modifiableAccountFolder)
                 throw new InvalidOperationException("The account folder is not modifiable.");
-            
+
             var file = await modifiableAccountFolder.CreateFileAsync(ACCOUNT_DEVICE_ID_FILENAME, false, cancellationToken);
             await WriteProtectedTextAsync(file, deviceId.ToString(), cancellationToken);
         }
@@ -187,7 +187,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (await modifiableFolder.TryGetFirstByNameAsync(accountId, cancellationToken) is { } accountFolder)
                 await modifiableFolder.DeleteAsync(accountFolder, cancellationToken);
         }
-        
+
         private async Task<string> ReadProtectedTextAsync(IFile file, CancellationToken cancellationToken)
         {
             var protectedBytes = await file.ReadBytesAsync(cancellationToken);
@@ -195,7 +195,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             return Encoding.UTF8.GetString(data);
         }
-        
+
         private async Task WriteProtectedTextAsync(IFile file, string text, CancellationToken cancellationToken)
         {
             var protectedBytes = await ProtectAsync(Encoding.UTF8.GetBytes(text), cancellationToken);
