@@ -1,5 +1,6 @@
 #if APP_PLATFORM_PRESENT
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     x.ServerUrl,
                     icon,
                     ProviderId))
-                .ToList();
+                .ToImmutableList();
         }
 
         /// <inheritdoc/>
