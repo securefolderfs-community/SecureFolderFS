@@ -124,6 +124,7 @@ namespace SecureFolderFS.Uno.PInvoke
         public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
         public const string SecurityLib = "/System/Library/Frameworks/Security.framework/Security";
         public const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
+        public const string LibObjc = "libobjc.dylib";
         public const uint KCfStringEncodingUtf8 = 0x08000100;
 
         public const int ErrSecSuccess = 0;
@@ -155,45 +156,39 @@ namespace SecureFolderFS.Uno.PInvoke
             IntPtr name,
             IntPtr obj);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.Bool)] bool value);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
+        [LibraryImport(LibObjc, EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr sel_registerName(string name);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
+        [LibraryImport(LibObjc, EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr objc_getClass(string className);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
 
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFRetain(IntPtr cf);
 
         [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
@@ -210,19 +205,19 @@ namespace SecureFolderFS.Uno.PInvoke
         [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFNumberCreate(IntPtr allocator, long theType, IntPtr valuePtr);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        [LibraryImport(SecurityLib)]
         public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        [LibraryImport(SecurityLib)]
         public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        [LibraryImport(SecurityLib)]
         public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        [LibraryImport(SecurityLib)]
         public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
+        [LibraryImport(SecurityLib)]
         public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
 
         // Global symbol accessors for Security framework constants
