@@ -75,7 +75,8 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
 #endif
 #if APP_PLATFORM_PRESENT && !WINDOWS
-                    .AddSingleton<IDeviceKeyStore>(new SkiaDeviceKeyStore(settingsFolder))
+                    .AddSingleton<IPropertyStoreService>(new SkiaPropertyStoreService(settingsFolder))
+                    .AddSingleton<IDeviceKeyStore>(sp => new SecurePropertyKeyStore(sp.GetRequiredService<IPropertyStoreService>().SecurePropertyStore, settingsFolder))
                     .AddSingleton<IAccountProvider>(sp => new AppPlatformAccountProvider(sp.GetRequiredService<IDeviceKeyStore>()))
 #endif
 

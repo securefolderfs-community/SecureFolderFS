@@ -205,7 +205,7 @@ namespace SecureFolderFS.Uno.PInvoke
                 //   kSecAttrAccessControl: access
                 var privateKeyAttrs = CreateCFDictionary(
                     new[] { _kSecAttrIsPermanent, _kSecAttrApplicationTag, _kSecAttrAccessControl },
-                    new[] { GetCFBooleanTrueValue(), tagData, access },
+                    new[] { GetCFBooleanTrue(), tagData, access },
                     3);
 
                 // Build generation parameters dictionary
@@ -250,7 +250,7 @@ namespace SecureFolderFS.Uno.PInvoke
 
                 var query = CreateCFDictionary(
                     new[] { _kSecClass, _kSecAttrApplicationTag, _kSecAttrKeyClass, _kSecAttrTokenID, _kSecReturnRef, _kSecMatchLimit },
-                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave, GetCFBooleanTrueValue(), _kSecMatchLimitOne },
+                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave, GetCFBooleanTrue(), _kSecMatchLimitOne },
                     6);
 
                 var status = SecItemCopyMatching(query, out var result);
@@ -352,13 +352,6 @@ namespace SecureFolderFS.Uno.PInvoke
             #endregion
 
             #region Helpers
-
-            private static IntPtr GetCFBooleanTrueValue()
-            {
-                var cfLib = dlopen("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", 1);
-                var ptr = dlsym(cfLib, "kCFBooleanTrue");
-                return Marshal.ReadIntPtr(ptr);
-            }
 
             [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
             private static partial IntPtr SecAccessControlCreateWithFlags(
