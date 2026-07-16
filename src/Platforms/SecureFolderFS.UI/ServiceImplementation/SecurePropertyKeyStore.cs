@@ -1,3 +1,4 @@
+#if APP_PLATFORM_PRESENT
 using System;
 using System.Security.Cryptography;
 using System.Threading;
@@ -62,7 +63,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 data.AsSpan(NONCE_SIZE, data.Length - NONCE_SIZE - TAG_SIZE),
                 key,
                 data.AsSpan(0, NONCE_SIZE),
-                data.AsSpan(NONCE_SIZE + data.Length - TAG_SIZE, TAG_SIZE),
+                data.AsSpan(data.Length - TAG_SIZE, TAG_SIZE),
                 plaintext,
                 ReadOnlySpan<byte>.Empty
                 );
@@ -91,3 +92,4 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
     }
 }
+#endif
