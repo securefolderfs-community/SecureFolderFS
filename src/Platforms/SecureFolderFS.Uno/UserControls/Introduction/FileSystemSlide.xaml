@@ -207,16 +207,26 @@
         </local:FeatureSlide.LeftSlot>
 
         <local:FeatureSlide.RightSlot>
-            <ListView
-                VerticalAlignment="Bottom"
-                IsItemClickEnabled="True"
-                ItemClick="FileSystems_ItemClick"
-                ItemsSource="{x:Bind OverlayViewModel.FileSystems, Mode=OneWay}"
-                SelectionMode="None">
-                <ListView.ItemTemplateSelector>
-                    <ts:FileSystemItemTemplateSelector FileSystemTemplate="{StaticResource FileSystemTemplate}" InstallationTemplate="{StaticResource InstallationTemplate}" />
-                </ListView.ItemTemplateSelector>
-            </ListView>
+            <Grid>
+                <ListView
+                    x:Name="FileSystemsList"
+                    VerticalAlignment="Bottom"
+                    IsItemClickEnabled="True"
+                    ItemClick="FileSystems_ItemClick"
+                    ItemsSource="{x:Bind OverlayViewModel.FileSystems, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.ItemTemplateSelector>
+                        <ts:FileSystemItemTemplateSelector FileSystemTemplate="{StaticResource FileSystemTemplate}" InstallationTemplate="{StaticResource InstallationTemplate}" />
+                    </ListView.ItemTemplateSelector>
+                </ListView>
+
+                <!--  Surfaces file system installation failures  -->
+                <TeachingTip
+                    x:Name="InstallationErrorTip"
+                    Title="{l:ResourceString Rid=ErrorOccurred}"
+                    PreferredPlacement="Top"
+                    Target="{x:Bind FileSystemsList}" />
+            </Grid>
         </local:FeatureSlide.RightSlot>
     </local:FeatureSlide>
 </UserControl>
