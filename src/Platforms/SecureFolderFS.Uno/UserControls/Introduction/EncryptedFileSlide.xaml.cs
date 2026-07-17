@@ -10,7 +10,12 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 using SkiaSharp;
+#if HAS_UNO_SKIA
+using Windows.Foundation;
+using Uno.WinUI.Graphics2DSK;
+#else
 using SkiaSharp.Views.Windows;
+#endif
 
 namespace SecureFolderFS.Uno.UserControls.Introduction
 {
@@ -37,9 +42,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private bool _isInitialized;
 
+#if HAS_UNO_SKIA
+        private readonly LensCanvas _canvas;
+#else
+        private readonly SKXamlCanvas _canvas;
+#endif
+
         private SKBitmap? _wallpaperBitmap;
         private SKBitmap? _hexBitmap;
         private SKPoint? _pointerPosition;
+
+        // The lens samples the composed scene, so the base layers are rendered into an
+        // offscreen surface whose snapshot can be read back (the on-screen canvas cannot be)
+        private SKSurface? _sceneSurface;
+        private SKSizeI _sceneSize;
 
         // Reusable resources for better performance
         private readonly SKPaint _highlightPaint;
@@ -74,6 +90,18 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public EncryptedFileSlide()
         {
             InitializeComponent();
+
+#if HAS_UNO_SKIA
+            // SKCanvasElement renders in the app's composition pass (GPU-backed, no
+            // per-frame bitmap upload), unlike SKXamlCanvas which lags on desktop
+            _canvas = new LensCanvas(this);
+#else
+            _canvas = new SKXamlCanvas();
+            _canvas.PaintSurface += SkiaCanvas_PaintSurface;
+#endif
+            _canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
+            _canvas.VerticalAlignment = VerticalAlignment.Stretch;
+            SlotGrid.Children.Add(_canvas);
 
             // Pre-create expensive paint objects
             _blurPaint = new SKPaint
@@ -167,7 +195,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _cachedEdgeColors = null;
             _cachedSweepStops = null;
             _cachedCoreColors = null;
-            SkiaCanvas.Invalidate();
+            _canvas.Invalidate();
 
             _isInitialized = true;
             return Task.CompletedTask;
@@ -215,33 +243,65 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             return result;
         }
 
+#if HAS_UNO_SKIA
+        private sealed class LensCanvas(EncryptedFileSlide owner) : SKCanvasElement
+        {
+            protected override void RenderOverride(SKCanvas canvas, Size area)
+            {
+                // Work in physical pixels like SKXamlCanvas did, so that all the tuned
+                // radii, stroke widths, and blur sigmas keep their meaning
+                var scale = (float)(owner.XamlRoot?.RasterizationScale ?? 1.0);
+                canvas.Save();
+                canvas.Scale(1f / scale);
+                owner.RenderSlide(canvas, (float)area.Width * scale, (float)area.Height * scale);
+                canvas.Restore();
+            }
+        }
+#else
         private void SkiaCanvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
-            var info = e.Info;
             canvas.Clear(SKColors.Transparent);
+            RenderSlide(canvas, e.Info.Width, e.Info.Height);
+        }
+#endif
 
-            var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(info.Width / 2f, info.Height / 2f);
-            var canvasRect = new SKRect(0, 0, info.Width, info.Height);
+        private void RenderSlide(SKCanvas canvas, float width, float height)
+        {
+            if (width < 1f || height < 1f)
+                return;
+
+            var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(width / 2f, height / 2f);
+            var sceneSize = new SKSizeI((int)width, (int)height);
+            if (_sceneSurface is null || sceneSize != _sceneSize)
+            {
+                _sceneSurface?.Dispose();
+                _sceneSurface = SKSurface.Create(new SKImageInfo(sceneSize.Width, sceneSize.Height));
+                _sceneSize = sceneSize;
+            }
+
+            var scene = _sceneSurface.Canvas;
+            scene.Clear(SKColors.Transparent);
+            var sceneRect = new SKRect(0, 0, width, height);
 
             // Layer 1: Hex (encrypted content)
             if (_hexBitmap is not null)
             {
-                var hexDest = ComputeUniformToFillRect(_hexBitmap.Width, _hexBitmap.Height, info.Width, info.Height);
-                canvas.Save();
-                canvas.ClipRect(canvasRect);
-                canvas.DrawBitmap(_hexBitmap, hexDest);
-                canvas.Restore();
+                var hexDest = ComputeUniformToFillRect(_hexBitmap.Width, _hexBitmap.Height, sceneSize.Width, sceneSize.Height);
+                scene.Save();
+                scene.ClipRect(sceneRect);
+                scene.DrawBitmap(_hexBitmap, hexDest);
+                scene.Restore();
             }
 
             // Layer 2: Wallpaper + smooth reveal hole
             if (_wallpaperBitmap is not null)
             {
                 var wallpaperDest = ComputeUniformToFillRect(_wallpaperBitmap.Width, _wallpaperBitmap.Height,
-                    info.Width, info.Height);
+                    sceneSize.Width, sceneSize.Height);
 
-                canvas.SaveLayer();
-                canvas.DrawBitmap(_wallpaperBitmap, wallpaperDest);
+                scene.SaveLayer();
+                scene.DrawBitmap(_wallpaperBitmap, wallpaperDest);
 
                 using var erasePaint = new SKPaint();
                 erasePaint.IsAntialias = true;
@@ -251,12 +311,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                     [0.2f, 0.4f, 1f],
                     SKShaderTileMode.Clamp);
 
-                canvas.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
-                canvas.Restore();
+                scene.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
+                scene.Restore();
             }
 
             // Snapshot for the lens effect (only once per frame)
-            using var snapshot = e.Surface.Snapshot();
+            using var snapshot = _sceneSurface.Snapshot();
+            canvas.DrawImage(snapshot, 0f, 0f);
 
             // Layer 3: Liquid Glass Lens
             DrawLiquidGlassLens(canvas, center, snapshot, _lensScale);
@@ -584,7 +645,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (moved)
                 _cachedEdgeColors = null;
 
-            SkiaCanvas.Invalidate();
+            _canvas.Invalidate();
         }
 
         private void StartAnimation()
@@ -643,7 +704,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _scaleTarget = 1f;
             _positionVelocity = new SKPoint(0f, 0f);
             StopAnimation();
-            SkiaCanvas.Invalidate();
+            _canvas.Invalidate();
         }
 
         private void UpdatePointer(PointerRoutedEventArgs e)
@@ -655,8 +716,14 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (width <= 0 || height <= 0)
                 return;
 
-            var scaleX = SkiaCanvas.CanvasSize.Width / width;
-            var scaleY = SkiaCanvas.CanvasSize.Height / height;
+#if HAS_UNO_SKIA
+            // The lens is rendered in physical pixels; map the logical pointer position accordingly
+            var scaleX = (float)(XamlRoot?.RasterizationScale ?? 1.0);
+            var scaleY = scaleX;
+#else
+            var scaleX = _canvas.CanvasSize.Width / width;
+            var scaleY = _canvas.CanvasSize.Height / height;
+#endif
 
             var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS / scaleX, width - MAGNIFIER_RADIUS / scaleX);
             var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS / scaleY, height - MAGNIFIER_RADIUS / scaleY);
@@ -678,19 +745,14 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _animTimer.Stop();
             _animTimer.Tick -= AnimTimer_Tick;
 
-#if HAS_UNO_SKIA
-            SkiaCanvas.Dispose();
-#endif
+            // Detach the canvas so no further composition pass can render this slide.
+            // The Skia resources (paints, bitmaps, scene surface) are intentionally not
+            // disposed here: a redraw may already be queued, and the GC reclaims them safely.
+            SlotGrid.Children.Remove(_canvas);
 
-            _blurPaint.Dispose();
-            _highlightPaint.Dispose();
-            _shadowPaint.Dispose();
-
-            _invisiblePaint.Dispose();
-            _outerGlowPaint.Dispose();
-            _iridescentPaint.Dispose();
-            _corePaint.Dispose();
-            _additiveGlowPaint.Dispose();
+            _wallpaperBitmap = null;
+            _hexBitmap = null;
+            _sceneSurface = null;
 
             _cachedEdgeColors = null;
             _cachedSweepStops = null;

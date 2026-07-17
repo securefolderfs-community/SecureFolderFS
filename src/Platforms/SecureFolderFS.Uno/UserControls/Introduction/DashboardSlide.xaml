@@ -1,0 +1,78 @@
+<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.Introduction.DashboardSlide"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingDashboardTitle}" Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
+        <local:FeatureSlide.LeftSlot>
+            <Border Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">
+                <StackPanel
+                    MaxWidth="320"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Spacing="12">
+
+                    <!--  Health status card  -->
+                    <Border
+                        Padding="16,12"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Grid>
+                                <Ellipse
+                                    Width="28"
+                                    Height="28"
+                                    Fill="LimeGreen" />
+                                <FontIcon
+                                    FontSize="13"
+                                    Foreground="White"
+                                    Glyph="&#xE73E;" />
+                            </Grid>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="{l:ResourceString Rid=HealthNoProblems}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Live read-speed card  -->
+                    <Border
+                        Padding="16,12"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                        <StackPanel Spacing="8">
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{l:ResourceString Rid=ReadSpeeds}" />
+                            <TextBlock
+                                x:Name="SpeedText"
+                                FontSize="24"
+                                FontWeight="SemiBold"
+                                Text="209mb/s" />
+                            <Grid
+                                x:Name="ChartHost"
+                                Height="88"
+                                SizeChanged="ChartHost_SizeChanged">
+                                <Polygon x:Name="AreaPolygon" Fill="{ThemeResource AccentFillColorDefaultBrush}" Opacity="0.2" />
+                                <Polyline
+                                    x:Name="SpeedPolyline"
+                                    Stroke="{ThemeResource AccentFillColorDefaultBrush}"
+                                    StrokeThickness="2" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </local:FeatureSlide.LeftSlot>
+    </local:FeatureSlide>
+</UserControl>
