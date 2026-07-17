@@ -28,6 +28,14 @@
                             IconSource="{x:Bind Icon, Mode=OneWay, Converter={StaticResource IconSourceConverter}}" />
                     </ucab:ActionBlockContentControl.Icon>
                 </ucab:ActionBlockContentControl>
+
+                <!--  Selection is drawn here instead of by ListViewItem, which renders inconsistently across targets  -->
+                <Border
+                    BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                    IsHitTestVisible="False"
+                    Visibility="{x:Bind IsSelected, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="InstallationTemplate" x:DataType="vm:ItemInstallationViewModel">
@@ -72,6 +80,14 @@
                         </Grid>
                     </ucab:ActionBlockContentControl.ActionElement>
                 </ucab:ActionBlockContentControl>
+
+                <!--  Selection is drawn here instead of by ListViewItem, which renders inconsistently across targets  -->
+                <Border
+                    BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                    BorderThickness="2"
+                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                    IsHitTestVisible="False"
+                    Visibility="{x:Bind IsSelected, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -193,9 +209,10 @@
         <local:FeatureSlide.RightSlot>
             <ListView
                 VerticalAlignment="Bottom"
+                IsItemClickEnabled="True"
+                ItemClick="FileSystems_ItemClick"
                 ItemsSource="{x:Bind OverlayViewModel.FileSystems, Mode=OneWay}"
-                SelectionChanged="FileSystems_SelectionChanged"
-                SelectionMode="Extended">
+                SelectionMode="None">
                 <ListView.ItemTemplateSelector>
                     <ts:FileSystemItemTemplateSelector FileSystemTemplate="{StaticResource FileSystemTemplate}" InstallationTemplate="{StaticResource InstallationTemplate}" />
                 </ListView.ItemTemplateSelector>

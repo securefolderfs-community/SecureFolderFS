@@ -115,15 +115,7 @@
                     <!--  Views  -->
                     <local:WelcomeScreen />
                     <!--  Slide 1: Dashboard  -->
-                    <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingDashboardTitle}" Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
-                        <local:FeatureSlide.LeftSlot>
-                            <Image
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Stretch="UniformToFill"
-                                Style="{ThemeResource VaultDashboardImage}" />
-                        </local:FeatureSlide.LeftSlot>
-                    </local:FeatureSlide>
+                    <local:DashboardSlide />
 
                     <!--  Slide 2: Authentication  -->
                     <local:AuthenticationSlide x:Name="AuthenticationSlide" />

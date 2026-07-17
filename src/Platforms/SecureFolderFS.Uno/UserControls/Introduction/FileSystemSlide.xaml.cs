@@ -27,38 +27,18 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             InitializeComponent();
         }
 
-        private void FileSystems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FileSystems_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (OverlayViewModel is null)
                 return;
 
-            if (sender is not ListView listView)
+            // Not installed yet - the Install button inside the item handles that flow
+            if (e.ClickedItem is ItemInstallationViewModel { IsInstalled: false })
                 return;
 
-            foreach (var item in OverlayViewModel.FileSystems)
-                item.IsSelected = false;
-
-            var selectedItem = e.AddedItems.FirstOrDefault();
-            if (selectedItem is ItemInstallationViewModel installation)
-            {
-                if (installation.IsInstalled)
-                {
-                    installation.IsSelected = true;
-                    OverlayViewModel.SelectedFileSystem = installation;
-                }
-                else
-                {
-                    var oldSelected = e.RemovedItems.FirstOrDefault()?.TryCast<PickerOptionViewModel>();
-                    oldSelected?.IsSelected = true;
-                    OverlayViewModel.SelectedFileSystem = oldSelected;
-                    listView.SelectedItem = oldSelected;
-                }
-            }
-            else if (selectedItem is PickerOptionViewModel itemViewModel)
-            {
-                itemViewModel.IsSelected = true;
+            // The view model synchronizes IsSelected across all items, which drives the selection visuals
+            if (e.ClickedItem is PickerOptionViewModel itemViewModel)
                 OverlayViewModel.SelectedFileSystem = itemViewModel;
-            }
         }
 
         public IntroductionOverlayViewModel? OverlayViewModel
