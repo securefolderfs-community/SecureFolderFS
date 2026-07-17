@@ -126,6 +126,17 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             await EncryptedFileSlide.InitAsync();
         }
 
+        private void ShadowTarget_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ShadowTarget.ActualWidth <= 0d || ShadowTarget.ActualHeight <= 0d)
+                return;
+
+            // Tell the background where the elevated content sits so it can draw a drop shadow beneath it
+            var transform = ShadowTarget.TransformToVisual(BackgroundControl);
+            var bounds = transform.TransformBounds(new Windows.Foundation.Rect(0d, 0d, ShadowTarget.ActualWidth, ShadowTarget.ActualHeight));
+            BackgroundControl.SetContentBounds(bounds);
+        }
+
         private void IntroductionControl_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (ViewModel is null)

@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-#if HAS_UNO_SKIA
 using Windows.Foundation;
 using SkiaSharp;
+#if HAS_UNO_SKIA
 using Uno.WinUI.Graphics2DSK;
 #else
 using SkiaSharp.Views.Windows;
@@ -20,6 +20,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     public sealed partial class IntroductionBackground : UserControl, IDisposable
     {
         private const double REVEAL_DURATION_MS = 750d;
+        private const double SHADOW_FADE_MS = 350d;
 
 #if HAS_UNO_SKIA
         // SKCanvasElement draws directly in the app's composition pass (GPU-backed,
@@ -37,9 +38,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private readonly DispatcherTimer _frameTimer;
         private readonly Stopwatch _clock = Stopwatch.StartNew();
 
+        private bool _hasRendered;
         private float _revealProgress;
+        private float _shadowOpacity;
         private DateTime? _revealStart;
+        private DateTime? _shadowStart;
         private TaskCompletionSource? _revealTcs;
+        private Rect? _contentBounds;
 
         public IntroductionBackground()
         {
@@ -80,22 +85,62 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             return _revealTcs.Task;
         }
 
+        /// <summary>
+        /// Sets the bounds (relative to this control) of the elevated content that the
+        /// background draws a drop shadow beneath.
+        /// </summary>
+        public void SetContentBounds(Rect bounds)
+        {
+            _contentBounds = bounds;
+        }
+
         private void FrameTimer_Tick(object? sender, object e)
         {
             if (_revealStart is { } revealStart)
             {
-                var progress = (float)((DateTime.UtcNow - revealStart).TotalMilliseconds / REVEAL_DURATION_MS);
-                if (progress >= 1f)
+                if (!_hasRendered)
                 {
-                    _revealProgress = 1f;
-                    _revealStart = null;
-                    _revealTcs?.TrySetResult();
+                    // The first composited frame can land well after RevealAsync was called
+                    // (the freshly added overlay still needs to load and lay out); hold the
+                    // clock at zero until then so the wipe visibly starts at the bottom
+                    _revealStart = DateTime.UtcNow;
                 }
                 else
-                    _revealProgress = 1f - MathF.Pow(1f - progress, 3f); // ease-out cubic
+                {
+                    var progress = (float)((DateTime.UtcNow - revealStart).TotalMilliseconds / REVEAL_DURATION_MS);
+                    if (progress >= 1f)
+                    {
+                        _revealProgress = 1f;
+                        _revealStart = null;
+                        _shadowStart = DateTime.UtcNow;
+                        _revealTcs?.TrySetResult();
+                    }
+                    else
+                        _revealProgress = 1f - MathF.Pow(1f - progress, 3f); // ease-out cubic
+                }
+            }
+
+            if (_shadowStart is { } shadowStart)
+            {
+                // Fade the content shadow in alongside the content's own entrance animation
+                var progress = (float)((DateTime.UtcNow - shadowStart).TotalMilliseconds / SHADOW_FADE_MS);
+                _shadowOpacity = progress >= 1f ? 1f : 1f - MathF.Pow(1f - progress, 3f);
             }
 
             _canvas.Invalidate();
+        }
+
+        private void PrepareFrame(float shadowScale)
+        {
+            _hasRendered = true;
+            _renderer.ShadowOpacity = _shadowOpacity;
+            _renderer.ShadowBounds = _contentBounds is { } bounds
+                ? new SKRect(
+                    (float)(bounds.X * shadowScale),
+                    (float)(bounds.Y * shadowScale),
+                    (float)((bounds.X + bounds.Width) * shadowScale),
+                    (float)((bounds.Y + bounds.Height) * shadowScale))
+                : null;
         }
 
 #if HAS_UNO_SKIA
@@ -103,6 +148,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             protected override void RenderOverride(SKCanvas canvas, Size area)
             {
+                owner.PrepareFrame(shadowScale: 1f);
                 owner._renderer.Render(
                     canvas,
                     (float)area.Width,
@@ -114,7 +160,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 #else
         private void Canvas_PaintSurface(object? sender, SKPaintSurfaceEventArgs e)
         {
-            e.Surface.Canvas.Clear(SkiaSharp.SKColors.Transparent);
+            // SKXamlCanvas works in physical pixels while element bounds are logical
+            var scale = ActualWidth > 0 ? (float)(e.Info.Width / ActualWidth) : 1f;
+            PrepareFrame(scale);
+
+            e.Surface.Canvas.Clear(SKColors.Transparent);
             _renderer.Render(
                 e.Surface.Canvas,
                 e.Info.Width,
@@ -133,6 +183,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private void IntroductionBackground_Unloaded(object sender, RoutedEventArgs e)
         {
             _frameTimer.Stop();
+            _hasRendered = false;
 
             // Never leave a pending reveal awaiter hanging if the control is torn down mid-animation
             _revealTcs?.TrySetResult();

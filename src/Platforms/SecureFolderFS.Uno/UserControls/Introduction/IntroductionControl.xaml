@@ -88,35 +88,28 @@
             <Grid.RenderTransform>
                 <CompositeTransform />
             </Grid.RenderTransform>
+            <!--  Wider side/top/bottom bands give the animated background room to read  -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="14*" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="13*" />
+                <ColumnDefinition Width="1.5*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="10*" />
-                <RowDefinition />
+                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="9*" />
+                <RowDefinition Height="1.5*" />
             </Grid.RowDefinitions>
 
             <Border
                 x:Name="ShadowTarget"
                 Grid.Row="1"
-                Grid.Column="1" />
+                Grid.Column="1"
+                SizeChanged="ShadowTarget_SizeChanged" />
 
             <Grid
                 Grid.Row="1"
                 Grid.Column="1"
                 CornerRadius="8">
-
-                <!--  TODO: Not supported on non_win platforms. Implement and use OnPlatform  -->
-                <!-- <tui:Effects.Shadow> -->
-                <!--  <tui:AttachedDropShadow  -->
-                <!--  BlurRadius="10"  -->
-                <!--  CastTo="{x:Bind ShadowTarget}"  -->
-                <!--  CornerRadius="8"  -->
-                <!--  Opacity="0.6" />  -->
-                <!-- </tui:Effects.Shadow> -->
 
                 <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
                     <!--  Views  -->
