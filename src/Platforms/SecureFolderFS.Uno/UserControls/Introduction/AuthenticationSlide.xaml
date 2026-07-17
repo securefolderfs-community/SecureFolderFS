@@ -13,39 +13,21 @@
     <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingAuthenticationTitle}" Description="{l:ResourceString Rid=OnboardingAuthenticationSubtitle}">
         <local:FeatureSlide.LeftSlot>
             <Border Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid x:Name="DiagramGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                    <!--  S-curve path  -->
+                    <!--  S-curve path - its geometry is computed in code-behind from the
+                          actual icon positions so the connection points always line up  -->
                     <Path
                         x:Name="AuthenticationPath"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         Opacity="0"
                         Stroke="{ThemeResource TextFillColorSecondaryBrush}"
                         StrokeDashArray="4 4"
-                        StrokeThickness="1.5">
-                        <Path.Data>
-                            <PathGeometry>
-                                <PathFigure StartPoint="40,40">
-                                    <BezierSegment
-                                        Point1="40,100"
-                                        Point2="160,80"
-                                        Point3="160,136" />
-                                    <BezierSegment
-                                        Point1="160,192"
-                                        Point2="40,212"
-                                        Point3="40,232" />
-                                    <BezierSegment
-                                        Point1="40,292"
-                                        Point2="160,308"
-                                        Point3="160,328" />
-                                </PathFigure>
-                            </PathGeometry>
-                        </Path.Data>
-                    </Path>
+                        StrokeThickness="1.5" />
 
                     <!--  Icons - render second, on top of the path  -->
-                    <Grid>
+                    <Grid x:Name="IconsGrid" SizeChanged="IconsGrid_SizeChanged">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
