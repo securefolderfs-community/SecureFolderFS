@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="SecureFolderFS.Uno.UserControls.Introduction.IntroductionControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,40 +6,39 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:not_win="http://uno.ui/skia"
-    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    Loaded="IntroductionControl_Loaded"
     PreviewKeyDown="IntroductionControl_KeyDown"
-    mc:Ignorable="d not_win">
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!--  Fade In + Scale In Animation  -->
+        <!--  Fade In + Scale In Animation (content only)  -->
         <Storyboard x:Key="ShowOverlayStoryboard" x:Name="ShowOverlayStoryboard">
             <DoubleAnimation
-                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetName="ContentGrid"
                 Storyboard.TargetProperty="Opacity"
                 From="0"
                 To="1"
-                Duration="0:0:0.25">
+                Duration="0:0:0.3">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation
-                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetName="ContentGrid"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
                 From="0.95"
                 To="1"
-                Duration="0:0:0.25">
+                Duration="0:0:0.3">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation
-                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetName="ContentGrid"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
                 From="0.95"
                 To="1"
-                Duration="0:0:0.25">
+                Duration="0:0:0.3">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
@@ -58,7 +57,7 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation
-                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetName="ContentGrid"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"
                 To="0.95"
                 Duration="0:0:0.2">
@@ -67,7 +66,7 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation
-                Storyboard.TargetName="RootGrid"
+                Storyboard.TargetName="ContentGrid"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"
                 To="0.95"
                 Duration="0:0:0.2">
@@ -78,76 +77,73 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid
-        x:Name="RootGrid"
-        RenderTransformOrigin="0.5,0.5"
-        RowSpacing="16">
-        <Grid.RenderTransform>
-            <CompositeTransform />
-        </Grid.RenderTransform>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="14*" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="10*" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <WebView2
-            x:Name="BackgroundWebView"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            DefaultBackgroundColor="Transparent"
-            Loaded="BackgroundWebView_Loaded" />
-
-        <Border
-            x:Name="ShadowTarget"
-            Grid.Row="1"
-            Grid.Column="1" />
+    <Grid x:Name="RootGrid">
+        <local:IntroductionBackground x:Name="BackgroundControl" />
 
         <Grid
-            Grid.Row="1"
-            Grid.Column="1"
-            CornerRadius="8">
+            x:Name="ContentGrid"
+            Opacity="0"
+            RenderTransformOrigin="0.5,0.5"
+            RowSpacing="16">
+            <Grid.RenderTransform>
+                <CompositeTransform />
+            </Grid.RenderTransform>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="14*" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="10*" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <!--  TODO: Not supported on non_win platforms. Implement and use OnPlatform  -->
-            <!-- <tui:Effects.Shadow> -->
-            <!--  <tui:AttachedDropShadow  -->
-            <!--  BlurRadius="10"  -->
-            <!--  CastTo="{x:Bind ShadowTarget}"  -->
-            <!--  CornerRadius="8"  -->
-            <!--  Opacity="0.6" />  -->
-            <!-- </tui:Effects.Shadow> -->
+            <Border
+                x:Name="ShadowTarget"
+                Grid.Row="1"
+                Grid.Column="1" />
 
-            <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
-                <!--  Views  -->
-                <local:WelcomeScreen />
-                <!--  Slide 1: Dashboard  -->
-                <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingDashboardTitle}" Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
-                    <local:FeatureSlide.LeftSlot>
-                        <Image
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Stretch="UniformToFill"
-                            Style="{ThemeResource VaultDashboardImage}" />
-                    </local:FeatureSlide.LeftSlot>
-                </local:FeatureSlide>
+            <Grid
+                Grid.Row="1"
+                Grid.Column="1"
+                CornerRadius="8">
 
-                <!--  Slide 2: Authentication  -->
-                <local:AuthenticationSlide x:Name="AuthenticationSlide" />
+                <!--  TODO: Not supported on non_win platforms. Implement and use OnPlatform  -->
+                <!-- <tui:Effects.Shadow> -->
+                <!--  <tui:AttachedDropShadow  -->
+                <!--  BlurRadius="10"  -->
+                <!--  CastTo="{x:Bind ShadowTarget}"  -->
+                <!--  CornerRadius="8"  -->
+                <!--  Opacity="0.6" />  -->
+                <!-- </tui:Effects.Shadow> -->
 
-                <!--  Slide 3: Encryption  -->
-                <local:EncryptedFileSlide x:Name="EncryptedFileSlide" />
+                <FlipView x:Name="SlidesFlipView" SelectedIndex="{x:Bind ViewModel.CurrentIndex, Mode=TwoWay}">
+                    <!--  Views  -->
+                    <local:WelcomeScreen />
+                    <!--  Slide 1: Dashboard  -->
+                    <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingDashboardTitle}" Description="{l:ResourceString Rid=OnboardingDashboardSubtitle}">
+                        <local:FeatureSlide.LeftSlot>
+                            <Image
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Stretch="UniformToFill"
+                                Style="{ThemeResource VaultDashboardImage}" />
+                        </local:FeatureSlide.LeftSlot>
+                    </local:FeatureSlide>
 
-                <!--  Slide 4: Virtual File System  -->
-                <local:FileSystemSlide OverlayViewModel="{x:Bind ViewModel, Mode=OneWay}" />
+                    <!--  Slide 2: Authentication  -->
+                    <local:AuthenticationSlide x:Name="AuthenticationSlide" />
 
-                <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
-            </FlipView>
+                    <!--  Slide 3: Encryption  -->
+                    <local:EncryptedFileSlide x:Name="EncryptedFileSlide" />
+
+                    <!--  Slide 4: Virtual File System  -->
+                    <local:FileSystemSlide OverlayViewModel="{x:Bind ViewModel, Mode=OneWay}" />
+
+                    <local:EndScreen CloseCommand="{x:Bind HideCommand, Mode=OneWay}" />
+                </FlipView>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

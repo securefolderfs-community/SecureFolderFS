@@ -13,11 +13,8 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
-using SecureFolderFS.UI;
-using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
-using SecureFolderFS.Uno.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -63,12 +60,16 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             // Set the visibility of the overlay container
             _overlayContainer.Visibility = Visibility.Visible;
-            RootGrid.Opacity = 0;
+            RootGrid.Opacity = 1;
+            ContentGrid.Opacity = 0;
 
-            // Play the show animation
+            // Sweep the animated background up from the bottom, covering the app behind it
+            await BackgroundControl.RevealAsync();
+
+            // Then fade + scale the slides into view
             await ShowOverlayStoryboard.BeginAsync();
             ShowOverlayStoryboard.Stop();
-            RootGrid.Opacity = 1;
+            ContentGrid.Opacity = 1;
 
             // Wait for the overlay to be closed
             return await ViewModel.TaskCompletion.Task;
@@ -102,6 +103,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 _overlayContainer = null;
             }
 
+            // Dispose the background only once it can no longer be rendered
+            BackgroundControl.Dispose();
+
             ViewModel?.TaskCompletion.SetResult(Result.Success);
         }
 
@@ -117,22 +121,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
         }
 
-        private async void BackgroundWebView_Loaded(object sender, RoutedEventArgs e)
+        private async void IntroductionControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var htmlString = Constants.Introduction.BACKGROUND_WEBVIEW
-                .Replace("c_bg", UnoThemeHelper.Instance.ActualTheme switch
-                {
-                    ThemeType.Light => "vec3(0.80, 0.86, 0.92)",
-                    _ => "vec3(0.00, 0.08, 0.15)"
-                })
-                .Replace("c_wave", UnoThemeHelper.Instance.ActualTheme switch
-                {
-                    ThemeType.Light => "vec3(0.10, 0.42, 0.75)",
-                    _ => "vec3(0.090, 0.569, 1.0)"
-                });
-
-            await BackgroundWebView.EnsureCoreWebView2Async();
-            BackgroundWebView.NavigateToString(htmlString);
             await EncryptedFileSlide.InitAsync();
         }
 
