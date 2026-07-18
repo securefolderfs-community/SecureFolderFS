@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     /// </summary>
     public sealed partial class IntroductionBackground : UserControl, IDisposable
     {
-        private const double REVEAL_DURATION_MS = 750d;
+        private const double REVEAL_DURATION_MS = 1200d;
         private const double SHADOW_FADE_MS = 350d;
 
 #if HAS_UNO_SKIA
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
 
         /// <summary>
-        /// Sweeps the background into view with a bottom-up gradient wipe.
+        /// Reveals the background with a soft-edged ripple expanding from the center.
         /// </summary>
         /// <returns>A <see cref="Task"/> that completes when the background is fully revealed.</returns>
         public Task RevealAsync()
@@ -102,7 +102,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 {
                     // The first composited frame can land well after RevealAsync was called
                     // (the freshly added overlay still needs to load and lay out); hold the
-                    // clock at zero until then so the wipe visibly starts at the bottom
+                    // clock at zero until then so the ripple visibly starts from nothing
                     _revealStart = DateTime.UtcNow;
                 }
                 else
@@ -116,7 +116,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                         _revealTcs?.TrySetResult();
                     }
                     else
-                        _revealProgress = 1f - MathF.Pow(1f - progress, 3f); // ease-out cubic
+                    {
+                        // Cubic ease-in-out: the ripple builds up gently, sweeps, then settles
+                        _revealProgress = progress < 0.5f
+                            ? 4f * progress * progress * progress
+                            : 1f - MathF.Pow(-2f * progress + 2f, 3f) / 2f;
+                    }
                 }
             }
 

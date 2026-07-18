@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 using SkiaSharp;
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
 using Windows.Foundation;
 using Uno.WinUI.Graphics2DSK;
 #else
@@ -30,15 +30,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float SPRING_STIFFNESS = 280f;
         private const float SPRING_DAMPING = 18f;
 
-#if HAS_UNO_SKIA
-        private const float MAGNIFIER_RADIUS = 115f;
-#else
+        // Logical (DIP) units, converted to physical pixels per frame - the lens
+        // occupies the same visual size regardless of screen scaling or resolution
         private const float MAGNIFIER_RADIUS = 60f;
-#endif
 
         private bool _isInitialized;
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
         private readonly LensCanvas _canvas;
 #else
         private readonly SKXamlCanvas _canvas;
@@ -75,7 +73,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             InitializeComponent();
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
             // SKCanvasElement renders in the app's composition pass (GPU-backed, no
             // per-frame bitmap upload), unlike SKXamlCanvas which lags on desktop
             _canvas = new LensCanvas(this);
@@ -103,11 +101,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             var rnd = Random.Shared.Next(1, 4);
             _wallpaperBitmap = LoadBitmap(assembly, $"Introduction.intro_wallpaper{rnd}.jpg");
-            _hexBitmap = LoadBitmap(assembly, "Introduction." + UnoThemeHelper.Instance.ActualTheme switch
-            {
-                ThemeType.Light => "intro_hex_light.png",
-                _ => "intro_hex_dark.png"
-            });
+            _hexBitmap = LoadBitmap(assembly, "Introduction.intro_hex_dark");
             if (_wallpaperBitmap is not null)
             {
                 _wallpaperBitmap = RotateBitmap(_wallpaperBitmap, 180);
@@ -162,7 +156,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             return result;
         }
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
         private sealed class LensCanvas(EncryptedFileSlide owner) : SKCanvasElement
         {
             protected override void RenderOverride(SKCanvas canvas, Size area)
@@ -172,7 +166,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 var scale = (float)(owner.XamlRoot?.RasterizationScale ?? 1.0);
                 canvas.Save();
                 canvas.Scale(1f / scale);
-                owner.RenderSlide(canvas, (float)area.Width * scale, (float)area.Height * scale);
+                owner.RenderSlide(canvas, (float)area.Width * scale, (float)area.Height * scale, scale);
                 canvas.Restore();
             }
         }
@@ -181,14 +175,17 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             var canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.Transparent);
-            RenderSlide(canvas, e.Info.Width, e.Info.Height);
+            var scale = ActualWidth > 0 ? (float)(e.Info.Width / ActualWidth) : 1f;
+            RenderSlide(canvas, e.Info.Width, e.Info.Height, scale);
         }
 #endif
 
-        private void RenderSlide(SKCanvas canvas, float width, float height)
+        private void RenderSlide(SKCanvas canvas, float width, float height, float scale)
         {
             if (width < 1f || height < 1f)
                 return;
+
+            var radius = MAGNIFIER_RADIUS * scale;
 
             var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(width / 2f, height / 2f);
             var sceneSize = new SKSizeI((int)width, (int)height);
@@ -227,12 +224,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 erasePaint.BlendMode = SKBlendMode.DstOut;
                 // Fully clear until deep into the lens so the magnified interior has no dark
                 // vignette (which would read as sphere shading instead of flat glass)
-                erasePaint.Shader = SKShader.CreateRadialGradient(center, MAGNIFIER_RADIUS,
+                erasePaint.Shader = SKShader.CreateRadialGradient(center, radius,
                     [new SKColor(0, 0, 0, 255), new SKColor(0, 0, 0, 245), SKColors.Transparent],
                     [0.6f, 0.88f, 1f],
                     SKShaderTileMode.Clamp);
 
-                scene.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
+                scene.DrawCircle(center, radius, erasePaint);
                 scene.Restore();
             }
 
@@ -241,8 +238,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.DrawImage(snapshot, 0f, 0f);
 
             // Layer 3: Liquid Glass Lens
-            var (radiusX, radiusY) = ComputeRingRadii(MAGNIFIER_RADIUS);
-            _lensRenderer.Draw(canvas, snapshot, center, MAGNIFIER_RADIUS, radiusX, radiusY, LENS_ZOOM * _lensScale);
+            var (radiusX, radiusY) = ComputeRingRadii(radius);
+            _lensRenderer.Draw(canvas, snapshot, center, radius, radiusX, radiusY, LENS_ZOOM * _lensScale);
         }
 
         /// <summary>
@@ -412,7 +409,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (width <= 0 || height <= 0)
                 return;
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
             // The lens is rendered in physical pixels; map the logical pointer position accordingly
             var scaleX = (float)(XamlRoot?.RasterizationScale ?? 1.0);
             var scaleY = scaleX;
@@ -421,8 +418,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var scaleY = _canvas.CanvasSize.Height / height;
 #endif
 
-            var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS / scaleX, width - MAGNIFIER_RADIUS / scaleX);
-            var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS / scaleY, height - MAGNIFIER_RADIUS / scaleY);
+            var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS, width - MAGNIFIER_RADIUS);
+            var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS, height - MAGNIFIER_RADIUS);
 
             var newPosition = new SKPoint(clampedX * scaleX, clampedY * scaleY);
             _targetPosition = newPosition;

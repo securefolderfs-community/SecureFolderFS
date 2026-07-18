@@ -13,8 +13,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const int FIELD_MAX_SIZE = 160; // the color field is rendered at most this large, then upscaled
         private const int NOISE_TILE_SIZE = 256;
         private const float GRAIN_SCALE = 1.6f; // enlarges the noise texels so the grain reads clearly
-        private const float REVEAL_BAND = 0.22f; // relative height of the soft edge of the reveal wipe
-        private const float REVEAL_LIFT = 0.30f; // relative distance the colors travel upward while revealing
+        private const float REVEAL_BAND = 0.22f; // relative width of the ripple's soft edge
+        private const float REVEAL_LIFT = 0.30f; // how zoomed the field starts, expanding out with the ripple
+        private const float REVEAL_CENTER_Y = 2.4f; // ripple origin below the visible area, relative to the height;
+                                                    // smaller values curve the front more strongly
 
         /// <summary>
         /// Domain-warped fractal noise: fbm distorted by two nested fbm passes folds the color
@@ -61,7 +63,12 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             half4 main(float2 frag) {
                 float2 uv = frag / uSize;
-                float2 p = float2(uv.x * uSize.x / uSize.y, uv.y + uLift) * 1.35;
+
+                // While revealing, the field starts zoomed about the bottom center and
+                // settles to 1:1, so the colors push upward with the expanding ripple
+                float2 anchor = float2(0.5, 1.1);
+                float2 uvr = (uv - anchor) / (1.0 + uLift) + anchor;
+                float2 p = float2(uvr.x * uSize.x / uSize.y, uvr.y) * 1.35;
 
                 float t = uTime * 0.15;
                 float2 q = float2(
@@ -173,7 +180,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         /// <summary>
         /// Draws one frame onto <paramref name="canvas"/>. Nothing is drawn while
         /// <paramref name="reveal"/> is 0; a partially revealed frame keeps everything
-        /// above the wipe front fully transparent.
+        /// beyond the ripple front fully transparent.
         /// </summary>
         public void Render(SKCanvas canvas, float width, float height, float time, float reveal)
         {
@@ -190,17 +197,21 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             if (needsMask)
             {
-                // Erase everything above the reveal front, with a soft gradient edge
+                // Ripple reveal: a circle centered below the visible area expands upward, its
+                // gently curved, soft-edged front sweeping from the bottom to the top corners
+                var center = new SKPoint(width / 2f, height * REVEAL_CENTER_Y);
+                var startRadius = center.Y - height; // front tangent to the bottom edge
+                var endRadius = MathF.Sqrt(center.X * center.X + center.Y * center.Y); // front past the top corners
                 var band = height * REVEAL_BAND;
-                var frontTop = height - reveal * (height + band);
+                var front = Math.Max(1f, startRadius + reveal * (endRadius + band - startRadius));
 
                 using var maskPaint = new SKPaint();
                 maskPaint.BlendMode = SKBlendMode.DstIn;
-                maskPaint.Shader = SKShader.CreateLinearGradient(
-                    new SKPoint(0f, frontTop),
-                    new SKPoint(0f, frontTop + band),
-                    [SKColors.Transparent, SKColors.White],
-                    null,
+                maskPaint.Shader = SKShader.CreateRadialGradient(
+                    center,
+                    front,
+                    [SKColors.White, SKColors.White, SKColors.Transparent],
+                    [0f, Math.Max(0f, (front - band) / front), 1f],
                     SKShaderTileMode.Clamp);
 
                 canvas.DrawRect(new SKRect(0, 0, width, height), maskPaint);
