@@ -30,6 +30,19 @@ namespace SecureFolderFS.Core.MacFuse
             {
                 FileSystemManager.Instance.FileSystems.Remove(this);
                 await base.DisposeAsync();
+
+                try
+                {
+                    // Remove the now-empty mount point directory. Delete is non-recursive,
+                    // so a directory which is unexpectedly not empty is left untouched
+                    Directory.Delete(VirtualizedRoot.Id, recursive: false);
+                }
+                catch (IOException)
+                {
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
             }
         }
     }
