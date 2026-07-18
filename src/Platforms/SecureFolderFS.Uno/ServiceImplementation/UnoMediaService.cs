@@ -57,10 +57,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),
                 "WINFSP" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/winfsp.png"),
                 "WEBDAV" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/webdav.png"),
+                "MAC_FUSE" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/mac_fuse.png"),
 #else
                 "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),
                 "WINFSP" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/winfsp.png"),
                 "WEBDAV" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/webdav.png"),
+                "MAC_FUSE" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/mac_fuse.png"),
 #endif
 
                 _ => new ImageResource(resourceName, true)

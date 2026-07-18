@@ -109,6 +109,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         partial void OnCurrentIndexChanged(int value)
         {
+            _ = value;
             CurrentStep = $"{CurrentIndex+1}/{SlidesCount}";
         }
     }

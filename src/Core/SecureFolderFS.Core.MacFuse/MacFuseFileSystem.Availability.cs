@@ -4,7 +4,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MacFuse
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed partial class MacFuseFileSystem
     {
         /// <inheritdoc/>

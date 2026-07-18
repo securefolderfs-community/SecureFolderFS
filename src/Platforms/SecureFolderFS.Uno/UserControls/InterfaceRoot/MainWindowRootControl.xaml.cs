@@ -84,10 +84,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (!settingsService.AppSettings.WasIntroduced)
             {
                 var overlayService = DI.Service<IOverlayService>();
-                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
-
-                settingsService.AppSettings.WasIntroduced = true;
-                await settingsService.AppSettings.SaveAsync();
+                var result = await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                if (result.Positive())
+                {
+                    settingsService.AppSettings.WasIntroduced = true;
+                    await settingsService.AppSettings.SaveAsync();
+                }
             }
 
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults

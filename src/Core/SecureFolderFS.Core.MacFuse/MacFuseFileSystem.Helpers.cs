@@ -5,7 +5,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MacFuse
 {
-    /// <inheritdoc cref="IFileSystem"/>
+    /// <inheritdoc cref="IFileSystemInfo"/>
     public sealed partial class MacFuseFileSystem
     {
         private static string MountDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
