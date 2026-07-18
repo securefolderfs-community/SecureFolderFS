@@ -181,7 +181,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             var canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.Transparent);
-            var scale = ActualWidth > 0 ? (float)(e.Info.Width / ActualWidth) : 1f;
+
+            // Display scaling, not canvas-to-control ratio: the canvas only fills the
+            // left slot, so dividing by this control's width would shrink the lens
+            var scale = (float)(XamlRoot?.RasterizationScale ?? 1.0);
             RenderSlide(canvas, e.Info.Width, e.Info.Height, scale);
         }
 #endif

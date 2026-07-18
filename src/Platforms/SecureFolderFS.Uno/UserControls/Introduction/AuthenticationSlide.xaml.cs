@@ -37,11 +37,15 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private static void ResetIcon(Border icon)
         {
+            // The static scale stays at 1.0 (opacity hides the icon) so WinUI rasterizes
+            // the content at full resolution; a static 0.4 would make the composition
+            // surface low-res and the pop animation would scale it up blurry. The
+            // storyboard's From=0.4 provides the visual starting point instead.
             icon.Opacity = 0d;
             if (icon.RenderTransform is ScaleTransform scale)
             {
-                scale.ScaleX = 0.4d;
-                scale.ScaleY = 0.4d;
+                scale.ScaleX = 1d;
+                scale.ScaleY = 1d;
             }
         }
 
