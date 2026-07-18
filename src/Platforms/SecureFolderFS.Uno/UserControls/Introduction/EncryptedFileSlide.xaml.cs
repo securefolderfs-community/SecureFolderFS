@@ -101,7 +101,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             var rnd = Random.Shared.Next(1, 4);
             _wallpaperBitmap = LoadBitmap(assembly, $"Introduction.intro_wallpaper{rnd}.jpg");
-            _hexBitmap = LoadBitmap(assembly, "Introduction.intro_hex_dark");
+            _hexBitmap = LoadBitmap(assembly, "Introduction." + UnoThemeHelper.Instance.ActualTheme switch
+            {
+#if !__UNO_SKIA_X11__
+                ThemeType.Light => "intro_hex_light.png",
+#endif
+                _ => "intro_hex_dark.png"
+            });
             if (_wallpaperBitmap is not null)
             {
                 _wallpaperBitmap = RotateBitmap(_wallpaperBitmap, 180);
