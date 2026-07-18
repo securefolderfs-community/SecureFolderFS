@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 #if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
         private readonly LensCanvas _canvas;
 #else
-        private readonly SKSwapChainPanel _canvas;
+        private readonly SKXamlCanvas _canvas;
 #endif
 
         private SKBitmap? _wallpaperBitmap;
@@ -50,7 +50,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         // offscreen surface whose snapshot can be read back (the on-screen canvas cannot be)
         private SKSurface? _sceneSurface;
         private SKSizeI _sceneSize;
-        private GRContext? _sceneContext;
 
         // Draws the glass disc with per-pixel refraction
         private readonly GlassLensRenderer _lensRenderer = new();
@@ -79,11 +78,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             // per-frame bitmap upload), unlike SKXamlCanvas which lags on desktop
             _canvas = new LensCanvas(this);
 #else
-            // ANGLE-backed swap chain: Skia draws through a GPU context instead of SKXamlCanvas'
-            // per-frame CPU raster + bitmap upload. The panel composes opaquely (no per-pixel
-            // transparency over the XAML behind it), which is safe here because the hex and
-            // wallpaper layers cover every canvas pixel with opaque content
-            _canvas = new SKSwapChainPanel();
+            _canvas = new SKXamlCanvas();
             _canvas.PaintSurface += SkiaCanvas_PaintSurface;
 #endif
             _canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -182,7 +177,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
         }
 #else
-        private void SkiaCanvas_PaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
+        private void SkiaCanvas_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.Transparent);
@@ -190,11 +185,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             // Display scaling, not canvas-to-control ratio: the canvas only fills the
             // left slot, so dividing by this control's width would shrink the lens
             var scale = (float)(XamlRoot?.RasterizationScale ?? 1.0);
-            RenderSlide(canvas, e.Info.Width, e.Info.Height, scale, _canvas.GRContext);
+            RenderSlide(canvas, e.Info.Width, e.Info.Height, scale);
         }
 #endif
 
-        private void RenderSlide(SKCanvas canvas, float width, float height, float scale, GRContext? context = null)
+        private void RenderSlide(SKCanvas canvas, float width, float height, float scale)
         {
             if (width < 1f || height < 1f)
                 return;
@@ -203,16 +198,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
             var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(width / 2f, height / 2f);
             var sceneSize = new SKSizeI((int)width, (int)height);
-            if (_sceneSurface is null || sceneSize != _sceneSize || !ReferenceEquals(_sceneContext, context))
+            if (_sceneSurface is null || sceneSize != _sceneSize)
             {
                 _sceneSurface?.Dispose();
-
-                // When the destination canvas is GPU-backed, the scene must live on the same
-                // context - a raster scene would force a full readback and upload every frame
-                _sceneSurface = context is null ? null : SKSurface.Create(context, true, new SKImageInfo(sceneSize.Width, sceneSize.Height));
-                _sceneSurface ??= SKSurface.Create(new SKImageInfo(sceneSize.Width, sceneSize.Height));
+                _sceneSurface = SKSurface.Create(new SKImageInfo(sceneSize.Width, sceneSize.Height));
                 _sceneSize = sceneSize;
-                _sceneContext = context;
             }
 
             var scene = _sceneSurface.Canvas;
@@ -465,7 +455,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _wallpaperBitmap = null;
             _hexBitmap = null;
             _sceneSurface = null;
-            _sceneContext = null;
         }
     }
 }

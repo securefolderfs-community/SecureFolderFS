@@ -21,7 +21,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float EDGE_DISPERSION = 0.028f; // chromatic separation in the bent bands (relative radius)
         private const float INNER_BEND = 0.03f; // near-imperceptible curvature of the interior glyphs
         private const float INNER_DISPERSION = 0.005f; // subtle chromatic fringing across the interior
-        private const float RIM_CHROMATIC_OFFSET = 1.6f; // radial separation of the specular ring's color channels
+        private const float RIM_CHROMATIC_OFFSET = 1.4f; // radial separation of the specular ring's color channels
 
         /// <summary>
         /// Refraction of a thick glass disc with a flat center. Coordinates are in canvas
