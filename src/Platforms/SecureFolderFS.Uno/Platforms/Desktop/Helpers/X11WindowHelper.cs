@@ -1,19 +1,37 @@
 #if __UNO_SKIA_X11__
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
+using Windows.Foundation;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 {
     /// <summary>
     /// Provides helper methods for controlling X11 windows on Linux, covering window operations
-    /// that Uno's X11 backend does not implement (interactive window dragging and un-maximizing).
+    /// that Uno's X11 backend does not implement (interactive window dragging, resizing, and un-maximizing).
     /// </summary>
     internal static partial class X11WindowHelper
     {
+        /// <summary>
+        /// The thickness, in logical pixels, of the client-drawn resize borders along the window edges.
+        /// </summary>
+        private const double RESIZE_BORDER_THICKNESS = 8d;
+
         // https://specifications.freedesktop.org/wm-spec/wm-spec-1.3.html
         private const nint _NET_WM_STATE_REMOVE = 0;
+        private const nint _NET_WM_MOVERESIZE_SIZE_TOPLEFT = 0;
+        private const nint _NET_WM_MOVERESIZE_SIZE_TOP = 1;
+        private const nint _NET_WM_MOVERESIZE_SIZE_TOPRIGHT = 2;
+        private const nint _NET_WM_MOVERESIZE_SIZE_RIGHT = 3;
+        private const nint _NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT = 4;
+        private const nint _NET_WM_MOVERESIZE_SIZE_BOTTOM = 5;
+        private const nint _NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT = 6;
+        private const nint _NET_WM_MOVERESIZE_SIZE_LEFT = 7;
         private const nint _NET_WM_MOVERESIZE_MOVE = 8;
         private const nint SOURCE_INDICATION_APPLICATION = 1;
         private const long SubstructureNotifyMask = 1L << 19;
@@ -31,48 +49,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         /// <returns>True if the move request was sent to the window manager; otherwise, false.</returns>
         public static bool TryBeginWindowDrag(Window window)
         {
-            if (!OperatingSystem.IsLinux())
-                return false;
-
-            try
-            {
-                if (GetX11Handles(window) is not { } handles)
-                    return false;
-
-                var (display, x11Window) = handles;
-                XLockDisplay(display);
-                try
-                {
-                    // Locate the pointer in root-window coordinates
-                    var rootWindow = XDefaultRootWindow(display);
-                    if (XQueryPointer(display, rootWindow, out _, out _, out var rootX, out var rootY, out _, out _, out _) == 0)
-                        return false;
-
-                    // The window manager cannot take over the pointer while it is still implicitly
-                    // grabbed by the button press that initiated the drag, so release the grab first
-                    _ = XUngrabPointer(display, IntPtr.Zero);
-
-                    SendClientMessageToRoot(
-                        display,
-                        x11Window,
-                        XInternAtom(display, "_NET_WM_MOVERESIZE", 0),
-                        rootX,
-                        rootY,
-                        _NET_WM_MOVERESIZE_MOVE,
-                        1 /* left mouse button */,
-                        SOURCE_INDICATION_APPLICATION);
-
-                    return true;
-                }
-                finally
-                {
-                    XUnlockDisplay(display);
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return TryBeginMoveResize(window, _NET_WM_MOVERESIZE_MOVE);
         }
 
         /// <summary>
@@ -105,6 +82,115 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                         XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", 0),
                         SOURCE_INDICATION_APPLICATION,
                         0);
+
+                    return true;
+                }
+                finally
+                {
+                    XUnlockDisplay(display);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Enables client-drawn resize borders along the window edges. Extending content into the title bar
+        /// removes the window manager's decorations, including its resize frame, so edge resizing
+        /// has to be reimplemented by the application.
+        /// </summary>
+        /// <param name="window">The window to enable the resize borders for.</param>
+        public static void EnableResizeBorders(Window window)
+        {
+            if (!OperatingSystem.IsLinux())
+                return;
+
+            if (window.Content is not FrameworkElement root)
+                return;
+
+            _ = new ResizeBorderTracker(window, root);
+        }
+
+        /// <summary>
+        /// Determines whether the specified window-space position falls within the client-drawn resize borders.
+        /// </summary>
+        /// <param name="window">The window to check.</param>
+        /// <param name="position">The pointer position relative to the window content.</param>
+        /// <returns>True if the position lies on a resize border; otherwise, false.</returns>
+        public static bool IsInResizeBorder(Window window, Point position)
+        {
+            if (window.Content is not FrameworkElement root)
+                return false;
+
+            if (!IsResizable(window))
+                return false;
+
+            return GetResizeEdge(position, root.ActualWidth, root.ActualHeight) is not null;
+        }
+
+        private static bool IsResizable(Window window)
+        {
+            return window.AppWindow?.Presenter is OverlappedPresenter { IsResizable: true, State: OverlappedPresenterState.Restored };
+        }
+
+        private static (nint Action, InputSystemCursorShape Shape)? GetResizeEdge(Point position, double width, double height)
+        {
+            if (width <= 0d || height <= 0d)
+                return null;
+
+            var left = position.X <= RESIZE_BORDER_THICKNESS;
+            var right = position.X >= width - RESIZE_BORDER_THICKNESS;
+            var top = position.Y <= RESIZE_BORDER_THICKNESS;
+            var bottom = position.Y >= height - RESIZE_BORDER_THICKNESS;
+
+            return (top, bottom, left, right) switch
+            {
+                (true, _, true, _) => (_NET_WM_MOVERESIZE_SIZE_TOPLEFT, InputSystemCursorShape.SizeNorthwestSoutheast),
+                (true, _, _, true) => (_NET_WM_MOVERESIZE_SIZE_TOPRIGHT, InputSystemCursorShape.SizeNortheastSouthwest),
+                (_, true, true, _) => (_NET_WM_MOVERESIZE_SIZE_BOTTOMLEFT, InputSystemCursorShape.SizeNortheastSouthwest),
+                (_, true, _, true) => (_NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT, InputSystemCursorShape.SizeNorthwestSoutheast),
+                (true, _, _, _) => (_NET_WM_MOVERESIZE_SIZE_TOP, InputSystemCursorShape.SizeNorthSouth),
+                (_, true, _, _) => (_NET_WM_MOVERESIZE_SIZE_BOTTOM, InputSystemCursorShape.SizeNorthSouth),
+                (_, _, true, _) => (_NET_WM_MOVERESIZE_SIZE_LEFT, InputSystemCursorShape.SizeWestEast),
+                (_, _, _, true) => (_NET_WM_MOVERESIZE_SIZE_RIGHT, InputSystemCursorShape.SizeWestEast),
+                _ => null
+            };
+        }
+
+        private static bool TryBeginMoveResize(Window window, nint action)
+        {
+            if (!OperatingSystem.IsLinux())
+                return false;
+
+            try
+            {
+                if (GetX11Handles(window) is not { } handles)
+                    return false;
+
+                var (display, x11Window) = handles;
+                XLockDisplay(display);
+                try
+                {
+                    // Locate the pointer in root-window coordinates
+                    var rootWindow = XDefaultRootWindow(display);
+                    if (XQueryPointer(display, rootWindow, out _, out _, out var rootX, out var rootY, out _, out _, out _) == 0)
+                        return false;
+
+                    // The window manager cannot take over the pointer while it is still implicitly
+                    // grabbed by the button press that initiated the operation, so release the grab first
+                    _ = XUngrabPointer(display, IntPtr.Zero);
+
+                    SendClientMessageToRoot(
+                        display,
+                        x11Window,
+                        XInternAtom(display, "_NET_WM_MOVERESIZE", 0),
+                        rootX,
+                        rootY,
+                        action,
+                        1 /* left mouse button */,
+                        SOURCE_INDICATION_APPLICATION);
 
                     return true;
                 }
@@ -172,6 +258,96 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Tracks pointer movement along the window edges to provide resize cursors
+        /// and initiate window manager-driven resizing.
+        /// </summary>
+        private sealed class ResizeBorderTracker
+        {
+            private static readonly Dictionary<InputSystemCursorShape, InputSystemCursor> _cursorCache = new();
+            private static PropertyInfo? _protectedCursorProperty;
+
+            private readonly Window _window;
+            private readonly FrameworkElement _root;
+            private InputSystemCursorShape? _currentShape;
+
+            public ResizeBorderTracker(Window window, FrameworkElement root)
+            {
+                _window = window;
+                _root = root;
+
+                // Handled events are observed as well, so the borders also work above interactive content
+                root.AddHandler(UIElement.PointerMovedEvent, new PointerEventHandler(Root_PointerMoved), true);
+                root.AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler(Root_PointerPressed), true);
+                root.AddHandler(UIElement.PointerExitedEvent, new PointerEventHandler(Root_PointerExited), true);
+            }
+
+            private void Root_PointerMoved(object sender, PointerRoutedEventArgs e)
+            {
+                var edge = IsResizable(_window)
+                    ? GetResizeEdge(e.GetCurrentPoint(_root).Position, _root.ActualWidth, _root.ActualHeight)
+                    : null;
+
+                SetCursor(edge?.Shape);
+            }
+
+            private void Root_PointerPressed(object sender, PointerRoutedEventArgs e)
+            {
+                // Do not interfere with elements that already handled the press (e.g. buttons, title bar drag)
+                if (e.Handled)
+                    return;
+
+                if (!IsResizable(_window))
+                    return;
+
+                var point = e.GetCurrentPoint(_root);
+                if (!point.Properties.IsLeftButtonPressed)
+                    return;
+
+                if (GetResizeEdge(point.Position, _root.ActualWidth, _root.ActualHeight) is not { } edge)
+                    return;
+
+                if (TryBeginMoveResize(_window, edge.Action))
+                    e.Handled = true;
+            }
+
+            private void Root_PointerExited(object sender, PointerRoutedEventArgs e)
+            {
+                SetCursor(null);
+            }
+
+            private void SetCursor(InputSystemCursorShape? shape)
+            {
+                if (shape == _currentShape)
+                    return;
+
+                _currentShape = shape;
+
+                // UIElement.ProtectedCursor is not publicly settable, so reflection is required
+                _protectedCursorProperty ??= typeof(UIElement).GetProperty("ProtectedCursor", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (_protectedCursorProperty is null)
+                    return;
+
+                InputSystemCursor? cursor = null;
+                if (shape is { } cursorShape)
+                {
+                    if (!_cursorCache.TryGetValue(cursorShape, out cursor))
+                    {
+                        cursor = InputSystemCursor.Create(cursorShape);
+                        _cursorCache[cursorShape] = cursor;
+                    }
+                }
+
+                try
+                {
+                    _protectedCursorProperty.SetValue(_root, cursor);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 

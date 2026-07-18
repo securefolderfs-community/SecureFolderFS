@@ -48,7 +48,12 @@ namespace SecureFolderFS.Uno.UserControls
             if (_window is null)
                 return;
 
-            if (!e.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
+            var point = e.GetCurrentPoint(null);
+            if (!point.Properties.IsLeftButtonPressed)
+                return;
+
+            // Leave the outer edge strip to the client-drawn resize borders
+            if (X11WindowHelper.IsInResizeBorder(_window, point.Position))
                 return;
 
             if (X11WindowHelper.TryBeginWindowDrag(_window))

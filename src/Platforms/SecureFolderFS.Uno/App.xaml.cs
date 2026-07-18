@@ -392,6 +392,12 @@ namespace SecureFolderFS.Uno
             // The OS does not paint caption buttons when the title bar is client-drawn,
             // so show our own minimize/maximize/close buttons
             titleBar?.ShowWindowButtons(window);
+
+#if __UNO_SKIA_X11__
+            // Removing the window decorations also removes the window manager's resize frame,
+            // so provide client-drawn resize borders along the window edges
+            X11WindowHelper.EnableResizeBorders(window);
+#endif
 #endif
 
 #if WINDOWS
