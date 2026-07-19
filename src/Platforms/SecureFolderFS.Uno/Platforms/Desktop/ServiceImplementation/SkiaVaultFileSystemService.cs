@@ -15,10 +15,9 @@ using static SecureFolderFS.Sdk.Constants.DataSources;
 
 #if !__UNO_SKIA_MACOS__
 using SecureFolderFS.Core.FUSE;
-#else
-using System;
-using SecureFolderFS.Core.MacFuse;
 using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
+#else
+using SecureFolderFS.Core.MacFuse;
 #endif
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
