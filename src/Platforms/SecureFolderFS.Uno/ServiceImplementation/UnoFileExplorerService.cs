@@ -85,7 +85,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 }
 
 #if __MACOS__ || __MACCATALYST__ || __UNO_SKIA_MACOS__
-                Process.Start("sh", ["-c", $"open {folder.Id}"]);
+                // Pass the path as a discrete argument instead of interpolating it into a shell
+                // command. The FUSE mount point lives under "Application Support", whose space
+                // would otherwise be split by the shell and cause 'open' to fail
+                Process.Start("/usr/bin/open", [folder.Id]);
                 return true;
 #elif WINDOWS
                 await global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);

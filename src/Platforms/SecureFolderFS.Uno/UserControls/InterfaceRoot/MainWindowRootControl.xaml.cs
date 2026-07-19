@@ -14,13 +14,12 @@ using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
 using Uno.UI;
@@ -84,10 +83,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (!settingsService.AppSettings.WasIntroduced)
             {
                 var overlayService = DI.Service<IOverlayService>();
-                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
-
-                settingsService.AppSettings.WasIntroduced = true;
-                await settingsService.AppSettings.SaveAsync();
+                var result = await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                if (result.Positive())
+                {
+                    settingsService.AppSettings.WasIntroduced = true;
+                    await settingsService.AppSettings.SaveAsync();
+                }
             }
 
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults

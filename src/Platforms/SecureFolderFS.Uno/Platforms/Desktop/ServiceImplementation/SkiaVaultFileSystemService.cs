@@ -15,7 +15,9 @@ using static SecureFolderFS.Sdk.Constants.DataSources;
 
 #if !__UNO_SKIA_MACOS__
 using SecureFolderFS.Core.FUSE;
+#else
 using System;
+using SecureFolderFS.Core.MacFuse;
 using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
 #endif
 
@@ -30,7 +32,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
             await Task.CompletedTask;
             yield return new SkiaWebDavFileSystem();
 
-#if !__UNO_SKIA_MACOS__
+#if __UNO_SKIA_MACOS__
+            yield return new MacFuseFileSystem();
+#else
             // Inside a Flatpak sandbox the FUSE userspace may appear available, but mounts
             // are confined to the sandbox's mount namespace and invisible to the host
             if (!FuseInstallationViewModel.IsSandboxed)

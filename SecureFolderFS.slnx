@@ -21,6 +21,11 @@
       <Platform Solution="Release|x64" Project="x64" />
       <Platform Solution="Release|x86" Project="x86" />
     </Project>
+    <Project Path="lib/FuseSharp/src/FuseSharp/FuseSharp/FuseSharp.csproj">
+      <Platform Solution="Release|arm64" Project="ARM64" />
+      <Platform Solution="Release|x64" Project="x64" />
+      <Platform Solution="Release|x86" Project="x86" />
+    </Project>
   </Folder>
   <Folder Name="/SolutionItems/">
     <File Path="../SecureFolderFS.Uno/Directory.Build.props" />
@@ -53,6 +58,11 @@
       <Platform Solution="Release|x86" Project="x86" />
     </Project>
     <Project Path="src/Core/SecureFolderFS.Core.FUSE/SecureFolderFS.Core.FUSE.csproj">
+      <Platform Solution="Release|arm64" Project="ARM64" />
+      <Platform Solution="Release|x64" Project="x64" />
+      <Platform Solution="Release|x86" Project="x86" />
+    </Project>
+    <Project Path="src/Core/SecureFolderFS.Core.MacFuse/SecureFolderFS.Core.MacFuse.csproj">
       <Platform Solution="Release|arm64" Project="ARM64" />
       <Platform Solution="Release|x64" Project="x64" />
       <Platform Solution="Release|x86" Project="x86" />

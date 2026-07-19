@@ -86,6 +86,7 @@
 
       <ItemGroup>
         <ProjectReference Include="..\..\Core\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+        <ProjectReference Include="..\..\Core\SecureFolderFS.Core.MacFuse\SecureFolderFS.Core.MacFuse.csproj" />
         <ProjectReference Include="..\..\Core\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
       </ItemGroup>
     </When>
