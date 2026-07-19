@@ -1,11 +1,14 @@
 using System.Text;
 using FuseSharp;
 using FuseSharp.Native;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.MacFuse.OpenHandles;
+using SecureFolderFS.Storage.Extensions;
 using static FuseSharp.Native.LibC;
 
 namespace SecureFolderFS.Core.MacFuse.Callbacks
@@ -475,18 +478,25 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (!Directory.Exists(ciphertextPath))
                 return -ENOENT;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(static x => !PathHelpers.IsCoreName(x)))
+            // Protect core folders from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(Path.TrimEndingDirectorySeparator(ciphertextPath))))
+                return -EACCES;
+
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(static x => !PathHelpers.IsCoreName(Path.GetFileName(x))))
                 return -ENOTEMPTY;
 
             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
-
             try
             {
-                // Remove DirectoryID
+                if (FuseOptions.IsRecycleBinEnabled())
+                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.Folder);
+                else
+                    Directory.Delete(ciphertextPath, recursive: true); // Recursive because we want to delete the Directory ID file
+
+                // Delete and remove Directory ID
                 File.Delete(directoryIdPath);
                 specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
 
-                Directory.Delete(ciphertextPath, recursive: false);
                 return 0;
             }
             catch (Exception ex)
@@ -603,9 +613,17 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (Directory.Exists(ciphertextPath))
                 return -EISDIR;
 
+            // Protect core files from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
+                return -EACCES;
+
             try
             {
-                File.Delete(ciphertextPath);
+                if (FuseOptions.IsRecycleBinEnabled())
+                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
+                else
+                    File.Delete(ciphertextPath);
+
                 return 0;
             }
             catch (Exception ex)
