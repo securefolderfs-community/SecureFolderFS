@@ -79,10 +79,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             {
                 if (!fileExists)
                 {
-                    using (File.Create(ciphertextPath))
-                    {
-                    }
-
+                    File.Create(ciphertextPath).Dispose();
                     File.SetUnixFileMode(ciphertextPath, (UnixFileMode)(mode & 0xFFFu));
                 }
             }
