@@ -3,6 +3,7 @@
     <Project Path="lib/nwebdav/src/NWebDav.Server.HttpListener/NWebDav.Server.HttpListener.csproj" />
     <Project Path="lib/nwebdav/src/NWebDav.Server/NWebDav.Server.csproj" />
     <Project Path="lib/Tmds.Fuse/src/Tmds.Fuse/Tmds.Fuse.csproj" />
+    <Project Path="lib/FuseSharp/src/FuseSharp/FuseSharp/FuseSharp.csproj" />
   </Folder>
   <Folder Name="/SolutionItems/">
     <File Path="../SecureFolderFS.Uno/Directory.Build.props" />
@@ -19,6 +20,7 @@
     <Project Path="src/Core/SecureFolderFS.Core.Dokany/SecureFolderFS.Core.Dokany.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.FileSystem/SecureFolderFS.Core.FileSystem.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.FUSE/SecureFolderFS.Core.FUSE.csproj" />
+    <Project Path="src/Core/SecureFolderFS.Core.MacFuse/SecureFolderFS.Core.MacFuse.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.MobileFS/SecureFolderFS.Core.MobileFS.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.WebDav/SecureFolderFS.Core.WebDav.csproj" />
     <Project Path="src/Core/SecureFolderFS.Core.WinFsp/SecureFolderFS.Core.WinFsp.csproj" />
