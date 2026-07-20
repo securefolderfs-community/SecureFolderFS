@@ -177,6 +177,37 @@ namespace SecureFolderFS.Uno.PInvoke
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr objc_getClass(string className);
 
+        [LibraryImport("libobjc.dylib", EntryPoint = "object_getClass")]
+        public static partial IntPtr object_getClass(IntPtr obj);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_allocateClassPair", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr objc_allocateClassPair(IntPtr superclass, string name, nint extraBytes);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_registerClassPair")]
+        public static partial void objc_registerClassPair(IntPtr cls);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "class_addMethod", StringMarshalling = StringMarshalling.Utf8)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static partial bool class_addMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "class_replaceMethod", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr class_replaceMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial long objc_msgSend_long(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_double(IntPtr receiver, IntPtr selector, double arg);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2, IntPtr arg3);
+
+        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_CGSize(IntPtr receiver, IntPtr selector, CGSize size);
+
         [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
 
@@ -363,6 +394,13 @@ namespace SecureFolderFS.Uno.PInvoke
     {
         public double X;
         public double Y;
+        public double Width;
+        public double Height;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct CGSize
+    {
         public double Width;
         public double Height;
     }

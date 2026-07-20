@@ -422,6 +422,16 @@ namespace SecureFolderFS.Uno
             // Enable early window configuration
             EnsureEarlyWindow(window, nameof(SecureFolderFS));
 
+#if __UNO_SKIA_MACOS__
+            // Hide the main window instead of closing it when 'Reduce to background' is enabled.
+            // This is handled natively because Uno's managed close-cancellation is a no-op on the macOS Skia host.
+            MacOsWindowHelper.InstallMainWindowCloseInterceptor(window, static () =>
+            {
+                var reduceToBackground = DI.Service<ISettingsService>().UserSettings.ReduceToBackground;
+                return reduceToBackground && !(Instance?.UseForceClose ?? false);
+            });
+#endif
+
 #if WINDOWS
             // Get BoundsManager
             var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
@@ -446,18 +456,23 @@ namespace SecureFolderFS.Uno
             }
 #endif
             var settingsService = DI.Service<ISettingsService>();
-#if !WINDOWS
-            var useForceClose = true;
-#else
+#if WINDOWS || __UNO_SKIA_MACOS__
             var useForceClose = Instance?.UseForceClose ?? false;
+#else
+            var useForceClose = true;
 #endif
             var reduceToBackground = settingsService.UserSettings.ReduceToBackground;
-            
 
             if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
+#if __UNO_SKIA_MACOS__
+                // Hide the window natively (AppWindow.Hide is not implemented on the macOS Skia host)
+                if (Instance?.MainWindow is { } mainWindow)
+                    MacOsWindowHelper.HideWindow(mainWindow);
+#else
                 Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
+#endif
             }
             else
             {
