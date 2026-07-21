@@ -53,7 +53,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 RecycleBinSize = config.RecycleBinSize,
                 VaultId = config.Uid,
                 Version = config.Version,
-                AppPlatform = config.AppPlatform
+                AppPlatform = config.AppPlatform,
+                ComplementGeneration = config.ComplementGeneration
             };
         }
 

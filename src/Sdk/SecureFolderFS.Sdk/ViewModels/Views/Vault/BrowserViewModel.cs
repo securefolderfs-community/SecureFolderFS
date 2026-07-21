@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.AppModels.Sorters;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -20,6 +21,8 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -170,6 +173,147 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         [RelayCommand]
+        protected virtual void SelectAll()
+        {
+            if (!IsSelecting || CurrentFolder is null)
+                return;
+
+            CurrentFolder.Items.SelectAll();
+        }
+
+        [RelayCommand]
+        protected virtual Task MoveSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.MoveCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task CopySelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.CopyCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task ExportSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.ExportCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual Task DeleteSelectedAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteOnSelectionAsync(static item => item.DeleteCommand.ExecuteAsync(null));
+        }
+
+        [RelayCommand]
+        protected virtual async Task CompressSelectedAsync(CancellationToken cancellationToken)
+        {
+            if (Options.IsReadOnly)
+                return;
+
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                return;
+
+            if (TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+
+            var items = CurrentFolder.SelectedItems.ToArray();
+            if (items.IsEmpty())
+                return;
+
+            IsSelecting = false;
+
+            var desiredName = items.Length == 1
+                ? $"{Path.GetFileNameWithoutExtension(items[0].Inner.Name)}.zip"
+                : "Archive.zip";
+            var archiveName = CollisionHelpers.GetAvailableName(desiredName, CurrentFolder.Items.Select(x => x.Inner.Name));
+
+            IFile? archiveFile = null;
+            try
+            {
+                using var cts = transferViewModel.GetCancellation(cancellationToken);
+                transferViewModel.ShowIndeterminate("Compressing".ToLocalized());
+
+                archiveFile = await modifiableFolder.CreateFileAsync(archiveName, false, cts.Token);
+                await using (var archiveStream = await archiveFile.OpenWriteAsync(cts.Token))
+                {
+                    // Wrap in a forward-only stream so ZipArchive never seeks back to patch headers.
+                    // Seeking back would force a read-modify-write on the write-only encrypting stream, corrupting already-written data
+                    await using var forwardOnlyStream = new ForwardOnlyWriteStream(archiveStream);
+                    await using (var zipArchive = new ZipArchive(forwardOnlyStream, ZipArchiveMode.Create))
+                    {
+                        foreach (var item in items)
+                            await AddToArchiveAsync(zipArchive, item.Inner, string.Empty, cts.Token);
+                    }
+                }
+
+                CurrentFolder.Items.Insert(new FileViewModel(archiveFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
+            }
+            catch (OperationCanceledException)
+            {
+                await CleanupPartialArchiveAsync(archiveFile);
+            }
+            catch (Exception ex)
+            {
+                await CleanupPartialArchiveAsync(archiveFile);
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
+            }
+            finally
+            {
+                await transferViewModel.HideAsync();
+            }
+        }
+
+        private static async Task AddToArchiveAsync(ZipArchive zipArchive, IStorable storable, string basePath, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            switch (storable)
+            {
+                case IFile file:
+                {
+                    var entry = zipArchive.CreateEntry($"{basePath}{file.Name}", CompressionLevel.Optimal);
+                    await using var entryStream = entry.Open();
+                    await using var sourceStream = await file.OpenReadAsync(cancellationToken);
+                    await sourceStream.CopyToAsync(entryStream, cancellationToken);
+                    break;
+                }
+
+                case IFolder folder:
+                {
+                    await foreach (var item in folder.GetItemsAsync(StorableType.All, cancellationToken))
+                        await AddToArchiveAsync(zipArchive, item, $"{basePath}{folder.Name}/", cancellationToken);
+                    break;
+                }
+            }
+        }
+
+        private async Task CleanupPartialArchiveAsync(IFile? archiveFile)
+        {
+            if (archiveFile is not IStorableChild archiveChild || CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                return;
+
+            try
+            {
+                await modifiableFolder.DeleteAsync(archiveChild, CancellationToken.None);
+            }
+            catch (Exception)
+            {
+                // The partial archive could not be removed - it will show up on the next refresh
+            }
+        }
+
+        private async Task ExecuteOnSelectionAsync(Func<BrowserItemViewModel, Task> action)
+        {
+            // The item-level commands already operate on the whole selection
+            // when IsSelecting is active - delegate to any selected item
+            var selectedItem = CurrentFolder?.SelectedItems.FirstOrDefault();
+            if (selectedItem is null)
+                return;
+
+            await action(selectedItem);
+        }
+
+        [RelayCommand]
         protected virtual async Task SearchAsync()
         {
             if (CurrentFolder?.Inner is not IFolder searchedFolder)
@@ -242,10 +386,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 return;
 
             var originalSortOption = Layouts.CurrentSortOption;
+            var originalIsAscending = Layouts.IsAscending;
             await OverlayService.ShowAsync(Layouts);
 
-            if (originalSortOption != Layouts.CurrentSortOption)
-                Layouts.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            if (originalSortOption != Layouts.CurrentSortOption || originalIsAscending != Layouts.IsAscending)
+            {
+                // Date sorting needs modification dates, which are loaded lazily and may be
+                // missing for items that were never scrolled into view - relist to fetch them
+                if (Layouts.GetSorter() is DateSorter && CurrentFolder.Items.Any(x => x.LastModified is null))
+                    await CurrentFolder.ListContentsAsync(cancellationToken);
+                else
+                    Layouts.GetSorter()?.SortCollection(CurrentFolder.Items, CurrentFolder.Items);
+            }
         }
 
         [RelayCommand]
@@ -278,6 +430,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (result.Aborted() || newItemViewModel.ItemName is null)
                 return;
 
+            // The collision check below runs against the loaded items, so make sure
+            // the listing is complete - otherwise CreateFileAsync(overwrite: false)
+            // could silently return an existing item instead of creating a new one
+            if (CurrentFolder.Items.IsEmpty())
+                await CurrentFolder.ListContentsAsync(cancellationToken);
+
             var formattedName = CollisionHelpers.GetAvailableName(
                     FormattingHelpers.SanitizeItemName(newItemViewModel.ItemName, "New item"),
                     CurrentFolder.Items.Select(x => x.Inner.Name));
@@ -304,10 +462,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (TransferViewModel is not null)
-                    await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await TransferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
         }
 
@@ -394,13 +552,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
                         TransferViewModel.TransferType = TransferType.Copy;
                         using var cts = TransferViewModel.GetCancellation(cancellationToken);
+                        var existingNames = new HashSet<string>(CurrentFolder.Items.Select(x => x.Inner.Name), StringComparer.OrdinalIgnoreCase);
                         await TransferViewModel.TransferAsync(galleryItems, async (item, token) =>
                         {
                             // Get available name to avoid collision
-                            var availableName = CollisionHelpers.GetAvailableName(item.Name, CurrentFolder.Items.Select(x => x.Inner.Name));
+                            var availableName = CollisionHelpers.GetAvailableName(item.Name, existingNames);
 
                             // Copy
                             var copiedFile = await modifiableFolder.CreateCopyOfAsync(item, false, availableName, token);
+                            existingNames.Add(availableName);
 
                             // Add to destination
                             CurrentFolder.Items.Insert(new FileViewModel(copiedFile, this, CurrentFolder).WithInitAsync(), Layouts.GetSorter());
@@ -414,9 +574,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await TransferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await TransferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {

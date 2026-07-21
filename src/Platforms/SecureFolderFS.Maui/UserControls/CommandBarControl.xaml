@@ -17,7 +17,7 @@
 
     <Grid SafeAreaEdges="None">
         <Grid.RowDefinitions>
-            <RowDefinition Height="75" />
+            <RowDefinition x:Name="ToolbarRow" Height="75" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -61,6 +61,7 @@
                             mi:MauiIcon.Value="{mi_material:Material Close,
                                                                      IconSize=20}"
                             Clicked="Close_Clicked"
+                            SemanticProperties.Description="{l:ResourceString Rid=Close}"
                             Style="{StaticResource TransparentButtonStyle}"
                             VerticalOptions="Center" />
 
@@ -78,10 +79,20 @@
                         <HorizontalStackLayout Grid.Column="2">
                             <Button
                                 Padding="12,8"
+                                mi:MauiIcon.Value="{mi_material:Material DeleteOutline,
+                                                                         IconSize=20}"
+                                Command="{Binding DeleteCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding DeleteCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Delete}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="12,8"
                                 mi:MauiIcon.Value="{mi_material:Material InfoOutline,
                                                                          IconSize=20}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=GetInfo}"
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
@@ -90,6 +101,7 @@
                                                                          IconSize=20}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Share}"
                                 Style="{StaticResource TransparentButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
@@ -115,6 +127,7 @@
                                                                            IconColor='#007bff'}"
                                 Command="{Binding PropertiesCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding PropertiesCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=GetInfo}"
                                 Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                             <Button
@@ -124,6 +137,17 @@
                                                                            IconColor='#007bff'}"
                                 Command="{Binding ShareCommand, Source={x:Reference ThisControl}}"
                                 IsVisible="{Binding ShareCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Share}"
+                                Style="{StaticResource NoBackgroundButtonStyle}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="10"
+                                mi:MauiIcon.Value="{mi_cupertino:Cupertino Trash,
+                                                                           IconSize=22,
+                                                                           IconColor='#FF3B30'}"
+                                Command="{Binding DeleteCommand, Source={x:Reference ThisControl}}"
+                                IsVisible="{Binding DeleteCommand, Converter={StaticResource NullToBoolConverter}, Source={x:Reference ThisControl}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Delete}"
                                 Style="{StaticResource NoBackgroundButtonStyle}"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>

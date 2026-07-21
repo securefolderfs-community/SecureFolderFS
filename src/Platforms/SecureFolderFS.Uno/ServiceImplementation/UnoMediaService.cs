@@ -14,11 +14,11 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
-using SecureFolderFS.Uno.PInvoke;
-using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 
 #if WINDOWS
 using System.Runtime.InteropServices;
+using SecureFolderFS.Uno.PInvoke;
+using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 #endif
 
 namespace SecureFolderFS.Uno.ServiceImplementation
@@ -34,8 +34,8 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 "Android_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
                 {
 #if WINDOWS && !HAS_UNO
-                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_dark.png",
-                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_light.png"
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_light.png"
 #else
                     ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/gpixel_dark.png",
                     _ => "ms-appx:///Assets/AppAssets/Devices/gpixel_light.png"
@@ -45,13 +45,21 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 "iOS_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
                 {
 #if WINDOWS && !HAS_UNO
-                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_dark.png",
-                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_light.png"
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_light.png"
 #else
                     ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/iphone_dark.png",
                     _ => "ms-appx:///Assets/AppAssets/Devices/iphone_light.png"
 #endif
                 }),
+                
+                "AppPlatformIcon" => new ImageResource(
+#if WINDOWS && !HAS_UNO
+                    "ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_platform_icon.png"
+#else
+                    "ms-appx:///Assets/AppAssets/app_platform_icon.png"
+#endif
+                ),
 
 #if WINDOWS && !HAS_UNO
                 "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),

@@ -36,6 +36,14 @@
                                                 SelectedItem="{Binding ViewModel.CurrentSortOption, Mode=TwoWay}" />
                                         </uco:OptionsControl.Slot>
                                     </uco:OptionsControl>
+                                    <uco:OptionsControl Title="{l:ResourceString Rid=Ascending}">
+                                        <uco:OptionsControl.Slot>
+                                            <Switch
+                                                BindingContext="{x:Reference ThisSheet}"
+                                                HorizontalOptions="End"
+                                                IsToggled="{Binding ViewModel.IsAscending, Mode=TwoWay}" />
+                                        </uco:OptionsControl.Slot>
+                                    </uco:OptionsControl>
                                     <uco:OptionsControl Title="{l:ResourceString Rid=ItemLayout}" IsSeparatorVisible="False">
                                         <uco:OptionsControl.Slot>
                                             <ucc:ModernPicker

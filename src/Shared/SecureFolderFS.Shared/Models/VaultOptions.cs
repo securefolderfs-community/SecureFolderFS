@@ -54,5 +54,15 @@
         /// Gets App Platform metadata when the vault is managed by a key broker.
         /// </summary>
         public AppPlatformVaultOptions? AppPlatform { get; init; }
+
+        /// <summary>
+        /// Gets the rotation counter for complementation key material.
+        /// </summary>
+        /// <remarks>
+        /// This value is a monotonic high-water mark: it must be carried through every configuration
+        /// rewrite (even while complementation is disabled) so that re-enabling complementation can
+        /// never reuse a previously issued generation, which would resurrect revoked credentials.
+        /// </remarks>
+        public int ComplementGeneration { get; init; }
     }
 }

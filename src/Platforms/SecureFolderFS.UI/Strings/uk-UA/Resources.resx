@@ -1398,7 +1398,7 @@
   <data name="DeviceLinkSourceDesktop" xml:space="preserve">
       <value>Desktop</value>
   </data>
-  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+  <data name="ThisDevice" xml:space="preserve">
       <value>This device</value>
   </data>
   <data name="FileInformation" xml:space="preserve">

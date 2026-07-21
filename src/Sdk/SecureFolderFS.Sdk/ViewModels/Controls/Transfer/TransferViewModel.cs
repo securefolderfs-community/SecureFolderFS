@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
     {
         private const int ERROR_DISPLAY_DURATION_MS = 5000;
 
-        private readonly BrowserViewModel _browserViewModel;
+        private readonly BrowserViewModel? _browserViewModel;
         private readonly SynchronizationContext? _synchronizationContext;
         private TaskCompletionSource<IFolder?>? _tcs;
         private CancellationTokenSource? _cts;
@@ -35,7 +35,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         [ObservableProperty] private bool _IsErrorVisible;
         [ObservableProperty] private TransferType _TransferType;
 
-        public TransferViewModel(BrowserViewModel browserViewModel)
+        /// <summary>
+        /// Gets or sets an optional override for resolving the destination folder when the user
+        /// confirms a folder pick. Used by hosts that share one transfer view model across multiple
+        /// browser instances (e.g. tabbed browsing), where the destination is whichever browser is
+        /// currently in view rather than the one this view model was created with.
+        /// </summary>
+        public Func<IFolder?>? DestinationResolver { get; set; }
+
+        public TransferViewModel(BrowserViewModel? browserViewModel = null)
         {
             _browserViewModel = browserViewModel;
             _synchronizationContext = SynchronizationContext.Current;
@@ -199,7 +207,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         private void Confirm()
         {
             // Only used for confirming the destination folder
-            _tcs?.TrySetResult(_browserViewModel.CurrentFolder?.Folder);
+            _tcs?.TrySetResult(DestinationResolver is not null
+                ? DestinationResolver()
+                : _browserViewModel?.CurrentFolder?.Folder);
         }
 
         [RelayCommand]

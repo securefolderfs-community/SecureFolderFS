@@ -10,6 +10,7 @@
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels.Authentication;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk"
+    xmlns:vm3="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Components;assembly=SecureFolderFS.Sdk"
     x:Name="ThisLoginControl">
 
     <ContentView.Resources>
@@ -100,6 +101,99 @@
             </ContentView>
         </DataTemplate>
 
+        <!--  App Platform Template  -->
+        <DataTemplate x:Key="AppPlatformTemplate" x:DataType="vm:AppPlatformLoginViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="16">
+
+                    <!--  Icon + title card  -->
+                    <Border
+                        Padding="20,18"
+                        Background="{StaticResource ThemeSecondaryColorBrush}"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="12">
+                            <Border
+                                Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                                HeightRequest="48"
+                                HorizontalOptions="Center"
+                                StrokeThickness="0"
+                                WidthRequest="48">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_material:Material Shield}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="Android"
+                                        VerticalOptions="Center" />
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_cupertino:Cupertino LockShield}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="iOS"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                            <Label
+                                FontSize="14"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                Opacity="0.6"
+                                Text="Sign in with App Platform" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!--  Account picker  -->
+                    <VerticalStackLayout IsVisible="{Binding Accounts.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}" Spacing="4">
+                        <Label
+                            FontSize="12"
+                            Opacity="0.6"
+                            Text="{l:ResourceString Rid=Account}" />
+                        <Picker
+                            Background="{StaticResource ThemeSecondaryColorBrush}"
+                            HorizontalOptions="Fill"
+                            ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm3:PickerOptionViewModel}}"
+                            ItemsSource="{Binding Accounts, Mode=OneWay}"
+                            SelectedItem="{Binding SelectedAccount, Mode=TwoWay}" />
+                    </VerticalStackLayout>
+
+                    <!--  Authenticate button  -->
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
+                        Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Authenticate}" />
+
+                    <!--  Waiting for browser sign-in  -->
+                    <Label
+                        FontSize="12"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Opacity="0.6"
+                        Text="Waiting for browser sign-in..." />
+
+                    <!--  Cancel  -->
+                    <Button
+                        Command="{Binding ProvideCredentialsCancelCommand}"
+                        HorizontalOptions="Fill"
+                        IsVisible="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Cancel}" />
+
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+
         <!--  Persisted Template  -->
         <DataTemplate x:Key="PersistedAuthenticationTemplate" x:DataType="vm2:PersistedAuthenticationViewModel">
             <ContentView>
@@ -146,6 +240,7 @@
         <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
+                    AppPlatformTemplate="{StaticResource AppPlatformTemplate}"
                     ErrorTemplate="{StaticResource ErrorTemplate}"
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     PasswordTemplate="{StaticResource PasswordTemplate}"

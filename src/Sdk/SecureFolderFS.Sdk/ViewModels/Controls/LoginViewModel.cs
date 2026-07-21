@@ -294,7 +294,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
+                var isAppPlatform = _authenticatedMethodIds.Contains("app_platform"); // TODO: Avoid arbitrary authId constants in Sdk
+                var unlockContract = isAppPlatform
+                    ? await VaultManagerService.UnlockAppPlatformAsync(_vaultFolder, _keySequence, cancellationToken)
+                    : await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
                 _vaultOptions ??= await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
                 if (string.IsNullOrWhiteSpace(_vaultOptions.VaultId))
                 {

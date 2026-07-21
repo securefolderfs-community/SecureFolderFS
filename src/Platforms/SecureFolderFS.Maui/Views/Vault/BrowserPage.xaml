@@ -87,15 +87,93 @@
             IsSelecting="{Binding ViewModel.IsSelecting, Mode=OneWay}"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}"
             RefreshCommand="{Binding ViewModel.RefreshCommand, Mode=OneWay}"
+            ViewModel="{Binding ViewModel, Mode=OneWay}"
             ViewType="{Binding ViewModel.Layouts.BrowserViewType, Mode=OneWay}">
             <uc2:BrowserControl.EmptyView>
-                <Label
-                    FontSize="18"
+                <VerticalStackLayout
                     HorizontalOptions="Center"
-                    Text="{l:ResourceString Rid=NoItems}"
-                    VerticalOptions="Center" />
+                    Spacing="16"
+                    VerticalOptions="Center">
+                    <Label
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="{l:ResourceString Rid=NoItems}" />
+                    <HorizontalStackLayout
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay, Source={x:Reference ThisPage}, Converter={StaticResource BoolInvertConverter}}"
+                        Spacing="8">
+                        <Button
+                            Command="{Binding ViewModel.NewItemCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                            Style="{StaticResource TransparentButtonStyle}"
+                            Text="{l:ResourceString Rid=CreateNew}" />
+                        <Button
+                            Command="{Binding ViewModel.ImportItemCommand, Mode=OneWay, Source={x:Reference ThisPage}}"
+                            Style="{StaticResource TransparentButtonStyle}"
+                            Text="{l:ResourceString Rid=ImportExisting}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
             </uc2:BrowserControl.EmptyView>
         </uc2:BrowserControl>
+
+        <!--  Selection action bar  -->
+        <Grid
+            Grid.Row="1"
+            Padding="8,8,8,16"
+            Background="{StaticResource ThemeBackgroundFillSecondaryColorBrush}"
+            IsVisible="{Binding ViewModel.IsSelecting, Mode=OneWay}"
+            VerticalOptions="End"
+            ZIndex="4">
+            <ScrollView
+                HeightRequest="48"
+                HorizontalOptions="Center"
+                HorizontalScrollBarVisibility="Default"
+                Orientation="Horizontal"
+                VerticalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="4">
+                    <Button
+                        Command="{Binding ViewModel.SelectAllCommand, Mode=OneWay}"
+                        SemanticProperties.Description="{l:ResourceString Rid=SelectAll}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=SelectAll}" />
+                    <Button
+                        Command="{Binding ViewModel.MoveSelectedCommand, Mode=OneWay}"
+                        IsEnabled="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        IsVisible="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        SemanticProperties.Description="{l:ResourceString Rid=Move}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=Move}" />
+                    <Button
+                        Command="{Binding ViewModel.CopySelectedCommand, Mode=OneWay}"
+                        IsEnabled="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        IsVisible="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        SemanticProperties.Description="{l:ResourceString Rid=Copy}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=Copy}" />
+                    <Button
+                        Command="{Binding ViewModel.ExportSelectedCommand, Mode=OneWay}"
+                        IsEnabled="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        SemanticProperties.Description="{l:ResourceString Rid=Export}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=Export}" />
+                    <Button
+                        Command="{Binding ViewModel.CompressSelectedCommand, Mode=OneWay}"
+                        IsEnabled="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        IsVisible="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        SemanticProperties.Description="{l:ResourceString Rid=Compress}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=Compress}" />
+                    <Button
+                        Command="{Binding ViewModel.DeleteSelectedCommand, Mode=OneWay}"
+                        IsEnabled="{Binding ViewModel.CurrentFolder.SelectedItems.Count, Mode=OneWay, Converter={StaticResource CountToBoolConverter}}"
+                        IsVisible="{Binding ViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        SemanticProperties.Description="{l:ResourceString Rid=Delete}"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Text="{l:ResourceString Rid=Delete}"
+                        TextColor="{AppThemeBinding Light=#C42B1C,
+                                                    Dark=#FF453A}" />
+                </HorizontalStackLayout>
+            </ScrollView>
+        </Grid>
 
         <uc2:TransferControl
             Title="{Binding ViewModel.TransferViewModel.Title, Mode=OneWay}"

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Miscreant;
 
@@ -6,11 +6,13 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     public sealed class AesSiv256 : IDisposable
     {
-        private readonly Aead _aesCmacSiv;
+        private readonly Aead? _aesCmacSiv;
+        private readonly byte[]? _longKey;
 
-        private AesSiv256(Aead aesCmacSiv)
+        private AesSiv256(Aead? aesCmacSiv, byte[]? longKey)
         {
             _aesCmacSiv = aesCmacSiv;
+            _longKey = longKey;
         }
 
         public static AesSiv256 CreateInstance(ReadOnlySpan<byte> dekKey, ReadOnlySpan<byte> macKey)
@@ -23,20 +25,29 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             dekKey.CopyTo(longKeySpan);
             macKey.CopyTo(longKeySpan.Slice(dekKey.Length));
 
+            if (Constants.PreferBouncyCastle)
+                return new AesSiv256(null, longKey);
+
             var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-            return new AesSiv256(aesCmacSiv);
+            return new AesSiv256(aesCmacSiv, null);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> associatedData)
         {
-            return _aesCmacSiv.Seal(bytes.ToArray(), data: associatedData.ToArray());
+            if (_longKey is not null)
+                return BouncyCastleAesSiv.Seal(_longKey, associatedData, bytes);
+
+            return _aesCmacSiv!.Seal(bytes.ToArray(), data: associatedData.ToArray());
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> associatedData)
         {
-            return _aesCmacSiv.Open(bytes.ToArray(), data: associatedData.ToArray());
+            if (_longKey is not null)
+                return BouncyCastleAesSiv.Open(_longKey, associatedData, bytes);
+
+            return _aesCmacSiv!.Open(bytes.ToArray(), data: associatedData.ToArray());
         }
 
         /// <inheritdoc/>
@@ -44,7 +55,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
         {
             try
             {
-                _aesCmacSiv.Dispose();
+                _aesCmacSiv?.Dispose();
             }
             catch (Exception ex)
             {

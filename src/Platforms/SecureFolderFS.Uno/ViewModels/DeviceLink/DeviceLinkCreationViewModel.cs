@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -55,7 +56,11 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
                         MobileDeviceId = pairingResult.MobileDeviceId,
                         MobileDeviceName = pairingResult.MobileDeviceName,
                         MobileDeviceType = pairingResult.MobileDeviceType,
-                        ExpectedHmac = key.Key,
+                        // Only a hash of the key contribution is persisted; the contribution itself
+                        // exists on this device transiently and must be re-obtained from the mobile
+                        // device on every unlock.
+                        KeyVerifier = SHA256.HashData(key.Key),
+                        BindingSecret = pairingResult.BindingSecret,
                         CreatedAt = DateTime.Now
                     }, cancellationToken);
 

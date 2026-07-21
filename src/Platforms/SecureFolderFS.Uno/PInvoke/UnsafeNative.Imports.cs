@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SecureFolderFS.Uno.PInvoke
 {
@@ -119,127 +120,25 @@ namespace SecureFolderFS.Uno.PInvoke
 #endif
 
 #if __UNO_SKIA_MACOS__
+        public const string LibObjc = "libobjc.dylib";
+        public const string SecurityLib = "/System/Library/Frameworks/Security.framework/Security";
+        public const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
 
+        public const int ErrSecSuccess = 0;
+        public const int ErrSecDuplicateItem = -25299;
+        public const int ErrSecItemNotFound = -25300;
+        public const uint KCfStringEncodingUtf8 = 0x08000100;
         public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr CFNotificationCenterGetDistributedCenter();
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr CFStringCreateWithCString(IntPtr allocator, string str, uint encoding);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial void CFNotificationCenterAddObserver(
-            IntPtr center,
-            IntPtr observer,
-            IntPtr callback,
-            IntPtr name,
-            IntPtr obj,
-            uint suspensionBehavior);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial void CFNotificationCenterRemoveObserver(
-            IntPtr center,
-            IntPtr observer,
-            IntPtr name,
-            IntPtr obj);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.U1)] bool value);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr sel_registerName(string name);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_ulong(IntPtr receiver, IntPtr selector, ulong arg);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial CGRect objc_msgSend_CGRect(IntPtr receiver, IntPtr selector);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_CGPoint(IntPtr receiver, IntPtr selector, CGPoint point);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr objc_getClass(string className);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "object_getClass")]
-        public static partial IntPtr object_getClass(IntPtr obj);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_allocateClassPair", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr objc_allocateClassPair(IntPtr superclass, string name, nint extraBytes);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_registerClassPair")]
-        public static partial void objc_registerClassPair(IntPtr cls);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "class_addMethod", StringMarshalling = StringMarshalling.Utf8)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static partial bool class_addMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "class_replaceMethod", StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr class_replaceMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial long objc_msgSend_long(IntPtr receiver, IntPtr selector);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_double(IntPtr receiver, IntPtr selector, double arg);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2, IntPtr arg3);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_CGSize(IntPtr receiver, IntPtr selector, CGSize size);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
-
-        [LibraryImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial void CFRelease(IntPtr cf);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial IntPtr CFRetain(IntPtr cf);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial long CFDataGetLength(IntPtr theData);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial IntPtr CFDataGetBytePtr(IntPtr theData);
-
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        #region Core Foundation
+        
+        [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFDictionaryCreate(
             IntPtr allocator,
             IntPtr keys,
@@ -248,50 +147,252 @@ namespace SecureFolderFS.Uno.PInvoke
             IntPtr keyCallBacks,
             IntPtr valueCallBacks);
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
+        [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFNumberCreate(IntPtr allocator, long theType, IntPtr valuePtr);
+        
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFStringCreateWithBytes(IntPtr allocator, byte[] bytes, nint numBytes, uint encoding, byte isExternalRepresentation);
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation")]
-        public static partial IntPtr CFBooleanGetValue(IntPtr boolean);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDataCreate(IntPtr allocator, byte[] bytes, nint length);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDictionaryCreate(IntPtr allocator, IntPtr[] keys, IntPtr[] values, nint numValues, IntPtr keyCallBacks, IntPtr valueCallBacks);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial void CFRelease(IntPtr cf);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDataGetBytePtr(IntPtr theData);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial nint CFDataGetLength(IntPtr theData);
+        
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFRetain(IntPtr cf);
+        
+        [LibraryImport(CoreFoundationLib, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr CFNotificationCenterGetDistributedCenter();
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
+        [LibraryImport(CoreFoundationLib, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr CFStringCreateWithCString(IntPtr allocator, string str, uint encoding);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial int SecItemCopyMatching(IntPtr query, out IntPtr result);
+        [LibraryImport(CoreFoundationLib)]
+        public static partial void CFNotificationCenterAddObserver(
+            IntPtr center,
+            IntPtr observer,
+            IntPtr callback,
+            IntPtr name,
+            IntPtr obj,
+            uint suspensionBehavior);
 
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security")]
-        public static partial int SecItemDelete(IntPtr query);
-
-        // Well-known CFString constants from Security framework
-        [LibraryImport("/System/Library/Frameworks/Security.framework/Security", EntryPoint = "kSecAttrKeyTypeECSECPrimeRandom")]
-        public static partial IntPtr GetSecAttrKeyTypeECSECPrimeRandom();
-
-        // Global symbol accessors for Security framework constants
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFBooleanTrue")]
+        [LibraryImport(CoreFoundationLib)]
+        public static partial void CFNotificationCenterRemoveObserver(
+            IntPtr center,
+            IntPtr observer,
+            IntPtr name,
+            IntPtr obj);
+        
+        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanTrue")]
         public static partial IntPtr GetCFBooleanTrue();
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFBooleanFalse")]
+        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanFalse")]
         public static partial IntPtr GetCFBooleanFalse();
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFTypeDictionaryKeyCallBacks")]
-        public static partial IntPtr GetCFTypeDictionaryKeyCallBacks();
+        #endregion
 
-        [LibraryImport("/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation", EntryPoint = "kCFTypeDictionaryValueCallBacks")]
-        public static partial IntPtr GetCFTypeDictionaryValueCallBacks();
+        #region Security
 
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemAdd(IntPtr attributes, IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemCopyMatching(IntPtr query, out IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemUpdate(IntPtr query, IntPtr attributesToUpdate);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemDelete(IntPtr query);        
+
+        #endregion
+
+        #region Objc
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_ulong(IntPtr receiver, IntPtr selector, ulong value);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        [LibraryImport(LibObjc, EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr sel_registerName(string name);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr objc_getClass(string className);
+
+        [LibraryImport(LibObjc, EntryPoint = "object_getClass")]
+        public static partial IntPtr object_getClass(IntPtr obj);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_allocateClassPair", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr objc_allocateClassPair(IntPtr superclass, string name, nint extraBytes);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_registerClassPair")]
+        public static partial void objc_registerClassPair(IntPtr cls);
+
+        [LibraryImport(LibObjc, EntryPoint = "class_addMethod", StringMarshalling = StringMarshalling.Utf8)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static partial bool class_addMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport(LibObjc, EntryPoint = "class_replaceMethod", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr class_replaceMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial long objc_msgSend_long(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_double(IntPtr receiver, IntPtr selector, double arg);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2, IntPtr arg3);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_CGSize(IntPtr receiver, IntPtr selector, CGSize size);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
+
+        #endregion
+
+        public static IntPtr CfString(string value)
+        {
+            var bytes = Encoding.UTF8.GetBytes(value);
+            return CFStringCreateWithBytes(IntPtr.Zero, bytes, bytes.Length, KCfStringEncodingUtf8, 0);
+        }
+
+        public static IntPtr CfData(byte[] bytes)
+        {
+            return CFDataCreate(IntPtr.Zero, bytes, bytes.Length);
+        }
+
+#endif
+        
+#if !__UNO_SKIA_MACOS__ && !WINDOWS
+
+        private const string LibSecret = "libsecret-1.so.0";
+        private const string LibGlib = "libglib-2.0.so.0";
+        public const string SecretCollectionDefault = "default";
+
+        [LibraryImport(LibSecret, StringMarshalling = StringMarshalling.Utf8)]
+        public static partial int secret_password_storev_sync(IntPtr schema, IntPtr attributes, string collection, string label, string password, IntPtr cancellable, out IntPtr error);
+
+        [LibraryImport(LibSecret)]
+        public static partial IntPtr secret_password_lookupv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
+
+        [LibraryImport(LibSecret)]
+        public static partial int secret_password_clearv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
+
+        [LibraryImport(LibSecret)]
+        public static partial void secret_password_free(IntPtr password);
+
+        [LibraryImport(LibGlib)]
+        public static partial IntPtr g_hash_table_new(IntPtr hashFunc, IntPtr keyEqualFunc);
+
+        [LibraryImport(LibGlib)]
+        public static partial void g_hash_table_insert(IntPtr hashTable, IntPtr key, IntPtr value);
+
+        [LibraryImport(LibGlib)]
+        public static partial void g_hash_table_unref(IntPtr hashTable);
+
+        [LibraryImport(LibGlib)]
+        public static partial void g_error_free(IntPtr error);
+        
+        public static class GlibFunctions
+        {
+            internal static readonly IntPtr StrHash;
+            internal static readonly IntPtr StrEqual;
+
+            static GlibFunctions()
+            {
+                var glib = NativeLibrary.Load(LibGlib);
+                StrHash = NativeLibrary.GetExport(glib, "g_str_hash");
+                StrEqual = NativeLibrary.GetExport(glib, "g_str_equal");
+            }
+        }
+
+        /// <summary>
+        /// Owns a GHashTable of string attributes ({"key": value} or empty) plus the unmanaged
+        /// strings inserted into it (libsecret copies what it needs during the sync calls).
+        /// </summary>
+        public readonly struct SecretAttributes : IDisposable
+        {
+            internal IntPtr Handle { get; }
+            private readonly IntPtr _keyPtr;
+            private readonly IntPtr _valuePtr;
+
+            internal SecretAttributes(string? key)
+            {
+                Handle = g_hash_table_new(GlibFunctions.StrHash, GlibFunctions.StrEqual);
+                if (key is not null)
+                {
+                    _keyPtr = Marshal.StringToHGlobalAnsi("Key");
+                    _valuePtr = Marshal.StringToHGlobalAnsi(key);
+                    g_hash_table_insert(Handle, _keyPtr, _valuePtr);
+                }
+                else
+                {
+                    _keyPtr = IntPtr.Zero;
+                    _valuePtr = IntPtr.Zero;
+                }
+            }
+
+            public void Dispose()
+            {
+                if (Handle != IntPtr.Zero)
+                    g_hash_table_unref(Handle);
+                if (_keyPtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(_keyPtr);
+                if (_valuePtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(_valuePtr);
+            }
+        }
 #endif
     }
 
@@ -382,20 +483,90 @@ namespace SecureFolderFS.Uno.PInvoke
 #endif
 
 #if __UNO_SKIA_MACOS__
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct CGPoint
+    /// <summary>
+    /// Lazily-resolved CoreFoundation/Security constants. kSec* symbols are exported CFStringRef
+    /// variables (dereference the export); the dictionary callback symbols are the structs
+    /// themselves (use the export address directly).
+    /// </summary>
+    public static class MacOsConstants
     {
-        public double X;
-        public double Y;
-    }
+        internal static readonly IntPtr SecClass;
+        internal static readonly IntPtr SecClassGenericPassword;
+        internal static readonly IntPtr SecAttrService;
+        internal static readonly IntPtr SecAttrAccount;
+        internal static readonly IntPtr SecValueData;
+        internal static readonly IntPtr SecReturnData;
+        internal static readonly IntPtr SecMatchLimit;
+        internal static readonly IntPtr SecMatchLimitOne;
+        internal static readonly IntPtr CfBooleanTrue;
+        internal static readonly IntPtr TypeDictionaryKeyCallBacks;
+        internal static readonly IntPtr TypeDictionaryValueCallBacks;
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct CGRect
+        static MacOsConstants()
+        {
+            var security = NativeLibrary.Load(UnsafeNative.SecurityLib);
+            var coreFoundation = NativeLibrary.Load(UnsafeNative.CoreFoundationLib);
+
+            SecClass = Deref(security, "kSecClass");
+            SecClassGenericPassword = Deref(security, "kSecClassGenericPassword");
+            SecAttrService = Deref(security, "kSecAttrService");
+            SecAttrAccount = Deref(security, "kSecAttrAccount");
+            SecValueData = Deref(security, "kSecValueData");
+            SecReturnData = Deref(security, "kSecReturnData");
+            SecMatchLimit = Deref(security, "kSecMatchLimit");
+            SecMatchLimitOne = Deref(security, "kSecMatchLimitOne");
+            CfBooleanTrue = Deref(coreFoundation, "kCFBooleanTrue");
+            TypeDictionaryKeyCallBacks = NativeLibrary.GetExport(coreFoundation, "kCFTypeDictionaryKeyCallBacks");
+            TypeDictionaryValueCallBacks = NativeLibrary.GetExport(coreFoundation, "kCFTypeDictionaryValueCallBacks");
+        }
+
+        private static IntPtr Deref(IntPtr library, string symbol)
+            => Marshal.ReadIntPtr(NativeLibrary.GetExport(library, symbol));
+    }
+    
+    /// <summary>
+    /// Owns a CFDictionary and the CF value objects passed into it (keys are shared kSec* constants and must not be released).
+    /// </summary>
+    public readonly struct CfDictionary : IDisposable
     {
-        public double X;
-        public double Y;
-        public double Width;
-        public double Height;
+        internal IntPtr Handle { get; }
+        private readonly IntPtr[] _ownedValues;
+
+        internal CfDictionary(params (IntPtr key, IntPtr value)[] entries)
+        {
+            var keys = new IntPtr[entries.Length];
+            var values = new IntPtr[entries.Length];
+            var owned = new IntPtr[entries.Length];
+
+            for (var i = 0; i < entries.Length; i++)
+            {
+                keys[i] = entries[i].key;
+                values[i] = entries[i].value;
+
+                // Constants (booleans, match limits) are process-wide singletons — don't release them.
+                owned[i] = values[i] != MacOsConstants.CfBooleanTrue && values[i] != MacOsConstants.SecMatchLimitOne &&
+                           values[i] != MacOsConstants.SecClassGenericPassword
+                    ? values[i]
+                    : IntPtr.Zero;
+            }
+
+            _ownedValues = owned;
+            Handle = UnsafeNative.CFDictionaryCreate(
+                IntPtr.Zero, keys, values, entries.Length,
+                MacOsConstants.TypeDictionaryKeyCallBacks, MacOsConstants.TypeDictionaryValueCallBacks);
+        }
+
+        public void Dispose()
+        {
+            if (Handle != IntPtr.Zero)
+                UnsafeNative.CFRelease(Handle);
+
+            foreach (var value in _ownedValues)
+            {
+                if (value != IntPtr.Zero)
+                    UnsafeNative.CFRelease(value);
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

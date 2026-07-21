@@ -41,7 +41,9 @@ namespace SecureFolderFS.Core.Routines.Operational
             if (unlockContract is not IWrapper<Security> securityWrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            _keyPair = securityWrapper.Inner.KeyPair;
+            // Operate on a private copy so the caller's unlock contract is never disposed by this routine,
+            // keeping it valid for retries after a failed attempt and for the session after a successful one.
+            _keyPair = securityWrapper.Inner.KeyPair.CreateCopy();
         }
 
         /// <inheritdoc/>

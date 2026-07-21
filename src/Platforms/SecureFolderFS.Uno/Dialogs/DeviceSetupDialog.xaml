@@ -1,0 +1,55 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.Uno.Dialogs.DeviceSetupDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Device Setup Required"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Continue"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel Width="380" Spacing="16">
+        <TextBlock Text="This is the first time unlocking an App Platform vault on this device. Enter your Account Key passphrase to set up this device." TextWrapping="Wrap" />
+
+        <PasswordBox x:Name="PassphraseBox" PlaceholderText="Account Key passphrase" />
+
+        <TextBlock
+            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+            Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+            TextWrapping="Wrap"
+            Visibility="{x:Bind ViewModel.ErrorMessage, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <TextBlock
+            FontSize="12"
+            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+            Text="This passphrase was set when you first configured your App Platform account. It is needed once per device to import your private key."
+            TextWrapping="Wrap" />
+
+        <HyperlinkButton
+            x:Name="ForgotPassphraseLink"
+            Padding="0"
+            HorizontalAlignment="Center"
+            Click="ForgotPassphraseLink_Click"
+            Content="Forgot your passphrase? Request an account reset">
+            <FlyoutBase.AttachedFlyout>
+                <Flyout x:Name="ResetFlyout" Placement="Top">
+                    <StackPanel Width="300" Spacing="12">
+                        <TextBlock
+                            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                            Text="This will request an administrator to reset your account. All your current keys will be deleted and access to all vaults will be revoked."
+                            TextWrapping="Wrap" />
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Click="ConfirmReset_Click"
+                            Content="Request Reset" />
+                    </StackPanel>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </HyperlinkButton>
+    </StackPanel>
+</ContentDialog>

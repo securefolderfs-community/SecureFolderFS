@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         public UserSettings(IModifiableFolder settingsFolder)
         {
             _settingsFolder = settingsFolder;
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.Settings.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
             PropertyChanged += UserSettings_PropertyChanged;
         }
 
@@ -59,6 +59,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         public virtual bool ContinueOnLastVault
         {
             get => GetSetting(static () => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public virtual string? AutoUnlockVaultId
+        {
+            get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
@@ -166,7 +173,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             await SaveAsync(cancellationToken);
 
             // Get the settings file
-            var settingsFile = await _settingsFolder.TryGetFileByNameAsync(Constants.FileNames.USER_SETTINGS_FILENAME, cancellationToken) as IFile;
+            var settingsFile = await _settingsFolder.TryGetFileByNameAsync(Constants.FileNames.Settings.USER_SETTINGS_FILENAME, cancellationToken) as IFile;
             if (settingsFile is null)
                 return Stream.Null;
 
@@ -175,7 +182,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             await using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
             {
                 // Create an entry with the specified filename
-                var entry = archive.CreateEntry(Constants.FileNames.USER_SETTINGS_FILENAME, CompressionLevel.Optimal);
+                var entry = archive.CreateEntry(Constants.FileNames.Settings.USER_SETTINGS_FILENAME, CompressionLevel.Optimal);
 
                 await using var entryStream = await entry.OpenAsync(cancellationToken);
                 await using var settingsStream = await settingsFile.OpenReadAsync(cancellationToken);
@@ -195,12 +202,12 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
                 await using var archive = new ZipArchive(dataStream, ZipArchiveMode.Read, leaveOpen: true);
 
                 // Find the settings file in the archive
-                var entry = archive.GetEntry(Constants.FileNames.USER_SETTINGS_FILENAME);
+                var entry = archive.GetEntry(Constants.FileNames.Settings.USER_SETTINGS_FILENAME);
                 if (entry is null)
                     return false;
 
                 // Get or create the settings file
-                var settingsFile = await _settingsFolder.CreateFileAsync(Constants.FileNames.USER_SETTINGS_FILENAME, true, cancellationToken);
+                var settingsFile = await _settingsFolder.CreateFileAsync(Constants.FileNames.Settings.USER_SETTINGS_FILENAME, true, cancellationToken);
 
                 // Write the imported settings
                 await using var entryStream = await entry.OpenAsync(cancellationToken);

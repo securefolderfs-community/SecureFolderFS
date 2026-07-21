@@ -246,6 +246,9 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 
+                            <!--  Auto unlock  -->
+                            <ToggleMenuFlyoutItem IsChecked="{x:Bind IsAutoUnlockEnabled, Mode=TwoWay}" Text="{l:ResourceString Rid=AutoUnlock}" />
+
                             <!--  Move up/down  -->
                             <MenuFlyoutSeparator Visibility="{x:Bind CanMove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <MenuFlyoutItem

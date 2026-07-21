@@ -2,6 +2,8 @@
 using System.Buffers;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -85,6 +87,78 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     chunkNumber,
                     _fileHeader,
                     plaintextChunk);
+
+                _fileSystemStatistics.BytesDecrypted?.Report(read);
+
+                // Check if the chunk is authentic
+                if (!result)
+                    return -1;
+
+                return read - (ciphertextSize - plaintextSize);
+            }
+            finally
+            {
+                // Clear ciphertext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(ciphertextChunk.AsSpan(0, ciphertextSize));
+
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(ciphertextChunk);
+            }
+        }
+
+        /// <inheritdoc cref="ReadChunk"/>
+        public async ValueTask<int> ReadChunkAsync(long chunkNumber, Memory<byte> plaintextChunk, CancellationToken cancellationToken = default)
+        {
+            // Calculate sizes
+            var ciphertextSize = _security.ContentCrypt.ChunkCiphertextSize;
+            var plaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
+            var ciphertextPosition = _security.HeaderCrypt.HeaderCiphertextSize + (chunkNumber * ciphertextSize);
+
+            // Rent buffer
+            var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
+            try
+            {
+                // ArrayPool may return a larger array than requested
+                var realCiphertextChunk = ciphertextChunk.AsMemory(0, ciphertextSize);
+
+                // Check position bounds
+                if (_ciphertextStream.CanSeek && _ciphertextStream.Length < ciphertextPosition)
+                    return 0;
+
+                // Set the correct stream position
+                if (!await _ciphertextStream.TrySetPositionOrAdvanceAsync(ciphertextPosition, cancellationToken).ConfigureAwait(false))
+                    return 0;
+
+                // Return early if the stream is at the EOF position
+                if (_ciphertextStream.IsEndOfStream())
+                    return 0;
+
+                // Read from the stream at the correct chunk
+                var read = await _ciphertextStream.ReadAsync(realCiphertextChunk, cancellationToken).ConfigureAwait(false);
+
+                // Check for the end of the file
+                if (read == Constants.FILE_EOF)
+                    return 0;
+
+                _fileSystemStatistics.BytesRead?.Report(read);
+
+                // Get reserved part for ciphertext chunk
+                var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
+                var chunkReserved = realCiphertextChunk.Span.Slice(0, chunkReservedSize);
+
+                // Check if the reserved part is all zeros, in which case the decryption will be skipped (the chunk was extended)
+                if (chunkReservedSize > 0 && SpanExtensions.IsAllZeros(chunkReserved))
+                {
+                    plaintextChunk.Span.Clear();
+                    return read - (ciphertextSize - plaintextSize);
+                }
+
+                // Decrypt
+                var result = _security.ContentCrypt.DecryptChunk(
+                    realCiphertextChunk.Span.Slice(0, read),
+                    chunkNumber,
+                    _fileHeader,
+                    plaintextChunk.Span);
 
                 _fileSystemStatistics.BytesDecrypted?.Report(read);
 
