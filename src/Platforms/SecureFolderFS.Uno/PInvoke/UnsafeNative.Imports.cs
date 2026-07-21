@@ -120,20 +120,57 @@ namespace SecureFolderFS.Uno.PInvoke
 #endif
 
 #if __UNO_SKIA_MACOS__
-
-        public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
+        public const string LibObjc = "libobjc.dylib";
         public const string SecurityLib = "/System/Library/Frameworks/Security.framework/Security";
         public const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
-        public const string LibObjc = "libobjc.dylib";
-        public const uint KCfStringEncodingUtf8 = 0x08000100;
 
         public const int ErrSecSuccess = 0;
         public const int ErrSecDuplicateItem = -25299;
         public const int ErrSecItemNotFound = -25300;
+        public const uint KCfStringEncodingUtf8 = 0x08000100;
+        public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
 
+        #region Core Foundation
+        
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDictionaryCreate(
+            IntPtr allocator,
+            IntPtr keys,
+            IntPtr values,
+            long numValues,
+            IntPtr keyCallBacks,
+            IntPtr valueCallBacks);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFNumberCreate(IntPtr allocator, long theType, IntPtr valuePtr);
+        
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFStringCreateWithBytes(IntPtr allocator, byte[] bytes, nint numBytes, uint encoding, byte isExternalRepresentation);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDataCreate(IntPtr allocator, byte[] bytes, nint length);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDictionaryCreate(IntPtr allocator, IntPtr[] keys, IntPtr[] values, nint numValues, IntPtr keyCallBacks, IntPtr valueCallBacks);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial void CFRelease(IntPtr cf);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFDataGetBytePtr(IntPtr theData);
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial nint CFDataGetLength(IntPtr theData);
+        
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFRetain(IntPtr cf);
+        
         [LibraryImport(CoreFoundationLib, StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr CFNotificationCenterGetDistributedCenter();
 
@@ -155,6 +192,47 @@ namespace SecureFolderFS.Uno.PInvoke
             IntPtr observer,
             IntPtr name,
             IntPtr obj);
+        
+        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanTrue")]
+        public static partial IntPtr GetCFBooleanTrue();
+
+        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanFalse")]
+        public static partial IntPtr GetCFBooleanFalse();
+
+        #endregion
+
+        #region Security
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemAdd(IntPtr attributes, IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemCopyMatching(IntPtr query, out IntPtr result);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemUpdate(IntPtr query, IntPtr attributesToUpdate);
+
+        [LibraryImport(SecurityLib)]
+        public static partial int SecItemDelete(IntPtr query);        
+
+        #endregion
+
+        #region Objc
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
@@ -215,81 +293,13 @@ namespace SecureFolderFS.Uno.PInvoke
         public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
-        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
-
-        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         [return: MarshalAs(UnmanagedType.U1)]
         public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
 
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFDictionaryCreate(
-            IntPtr allocator,
-            IntPtr keys,
-            IntPtr values,
-            long numValues,
-            IntPtr keyCallBacks,
-            IntPtr valueCallBacks);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFNumberCreate(IntPtr allocator, long theType, IntPtr valuePtr);
-
-        [LibraryImport(SecurityLib)]
-        public static partial IntPtr SecKeyCreateRandomKey(IntPtr parameters, out IntPtr error);
-
-        [LibraryImport(SecurityLib)]
-        public static partial IntPtr SecKeyCopyPublicKey(IntPtr key);
-
-        [LibraryImport(SecurityLib)]
-        public static partial IntPtr SecKeyCreateEncryptedData(IntPtr key, IntPtr algorithm, IntPtr plaintext, out IntPtr error);
-
-        [LibraryImport(SecurityLib)]
-        public static partial IntPtr SecKeyCreateDecryptedData(IntPtr key, IntPtr algorithm, IntPtr ciphertext, out IntPtr error);
-
-        [LibraryImport(SecurityLib)]
-        public static partial int SecItemAdd(IntPtr attributes, out IntPtr result);
-
-        // Global symbol accessors for Security framework constants
-        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanTrue")]
-        public static partial IntPtr GetCFBooleanTrue();
-
-        [LibraryImport(CoreFoundationLib, EntryPoint = "kCFBooleanFalse")]
-        public static partial IntPtr GetCFBooleanFalse();
-
-        [LibraryImport(SecurityLib)]
-        public static partial int SecItemAdd(IntPtr attributes, IntPtr result);
-
-        [LibraryImport(SecurityLib)]
-        public static partial int SecItemCopyMatching(IntPtr query, out IntPtr result);
-
-        [LibraryImport(SecurityLib)]
-        public static partial int SecItemUpdate(IntPtr query, IntPtr attributesToUpdate);
-
-        [LibraryImport(SecurityLib)]
-        public static partial int SecItemDelete(IntPtr query);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFStringCreateWithBytes(IntPtr allocator, byte[] bytes, nint numBytes, uint encoding, byte isExternalRepresentation);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFDataCreate(IntPtr allocator, byte[] bytes, nint length);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFDictionaryCreate(IntPtr allocator, IntPtr[] keys, IntPtr[] values, nint numValues, IntPtr keyCallBacks, IntPtr valueCallBacks);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial void CFRelease(IntPtr cf);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFDataGetBytePtr(IntPtr theData);
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial nint CFDataGetLength(IntPtr theData);
+        #endregion
 
         public static IntPtr CfString(string value)
         {
