@@ -95,7 +95,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
             await using var keyStream = await keyFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
             using var secretKey = new ManagedKey(KEY_LENGTH + id.Length);
 
-            var read = await keyStream.ReadAsync(secretKey.Key, cancellationToken);
+            var read = await keyStream.ReadAtLeastAsync(secretKey.Key, secretKey.Length, throwOnEndOfStream: false, cancellationToken);
             if (read < secretKey.Length)
                 throw new DataException("The key data was too short.");
 

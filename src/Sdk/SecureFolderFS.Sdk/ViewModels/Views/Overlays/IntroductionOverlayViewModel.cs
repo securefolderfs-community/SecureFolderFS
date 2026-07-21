@@ -93,6 +93,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             if (value is null)
                 return;
 
+            foreach (var item in FileSystems)
+                item.IsSelected = ReferenceEquals(item, value);
+
             SettingsService.UserSettings.PreferredFileSystemId = value.Id;
             _ = SettingsService.TrySaveAsync();
         }
@@ -106,6 +109,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         partial void OnCurrentIndexChanged(int value)
         {
+            _ = value;
             CurrentStep = $"{CurrentIndex+1}/{SlidesCount}";
         }
     }

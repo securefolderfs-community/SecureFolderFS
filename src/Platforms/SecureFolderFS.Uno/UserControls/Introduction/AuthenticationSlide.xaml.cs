@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -36,11 +37,65 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
         private static void ResetIcon(Border icon)
         {
+            // The static scale stays at 1.0 (opacity hides the icon) so WinUI rasterizes
+            // the content at full resolution; a static 0.4 would make the composition
+            // surface low-res and the pop animation would scale it up blurry. The
+            // storyboard's From=0.4 provides the visual starting point instead.
             icon.Opacity = 0d;
             if (icon.RenderTransform is ScaleTransform scale)
             {
-                scale.ScaleX = 0.4d;
-                scale.ScaleY = 0.4d;
+                scale.ScaleX = 1d;
+                scale.ScaleY = 1d;
+            }
+        }
+
+        private void IconsGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RebuildPathGeometry();
+        }
+
+        /// <summary>
+        /// Connects the centers of the four icon circles with smooth S-curves. Built from the
+        /// actual layout positions so the connection points stay aligned regardless of sizing.
+        /// </summary>
+        private void RebuildPathGeometry()
+        {
+            if (DiagramGrid.ActualWidth <= 0d || DiagramGrid.ActualHeight <= 0d)
+                return;
+
+            Point[] centers =
+            [
+                CenterOf(PasswordBorder),
+                CenterOf(DeviceLinkBorder),
+                CenterOf(YubiKeyBorder),
+                CenterOf(KeyFileBorder)
+            ];
+
+            var figure = new PathFigure { StartPoint = centers[0], IsClosed = false, IsFilled = false };
+            for (var i = 1; i < centers.Length; i++)
+            {
+                // Vertical tangents at both ends make the dashed line leave and enter each circle straight down
+                var previous = centers[i - 1];
+                var current = centers[i];
+                var middleY = (previous.Y + current.Y) / 2d;
+
+                figure.Segments.Add(new BezierSegment
+                {
+                    Point1 = new Point(previous.X, middleY),
+                    Point2 = new Point(current.X, middleY),
+                    Point3 = current
+                });
+            }
+
+            var geometry = new PathGeometry();
+            geometry.Figures.Add(figure);
+            AuthenticationPath.Data = geometry;
+
+            Point CenterOf(FrameworkElement element)
+            {
+                return element
+                    .TransformToVisual(DiagramGrid)
+                    .TransformPoint(new Point(element.ActualWidth / 2d, element.ActualHeight / 2d));
             }
         }
 

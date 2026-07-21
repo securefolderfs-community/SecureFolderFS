@@ -346,11 +346,20 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [Release, Debug]
-        targetFramework: [net10.0-desktop, net10.0-windows10.0.26100.0]
+        target:
+          # The desktop TFM is compiled with per-OS platform defines (see _AdjustSkiaPlatformDefines
+          # in SecureFolderFS.Uno.csproj), so each OS flavor is compile-checked separately
+          - tfm: net10.0-desktop
+            desktopTargetOS: macos
+          - tfm: net10.0-desktop
+            desktopTargetOS: linux
+          - tfm: net10.0-windows10.0.26100.0
+            desktopTargetOS: ''
     env:
       CONFIGURATION: ${{ matrix.configuration }}
       THIS_PROJECT_PATH: ${{ github.workspace }}\src\Platforms\SecureFolderFS.Uno
-      THIS_TFM: ${{ matrix.targetFramework }}
+      THIS_TFM: ${{ matrix.target.tfm }}
+      THIS_DESKTOP_TARGET_OS: ${{ matrix.target.desktopTargetOS }}
 
     steps:
       - name: Checkout the repository
@@ -379,7 +388,8 @@ jobs:
             -t:Build `
             -p:Platform="Any CPU" `
             -p:Configuration=$env:CONFIGURATION `
-            -p:TargetFramework=$env:THIS_TFM
+            -p:TargetFramework=$env:THIS_TFM `
+            -p:DesktopTargetOS=$env:THIS_DESKTOP_TARGET_OS
 
 #      - name: Upload artifact
 #        uses: actions/upload-artifact@v7

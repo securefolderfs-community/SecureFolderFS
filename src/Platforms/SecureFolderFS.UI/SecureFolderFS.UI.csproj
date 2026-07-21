@@ -38,7 +38,6 @@
     <None Remove="Assets\AppAssets\Devices\gpixel_light.png" />
     <None Remove="Assets\AppAssets\Devices\iphone_dark.png" />
     <None Remove="Assets\AppAssets\Devices\iphone_light.png" />
-    <None Remove="Assets\AppAssets\Introduction\intro_light_dashboard.png" />
     <None Remove="Assets\AppAssets\Shields\error_shield.svg" />
     <None Remove="Assets\AppAssets\Shields\error_shield.png" />
     <None Remove="Assets\AppAssets\Shields\success_shield.png" />

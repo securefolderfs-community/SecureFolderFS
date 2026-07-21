@@ -93,7 +93,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Vault
             }
             finally
             {
-                toggleSwitch.IsEnabled = true;
+                // Configuration stays locked without an active subscription
+                toggleSwitch.IsEnabled = ViewModel.CanConfigure;
             }
         }
 

@@ -169,13 +169,44 @@ namespace SecureFolderFS.Uno.PInvoke
         public static partial void objc_msgSend_void_long(IntPtr receiver, IntPtr selector, long value);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
-        public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.Bool)] bool value);
+        public static partial void objc_msgSend_void_bool(IntPtr receiver, IntPtr selector, [MarshalAs(UnmanagedType.U1)] bool value);
 
         [LibraryImport(LibObjc, EntryPoint = "sel_registerName", StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr sel_registerName(string name);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_getClass", StringMarshalling = StringMarshalling.Utf8)]
         public static partial IntPtr objc_getClass(string className);
+
+        [LibraryImport(LibObjc, EntryPoint = "object_getClass")]
+        public static partial IntPtr object_getClass(IntPtr obj);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_allocateClassPair", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr objc_allocateClassPair(IntPtr superclass, string name, nint extraBytes);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_registerClassPair")]
+        public static partial void objc_registerClassPair(IntPtr cls);
+
+        [LibraryImport(LibObjc, EntryPoint = "class_addMethod", StringMarshalling = StringMarshalling.Utf8)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static partial bool class_addMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport(LibObjc, EntryPoint = "class_replaceMethod", StringMarshalling = StringMarshalling.Utf8)]
+        public static partial IntPtr class_replaceMethod(IntPtr cls, IntPtr name, IntPtr imp, string types);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial long objc_msgSend_long(IntPtr receiver, IntPtr selector);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_double(IntPtr receiver, IntPtr selector, double arg);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2, IntPtr arg3);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial void objc_msgSend_void_CGSize(IntPtr receiver, IntPtr selector, CGSize size);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial IntPtr objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector);
@@ -184,7 +215,10 @@ namespace SecureFolderFS.Uno.PInvoke
         public static partial IntPtr objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial IntPtr objc_msgSend_IntPtr_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
+
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        [return: MarshalAs(UnmanagedType.U1)]
         public static partial bool objc_msgSend_bool_long_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
@@ -523,6 +557,13 @@ namespace SecureFolderFS.Uno.PInvoke
                     UnsafeNative.CFRelease(value);
             }
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct CGSize
+    {
+        public double Width;
+        public double Height;
     }
 #endif
 }

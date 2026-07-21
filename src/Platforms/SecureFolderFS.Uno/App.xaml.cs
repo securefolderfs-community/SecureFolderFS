@@ -406,9 +406,9 @@ namespace SecureFolderFS.Uno
 
             window.ExtendsContentIntoTitleBar = true;
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            window.SetTitleBar(titleBar);
+            window.SetTitleBar(titleBar?.DragRegion);
 
-#if __UNO_SKIA_MACOS__
+#if __UNO_SKIA_MACOS__ || __MACCATALYST__
             // Use native macOS APIs to configure the window
             MacOsWindowHelper.ConfigureFullSizeContentView(window);
             MacOsWindowHelper.CenterWindow(window);
@@ -416,17 +416,26 @@ namespace SecureFolderFS.Uno
 
             // Add left padding for traffic light buttons
             var (leftPadding, _) = MacOsWindowHelper.GetTrafficLightButtonsInset();
-            titleBar.Margin = new Thickness(leftPadding, 0, 0, 0);
+            titleBar?.Margin = new Thickness(leftPadding, 0, 0, 0);
 #elif !WINDOWS
             // For other non-Windows platforms, use OverlappedPresenter
-            if (appWindow.Presenter is OverlappedPresenter overlappedPresenter)
+            if (appWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter overlappedPresenter)
             {
                 overlappedPresenter.SetBorderAndTitleBar(true, false);
                 overlappedPresenter.IsMinimizable = true;
                 overlappedPresenter.IsMaximizable = true;
             }
-#endif
 
+            // The OS does not paint caption buttons when the title bar is client-drawn,
+            // so show our own minimize/maximize/close buttons
+            titleBar?.ShowWindowButtons(window);
+
+#if __UNO_SKIA_X11__
+            // Removing the window decorations also removes the window manager's resize frame,
+            // so provide client-drawn resize borders along the window edges
+            X11WindowHelper.EnableResizeBorders(window);
+#endif
+#endif
 
 #if WINDOWS
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
@@ -449,6 +458,16 @@ namespace SecureFolderFS.Uno
 
             // Enable early window configuration
             EnsureEarlyWindow(window, nameof(SecureFolderFS));
+
+#if __UNO_SKIA_MACOS__
+            // Hide the main window instead of closing it when 'Reduce to background' is enabled.
+            // This is handled natively because Uno's managed close-cancellation is a no-op on the macOS Skia host.
+            MacOsWindowHelper.InstallMainWindowCloseInterceptor(window, static () =>
+            {
+                var reduceToBackground = DI.Service<ISettingsService>().UserSettings.ReduceToBackground;
+                return reduceToBackground && !(Instance?.UseForceClose ?? false);
+            });
+#endif
 
 #if WINDOWS
             // Get BoundsManager
@@ -474,13 +493,23 @@ namespace SecureFolderFS.Uno
             }
 #endif
             var settingsService = DI.Service<ISettingsService>();
-            var useForceClose = Instance!.UseForceClose;
+#if WINDOWS || __UNO_SKIA_MACOS__
+            var useForceClose = Instance?.UseForceClose ?? false;
+#else
+            var useForceClose = true;
+#endif
             var reduceToBackground = settingsService.UserSettings.ReduceToBackground;
 
             if (reduceToBackground && !useForceClose)
             {
                 args.Handled = true;
-                Instance.MainWindow?.Hide(enableEfficiencyMode: false);
+#if __UNO_SKIA_MACOS__
+                // Hide the window natively (AppWindow.Hide is not implemented on the macOS Skia host)
+                if (Instance?.MainWindow is { } mainWindow)
+                    MacOsWindowHelper.HideWindow(mainWindow);
+#else
+                Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
+#endif
             }
             else
             {

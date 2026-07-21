@@ -5,6 +5,7 @@ using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
+using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem
 {
@@ -48,6 +49,11 @@ namespace SecureFolderFS.Core.FileSystem
         /// </summary>
         public required UniversalCache<NameWithDirectoryId, string> PlaintextFileNameCache { get; init; }
 
+        /// <summary>
+        /// Gets the lock that serializes recycle bin quota checks and occupied-size updates.
+        /// </summary>
+        public SemaphoreSlim RecycleBinSemaphore { get; } = new(1, 1);
+
         private FileSystemSpecifics()
         {
         }
@@ -55,6 +61,7 @@ namespace SecureFolderFS.Core.FileSystem
         /// <inheritdoc/>
         public void Dispose()
         {
+            RecycleBinSemaphore.Dispose();
             PlaintextFileNameCache.Dispose();
             CiphertextFileNameCache.Dispose();
             DirectoryIdCache.Dispose();

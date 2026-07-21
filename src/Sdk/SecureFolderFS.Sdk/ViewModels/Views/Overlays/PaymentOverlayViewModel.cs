@@ -12,7 +12,7 @@ using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    [Inject<IIapService>]
+    [Inject<IIapService>, Inject<IOverlayService>]
     [Bindable(true)]
     public sealed partial class PaymentOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
@@ -40,15 +40,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task PurchaseLifetimeAsync(CancellationToken cancellationToken)
+        private Task PurchaseLifetimeAsync(CancellationToken cancellationToken)
         {
-            await IapService.PurchaseAsync(IapProductType.PlusSubscription, cancellationToken);
+            return PurchaseAsync(IapProductType.PlusLifetime, cancellationToken);
         }
 
         [RelayCommand]
-        private async Task PurchaseSubscriptionAsync(CancellationToken cancellationToken)
+        private Task PurchaseSubscriptionAsync(CancellationToken cancellationToken)
         {
-            await IapService.PurchaseAsync(IapProductType.PlusSubscription, cancellationToken);
+            return PurchaseAsync(IapProductType.PlusSubscription, cancellationToken);
+        }
+
+        private async Task PurchaseAsync(IapProductType productType, CancellationToken cancellationToken)
+        {
+            // The Store surfaces its own native UI for progress, cancellation, and errors,
+            // so we only need to react to a confirmed success here. On success, close the
+            // overlay so the gated action that opened it can re-check ownership and proceed.
+            var purchased = await IapService.PurchaseAsync(productType, cancellationToken);
+            if (purchased)
+                await OverlayService.CloseAllAsync();
         }
     }
 }

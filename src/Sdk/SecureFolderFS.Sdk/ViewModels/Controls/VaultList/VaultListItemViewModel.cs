@@ -82,6 +82,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             await UpdateIconAsync(cancellationToken);
         }
 
+        public void UpdateCanMove()
+        {
+            var itemIndex = _vaultCollectionModel.IndexOf(VaultViewModel.VaultModel);
+            CanMoveDown = itemIndex < _vaultCollectionModel.Count - 1;
+            CanMoveUp = itemIndex > 0;
+            CanMove = CanMoveUp && CanMoveDown;
+        }
+
         [RelayCommand]
         private void RequestLock()
         {
@@ -225,14 +233,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 return;
 
             CustomIcon = await MediaService.ReadImageFileAsync(imageFile, cancellationToken);
-        }
-
-        private void UpdateCanMove()
-        {
-            var itemIndex = _vaultCollectionModel.IndexOf(VaultViewModel.VaultModel);
-            CanMoveDown = itemIndex < _vaultCollectionModel.Count - 1;
-            CanMoveUp = itemIndex > 0;
-            CanMove = CanMoveUp && CanMoveDown;
         }
 
         private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

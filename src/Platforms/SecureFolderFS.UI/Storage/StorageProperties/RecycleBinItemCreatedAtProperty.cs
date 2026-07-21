@@ -20,8 +20,8 @@ namespace SecureFolderFS.UI.Storage.StorageProperties
         public RecycleBinItemCreatedAtProperty(string id, RecycleBinItemDataModel dataModel)
         {
             _dataModel = dataModel;
-            Name = nameof(ISizeOf.SizeOf);
-            Id = $"{id}/{nameof(ISizeOf.SizeOf)}";
+            Name = nameof(ICreatedAt.CreatedAt);
+            Id = $"{id}/{nameof(ICreatedAt.CreatedAt)}";
         }
 
         /// <inheritdoc/>
