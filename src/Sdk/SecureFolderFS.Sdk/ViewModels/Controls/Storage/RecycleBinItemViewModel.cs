@@ -18,6 +18,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Pickers;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -53,12 +54,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (Inner is not IFile file)
-                return;
-
             var size = await _recycleBinItem.SizeOf.GetValueAsync(cancellationToken);
             Size = size.HasValue ? ByteSize.FromBytes(size.Value).ToString().Replace(" ", string.Empty) : string.Empty;
             DeletionTimestamp = await _recycleBinItem.CreatedAt.GetValueAsync(cancellationToken);
+
+            if (Inner is not IFile file)
+                return;
 
             var extension = Path.GetExtension(Title);
             if (extension is null)
@@ -97,9 +98,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
             {
                 foreach (var item in items)
                     OverlayViewModel.Items.Remove(item);
-            }
 
-            OverlayViewModel.ToggleSelectionCommand.Execute(false);
+                OverlayViewModel.ToggleSelectionCommand.Execute(false);
+            }
+            else
+            {
+                OverlayViewModel.Report(new MessageResult(false, "ItemsFailedToRestorePlural".ToLocalized(items.Length)));
+
+                // Some items may have been restored before the failure.
+                // Refresh the listing so the view matches the on-disk state
+                OverlayViewModel.ToggleSelectionCommand.Execute(false);
+                await OverlayViewModel.InitAsync(cancellationToken);
+            }
         }
 
         [RelayCommand]
@@ -117,6 +127,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                     items = [this];
             }
 
+            var failedCount = 0;
+            Exception? lastException = null;
             foreach (var item in items)
             {
                 if (item.AsWrapper<IStorable>().GetWrapperAt(1).Inner is not IStorableChild innerChild)
@@ -129,9 +141,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage
                 }
                 catch (Exception ex)
                 {
-                    _ = ex;
+                    // A failed item must not abandon the remaining ones
+                    failedCount++;
+                    lastException = ex;
                 }
             }
+
+            if (failedCount > 0)
+                OverlayViewModel.Report(Result.Failure(lastException));
 
             OverlayViewModel.ToggleSelectionCommand.Execute(false);
         }

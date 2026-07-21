@@ -139,6 +139,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             Items.Add(itemViewModel);
             HasVaults = true;
+
+            foreach (var item in Items)
+                item.UpdateCanMove();
         }
 
         private void RemoveVault(IVaultModel vaultModel)

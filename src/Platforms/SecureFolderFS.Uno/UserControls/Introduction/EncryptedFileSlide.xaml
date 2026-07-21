@@ -6,24 +6,20 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:local="using:SecureFolderFS.Uno.UserControls.Introduction"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:skia="using:SkiaSharp.Views.Windows"
     mc:Ignorable="d">
 
     <local:FeatureSlide Title="{l:ResourceString Rid=OnboardingEncryptionTitle}" Description="{l:ResourceString Rid=OnboardingEncryptionSubtitle}">
         <local:FeatureSlide.LeftSlot>
+            <!--  The Skia canvas is created in code-behind (platform-dependent host); the transparent
+                  background keeps the grid hit-testable for the pointer-driven lens  -->
             <Grid
                 x:Name="SlotGrid"
+                Background="Transparent"
                 PointerEntered="SlotGrid_PointerEntered"
                 PointerExited="SlotGrid_PointerExited"
                 PointerMoved="SlotGrid_PointerMoved"
                 PointerPressed="SlotGrid_PointerPressed"
-                PointerReleased="SlotGrid_PointerReleased">
-                <skia:SKXamlCanvas
-                    x:Name="SkiaCanvas"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    PaintSurface="SkiaCanvas_PaintSurface" />
-            </Grid>
+                PointerReleased="SlotGrid_PointerReleased" />
         </local:FeatureSlide.LeftSlot>
     </local:FeatureSlide>
 </UserControl>

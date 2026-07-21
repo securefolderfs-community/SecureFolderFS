@@ -20,10 +20,6 @@
                 <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_light.png" />
                 <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/gpixel_light.png" />
             </Style>
-            <Style x:Key="VaultDashboardImage" TargetType="Image">
-                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_light_dashboard.png" />
-                <not_win:Setter Property="Source" Value="Assets/AppAssets/Introduction/intro_light_dashboard.png" />
-            </Style>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -38,10 +34,6 @@
             <Style x:Key="AuthGooglePixelImage" TargetType="Image">
                 <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_dark.png" />
                 <not_win:Setter Property="Source" Value="Assets/AppAssets/Devices/gpixel_dark.png" />
-            </Style>
-            <Style x:Key="VaultDashboardImage" TargetType="Image">
-                <win:Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Introduction/intro_dark_dashboard.png" />
-                <not_win:Setter Property="Source" Value="Assets/AppAssets/Introduction/intro_dark_dashboard.png" />
             </Style>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

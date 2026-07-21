@@ -54,8 +54,9 @@ namespace SecureFolderFS.Uno.ViewModels.WindowsHello
             if (VaultFolder is not IModifiableFolder modifiableFolder)
                 return;
 
-            var authenticationFile = await modifiableFolder.GetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
-            await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (authenticationFile is not null)
+                await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
         /// <inheritdoc/>

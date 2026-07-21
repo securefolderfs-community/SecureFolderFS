@@ -20,7 +20,10 @@ internal sealed class CliVaultFileSystemService : BaseVaultFileSystemService
 
         // Keep ordering aligned with desktop targets: WebDAV first, then native adapters.
         yield return new CliWebDavFileSystem();
-        yield return new FuseFileSystem();
+        if (System.OperatingSystem.IsMacOS())
+            yield return new SecureFolderFS.Core.MacFuse.MacFuseFileSystem();
+        else
+            yield return new FuseFileSystem();
 
 #if SFFS_WINDOWS_FS
         yield return new SecureFolderFS.Core.WinFsp.WinFspFileSystem();

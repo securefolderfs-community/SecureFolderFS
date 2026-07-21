@@ -14,16 +14,20 @@ using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
 using Uno.UI;
+#if __UNO_SKIA_MACOS__
+using System.IO;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
+#endif
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -57,9 +61,52 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (OperatingSystem.IsMacCatalyst())
                 RootGrid.Margin = new(0, 37, 0, 0);
 
+#if __UNO_SKIA_MACOS__
+            InitializeStatusBarIcon();
+#endif
+
             ViewModel?.RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
+
+#if __UNO_SKIA_MACOS__
+        private void InitializeStatusBarIcon()
+        {
+            // Keep the app alive when the last window is closed (standard menu bar app behavior)
+            MacOsWindowHelper.PreventTerminationOnLastWindowClose();
+
+            var statusBar = MacOsStatusBarHelper.GetOrCreate(
+                Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon", "AppIcon.icns"),
+                "ViewInApp".ToLocalized(),
+                "LockAll".ToLocalized(),
+                "ExitApp".ToLocalized());
+            if (statusBar is null)
+                return;
+
+            statusBar.ShowAppRequested = () =>
+            {
+                if (App.Instance?.MainWindow is not { } mainWindow)
+                    return;
+
+                MacOsWindowHelper.ShowWindow(mainWindow);
+                mainWindow.Activate();
+            };
+            statusBar.LockAllRequested = LockAllVaults;
+            statusBar.ExitAppRequested = () =>
+            {
+                LockAllVaults();
+                App.Instance?.UseForceClose = true;
+                Application.Current.Exit();
+            };
+
+            statusBar.SetLockAllEnabled(!FileSystemManager.Instance.FileSystems.IsEmpty());
+            FileSystemManager.Instance.FileSystems.CollectionChanged += (_, _) =>
+            {
+                var isEnabled = !FileSystemManager.Instance.FileSystems.IsEmpty();
+                DispatcherQueue.TryEnqueue(() => statusBar.SetLockAllEnabled(isEnabled));
+            };
+        }
+#endif
 
         private async Task EnsureRootAsync()
         {
@@ -84,10 +131,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             if (!settingsService.AppSettings.WasIntroduced)
             {
                 var overlayService = DI.Service<IOverlayService>();
-                await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
-
-                settingsService.AppSettings.WasIntroduced = true;
-                await settingsService.AppSettings.SaveAsync();
+                var result = await overlayService.ShowAsync(new IntroductionOverlayViewModel().WithInitAsync());
+                if (result.Positive())
+                {
+                    settingsService.AppSettings.WasIntroduced = true;
+                    await settingsService.AppSettings.SaveAsync();
+                }
             }
 
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
@@ -217,13 +266,16 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MenuLockAll_Click(object sender, RoutedEventArgs e)
         {
-#if WINDOWS
+            LockAllVaults();
+        }
+
+        private void LockAllVaults()
+        {
             if (ViewModel is null)
                 return;
 
             foreach (var item in ViewModel.VaultCollectionModel)
                 WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
-#endif
         }
     }
 }

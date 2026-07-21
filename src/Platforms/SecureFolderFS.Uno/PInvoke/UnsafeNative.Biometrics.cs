@@ -31,6 +31,7 @@ namespace SecureFolderFS.Uno.PInvoke
             private static readonly IntPtr _kSecReturnRef;
             private static readonly IntPtr _kSecMatchLimit;
             private static readonly IntPtr _kSecMatchLimitOne;
+            private static readonly IntPtr _kSecUseDataProtectionKeychain;
             private static readonly IntPtr _kSecKeyAlgorithmECIESEncryptionStandardX963SHA256AESGCM;
 
             // errSecSuccess
@@ -52,6 +53,10 @@ namespace SecureFolderFS.Uno.PInvoke
 
             static Biometrics()
             {
+                // LAContext lives in LocalAuthentication.framework, which is not linked by the host
+                // process; it must be loaded before objc_getClass("LAContext") can resolve the class.
+                dlopen("/System/Library/Frameworks/LocalAuthentication.framework/LocalAuthentication", 1);
+
                 var securityLib = dlopen("/System/Library/Frameworks/Security.framework/Security", 1);
 
                 _kSecAttrKeyType = ReadGlobalCFString(securityLib, "kSecAttrKeyType");
@@ -70,6 +75,7 @@ namespace SecureFolderFS.Uno.PInvoke
                 _kSecReturnRef = ReadGlobalCFString(securityLib, "kSecReturnRef");
                 _kSecMatchLimit = ReadGlobalCFString(securityLib, "kSecMatchLimit");
                 _kSecMatchLimitOne = ReadGlobalCFString(securityLib, "kSecMatchLimitOne");
+                _kSecUseDataProtectionKeychain = ReadGlobalCFString(securityLib, "kSecUseDataProtectionKeychain");
 
                 // Load the algorithm constant for ECIES encryption
                 var algSymbol = dlsym(securityLib, "kSecKeyAlgorithmECIESEncryptionStandardX963SHA256AESGCM");
@@ -94,6 +100,9 @@ namespace SecureFolderFS.Uno.PInvoke
             public static bool CanEvaluateBiometricPolicy()
             {
                 var laContextClass = objc_getClass("LAContext");
+                if (laContextClass == IntPtr.Zero)
+                    return false;
+
                 var allocSel = sel_registerName("alloc");
                 var initSel = sel_registerName("init");
 
@@ -127,6 +136,12 @@ namespace SecureFolderFS.Uno.PInvoke
                 var tcs = new TaskCompletionSource<bool>();
 
                 var laContextClass = objc_getClass("LAContext");
+                if (laContextClass == IntPtr.Zero)
+                {
+                    tcs.SetResult(false);
+                    return tcs.Task;
+                }
+
                 var allocSel = sel_registerName("alloc");
                 var initSel = sel_registerName("init");
 
@@ -171,10 +186,12 @@ namespace SecureFolderFS.Uno.PInvoke
 
                 objc_msgSend_void_long_IntPtr_IntPtr(context, evaluateSel, LAPolicyDeviceOwnerAuthenticationWithBiometrics, nsReason, block);
 
-                // Release context after evaluation completes
+                // Release context after evaluation completes. The block (and its pinned delegate)
+                // is intentionally never freed: LocalAuthentication may still hold a reference to it
+                // after the reply fires, so freeing it here would risk a use-after-free. The few bytes
+                // leaked per prompt are negligible for how rarely authentication runs.
                 tcs.Task.ContinueWith(_ =>
                 {
-                    ReleaseBlock(block);
                     var releaseSel = sel_registerName("release");
                     objc_msgSend_IntPtr(context, releaseSel);
                 });
@@ -249,9 +266,9 @@ namespace SecureFolderFS.Uno.PInvoke
                 var tagData = StringToCFData(alias);
 
                 var query = CreateCFDictionary(
-                    new[] { _kSecClass, _kSecAttrApplicationTag, _kSecAttrKeyClass, _kSecAttrTokenID, _kSecReturnRef, _kSecMatchLimit },
-                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave, GetCFBooleanTrueValue(), _kSecMatchLimitOne },
-                    6);
+                    new[] { _kSecClass, _kSecAttrApplicationTag, _kSecAttrKeyClass, _kSecAttrTokenID, _kSecReturnRef, _kSecMatchLimit, _kSecUseDataProtectionKeychain },
+                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave, GetCFBooleanTrueValue(), _kSecMatchLimitOne, GetCFBooleanTrueValue() },
+                    7);
 
                 var status = SecItemCopyMatching(query, out var result);
 
@@ -270,9 +287,9 @@ namespace SecureFolderFS.Uno.PInvoke
                 var tagData = StringToCFData(alias);
 
                 var query = CreateCFDictionary(
-                    new[] { _kSecClass, _kSecAttrApplicationTag, _kSecAttrKeyClass, _kSecAttrTokenID },
-                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave },
-                    4);
+                    new[] { _kSecClass, _kSecAttrApplicationTag, _kSecAttrKeyClass, _kSecAttrTokenID, _kSecUseDataProtectionKeychain },
+                    new[] { _kSecClassKey, tagData, _kSecAttrKeyClassPrivate, _kSecAttrTokenIDSecureEnclave, GetCFBooleanTrueValue() },
+                    5);
 
                 SecItemDelete(query);
 
@@ -523,22 +540,11 @@ namespace SecureFolderFS.Uno.PInvoke
                 var blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf<BlockLiteral>());
                 Marshal.StructureToPtr(block, blockPtr, false);
 
-                // Pin the callback delegate to prevent GC collection
+                // Keep the callback delegate alive for the lifetime of the block (never freed,
+                // see the comment in EvaluateBiometricPolicyAsync)
                 GCHandle.Alloc(callback);
 
                 return blockPtr;
-            }
-
-            private static void ReleaseBlock(IntPtr blockPtr)
-            {
-                if (blockPtr == IntPtr.Zero)
-                    return;
-
-                var block = Marshal.PtrToStructure<BlockLiteral>(blockPtr);
-                if (block.descriptor != IntPtr.Zero)
-                    Marshal.FreeHGlobal(block.descriptor);
-
-                Marshal.FreeHGlobal(blockPtr);
             }
 
             #endregion

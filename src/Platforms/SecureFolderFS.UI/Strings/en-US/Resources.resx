@@ -294,6 +294,12 @@
   <data name="MasterKeyDescription" xml:space="preserve">
     <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
   </data>
+  <data name="Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
   </data>
@@ -1061,6 +1067,15 @@
   <data name="SetupYubiKey" xml:space="preserve">
       <value>Setup YubiKey PIV authentication</value>
   </data>
+  <data name="Overwrite" xml:space="preserve">
+      <value>Overwrite</value>
+  </data>
+  <data name="OverwriteYubiKeySlot" xml:space="preserve">
+      <value>Overwrite YubiKey slot?</value>
+  </data>
+  <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
+      <value>The selected slot already holds a configuration that is not HMAC-SHA1 challenge-response. Overwriting it will permanently erase the existing configuration and break anything that still uses it.</value>
+  </data>
   <data name="UseLongPress" xml:space="preserve">
       <value>Use long press (Slot 2)</value>
   </data>
@@ -1519,5 +1534,8 @@
   </data>
   <data name="ItemsFailedToRestorePlural" xml:space="preserve">
       <value>Couldn't restore {0:plural:one item|{} items|{} items}</value>
+  </data>
+  <data name="RecycleBinSpaceTaken" xml:space="preserve">
+      <value>Taken {0} out of {1}</value>
   </data>
 </root>

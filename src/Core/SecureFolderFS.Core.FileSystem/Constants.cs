@@ -6,6 +6,16 @@
         public const string UNC_NAME = "securefolderfs";
         public const int FILE_EOF = 0;
         public const int DIRECTORY_ID_SIZE = 16;
+
+        /// <summary>
+        /// The time window within which previously recycled items are folded back into a
+        /// recycled parent folder. OS clients (Finder, Explorer, WebDav/FUSE drivers) delete
+        /// folder trees member-by-member; when the parent folder finally arrives at the recycle
+        /// bin, children recycled within this window are reattached to it so the tree appears
+        /// as a single restorable entry. Membership is proven by Directory ID, so this window
+        /// only limits how far back unrelated same-folder deletions are pulled in.
+        /// </summary>
+        public const long RECYCLE_BIN_FOLD_WINDOW_MS = 60L * 60L * 1000L;
         public const ulong INVALID_HANDLE = 0UL;
         public const bool OPT_IN_FOR_OPTIONAL_DEBUG_TRACING = false;
 
