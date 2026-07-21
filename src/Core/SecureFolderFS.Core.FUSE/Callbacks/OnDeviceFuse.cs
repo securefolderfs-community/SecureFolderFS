@@ -1,10 +1,13 @@
 using System.Text;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
+using SecureFolderFS.Storage.Extensions;
 using Tmds.Fuse;
 using Tmds.Linux;
 using static SecureFolderFS.Core.FUSE.UnsafeNative.UnsafeNativeApis;
@@ -470,19 +473,58 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreName(x)))
+            // Protect core folders from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(Path.TrimEndingDirectorySeparator(ciphertextPath))))
+                return -EACCES;
+
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreName(Path.GetFileName(x))))
                 return -ENOTEMPTY;
 
             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
-
-            // Remove DirectoryID
-            File.Delete(directoryIdPath);
             specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
+
+            if (FuseOptions.IsRecycleBinEnabled())
+            {
+                try
+                {
+                    // The folder is moved into the recycle bin together with its DirectoryID file
+                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.Folder);
+                    return 0;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return -EACCES;
+                }
+                catch (Exception)
+                {
+                    return -EIO;
+                }
+            }
+
+            // Read the DirectoryID so it can be restored if rmdir fails.
+            // Deleting it permanently while the folder survives would make its contents undecryptable
+            var directoryId = File.Exists(directoryIdPath) ? File.ReadAllBytes(directoryIdPath) : null;
+            File.Delete(directoryIdPath);
 
             fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
             {
                 if (rmdir(ciphertextPathPtr) == -1)
-                    return -errno;
+                {
+                    var error = errno;
+                    if (directoryId is null)
+                        return -error;
+
+                    try
+                    {
+                        File.WriteAllBytes(directoryIdPath, directoryId);
+                    }
+                    catch (Exception)
+                    {
+                        // Best effort - the directory may have been removed concurrently
+                    }
+
+                    return -error;
+                }
             }
 
             return 0;
@@ -589,6 +631,27 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             if (Directory.Exists(ciphertextPath))
                 return -EISDIR;
+
+            // Protect core files from deletion
+            if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
+                return -EACCES;
+
+            if (FuseOptions.IsRecycleBinEnabled())
+            {
+                try
+                {
+                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
+                    return 0;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return -EACCES;
+                }
+                catch (Exception)
+                {
+                    return -EIO;
+                }
+            }
 
             fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
             {

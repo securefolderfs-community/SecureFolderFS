@@ -13,11 +13,12 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
 using static SecureFolderFS.Sdk.Constants.DataSources;
 
-#if __UNO_SKIA_MACOS__
-using SecureFolderFS.Core.MacFuse;
-#else
+#if !__UNO_SKIA_MACOS__
 using System;
+using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Uno.Platforms.Desktop.ViewModels;
+#else
+using SecureFolderFS.Core.MacFuse;
 #endif
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation

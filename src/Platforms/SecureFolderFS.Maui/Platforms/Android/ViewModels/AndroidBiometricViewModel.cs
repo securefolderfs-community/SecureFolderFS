@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Security.Cryptography;
 using Android.Hardware.Biometrics;
+using Android.OS;
 using AndroidX.Core.Content;
 using Java.Security;
 using OwlCore.Storage;
@@ -13,6 +14,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
 {
@@ -47,18 +49,24 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        public override async Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
+            id ??= VaultId;
             var keyStore = KeyStore.GetInstance(KEYSTORE_PROVIDER);
-            if (keyStore is null)
-                return Task.CompletedTask;
+            if (keyStore is not null)
+            {
+                keyStore.Load(null);
+                var alias = $"{KEY_ALIAS_PREFIX}{id}";
+                if (keyStore.ContainsAlias(alias))
+                    keyStore.DeleteEntry(alias);
+            }
 
-            keyStore.Load(null);
-            var alias = $"{KEY_ALIAS_PREFIX}{id}";
-            if (keyStore.ContainsAlias(alias))
-                keyStore.DeleteEntry(alias);
+            if (VaultFolder is not IModifiableFolder modifiableFolder)
+                return;
 
-            return Task.CompletedTask;
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (authenticationFile is not null)
+                await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -86,7 +94,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                 privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
             }
 
-            var signature = await MakeSignatureAsync(privateKey, data);
+            var signature = await MakeSignatureAsync(privateKey, data, cancellationToken);
             return Result<IKeyBytes>.Success(signature);
         }
 
@@ -105,11 +113,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
             var privateKeyEntry = keyStore.GetEntry(alias, null) as KeyStore.PrivateKeyEntry;
             var privateKey = privateKeyEntry?.PrivateKey ?? throw new CryptographicException("Private key could not be found.");
 
-            var signature = await MakeSignatureAsync(privateKey, data);
+            var signature = await MakeSignatureAsync(privateKey, data, cancellationToken);
             return Result<IKeyBytes>.Success(signature);
         }
 
-        private static async Task<IKeyBytes> MakeSignatureAsync(IPrivateKey privateKey, byte[] data)
+        private static async Task<IKeyBytes> MakeSignatureAsync(IPrivateKey privateKey, byte[] data, CancellationToken cancellationToken)
         {
             var signature = Signature.GetInstance("SHA256withRSA");
             if (signature is null)
@@ -129,14 +137,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                 }))
                 .Build();
 
-            promptInfo.Authenticate(new BiometricPrompt.CryptoObject(signature), new(), executor,
+            // Dismiss the prompt when the caller cancels
+            var cancellationSignal = new CancellationSignal();
+            using var cancellationRegistration = cancellationToken.Register(() => cancellationSignal.Cancel());
+
+            promptInfo.Authenticate(new BiometricPrompt.CryptoObject(signature), cancellationSignal, executor,
                 new BiometricPromptCallback(
                     onSuccess: result =>
                     {
                         try
                         {
                             if (result?.CryptoObject?.Signature is null)
-                                return;
+                                throw new CryptographicException("The authenticated signature was not available.");
 
                             var signedBytes = AndroidBiometricHelpers.SignData(result.CryptoObject.Signature, data);
                             if (signedBytes is null)
@@ -151,8 +163,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ViewModels
                     },
                     onError: (code, message) =>
                     {
-                        _ = message;
-                        //tcs.TrySetException(new Exception($"Biometric error {code}: {message}"));
+                        // Every terminal prompt error must complete the task, otherwise the caller awaits forever
+                        if (code is BiometricErrorCode.UserCanceled or BiometricErrorCode.Canceled)
+                            tcs.TrySetCanceled();
+                        else
+                            tcs.TrySetException(new CryptographicException($"Biometric authentication failed ({code}). {message}"));
                     },
                     onFailure: null));
 

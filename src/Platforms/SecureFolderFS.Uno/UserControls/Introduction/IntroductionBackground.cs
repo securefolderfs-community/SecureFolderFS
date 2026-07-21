@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
     /// </summary>
     public sealed partial class IntroductionBackground : UserControl, IDisposable
     {
-        private const double REVEAL_DURATION_MS = 750d;
+        private const double REVEAL_DURATION_MS = 1200d;
         private const double SHADOW_FADE_MS = 350d;
 
 #if HAS_UNO_SKIA
@@ -28,10 +28,17 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const int FRAME_INTERVAL_MS = 16;
         private readonly CompositionCanvas _canvas;
 #else
-        // SKXamlCanvas rasterizes on the CPU and uploads the bitmap each frame - keep
-        // the cadence lower and let the renderer use cheaper sampling
+        // The reveal ripple needs true per-pixel transparency over the XAML behind this
+        // control, which the ANGLE swap chain cannot compose (it presents opaquely). The
+        // reveal therefore runs on a CPU-rasterized SKXamlCanvas at a reduced cadence with
+        // cheaper sampling; once the gradient covers every pixel, rendering hands off to a
+        // GPU-backed SKSwapChainPanel at full frame rate and quality
         private const int FRAME_INTERVAL_MS = 33;
-        private readonly SKXamlCanvas _canvas;
+        private const int GPU_FRAME_INTERVAL_MS = 16;
+        private readonly Grid _canvasHost;
+        private readonly SKXamlCanvas _revealCanvas;
+        private SKSwapChainPanel? _gpuCanvas;
+        private bool _revealCanvasRemoved;
 #endif
 
         private readonly IntroductionBackgroundRenderer _renderer = new();
@@ -52,14 +59,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 
 #if HAS_UNO_SKIA
             _canvas = new CompositionCanvas(this);
-#else
-            _renderer.HighQualitySampling = false;
-            _canvas = new SKXamlCanvas();
-            _canvas.PaintSurface += Canvas_PaintSurface;
-#endif
             _canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
             _canvas.VerticalAlignment = VerticalAlignment.Stretch;
             Content = _canvas;
+#else
+            _renderer.HighQualitySampling = false;
+            _revealCanvas = new SKXamlCanvas();
+            _revealCanvas.PaintSurface += Canvas_PaintSurface;
+            _revealCanvas.HorizontalAlignment = HorizontalAlignment.Stretch;
+            _revealCanvas.VerticalAlignment = VerticalAlignment.Stretch;
+
+            _canvasHost = new Grid();
+            _canvasHost.Children.Add(_revealCanvas);
+            Content = _canvasHost;
+#endif
 
             _frameTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(FRAME_INTERVAL_MS) };
             _frameTimer.Tick += FrameTimer_Tick;
@@ -70,7 +83,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
 
         /// <summary>
-        /// Sweeps the background into view with a bottom-up gradient wipe.
+        /// Reveals the background with a soft-edged ripple expanding from the center.
         /// </summary>
         /// <returns>A <see cref="Task"/> that completes when the background is fully revealed.</returns>
         public Task RevealAsync()
@@ -102,7 +115,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 {
                     // The first composited frame can land well after RevealAsync was called
                     // (the freshly added overlay still needs to load and lay out); hold the
-                    // clock at zero until then so the wipe visibly starts at the bottom
+                    // clock at zero until then so the ripple visibly starts from nothing
                     _revealStart = DateTime.UtcNow;
                 }
                 else
@@ -114,9 +127,17 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                         _revealStart = null;
                         _shadowStart = DateTime.UtcNow;
                         _revealTcs?.TrySetResult();
+#if !HAS_UNO_SKIA
+                        AttachGpuCanvas();
+#endif
                     }
                     else
-                        _revealProgress = 1f - MathF.Pow(1f - progress, 3f); // ease-out cubic
+                    {
+                        // Cubic ease-in-out: the ripple builds up gently, sweeps, then settles
+                        _revealProgress = progress < 0.5f
+                            ? 4f * progress * progress * progress
+                            : 1f - MathF.Pow(-2f * progress + 2f, 3f) / 2f;
+                    }
                 }
             }
 
@@ -127,7 +148,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 _shadowOpacity = progress >= 1f ? 1f : 1f - MathF.Pow(1f - progress, 3f);
             }
 
+#if HAS_UNO_SKIA
             _canvas.Invalidate();
+#else
+            _gpuCanvas?.Invalidate();
+            if (!_revealCanvasRemoved)
+                _revealCanvas.Invalidate();
+#endif
         }
 
         private void PrepareFrame(float shadowScale)
@@ -158,19 +185,62 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
         }
 #else
-        private void Canvas_PaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+        private void RenderFrame(SKCanvas canvas, SKImageInfo info)
         {
-            // SKXamlCanvas works in physical pixels while element bounds are logical
-            var scale = ActualWidth > 0 ? (float)(e.Info.Width / ActualWidth) : 1f;
+            // Both canvases work in physical pixels while element bounds are logical
+            var scale = ActualWidth > 0 ? (float)(info.Width / ActualWidth) : 1f;
             PrepareFrame(scale);
 
-            e.Surface.Canvas.Clear(SKColors.Transparent);
+            canvas.Clear(SKColors.Transparent);
             _renderer.Render(
-                e.Surface.Canvas,
-                e.Info.Width,
-                e.Info.Height,
+                canvas,
+                info.Width,
+                info.Height,
                 (float)_clock.Elapsed.TotalSeconds,
                 _revealProgress);
+        }
+
+        private void Canvas_PaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+        {
+            RenderFrame(e.Surface.Canvas, e.Info);
+        }
+
+        private void GpuCanvas_PaintSurface(object? sender, SKPaintGLSurfaceEventArgs e)
+        {
+            RenderFrame(e.Surface.Canvas, e.Info);
+
+            // The CPU canvas stays stacked on top until the swap chain has painted, so the
+            // handoff never flashes an unpainted (opaque black) panel
+            if (!_revealCanvasRemoved)
+                DispatcherQueue.TryEnqueue(RemoveRevealCanvas);
+        }
+
+        private void AttachGpuCanvas()
+        {
+            if (_gpuCanvas is not null)
+                return;
+
+            _gpuCanvas = new SKSwapChainPanel();
+            _gpuCanvas.PaintSurface += GpuCanvas_PaintSurface;
+            _gpuCanvas.HorizontalAlignment = HorizontalAlignment.Stretch;
+            _gpuCanvas.VerticalAlignment = VerticalAlignment.Stretch;
+
+            // Inserted behind the CPU canvas: both hosts render identical frames during
+            // the handoff, so the swap is not visible
+            _canvasHost.Children.Insert(0, _gpuCanvas);
+
+            _renderer.HighQualitySampling = true;
+            _frameTimer.Interval = TimeSpan.FromMilliseconds(GPU_FRAME_INTERVAL_MS);
+        }
+
+        private void RemoveRevealCanvas()
+        {
+            if (_revealCanvasRemoved)
+                return;
+
+            _revealCanvasRemoved = true;
+            _revealCanvas.PaintSurface -= Canvas_PaintSurface;
+            _canvasHost.Children.Remove(_revealCanvas);
         }
 #endif
 
@@ -199,6 +269,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             _frameTimer.Stop();
             _frameTimer.Tick -= FrameTimer_Tick;
+
+#if !HAS_UNO_SKIA
+            if (_gpuCanvas is not null)
+                _gpuCanvas.PaintSurface -= GpuCanvas_PaintSurface;
+            if (!_revealCanvasRemoved)
+                _revealCanvas.PaintSurface -= Canvas_PaintSurface;
+#endif
 
             Loaded -= IntroductionBackground_Loaded;
             Unloaded -= IntroductionBackground_Unloaded;

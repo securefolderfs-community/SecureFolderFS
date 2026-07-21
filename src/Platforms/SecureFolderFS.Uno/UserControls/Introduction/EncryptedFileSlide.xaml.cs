@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 using SkiaSharp;
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
 using Windows.Foundation;
 using Uno.WinUI.Graphics2DSK;
 #else
@@ -21,9 +21,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class EncryptedFileSlide : UserControl, IAsyncInitialize, IDisposable
     {
-        private const float INNER_SHADOW_OFFSET = 6f;
-        private const float DEFORM_STRENGTH = 0.25f;
-        private const float LENS_ZOOM = 1.3f;
+        private const float LENS_ZOOM = 1.15f;
         private const string UI_ASSEMBLY_NAME = $"{nameof(SecureFolderFS)}.UI";
 
         private const float VELOCITY_SCALE = 0.00018f; // pixels/sec to deform ratio
@@ -32,17 +30,13 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private const float SPRING_STIFFNESS = 280f;
         private const float SPRING_DAMPING = 18f;
 
-#if HAS_UNO_SKIA
-        private const float MAGNIFIER_RADIUS = 115f;
-        private const float MOVEMENT_THRESHOLD = 2.5f;
-#else
+        // Logical (DIP) units, converted to physical pixels per frame - the lens
+        // occupies the same visual size regardless of screen scaling or resolution
         private const float MAGNIFIER_RADIUS = 60f;
-        private const float MOVEMENT_THRESHOLD = 1f;
-#endif
 
         private bool _isInitialized;
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
         private readonly LensCanvas _canvas;
 #else
         private readonly SKXamlCanvas _canvas;
@@ -57,20 +51,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         private SKSurface? _sceneSurface;
         private SKSizeI _sceneSize;
 
-        // Reusable resources for better performance
-        private readonly SKPaint _highlightPaint;
-        private readonly SKPaint _shadowPaint;
-        private readonly SKPaint _blurPaint;
-
-        private SKColor[]? _cachedEdgeColors;
-        private SKColor[]? _cachedCoreColors;
-        private float[]? _cachedSweepStops;
-
-        private readonly SKPaint _invisiblePaint; // for the warping trick
-        private readonly SKPaint _outerGlowPaint;
-        private readonly SKPaint _iridescentPaint;
-        private readonly SKPaint _corePaint;
-        private readonly SKPaint _additiveGlowPaint;
+        // Draws the glass disc with per-pixel refraction
+        private readonly GlassLensRenderer _lensRenderer = new();
 
         // Fluid pointer dynamics
         private SKPoint _targetPosition;
@@ -91,7 +73,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             InitializeComponent();
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
             // SKCanvasElement renders in the app's composition pass (GPU-backed, no
             // per-frame bitmap upload), unlike SKXamlCanvas which lags on desktop
             _canvas = new LensCanvas(this);
@@ -102,68 +84,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _canvas.HorizontalAlignment = HorizontalAlignment.Stretch;
             _canvas.VerticalAlignment = VerticalAlignment.Stretch;
             SlotGrid.Children.Add(_canvas);
-
-            // Pre-create expensive paint objects
-            _blurPaint = new SKPaint
-            {
-                IsAntialias = true,
-                ImageFilter = SKImageFilter.CreateBlur(4.8f, 4.8f, SKImageFilter.CreateBlur(1f, 1f)) // light + subtle secondary blur
-            };
-
-            _highlightPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                Color = SKColors.White.WithAlpha(140),
-                StrokeWidth = 1.8f,
-                IsAntialias = true
-            };
-
-            _shadowPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                Color = new SKColor(0, 0, 0, 30),
-                StrokeWidth = 3f,
-                IsAntialias = true,
-                MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 6.5f)
-            };
-
-            _invisiblePaint = new SKPaint
-            {
-                IsAntialias = true,
-                ColorFilter = SKColorFilter.CreateBlendMode(new SKColor(255, 255, 255, 0), SKBlendMode.SrcOver)
-            };
-
-            _outerGlowPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 24f,
-                IsAntialias = true,
-                BlendMode = SKBlendMode.Screen
-            };
-
-            _iridescentPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 12f,
-                IsAntialias = true,
-                BlendMode = SKBlendMode.Screen
-            };
-
-            _corePaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 3.5f,
-                IsAntialias = true,
-                BlendMode = SKBlendMode.Screen
-            };
-
-            _additiveGlowPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 28f,
-                IsAntialias = true,
-                BlendMode = SKBlendMode.Plus
-            };
 
             _animTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) }; // ~60 fps
             _animTimer.Tick += AnimTimer_Tick;
@@ -183,7 +103,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _wallpaperBitmap = LoadBitmap(assembly, $"Introduction.intro_wallpaper{rnd}.jpg");
             _hexBitmap = LoadBitmap(assembly, "Introduction." + UnoThemeHelper.Instance.ActualTheme switch
             {
+#if !__UNO_SKIA_X11__
                 ThemeType.Light => "intro_hex_light.png",
+#endif
                 _ => "intro_hex_dark.png"
             });
             if (_wallpaperBitmap is not null)
@@ -192,9 +114,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 _wallpaperBitmap = FlipBitmap(_wallpaperBitmap, horizontal: true, vertical: true);
             }
 
-            _cachedEdgeColors = null;
-            _cachedSweepStops = null;
-            _cachedCoreColors = null;
             _canvas.Invalidate();
 
             _isInitialized = true;
@@ -243,7 +162,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             return result;
         }
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
         private sealed class LensCanvas(EncryptedFileSlide owner) : SKCanvasElement
         {
             protected override void RenderOverride(SKCanvas canvas, Size area)
@@ -253,7 +172,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 var scale = (float)(owner.XamlRoot?.RasterizationScale ?? 1.0);
                 canvas.Save();
                 canvas.Scale(1f / scale);
-                owner.RenderSlide(canvas, (float)area.Width * scale, (float)area.Height * scale);
+                owner.RenderSlide(canvas, (float)area.Width * scale, (float)area.Height * scale, scale);
                 canvas.Restore();
             }
         }
@@ -262,14 +181,20 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             var canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.Transparent);
-            RenderSlide(canvas, e.Info.Width, e.Info.Height);
+
+            // Display scaling, not canvas-to-control ratio: the canvas only fills the
+            // left slot, so dividing by this control's width would shrink the lens
+            var scale = (float)(XamlRoot?.RasterizationScale ?? 1.0);
+            RenderSlide(canvas, e.Info.Width, e.Info.Height, scale);
         }
 #endif
 
-        private void RenderSlide(SKCanvas canvas, float width, float height)
+        private void RenderSlide(SKCanvas canvas, float width, float height, float scale)
         {
             if (width < 1f || height < 1f)
                 return;
+
+            var radius = MAGNIFIER_RADIUS * scale;
 
             var center = _smoothPosition != default ? _smoothPosition : _pointerPosition ?? new SKPoint(width / 2f, height / 2f);
             var sceneSize = new SKSizeI((int)width, (int)height);
@@ -306,12 +231,14 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 using var erasePaint = new SKPaint();
                 erasePaint.IsAntialias = true;
                 erasePaint.BlendMode = SKBlendMode.DstOut;
-                erasePaint.Shader = SKShader.CreateRadialGradient(center, MAGNIFIER_RADIUS,
-                    [new SKColor(0, 0, 0, 250), new SKColor(0, 0, 0, 200), SKColors.Transparent],
-                    [0.2f, 0.4f, 1f],
+                // Fully clear until deep into the lens so the magnified interior has no dark
+                // vignette (which would read as sphere shading instead of flat glass)
+                erasePaint.Shader = SKShader.CreateRadialGradient(center, radius,
+                    [new SKColor(0, 0, 0, 255), new SKColor(0, 0, 0, 245), SKColors.Transparent],
+                    [0.6f, 0.88f, 1f],
                     SKShaderTileMode.Clamp);
 
-                scene.DrawCircle(center, MAGNIFIER_RADIUS, erasePaint);
+                scene.DrawCircle(center, radius, erasePaint);
                 scene.Restore();
             }
 
@@ -320,215 +247,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             canvas.DrawImage(snapshot, 0f, 0f);
 
             // Layer 3: Liquid Glass Lens
-            DrawLiquidGlassLens(canvas, center, snapshot, _lensScale);
-        }
-
-        private void DrawLiquidGlassLens(SKCanvas canvas, SKPoint center, SKImage snapshot, float lensScale = 1f)
-        {
-            var r = MAGNIFIER_RADIUS;
-            var (rx, ry) = ComputeRingRadii(r);
-            var innerR = r * 0.76f;
-
-            // Approximate inner ellipse with same aspect ratio as outer
-            var innerRx = innerR * (rx / r);
-            var innerRy = innerR * (ry / r);
-
-            using var ringPath = new SKPath();
-            ringPath.AddOval(new SKRect(center.X - rx, center.Y - ry, center.X + rx, center.Y + ry));
-            ringPath.AddOval(new SKRect(center.X - innerRx, center.Y - innerRy, center.X + innerRx, center.Y + innerRy));
-            ringPath.FillType = SKPathFillType.EvenOdd;
-
-            // Lens Interior with Edge Deformation
-            canvas.SaveLayer();
-            canvas.ClipPath(ringPath, SKClipOperation.Intersect, true);
-
-            canvas.Save();
-
-            // Center the transform
-            canvas.Translate(center.X, center.Y);
-
-            // Base zoom (slightly reduced so deformation is more visible)
-            canvas.Scale(LENS_ZOOM * lensScale, LENS_ZOOM * lensScale);
-
-            // Edge Deformation
-            // This creates a directional outward push at the four edges
-            // We apply a small additional translation based on normalized position
-            // This is approximated by drawing the image multiple times with slight offsets
-
-            // 1. Base zoomed content
-            canvas.Translate(-center.X, -center.Y);
-            canvas.DrawImage(snapshot, 0, 0, _blurPaint);
-
-            // 2. Deformed passes for edge stretch (directional)
-            using var deformPaint = new SKPaint();
-            deformPaint.IsAntialias = true;
-            deformPaint.ColorFilter = SKColorFilter.CreateBlendMode(new SKColor(255, 255, 255, 40), SKBlendMode.SrcOver);
-
-            // Top edge - push upward
-            canvas.DrawImage(snapshot, 0, DEFORM_STRENGTH * 12, deformPaint);
-
-            // Bottom edge - push downward
-            canvas.DrawImage(snapshot, 0, -DEFORM_STRENGTH * 12, deformPaint);
-
-            // Left edge - push left
-            canvas.DrawImage(snapshot, DEFORM_STRENGTH * 12, 0, deformPaint);
-
-            // Right edge - push right
-            canvas.DrawImage(snapshot, -DEFORM_STRENGTH * 12, 0, deformPaint);
-
-            // Invisible pass to help with warping consistency
-            canvas.DrawImage(snapshot, 0, 0, _invisiblePaint);
-
-            canvas.Restore(); // end all transforms
-
-            // Internal Glass Effects
-
-            // Caustic light scattering
-            var causticPhase = (float)(DateTime.UtcNow.TimeOfDay.TotalSeconds * 0.8) % (MathF.PI * 2);
-            using var causticPaint = new SKPaint
-            {
-                BlendMode = SKBlendMode.Screen,
-                Shader = SKShader.CreateRadialGradient(
-                    new SKPoint(center.X + MathF.Sin(causticPhase) * 12,
-                        center.Y + MathF.Cos(causticPhase) * 12),
-                    r * 0.45f,
-                    [SKColors.White.WithAlpha(0), SKColors.White.WithAlpha(90), SKColors.White.WithAlpha(0)],
-                    [0.3f, 0.7f, 1f], SKShaderTileMode.Clamp)
-            };
-            canvas.DrawCircle(center, r * 0.65f, causticPaint);
-
-            // Dynamic inner shadow for thickness
-            using var innerShadowPaint = new SKPaint
-            {
-                BlendMode = SKBlendMode.DstOut,
-                Shader = SKShader.CreateRadialGradient(
-                    new SKPoint(center.X - INNER_SHADOW_OFFSET, center.Y - INNER_SHADOW_OFFSET),
-                    r * 0.82f,
-                    [new SKColor(0, 0, 0, 0), new SKColor(0, 0, 0, 80)],
-                    [0.7f, 1f], SKShaderTileMode.Clamp)
-            };
-            canvas.DrawCircle(center, r * 0.78f, innerShadowPaint);
-
-            // Smooth radial fade
-            using var fadePaint = new SKPaint
-            {
-                BlendMode = SKBlendMode.DstIn,
-                Shader = SKShader.CreateRadialGradient(center, r,
-                    [SKColors.Transparent, SKColors.Transparent, new SKColor(255, 255, 255, 235)],
-                    [0f, innerR / r, 1f], SKShaderTileMode.Clamp)
-            };
-            canvas.DrawCircle(center, r, fadePaint);
-
-            canvas.Restore(); // end lens interior SaveLayer
-
-            // Iridescent Rim + Edge Highlights
-            var edgeColors = GetRimColors(snapshot, center, r);
-            if (_cachedSweepStops == null || _cachedSweepStops.Length != edgeColors.Length)
-            {
-                _cachedSweepStops = Enumerable.Range(0, edgeColors.Length)
-                    .Select(i => i / (float)(edgeColors.Length - 1)).ToArray();
-            }
-
-            if (_cachedCoreColors == null || _cachedCoreColors.Length != edgeColors.Length)
-                _cachedCoreColors = edgeColors.Select(c => LightenColor(c, 70)).ToArray();
-
-            // Deformed ring rect - rx/ry drive horizontal/vertical radius independently
-            var edgeRingRect = new SKRect(center.X - rx + 1, center.Y - ry + 1, center.X + rx - 1, center.Y + ry - 1);
-
-            // Wide outer glow
-            _outerGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
-            canvas.DrawOval(edgeRingRect, _outerGlowPaint);
-
-            // Vibrant mid ring
-            _iridescentPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
-            canvas.DrawOval(edgeRingRect, _iridescentPaint);
-
-            // Bright core
-            _corePaint.Shader = SKShader.CreateSweepGradient(center, _cachedCoreColors, _cachedSweepStops);
-            canvas.DrawOval(edgeRingRect, _corePaint);
-
-            // Aggressive additive glow
-            _additiveGlowPaint.Shader = SKShader.CreateSweepGradient(center, edgeColors, _cachedSweepStops);
-            canvas.DrawOval(edgeRingRect, _additiveGlowPaint);
-
-            // Fresnel bright edge - follows deformed shape
-            using var fresnelPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 3.5f,
-                IsAntialias = true,
-                BlendMode = SKBlendMode.Screen,
-                Color = SKColors.White.WithAlpha(180)
-            };
-            var fresnelRect = new SKRect(center.X - rx + 1.5f, center.Y - ry + 1.5f, center.X + rx - 1.5f, center.Y + ry - 1.5f);
-            canvas.DrawOval(fresnelRect, fresnelPaint);
-            canvas.DrawOval(fresnelRect, _highlightPaint);
-
-            // Outer shadow - a slightly larger oval
-            var shadowRect = new SKRect(center.X - rx - 3f, center.Y - ry - 3f, center.X + rx + 3f, center.Y + ry + 3f);
-            canvas.DrawOval(shadowRect, _shadowPaint);
-
-            // Specular highlight - arc mapped onto the deformed ellipse
-            using var specularPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 2.8f,
-                IsAntialias = true
-            };
-            specularPaint.Shader = SKShader.CreateLinearGradient(
-                new SKPoint(center.X + rx * 0.55f, center.Y - ry * 0.65f),
-                new SKPoint(center.X + rx * 0.95f, center.Y + ry * 0.45f),
-                [SKColors.Transparent, SKColors.White.WithAlpha(235), SKColors.Transparent],
-                [0f, 0.5f, 1f],
-                SKShaderTileMode.Clamp);
-
-            canvas.DrawArc(
-                new SKRect(center.X - rx + 6, center.Y - ry + 6, center.X + rx - 6, center.Y + ry - 6),
-                305, 110, false, specularPaint);
-        }
-
-        private SKColor[] GetRimColors(SKImage snapshot, SKPoint center, float radius)
-        {
-            // Recompute only when necessary (e.g., the pointer moved a lot)
-            if (_cachedEdgeColors != null)
-                return _cachedEdgeColors;
-
-            _cachedEdgeColors = SampleRimColors(snapshot, center, radius, sampleCount: 20);
-            return _cachedEdgeColors;
-        }
-
-        /// <summary>
-        /// Samples pixel colors from the lens rim and boosts them aggressively for a vivid iridescent effect.
-        /// </summary>
-        private static SKColor[] SampleRimColors(SKImage image, SKPoint center, float radius, int sampleCount)
-        {
-            var colors = new SKColor[sampleCount + 1];
-            using var bitmap = SKBitmap.FromImage(image);
-
-            for (var i = 0; i < sampleCount; i++)
-            {
-                var angle = 2f * MathF.PI * i / sampleCount;
-                var x = (int)(center.X + radius * MathF.Cos(angle));
-                var y = (int)(center.Y + radius * MathF.Sin(angle));
-
-                x = Math.Clamp(x, 0, bitmap.Width - 1);
-                y = Math.Clamp(y, 0, bitmap.Height - 1);
-
-                var pixel = bitmap.GetPixel(x, y);
-                pixel.ToHsv(out var h, out var s, out var v);
-
-                // Aggressive boost for maximum visibility
-                s = Math.Min(1f, s * 5.0f + 0.65f); // very heavy saturation
-                v = Math.Min(1f, v * 3.6f + 0.55f); // strong brightness push
-
-                // Gentle hue rotation for a more dynamic color feel
-                h = (h + 0.025f) % 1f;
-
-                colors[i] = SKColor.FromHsv(h, s, v).WithAlpha(250);
-            }
-
-            colors[sampleCount] = colors[0];
-            return colors;
+            var (radiusX, radiusY) = ComputeRingRadii(radius);
+            _lensRenderer.Draw(canvas, snapshot, center, radius, radiusX, radiusY, LENS_ZOOM * _lensScale);
         }
 
         /// <summary>
@@ -565,18 +285,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             }
 
             return (uniformR * (1f + deformX), uniformR * (1f + deformY));
-        }
-
-        /// <summary>
-        /// Mixes a color toward white by <paramref name="amount"/> (0–255) for the bright core pass.
-        /// </summary>
-        private static SKColor LightenColor(SKColor color, byte amount)
-        {
-            return new SKColor(
-                (byte)Math.Min(255, color.Red + amount),
-                (byte)Math.Min(255, color.Green + amount),
-                (byte)Math.Min(255, color.Blue + amount),
-                color.Alpha);
         }
 
         private static SKRect ComputeUniformToFillRect(int srcWidth, int srcHeight, int dstWidth, int dstHeight)
@@ -638,12 +346,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
                 _positionVelocity = new SKPoint(0f, 0f);
                 StopAnimation();
             }
-
-            // Invalidate edge color cache if smoothed position moved meaningfully
-            var moved = MathF.Abs(_smoothPosition.X - prevSmooth.X) > MOVEMENT_THRESHOLD
-                        || MathF.Abs(_smoothPosition.Y - prevSmooth.Y) > MOVEMENT_THRESHOLD;
-            if (moved)
-                _cachedEdgeColors = null;
 
             _canvas.Invalidate();
         }
@@ -716,7 +418,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (width <= 0 || height <= 0)
                 return;
 
-#if HAS_UNO_SKIA
+#if HAS_UNO_SKIA || __UNO_SKIA_MACOS__ || __UNO_SKIA_X11__
             // The lens is rendered in physical pixels; map the logical pointer position accordingly
             var scaleX = (float)(XamlRoot?.RasterizationScale ?? 1.0);
             var scaleY = scaleX;
@@ -725,8 +427,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             var scaleY = _canvas.CanvasSize.Height / height;
 #endif
 
-            var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS / scaleX, width - MAGNIFIER_RADIUS / scaleX);
-            var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS / scaleY, height - MAGNIFIER_RADIUS / scaleY);
+            var clampedX = Math.Clamp((float)pos.X, MAGNIFIER_RADIUS, width - MAGNIFIER_RADIUS);
+            var clampedY = Math.Clamp((float)pos.Y, MAGNIFIER_RADIUS, height - MAGNIFIER_RADIUS);
 
             var newPosition = new SKPoint(clampedX * scaleX, clampedY * scaleY);
             _targetPosition = newPosition;
@@ -753,10 +455,6 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             _wallpaperBitmap = null;
             _hexBitmap = null;
             _sceneSurface = null;
-
-            _cachedEdgeColors = null;
-            _cachedSweepStops = null;
-            _cachedCoreColors = null;
         }
     }
 }

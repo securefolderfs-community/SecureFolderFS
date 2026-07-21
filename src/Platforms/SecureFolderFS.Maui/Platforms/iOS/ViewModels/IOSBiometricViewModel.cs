@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
+using SecureFolderFS.Storage.Extensions;
 using Security;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
@@ -49,7 +50,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        public override async Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
             id ??= VaultId;
 
@@ -59,14 +60,19 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             {
                 ApplicationTag = applicationTag,
                 KeyClass = SecKeyClass.Private,
-                TokenID = SecTokenID.SecureEnclave 
+                TokenID = SecTokenID.SecureEnclave
             };
 
             // Remove the key from the keychain
             var status = SecKeyChain.Remove(query);
             _ = status;
 
-            return Task.CompletedTask;
+            if (VaultFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            var authenticationFile = await modifiableFolder.TryGetFileByNameAsync($"{Id}{Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
+            if (authenticationFile is not null)
+                await modifiableFolder.DeleteAsync(authenticationFile, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -82,7 +88,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
                 throw new CryptographicException(evalErr?.LocalizedDescription ?? "Authentication failed.");
 
             privateKey ??= CreatePrivateKey(alias);
-            var publicKey = privateKey.GetPublicKey() ?? throw new CryptographicException("Public key could not be retrieved.");;
+            var publicKey = privateKey.GetPublicKey() ?? throw new CryptographicException("Public key could not be retrieved.");
             var encrypted = Encrypt(publicKey, data);
 
             return Result<IKeyBytes>.Success(encrypted);
@@ -114,15 +120,20 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ViewModels
             return ManagedKey.TakeOwnership(ciphertextBuffer);
         }
 
-        private static async Task<ManagedKey> DecryptAsync(SecKey privateKey, byte[] data)
+        private static Task<ManagedKey> DecryptAsync(SecKey privateKey, byte[] data)
         {
-            var ciphertext = NSData.FromArray(data);
-            var plaintext = privateKey.CreateDecryptedData(ALGORITHM, ciphertext, out var error);
-            if (plaintext is null || error is not null)
-                throw new CryptographicException($"Could not decrypt the data. {error?.LocalizedDescription}");
+            // Decryption with the Secure Enclave key triggers the biometric prompt automatically
+            // and blocks until it is dismissed, so it must not run on the UI thread
+            return Task.Run(() =>
+            {
+                using var ciphertext = NSData.FromArray(data);
+                using var plaintext = privateKey.CreateDecryptedData(ALGORITHM, ciphertext, out var error);
+                if (plaintext is null || error is not null)
+                    throw new CryptographicException($"Could not decrypt the data. {error?.LocalizedDescription}");
 
-            var plaintextBuffer = plaintext.ToArray();
-            return ManagedKey.TakeOwnership(plaintextBuffer);
+                var plaintextBuffer = plaintext.ToArray();
+                return ManagedKey.TakeOwnership(plaintextBuffer);
+            });
         }
 
         private static async Task<(bool ok, NSError? error)> EvaluateAsync(LAContext context, LAPolicy policy, string reason)

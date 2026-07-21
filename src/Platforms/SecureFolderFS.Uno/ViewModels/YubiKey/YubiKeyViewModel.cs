@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
@@ -26,9 +27,11 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
     public abstract partial class YubiKeyViewModel : AuthenticationViewModel
     {
         private readonly SynchronizationContext? _synchronizationContext;
+        private TaskCompletionSource<bool>? _slotOverwriteDecisionTcs;
 
         [ObservableProperty] private bool _IsAwaitingTouch;
         [ObservableProperty] private bool _UseLongPress = true;
+        [ObservableProperty] private bool _IsSlotOverwriteWarningOpen;
 
         /// <summary>
         /// Gets the unique ID of the vault.
@@ -75,13 +78,27 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
             try
             {
-                // During enrollment, configure the slot for HMAC-SHA1 challenge-response first
-                var key = await PerformChallengeResponseAsync(
-                    data,
-                    configureSlot: true,
-                    UseLongPress,
-                    () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
-                    cancellationToken);
+                Action touchNotifier = () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true);
+
+                // The slot is global YubiKey state shared by every vault and application, so reuse
+                // an existing secret whenever possible; regenerating it would irreversibly break
+                // everything else that relies on the slot
+                var slotConfigured = await Task.Run(() => IsSlotConfigured(UseLongPress), cancellationToken);
+                if (slotConfigured)
+                {
+                    var existingKey = await PerformChallengeResponseAsync(data, configureSlot: false, UseLongPress, touchNotifier, cancellationToken);
+                    if (existingKey is not null)
+                        return Result<IKeyBytes>.Success(existingKey);
+
+                    // The slot holds a configuration other than HMAC-SHA1 challenge-response;
+                    // overwriting it is destructive, so the user must explicitly confirm
+                    _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = false);
+                    if (!await RequestSlotOverwriteConfirmationAsync())
+                        throw new OperationCanceledException("The user declined to overwrite the configured YubiKey slot.");
+                }
+
+                var key = await PerformChallengeResponseAsync(data, configureSlot: true, UseLongPress, touchNotifier, cancellationToken)
+                          ?? throw new InvalidOperationException("Challenge-response failed after configuring the slot for HMAC-SHA1.");
 
                 return Result<IKeyBytes>.Success(key);
             }
@@ -105,7 +122,8 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
                     configureSlot: false,
                     UseLongPress,
                     () => _synchronizationContext.PostOrExecute(_ => IsAwaitingTouch = true),
-                    cancellationToken);
+                    cancellationToken)
+                    ?? throw new InvalidOperationException("Challenge-response failed. Ensure the YubiKey slot is configured for HMAC-SHA1.");
 
                 return Result<IKeyBytes>.Success(key);
             }
@@ -138,15 +156,15 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
         /// <param name="useLongPress">If true, uses Slot 2 (LongPress); otherwise uses Slot 1 (ShortPress).</param>
         /// <param name="touchNotifier">Callback invoked when touch is required.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The response key bytes.</returns>
-        protected static Task<ManagedKey> PerformChallengeResponseAsync(
-            byte[] challenge, 
+        /// <returns>The response key bytes, or null when the slot is not configured for HMAC-SHA1 challenge-response.</returns>
+        protected static Task<ManagedKey?> PerformChallengeResponseAsync(
+            byte[] challenge,
             bool configureSlot,
             bool useLongPress,
             Action? touchNotifier,
             CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
+            return Task.Run<ManagedKey?>(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -166,9 +184,8 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
                 // Perform challenge-response
                 var response = ChallengeResponse(otpSession, slot, challengeBytes, touchNotifier);
-
                 if (response is null)
-                    throw new InvalidOperationException("Challenge-response failed. Ensure the YubiKey slot is configured for HMAC-SHA1.");
+                    return null;
 
                 var responseBytes = response.Value.ToArray();
                 var secretKey = new ManagedKey(responseBytes.Length);
@@ -176,6 +193,45 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
 
                 return secretKey;
             }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Checks whether the given slot already holds a configuration of any kind.
+        /// </summary>
+        /// <param name="useLongPress">If true, checks Slot 2 (LongPress); otherwise Slot 1 (ShortPress).</param>
+        /// <returns>True if the slot is configured, false otherwise.</returns>
+        private static bool IsSlotConfigured(bool useLongPress)
+        {
+            var device = GetYubiKeyDevice();
+            using var otpSession = new OtpSession(device);
+
+            return useLongPress ? otpSession.IsLongPressConfigured : otpSession.IsShortPressConfigured;
+        }
+
+        /// <summary>
+        /// Opens the slot overwrite warning and waits for the user's decision.
+        /// </summary>
+        /// <returns>True if the user confirmed overwriting the slot, false otherwise.</returns>
+        private Task<bool> RequestSlotOverwriteConfirmationAsync()
+        {
+            _slotOverwriteDecisionTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _synchronizationContext.PostOrExecute(_ => IsSlotOverwriteWarningOpen = true);
+
+            return _slotOverwriteDecisionTcs.Task;
+        }
+
+        partial void OnIsSlotOverwriteWarningOpenChanged(bool value)
+        {
+            // Dismissing the warning without choosing the action counts as declining
+            if (!value)
+                _slotOverwriteDecisionTcs?.TrySetResult(false);
+        }
+
+        [RelayCommand]
+        private void ConfirmSlotOverwrite()
+        {
+            _slotOverwriteDecisionTcs?.TrySetResult(true);
+            IsSlotOverwriteWarningOpen = false;
         }
 
         /// <summary>
@@ -215,10 +271,10 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
         /// <param name="slot">The slot to use.</param>
         /// <param name="challenge">The challenge bytes (must be exactly 64 bytes).</param>
         /// <param name="touchNotifier">Callback invoked when touch is required.</param>
-        /// <returns>The response bytes, or null if the operation failed.</returns>
+        /// <returns>The response bytes, or null when the slot is not configured for HMAC-SHA1 challenge-response.</returns>
         private static ReadOnlyMemory<byte>? ChallengeResponse(
-            IOtpSession session, 
-            Slot slot, 
+            IOtpSession session,
+            Slot slot,
             byte[] challenge,
             Action? touchNotifier)
         {
@@ -245,25 +301,11 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
                 ex.Message.Contains("keyboard", StringComparison.OrdinalIgnoreCase) ||
                 ex.Message.Contains("acknowledge", StringComparison.OrdinalIgnoreCase))
             {
-                // This error occurs when:
-                // 1. The slot is not configured for HMAC-SHA1 challenge-response
-                // 2. The slot is configured for a different mode (static password, Yubico OTP, HOTP)
-                // 3. There's a USB communication issue
-                Debug.WriteLine($"Slot {slot} failed - likely not configured for HMAC-SHA1 challenge-response: {ex.Message}");
-                return null;
-            }
-            catch (TimeoutException ex)
-            {
-                // Touch timeout - user didn't touch the key in time
-                Debug.WriteLine($"Challenge-response timed out on {slot}: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                // Log the full exception type and inner exception for debugging
-                Debug.WriteLine($"Challenge-response failed on {slot} ({ex.GetType().FullName}): {ex.Message}");
-                if (ex.InnerException != null)
-                    Debug.WriteLine($"  Inner exception ({ex.InnerException.GetType().FullName}): {ex.InnerException.Message}");
+                // Thrown when the slot is configured for a mode other than HMAC-SHA1 challenge-response
+                // (static password, Yubico OTP, HOTP). Only this case may return null - callers use it
+                // to decide whether reprogramming the slot should be offered, so timeouts and transport
+                // errors must propagate instead of being conflated with a misconfigured slot.
+                Debug.WriteLine($"Slot {slot} is not configured for HMAC-SHA1 challenge-response: {ex.Message}");
                 return null;
             }
         }

@@ -94,11 +94,23 @@
 
                 <!--  Authenticate  -->
                 <Button
+                    x:Name="SetupYubiKeyButton"
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Rid=Setup}"
                     Style="{ThemeResource AccentButtonStyle}" />
+
+                <!--  Slot Overwrite Confirmation  -->
+                <TeachingTip
+                    Title="{l:ResourceString Rid=OverwriteYubiKeySlot}"
+                    ActionButtonCommand="{x:Bind ConfirmSlotOverwriteCommand}"
+                    ActionButtonContent="{l:ResourceString Rid=Overwrite}"
+                    CloseButtonContent="{l:ResourceString Rid=Cancel}"
+                    IsOpen="{x:Bind IsSlotOverwriteWarningOpen, Mode=TwoWay}"
+                    PreferredPlacement="Top"
+                    Subtitle="{l:ResourceString Rid=OverwriteYubiKeySlotDescription}"
+                    Target="{Binding ElementName=SetupYubiKeyButton}" />
             </StackPanel>
         </DataTemplate>
 
