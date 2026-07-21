@@ -318,33 +318,33 @@ namespace SecureFolderFS.Uno.PInvoke
 
         private const string LibSecret = "libsecret-1.so.0";
         private const string LibGlib = "libglib-2.0.so.0";
-        private const string SecretCollectionDefault = "default";
+        public const string SecretCollectionDefault = "default";
 
         [LibraryImport(LibSecret, StringMarshalling = StringMarshalling.Utf8)]
-        private static partial int secret_password_storev_sync(IntPtr schema, IntPtr attributes, string collection, string label, string password, IntPtr cancellable, out IntPtr error);
+        public static partial int secret_password_storev_sync(IntPtr schema, IntPtr attributes, string collection, string label, string password, IntPtr cancellable, out IntPtr error);
 
         [LibraryImport(LibSecret)]
-        private static partial IntPtr secret_password_lookupv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
+        public static partial IntPtr secret_password_lookupv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
 
         [LibraryImport(LibSecret)]
-        private static partial int secret_password_clearv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
+        public static partial int secret_password_clearv_sync(IntPtr schema, IntPtr attributes, IntPtr cancellable, out IntPtr error);
 
         [LibraryImport(LibSecret)]
-        private static partial void secret_password_free(IntPtr password);
+        public static partial void secret_password_free(IntPtr password);
 
         [LibraryImport(LibGlib)]
-        private static partial IntPtr g_hash_table_new(IntPtr hashFunc, IntPtr keyEqualFunc);
+        public static partial IntPtr g_hash_table_new(IntPtr hashFunc, IntPtr keyEqualFunc);
 
         [LibraryImport(LibGlib)]
-        private static partial void g_hash_table_insert(IntPtr hashTable, IntPtr key, IntPtr value);
+        public static partial void g_hash_table_insert(IntPtr hashTable, IntPtr key, IntPtr value);
 
         [LibraryImport(LibGlib)]
-        private static partial void g_hash_table_unref(IntPtr hashTable);
+        public static partial void g_hash_table_unref(IntPtr hashTable);
 
         [LibraryImport(LibGlib)]
-        private static partial void g_error_free(IntPtr error);
+        public static partial void g_error_free(IntPtr error);
         
-        private static class GlibFunctions
+        public static class GlibFunctions
         {
             internal static readonly IntPtr StrHash;
             internal static readonly IntPtr StrEqual;
@@ -361,7 +361,7 @@ namespace SecureFolderFS.Uno.PInvoke
         /// Owns a GHashTable of string attributes ({"key": value} or empty) plus the unmanaged
         /// strings inserted into it (libsecret copies what it needs during the sync calls).
         /// </summary>
-        private readonly struct SecretAttributes : IDisposable
+        public readonly struct SecretAttributes : IDisposable
         {
             internal IntPtr Handle { get; }
             private readonly IntPtr _keyPtr;
