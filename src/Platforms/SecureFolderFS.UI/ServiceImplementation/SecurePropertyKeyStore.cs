@@ -53,21 +53,36 @@ namespace SecureFolderFS.UI.ServiceImplementation
         protected override async Task<byte[]> UnprotectAsync(byte[] data, CancellationToken cancellationToken)
         {
             if (data.Length < NONCE_SIZE + TAG_SIZE)
-                throw new CryptographicException("The protected data is malformed or truncated.");
+            {
+                // A truncated/malformed blob can never be recovered; treat it like a key mismatch
+                // so the caller discards it and regenerates fresh material instead of failing hard.
+                throw new KeyMaterialUnrecoverableException("The protected data is malformed or truncated.");
+            }
 
             var key = await GetOrCreateProtectionKeyAsync(cancellationToken);
             var plaintext = new byte[data.Length - NONCE_SIZE - TAG_SIZE];
-            
-            // [nonce][ciphertext][tag]
-            AesGcm256.Decrypt(
-                data.AsSpan(NONCE_SIZE, data.Length - NONCE_SIZE - TAG_SIZE),
-                key,
-                data.AsSpan(0, NONCE_SIZE),
-                data.AsSpan(data.Length - TAG_SIZE, TAG_SIZE),
-                plaintext,
-                ReadOnlySpan<byte>.Empty
-                );
-            
+
+            try
+            {
+                // [nonce][ciphertext][tag]
+                AesGcm256.Decrypt(
+                    data.AsSpan(NONCE_SIZE, data.Length - NONCE_SIZE - TAG_SIZE),
+                    key,
+                    data.AsSpan(0, NONCE_SIZE),
+                    data.AsSpan(data.Length - TAG_SIZE, TAG_SIZE),
+                    plaintext,
+                    ReadOnlySpan<byte>.Empty
+                    );
+            }
+            catch (CryptographicException ex)
+            {
+                // The stored protection key no longer matches this blob (e.g. the OS secret store was
+                // reset, or the fallback store was regenerated). Surface it as unrecoverable so the
+                // caller can drop the stale material and regenerate fresh keys instead of breaking.
+                throw new KeyMaterialUnrecoverableException(
+                    "The protected data could not be decrypted with the current protection key.", ex);
+            }
+
             return plaintext;
         }
         

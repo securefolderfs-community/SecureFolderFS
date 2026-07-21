@@ -1,6 +1,7 @@
 #if APP_PLATFORM_PRESENT
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,13 +32,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 throw new InvalidOperationException("The accounts folder is not modifiable.");
 
             var file = await modifiableFolder.TryGetFileByNameAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, cancellationToken);
-            if (file is not null && Guid.TryParse(await ReadProtectedTextAsync(file, cancellationToken), out var existing))
-                return existing;
+            if (file is not null)
+            {
+                // If the stored id can no longer be decrypted, TryReadProtectedTextAsync discards it
+                // and returns null so a fresh id is generated below.
+                var text = await TryReadProtectedTextAsync(file, modifiableFolder, cancellationToken);
+                if (Guid.TryParse(text, out var existing))
+                    return existing;
+            }
 
-            file ??= await modifiableFolder.CreateFileAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, true, cancellationToken);
-
+            var idFile = await modifiableFolder.CreateFileAsync(ACCOUNT_CLIENT_DEVICE_ID_FILENAME, true, cancellationToken);
             var clientDeviceId = Guid.NewGuid();
-            await WriteProtectedTextAsync(file, clientDeviceId.ToString(), cancellationToken);
+            await WriteProtectedTextAsync(idFile, clientDeviceId.ToString(), cancellationToken);
 
             return clientDeviceId;
         }
@@ -52,15 +58,27 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             await foreach (var item in accountsFolder.GetItemsAsync(StorableType.Folder, cancellationToken))
             {
-                if (item is not IFolder accountFolder)
+                if (item is not IChildFolder accountFolder)
                     continue;
 
                 if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is null)
                     continue;
 
-                if (await accountFolder.TryGetFirstByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
+                if (await accountFolder.TryGetFileByNameAsync(ACCOUNT_METADATA_FILENAME, cancellationToken) is IFile metaFile)
                 {
-                    var lines = (await ReadProtectedTextAsync(metaFile, cancellationToken)).Split(Environment.NewLine);
+                    var text = await TryReadProtectedTextAsync(metaFile, owningFolder: null, cancellationToken);
+                    if (text is null)
+                    {
+                        // The account's metadata can no longer be decrypted with the current protection
+                        // key, so the whole account is unusable. Discard it and let the user re-add it,
+                        // which regenerates fresh key material rather than leaving the picker broken.
+                        if (accountsFolder is IModifiableFolder modifiableAccountsFolder)
+                            await TryDeleteAsync(modifiableAccountsFolder, accountFolder, cancellationToken);
+
+                        continue;
+                    }
+
+                    var lines = text.Split(Environment.NewLine);
                     accounts.Add(new DeviceKeyAccount
                     {
                         Id = Get(lines, 0) ?? accountFolder.Name,
@@ -110,10 +128,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 return false;
 
             var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
-            if (accountFolder is null)
+            if (accountFolder is null || await accountFolder.TryGetFileByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not { } file)
                 return false;
 
-            return await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not null;
+            // Verify the key can still be decrypted. If the protection key no longer matches, heal by
+            // discarding the stale key and reporting "no key" so the caller re-registers a fresh device
+            // instead of hitting an undecryptable key later in GetPrivateKeyAsync.
+            var privateKey = await TryUnprotectFileAsync(file, accountFolder as IModifiableFolder, cancellationToken);
+            if (privateKey is null)
+                return false;
+
+            CryptographicOperations.ZeroMemory(privateKey);
+            return true;
         }
 
         /// <inheritdoc/>
@@ -127,8 +153,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (accountFolder is null || await accountFolder.TryGetFileByNameAsync(ACCOUNT_DEVICE_KEY_FILENAME, cancellationToken) is not { } file)
                 throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
 
-            var protectedBytes = await file.ReadBytesAsync(cancellationToken);
-            return await UnprotectAsync(protectedBytes, cancellationToken);
+            // Discards the key if it can no longer be decrypted (returns null), surfacing the standard
+            // "setup first" error so the login flow re-bootstraps the device.
+            var privateKey = await TryUnprotectFileAsync(file, accountFolder as IModifiableFolder, cancellationToken);
+            if (privateKey is null)
+                throw new InvalidOperationException("No device key stored. Complete App Platform setup first.");
+
+            return privateKey;
         }
 
         /// <inheritdoc/>
@@ -155,10 +186,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 return null;
 
             var accountFolder = await accountsFolder.TryGetFolderByNameAsync(accountId, cancellationToken);
-            if (accountFolder is null || await accountFolder.TryGetFirstByNameAsync(ACCOUNT_DEVICE_ID_FILENAME, cancellationToken) is not IFile file)
+            if (accountFolder is null || await accountFolder.TryGetFileByNameAsync(ACCOUNT_DEVICE_ID_FILENAME, cancellationToken) is not IFile file)
                 return null;
 
-            var text = await ReadProtectedTextAsync(file, cancellationToken);
+            // If the stored id can no longer be decrypted it is discarded and treated as absent.
+            var text = await TryReadProtectedTextAsync(file, accountFolder as IModifiableFolder, cancellationToken);
             return Guid.TryParse(text, out var id) ? id : null;
         }
 
@@ -188,12 +220,51 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 await modifiableFolder.DeleteAsync(accountFolder, cancellationToken);
         }
 
-        private async Task<string> ReadProtectedTextAsync(IFile file, CancellationToken cancellationToken)
+        /// <summary>
+        /// Reads and unprotects the text content of <paramref name="file"/>, returning <see langword="null"/>
+        /// (instead of throwing) when the data can no longer be decrypted with the current protection key.
+        /// </summary>
+        /// <param name="file">The file to read.</param>
+        /// <param name="owningFolder">The folder that contains <paramref name="file"/>, used to discard the
+        /// file when it is unrecoverable. Pass <see langword="null"/> when the caller cleans up separately.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        private async Task<string?> TryReadProtectedTextAsync(IFile file, IModifiableFolder? owningFolder, CancellationToken cancellationToken)
         {
-            var protectedBytes = await file.ReadBytesAsync(cancellationToken);
-            var data = await UnprotectAsync(protectedBytes, cancellationToken);
+            var data = await TryUnprotectFileAsync(file, owningFolder, cancellationToken);
+            return data is null ? null : Encoding.UTF8.GetString(data);
+        }
 
-            return Encoding.UTF8.GetString(data);
+        /// <summary>
+        /// Reads and unprotects the raw content of <paramref name="file"/>, returning <see langword="null"/>
+        /// (instead of throwing) when the data can no longer be decrypted. When it cannot be decrypted the
+        /// unrecoverable file is discarded so a fresh copy can be regenerated on the next write.
+        /// </summary>
+        private async Task<byte[]?> TryUnprotectFileAsync(IFile file, IModifiableFolder? owningFolder, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var protectedBytes = await file.ReadBytesAsync(cancellationToken);
+                return await UnprotectAsync(protectedBytes, cancellationToken);
+            }
+            catch (KeyMaterialUnrecoverableException)
+            {
+                if (owningFolder is not null && file is IStorableChild child)
+                    await TryDeleteAsync(owningFolder, child, cancellationToken);
+
+                return null;
+            }
+        }
+
+        private static async Task TryDeleteAsync(IModifiableFolder folder, IStorableChild item, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await folder.DeleteAsync(item, cancellationToken: cancellationToken);
+            }
+            catch (Exception)
+            {
+                // Best-effort cleanup; a lingering unrecoverable file is simply overwritten on the next write.
+            }
         }
 
         private async Task WriteProtectedTextAsync(IFile file, string text, CancellationToken cancellationToken)
@@ -216,7 +287,31 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <param name="data">The data to unprotect.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the unprotected data.</returns>
+        /// <exception cref="KeyMaterialUnrecoverableException">
+        /// Thrown when <paramref name="data"/> cannot be decrypted with the current protection key.
+        /// Implementations should raise this (rather than a raw <see cref="CryptographicException"/>) so callers
+        /// can discard the stale material and regenerate fresh keys instead of failing.
+        /// </exception>
         protected abstract Task<byte[]> UnprotectAsync(byte[] data, CancellationToken cancellationToken);
+    }
+
+    /// <summary>
+    /// Thrown when protected key material can no longer be decrypted with the current protection key
+    /// (for example after the OS secret store was reset or the fallback store was regenerated).
+    /// Signals that the material is unrecoverable and should be discarded and regenerated rather than
+    /// treated as a fatal error.
+    /// </summary>
+    public sealed class KeyMaterialUnrecoverableException : Exception
+    {
+        public KeyMaterialUnrecoverableException(string message)
+            : base(message)
+        {
+        }
+
+        public KeyMaterialUnrecoverableException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }
 #endif
