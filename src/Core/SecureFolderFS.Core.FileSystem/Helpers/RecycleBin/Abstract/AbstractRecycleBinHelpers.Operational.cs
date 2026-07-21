@@ -68,16 +68,20 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
             // Get the plaintext name and parent ID
+            var plaintextParentPath = deserialized.DecryptParentId(specifics.Security);
             var plaintextOriginalName = deserialized.DecryptName(specifics.Security);
-            if (plaintextOriginalName is null)
+            if (plaintextOriginalName is null || plaintextParentPath is null)
                 throw new FormatException("Could not decrypt recycle bin configuration file.");
 
-            // The name is always re-encrypted for the destination folder so that the
+            // The name is always re-encrypted for discovery for the destination folder so that the
             // ciphertext name matches the destination's Directory ID, whether the destination is the original parent.
-            var ciphertextName = await AbstractPathHelpers.EncryptNameAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
+            var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(plaintextOriginalName, ciphertextDestinationFolder, specifics, cancellationToken);
 
             // Get an available name if the destination already exists
-            ciphertextName = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
+            var (_, finalPlaintextName) = await GetAvailableDestinationNameAsync(ciphertextDestinationFolder, ciphertextName, plaintextOriginalName, specifics, cancellationToken);
+
+            // Materialize the name: writes the sidecar file if the name is shortened
+            ciphertextName = await AbstractPathHelpers.EncryptNameForUseAsync(finalPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
 
             // Rename and move item to destination
             _ = await ciphertextDestinationFolder.MoveStorableFromAsync(recycleBinItem, modifiableRecycleBin, false, ciphertextName, null, cancellationToken);
@@ -332,26 +336,28 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
             return foldedSize;
         }
 
-        private static async Task<string> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)
+        private static async Task<(string CiphertextName, string PlaintextName)> GetAvailableDestinationNameAsync(IFolder ciphertextDestinationFolder, string ciphertextName, string plaintextOriginalName, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
+            var finalPlaintextName = plaintextOriginalName;
+
             // Check if the item already exists
             var existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
-            if (existing is null)
-                return ciphertextName;
-
-            // If the item already exists, append a suffix to the name
-            var nameWithoutExtension = Path.GetFileNameWithoutExtension(plaintextOriginalName);
-            var extension = Path.GetExtension(plaintextOriginalName);
-            var suffix = 1;
-            do
+            if (existing is not null)
             {
-                var newPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
-                ciphertextName = await AbstractPathHelpers.EncryptNameAsync(newPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
-                existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
-                suffix++;
-            } while (existing is not null);
+                // If the item already exists, append a suffix to the name
+                var nameWithoutExtension = Path.GetFileNameWithoutExtension(plaintextOriginalName);
+                var extension = Path.GetExtension(plaintextOriginalName);
+                var suffix = 1;
+                do
+                {
+                    finalPlaintextName = $"{nameWithoutExtension} ({suffix}){extension}";
+                    ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(finalPlaintextName, ciphertextDestinationFolder, specifics, cancellationToken);
+                    existing = await ciphertextDestinationFolder.TryGetFirstByNameAsync(ciphertextName, cancellationToken);
+                    suffix++;
+                } while (existing is not null);
+            }
 
-            return ciphertextName;
+            return (ciphertextName, finalPlaintextName);
         }
 
         private static async Task<bool> IsRecentlyCreatedAsync(IStorable storable, CancellationToken cancellationToken)
