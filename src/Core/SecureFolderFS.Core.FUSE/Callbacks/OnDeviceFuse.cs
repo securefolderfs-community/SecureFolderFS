@@ -473,7 +473,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
-        public override int RmDir(ReadOnlySpan<byte> path)
+        public override unsafe int RmDir(ReadOnlySpan<byte> path)
         {
             if (FuseOptions!.IsReadOnly)
                 return -EROFS;
