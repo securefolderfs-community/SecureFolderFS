@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -51,6 +52,44 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty IsLoginSequenceProperty =
             DependencyProperty.Register(nameof(IsLoginSequence), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
+
+        public bool IsAlternativeLogin
+        {
+            get => (bool)GetValue(IsAlternativeLoginProperty);
+            set => SetValue(IsAlternativeLoginProperty, value);
+        }
+        public static readonly DependencyProperty IsAlternativeLoginProperty =
+            DependencyProperty.Register(nameof(IsAlternativeLogin), typeof(bool), typeof(LoginOptions), new PropertyMetadata(false));
+
+        public IEnumerable? AuthenticationOptions
+        {
+            get => (IEnumerable?)GetValue(AuthenticationOptionsProperty);
+            set => SetValue(AuthenticationOptionsProperty, value);
+        }
+        public static readonly DependencyProperty AuthenticationOptionsProperty =
+            DependencyProperty.Register(nameof(AuthenticationOptions), typeof(IEnumerable), typeof(LoginOptions), new PropertyMetadata(null));
+
+        public object? SelectedAuthenticationOption
+        {
+            get => GetValue(SelectedAuthenticationOptionProperty);
+            set => SetValue(SelectedAuthenticationOptionProperty, value);
+        }
+        public static readonly DependencyProperty SelectedAuthenticationOptionProperty =
+            DependencyProperty.Register(nameof(SelectedAuthenticationOption), typeof(object), typeof(LoginOptions), new PropertyMetadata(null));
+
+        public ICommand? SelectAuthenticationOptionCommand
+        {
+            get => (ICommand?)GetValue(SelectAuthenticationOptionCommandProperty);
+            set => SetValue(SelectAuthenticationOptionCommandProperty, value);
+        }
+        public static readonly DependencyProperty SelectAuthenticationOptionCommandProperty =
+            DependencyProperty.Register(nameof(SelectAuthenticationOptionCommand), typeof(ICommand), typeof(LoginOptions), new PropertyMetadata(null));
+
+        private void AuthenticationOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox { SelectedItem: { } selectedItem } && SelectAuthenticationOptionCommand?.CanExecute(selectedItem) == true)
+                SelectAuthenticationOptionCommand.Execute(selectedItem);
+        }
 
         public ICommand? DiscardSavedCredentialsCommand
         {

@@ -278,7 +278,7 @@ namespace SecureFolderFS.Uno.ViewModels.YubiKey
             byte[] challenge,
             Action? touchNotifier)
         {
-            if (challenge.Length != Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_64)
+            if (challenge.Length != Core.Cryptography.Constants.KeyTraits.KEY_PART_LENGTH_64)
                 throw new ArgumentException("Challenge must be exactly 64 bytes.", nameof(challenge));
 
             try

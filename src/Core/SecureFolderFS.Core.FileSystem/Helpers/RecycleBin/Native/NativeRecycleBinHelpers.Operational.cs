@@ -27,6 +27,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 throw FileSystemExceptions.FileSystemReadOnly;
 
             storableType = AlignStorableType(ciphertextPath);
+
+            // Compute parent path early so it's available in all branches
+            var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
+            _ = ciphertextParentPath ?? throw new DirectoryNotFoundException("The parent folder could not be determined.");
+
             if (!specifics.Options.IsRecycleBinEnabled())
             {
                 DeleteImmediately(ciphertextPath, storableType);
@@ -36,9 +41,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
             // Allocate Directory ID for later use
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security);
 
-            // Decrypt the plaintext name
-            var ciphertextParentPath = Path.GetDirectoryName(ciphertextPath);
-            _ = ciphertextParentPath ?? throw new DirectoryNotFoundException("The parent folder could not be determined.");
+            // Decrypt the plaintext name (reads sidecar if shortened)
             var plaintextName = NativePathHelpers.DecryptName(Path.GetFileName(ciphertextPath), ciphertextParentPath, specifics, directoryId);
             if (plaintextName is null)
                 throw new FormatException("Could not decrypt name for recycle bin configuration file.");

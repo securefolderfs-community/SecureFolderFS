@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace SecureFolderFS.Core.DataModels
+namespace SecureFolderFS.Core.Migration.DataModels
 {
     [Serializable]
     public sealed record class V3VaultKeystoreDataModel

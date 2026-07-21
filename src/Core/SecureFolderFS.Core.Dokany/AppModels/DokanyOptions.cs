@@ -1,8 +1,8 @@
-﻿using SecureFolderFS.Core.FileSystem.AppModels;
+﻿using System;
+using System.Collections.Generic;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.Dokany.AppModels
 {
@@ -36,6 +36,7 @@ namespace SecureFolderFS.Core.Dokany.AppModels
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? false,
                 IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
                 RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
+                ShorteningThreshold = (int?)options.Get(nameof(ShorteningThreshold)) ?? 0,
 
                 // Dokany specific
                 MountPoint = (string?)options.Get(nameof(MountPoint))

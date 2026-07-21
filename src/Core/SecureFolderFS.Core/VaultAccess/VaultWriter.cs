@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +36,8 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(keystoreFile, keystoreDataModel, cancellationToken);
         }
 
-        public async Task WriteConfigurationAsync(VaultConfigurationDataModel? configDataModel, CancellationToken cancellationToken)
+        public async Task WriteConfigurationAsync<TConfiguration>(TConfiguration? configDataModel, CancellationToken cancellationToken)
+            where TConfiguration : class
         {
             var configFile = configDataModel is null ? null : _vaultFolder switch
             {
@@ -46,15 +48,27 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
         }
 
-        public async Task WriteV4ConfigurationAsync(V4VaultConfigurationDataModel? configDataModel, CancellationToken cancellationToken)
+        public async Task WriteComplementationAsync(VaultSharesDataModel? sharesDataModel, CancellationToken cancellationToken)
         {
-            var configFile = configDataModel is null ? null : _vaultFolder switch
+            if (sharesDataModel is null)
             {
-                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, true, cancellationToken),
-                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) as IFile
+                if (_vaultFolder is not IModifiableFolder modifiableFolder)
+                    return;
+
+                var existingFile = await modifiableFolder.TryGetFileByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken);
+                if (existingFile is not null)
+                    await modifiableFolder.DeleteAsync(existingFile, cancellationToken);
+
+                return;
+            }
+
+            var complementFile = _vaultFolder switch
+            {
+                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, true, cancellationToken),
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_COMPLEMENTATION_FILENAME, cancellationToken) as IFile
             };
 
-            await WriteDataAsync(configFile, configDataModel, cancellationToken);
+            await WriteDataAsync(complementFile, sharesDataModel, cancellationToken);
         }
 
         public async Task WriteAuthenticationAsync<TCapability>(string fileName, TCapability? authDataModel, CancellationToken cancellationToken)

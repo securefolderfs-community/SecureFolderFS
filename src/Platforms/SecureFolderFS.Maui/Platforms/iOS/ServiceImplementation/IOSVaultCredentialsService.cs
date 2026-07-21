@@ -43,12 +43,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            foreach (var item in unlockProcedure.Methods)
+            foreach (var item in EnumerateLoginMethods(unlockProcedure))
             {
                 yield return item switch
                 {
+                    // Password
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    
+                    // Key File
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    
+                    // Apple Biometrics
                     Constants.Vault.Authentication.AUTH_APPLE_BIOMETRIC when AreBiometricsAvailable(out var biometryType) => 
                         new IOSBiometricLoginViewModel(vaultFolder, vaultId, biometryType switch
                         {
@@ -56,6 +61,10 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                             LABiometryType.TouchId => "Touch ID",
                             _ => string.Empty
                         }),
+                    
+                    // App Platform
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
+                    
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

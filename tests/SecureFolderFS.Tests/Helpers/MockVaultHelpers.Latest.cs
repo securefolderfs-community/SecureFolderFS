@@ -7,7 +7,7 @@ namespace SecureFolderFS.Tests.Helpers
     {
         public static async Task<(IFolder, string)> CreateVaultLatestAsync(MockVaultOptions? options, CancellationToken cancellationToken = default)
         {
-            return await CreateVaultV3Async(options, cancellationToken);
+            return await CreateVaultV4Async(options, cancellationToken);
         }
     }
 }

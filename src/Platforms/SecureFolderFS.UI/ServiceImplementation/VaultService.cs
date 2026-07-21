@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
 
         /// <inheritdoc/>
-        public string ShortcutFileExtension { get; } = UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION;
+        public string ShortcutFileExtension { get; } = Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION;
 
         /// <inheritdoc/>
         public virtual bool IsNameReserved(string? name)
@@ -42,20 +42,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            AppPlatformVaultOptions? appPlatform = null;
-
-            if (config.AuthenticationMethod.Contains(Core.Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
-            {
-                try
-                {
-                    var v4Config = await vaultReader.ReadV4ConfigurationAsync(cancellationToken);
-                    appPlatform = v4Config.AppPlatform;
-                }
-                catch (Exception)
-                {
-                    appPlatform = null;
-                }
-            }
 
             return new()
             {
@@ -63,10 +49,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
                 NameEncodingId = config.FileNameEncodingId,
+                ShorteningThreshold = config.ShorteningThreshold,
                 RecycleBinSize = config.RecycleBinSize,
                 VaultId = config.Uid,
                 Version = config.Version,
-                AppPlatform = appPlatform
+                AppPlatform = config.AppPlatform
             };
         }
 

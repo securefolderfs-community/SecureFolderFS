@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     // The header needs to be read at this point now as there is existing data in the wrapped stream,
                     // indicating overhead is present. Since the primary stream is write-only, we must
                     // use the dedicated read-only stream and store the header.
-                    if (!headerBuffer.ReadHeader(headerReadingStream, _security))
+                    if (!headerBuffer.ReadHeader(headerReadingStream, _security.HeaderCrypt))
                         throw new InvalidOperationException($"The {nameof(headerReadingStream)} cannot read the header.");
 
                     headerReadingStream.Dispose();

@@ -21,16 +21,17 @@ namespace SecureFolderFS.Core.Models
                 fileNameCipherId: _configDataModel.FileNameCipherId,
                 fileNameEncodingId: _configDataModel.FileNameEncodingId);
 
-        public SecurityWrapper(KeyPair keyPair, VaultConfigurationDataModel configurationDataModel)
+        public SecurityWrapper(KeyPair keyPair, VaultConfigurationDataModel configDataModel)
         {
             _keyPair = keyPair;
-            _configDataModel = configurationDataModel;
+            _configDataModel = configDataModel;
         }
 
         /// <inheritdoc/>
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             yield return new(nameof(VirtualFileSystemOptions.RecycleBinSize), _configDataModel.RecycleBinSize);
+            yield return new (nameof(VirtualFileSystemOptions.ShorteningThreshold), _configDataModel.ShorteningThreshold);
         }
 
         /// <inheritdoc/>

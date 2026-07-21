@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
 {
     public static class CryptHelpers
     {
-        public static IKeyBytes GenerateChallenge(string vaultId, int challengeSize = Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_128)
+        public static IKeyBytes GenerateChallenge(string vaultId, int challengeSize = Constants.KeyTraits.KEY_PART_LENGTH_128)
         {
             var encodedVaultIdLength = Encoding.ASCII.GetByteCount(vaultId);
             var challenge = new byte[challengeSize + encodedVaultIdLength];

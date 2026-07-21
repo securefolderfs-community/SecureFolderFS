@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
@@ -7,6 +9,7 @@ using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -15,10 +18,9 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class UnlockRoutine : ICredentialsRoutine
     {
         private readonly VaultReader _vaultReader;
-        private V3VaultKeystoreDataModel? _keystoreDataModel;
-        private V4VaultKeystoreDataModel? _v4KeystoreDataModel;
+        private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
-        private V4VaultConfigurationDataModel? _v4ConfigDataModel;
+        private VaultSharesDataModel? _sharesDataModel;
         private SecureKey? _dekKey;
         private SecureKey? _macKey;
 
@@ -31,45 +33,83 @@ namespace SecureFolderFS.Core.Routines.Operational
         public async Task InitAsync(CancellationToken cancellationToken)
         {
             _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
-
-            if (_configDataModel.AuthenticationMethod.Contains(Constants.Vault.Authentication.AUTH_APP_PLATFORM, StringComparison.Ordinal))
-            {
-                try
-                {
-                    _v4ConfigDataModel = await _vaultReader.ReadV4ConfigurationAsync(cancellationToken);
-                }
-                catch (Exception)
-                {
-                    _v4ConfigDataModel = null;
-                }
-            }
-
-            if (_configDataModel.Version >= Constants.Vault.Versions.V4)
-                _v4KeystoreDataModel = await _vaultReader.ReadKeystoreAsync<V4VaultKeystoreDataModel>(cancellationToken);
-            else
-                _keystoreDataModel = await _vaultReader.ReadKeystoreAsync<V3VaultKeystoreDataModel>(cancellationToken);
+            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync(cancellationToken);
+            _sharesDataModel = await _vaultReader.ReadComplementationAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public void SetCredentials(IKeyUsage passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            if (_v4KeystoreDataModel is not null)
-            {
-                var derived = passkey.UseKey(key => VaultParser.V4DeriveKeystore(key, _v4KeystoreDataModel));
-                _dekKey = SecureKey.TakeOwnership(derived.dekKey);
-                _macKey = SecureKey.TakeOwnership(derived.macKey);
-            }
-            else
-            {
-                ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+            var authenticationMethod = AuthenticationMethod.FromString(_configDataModel.AuthenticationMethod);
+            var derived = string.IsNullOrWhiteSpace(authenticationMethod.Complementation)
+                ? passkey.UseKey(key => VaultParser.DeriveKeystore(key, _keystoreDataModel))
+                : DeriveComplementedKeystore(passkey, authenticationMethod);
 
-                // V3 path: unchanged
-                var derived = passkey.UseKey(key => VaultParser.V3DeriveKeystore(key, _keystoreDataModel));
-                _dekKey = SecureKey.TakeOwnership(derived.dekKey);
-                _macKey = SecureKey.TakeOwnership(derived.macKey);
+            _dekKey = SecureKey.TakeOwnership(derived.dekKey);
+            _macKey = SecureKey.TakeOwnership(derived.macKey);
+        }
+
+        private (byte[] dekKey, byte[] macKey) DeriveComplementedKeystore(IKeyUsage passkey, AuthenticationMethod authenticationMethod)
+        {
+            ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+
+            Exception? lastException = null;
+            var primaryMethodId = authenticationMethod.Methods.FirstOrDefault() ?? throw new InvalidOperationException("Primary authentication is missing.");
+
+            try
+            {
+                return passkey.UseKey(key =>
+                {
+                    Span<byte> complementSecret = stackalloc byte[32];
+                    try
+                    {
+                        VaultParser.DeriveComplementKey(key, _configDataModel.Uid, primaryMethodId, complementSecret);
+                        return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
+                    }
+                    finally
+                    {
+                        CryptographicOperations.ZeroMemory(complementSecret);
+                    }
+                });
             }
+            catch (CryptographicException ex)
+            {
+                lastException = ex;
+            }
+
+            foreach (var share in _sharesDataModel?.Shares ?? [])
+            {
+                if (share.WrappedComplementSecret is null
+                    || share.Tag is null
+                    || share.Nonce is null
+                    || share.AuthenticationMethodId is null)
+                    continue;
+
+                if (!string.Equals(share.AuthenticationMethodId, authenticationMethod.Complementation, StringComparison.Ordinal))
+                    continue;
+
+                byte[]? complementSecret = null;
+                try
+                {
+                    complementSecret = passkey.UseKey(key => VaultParser.UnwrapComplementSecret(key, _configDataModel.Uid, share));
+                    return VaultParser.DeriveKeystore(complementSecret, _keystoreDataModel);
+                }
+                catch (CryptographicException ex)
+                {
+                    lastException = ex;
+                }
+                finally
+                {
+                    if (complementSecret is not null)
+                        CryptographicOperations.ZeroMemory(complementSecret);
+                }
+            }
+
+            throw lastException ?? new CryptographicException("The complemented credentials could not unlock this vault.");
         }
 
         /// <inheritdoc/>
@@ -85,10 +125,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             {
                 // Check if the payload has not been tampered with
                 var validator = new ConfigurationValidator(_macKey);
-                if (_v4ConfigDataModel is not null)
-                    await validator.V4ValidateAsync(_v4ConfigDataModel, cancellationToken);
-                else
-                    await validator.ValidateAsync(_configDataModel, cancellationToken);
+                await validator.ValidateAsync(_configDataModel, cancellationToken);
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here

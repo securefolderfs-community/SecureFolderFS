@@ -36,13 +36,22 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             string vaultId,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var item in unlockProcedure.Methods)
+            foreach (var item in EnumerateLoginMethods(unlockProcedure))
             {
                 yield return item switch
                 {
+                    // Password
                     Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    
+                    // Key File
                     Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
+                    
+                    // Android Biometrics
                     Constants.Vault.Authentication.AUTH_ANDROID_BIOMETRIC => new AndroidBiometricLoginViewModel(vaultFolder, vaultId),
+                    
+                    // App Platform
+                    Constants.Vault.Authentication.AUTH_APP_PLATFORM => new AppPlatformLoginViewModel(),
+                    
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }

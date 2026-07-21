@@ -5,6 +5,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
 {
     public static partial class NativePathHelpers
     {
+        /// <summary>
+        /// Gets the Directory ID for the specified ciphertext folder.
+        /// </summary>
+        /// <param name="ciphertextFolderPath">The ciphertext folder path on disk.</param>
+        /// <param name="specifics">The <see cref="FileSystemSpecifics"/> instance associated with the item.</param>
+        /// <param name="directoryId">A <see cref="Span{T}"/> of size <see cref="Constants.DIRECTORY_ID_SIZE"/> which will be filled with the Directory ID data.</param>
+        /// <returns>True if a Directory ID was read; false if the folder is the root.</returns>
         public static bool GetDirectoryId(string ciphertextFolderPath, FileSystemSpecifics specifics, Span<byte> directoryId)
         {
             // Check if we're at the root

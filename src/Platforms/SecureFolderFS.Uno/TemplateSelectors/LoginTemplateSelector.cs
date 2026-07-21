@@ -25,6 +25,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         public DataTemplate? TouchIDTemplate { get; set; }
 
         public DataTemplate? DeviceLinkTemplate { get; set; }
+        
+        public DataTemplate? AppPlatformTemplate { get; set; }
 
         public DataTemplate? MigrationTemplate { get; set; }
 
@@ -50,6 +52,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 MacOSBiometricsLoginViewModel => TouchIDTemplate,
 #endif
                 DeviceLinkLoginViewModel => DeviceLinkTemplate,
+                AppPlatformLoginViewModel => AppPlatformTemplate,
                 PersistedAuthenticationViewModel => PersistedAuthenticationTemplate,
                 MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,

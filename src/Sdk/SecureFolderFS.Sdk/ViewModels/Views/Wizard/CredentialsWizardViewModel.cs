@@ -32,6 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         private readonly string _vaultId;
         private readonly TaskCompletionSource<IKeyUsage> _credentialsTcs;
 
+        [ObservableProperty] private int _ShorteningThreshold;
         [ObservableProperty] private bool _IsNameCipherEnabled;
         [ObservableProperty] private PickerOptionViewModel? _ContentCipher;
         [ObservableProperty] private PickerOptionViewModel? _FileNameCipher;
@@ -87,6 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
                     NameEncodingId = EncodingOption.Id,
+                    ShorteningThreshold = Math.Max(0, Math.Min(ShorteningThreshold, 250)),
                     RecycleBinSize = 0L,
                     VaultId = _vaultId
                 };

@@ -38,6 +38,10 @@
                             <TextBlock Text="{l:ResourceString Rid=Security}" />
                             <TextBlock Text="{l:ResourceString Rid=DataEncryption}" />
                             <TextBlock Text="{l:ResourceString Rid=NameEncryption}" />
+                            <TextBlock
+                                x:Name="NameShorteningTitle"
+                                x:Load="{x:Bind ViewModel.FileNameShorteningText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                Text="{l:ResourceString Rid=NameShortening}" />
                             <TextBlock Text="{l:ResourceString Rid=ActiveFileSystem}" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Spacing="4">
@@ -53,6 +57,12 @@
                                 IsTextSelectionEnabled="True"
                                 Opacity="0.6"
                                 Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
+                            <TextBlock
+                                x:Name="NameShorteningValue"
+                                x:Load="{x:Bind ViewModel.FileNameShorteningText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                IsTextSelectionEnabled="True"
+                                Opacity="0.6"
+                                Text="{x:Bind ViewModel.FileNameShorteningText, Mode=OneWay}" />
                             <TextBlock
                                 x:Name="FileSystemText"
                                 IsTextSelectionEnabled="True"

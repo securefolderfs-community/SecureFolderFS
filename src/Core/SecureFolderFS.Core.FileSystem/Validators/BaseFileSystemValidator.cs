@@ -1,8 +1,11 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,6 +31,14 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         {
             if (specifics.Security.NameCrypt is null)
                 return;
+
+            // Check NFC normalization for Base4K-encoded .sffs names
+            if (specifics.Security.NameCrypt.EncodingId == Cryptography.Constants.CipherId.ENCODING_BASE4K
+                && storable.Name.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+                && !storable.Name.IsNormalized(NormalizationForm.FormC))
+            {
+                throw new NormalizationException(storable.Name);
+            }
 
             var decryptedName = await DecryptNameAsync(storable, cancellationToken).ConfigureAwait(false);
             if (decryptedName is null)
@@ -59,6 +70,11 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             var decryptedName = await AbstractPathHelpers.DecryptNameAsync(storable.Name, parentFolder, specifics, cancellationToken);
             if (!string.IsNullOrEmpty(decryptedName))
                 return decryptedName;
+
+            // A shortened file (.sffsn) that couldn't be decrypted means its sidecar is missing.
+            // Report this as an invalid name so the health system can offer to generate a new one.
+            if (storable.Name.EndsWith(Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
+                return null;
 
             // We want to suppress failures that might be raised when the Directory ID file is not found.
             // This case should be already handled in the folder validator
