@@ -34,5 +34,11 @@ namespace SecureFolderFS.Tests.FileSystemTests
         {
             await Base_Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow();
         }
+
+        [Test]
+        public async Task Write_SparseFile_ReadGap_ReturnsZeros_NoThrow()
+        {
+            await Base_Write_SparseFile_ReadGap_ReturnsZeros_NoThrow();
+        }
     }
 }

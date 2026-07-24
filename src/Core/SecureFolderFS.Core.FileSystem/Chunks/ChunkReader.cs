@@ -70,12 +70,13 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 _fileSystemStatistics.BytesRead?.Report(read);
 
-                // Get reserved part for ciphertext chunk
-                var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
-                var chunkReserved = realCiphertextChunk.Slice(0, chunkReservedSize);
-
-                // Check if the reserved part is all zeros, in which case the decryption will be skipped (the chunk was extended)
-                if (chunkReservedSize > 0 && SpanExtensions.IsAllZeros(chunkReserved))
+                // A legitimately sparse (SetLength-extended) or repaired chunk is zero-filled across its
+                // ENTIRE length, so only a fully-zero chunk may skip authentication. Checking just the
+                // reserved nonce would let an attacker with ciphertext write access zero those few bytes
+                // to force any real chunk to decrypt as zeros with its MAC/AEAD tag never verified.
+                // Requiring the whole chunk to be zero sends any partial tamper down the authenticated
+                // path below, where the failed tag surfaces as an integrity error (-1).
+                if (read > 0 && SpanExtensions.IsAllZeros(realCiphertextChunk.Slice(0, read)))
                 {
                     plaintextChunk.Clear();
                     return read - (ciphertextSize - plaintextSize);
@@ -142,12 +143,13 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 _fileSystemStatistics.BytesRead?.Report(read);
 
-                // Get reserved part for ciphertext chunk
-                var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
-                var chunkReserved = realCiphertextChunk.Span.Slice(0, chunkReservedSize);
-
-                // Check if the reserved part is all zeros, in which case the decryption will be skipped (the chunk was extended)
-                if (chunkReservedSize > 0 && SpanExtensions.IsAllZeros(chunkReserved))
+                // A legitimately sparse (SetLength-extended) or repaired chunk is zero-filled across its
+                // ENTIRE length, so only a fully-zero chunk may skip authentication. Checking just the
+                // reserved nonce would let an attacker with ciphertext write access zero those few bytes
+                // to force any real chunk to decrypt as zeros with its MAC/AEAD tag never verified.
+                // Requiring the whole chunk to be zero sends any partial tamper down the authenticated
+                // path below, where the failed tag surfaces as an integrity error (-1).
+                if (read > 0 && SpanExtensions.IsAllZeros(realCiphertextChunk.Span.Slice(0, read)))
                 {
                     plaintextChunk.Span.Clear();
                     return read - (ciphertextSize - plaintextSize);
