@@ -10,12 +10,9 @@ namespace SecureFolderFS.Tests.Helpers
 
         private const string V4_KEYSTORE_STRING = """
                                                   {
-                                                    "c_encryptionKey": "GK/Gc0UphVHpb/utm61odQJGH6j7IIc9RAGWQTTrcugxTOXwOxkwhA==",
-                                                    "c_macKey": "A7jTnbT9RHfZ466cU/DLHIp7164L4iXqnWTpGOT5ast9pgnrccAi7A==",
-                                                    "salt": "aSNkObtR5gXuR5uNkeSygw==",
-                                                    "c_softwareEntropy": "SRM8vmYDfy0F8EWGzN1/5YAuMRxvGsXH6eiQhwJJ6/s=",
-                                                    "entropyNonce": "tsuXKhJA6SvzlB8+",
-                                                    "entropyTag": "2dD9acgmpY9/xQoW6I6kmA=="
+                                                    "c_encryptionKey": "pWpPkfqc5hJHKZaH92ccA7HGgMXs99k/GuTMFG1zmimF16+1BbfSRg==",
+                                                    "c_macKey": "YKQY8WzDf+t6B/LaCG68SNf0NJf/ru6mtt/irsJjVpneBzbmf1Oa/Q==",
+                                                    "salt": "aSNkObtR5gXuR5uNkeSygw=="
                                                   }
                                                   """;
 

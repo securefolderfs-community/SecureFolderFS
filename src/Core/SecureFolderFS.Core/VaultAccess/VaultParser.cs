@@ -43,107 +43,105 @@ namespace SecureFolderFS.Core.VaultAccess
 
         /// <summary>
         /// Derives DEK and MAC keys from provided credentials for a vault.
-        /// Decrypts <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> using the
-        /// raw passkey, then mixes it into the Argon2id input via HKDF-Extract before
-        /// deriving the KEK. This raises the quantum security floor to 256 bits regardless
-        /// of the entropy of the auth factor feeding the passkey.
+        /// The passkey is stretched with Argon2id to produce the KEK, which unwraps the stored
+        /// keys. Argon2id is the only step between the passkey and the KEK, so the sole way to
+        /// test a candidate passkey against the keystore is the RFC3394 unwrap.
         /// </summary>
         /// <param name="passkey">The passkey credential that combines all active auth factor outputs.</param>
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         public static (byte[] dekKey, byte[] macKey) DeriveKeystore(ReadOnlySpan<byte> passkey, VaultKeystoreDataModel keystoreDataModel)
         {
-            var passkeyCopy = passkey.ToArray();
+            ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
+
+            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             try
             {
-                return DeriveKeystoreAsync(passkeyCopy, keystoreDataModel).ConfigureAwait(false).GetAwaiter().GetResult();
+                Argon2id.DeriveKey(passkey, keystoreDataModel.Salt, kek);
+                return UnwrapKeys(kek, keystoreDataModel);
             }
             finally
             {
-                CryptographicOperations.ZeroMemory(passkeyCopy);
+                CryptographicOperations.ZeroMemory(kek);
             }
         }
 
         /// <inheritdoc cref="DeriveKeystore"/>
         /// <remarks>
-        /// The awaitable form exists because the Argon2id step must not block the calling thread on
-        /// single-threaded runtimes (browser WASM). Heap buffers replace stackalloc since spans
-        /// cannot live across the await; all intermediates are zeroed. Caller retains ownership of
-        /// <paramref name="passkey"/>.
+        /// The awaitable form exists because the Argon2id step must not block the calling thread on single-threaded runtimes (browser WASM).
+        /// <br/>
+        /// Caller retains ownership of <paramref name="passkey"/>.
         /// </remarks>
         public static async Task<(byte[] dekKey, byte[] macKey)> DeriveKeystoreAsync(byte[] passkey, VaultKeystoreDataModel keystoreDataModel)
         {
             ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.EncryptedSoftwareEntropy);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.SoftwareEntropyNonce);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.SoftwareEntropyTag);
 
-            var dekKey = new byte[Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH];
-            var macKey = new byte[Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH];
-
-            var bootstrapKey = new byte[32];
-            var softwareEntropy = new byte[keystoreDataModel.EncryptedSoftwareEntropy.Length];
-            var augmentedPasskey = new byte[32];
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             try
             {
-                // Step 1: Decrypt SoftwareEntropy using a key derived from the raw passkey.
-                //   The bootstrap key is derived from the passkey alone (not the augmented key)
-                //   so that recovering SoftwareEntropy always requires all active auth factors.
-                HKDF.DeriveKey(
-                    HashAlgorithmName.SHA256,
-                    passkey,
-                    bootstrapKey,
-                    keystoreDataModel.Salt, // Salt ties the bootstrap key to this specific keystore
-                    "SFFSv4-EntropyBootstrap-v1"u8);
-
-                AesGcm256.Decrypt(
-                    keystoreDataModel.EncryptedSoftwareEntropy,
-                    bootstrapKey,
-                    keystoreDataModel.SoftwareEntropyNonce,
-                    keystoreDataModel.SoftwareEntropyTag,
-                    softwareEntropy,
-                    ReadOnlySpan<byte>.Empty);
-
-                // Step 2: Mix passkey and SoftwareEntropy via HKDF-Extract.
-                //   passkey is IKM; SoftwareEntropy is salt.
-                //   Breaking either alone is insufficient to reproduce the augmented key.
-                HKDF.DeriveKey(
-                    HashAlgorithmName.SHA256,
-                    passkey,
-                    augmentedPasskey,
-                    softwareEntropy,
-                    "SFFSv4-AugmentedPasskey-v1"u8);
-
-                // Step 3: Derive KEK from the augmented passkey
-                await Argon2id.DeriveKeyAsync(augmentedPasskey, keystoreDataModel.Salt, kek).ConfigureAwait(false);
-
-                // Step 4: Unwrap keys
-                using var rfc3394 = new Rfc3394KeyWrap();
-                rfc3394.UnwrapKey(keystoreDataModel.WrappedDekKey, kek, dekKey);
-                rfc3394.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey);
+                await Argon2id.DeriveKeyAsync(passkey, keystoreDataModel.Salt, kek).ConfigureAwait(false);
+                return UnwrapKeys(kek, keystoreDataModel);
             }
             finally
             {
-                CryptographicOperations.ZeroMemory(bootstrapKey);
-                CryptographicOperations.ZeroMemory(softwareEntropy);
-                CryptographicOperations.ZeroMemory(augmentedPasskey);
                 CryptographicOperations.ZeroMemory(kek);
             }
+        }
 
-            return (dekKey, macKey);
+        /// <summary>
+        /// Confirms that <paramref name="passkey"/> opens <paramref name="keystoreDataModel"/>, without
+        /// returning the unwrapped keys. Used by credential- and complementation-change routines to
+        /// authenticate a supplied credential against the existing keystore before re-keying it.
+        /// </summary>
+        /// <param name="passkey">The passkey credential to verify.</param>
+        /// <param name="keystoreDataModel">The existing keystore to verify against.</param>
+        public static void VerifyKeystoreKey(ReadOnlySpan<byte> passkey, VaultKeystoreDataModel keystoreDataModel)
+        {
+            var (dekKey, macKey) = DeriveKeystore(passkey, keystoreDataModel);
+            CryptographicOperations.ZeroMemory(dekKey);
+            CryptographicOperations.ZeroMemory(macKey);
+        }
+
+        /// <summary>
+        /// Unwraps the stored DEK and MAC keys with the supplied KEK. The RFC3394 unwrap is
+        /// integrity-checked, so a wrong KEK throws instead of yielding garbage keys.
+        /// </summary>
+        private static (byte[] dekKey, byte[] macKey) UnwrapKeys(ReadOnlySpan<byte> kek, VaultKeystoreDataModel keystoreDataModel)
+        {
+            // A keystore missing either wrapped key would otherwise reach the unwrap as an empty span,
+            // whose failure mode differs per backend. Unlock's fallback chain only catches
+            // CryptographicException, so fail here with a definite exception type instead.
+            ArgumentNullException.ThrowIfNull(keystoreDataModel.WrappedDekKey);
+            ArgumentNullException.ThrowIfNull(keystoreDataModel.WrappedMacKey);
+
+            var dekKey = new byte[Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH];
+            var macKey = new byte[Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH];
+            try
+            {
+                using var rfc3394 = new Rfc3394KeyWrap();
+                rfc3394.UnwrapKey(keystoreDataModel.WrappedDekKey, kek, dekKey);
+                rfc3394.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey);
+
+                return (dekKey, macKey);
+            }
+            catch
+            {
+                CryptographicOperations.ZeroMemory(dekKey);
+                CryptographicOperations.ZeroMemory(macKey);
+                throw;
+            }
         }
 
         /// <summary>
         /// Encrypts cryptographic keys and creates a new instance of <see cref="VaultKeystoreDataModel"/>.
-        /// Generates and encrypts a fresh <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/>
-        /// which is mixed into Argon2id input at unlock time to raise the quantum security floor.
+        /// The KEK is derived from the passkey with Argon2id alone; the DEK and MAC keys it wraps are
+        /// already full-width CSPRNG values, so no additional key material is stored alongside them.
         /// </summary>
         /// <param name="passkey">The passkey credential that combines all active auth factor outputs.</param>
         /// <param name="dekKey">The DEK key.</param>
         /// <param name="macKey">The MAC key.</param>
         /// <param name="salt">The salt used during KEK derivation.</param>
-        /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys and entropy.</returns>
+        /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys.</returns>
         [SkipLocalsInit]
         public static VaultKeystoreDataModel EncryptKeystore(
             ReadOnlySpan<byte> passkey,
@@ -151,69 +149,27 @@ namespace SecureFolderFS.Core.VaultAccess
             ReadOnlySpan<byte> macKey,
             byte[] salt)
         {
-            // Step 1: Generate fresh SoftwareEntropy (256-bit CSPRNG)
-            Span<byte> softwareEntropy = stackalloc byte[32];
-            RandomNumberGenerator.Fill(softwareEntropy);
+            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
+            try
+            {
+                // Derive the KEK from the passkey, then wrap the keys under it. Mirrors DeriveKeystore.
+                Argon2id.DeriveKey(passkey, salt, kek);
 
-            return EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, softwareEntropy);
-        }
+                using var rfc3394 = new Rfc3394KeyWrap();
+                var wrappedDekKey = rfc3394.WrapKey(dekKey, kek);
+                var wrappedMacKey = rfc3394.WrapKey(macKey, kek);
 
-        /// <summary>
-        /// Re-encrypts cryptographic keys into a new <see cref="VaultKeystoreDataModel"/> while
-        /// preserving the provided <paramref name="existingSoftwareEntropy"/>.
-        /// This is an optional credential-rotation path when the previous passkey is available.
-        /// </summary>
-        /// <param name="passkey">The new passkey credential.</param>
-        /// <param name="dekKey">The DEK key (unchanged from the existing keystore).</param>
-        /// <param name="macKey">The MAC key (unchanged from the existing keystore).</param>
-        /// <param name="salt">A freshly generated salt for the new keystore.</param>
-        /// <param name="existingSoftwareEntropy">The plaintext SoftwareEntropy recovered from the old keystore.</param>
-        /// <returns>A new <see cref="VaultKeystoreDataModel"/> with re-encrypted keys and entropy.</returns>
-        [SkipLocalsInit]
-        public static VaultKeystoreDataModel ReEncryptKeystore(
-            ReadOnlySpan<byte> passkey,
-            ReadOnlySpan<byte> dekKey,
-            ReadOnlySpan<byte> macKey,
-            byte[] salt,
-            ReadOnlySpan<byte> existingSoftwareEntropy)
-        {
-            return EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, existingSoftwareEntropy);
-        }
-
-        /// <summary>
-        /// Decrypts the <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> from an existing
-        /// keystore using the previous passkey.
-        /// This is only required for preserve-entropy rotation; fresh-entropy rotation uses
-        /// <see cref="EncryptKeystore"/>.
-        /// </summary>
-        /// <param name="passkey">The current (old) passkey.</param>
-        /// <param name="keystoreDataModel">The existing V4 keystore.</param>
-        /// <param name="softwareEntropy">The destination span to fill with the decrypted entropy (must be 32 bytes).</param>
-        public static void DecryptSoftwareEntropy(
-            ReadOnlySpan<byte> passkey,
-            VaultKeystoreDataModel keystoreDataModel,
-            Span<byte> softwareEntropy)
-        {
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.EncryptedSoftwareEntropy);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.SoftwareEntropyNonce);
-            ArgumentNullException.ThrowIfNull(keystoreDataModel.SoftwareEntropyTag);
-
-            Span<byte> bootstrapKey = stackalloc byte[32];
-            HKDF.DeriveKey(
-                HashAlgorithmName.SHA256,
-                passkey,
-                bootstrapKey,
-                keystoreDataModel.Salt,
-                "SFFSv4-EntropyBootstrap-v1"u8);
-
-            AesGcm256.Decrypt(
-                keystoreDataModel.EncryptedSoftwareEntropy,
-                bootstrapKey,
-                keystoreDataModel.SoftwareEntropyNonce,
-                keystoreDataModel.SoftwareEntropyTag,
-                softwareEntropy,
-                ReadOnlySpan<byte>.Empty);
+                return new()
+                {
+                    WrappedDekKey = wrappedDekKey,
+                    WrappedMacKey = wrappedMacKey,
+                    Salt = salt
+                };
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(kek);
+            }
         }
 
         public static void DeriveComplementKey(
@@ -308,66 +264,6 @@ namespace SecureFolderFS.Core.VaultAccess
             {
                 CryptographicOperations.ZeroMemory(complementWrapKey);
             }
-        }
-
-        /// <summary>
-        /// Shared implementation for both <see cref="EncryptKeystore"/> and <see cref="ReEncryptKeystore"/>.
-        /// Encrypts the provided entropy under the passkey and wraps DEK/MAC under the augmented KEK.
-        /// </summary>
-        [SkipLocalsInit]
-        private static VaultKeystoreDataModel EncryptKeystoreWithEntropy(
-            ReadOnlySpan<byte> passkey,
-            ReadOnlySpan<byte> dekKey,
-            ReadOnlySpan<byte> macKey,
-            byte[] salt,
-            ReadOnlySpan<byte> softwareEntropy)
-        {
-            // Step 1: Encrypt SoftwareEntropy under a bootstrap key derived from the raw passkey.
-            //   Using the raw passkey (not the augmented one) means decrypting entropy
-            //   always requires all active auth factors — same guarantee at both creation and unlock.
-            Span<byte> bootstrapKey = stackalloc byte[32];
-            HKDF.DeriveKey(
-                HashAlgorithmName.SHA256,
-                passkey,
-                bootstrapKey,
-                salt,
-                "SFFSv4-EntropyBootstrap-v1"u8);
-
-            var entropyNonce = new byte[12];
-            var entropyTag = new byte[16];
-            var encryptedEntropy = new byte[softwareEntropy.Length];
-            RandomNumberGenerator.Fill(entropyNonce);
-
-            AesGcm256.Encrypt(softwareEntropy, bootstrapKey, entropyNonce, entropyTag, encryptedEntropy, ReadOnlySpan<byte>.Empty);
-
-            // Step 2: Augment passkey with SoftwareEntropy via HKDF-Extract before Argon2id.
-            //   This is the same derivation performed at unlock in V4DeriveKeystore.
-            Span<byte> augmentedPasskey = stackalloc byte[32];
-            HKDF.DeriveKey(
-                HashAlgorithmName.SHA256,
-                passkey,
-                augmentedPasskey,
-                softwareEntropy,
-                "SFFSv4-AugmentedPasskey-v1"u8);
-
-            // Step 3: Derive KEK from augmented passkey
-            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.DeriveKey(augmentedPasskey, salt, kek);
-
-            // Step 4: Wrap keys
-            using var rfc3394 = new Rfc3394KeyWrap();
-            var wrappedDekKey = rfc3394.WrapKey(dekKey, kek);
-            var wrappedMacKey = rfc3394.WrapKey(macKey, kek);
-
-            return new()
-            {
-                WrappedDekKey = wrappedDekKey,
-                WrappedMacKey = wrappedMacKey,
-                Salt = salt,
-                EncryptedSoftwareEntropy = encryptedEntropy,
-                SoftwareEntropyNonce = entropyNonce,
-                SoftwareEntropyTag = entropyTag
-            };
         }
     }
 }

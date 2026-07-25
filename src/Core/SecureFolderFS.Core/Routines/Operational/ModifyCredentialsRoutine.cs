@@ -57,7 +57,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
 
-            // Recovery/unlock-contract flow: rotate to a fresh entropy value under the new passkey.
+            // Recovery/unlock-contract flow: re-key the keystore under the new passkey and a fresh salt.
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
@@ -85,49 +85,23 @@ namespace SecureFolderFS.Core.Routines.Operational
             var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             RandomNumberGenerator.Fill(salt);
 
-            // Optional step-up flow: preserve existing entropy by decrypting it with the old passkey
-            // and re-encrypting it under the new passkey next to unchanged DEK and MAC keys.
-            // If old passkey material is unavailable (for example recovery-key driven rotation),
-            // the single-passkey overload rotates to fresh entropy and still yields a valid keystore.
-            Span<byte> softwareEntropy = stackalloc byte[32];
-            try
+            // Step-up flow: re-authenticate the old passkey against the existing keystore before
+            // re-keying. The DEK and MAC keys themselves are unchanged, so a successful verification
+            // is the only thing the old passkey is needed for; it throws when it does not match.
+            oldPasskey.UseKey(oldKey => VaultParser.VerifyKeystoreKey(oldKey, _existingV4KeystoreDataModel));
+
+            newPasskey.UseKey(newKey =>
             {
-                fixed (byte* softwareEntropyPtr = softwareEntropy)
+                fixed (byte* newKeyPtr = newKey)
                 {
-                    var state = (sePtr: (nint)softwareEntropyPtr, seLen: softwareEntropy.Length);
-                    oldPasskey.UseKey(state, (oldKey, s) =>
+                    var state = (nkPtr: (nint)newKeyPtr, nkLen: newKey.Length);
+                    _keyPair.UseKeys(state, (dekKey, macKey, s) =>
                     {
-                        var se = new Span<byte>((byte*)s.sePtr, s.seLen);
-                        VaultParser.DecryptSoftwareEntropy(oldKey, _existingV4KeystoreDataModel, se);
+                        var nk = new ReadOnlySpan<byte>((byte*)s.nkPtr, s.nkLen);
+                        _keystoreDataModel = VaultParser.EncryptKeystore(nk, dekKey, macKey, salt);
                     });
                 }
-
-                if (softwareEntropy.IsAllZeros())
-                    throw new CryptographicException("The old passkey material is unavailable.");
-
-                fixed (byte* softwareEntropyPtr = softwareEntropy)
-                {
-                    var state = (sePtr: (nint)softwareEntropyPtr, seLen: softwareEntropy.Length);
-                    newPasskey.UseKey(state, (newKey, s) =>
-                    {
-                        fixed (byte* newKeyPtr = newKey)
-                        {
-                            var state2 = (nkPtr: (nint)newKeyPtr, nkLen: newKey.Length, outerState: state);
-                            _keyPair.UseKeys(state2, (dekKey, macKey, s2) =>
-                            {
-                                var nk = new ReadOnlySpan<byte>((byte*)s2.nkPtr, s2.nkLen);
-                                var se = new Span<byte>((byte*)s2.outerState.sePtr, s2.outerState.seLen);
-
-                                _keystoreDataModel = VaultParser.ReEncryptKeystore(nk, dekKey, macKey, salt, se);
-                            });
-                        }
-                    });
-                }
-            }
-            finally
-            {
-                CryptographicOperations.ZeroMemory(softwareEntropy);
-            }
+            });
         }
 
         /// <inheritdoc/>

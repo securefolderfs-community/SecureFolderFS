@@ -95,7 +95,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             await complementationRoutine.InitAsync(cancellationToken);
             complementationRoutine.SetUnlockContract(unlockContract);
             complementationRoutine.SetOptions(vaultOptions);
-            complementationRoutine.SetCredentials(credentials, cancellationToken);
+            complementationRoutine.SetCredentials(credentials);
 
             using var result = await complementationRoutine.FinalizeAsync(cancellationToken);
         }

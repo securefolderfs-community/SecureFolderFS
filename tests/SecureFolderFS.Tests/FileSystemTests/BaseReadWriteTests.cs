@@ -112,8 +112,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(StorageRoot);
 
             // Arrange: write a marker far past EOF so the intervening chunks are never written and
-            // the writer extends the ciphertext with a zer--filled (sparse) gap. Reading the gap back
-            // must return zeros without an integrity error.
+            // the writer extends the ciphertext with a sparse gap.
+            // Reading the gap back must return zeros without an integrity error.
             // The path guarded by the all-zero chunk check in ChunkReader.
             const long gapOffset = 200_000; // spans several plaintext chunks
             var marker = new byte[] { 1, 2, 3, 4 };
