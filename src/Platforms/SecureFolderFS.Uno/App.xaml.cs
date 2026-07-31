@@ -8,17 +8,16 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
@@ -39,8 +38,9 @@ using Uno.UI.Adapter.Microsoft.Extensions.Logging;
 using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
 using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 #else
+using H.NotifyIcon;
 using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.ViewModels;
 #endif
 
 namespace SecureFolderFS.Uno
@@ -388,13 +388,11 @@ namespace SecureFolderFS.Uno
             // Set icon
             appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, Constants.FileNames.ICON_ASSET_PATH));
 #endif
-#if WINDOWS
-            // Set backdrop
-            window.SystemBackdrop = new MicaBackdrop();
-#endif
-
             // Set title
             appWindow.Title = title;
+
+            // Set backdrop
+            window.SystemBackdrop = new MicaBackdrop();
 
             // Extend title bar
             var titleBar = window.Content switch
