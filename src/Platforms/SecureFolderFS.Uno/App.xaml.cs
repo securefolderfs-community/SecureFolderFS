@@ -41,7 +41,7 @@ using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 using Microsoft.UI;
 using SecureFolderFS.Sdk.ViewModels;
 #endif
-#if __UNO_SKIA_X11__
+#if !__UNO_SKIA_MACOS__
 using H.NotifyIcon;
 #endif
 

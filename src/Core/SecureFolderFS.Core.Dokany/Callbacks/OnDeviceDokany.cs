@@ -441,6 +441,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
         {
+            if (specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             try
             {
                 if (!IsContextInvalid(info))
