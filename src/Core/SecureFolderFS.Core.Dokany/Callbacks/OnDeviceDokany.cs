@@ -170,7 +170,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 try
                 {
-                    if (specifics.Options.IsReadOnly && mode.IsWriteFlag())
+                    if (specifics.Options.IsReadOnly && mode.IsWriteFlag(pathExists))
                         throw FileSystemExceptions.FileSystemReadOnly;
 
                     // Materialize sidecar for the new file name if shortened
