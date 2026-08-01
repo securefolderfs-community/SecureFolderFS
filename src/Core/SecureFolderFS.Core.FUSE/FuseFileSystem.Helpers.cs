@@ -1,11 +1,9 @@
-﻿using SecureFolderFS.Storage.VirtualFileSystem;
-using System.Text;
-using Tmds.Fuse;
+﻿using Tmds.Fuse;
 using Tmds.Linux;
+using static SecureFolderFS.Core.FileSystem.Helpers.Paths.PathHelpers;
 
 namespace SecureFolderFS.Core.FUSE
 {
-    /// <inheritdoc cref="IFileSystem"/>
     public sealed partial class FuseFileSystem
     {
         private static string MountDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
@@ -14,14 +12,14 @@ namespace SecureFolderFS.Core.FUSE
         private static unsafe bool IsMountPoint(string directory)
         {
             stat stat = new();
-            fixed (byte* pathPtr = Encoding.UTF8.GetBytes(directory))
+            fixed (byte* pathPtr = ToNativePath(directory))
             {
                 if (LibC.stat(pathPtr, &stat) == -1)
                     return false;
             }
 
             stat parentStat = new();
-            fixed (byte* parentPathPtr = Encoding.UTF8.GetBytes(Directory.GetParent(directory)!.FullName))
+            fixed (byte* parentPathPtr = ToNativePath(Directory.GetParent(directory)!.FullName))
             {
                 if (LibC.stat(parentPathPtr, &parentStat) == -1)
                     return false;

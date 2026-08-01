@@ -1,11 +1,7 @@
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
@@ -15,6 +11,7 @@ using SecureFolderFS.Storage.Extensions;
 using Tmds.Fuse;
 using Tmds.Linux;
 using static SecureFolderFS.Core.FUSE.UnsafeNative.UnsafeNativeApis;
+using static SecureFolderFS.Core.FileSystem.Helpers.Paths.PathHelpers;
 using static Tmds.Linux.LibC;
 
 namespace SecureFolderFS.Core.FUSE.Callbacks
@@ -39,7 +36,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (chmod(ciphertextPathPtr, mode) == -1)
                     return -errno;
@@ -57,7 +54,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (chown(ciphertextPathPtr, uid, gid) == -1)
                     return -errno;
@@ -78,7 +75,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if ((fi.flags & O_CREAT) != 0 && (fi.flags & O_EXCL) != 0 && File.Exists(ciphertextPath))
                 return -EEXIST;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 var fd = creat(ciphertextPathPtr, mode);
                 if (fd == -1)
@@ -153,7 +150,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (onlyData)
                 return 0;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 var fd = open(ciphertextPathPtr, O_WRONLY);
                 if (fd == -1)
@@ -187,7 +184,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (onlyData)
                 return 0;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 var fd = open(ciphertextPathPtr, O_RDONLY);
                 if (fd == -1)
@@ -212,7 +209,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             fixed (stat *statPtr = &stat)
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (LibC.stat(ciphertextPathPtr, statPtr) == -1)
                     return -errno;
@@ -240,7 +237,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             fixed (byte *namePtr = name)
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 int result;
                 if (value.Length == 0)
@@ -264,7 +261,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 int result;
                 if (list.Length == 0)
@@ -291,7 +288,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (mkdir(ciphertextPathPtr, mode) == -1)
                     return -errno;
@@ -405,7 +402,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
                 var ciphertextName = Path.GetFileName(entry);
-                if (PathHelpers.IsCoreName(ciphertextName))
+                if (IsCoreName(ciphertextName))
                     continue;
 
                 // Skip entries whose names cannot be decrypted
@@ -439,7 +436,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             fixed (byte *namePtr = name)
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (UnsafeNativeApis.RemoveXAttr(ciphertextPathPtr, namePtr) == -1)
                     return -errno;
@@ -458,8 +455,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null || newCiphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
-            fixed (byte *newCiphertextPathPtr = Encoding.UTF8.GetBytes(newCiphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
+            fixed (byte *newCiphertextPathPtr = ToNativePath(newCiphertextPath))
             {
                 if (RenameAt2(0, ciphertextPathPtr, 0, newCiphertextPathPtr, (uint)flags) == -1)
                     return -errno;
@@ -483,10 +480,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             // Protect core folders from deletion
-            if (PathHelpers.IsCoreName(Path.GetFileName(Path.TrimEndingDirectorySeparator(ciphertextPath))))
+            if (IsCoreName(Path.GetFileName(Path.TrimEndingDirectorySeparator(ciphertextPath))))
                 return -EACCES;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreName(Path.GetFileName(x))))
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !IsCoreName(Path.GetFileName(x))))
                 return -ENOTEMPTY;
 
             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
@@ -533,7 +530,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var directoryId = File.Exists(directoryIdPath) ? File.ReadAllBytes(directoryIdPath) : null;
             File.Delete(directoryIdPath);
 
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (rmdir(ciphertextPathPtr) == -1)
                 {
@@ -568,7 +565,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             fixed (byte *namePtr = name)
             fixed (void *valuePtr = value)
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (UnsafeNativeApis.SetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length, flags) == -1)
                     return -errno;
@@ -584,7 +581,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             fixed (statvfs *statfsPtr = &statfs)
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (statvfs(ciphertextPathPtr, statfsPtr) == -1)
                     return -errno;
@@ -660,7 +657,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -EISDIR;
 
             // Protect core files from deletion
-            if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
+            if (IsCoreName(Path.GetFileName(ciphertextPath)))
                 return -EACCES;
 
             try
@@ -707,7 +704,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             fixed (timespec *times = new[] { atime, mtime })
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (Directory.Exists(ciphertextPath))
                 {
