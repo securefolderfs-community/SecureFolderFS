@@ -311,6 +311,18 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         }
 
         /// <summary>
+        /// Discards any cached chunk whose number is greater than or equal to <paramref name="fromChunkNumber"/>.
+        /// </summary>
+        /// <param name="fromChunkNumber">The first chunk number to discard.</param>
+        /// <remarks>
+        /// Used when a file is truncated, so that chunks past the new end of file are not
+        /// served from the cache and are not flushed back over the shortened file.
+        /// </remarks>
+        public virtual void EvictChunksFrom(long fromChunkNumber)
+        {
+        }
+
+        /// <summary>
         /// Flushes outstanding chunks to disk.
         /// </summary>
         public virtual void Flush()

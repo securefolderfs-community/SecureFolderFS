@@ -303,12 +303,14 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             // Determine whether to extend or truncate the file
             if (value < Length)
             {
+                var lastChunkNumber = value / plaintextChunkSize;
                 var remainingSize = (int)(value % plaintextChunkSize);
                 if (remainingSize > 0)
-                {
-                    var lastChunkNumber = value / plaintextChunkSize;
                     _chunkAccess.SetChunkLength(lastChunkNumber, remainingSize);
-                }
+
+                // Drop cached chunks past the new end of file. They hold plaintext the user just
+                // deleted, and leaving them cached would both serve that data back on a later read and flush it over the truncated file
+                _chunkAccess.EvictChunksFrom(remainingSize > 0 ? lastChunkNumber + 1 : lastChunkNumber);
 
                 // Update position to fit within new length
                 _position = Math.Min(value, _position);

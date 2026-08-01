@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
@@ -187,18 +188,50 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // Determine whether to extend or truncate the chunk
                 if (length < plaintextChunk.ActualLength)
                 {
-                    // Truncate chunk
-                    plaintextChunk.ActualLength = Math.Min(plaintextChunk.ActualLength, length);
+                    // Truncate chunk. The discarded bytes must actually be destroyed rather than
+                    // just hidden behind a shorter length - a later extension of the same cached
+                    // chunk would otherwise resurrect them and re-encrypt them into the vault
+                    var newLength = Math.Min(plaintextChunk.ActualLength, length);
+                    CryptographicOperations.ZeroMemory(plaintextChunk.Buffer.AsSpan(newLength, plaintextChunk.ActualLength - newLength));
+
+                    plaintextChunk.ActualLength = newLength;
                 }
                 else if (plaintextChunk.ActualLength < length)
                 {
-                    // Extend chunk
-                    plaintextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
+                    // Extend chunk. The extended region must read as zeros, so any plaintext
+                    // that a previous truncation left behind in the buffer is cleared first
+                    var newLength = Math.Min(length, contentCrypt.ChunkPlaintextSize);
+                    CryptographicOperations.ZeroMemory(plaintextChunk.Buffer.AsSpan(plaintextChunk.ActualLength, newLength - plaintextChunk.ActualLength));
+
+                    plaintextChunk.ActualLength = newLength;
                 }
                 else
                     return; // Ignore resizing the same length
 
                 plaintextChunk.WasModified = true;
+            }
+            finally
+            {
+                chunkLock.Release();
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void EvictChunksFrom(long fromChunkNumber)
+        {
+            // Hold the chunk lock for the entire operation
+            chunkLock.Wait();
+            try
+            {
+                foreach (var chunkNumber in _chunkCache.Keys.Where(x => x >= fromChunkNumber).ToArray())
+                {
+                    if (!_chunkCache.Remove(chunkNumber, out var removedChunk))
+                        continue;
+
+                    // Discard chunks that lie beyond the new end of file instead of flushing.
+                    // Wipe the plaintext so the truncated data does not survive in the cache
+                    CryptographicOperations.ZeroMemory(removedChunk.Buffer);
+                }
             }
             finally
             {
@@ -327,10 +360,17 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var chunkNumberToRemove = _chunkCache.Keys.First();
 
                 // Write chunk
-                if (_chunkCache.Remove(chunkNumberToRemove, out var removedChunk) && removedChunk.WasModified)
+                if (_chunkCache.Remove(chunkNumberToRemove, out var removedChunk))
                 {
-                    var realRemovedChunk = removedChunk.Buffer.AsSpan(0, removedChunk.ActualLength);
-                    chunkWriter.WriteChunk(chunkNumberToRemove, realRemovedChunk);
+                    if (removedChunk.WasModified)
+                    {
+                        var realRemovedChunk = removedChunk.Buffer.AsSpan(0, removedChunk.ActualLength);
+                        chunkWriter.WriteChunk(chunkNumberToRemove, realRemovedChunk);
+                    }
+
+                    // The evicted buffer holds decrypted file content, so it must not be
+                    // abandoned to the garbage collector with the plaintext still in it
+                    CryptographicOperations.ZeroMemory(removedChunk.Buffer);
                 }
             }
 
@@ -346,10 +386,17 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var chunkNumberToRemove = _chunkCache.Keys.First();
 
                 // Write chunk
-                if (_chunkCache.Remove(chunkNumberToRemove, out var removedChunk) && removedChunk.WasModified)
+                if (_chunkCache.Remove(chunkNumberToRemove, out var removedChunk))
                 {
-                    var realRemovedChunk = removedChunk.Buffer.AsMemory(0, removedChunk.ActualLength);
-                    await chunkWriter.WriteChunkAsync(chunkNumberToRemove, realRemovedChunk, cancellationToken).ConfigureAwait(false);
+                    if (removedChunk.WasModified)
+                    {
+                        var realRemovedChunk = removedChunk.Buffer.AsMemory(0, removedChunk.ActualLength);
+                        await chunkWriter.WriteChunkAsync(chunkNumberToRemove, realRemovedChunk, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    // The evicted buffer holds decrypted file content, so it must not be
+                    // abandoned to the garbage collector with the plaintext still in it
+                    CryptographicOperations.ZeroMemory(removedChunk.Buffer);
                 }
             }
 
@@ -374,6 +421,13 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 }
 
                 base.Dispose();
+
+                // Wipe the decrypted file content before the cache is detached. Locking the vault
+                // zeroes the DEK and MAC keys, but the plaintext those keys protected would
+                // otherwise be left on the managed heap for anyone reading the process memory
+                foreach (var item in _chunkCache)
+                    CryptographicOperations.ZeroMemory(item.Value.Buffer);
+
                 _chunkCache.Clear();
             }
             finally
