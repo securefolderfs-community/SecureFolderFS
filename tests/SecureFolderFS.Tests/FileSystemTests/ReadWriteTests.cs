@@ -40,5 +40,11 @@ namespace SecureFolderFS.Tests.FileSystemTests
         {
             await Base_Write_SparseFile_ReadGap_ReturnsZeros_NoThrow();
         }
+
+        [Test]
+        public async Task SetLength_Truncate_Then_Extend_ReadsZeros_NoThrow()
+        {
+            await Base_SetLength_Truncate_Then_Extend_ReadsZeros_NoThrow();
+        }
     }
 }

@@ -168,6 +168,58 @@ namespace SecureFolderFS.Tests.FileSystemTests
             }
         }
 
+        protected async Task Base_SetLength_Truncate_Then_Extend_ReadsZeros_NoThrow()
+        {
+            ArgumentNullException.ThrowIfNull(StorageRoot);
+
+            // Arrange: truncate a file to drop a secret, then extend it again on the same handle.
+            // The extended region must read as zeros. The removed plaintext must not be
+            // resurrected from the chunk cache and re-encrypted back into the vault
+            var secret = "SUPER_SECRET_VALUE"u8.ToArray();
+            var prefix = new byte[1000];
+            Random.Shared.NextBytes(prefix);
+            if (StorageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
+            {
+                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
+                return;
+            }
+
+            // Act
+            var file = await modifiableFolder.CreateFileAsync("TRUNCATED_FILE");
+            await using (var stream = await file.OpenReadWriteAsync())
+            {
+                await stream.WriteAsync(prefix);
+                await stream.WriteAsync(secret);
+                await stream.FlushAsync();
+
+                stream.SetLength(prefix.Length);
+                stream.SetLength(prefix.Length + secret.Length);
+                await stream.FlushAsync();
+            }
+
+            // Assert
+            await using (var readStream = await file.OpenReadWriteAsync())
+            {
+                readStream.Length.Should().Be(prefix.Length + secret.Length);
+
+                var contents = new byte[prefix.Length + secret.Length];
+                readStream.Position = 0;
+                var totalRead = 0;
+                while (totalRead < contents.Length)
+                {
+                    var read = await readStream.ReadAsync(contents.AsMemory(totalRead));
+                    if (read <= 0)
+                        break;
+
+                    totalRead += read;
+                }
+
+                totalRead.Should().Be(contents.Length);
+                prefix.SequenceEqual(contents.Take(prefix.Length)).Should().BeTrue();
+                Array.TrueForAll(contents[prefix.Length..], static b => b == 0).Should().BeTrue();
+            }
+        }
+
         protected async Task Base_Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow()
         {
             ArgumentNullException.ThrowIfNull(StorageRoot);

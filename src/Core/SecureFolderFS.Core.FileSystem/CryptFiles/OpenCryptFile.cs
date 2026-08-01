@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
@@ -116,6 +117,10 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
                     stream.Dispose();
                 }
                 _openedStreams.Clear();
+
+                // Wipe the header content key from memory to avoid leaving it on the heap after the file is closed
+                CryptographicOperations.ZeroMemory(HeaderBuffer.Buffer);
+                HeaderBuffer.IsHeaderReady = false;
             }
         }
     }
