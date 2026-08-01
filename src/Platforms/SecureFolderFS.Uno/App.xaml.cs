@@ -38,9 +38,11 @@ using Uno.UI.Adapter.Microsoft.Extensions.Logging;
 using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
 using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 #else
-using H.NotifyIcon;
 using Microsoft.UI;
 using SecureFolderFS.Sdk.ViewModels;
+#endif
+#if __UNO_SKIA_X11__
+using H.NotifyIcon;
 #endif
 
 namespace SecureFolderFS.Uno
