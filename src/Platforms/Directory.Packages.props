@@ -43,8 +43,8 @@
     <PackageVersion Include="Uno.Resizetizer" Version="1.6.0" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.3.90" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.37" />
-    <PackageVersion Include="Uno.WinUI" Version="5.3.90" />
-    <PackageVersion Include="Uno.WinUI.Lottie" Version="5.3.90" />
+    <PackageVersion Include="Uno.WinUI" Version="6.6.166" />
+    <PackageVersion Include="Uno.WinUI.Lottie" Version="6.6.166" />
     <PackageVersion Include="VideoLAN.LibVLC.Android" Version="3.7.0-beta" />
     <PackageVersion Include="VideoLAN.LibVLC.iOS" Version="3.6.1" />
     <PackageVersion Include="WinUI.TableView" Version="1.4.1" />

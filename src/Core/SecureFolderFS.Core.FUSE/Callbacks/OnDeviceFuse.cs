@@ -663,42 +663,38 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (PathHelpers.IsCoreName(Path.GetFileName(ciphertextPath)))
                 return -EACCES;
 
-            if (FuseOptions.IsRecycleBinEnabled())
+            try
             {
-                try
-                {
-                    NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
+                // DeleteOrRecycle deletes the file immediately when the recycle bin is disabled
+                NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
 
-                    // Clean up sidecar after successful delete/recycle
-                    NativePathHelpers.DeleteSidecarFile(
-                        Path.GetFileName(ciphertextPath),
-                        Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
+                // Clean up sidecar after successful delete/recycle
+                NativePathHelpers.DeleteSidecarFile(
+                    Path.GetFileName(ciphertextPath),
+                    Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
 
-                    return 0;
-                }
-                catch (FileNotFoundException)
-                {
-                    return -ENOENT;
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    return -ENOENT;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    return -EACCES;
-                }
-                catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
-                {
-                    return -ENOSPC;
-                }
-                catch (Exception)
-                {
-                    return -EIO;
-                }
+                return 0;
             }
-
-            return 0;
+            catch (FileNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return -ENOENT;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return -EACCES;
+            }
+            catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+            {
+                return -ENOSPC;
+            }
+            catch (Exception)
+            {
+                return -EIO;
+            }
         }
 
         public override unsafe int UpdateTimestamps(ReadOnlySpan<byte> path, ref timespec atime, ref timespec mtime, FuseFileInfoRef fiRef)
