@@ -136,11 +136,54 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// </remarks>
         private SafRoot? GetSafRootForDocumentId(string documentId)
         {
-            var split = documentId.Split(':', 2);
-            if (split.Length < 2)
+            if (!TryParseDocumentId(documentId, out var rootId, out _))
                 return null;
 
-            return _rootCollection?.GetSafRootForRootId(split[0]);
+            return _rootCollection?.GetSafRootForRootId(rootId);
+        }
+
+        /// <summary>
+        /// Splits <paramref name="documentId"/> into its root ID and a canonical path.
+        /// </summary>
+        /// <param name="documentId">The document ID to parse.</param>
+        /// <param name="rootId">The root ID of the document.</param>
+        /// <param name="path">The canonical path of the document.</param>
+        /// <remarks>
+        /// Every document ID that reaches this provider is attacker-controlled. An app holding a tree
+        /// grant over one sub-folder can call <see cref="global::Android.Provider.DocumentsContract"/> with any
+        /// ID it likes. A parent-directory segment would resolve back out of the granted sub-tree and
+        /// hand it the whole vault, so such IDs are rejected outright rather than normalized away, and
+        /// the canonical form produced here is what both ancestry checks and resolution operate on.
+        /// </remarks>
+        /// <returns>true if the document ID is well-formed and free of traversal; otherwise false.</returns>
+        private static bool TryParseDocumentId(string documentId, out string rootId, out string path)
+        {
+            rootId = string.Empty;
+            path = string.Empty;
+
+            // Split the documentId into two:
+            // 1. RootID - The source root of the document provider where the item belongs
+            // 2. Path - The path to an item
+            var split = documentId.Split(':', 2);
+            if (split.Length < 2)
+                return false;
+
+            rootId = split[0];
+            var rawPath = split[1];
+            var isRooted = rawPath.StartsWith('/');
+            var segments = rawPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var segment in segments)
+            {
+                // Reject relative segments '..' escapes the granted sub-tree and '.' is
+                // an alias that would let the same item carry more than one document ID
+                if (segment is "." or "..")
+                    return false;
+            }
+
+            path = (isRooted ? "/" : string.Empty) + string.Join('/', segments);
+
+            return true;
         }
 
         private IStorable? GetStorableForDocumentId(string documentId)
@@ -148,16 +191,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (_rootCollection is null)
                 return null;
 
-            // Split the documentId into two:
-            // 1. RootID - The source root of the document provider where the item belongs
-            // 2. Path - The path to an item
-            var split = documentId.Split(':', 2);
-            if (split.Length < 2)
+            // Extract RootID and Path, rejecting any traversal in the process
+            if (!TryParseDocumentId(documentId, out var rootId, out var path))
                 return null;
-
-            // Extract RootID and Path
-            var rootId = split[0];
-            var path = split[1];
 
             // Get root
             var safRoot = _rootCollection.GetSafRootForRootId(rootId);
