@@ -143,6 +143,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         }
 
         /// <summary>
+        /// Determines whether <paramref name="displayName"/> is a single, safe path component.
+        /// </summary>
+        /// <param name="displayName">The display name to check.</param>
+        /// <remarks>
+        /// A display name comes from the calling app and is joined onto a folder path. A name carrying a
+        /// directory separator or a parent-directory segment would place the item outside the folder the app was granted.
+        /// </remarks>
+        private static bool IsValidDisplayName(string? displayName)
+        {
+            return !string.IsNullOrWhiteSpace(displayName)
+                   && displayName is not ("." or "..")
+                   && displayName.IndexOf('/') < 0
+                   && displayName.IndexOf('\\') < 0
+                   && !IOPath.IsPathRooted(displayName);
+        }
+
+        /// <summary>
         /// Splits <paramref name="documentId"/> into its root ID and a canonical path.
         /// </summary>
         /// <param name="documentId">The document ID to parse.</param>

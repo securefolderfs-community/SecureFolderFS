@@ -92,6 +92,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parentDocumentId is null || displayName is null)
                 return null;
 
+            // The name is joined onto the parent's path, so it must not be able to escape it
+            if (!IsValidDisplayName(displayName))
+                return null;
+
             var parentStorable = GetStorableForDocumentId(parentDocumentId);
             if (parentStorable is not IModifiableFolder parentFolder)
                 return null;
@@ -321,7 +325,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override string? RenameDocument(string? documentId, string? displayName)
         {
-            if (string.IsNullOrWhiteSpace(displayName))
+            // The new name is resolved against the item's parent, so it must not be able to escape it
+            if (!IsValidDisplayName(displayName))
                 return null;
 
             documentId = documentId == "null" ? null : documentId;
