@@ -24,6 +24,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _existingConfigDataModel;
         private VaultConfigurationDataModel? _configDataModel;
+        private VaultConfigurationDataModel? _verifiedConfigDataModel;
         private VaultSharesDataModel? _existingSharesDataModel;
         private VaultSharesDataModel? _sharesDataModel;
         private bool _writeShares;
@@ -51,22 +52,48 @@ namespace SecureFolderFS.Core.Routines.Operational
             if (unlockContract is not IWrapper<Security> securityWrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            // Operate on a private copy so the caller's unlock contract is never disposed by this routine.
+            if (unlockContract is not IWrapper<VaultConfigurationDataModel> configurationWrapper)
+                throw new ArgumentException($"The {nameof(unlockContract)} does not carry a verified configuration.");
+
+            // Operate on a private copy so this routine never disposes of the caller's unlock contract.
             // This keeps the contract valid for retries if an attempt fails, and valid for the session after success.
             _keyPair = securityWrapper.Inner.KeyPair.CreateCopy();
+
+            // Retain the configuration whose MAC was verified during unlock, so the rewrite below
+            // is derived from authenticated data rather than from a fresh read of the vault directory
+            _verifiedConfigDataModel = configurationWrapper.Inner;
         }
 
         /// <inheritdoc/>
         public void SetOptions(VaultOptions vaultOptions)
         {
-            ArgumentNullException.ThrowIfNull(_existingConfigDataModel);
+            ArgumentNullException.ThrowIfNull(_verifiedConfigDataModel);
 
-            _configDataModel = VaultConfigurationDataModel.V4FromVaultOptions(vaultOptions);
+            // Build on the model that was MAC-verified at unlock rather than on the caller's unvalidated
+            // re-read of sfconfig.cfg, so a configuration an attacker edited on disk can never be
+            // re-signed here with the vault's genuine MAC key (see ModifyCredentialsRoutine)
+            EnsureMatchesVerified(nameof(vaultOptions.ContentCipherId), _verifiedConfigDataModel.ContentCipherId, vaultOptions.ContentCipherId);
+            EnsureMatchesVerified(nameof(vaultOptions.FileNameCipherId), _verifiedConfigDataModel.FileNameCipherId, vaultOptions.FileNameCipherId);
+            EnsureMatchesVerified(nameof(vaultOptions.NameEncodingId), _verifiedConfigDataModel.FileNameEncodingId, vaultOptions.NameEncodingId);
+            EnsureMatchesVerified(nameof(vaultOptions.VaultId), _verifiedConfigDataModel.Uid, vaultOptions.VaultId);
 
-            // Never invent a new vault id while modifying: the complement key derivations are bound to it,
-            // so a regenerated id would silently lock every credential out of the vault.
-            if (!string.Equals(_configDataModel.Uid, _existingConfigDataModel.Uid, StringComparison.Ordinal))
-                _configDataModel = _configDataModel with { Uid = _existingConfigDataModel.Uid };
+            // Never invent a new vault ID while modifying. The complement key derivations are bound to it,
+            // so a regenerated id would silently lock every credential out of the vault
+            _configDataModel = _verifiedConfigDataModel with
+            {
+                AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
+                ComplementGeneration = vaultOptions.ComplementGeneration,
+                RecycleBinSize = vaultOptions.RecycleBinSize,
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
+            return;
+
+            static void EnsureMatchesVerified(string field, string verified, string? supplied)
+            {
+                // A null value means the caller did not carry an opinion, so the verified one stands
+                if (supplied is not null && !string.Equals(verified, supplied, StringComparison.Ordinal))
+                    throw new CryptographicException($"The vault configuration on disk does not match the one authenticated at unlock ('{field}'). The vault directory may have been tampered with.");
+            }
         }
 
         /// <inheritdoc/>

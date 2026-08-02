@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new RecoverRoutine(VaultReader);
         }
 
-        public ICredentialsRoutine RestoreVault()
+        public RestoreRoutine RestoreVault()
         {
             // In the case of restoring the validation is not triggered since the vault is expected to be in an invalid state
             return new RestoreRoutine(_vaultFolder, VaultWriter);
