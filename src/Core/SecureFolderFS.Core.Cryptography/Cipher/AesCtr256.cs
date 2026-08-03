@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 
         public static void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result)
         {
-            ulong ulIv = BitConverter.ToUInt64(iv); // TODO: ulIv good here?
+            ulong ulIv = BitConverter.ToUInt64(iv);
 
             using var aesCtr = new AesCounterMode(ulIv, CTR_START);
             var transformEnc = aesCtr.CreateEncryptor(key.ToArray(), null);
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
         {
             try
             {
-                ulong ulIv = BitConverter.ToUInt64(iv); // TODO: ulIv good here?
+                ulong ulIv = BitConverter.ToUInt64(iv);
 
                 using var aesCtr = new AesCounterMode(ulIv, CTR_START);
                 var transformDec = aesCtr.CreateDecryptor(key.ToArray(), null);

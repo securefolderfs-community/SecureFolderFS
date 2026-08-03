@@ -294,6 +294,12 @@
   <data name="MasterKeyDescription" xml:space="preserve">
     <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
   </data>
+  <data name="Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
   </data>
@@ -441,7 +447,7 @@
     <value>View third-party libraries used by SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value></value>
+    <value>Unlock</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
     <value>Vault has been added</value>
@@ -918,7 +924,7 @@
     <value>You're in control</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Everything you need in one place. Quickly browse your files, modify credentials, and monitor your vault's integrity from a centralized dashboard.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
     <value>Your data — secure, anywhere</value>
@@ -927,22 +933,22 @@
     <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
   </data>
   <data name="OnboardingAuthenticationTitle" xml:space="preserve">
-    <value>Authenticate the way you want</value>
+    <value>Unlock your vaults your way</value>
   </data>
   <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
-    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+    <value>With our robust security, you choose how you access your files. Whether it's a password, hardware security key, or biometrics — your data remains protected and readily available.</value>
   </data>
   <data name="OnboardingEncryptionTitle" xml:space="preserve">
-    <value>Your files, always protected</value>
+    <value>Strong encryption by design</value>
   </data>
   <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
-    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+    <value>Every file is protected with AES-256-GCM encryption. Even file and folder names are encrypted to help keep your data truly private.</value>
   </data>
   <data name="OnboardingFileSystemTitle" xml:space="preserve">
     <value>Seamless virtual file system</value>
   </data>
   <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
-    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
+    <value>Your vault appears as a regular drive, allowing you to browse, edit, and use your favorite apps without compromising on performance or security.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
     <value>You're ready to go!</value>
@@ -1041,10 +1047,10 @@
     <value>Yesterday, {0}</value>
   </data>
   <data name="DateWeekAgoPlural" xml:space="preserve">
-      <value>{0:plural:Last week|{} weeks ago|{} weeks ago}</value>
+      <value>{0:plural:Last week|{} weeks ago}</value>
   </data>
   <data name="DateDaysAgoPlural" xml:space="preserve">
-      <value>{0:plural:{} day ago|{} days ago|{} days ago}</value>
+      <value>{0:plural:{} day ago|{} days ago}</value>
   </data>
   <data name="VaultUnlocked" xml:space="preserve">
     <value>Vault is unlocked</value>
@@ -1060,6 +1066,15 @@
   </data>
   <data name="SetupYubiKey" xml:space="preserve">
       <value>Setup YubiKey PIV authentication</value>
+  </data>
+  <data name="Overwrite" xml:space="preserve">
+      <value>Overwrite</value>
+  </data>
+  <data name="OverwriteYubiKeySlot" xml:space="preserve">
+      <value>Overwrite YubiKey slot?</value>
+  </data>
+  <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
+      <value>The selected slot already holds a configuration that is not HMAC-SHA1 challenge-response. Overwriting it will permanently erase the existing configuration and break anything that still uses it.</value>
   </data>
   <data name="UseLongPress" xml:space="preserve">
       <value>Use long press (Slot 2)</value>
@@ -1176,13 +1191,13 @@
       <value>Clear selection</value>
   </data>
   <data name="CopyingItemsPlural" xml:space="preserve">
-      <value>Copying {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Copying {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="MovingItemsPlural" xml:space="preserve">
-      <value>Moving {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Moving {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="DeletingItemsPlural" xml:space="preserve">
-      <value>Deleting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Deleting {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="NotEnoughSpace" xml:space="preserve">
       <value>Not enough space</value>
@@ -1191,7 +1206,7 @@
       <value>Deleting item(s)</value>
   </data>
   <data name="ItemDeletionDescriptionPlural" xml:space="preserve">
-      <value>Are you sure you want to permanently delete {0:plural:one item|{} items|{} items}?</value>
+      <value>Are you sure you want to permanently delete {0:plural:one item|{} items}?</value>
   </data>
   <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
       <value>The deleted {0:plural:item exceeds|{} items exceed|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items|{} items} instead?</value>
@@ -1227,13 +1242,13 @@
       <value>Enable Device Link</value>
   </data>
   <data name="ItemsSelectedPlural" xml:space="preserve">
-      <value>{0:plural:One item|{} items|{} items} selected</value>
+      <value>{0:plural:One item|{} items} selected</value>
   </data>
   <data name="ElementsCountPlural" xml:space="preserve">
-      <value>{0:plural:{} element|{} elements|{} elements}</value>
+      <value>{0:plural:{} element|{} elements}</value>
   </data>
   <data name="FoundIssuesCountPlural" xml:space="preserve">
-      <value>Found {0:plural:one issue|{} issues|{} issues}</value>
+      <value>Found {0:plural:one issue|{} issues}</value>
   </data>
   <data name="AvailableWidgets" xml:space="preserve">
       <value>Available widgets</value>
@@ -1254,7 +1269,7 @@
       <value>This archive format is not supported for extraction</value>
   </data>
   <data name="ExtractingItemsPlural" xml:space="preserve">
-      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="Extracting" xml:space="preserve">
       <value>Extracting...</value>
@@ -1344,7 +1359,7 @@
       <value>Collecting items ({0})</value>
   </data>
   <data name="CollectedItemsPlural" xml:space="preserve">
-      <value>Collected {0:plural:{} item|{} items|{} items}</value>
+      <value>Collected {0:plural:{} item|{} items}</value>
   </data>
   <data name="ScanCompleted" xml:space="preserve">
       <value>Scan completed</value>
@@ -1418,8 +1433,11 @@
   <data name="TapToLockAll" xml:space="preserve">
       <value>Tap to lock all vaults</value>
   </data>
+  <data name="LockAll" xml:space="preserve">
+      <value>Lock all</value>
+  </data>
   <data name="VaultsUnlockedPlural" xml:space="preserve">
-      <value>{0:plural:One vault is|{} vaults are|{} vaults are} unlocked</value>
+      <value>{0:plural:One vault is|{} vaults are} unlocked</value>
   </data>
   <data name="ViewInApp" xml:space="preserve">
       <value>View in app</value>
@@ -1450,5 +1468,47 @@
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
       <value>Open in external app</value>
+  </data>
+  <data name="Calculating" xml:space="preserve">
+      <value>Calculating...</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+      <value>Something went wrong. The operation could not be completed</value>
+  </data>
+  <data name="TransferItemsFailedPlural" xml:space="preserve">
+      <value>Couldn't complete the operation for {0:plural:one item|{} items|{} items}</value>
+  </data>
+  <data name="FolderLoadFailed" xml:space="preserve">
+      <value>Couldn't load the contents of this folder</value>
+  </data>
+  <data name="UnlockFailed" xml:space="preserve">
+      <value>Couldn't unlock the vault</value>
+  </data>
+  <data name="LockFailed" xml:space="preserve">
+      <value>Couldn't lock the vault</value>
+  </data>
+  <data name="LockFailedDescription" xml:space="preserve">
+      <value>The vault appears to be in use. Close any open files and try again</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+      <value>Couldn't connect to the vault</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+      <value>Couldn't recover access to the vault</value>
+  </data>
+  <data name="VaultAddedSaveFailed" xml:space="preserve">
+      <value>The vault was added, but saving the vault list failed. It may not appear after the app is restarted</value>
+  </data>
+  <data name="CredentialsChangeFailed" xml:space="preserve">
+      <value>Couldn't update the vault credentials</value>
+  </data>
+  <data name="ItemsFailedToDeletePlural" xml:space="preserve">
+      <value>Couldn't delete {0:plural:one item|{} items}</value>
+  </data>
+  <data name="ItemsFailedToRestorePlural" xml:space="preserve">
+      <value>Couldn't restore {0:plural:one item|{} items}</value>
+  </data>
+  <data name="RecycleBinSpaceTaken" xml:space="preserve">
+      <value>Taken {0} out of {1}</value>
   </data>
 </root>

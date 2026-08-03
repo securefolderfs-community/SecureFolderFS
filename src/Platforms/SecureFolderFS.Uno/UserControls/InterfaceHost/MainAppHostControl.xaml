@@ -104,7 +104,6 @@
                     </StackPanel>
                 </Button>
 
-                <!--  TODO(uno): #18589  -->
                 <Button
                     x:Name="CompactAddVaultButton"
                     Grid.Column="0"

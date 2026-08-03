@@ -279,6 +279,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     if (!childDirectoryId.AsSpan().SequenceEqual(folderDirectoryId))
                         return;
 
+                    // Check if the data model is authentic
+                    if (!dataModel.VerifyMac(Path.GetFileNameWithoutExtension(configurationPath), specifics.Security))
+                        return;
+
                     // Recency check: don't silently pull in unrelated deletions from long ago
                     if (dataModel.DeletionTimestamp is not { } deletionTimestamp
                         || Math.Abs((DateTime.Now - deletionTimestamp).TotalMilliseconds) > Constants.RECYCLE_BIN_FOLD_WINDOW_MS)

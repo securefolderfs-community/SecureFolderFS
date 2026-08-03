@@ -126,7 +126,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
         {
-            _ = mountPoint; // TODO: Check if mountPoint is different and update the RootFolder (?)
             return Trace(DokanResult.Success, null, info);
         }
 
@@ -360,7 +359,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info);
 
-        // TODO: Add checks for nullable in places where this function is called
         protected abstract string? GetCiphertextPath(string plaintextName);
 
         protected void CloseHandle(IDokanFileInfo info)

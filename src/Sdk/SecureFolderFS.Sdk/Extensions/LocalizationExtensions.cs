@@ -44,7 +44,13 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, params object?[] interpolate)
         {
             var localized = ToLocalized(resourceKey);
-            return SafetyHelpers.NoFailureResult(() => Smart.Format(localized, interpolate)) ?? $"{{{resourceKey}}}";
+            return SafetyHelpers.NoFailureResult(() =>
+                {
+                    if (_fallbackLocalizationService is null)
+                        return $"{{{resourceKey}}}";
+
+                    return Smart.Format(_fallbackLocalizationService.CurrentCulture, localized, interpolate);
+                }) ?? $"{{{resourceKey}}}";
         }
 
         /// <summary>
@@ -58,7 +64,7 @@ namespace SecureFolderFS.Sdk.Extensions
         public static string ToLocalized(this string resourceKey, ILocalizationService localizationService, params object?[] interpolate)
         {
             var localized = ToLocalized(resourceKey, localizationService);
-            return SafetyHelpers.NoFailureResult(() => Smart.Format(localized, interpolate)) ?? $"{{{resourceKey}}}";
+            return SafetyHelpers.NoFailureResult(() => Smart.Format(localizationService.CurrentCulture, localized, interpolate)) ?? $"{{{resourceKey}}}";
         }
 
         /// <summary>

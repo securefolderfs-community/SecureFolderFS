@@ -294,6 +294,12 @@
   <data name="MasterKeyDescription" xml:space="preserve">
     <value>To jest klucz główny, którego możesz użyć, aby odzyskać dostęp do tego sejfu. Utrata go uniemożliwi zresetowanie hasła.</value>
   </data>
+  <data name="Maximize" xml:space="preserve">
+    <value>Maksymalizuj</value>
+  </data>
+  <data name="Minimize" xml:space="preserve">
+    <value>Minimalizuj</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Moje sejfy</value>
   </data>
@@ -1061,6 +1067,15 @@
   <data name="SetupYubiKey" xml:space="preserve">
       <value>Skonfiguruj uwierzytelnianie YubiKey PIV</value>
   </data>
+  <data name="Overwrite" xml:space="preserve">
+      <value>Nadpisz</value>
+  </data>
+  <data name="OverwriteYubiKeySlot" xml:space="preserve">
+      <value>Zastąpić slot Yubikey?</value>
+  </data>
+  <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
+      <value>Wybrany slot już posiada konfigurację, która nie jest HMAC-SHA1. Nadpisanie spowoduje trwałe usunięcie istniejącej konfiguracji i unieważnienie wszystkiego, co nadal jej używa.</value>
+  </data>
   <data name="UseLongPress" xml:space="preserve">
       <value>Użyj długiego naciśnięcia (Pole 2)</value>
   </data>
@@ -1194,7 +1209,7 @@
       <value>Czy na pewno chcesz trwale usunąć {0:plural:jeden element|{} elementy|{} elementów}?</value>
   </data>
   <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
-      <value>The deleted {0:plural:item exceeds|{} items exceed|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items|{} items} instead?</value>
+      <value>{0:plural:Usunięty element przekracza|{} usunięte elementy przekraczają|{} usuniętych elementów przekraczają} dostępne miejsce w koszu. Czy chcesz trwale usunąć {0:plural:ten element|te {} elementy|tych {} elementów}?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
       <value>Kontynuując, akceptujesz nasz </value>
@@ -1418,6 +1433,9 @@
   <data name="TapToLockAll" xml:space="preserve">
       <value>Dotknij, aby zablokować wszystkie sejfy</value>
   </data>
+  <data name="LockAll" xml:space="preserve">
+      <value>Zablokuj wszystko</value>
+  </data>
   <data name="VaultsUnlockedPlural" xml:space="preserve">
       <value>{0:plural:Jeden sejf jest odblokowany|{} sejfy są odblokowane|{} sejfów jest odblokowanych}</value>
   </data>
@@ -1450,5 +1468,47 @@
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
       <value>Otwórz w aplikacji zewnętrznej</value>
+  </data>
+  <data name="Calculating" xml:space="preserve">
+      <value>Obliczanie...</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+      <value>Coś poszło nie tak. Operacja nie mogła zostać zakończona</value>
+  </data>
+  <data name="TransferItemsFailedPlural" xml:space="preserve">
+      <value>Nie można ukończyć operacji dla {0:plural:jednego elementu|{} elementów|{} elementów}</value>
+  </data>
+  <data name="FolderLoadFailed" xml:space="preserve">
+      <value>Nie można załadować zawartości tego folderu</value>
+  </data>
+  <data name="UnlockFailed" xml:space="preserve">
+      <value>Nie można odblokować sejfu</value>
+  </data>
+  <data name="LockFailed" xml:space="preserve">
+      <value>Nie można zablokować sejfu</value>
+  </data>
+  <data name="LockFailedDescription" xml:space="preserve">
+      <value>Sejf wydaje się być w użyciu. Zamknij wszystkie otwarte pliki i spróbuj ponownie</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+      <value>Nie można połączyć się z sejfem</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+      <value>Nie można odzyskać dostępu do sejfu</value>
+  </data>
+  <data name="VaultAddedSaveFailed" xml:space="preserve">
+      <value>Sejf został dodany, ale zapisanie listy sejfów nie powiodło się. Sejf może się nie pojawić po ponownym uruchomieniu aplikacji</value>
+  </data>
+  <data name="CredentialsChangeFailed" xml:space="preserve">
+      <value>Nie można zaktualizować poświadczeń dla sejfu</value>
+  </data>
+  <data name="ItemsFailedToDeletePlural" xml:space="preserve">
+      <value>Nie udało się usunąć {0:plural:jednego elementu|{} elementów|{} elementów}</value>
+  </data>
+  <data name="ItemsFailedToRestorePlural" xml:space="preserve">
+      <value>Nie można przywrócić {0:plural:jednego elementu|{} elementów|{} elementów}</value>
+  </data>
+  <data name="RecycleBinSpaceTaken" xml:space="preserve">
+      <value>Zapełniono {0} z {1}</value>
   </data>
 </root>
