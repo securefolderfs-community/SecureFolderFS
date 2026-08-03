@@ -32,12 +32,12 @@ namespace SecureFolderFS.Core.FileSystem.Validators
                     return;
 
                 // Check if Directory ID exists
-                var directoryIdFile = await value.GetFileByNameAsync(Core.FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
+                var directoryIdFile = await value.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
 
                 // Check the size
                 await using var stream = await directoryIdFile.OpenReadAsync(cancellationToken).ConfigureAwait(false);
-                if (stream.Length != Core.FileSystem.Constants.DIRECTORY_ID_SIZE)
-                    throw new EndOfStreamException($"The Directory ID size is invalid. Expected: {Core.FileSystem.Constants.DIRECTORY_ID_SIZE}; Got: {stream.Length}.");
+                if (stream.Length != Constants.DIRECTORY_ID_SIZE)
+                    throw new EndOfStreamException($"The Directory ID size is invalid. Expected: {Constants.DIRECTORY_ID_SIZE}; Got: {stream.Length}.");
             }
             catch (Exception ex)
             {

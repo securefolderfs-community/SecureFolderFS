@@ -75,7 +75,7 @@ namespace SecureFolderFS.UI.Storage
 
                 try
                 {
-                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, _serializer, cancellationToken);
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, _specifics.Security, _serializer, cancellationToken);
                     var plaintextParentPath = SafetyHelpers.NoFailureResult(() => dataModel.DecryptParentId(_specifics.Security));
                     restoreQueue.Add((item, originalItem, plaintextParentPath));
                 }
@@ -231,11 +231,10 @@ namespace SecureFolderFS.UI.Storage
             RecycleBinItemDataModel? itemDataModel = null;
             if (configurationFile is not null)
             {
+                // Read through the verifying helper. Forging configuration must not be able to
+                // dictate the size subtracted from the occupied total. On failure the size below is measured from the payload instead
                 itemDataModel = await SafetyHelpers.NoFailureAsync(async () =>
-                {
-                    await using var configurationStream = await configurationFile.OpenReadAsync(cancellationToken);
-                    return await _serializer.DeserializeAsync<Stream, RecycleBinItemDataModel>(configurationStream, cancellationToken);
-                });
+                    await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, _specifics.Security, _serializer, cancellationToken));
             }
 
             // Determine the size to subtract before the payload is gone
@@ -278,7 +277,7 @@ namespace SecureFolderFS.UI.Storage
         {
             var recycleBinItem = await SafetyHelpers.NoFailureAsync(async () =>
             {
-                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, StreamSerializer.Instance, cancellationToken);
+                var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(item, _recycleBin, _specifics.Security, StreamSerializer.Instance, cancellationToken);
                 if (dataModel.ParentId is null || dataModel.Name is null)
                     return null;
 

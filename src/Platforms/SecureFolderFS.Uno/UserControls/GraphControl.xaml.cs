@@ -42,7 +42,6 @@ namespace SecureFolderFS.Uno.UserControls
         private async void Chart_Loaded(object sender, RoutedEventArgs e)
         {
             // Workaround for the application freezing after unlocking at least 2 vaults
-            // TODO: Find the cause of the issue and fix it
             await Task.Delay(500);
 
             if (sender is not CartesianChart chart)
@@ -63,7 +62,7 @@ namespace SecureFolderFS.Uno.UserControls
                     DataPadding = new(0.5f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(0),
                     IsHoverable = false,
-                    GeometrySize = 0d // TODO: Setting this to any value other than 0 causes a bug with jumping line series
+                    GeometrySize = 0d // Setting this to any value other than 0 causes a bug with jumping line series
                 }
             ];
             chart.XAxes =

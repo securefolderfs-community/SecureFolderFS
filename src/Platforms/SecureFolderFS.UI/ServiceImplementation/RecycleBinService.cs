@@ -122,7 +122,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 // A single corrupt entry must not abandon the recalculation of the remaining ones
                 try
                 {
-                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(configurationFile, recycleBin, StreamSerializer.Instance, cancellationToken);
+                    var dataModel = await AbstractRecycleBinHelpers.GetItemDataModelAsync(configurationFile, recycleBin, specifics.Security, StreamSerializer.Instance, cancellationToken);
                     if (dataModel.Size is { } size and >= 0L)
                     {
                         totalSize += size;
