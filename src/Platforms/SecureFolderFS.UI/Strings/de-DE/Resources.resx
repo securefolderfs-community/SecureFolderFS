@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>Vorhandene hinzufügen</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Vorhandenen Tresor hinzufügen</value>
@@ -157,10 +157,10 @@
     <value>Versionshinweise</value>
   </data>
   <data name="ClearTraces" xml:space="preserve">
-    <value>Clear traces</value>
+    <value>Spuren löschen</value>
   </data>
   <data name="ClearTracesDescription" xml:space="preserve">
-    <value>Wipes data from caches and recently accessed list</value>
+    <value>Löscht Daten aus Caches und letzter Liste</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
     <value>Großartig!</value>
@@ -199,7 +199,7 @@
     <value>Wählen Sie, welche Version in die Zwischenablage kopiert werden soll</value>
   </data>
   <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
+    <value>Neu erstellen</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Neuen Tresor erstellen</value>
@@ -262,7 +262,7 @@
     <value>Das angegebene Passwort ist falsch.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>Schlüsseldatei</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
@@ -292,13 +292,13 @@
     <value>Einstellungen verwalten</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Dies ist der Wiederherstellungsschlüssel, mit dem Sie den Zugriff auf diesen Tresor wiederherstellen können. Wenn Sie ihn verlieren, können Sie Ihr Passwort nicht zurücksetzen.</value>
   </data>
   <data name="Maximize" xml:space="preserve">
-    <value>Maximize</value>
+    <value>Maximieren</value>
   </data>
   <data name="Minimize" xml:space="preserve">
-    <value>Minimize</value>
+    <value>Minimieren</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Meine Tresore</value>
@@ -323,7 +323,7 @@
     <value>Log-Speicherort öffnen</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-      <value>Opens {0} where the log file is located</value>
+      <value>Öffnet {0} wo sich die Protokolldatei befindet</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
     <value>Tresor-Ordner öffnen</value>
@@ -335,13 +335,13 @@
     <value>Passwort</value>
   </data>
   <data name="Paste" xml:space="preserve">
-    <value>Paste</value>
+    <value>Einfügen</value>
   </data>
   <data name="Print" xml:space="preserve">
     <value>Drucken</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Datenschutzerklärung</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>Datenschutzerklärung anzeigen</value>
@@ -350,10 +350,10 @@
     <value>Lesegeschwindigkeiten</value>
   </data>
   <data name="Recover" xml:space="preserve">
-    <value>Recover</value>
+    <value>Wiederherstellen</value>
   </data>
   <data name="RecoverAccess" xml:space="preserve">
-    <value>Recover access</value>
+    <value>Zugriff wiederherstellen</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Tresor aus der Liste entfernen</value>
@@ -375,7 +375,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal recovery key</value>
+    <value>Wiederherstellungsschlüssel anzeigen</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Suchen</value>
@@ -384,7 +384,7 @@
     <value>Tresorpfad auswählen</value>
   </data>
   <data name="SetCredentials" xml:space="preserve">
-    <value>Set credentials</value>
+    <value>Anmeldedaten festlegen</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
@@ -402,10 +402,10 @@
     <value>Privatsphäre</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-      <value>Show in {0}</value>
+      <value>In {0} anzeigen</value>
   </data>
   <data name="CreateShortcut" xml:space="preserve">
-    <value>Create shortcut file</value>
+    <value>Verknüpfungsdatei erstellen</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Soziales</value>
@@ -423,7 +423,7 @@
     <value>Anonyme Absturzberichte und Nutzungsdaten sammeln</value>
   </data>
   <data name="TelemetryInfoBarMessage" xml:space="preserve">
-    <value>Telemetry data is anonymized and helps us improve app stability and performance.</value>
+    <value>Telemetriedaten sind anonymisiert und helfen uns, die Stabilität und Leistung der App zu verbessern.</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Erscheinungsbild</value>
@@ -480,13 +480,13 @@
     <value>Tresor anzeigen</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-      <value>Show this vault in {0}</value>
+      <value>Tresor in {0} anzeigen</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Webseite</value>
   </data>
   <data name="WelcomeTo" xml:space="preserve">
-    <value>Welcome to {0}</value>
+    <value>Willkommen zu {0}</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Was gibt es Neues</value>
@@ -498,388 +498,388 @@
     <value>Schreibgeschwindigkeiten</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Hinzufügen</value>
   </data>
   <data name="VaultLoadError" xml:space="preserve">
-    <value>Vault could not be loaded</value>
+    <value>Tresor konnte nicht geladen werden</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>Fehlerdetails</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Open</value>
+    <value>Öffnen</value>
   </data>
   <data name="SelectFolderToContinue" xml:space="preserve">
-    <value>Select a folder to continue</value>
+    <value>Wählen Sie einen Ordner um fortzufahren</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>Ausgewählter Tresor wird möglicherweise nicht unterstützt</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
-    <value>Vault folder is invalid</value>
+    <value>Tresorordner ist ungültig</value>
   </data>
   <data name="SelectedValidVault" xml:space="preserve">
-    <value>Found a valid vault folder</value>
+    <value>Ein gültiger Tresorordner gefunden</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>Der ausgewählte Tresor wird überschrieben</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>Ein neuer Tresor wird im ausgewählten Ordner erstellt</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
-    <value>No location selected</value>
+    <value>Keinen Ort ausgewählt</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>Sperrtyp</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
-    <value>Advanced options</value>
+    <value>Erweiterte Optionen</value>
     <comment>Use a short-hand name, if possible</comment>
   </data>
   <data name="Setup" xml:space="preserve">
-    <value>Setup</value>
+    <value>Einstellungen</value>
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>Schlüssel-Dateiauthentifizierung einrichten</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>Windows Hallo Authentifizierung einrichten</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
-    <value>Login options</value>
+    <value>Anmeldeoptionen</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Sicherheit</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
-    <value>View recovery codes</value>
+    <value>Wiederherstellungscodes anzeigen</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>Wiederherstellungscodes für diesen Tresor abrufen, falls Sie Ihre Anmeldedaten vergessen</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use recovery key</value>
+    <value>Wiederherstellungsschlüssel verwenden</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>Anmeldedaten ändern</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>Ändern Sie, wie Sie sich bei diesem Tresor anmelden</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
+    <value>Zwei-Faktor-Authentifizierung</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>Zwei-Faktor-Authentifizierung einrichten oder ändern</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>Bestehende modifizieren</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Select authentication option</value>
+    <value>Authentifizierungsoption auswählen</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
-    <value>All options</value>
+    <value>Alle Optionen</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>Authentifizieren mit einer Schlüsseldatei</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
-    <value>Authenticate with Windows Hello</value>
+    <value>Mit Windows Hallo authentifizieren</value>
   </data>
   <data name="RemoveAuthentication" xml:space="preserve">
-    <value>Remove authentication</value>
+    <value>Authentifizierung entfernen</value>
   </data>
   <data name="RemoveAuthenticationDescription" xml:space="preserve">
-    <value>Remove this authentication method</value>
+    <value>Entferne diese Authentifizierungsmethode</value>
   </data>
   <data name="ChangeCurrentAuthentication" xml:space="preserve">
-    <value>Change current authentication method</value>
+    <value>Aktuelle Authentifizierungsmethode ändern</value>
   </data>
   <data name="ViewInFiles" xml:space="preserve">
-    <value>View in Files</value>
+    <value>In Dateien anzeigen</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
-    <value>Quick actions</value>
+    <value>Schnellaktionen</value>
   </data>
   <data name="Authentication" xml:space="preserve">
-    <value>Authentication</value>
+    <value>Authentifizierung</value>
   </data>
   <data name="TotalRead" xml:space="preserve">
-    <value>Total read</value>
+    <value>Gesamt gelesen</value>
   </data>
   <data name="TotalWrite" xml:space="preserve">
-    <value>Total write</value>
+    <value>Gesamt schreiben</value>
   </data>
   <data name="SystemVersion" xml:space="preserve">
-    <value>System version</value>
+    <value>Systemversion</value>
   </data>
   <data name="Migrate" xml:space="preserve">
-    <value>Migrate</value>
+    <value>Migrieren</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-    <value>Enter the recovery key for this vault</value>
+    <value>Wiederherstellungsschlüssel für diesen Tresor eingeben</value>
   </data>
   <data name="DateToday" xml:space="preserve">
-    <value>Today, {0}</value>
+    <value>Heute, {0}</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
-    <value>An error occurred</value>
+    <value>Ein Fehler ist aufgetreten</value>
   </data>
   <data name="VaultMigrated" xml:space="preserve">
-    <value>Vault has been migrated successfully</value>
+    <value>Tresor wurde erfolgreich migriert</value>
   </data>
   <data name="VaultNeedsMigration" xml:space="preserve">
-    <value>The vault needs to be migrated before it can be used</value>
+    <value>Der Tresor muss migriert werden, bevor er verwendet werden kann</value>
   </data>
   <data name="ActiveFileSystem" xml:space="preserve">
-    <value>Active file system</value>
+    <value>Aktives Dateisystem</value>
   </data>
   <data name="RestartLogin" xml:space="preserve">
-    <value>Restart login process</value>
+    <value>Login-Prozess neu starten</value>
   </data>
   <data name="ResetCredentials" xml:space="preserve">
-    <value>Reset credentials</value>
+    <value>Anmeldedaten zurücksetzen</value>
   </data>
   <data name="RecoveryKeyTip" xml:space="preserve">
-    <value>You can recover your vault using Recovery Key in case you lose or forget your credentials</value>
+    <value>Sie können Ihren Tresor mit dem Wiederherstellungsschlüssel wiederherstellen, falls Sie Ihre Anmeldendaten verlieren oder vergessen</value>
   </data>
   <data name="RemoveAuthenticationQuestion" xml:space="preserve">
-    <value>The following authentication method will be removed. Do you wish to continue?</value>
+    <value>Die folgende Authentifizierungsmethode wird entfernt. Möchten Sie fortfahren?</value>
   </data>
   <data name="RemoveAuthenticationTip" xml:space="preserve">
-    <value>You can always re-add it later</value>
+    <value>Sie können es später jederzeit wieder hinzufügen</value>
   </data>
   <data name="LearnMore" xml:space="preserve">
-    <value>Learn more</value>
+    <value>Mehr erfahren</value>
   </data>
   <data name="VaultAlreadyExists" xml:space="preserve">
-    <value>The selected vault already exists</value>
+    <value>Der ausgewählte Tresor existiert bereits</value>
   </data>
   <data name="UnlockAsReadOnly" xml:space="preserve">
-    <value>Unlock as read-only</value>
+    <value>Als schreibgeschützt entsperren</value>
   </data>
   <data name="VaultReadOnlyMode" xml:space="preserve">
-    <value>The vault is in read-only mode</value>
+    <value>Der Tresor ist im schreibgeschützten Modus</value>
   </data>
   <data name="HealthReport" xml:space="preserve">
-    <value>Health report</value>
+    <value>Zustandsbericht</value>
     <comment>Title for health report view</comment>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Umbenennen</value>
   </data>
   <data name="MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Nach oben</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Nach unten</value>
     <comment>Change order of vaults</comment>
   </data>
   <data name="ChooseDestinationFolder" xml:space="preserve">
-    <value>Choose destination folder</value>
+    <value>Zielordner auswählen</value>
   </data>
   <data name="RecoveryKey" xml:space="preserve">
-    <value>Recovery key</value>
+    <value>Wiederherstellungsschlüssel</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>File</value>
+    <value>Datei</value>
   </data>
   <data name="Folder" xml:space="preserve">
-    <value>Folder</value>
+    <value>Ordner</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copy</value>
+    <value>Kopieren</value>
   </data>
   <data name="Share" xml:space="preserve">
-    <value>Share</value>
+    <value>Teilen</value>
   </data>
   <data name="SetupPassword" xml:space="preserve">
-    <value>Setup password authentication</value>
+    <value>Passwortauthentifizierung einrichten</value>
   </data>
   <data name="RecycleBin" xml:space="preserve">
-    <value>Recycle bin</value>
+    <value>Papierkorb</value>
   </data>
   <data name="SortBy" xml:space="preserve">
-    <value>Sort by</value>
+    <value>Sortieren nach</value>
   </data>
   <data name="ItemLayout" xml:space="preserve">
-    <value>Item layout</value>
+    <value>Elementlayout</value>
   </data>
   <data name="ViewOptions" xml:space="preserve">
-    <value>View options</value>
+    <value>Anzeigen-Optionen</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Name</value>
+    <value>Namen</value>
   </data>
   <data name="Kind" xml:space="preserve">
-    <value>Kind</value>
+    <value>Art</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Größe</value>
   </data>
   <data name="ListViewLayout" xml:space="preserve">
-    <value>List view</value>
+    <value>Listenansicht</value>
   </data>
   <data name="ColumnViewLayout" xml:space="preserve">
-    <value>Column view</value>
+    <value>Spaltenansicht</value>
   </data>
   <data name="GridViewLayout" xml:space="preserve">
-    <value>Grid view</value>
+    <value>Rasteransicht</value>
   </data>
   <data name="GalleryViewLayout" xml:space="preserve">
-    <value>Gallery view</value>
+    <value>Galerieansicht</value>
   </data>
   <data name="ItemSize" xml:space="preserve">
-    <value>Item size</value>
+    <value>Elementgröße</value>
   </data>
   <data name="SmallSize" xml:space="preserve">
-    <value>Small</value>
+    <value>Kleine</value>
   </data>
   <data name="MediumSize" xml:space="preserve">
-    <value>Medium</value>
+    <value>Mittel</value>
   </data>
   <data name="LargeSize" xml:space="preserve">
-    <value>Large</value>
+    <value>Große</value>
   </data>
   <data name="EmptyRecycleBinDescription" xml:space="preserve">
-    <value>Recycle bin is empty. Delete some items to see them here.</value>
+    <value>Der Papierkorb ist leer. Löschen Sie einige Elemente, um sie hier anzuzeigen.</value>
   </data>
   <data name="DateModified" xml:space="preserve">
-    <value>Date modified</value>
+    <value>Modifikation Datum</value>
   </data>
   <data name="ItemType" xml:space="preserve">
-    <value>Item type</value>
+    <value>Element-Typ</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Move</value>
+    <value>Verschieben</value>
   </data>
   <data name="ImportExisting" xml:space="preserve">
-    <value>Import existing</value>
+    <value>Importiere vorhandene</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Select</value>
+    <value>Wähle</value>
   </data>
   <data name="NameEncryption" xml:space="preserve">
-    <value>Name encryption</value>
+    <value>Namensverschlüsselung</value>
   </data>
   <data name="NoItems" xml:space="preserve">
-    <value>No items</value>
+    <value>Keine Inhalte</value>
   </data>
   <data name="EnableFileThumbnails" xml:space="preserve">
-    <value>Enable file thumbnails</value>
+    <value>Dateivorschau aktivieren</value>
   </data>
   <data name="OpenFileBrowser" xml:space="preserve">
-    <value>Open file browser</value>
+    <value>Dateibrowser öffnen</value>
   </data>
   <data name="DeleteImmediately" xml:space="preserve">
-    <value>Delete immediately</value>
+    <value>Sofort löschen</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Löschen</value>
   </data>
   <data name="GetInfo" xml:space="preserve">
-    <value>Get info</value>
+    <value>Info</value>
   </data>
   <data name="Restore" xml:space="preserve">
-    <value>Restore</value>
+    <value>Wiederherstellen</value>
   </data>
   <data name="RepairAll" xml:space="preserve">
-    <value>Repair all</value>
+    <value>Reparieren alle</value>
   </data>
   <data name="RepairDescription" xml:space="preserve">
-    <value>During repair, your vault will be set into read-only mode.</value>
+    <value>Während der Reparatur wird dein Tresor in den schreibgeschützten Modus gesetzt.</value>
   </data>
   <data name="GenerateNewName" xml:space="preserve">
-    <value>Generate a new name</value>
+    <value>Neuen Namen generieren</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Exportieren</value>
   </data>
   <data name="MaximumSize" xml:space="preserve">
-    <value>Maximum size</value>
+    <value>Maximale Größe</value>
   </data>
   <data name="EnableRecycleBin" xml:space="preserve">
-    <value>Enable recycle bin</value>
+    <value>Papierkorb aktivieren</value>
   </data>
   <data name="NoSizeLimit" xml:space="preserve">
-    <value>No size limit</value>
+    <value>Kein Größenlimit</value>
   </data>
   <data name="NoPreviewAvailable" xml:space="preserve">
-    <value>No preview available</value>
+    <value>Keine Vorschau verfügbar</value>
   </data>
   <data name="AndroidBiometrics" xml:space="preserve">
-    <value>Android Biometrics</value>
+    <value>Android Biometrien</value>
   </data>
   <data name="TransferDone" xml:space="preserve">
-    <value>Completed</value>
+    <value>Beendet</value>
   </data>
   <data name="EnableFileExtensions" xml:space="preserve">
-    <value>Show file extensions</value>
+    <value>Dateierweiterungen anzeigen</value>
   </data>
   <data name="NameEncoding" xml:space="preserve">
-    <value>Name encoding</value>
+    <value>Namenskodierung</value>
   </data>
   <data name="OpenRecycleBin" xml:space="preserve">
-    <value>Open recycle bin</value>
+    <value>Papierkorb öffnen</value>
   </data>
   <data name="OpenRecycleBinDescription" xml:space="preserve">
-    <value>View deleted files and folders</value>
+    <value>Gelöschte Dateien und Ordner anzeigen</value>
   </data>
   <data name="RecentlyDeleted" xml:space="preserve">
-    <value>Recently deleted</value>
+    <value>Kürzlich gelöscht</value>
   </data>
   <data name="FileBrowser" xml:space="preserve">
-    <value>File browser</value>
+    <value>Dateibrowser</value>
   </data>
   <data name="EnableAdaptiveLayout" xml:space="preserve">
-    <value>Enable adaptive layout</value>
+    <value>Adaptives Layout aktivieren</value>
   </data>
   <data name="FoundIssues" xml:space="preserve">
-    <value>Found issues</value>
+    <value>Probleme gefunden</value>
   </data>
   <data name="UnsavedChanges" xml:space="preserve">
-    <value>Unsaved changes</value>
+    <value>Ungespeicherte Änderungen</value>
   </data>
   <data name="UnsavedChangesDescription" xml:space="preserve">
-    <value>You have made changes to the file. Do you want to save them now?</value>
+    <value>Sie haben Änderungen an der Datei vorgenommen. Möchten Sie sie jetzt speichern?</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
   </data>
   <data name="WriteHere" xml:space="preserve">
-    <value>Write here...</value>
+    <value>Schreibe hier...</value>
   </data>
   <data name="NoIssuesFound" xml:space="preserve">
-    <value>No issues found</value>
+    <value>Keine Probleme gefunden</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Entfernen</value>
   </data>
   <data name="GoToVaults" xml:space="preserve">
-    <value>Go to vault list</value>
+    <value>Gehe zur Tresorliste</value>
   </data>
   <data name="DateCreated" xml:space="preserve">
-    <value>Date created</value>
+    <value>Erstellungsdatum</value>
   </data>
   <data name="ClosedUnexpectedly" xml:space="preserve">
-    <value>{0} has closed unexpectedly</value>
+    <value>{0} hat unerwartet geschlossen</value>
   </data>
   <data name="SelectItems" xml:space="preserve">
-    <value>Select Items</value>
+    <value>Elemente auswählen</value>
   </data>
   <data name="Done" xml:space="preserve">
-    <value>Done</value>
+    <value>Fertig</value>
   </data>
   <data name="ChooseDataSource" xml:space="preserve">
-    <value>Choose data source</value>
+    <value>Datenquelle auswählen</value>
   </data>
   <data name="SourceLocalStorage" xml:space="preserve">
-    <value>Device storage</value>
+    <value>Gerätespeicher</value>
   </data>
   <data name="FTP" xml:space="preserve">
     <value>FTP</value>
@@ -888,373 +888,373 @@
     <value>Google Drive</value>
   </data>
   <data name="Address" xml:space="preserve">
-    <value>Address</value>
+    <value>Adresse</value>
   </data>
   <data name="Username" xml:space="preserve">
-    <value>Username</value>
+    <value>Nutzername</value>
   </data>
   <data name="AddAccount" xml:space="preserve">
-    <value>Add account</value>
+    <value>Konto hinzufügen</value>
   </data>
   <data name="User1" xml:space="preserve">
-    <value>User1</value>
+    <value>Benutzer1</value>
   </data>
   <data name="ChooseAccount" xml:space="preserve">
-    <value>Choose account</value>
+    <value>Konto auswählen</value>
   </data>
   <data name="SelectedLocation" xml:space="preserve">
-    <value>Selected location</value>
+    <value>Ausgewählter Speicherort</value>
   </data>
   <data name="AccountList" xml:space="preserve">
-    <value>Account list</value>
+    <value>Kontenlist</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Verbindung trennen</value>
   </data>
   <data name="AuthenticateForCredentials" xml:space="preserve">
-    <value>Authenticate to create credentials</value>
+    <value>Authentifizieren, um Anmeldedaten zu erstellen</value>
   </data>
   <data name="ViewOnboarding" xml:space="preserve">
-    <value>View onboarding</value>
+    <value>Onboarding anzeigen</value>
   </data>
   <data name="OnboardingWelcomeSubtitle" xml:space="preserve">
-    <value>To get you started, this presentation will guide you through the most notable features of the app.</value>
+    <value>Für einen leichten Einstieg führt Sie diese Präsentation durch die wichtigsten Funktionen der App.</value>
   </data>
   <data name="OnboardingDashboardTitle" xml:space="preserve">
-    <value>You're in control</value>
+    <value>Volle Kontrolle</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Alles, was Sie brauchen, an einem Ort. Durchsuchen Sie schnell Ihre Dateien, ändern Sie Anmeldedaten und überwachen Sie die Integrität Ihres Tresors über ein zentrales Dashboard.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
-    <value>Your data — secure, anywhere</value>
+    <value>Ihre Daten — sicher, überall</value>
   </data>
   <data name="OnboardingDataSourcesSubtitle" xml:space="preserve">
-    <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
+    <value>Neben dem Speichern von Tresoren auf Ihrem Gerät können Sie auch Verbindungen zu anderen Cloud-Speicheranbietern herstellen.</value>
   </data>
   <data name="OnboardingAuthenticationTitle" xml:space="preserve">
-    <value>Authenticate the way you want</value>
+    <value>Ihre Tresore, Ihr Style beim Entsperren</value>
   </data>
   <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
-    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+    <value>Mit unserer robusten Sicherheit entscheiden Sie, wie Sie auf Ihre Dateien zugreifen. Ob es das Passwort, der Hardware-Sicherheitsschlüssel oder die Biometrie ist – Ihre Daten bleiben geschützt und jederzeit verfügbar.</value>
   </data>
   <data name="OnboardingEncryptionTitle" xml:space="preserve">
-    <value>Your files, always protected</value>
+    <value>Starke Verschlüsselung by Design</value>
   </data>
   <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
-    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+    <value>Jede Datei ist mit AES-256-GCM verschlüsselt und auch Dateinamen und Ordnernamen werden verschlüsselt, um Ihre Daten wirklich vertraulich zu halten.</value>
   </data>
   <data name="OnboardingFileSystemTitle" xml:space="preserve">
-    <value>Seamless virtual file system</value>
+    <value>Nahtloses virtuelles Dateisystem</value>
   </data>
   <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
-    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
+    <value>Ihr Tresor erscheint als normales Laufwerk, das es Ihnen erlaubt, Ihre Lieblings-Apps zu durchsuchen, zu bearbeiten und zu verwenden, ohne die Leistung oder Sicherheit zu beeinträchtigen.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
-    <value>You're ready to go!</value>
+    <value>Es kann losgehen!</value>
   </data>
   <data name="AboutToMigrate" xml:space="preserve">
-    <value>You're about to migrate a vault</value>
+    <value>Sie sind im Begriff, einen Tresor zu migrieren</value>
   </data>
   <data name="VersionValue" xml:space="preserve">
     <value>Version {0}</value>
   </data>
   <data name="AuthenticationUnavailableOrExpired" xml:space="preserve">
-    <value>The configured authentication method is unavailable or has expired. Please use your recovery key.</value>
+    <value>Die konfigurierte Authentifizierungsmethode ist nicht verfügbar oder abgelaufen. Bitte verwenden Sie Ihren Wiederherstellungsschlüssel.</value>
   </data>
   <data name="AuthenticationUnavailable" xml:space="preserve">
-    <value>Authentication unavailable</value>
+    <value>Authentifizierung nicht verfügbar</value>
   </data>
   <data name="Documentation" xml:space="preserve">
-    <value>Documentation</value>
+    <value>Dokumentation</value>
   </data>
   <data name="DokanyNotDetected" xml:space="preserve">
-    <value>Dokany has not been detected. Please install Dokany (v{0}) to continue.</value>
+    <value>Dokany wurde nicht erkannt. Bitte installieren Sie Dokany (v{0}), um fortzufahren.</value>
   </data>
   <data name="DokanyIncompatible" xml:space="preserve">
-    <value>The installed version of Dokany is incompatible. Please install the requested version of Dokany (v{0}).</value>
+    <value>Die installierte Version von Dokany ist inkompatibel. Bitte installieren Sie die angeforderte Version von Dokany (v{0}).</value>
   </data>
   <data name="CopyPath" xml:space="preserve">
-    <value>Copy path</value>
+    <value>Pfad kopieren</value>
   </data>
   <data name="CopyError" xml:space="preserve">
-    <value>Copy error</value>
+    <value>Fehler kopieren</value>
   </data>
   <data name="RegenerateInvalidDirectoryId" xml:space="preserve">
-    <value>Regenerate invalid Directory ID</value>
+    <value>Ungültige Verzeichnis-ID neu generieren</value>
   </data>
   <data name="InvalidDirectoryId" xml:space="preserve">
-    <value>Invalid directory ID</value>
+    <value>Ungültige Verzeichnis-ID</value>
   </data>
   <data name="InvalidItemName" xml:space="preserve">
-    <value>Invalid item name</value>
+    <value>Ungültiger Elementname</value>
   </data>
   <data name="GenerateNewNameChanged" xml:space="preserve">
-    <value>A custom name will be applied</value>
+    <value>Ein benutzerdefinierter Name wird angewendet</value>
   </data>
   <data name="InvalidFileContents" xml:space="preserve">
-    <value>Corrupted file contents</value>
+    <value>Beschädigter Dateiinhalt</value>
   </data>
   <data name="RegenerateFileContents" xml:space="preserve">
-    <value>Overwrite affected file regions</value>
+    <value>Betroffene Datei-Regionen überschreiben</value>
   </data>
   <data name="RegenerateMissingDirectoryId" xml:space="preserve">
-    <value>Regenerate missing directory ID</value>
+    <value>Fehlende Verzeichnis-ID neu generieren</value>
   </data>
   <data name="MissingDirectoryId" xml:space="preserve">
-    <value>Missing directory ID</value>
+    <value>Fehlende Verzeichnis-ID</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Unknown error</value>
+    <value>Unbekannter Fehler</value>
   </data>
   <data name="ItemsLoseOriginalName" xml:space="preserve">
-    <value>Items in this directory will lose their original name</value>
+    <value>Elemente in diesem Verzeichnis verlieren ihren ursprünglichen Namen</value>
   </data>
   <data name="WelcomeUser" xml:space="preserve">
-    <value>Welcome, {0}</value>
+    <value>Willkommen, {0}</value>
   </data>
   <data name="Connect" xml:space="preserve">
-    <value>Connect</value>
+    <value>Verbinden</value>
   </data>
   <data name="WinFspNotDetected" xml:space="preserve">
-    <value>WinFsp has not been detected. Please install WinFsp (v{0}) to continue.</value>
+    <value>WinFsp wurde nicht erkannt. Bitte installieren Sie WinFsp (v{0}), um fortzufahren.</value>
   </data>
   <data name="WinFspIncompatible" xml:space="preserve">
-    <value>The installed version of WinFsp is incompatible. Please install the requested version of WinFsp (v{0}).</value>
+    <value>Die installierte Version von WinFsp ist inkompatibel. Bitte installieren Sie die angeforderte Version von WinFsp (v{0}).</value>
   </data>
   <data name="ChooseNewName" xml:space="preserve">
-    <value>Choose a new name</value>
+    <value>Neuen Namen wählen</value>
   </data>
   <data name="ViewOnboardingDescription" xml:space="preserve">
-    <value>Show the onboarding screen</value>
+    <value>Onboarding-Bildschirm anzeigen</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Saving</value>
+    <value>Speichern</value>
   </data>
   <data name="Loading" xml:space="preserve">
-    <value>Loading</value>
+    <value>Laden</value>
   </data>
   <data name="Cancelling" xml:space="preserve">
-    <value>Cancelling</value>
+    <value>Abbrechen</value>
   </data>
   <data name="SizeOptions" xml:space="preserve">
-    <value>Size options</value>
+    <value>Größenoptionen</value>
   </data>
   <data name="OperationTimedOut" xml:space="preserve">
-    <value>Operation timed out</value>
+    <value>Zeitüberschreitung der Operation</value>
   </data>
   <data name="DateYesterday" xml:space="preserve">
-    <value>Yesterday, {0}</value>
+    <value>Gestern, {0}</value>
   </data>
   <data name="DateWeekAgoPlural" xml:space="preserve">
-      <value>{0:plural:Last week|{} weeks ago|{} weeks ago}</value>
+      <value>{0:plural:Letzte Woche|{} Wochen zurück}</value>
   </data>
   <data name="DateDaysAgoPlural" xml:space="preserve">
-      <value>{0:plural:{} day ago|{} days ago|{} days ago}</value>
+      <value>Vor {0:plural:{} Tag|{} Tagen}</value>
   </data>
   <data name="VaultUnlocked" xml:space="preserve">
-    <value>Vault is unlocked</value>
+    <value>Tresor ist entsperrt</value>
   </data>
   <data name="AggregatedDataWidget" xml:space="preserve">
-      <value>Data widget</value>
+      <value>Daten-Widget</value>
   </data>
   <data name="GraphsWidget" xml:space="preserve">
-      <value>Graphs widget</value>
+      <value>Graphen-Widget</value>
   </data>
   <data name="HealthWidget" xml:space="preserve">
-      <value>Health widget</value>
+      <value>Gesundheits-Widget</value>
   </data>
   <data name="SetupYubiKey" xml:space="preserve">
-      <value>Setup YubiKey PIV authentication</value>
+      <value>YubiKey PIV Authentifizierung einrichten</value>
   </data>
   <data name="Overwrite" xml:space="preserve">
-      <value>Overwrite</value>
+      <value>Überschreiben</value>
   </data>
   <data name="OverwriteYubiKeySlot" xml:space="preserve">
-      <value>Overwrite YubiKey slot?</value>
+      <value>YubiKey-Slot überschreiben?</value>
   </data>
   <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
-      <value>The selected slot already holds a configuration that is not HMAC-SHA1 challenge-response. Overwriting it will permanently erase the existing configuration and break anything that still uses it.</value>
+      <value>Der ausgewählte Slot enthält bereits eine Konfiguration, die nicht vom Typ HMAC-SHA1 Challenge-Response ist. Durch das Überschreiben wird die vorhandene Konfiguration dauerhaft gelöscht und alles, was sie noch verwendet, wird beschädigt.</value>
   </data>
   <data name="UseLongPress" xml:space="preserve">
-      <value>Use long press (Slot 2)</value>
+      <value>Langes Drücken verwenden (Slot 2)</value>
   </data>
   <data name="YubiKey" xml:space="preserve">
       <value>YubiKey</value>
   </data>
   <data name="LoginYubiKey" xml:space="preserve">
-      <value>Authenticate with YubiKey PIV</value>
+      <value>Authentifizieren mit YubiKey PIV</value>
   </data>
   <data name="Finder" xml:space="preserve">
       <value>Finder</value>
   </data>
   <data name="FileExplorer" xml:space="preserve">
-      <value>File Explorer</value>
+      <value>Datei Explorer</value>
   </data>
   <data name="CorruptedFileChunks" xml:space="preserve">
-      <value>Corrupted file regions</value>
+      <value>Beschädigte Dateiregionen</value>
   </data>
   <data name="FileHasCorruptedChunks" xml:space="preserve">
-      <value>Parts of the file are corrupted and will be reset</value>
+      <value>Teile der Datei sind beschädigt und werden zurückgesetzt</value>
   </data>
   <data name="CorruptedChunksPlural" xml:space="preserve">
       <value>{0:plural:{} corrupted region|{} corrupted regions|{} corrupted regions}</value>
   </data>
   <data name="DataLossImminent" xml:space="preserve">
-      <value>Data loss unpreventable</value>
+      <value>Datenverlust ist nicht vermeidbar</value>
   </data>
   <data name="IrrecoverableFile" xml:space="preserve">
-      <value>Irrecoverable file</value>
+      <value>Unwiederherstellbare Datei</value>
   </data>
   <data name="FileHeaderCorrupted" xml:space="preserve">
-      <value>File header is corrupted and the file will be deleted</value>
+      <value>Dateiheader ist beschädigt und die Datei wird gelöscht</value>
   </data>
   <data name="DeviceLink" xml:space="preserve">
       <value>Device Link</value>
   </data>
   <data name="DeviceLinkInstructions" xml:space="preserve">
-      <value>1. Click "More Options" (three dots) in SecureFolderFS mobile app\n2. Select "Device Link" option\n3. Toggle "Enable Device Link"\n4. Ensure both devices are on the same network</value>
+      <value>1. Klicken Sie auf „Weitere Optionen“ (drei Punkte) in der SecureFolderFS Mobile-App\n2. Wählen Sie die Option "Device Link"\n3. Schalten Sie "Device Link aktivieren" ein\n4. Stellen Sie sicher, dass sich beide Geräte im selben Netzwerk befinden</value>
   </data>
   <data name="SetupDeviceLink" xml:space="preserve">
-      <value>Setup Device Link authentication</value>
+      <value>Device Link-Authentifizierung einrichten</value>
   </data>
   <data name="Accept" xml:space="preserve">
-      <value>Accept</value>
+      <value>Akzeptieren</value>
   </data>
   <data name="Reject" xml:space="preserve">
-      <value>Reject</value>
+      <value>Ablehnen</value>
   </data>
   <data name="LoginDeviceLink" xml:space="preserve">
-      <value>Authenticate with Device Link</value>
+      <value>Authentifizieren mit Device Link</value>
   </data>
   <data name="ConfirmBothCodesMatch" xml:space="preserve">
-      <value>Confirm that both codes match</value>
+      <value>Bestätigen, dass beide Codes übereinstimmen</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
-      <value>Verification code</value>
+      <value>Prüfcode</value>
   </data>
   <data name="DeviceLinkRequest" xml:space="preserve">
-      <value>Device Link request</value>
+      <value>Device Link-Anfrage</value>
   </data>
   <data name="DeviceLinkIsRequestingCredentials" xml:space="preserve">
-      <value>This device is requesting to use your Device Link credentials to unlock a vault.</value>
+      <value>Dieses Gerät bittet um die Verwendung Ihrer Device Link-Anmeldedaten, um einen Tresor zu entsperren.</value>
   </data>
   <data name="DeviceLinkAcceptWarning" xml:space="preserve">
-      <value>Only accept if you initiated this request</value>
+      <value>Nur akzeptieren, wenn Sie diese Anfrage initiiert haben</value>
   </data>
   <data name="CredentialRequested" xml:space="preserve">
-      <value>Credential requested: {0}</value>
+      <value>Anmeldedaten angefordert: {0}</value>
   </data>
   <data name="DeleteDeviceLinkCredential" xml:space="preserve">
-      <value>Delete Credential</value>
+      <value>Anmeldedaten löschen</value>
   </data>
   <data name="DeleteDeviceLinkCredentialWarning" xml:space="preserve">
-      <value>Are you sure you want to delete the credential '{0}'? This will revoke access for the paired device. Make sure to remove the authentication method in the desktop application first.</value>
+      <value>Sind Sie sicher, dass Sie die Anmeldedaten für '{0}' löschen möchten? Dies wird den Zugriff auf das gekoppelte Gerät widerrufen. Stellen Sie sicher, dass Sie die Authentifizierungsmethode in der Desktop-Anwendung zuerst entfernen.</value>
   </data>
   <data name="DeviceLinkDescription" xml:space="preserve">
-      <value>Device Link allows you to create credentials that can be used to sign in to your vault on desktop without needing to enter your password.</value>
+      <value>Mit dem Device Link können Sie Anmeldedaten erstellen, mit denen Sie sich in Ihrem Tresor auf dem Desktop anmelden können, ohne Ihr Passwort eingeben zu müssen.</value>
   </data>
   <data name="DeletedAt" xml:space="preserve">
-      <value>Deleted at</value>
+      <value>Gelöscht am</value>
   </data>
   <data name="OriginalLocation" xml:space="preserve">
-      <value>Original location</value>
+      <value>Ursprünglicher Ort</value>
   </data>
   <data name="Install" xml:space="preserve">
-      <value>Install</value>
+      <value>Installieren</value>
   </data>
   <data name="FileSystemOffersImprovedExperience" xml:space="preserve">
-      <value>Improved user experience, reliability, and performance</value>
+      <value>Verbesserte Benutzererfahrung, Zuverlässigkeit und Leistung</value>
   </data>
   <data name="DefaultFileSystem" xml:space="preserve">
-      <value>The default file system</value>
+      <value>Das Standard-Dateisystem</value>
   </data>
   <data name="BuiltinFileSystem" xml:space="preserve">
-      <value>One of the built-in file systems</value>
+      <value>Eines der integrierten Dateisysteme</value>
   </data>
   <data name="DokanyDescription" xml:space="preserve">
-      <value>Dokany offers better integration and reliability</value>
+      <value>Dokany bietet eine bessere Integration und Zuverlässigkeit</value>
   </data>
   <data name="WinFspDescription" xml:space="preserve">
-      <value>WinFsp offers better performance and reliability</value>
+      <value>WinFsp bietet eine bessere Leistung und Zuverlässigkeit</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-      <value>Refresh</value>
+      <value>Neuladen</value>
   </data>
   <data name="StorageUsed" xml:space="preserve">
-      <value>Storage used</value>
+      <value>Speicherplatz verwendet</value>
   </data>
   <data name="SelectAll" xml:space="preserve">
-      <value>Select all</value>
+      <value>Alles auswählen</value>
   </data>
   <data name="ClearSelection" xml:space="preserve">
-      <value>Clear selection</value>
+      <value>Auswahl aufheben</value>
   </data>
   <data name="CopyingItemsPlural" xml:space="preserve">
-      <value>Copying {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Kopieren von {Total:choose(0):{Achieved} {Achieved:plural:Element|Elementen}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:Element|Elementen}}}</value>
   </data>
   <data name="MovingItemsPlural" xml:space="preserve">
-      <value>Moving {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Verschieben von {Total:choose(0):{Achieved} {Achieved:plural:Element|Elementen}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:Element|Elementen}}}</value>
   </data>
   <data name="DeletingItemsPlural" xml:space="preserve">
-      <value>Deleting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Löschen von {Total:choose(0):{Achieved} {Achieved:plural:Element|Elementen}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:Element|Elementen}}}</value>
   </data>
   <data name="NotEnoughSpace" xml:space="preserve">
-      <value>Not enough space</value>
+      <value>Nicht genügend Speicherplatz</value>
   </data>
   <data name="ItemDeletionTitle" xml:space="preserve">
-      <value>Deleting item(s)</value>
+      <value>Element(e) löschen</value>
   </data>
   <data name="ItemDeletionDescriptionPlural" xml:space="preserve">
-      <value>Are you sure you want to permanently delete {0:plural:one item|{} items|{} items}?</value>
+      <value>Sind Sie sicher, dass Sie {0:plural:ein Element|{} Elemente} dauerhaft löschen möchten?</value>
   </data>
   <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
       <value>The deleted {0:plural:item exceeds|{} items exceed|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items|{} items} instead?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
-      <value>By continuing, you agree to our </value>
+      <value>Indem Sie fortfahren, akzeptieren Sie unsere </value>
   </data>
   <data name="IntroMiddle" xml:space="preserve">
-      <value> and </value>
+      <value> und </value>
   </data>
   <data name="IntroSuffix" xml:space="preserve">
       <value>.</value>
   </data>
   <data name="TermsOfService" xml:space="preserve">
-      <value>Terms of Service</value>
+      <value>Nutzungsbedingungen</value>
   </data>
   <data name="SelectLocationOfVault" xml:space="preserve">
-      <value>Select a location of your vault</value>
+      <value>Wählen Sie einen Ort Ihres Tresors</value>
   </data>
   <data name="CoreMemoryProtectionEnabled" xml:space="preserve">
-      <value>Core Memory Protection is enabled</value>
+      <value>Kern-Speicherschutz ist aktiviert</value>
   </data>
   <data name="EnrolledCredentials" xml:space="preserve">
-      <value>Enrolled credentials</value>
+      <value>Eingeschriebene Anmeldedaten</value>
   </data>
   <data name="PendingPairingRequest" xml:space="preserve">
-      <value>Pending pairing request</value>
+      <value>Ausstehende Pairing-Anfrage</value>
   </data>
   <data name="DeviceRequestingToPair" xml:space="preserve">
-      <value>{0} is requesting to pair to create credentials</value>
+      <value>{0} bittet um die Kopplung, um Anmeldedaten zu erstellen</value>
   </data>
   <data name="EnableDeviceLink" xml:space="preserve">
-      <value>Enable Device Link</value>
+      <value>Device Link aktivieren</value>
   </data>
   <data name="ItemsSelectedPlural" xml:space="preserve">
-      <value>{0:plural:One item|{} items|{} items} selected</value>
+      <value>{0:plural:Ein Element|{} Elemente} ausgewählt</value>
   </data>
   <data name="ElementsCountPlural" xml:space="preserve">
-      <value>{0:plural:{} element|{} elements|{} elements}</value>
+      <value>{0:plural:{} Element|{} Elemente}</value>
   </data>
   <data name="FoundIssuesCountPlural" xml:space="preserve">
-      <value>Found {0:plural:one issue|{} issues|{} issues}</value>
+      <value>{0:plural:Ein Problem|{} Probleme} gefunden</value>
   </data>
   <data name="AvailableWidgets" xml:space="preserve">
-      <value>Available widgets</value>
+      <value>Verfügbare Widgets</value>
   </data>
   <data name="ReorderWidgets" xml:space="preserve">
-      <value>Reorder widgets</value>
+      <value>Widgets neu anordnen</value>
   </data>
   <data name="Dropbox" xml:space="preserve">
       <value>Dropbox</value>
@@ -1266,249 +1266,249 @@
       <value>Port</value>
   </data>
   <data name="ArchiveFormatNotSupported" xml:space="preserve">
-      <value>This archive format is not supported for extraction</value>
+      <value>Dieses Archivformat wird für das Entpacken nicht unterstützt</value>
   </data>
   <data name="ExtractingItemsPlural" xml:space="preserve">
-      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items|items}}}</value>
+      <value>Extracting {Total:choose(0):{Achieved} {Achieved:plural:item|items}|{Total:choose(1):{State}|{Achieved}/{Total} {Total:plural:item|items}}}</value>
   </data>
   <data name="Extracting" xml:space="preserve">
-      <value>Extracting...</value>
+      <value>Entpacken...</value>
   </data>
   <data name="Extract" xml:space="preserve">
-      <value>Extract</value>
+      <value>Entpacke</value>
   </data>
   <data name="ConnectToRemoteVault" xml:space="preserve">
-      <value>Before logging in, establish a connection to the remote vault.</value>
+      <value>Bevor Sie sich anmelden, stellen Sie eine Verbindung zum entfernten Tresor her.</value>
   </data>
   <data name="LoginMacOsBiometrics" xml:space="preserve">
-      <value>Authenticate using Touch ID</value>
+      <value>Authentifizieren mit Touch ID</value>
   </data>
   <data name="MacOsBiometrics" xml:space="preserve">
       <value>Touch ID</value>
   </data>
   <data name="SetupMacOsBiometrics" xml:space="preserve">
-      <value>Setup Touch ID authentication</value>
+      <value>Touch ID Authentifizierung einrichten</value>
   </data>
   <data name="PlusAcquireSubscription" xml:space="preserve">
-      <value>{0} per month</value>
+      <value>{0} pro Monat</value>
   </data>
   <data name="PlusAcquireLifetime" xml:space="preserve">
-      <value>Lifetime, {0}</value>
+      <value>Lebenszeit, {0}</value>
   </data>
   <data name="PlusUpgrade" xml:space="preserve">
       <value>UPGRADE</value>
   </data>
   <data name="PlusTitle" xml:space="preserve">
-      <value>Your vaults, fully unleashed.</value>
+      <value>Ihre Tresore, völlig unbeschränkt.</value>
   </data>
   <data name="PlusDescription" xml:space="preserve">
-      <value>Support independent development and unlock every feature.</value>
+      <value>Unterstützen Sie unabhängige Entwicklung und entsperren Sie alle Funktionen.</value>
   </data>
   <data name="PlusUnlimitedVaults" xml:space="preserve">
-      <value>Unlimited vaults</value>
+      <value>Unbegrenzte Tresore</value>
   </data>
   <data name="PlusUnlimitedVaultsDescription" xml:space="preserve">
-      <value>Create and manage more than two vaults at a time.</value>
+      <value>Erstellen und verwalten Sie mehr als zwei Tresore gleichzeitig.</value>
   </data>
   <data name="PlusDeviceLink" xml:space="preserve">
       <value>Device Link</value>
   </data>
   <data name="PlusDeviceLinkDescription" xml:space="preserve">
-      <value>Sync desktop vault credentials securely with the mobile app.</value>
+      <value>Synchronisiere Tresor-Anmeldedaten sicher mit der mobilen App.</value>
   </data>
   <data name="PlusSecurityKey" xml:space="preserve">
-      <value>YubiKey authentication</value>
+      <value>YubiKey Authentifizierung</value>
   </data>
   <data name="PlusSecurityKeyDescription" xml:space="preserve">
-      <value>Protect vaults with hardware-grade security keys.</value>
+      <value>Schützen Sie Tresore mit hardwarefähigen Sicherheitsschlüsseln.</value>
   </data>
   <data name="PlusFileRecovery" xml:space="preserve">
-      <value>Recycle bin</value>
+      <value>Papierkorb</value>
   </data>
   <data name="PlusFileRecoveryDescription" xml:space="preserve">
-      <value>Recover accidentally deleted files with ease.</value>
+      <value>Wiederherstellen versehentlich gelöschter Dateien mit Leichtigkeit.</value>
   </data>
   <data name="PlusVaultShortcuts" xml:space="preserve">
-      <value>Vault shortcuts</value>
+      <value>Tresor Verknüpfungen</value>
   </data>
   <data name="PlusVaultShortcutsDescription" xml:space="preserve">
-      <value>Jump straight into any vault from a desktop shortcut.</value>
+      <value>Über eine Desktop-Verknüpfung direkt in jeden Tresor springen.</value>
   </data>
   <data name="PlusSupportDevelopment" xml:space="preserve">
-      <value>Achieve full potential · Supports independent development</value>
+      <value>Volles Potenzial erreichen · Unterstützt unabhängige Entwicklung</value>
   </data>
   <data name="AcceptFirstSsl" xml:space="preserve">
-      <value>Accept first SSL certificate</value>
+      <value>Erstes SSL-Zertifikat akzeptieren</value>
   </data>
   <data name="ManualSslCertificate" xml:space="preserve">
-      <value>Manual certificate fingerprint (SHA-256)</value>
+      <value>Manueller Zertifikat-Fingerabdruck (SHA-256)</value>
   </data>
   <data name="SearchIn" xml:space="preserve">
-      <value>Search in: '{0}'</value>
+      <value>Suche in: '{0}'</value>
   </data>
   <data name="RootFolder" xml:space="preserve">
-      <value>Root folder</value>
+      <value>Stammverzeichnis</value>
   </data>
   <data name="CollectingItemsInProgress" xml:space="preserve">
-      <value>Items are being collected</value>
+      <value>Elemente werden gesammelt</value>
   </data>
   <data name="CollectingItems" xml:space="preserve">
-      <value>Collecting items...</value>
+      <value>Sammeln von Elementen...</value>
   </data>
   <data name="CollectingItemsCount" xml:space="preserve">
-      <value>Collecting items ({0})</value>
+      <value>Sammeln von Elementen ({0})</value>
   </data>
   <data name="CollectedItemsPlural" xml:space="preserve">
-      <value>Collected {0:plural:{} item|{} items|{} items}</value>
+      <value>{0:plural:{} Element|{} Elemente} gesammelt</value>
   </data>
   <data name="ScanCompleted" xml:space="preserve">
-      <value>Scan completed</value>
+      <value>Scan erfolgt</value>
   </data>
   <data name="ScanningItems" xml:space="preserve">
-      <value>Scanning items</value>
+      <value>Scannen Elemente</value>
   </data>
   <data name="ScanningItemsCount" xml:space="preserve">
-      <value>Scanning items {0} of {1}</value>
+      <value>Scannen Elemente {0} von {1}</value>
   </data>
   <data name="ScannedCount" xml:space="preserve">
-      <value>Scanned {0} out of {1}</value>
+      <value>Gescannt {0} von {1}</value>
   </data>
   <data name="PerformIntegrityCheck" xml:space="preserve">
-      <value>Perform integrity check</value>
+      <value>Integritätsprüfung durchführen</value>
   </data>
   <data name="Gallery" xml:space="preserve">
-      <value>Gallery</value>
+      <value>Galerie</value>
   </data>
   <data name="EncryptedFile" xml:space="preserve">
-      <value>Encrypted file</value>
+      <value>Verschlüsselte Datei</value>
   </data>
   <data name="VirtualFile" xml:space="preserve">
-      <value>Virtual file</value>
+      <value>Virtuelle Datei</value>
   </data>
   <data name="VirtualFileName" xml:space="preserve">
-      <value>Vacations.jpeg</value>
+      <value>Urlaub.jpeg</value>
   </data>
   <data name="Path" xml:space="preserve">
-      <value>Path</value>
+      <value>Pfad</value>
   </data>
   <data name="EncryptedPath" xml:space="preserve">
-      <value>Encrypted path</value>
+      <value>Verschlüsselter Pfad</value>
   </data>
   <data name="SourceLocalStorageDescription" xml:space="preserve">
-      <value>Browse local storage folders</value>
+      <value>Lokale Speicherordner durchsuchen</value>
   </data>
   <data name="SourceThisDevice" xml:space="preserve">
-      <value>On this device</value>
+      <value>Auf diesem Gerät</value>
   </data>
   <data name="SourceCloudAndRemote" xml:space="preserve">
       <value>Cloud &amp; Remote</value>
   </data>
   <data name="ChooseNewVaultMode" xml:space="preserve">
-      <value>Choose how you want to add a new vault.</value>
+      <value>Wähle aus, wie du einen neuen Tresor hinzufügen möchtest.</value>
   </data>
   <data name="EndToEndBadge" xml:space="preserve">
-      <value>Credentials are encrypted end-to-end.</value>
+      <value>Anmeldedaten sind Ende-zu-Ende verschlüsselt.</value>
   </data>
   <data name="DeviceLinkSourceDesktop" xml:space="preserve">
       <value>Desktop</value>
   </data>
   <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
-      <value>This device</value>
+      <value>Dieses Gerät</value>
   </data>
   <data name="FileInformation" xml:space="preserve">
-      <value>File information</value>
+      <value>Datei-Informationen</value>
   </data>
   <data name="FolderInformation" xml:space="preserve">
-      <value>Folder information</value>
+      <value>Ordner-Informationen</value>
   </data>
   <data name="Encrypted" xml:space="preserve">
-      <value>Encrypted</value>
+      <value>Verschlüsselt</value>
   </data>
   <data name="Decrypted" xml:space="preserve">
-      <value>Decrypted</value>
+      <value>Entschlüsselt</value>
   </data>
   <data name="ItemAlreadyExists" xml:space="preserve">
-      <value>Item with the same name already exists</value>
+      <value>Element mit dem gleichen Namen existiert bereits</value>
   </data>
   <data name="TapToLockAll" xml:space="preserve">
-      <value>Tap to lock all vaults</value>
+      <value>Tippen, um alle Tresore zu sperren</value>
   </data>
   <data name="LockAll" xml:space="preserve">
-      <value>Lock all</value>
+      <value>Alle sperren</value>
   </data>
   <data name="VaultsUnlockedPlural" xml:space="preserve">
-      <value>{0:plural:One vault is|{} vaults are|{} vaults are} unlocked</value>
+      <value>{0:plural:Ein Tresor ist|{} Tresore sind} entsperrt</value>
   </data>
   <data name="ViewInApp" xml:space="preserve">
-      <value>View in app</value>
+      <value>In App anzeigen</value>
   </data>
   <data name="ExitApp" xml:space="preserve">
-      <value>Exit</value>
+      <value>Abbrechen</value>
   </data>
   <data name="Vault" xml:space="preserve">
-      <value>Vault</value>
+      <value>Tresor</value>
   </data>
   <data name="SaveCredentials" xml:space="preserve">
-      <value>Save credentials</value>
+      <value>Anmeldedaten speichern</value>
   </data>
   <data name="CharacterCount" xml:space="preserve">
-      <value>Characters: {0}</value>
+      <value>Zeichen: {0}</value>
   </data>
   <data name="CursorPosition" xml:space="preserve">
       <value>Position: {0}</value>
   </data>
   <data name="FileModified" xml:space="preserve">
-      <value>Modified</value>
+      <value>Modifiziert</value>
   </data>
   <data name="CredentialsHaveBeenSaved" xml:space="preserve">
-      <value>Credentials have been saved for this vault</value>
+      <value>Anmeldedaten wurden für diesen Tresor gespeichert</value>
   </data>
   <data name="DiscardSavedCredentials" xml:space="preserve">
-      <value>Discard saved credentials</value>
+      <value>Gespeicherte Anmeldeinformationen verwerfen</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
-      <value>Open in external app</value>
+      <value>In externer App öffnen</value>
   </data>
   <data name="Calculating" xml:space="preserve">
-      <value>Calculating...</value>
+      <value>Berechnung läuft...</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-      <value>Something went wrong. The operation could not be completed</value>
+      <value>Etwas ist schiefgelaufen. Die Operation konnte nicht abgeschlossen werden</value>
   </data>
   <data name="TransferItemsFailedPlural" xml:space="preserve">
       <value>Couldn't complete the operation for {0:plural:one item|{} items|{} items}</value>
   </data>
   <data name="FolderLoadFailed" xml:space="preserve">
-      <value>Couldn't load the contents of this folder</value>
+      <value>Konnte den Inhalt dieses Ordners nicht laden</value>
   </data>
   <data name="UnlockFailed" xml:space="preserve">
-      <value>Couldn't unlock the vault</value>
+      <value>Tresor konnte nicht entsperrt werden</value>
   </data>
   <data name="LockFailed" xml:space="preserve">
-      <value>Couldn't lock the vault</value>
+      <value>Tresor konnte nicht gesperrt werden</value>
   </data>
   <data name="LockFailedDescription" xml:space="preserve">
-      <value>The vault appears to be in use. Close any open files and try again</value>
+      <value>Der Tresor scheint im Einsatz zu sein. Schließe alle geöffneten Dateien und versuche es erneut</value>
   </data>
   <data name="ConnectionFailed" xml:space="preserve">
-      <value>Couldn't connect to the vault</value>
+      <value>Konnte nicht mit Tresor verbinden</value>
   </data>
   <data name="RecoveryFailed" xml:space="preserve">
-      <value>Couldn't recover access to the vault</value>
+      <value>Konnte den Tresor nicht wiederherstellen</value>
   </data>
   <data name="VaultAddedSaveFailed" xml:space="preserve">
-      <value>The vault was added, but saving the vault list failed. It may not appear after the app is restarted</value>
+      <value>Der Tresor wurde hinzugefügt, aber das Speichern der Tresorliste ist fehlgeschlagen. Es erscheint möglicherweise nicht nach einem Neustart der App</value>
   </data>
   <data name="CredentialsChangeFailed" xml:space="preserve">
-      <value>Couldn't update the vault credentials</value>
+      <value>Die Tresor-Zugangsdaten konnten nicht aktualisiert werden</value>
   </data>
   <data name="ItemsFailedToDeletePlural" xml:space="preserve">
-      <value>Couldn't delete {0:plural:one item|{} items}</value>
+      <value>{0:plural:Ein Element konnte nicht gelöscht werden|{} Elemente konnten nicht gelöscht werden}</value>
   </data>
   <data name="ItemsFailedToRestorePlural" xml:space="preserve">
-      <value>Couldn't restore {0:plural:one item|{} items}</value>
+      <value>{0:plural:Ein Element konnte nicht wiederhergestellt werden|{} Elemente konnten nicht wiederhergestellt werden}</value>
   </data>
   <data name="RecycleBinSpaceTaken" xml:space="preserve">
-      <value>Taken {0} out of {1}</value>
+      <value>{0} von {1} belegt</value>
   </data>
 </root>
