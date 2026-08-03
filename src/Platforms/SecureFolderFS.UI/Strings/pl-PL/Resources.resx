@@ -295,10 +295,10 @@
     <value>To jest klucz główny, którego możesz użyć, aby odzyskać dostęp do tego sejfu. Utrata go uniemożliwi zresetowanie hasła.</value>
   </data>
   <data name="Maximize" xml:space="preserve">
-    <value>Maximize</value>
+    <value>Maksymalizuj</value>
   </data>
   <data name="Minimize" xml:space="preserve">
-    <value>Minimize</value>
+    <value>Minimalizuj</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Moje sejfy</value>
@@ -1068,13 +1068,13 @@
       <value>Skonfiguruj uwierzytelnianie YubiKey PIV</value>
   </data>
   <data name="Overwrite" xml:space="preserve">
-      <value>Overwrite</value>
+      <value>Nadpisz</value>
   </data>
   <data name="OverwriteYubiKeySlot" xml:space="preserve">
-      <value>Overwrite YubiKey slot?</value>
+      <value>Zastąpić slot Yubikey?</value>
   </data>
   <data name="OverwriteYubiKeySlotDescription" xml:space="preserve">
-      <value>The selected slot already holds a configuration that is not HMAC-SHA1 challenge-response. Overwriting it will permanently erase the existing configuration and break anything that still uses it.</value>
+      <value>Wybrany slot już posiada konfigurację, która nie jest HMAC-SHA1. Nadpisanie spowoduje trwałe usunięcie istniejącej konfiguracji i unieważnienie wszystkiego, co nadal jej używa.</value>
   </data>
   <data name="UseLongPress" xml:space="preserve">
       <value>Użyj długiego naciśnięcia (Pole 2)</value>
@@ -1434,7 +1434,7 @@
       <value>Dotknij, aby zablokować wszystkie sejfy</value>
   </data>
   <data name="LockAll" xml:space="preserve">
-      <value>Lock all</value>
+      <value>Zablokuj wszystko</value>
   </data>
   <data name="VaultsUnlockedPlural" xml:space="preserve">
       <value>{0:plural:Jeden sejf jest odblokowany|{} sejfy są odblokowane|{} sejfów jest odblokowanych}</value>
@@ -1470,45 +1470,45 @@
       <value>Otwórz w aplikacji zewnętrznej</value>
   </data>
   <data name="Calculating" xml:space="preserve">
-      <value>Calculating...</value>
+      <value>Obliczanie...</value>
   </data>
   <data name="OperationFailed" xml:space="preserve">
-      <value>Something went wrong. The operation could not be completed</value>
+      <value>Coś poszło nie tak. Operacja nie mogła zostać zakończona</value>
   </data>
   <data name="TransferItemsFailedPlural" xml:space="preserve">
-      <value>Couldn't complete the operation for {0:plural:one item|{} items|{} items}</value>
+      <value>Nie można ukończyć operacji dla {0:plural:jednego elementu|{} elementów|{} elementów}</value>
   </data>
   <data name="FolderLoadFailed" xml:space="preserve">
-      <value>Couldn't load the contents of this folder</value>
+      <value>Nie można załadować zawartości tego folderu</value>
   </data>
   <data name="UnlockFailed" xml:space="preserve">
-      <value>Couldn't unlock the vault</value>
+      <value>Nie można odblokować sejfu</value>
   </data>
   <data name="LockFailed" xml:space="preserve">
-      <value>Couldn't lock the vault</value>
+      <value>Nie można zablokować sejfu</value>
   </data>
   <data name="LockFailedDescription" xml:space="preserve">
-      <value>The vault appears to be in use. Close any open files and try again</value>
+      <value>Sejf wydaje się być w użyciu. Zamknij wszystkie otwarte pliki i spróbuj ponownie</value>
   </data>
   <data name="ConnectionFailed" xml:space="preserve">
-      <value>Couldn't connect to the vault</value>
+      <value>Nie można połączyć się z sejfem</value>
   </data>
   <data name="RecoveryFailed" xml:space="preserve">
-      <value>Couldn't recover access to the vault</value>
+      <value>Nie można odzyskać dostępu do sejfu</value>
   </data>
   <data name="VaultAddedSaveFailed" xml:space="preserve">
-      <value>The vault was added, but saving the vault list failed. It may not appear after the app is restarted</value>
+      <value>Sejf został dodany, ale zapisanie listy sejfów nie powiodło się. Sejf może się nie pojawić po ponownym uruchomieniu aplikacji</value>
   </data>
   <data name="CredentialsChangeFailed" xml:space="preserve">
-      <value>Couldn't update the vault credentials</value>
+      <value>Nie można zaktualizować poświadczeń dla sejfu</value>
   </data>
   <data name="ItemsFailedToDeletePlural" xml:space="preserve">
-      <value>Couldn't delete {0:plural:one item|{} items}</value>
+      <value>Nie udało się usunąć {0:plural:jednego elementu|{} elementów|{} elementów}</value>
   </data>
   <data name="ItemsFailedToRestorePlural" xml:space="preserve">
-      <value>Couldn't restore {0:plural:one item|{} items}</value>
+      <value>Nie można przywrócić {0:plural:jednego elementu|{} elementów|{} elementów}</value>
   </data>
   <data name="RecycleBinSpaceTaken" xml:space="preserve">
-      <value>Taken {0} out of {1}</value>
+      <value>Zapełniono {0} z {1}</value>
   </data>
 </root>
