@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new DirectoryNotFoundException("Could not find recycle bin folder.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, specifics.Security, streamSerializer, cancellationToken);
             if (deserialized is not { ParentId: not null, Name: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, specifics.Security, streamSerializer, cancellationToken);
             if (deserialized is not { ParentId: not null, Name: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
