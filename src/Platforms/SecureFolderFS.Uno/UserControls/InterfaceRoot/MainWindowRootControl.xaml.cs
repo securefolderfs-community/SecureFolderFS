@@ -58,15 +58,16 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (OperatingSystem.IsMacCatalyst())
-                RootGrid.Margin = new(0, 37, 0, 0);
-
-#if __UNO_SKIA_MACOS__
-            InitializeStatusBarIcon();
-#endif
-
             ViewModel?.RootNavigationService.SetupNavigation(Navigation);
-            _ = EnsureRootAsync();
+            _ = EnsureRootAsync()
+#if __UNO_SKIA_MACOS__
+                .ContinueWith(_ => App.Instance?.MainWindowSynchronizationContext?.PostOrExecute(_ =>
+                {
+                    InitializeStatusBarIcon();
+                }));
+#else
+            ;
+#endif
         }
 
 #if __UNO_SKIA_MACOS__
