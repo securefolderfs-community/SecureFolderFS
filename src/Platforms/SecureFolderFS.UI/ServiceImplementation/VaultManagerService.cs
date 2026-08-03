@@ -101,15 +101,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, Func<VaultRestorationParameters, CancellationToken, Task<bool>> confirmParametersAsync, CancellationToken cancellationToken = default)
         {
             using var recoveryKey = KeyPair.CombineRecoveryKey(encodedRecoveryKey);
-            
+
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var restoreRoutine = routines.RestoreVault();
             await restoreRoutine.InitAsync(cancellationToken);
             restoreRoutine.SetCredentials(recoveryKey);
-            
+
+            // The detected parameters are written into a configuration signed with the vault's real MAC
+            // key, so they are put to the user before anything is committed to disk
+            var parameters = await restoreRoutine.DetectParametersAsync(cancellationToken);
+            if (!await confirmParametersAsync(parameters, cancellationToken))
+                throw new OperationCanceledException("The detected vault parameters were not confirmed.");
+
+            restoreRoutine.ConfirmParameters();
+
             return await restoreRoutine.FinalizeAsync(cancellationToken);
         }
 

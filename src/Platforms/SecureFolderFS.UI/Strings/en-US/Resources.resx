@@ -1515,13 +1515,25 @@
       <value>The file name uses decomposed Unicode and will be normalized.</value>
   </data>
   <data name="NameShortening" xml:space="preserve">
-      <value>Name shortening</value>
+      <value>Name shortening threshold</value>
   </data>
   <data name="RestorationTitle" xml:space="preserve">
       <value>Important configuration files are corrupted and must be restored.</value>
   </data>
   <data name="RestorationDescription" xml:space="preserve">
       <value>SecureFolderFS will attempt to regenerate the configuration files using information from your encrypted data. After the restore process is complete, you will need to reset your credentials.</value>
+  </data>
+  <data name="RestorationConfirmTitle" xml:space="preserve">
+      <value>Confirm the detected vault settings before they are applied.</value>
+  </data>
+  <data name="RestorationConfirmDescription" xml:space="preserve">
+      <value>These settings were determined by decrypting your existing data. They will be written into the rebuilt configuration and cannot be changed later without re-encrypting the vault. Continue only if they match how this vault was created.</value>
+  </data>
+  <data name="RestorationNoFileNameEncryption" xml:space="preserve">
+      <value>No file name encryption was detected. If this vault was created with encrypted file names, abort the operation as continuing will store every file name in readable form.</value>
+  </data>
+  <data name="ConfirmAndRestore" xml:space="preserve">
+      <value>Confirm and restore</value>
   </data>
   <data name="AppPlatformManagesThisVault" xml:space="preserve">
       <value>SecureFolderFS App Platform manages this vault</value>
