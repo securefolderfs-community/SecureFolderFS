@@ -145,7 +145,6 @@ namespace SecureFolderFS.Sdk.AppModels
 #if DEBUG
             if (!OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS())
             {
-                // TODO: Testing on desktop
                 widgetList.Insert(1, new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID));
             }
 #endif
