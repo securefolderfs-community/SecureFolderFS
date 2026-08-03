@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
@@ -182,22 +183,25 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
         /// <summary>
         /// Serializes <paramref name="dataModel"/> into <paramref name="configurationFile"/>, truncating any previous content.
         /// </summary>
-        internal static Task WriteItemDataModelAsync(IFile configurationFile, RecycleBinItemDataModel dataModel, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken)
+        internal static Task WriteItemDataModelAsync(IFile configurationFile, RecycleBinItemDataModel dataModel, Security security, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken)
         {
+            // Sign on the way out so every write (including the size rewrite after folding) is covered
+            var signedDataModel = dataModel.WithMac(Path.GetFileNameWithoutExtension(configurationFile.Name), security);
+
             return WithTransientIoRetryAsync<object?>(async () =>
             {
                 await using var configurationStream = await configurationFile.OpenWriteAsync(cancellationToken);
                 if (configurationStream.CanSeek)
                     configurationStream.SetLength(0L);
 
-                await using var serializedStream = await streamSerializer.SerializeAsync(dataModel, cancellationToken);
+                await using var serializedStream = await streamSerializer.SerializeAsync(signedDataModel, cancellationToken);
                 await serializedStream.CopyToAsync(configurationStream, cancellationToken);
                 await configurationStream.FlushAsync(cancellationToken);
                 return null;
             }, cancellationToken);
         }
 
-        public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
+        public static async Task<RecycleBinItemDataModel> GetItemDataModelAsync(IStorableChild item, IFolder recycleBin, Security security, IAsyncSerializer<Stream> streamSerializer, CancellationToken cancellationToken = default)
         {
             // Get the configuration file
             var configurationFile = !item.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
@@ -215,6 +219,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
 
             if (deserialized is not { ParentId: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
+
+            // Reject anything this vault did not write. Callers treat a throw as a corrupt entry, which
+            // leaves the payload in place and permanently deletable rather than acting on forged metadata
+            if (!deserialized.VerifyMac(Path.GetFileNameWithoutExtension(configurationFile.Name), security))
+                throw new UnauthorizedAccessException("The recycle bin configuration file is not authentic.");
 
             return deserialized;
         }

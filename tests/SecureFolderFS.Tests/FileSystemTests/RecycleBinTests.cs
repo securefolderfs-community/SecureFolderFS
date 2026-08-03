@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Text.RegularExpressions;
+using FluentAssertions;
 using NUnit.Framework;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
@@ -163,6 +164,39 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var rootItems = await modifiableFolder.GetItemsAsync().ToArrayAsyncImpl();
             rootItems.Select(x => x.Name).Should().Contain("CONFLICT");
             rootItems.Select(x => x.Name).Should().Contain("CONFLICT (1)");
+        }
+
+        [Test]
+        public async Task TamperedConfiguration_IsRejected_AndItemSurfacesAsOrphaned()
+        {
+            ArgumentNullException.ThrowIfNull(_storageRoot);
+            ArgumentNullException.ThrowIfNull(_recycleBinService);
+            ArgumentNullException.ThrowIfNull(CiphertextContentFolder);
+
+            // Arrange - recycle a file so a signed configuration file exists
+            var modifiableFolder = _storageRoot.PlaintextRoot as IModifiableFolder ?? throw new ArgumentException($"Folder is not {nameof(IModifiableFolder)}.");
+            var file = await modifiableFolder.CreateFileAsync("TAMPER");
+            await modifiableFolder.DeleteAsync(file);
+
+            var recycleBin = await _recycleBinService.GetRecycleBinAsync(_storageRoot);
+            (await recycleBin.GetItemsAsync().ToArrayAsyncImpl()).Single().Name.Should().Be("TAMPER");
+
+            // Act - rewrite the configuration the way an attacker with ciphertext write access would.
+            var binFolder = await CiphertextContentFolder.GetFolderByNameAsync(Core.FileSystem.Constants.Names.RECYCLE_BIN_NAME);
+            var configurationFile = await binFolder.GetItemsAsync(StorableType.File)
+                .FirstAsync(x => x.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) as IFile;
+
+            configurationFile.Should().NotBeNull();
+            var configuration = await configurationFile!.ReadTextAsync();
+            var tampered = Regex.Replace(configuration, "\"deletionTimestamp\":\\s*\"[^\"]*\"", "\"deletionTimestamp\":\"2020-01-01T00:00:00.0000000+00:00\"");
+            tampered.Should().NotBe(configuration);
+            await configurationFile!.WriteTextAsync(tampered);
+
+            // Assert - the entry no longer authenticates, so it is surfaced as an unnamed orphan
+            // (still permanently deletable) rather than acted upon
+            var afterTamper = await recycleBin.GetItemsAsync().ToArrayAsyncImpl();
+            afterTamper.Should().HaveCount(1);
+            afterTamper.Single().Name.Should().NotBe("TAMPER");
         }
 
         [Test]

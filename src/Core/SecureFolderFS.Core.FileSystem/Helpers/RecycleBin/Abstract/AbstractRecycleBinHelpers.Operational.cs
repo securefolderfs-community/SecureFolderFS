@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new DirectoryNotFoundException("Could not find recycle bin folder.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, specifics.Security, streamSerializer, cancellationToken);
             if (deserialized is not { ParentId: not null, Name: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 throw new UnauthorizedAccessException("The recycle bin is not modifiable.");
 
             // Deserialize configuration
-            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, streamSerializer, cancellationToken);
+            var deserialized = await GetItemDataModelAsync(recycleBinItem, recycleBin, specifics.Security, streamSerializer, cancellationToken);
             if (deserialized is not { ParentId: not null, Name: not null })
                 throw new FormatException("Could not deserialize recycle bin configuration file.");
 
@@ -197,7 +197,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 // whereas a payload without a configuration file would be unrestorable.
                 var guid = Guid.NewGuid().ToString();
                 var configurationFile = await modifiableRecycleBin.CreateFileAsync($"{guid}.json", false, cancellationToken);
-                await WriteItemDataModelAsync(configurationFile, dataModel, streamSerializer, cancellationToken);
+                await WriteItemDataModelAsync(configurationFile, dataModel, specifics.Security, streamSerializer, cancellationToken);
 
                 IStorableChild movedItem;
                 try
@@ -222,7 +222,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                     // The folded sizes were already part of the occupied total; only the
                     // folder's own entry needs to account for its regained contents
                     if (foldedSize > 0L)
-                        await WriteItemDataModelAsync(configurationFile, dataModel with { Size = sizeHint + foldedSize }, streamSerializer, cancellationToken);
+                        await WriteItemDataModelAsync(configurationFile, dataModel with { Size = sizeHint + foldedSize }, specifics.Security, streamSerializer, cancellationToken);
                 }
 
                 // Update occupied size
@@ -291,7 +291,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Abstract
                 // A single unreadable entry must not abandon the remaining ones
                 await SafetyHelpers.NoFailureAsync(async () =>
                 {
-                    var dataModel = await GetItemDataModelAsync(configurationFile, recycleBin, streamSerializer, cancellationToken);
+                    var dataModel = await GetItemDataModelAsync(configurationFile, recycleBin, specifics.Security, streamSerializer, cancellationToken);
                     if (dataModel is not { Name: not null, ParentId: not null, DirectoryId: { Length: Constants.DIRECTORY_ID_SIZE } childDirectoryId })
                         return;
 
