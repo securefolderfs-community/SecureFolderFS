@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.DataModels;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
@@ -117,7 +118,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                 var guid = Guid.NewGuid().ToString();
                 var destinationPath = Path.Combine(recycleBinPath, guid);
                 var configurationPath = $"{destinationPath}.json";
-                WriteItemDataModel(configurationPath, dataModel);
+                WriteItemDataModel(configurationPath, dataModel, specifics.Security);
 
                 // The folder's original plaintext path must be captured before the move - it is
                 // the key that previously recycled children are folded back in by
@@ -149,7 +150,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     {
                         // The folded sizes were already part of the occupied total; only the
                         // folder's own entry needs to account for its regained contents
-                        SafetyHelpers.NoFailure(() => WriteItemDataModel(configurationPath, dataModel with { Size = sizeHint + foldedSize }));
+                        SafetyHelpers.NoFailure(() => WriteItemDataModel(configurationPath, dataModel with { Size = sizeHint + foldedSize }, specifics.Security));
                     }
                 }
 
@@ -212,10 +213,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
         /// <summary>
         /// Serializes <paramref name="dataModel"/> into the file at <paramref name="configurationPath"/>, truncating any previous content.
         /// </summary>
-        private static void WriteItemDataModel(string configurationPath, RecycleBinItemDataModel dataModel)
+        private static void WriteItemDataModel(string configurationPath, RecycleBinItemDataModel dataModel, Security security)
         {
+            // Sign on the way out so every write (including the size rewrite after folding) is covered
+            var signedDataModel = dataModel.WithMac(Path.GetFileNameWithoutExtension(configurationPath), security);
+
             using var configurationStream = File.Create(configurationPath);
-            using var serializedStream = StreamSerializer.Instance.SerializeAsync(dataModel).ConfigureAwait(false).GetAwaiter().GetResult();
+            using var serializedStream = StreamSerializer.Instance.SerializeAsync(signedDataModel).ConfigureAwait(false).GetAwaiter().GetResult();
 
             serializedStream.CopyTo(configurationStream);
             configurationStream.Flush();
@@ -266,6 +270,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
 
                     // Lineage check: the entry must have been deleted out of this exact folder incarnation
                     if (!childDirectoryId.AsSpan().SequenceEqual(folderDirectoryId))
+                        return;
+
+                    // Check if the data model is authentic
+                    if (!dataModel.VerifyMac(Path.GetFileNameWithoutExtension(configurationPath), specifics.Security))
                         return;
 
                     // Recency check: don't silently pull in unrelated deletions from long ago

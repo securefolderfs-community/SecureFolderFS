@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Services;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -9,6 +10,12 @@ namespace SecureFolderFS.Tests.FileSystemTests
 {
     public abstract class BaseFileSystemTests
     {
+        /// <summary>
+        /// Gets the raw ciphertext content folder of the vault mounted by <see cref="MountVault"/>.
+        /// </summary>
+        /// <remarks>Used by tests that tamper with the stored ciphertext directly.</remarks>
+        protected IFolder? CiphertextContentFolder { get; private set; }
+
         protected async Task<IVfsRoot> MountVault(IFileSystemInfo fileSystem, MockVaultOptions? options, params (string, object)[] additionalOptions)
         {
             var (vaultFolder, recoveryKey) = await MockVaultHelpers.CreateVaultLatestAsync(options);
@@ -33,6 +40,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Create the storage layer
             var contentFolder = await vaultFolder.GetFolderByNameAsync(vaultService.ContentFolderName);
+            CiphertextContentFolder = contentFolder;
+
             return await fileSystem.MountAsync(contentFolder, unlockContract, fileSystemOptions);
         }
     }
