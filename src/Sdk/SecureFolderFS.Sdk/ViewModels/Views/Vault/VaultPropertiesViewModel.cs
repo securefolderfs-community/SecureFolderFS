@@ -23,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _SecurityText;
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;
+        [ObservableProperty] private string? _FileNameShorteningText;
         [ObservableProperty] private string? _ActiveFileSystemText;
         [ObservableProperty] private string? _FileSystemDescriptionText;
 
@@ -49,8 +50,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultFolder, cancellationToken);
-            ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
-            FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown") + $" + {vaultOptions.NameEncodingId}";
+            var areNamesEncrypted = !string.IsNullOrEmpty(vaultOptions.FileNameCipherId);
+            var areContentsEncrypted = !string.IsNullOrEmpty(vaultOptions.ContentCipherId);
+
+            ContentCipherText = !areContentsEncrypted ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
+            FileNameCipherText = !areNamesEncrypted ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown") + $" + {vaultOptions.NameEncodingId}";
+            FileNameShorteningText = !areNamesEncrypted ? null : vaultOptions.ShorteningThreshold.ToString();
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
             FileSystemDescriptionText = UnlockedVaultViewModel.StorageRoot.Options.GetDescription();
             SecurityText = await VaultCredentialsService.FromUnlockProcedureAsync(UnlockedVaultViewModel.VaultFolder, vaultOptions.UnlockProcedure, cancellationToken);

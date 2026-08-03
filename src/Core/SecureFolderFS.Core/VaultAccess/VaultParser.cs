@@ -23,98 +23,27 @@ namespace SecureFolderFS.Core.VaultAccess
             using var hmacSha256 = new HMACSHA256(macKey.ToArray());
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.Version));                                              // Version
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
-            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));                                       // RecycleBinSize
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                                  // FileNameEncodingId
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                                 // Id
-            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                           // AuthMethod
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.Version));                                          // Version
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));    // ContentCipherId
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));  // FileNameCipherId
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));                                   // RecycleBinSize
+            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.ShorteningThreshold));                              // ShorteningThreshold
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                              // FileNameEncodingId
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                             // Uid
+            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.ServerUrl ?? string.Empty));
+            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.VaultResource ?? string.Empty));
+            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.Organization ?? string.Empty));
+            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.AccessTokenEndpoint ?? string.Empty));
+            // hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.DeviceRegistrationEndpoint ?? string.Empty));
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                       // AuthenticationMethod
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(mac);
         }
 
-        public static void V4CalculateConfigMac(V4VaultConfigurationDataModel configDataModel, ReadOnlySpan<byte> macKey, Span<byte> mac)
-        {
-            using var hmacSha256 = new HMACSHA256(macKey.ToArray());
-
-            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.Version));
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));
-            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));
-            hmacSha256.AppendData(BitConverter.GetBytes(configDataModel.RecycleBinSize));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.ServerUrl ?? string.Empty));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.VaultResource ?? string.Empty));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.Organization ?? string.Empty));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.AccessTokenEndpoint ?? string.Empty));
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AppPlatform?.DeviceRegistrationEndpoint ?? string.Empty));
-            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));
-
-            hmacSha256.GetCurrentHash(mac);
-        }
-
-        /// <summary>
-        /// Derives DEK and MAC keys from provided credentials.
-        /// </summary>
-        /// <param name="passkey">The passkey credential that combines password and 'magic'.</param>
-        /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
-        /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
-        [SkipLocalsInit]
-        public static (byte[] dekKey, byte[] macKey) V3DeriveKeystore(ReadOnlySpan<byte> passkey, V3VaultKeystoreDataModel keystoreDataModel)
-        {
-            var dekKey = new byte[Cryptography.Constants.KeyTraits.DEK_KEY_LENGTH];
-            var macKey = new byte[Cryptography.Constants.KeyTraits.MAC_KEY_LENGTH];
-
-            // Derive KEK
-            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.DeriveKey(passkey, keystoreDataModel.Salt, kek);
-
-            // Unwrap keys
-            using var rfc3394 = new Rfc3394KeyWrap();
-            rfc3394.UnwrapKey(keystoreDataModel.WrappedDekKey, kek, dekKey);
-            rfc3394.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey);
-
-            return (dekKey, macKey);
-        }
-
-        /// <summary>
-        /// Encrypts cryptographic keys and creates a new instance of <see cref="V3VaultKeystoreDataModel"/>.
-        /// </summary>
-        /// <param name="passkey">The passkey credential that combines password and 'magic'.</param>
-        /// <param name="dekKey">The DEK key.</param>
-        /// <param name="macKey">The MAC key.</param>
-        /// <param name="salt">The salt used during KEK derivation.</param>
-        /// <returns>A new instance of <see cref="V3VaultKeystoreDataModel"/> containing the encrypted cryptographic keys.</returns>
-        [SkipLocalsInit]
-        public static V3VaultKeystoreDataModel V3EncryptKeystore(
-            ReadOnlySpan<byte> passkey,
-            ReadOnlySpan<byte> dekKey,
-            ReadOnlySpan<byte> macKey,
-            byte[] salt)
-        {
-            // Derive KEK
-            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
-            Argon2id.DeriveKey(passkey, salt, kek);
-
-            // Wrap keys
-            using var rfc3394 = new Rfc3394KeyWrap();
-            var wrappedDekKey = rfc3394.WrapKey(dekKey, kek);
-            var wrappedMacKey = rfc3394.WrapKey(macKey, kek);
-
-            // Generate keystore
-            return new()
-            {
-                WrappedDekKey = wrappedDekKey,
-                WrappedMacKey = wrappedMacKey,
-                Salt = salt
-            };
-        }
-
         /// <summary>
         /// Derives DEK and MAC keys from provided credentials for a vault.
-        /// Decrypts <see cref="V4VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> using the
+        /// Decrypts <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> using the
         /// raw passkey, then mixes it into the Argon2id input via HKDF-Extract before
         /// deriving the KEK. This raises the quantum security floor to 256 bits regardless
         /// of the entropy of the auth factor feeding the passkey.
@@ -123,7 +52,7 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         [SkipLocalsInit]
-        public static (byte[] dekKey, byte[] macKey) V4DeriveKeystore(ReadOnlySpan<byte> passkey, V4VaultKeystoreDataModel keystoreDataModel)
+        public static (byte[] dekKey, byte[] macKey) DeriveKeystore(ReadOnlySpan<byte> passkey, VaultKeystoreDataModel keystoreDataModel)
         {
             ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
             ArgumentNullException.ThrowIfNull(keystoreDataModel.EncryptedSoftwareEntropy);
@@ -185,17 +114,17 @@ namespace SecureFolderFS.Core.VaultAccess
         }
 
         /// <summary>
-        /// Encrypts cryptographic keys and creates a new instance of <see cref="V4VaultKeystoreDataModel"/>.
-        /// Generates and encrypts a fresh <see cref="V4VaultKeystoreDataModel.EncryptedSoftwareEntropy"/>
+        /// Encrypts cryptographic keys and creates a new instance of <see cref="VaultKeystoreDataModel"/>.
+        /// Generates and encrypts a fresh <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/>
         /// which is mixed into Argon2id input at unlock time to raise the quantum security floor.
         /// </summary>
         /// <param name="passkey">The passkey credential that combines all active auth factor outputs.</param>
         /// <param name="dekKey">The DEK key.</param>
         /// <param name="macKey">The MAC key.</param>
         /// <param name="salt">The salt used during KEK derivation.</param>
-        /// <returns>A new instance of <see cref="V4VaultKeystoreDataModel"/> containing the encrypted cryptographic keys and entropy.</returns>
+        /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys and entropy.</returns>
         [SkipLocalsInit]
-        public static V4VaultKeystoreDataModel V4EncryptKeystore(
+        public static VaultKeystoreDataModel EncryptKeystore(
             ReadOnlySpan<byte> passkey,
             ReadOnlySpan<byte> dekKey,
             ReadOnlySpan<byte> macKey,
@@ -205,42 +134,43 @@ namespace SecureFolderFS.Core.VaultAccess
             Span<byte> softwareEntropy = stackalloc byte[32];
             RandomNumberGenerator.Fill(softwareEntropy);
 
-            return V4EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, softwareEntropy);
+            return EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, softwareEntropy);
         }
 
         /// <summary>
-        /// Re-encrypts cryptographic keys into a new <see cref="V4VaultKeystoreDataModel"/> while
-        /// preserving the existing <paramref name="existingSoftwareEntropy"/>. Used during credential
-        /// changes so the vault remains accessible after the passkey changes.
+        /// Re-encrypts cryptographic keys into a new <see cref="VaultKeystoreDataModel"/> while
+        /// preserving the provided <paramref name="existingSoftwareEntropy"/>.
+        /// This is an optional credential-rotation path when the previous passkey is available.
         /// </summary>
         /// <param name="passkey">The new passkey credential.</param>
         /// <param name="dekKey">The DEK key (unchanged from the existing keystore).</param>
         /// <param name="macKey">The MAC key (unchanged from the existing keystore).</param>
         /// <param name="salt">A freshly generated salt for the new keystore.</param>
         /// <param name="existingSoftwareEntropy">The plaintext SoftwareEntropy recovered from the old keystore.</param>
-        /// <returns>A new <see cref="V4VaultKeystoreDataModel"/> with re-encrypted keys and entropy.</returns>
+        /// <returns>A new <see cref="VaultKeystoreDataModel"/> with re-encrypted keys and entropy.</returns>
         [SkipLocalsInit]
-        public static V4VaultKeystoreDataModel V4ReEncryptKeystore(
+        public static VaultKeystoreDataModel ReEncryptKeystore(
             ReadOnlySpan<byte> passkey,
             ReadOnlySpan<byte> dekKey,
             ReadOnlySpan<byte> macKey,
             byte[] salt,
             ReadOnlySpan<byte> existingSoftwareEntropy)
         {
-            return V4EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, existingSoftwareEntropy);
+            return EncryptKeystoreWithEntropy(passkey, dekKey, macKey, salt, existingSoftwareEntropy);
         }
 
         /// <summary>
-        /// Decrypts the <see cref="V4VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> from an existing
-        /// keystore using the current passkey. Used during credential changes to recover the entropy
-        /// value before re-encrypting it under the new passkey.
+        /// Decrypts the <see cref="VaultKeystoreDataModel.EncryptedSoftwareEntropy"/> from an existing
+        /// keystore using the previous passkey.
+        /// This is only required for preserve-entropy rotation; fresh-entropy rotation uses
+        /// <see cref="EncryptKeystore"/>.
         /// </summary>
         /// <param name="passkey">The current (old) passkey.</param>
         /// <param name="keystoreDataModel">The existing V4 keystore.</param>
         /// <param name="softwareEntropy">The destination span to fill with the decrypted entropy (must be 32 bytes).</param>
-        public static void V4DecryptSoftwareEntropy(
+        public static void DecryptSoftwareEntropy(
             ReadOnlySpan<byte> passkey,
-            V4VaultKeystoreDataModel keystoreDataModel,
+            VaultKeystoreDataModel keystoreDataModel,
             Span<byte> softwareEntropy)
         {
             ArgumentNullException.ThrowIfNull(keystoreDataModel.Salt);
@@ -264,12 +194,92 @@ namespace SecureFolderFS.Core.VaultAccess
                 softwareEntropy);
         }
 
+        public static void DeriveComplementKey(
+            ReadOnlySpan<byte> passkey,
+            string vaultId,
+            string authenticationMethodId,
+            Span<byte> complementKey)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(vaultId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(authenticationMethodId);
+
+            var salt = Encoding.UTF8.GetBytes(vaultId);
+            var info = Encoding.UTF8.GetBytes(authenticationMethodId);
+
+            HKDF.DeriveKey(
+                HashAlgorithmName.SHA256,
+                passkey,
+                complementKey,
+                salt,
+                info);
+        }
+
+        public static VaultShareDataModel WrapComplementSecret(
+            ReadOnlySpan<byte> complementSecret,
+            ReadOnlySpan<byte> wrappingKeyMaterial,
+            string vaultId,
+            string authenticationMethodId)
+        {
+            Span<byte> complementWrapKey = stackalloc byte[32];
+            try
+            {
+                DeriveComplementKey(wrappingKeyMaterial, vaultId, authenticationMethodId, complementWrapKey);
+
+                var nonce = new byte[12];
+                var tag = new byte[16];
+                var wrapped = new byte[complementSecret.Length];
+                RandomNumberGenerator.Fill(nonce);
+
+                using (var aes = new AesGcm(complementWrapKey, 16))
+                    aes.Encrypt(nonce, complementSecret, wrapped, tag);
+
+                return new()
+                {
+                    AuthenticationMethodId = authenticationMethodId,
+                    Nonce = nonce,
+                    WrappedComplementSecret = wrapped,
+                    Tag = tag
+                };
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(complementWrapKey);
+            }
+        }
+
+        public static byte[] UnwrapComplementSecret(
+            ReadOnlySpan<byte> wrappingKeyMaterial,
+            string vaultId,
+            VaultShareDataModel shareDataModel)
+        {
+            ArgumentNullException.ThrowIfNull(shareDataModel.AuthenticationMethodId);
+            ArgumentNullException.ThrowIfNull(shareDataModel.Nonce);
+            ArgumentNullException.ThrowIfNull(shareDataModel.WrappedComplementSecret);
+            ArgumentNullException.ThrowIfNull(shareDataModel.Tag);
+
+            Span<byte> complementWrapKey = stackalloc byte[32];
+            try
+            {
+                DeriveComplementKey(wrappingKeyMaterial, vaultId, shareDataModel.AuthenticationMethodId, complementWrapKey);
+
+                var complementSecret = new byte[shareDataModel.WrappedComplementSecret.Length];
+                using var aes = new AesGcm(complementWrapKey, 16);
+                aes.Decrypt(shareDataModel.Nonce, shareDataModel.WrappedComplementSecret, shareDataModel.Tag, complementSecret);
+
+                return complementSecret;
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(complementWrapKey);
+            }
+        }
+
         /// <summary>
-        /// Shared implementation for both <see cref="V4EncryptKeystore"/> and <see cref="V4ReEncryptKeystore"/>.
+        /// Shared implementation for both <see cref="EncryptKeystore"/> and <see cref="ReEncryptKeystore"/>.
         /// Encrypts the provided entropy under the passkey and wraps DEK/MAC under the augmented KEK.
         /// </summary>
         [SkipLocalsInit]
-        private static V4VaultKeystoreDataModel V4EncryptKeystoreWithEntropy(
+        private static VaultKeystoreDataModel EncryptKeystoreWithEntropy(
             ReadOnlySpan<byte> passkey,
             ReadOnlySpan<byte> dekKey,
             ReadOnlySpan<byte> macKey,

@@ -51,7 +51,7 @@
             x:FieldModifier="public"
             Canvas.ZIndex="10"
             PrimaryTitle="SecureFolderFS"
-            SecondaryTitle="Release Candidate 1" />
+            SecondaryTitle="Release Candidate 2" />
 
         <!--  Main Content  -->
         <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">

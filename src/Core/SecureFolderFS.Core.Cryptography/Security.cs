@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
@@ -48,7 +49,21 @@ namespace SecureFolderFS.Core.Cryptography
         public static Security CreateNew(KeyPair keyPair, string contentCipherId, string fileNameCipherId, string fileNameEncodingId)
         {
             // Initialize crypt implementation
-            IHeaderCrypt headerCrypt = contentCipherId switch
+            var headerCrypt = GetHeaderCrypt(keyPair, contentCipherId);
+            var contentCrypt = GetContentCrypt(contentCipherId, keyPair);
+            var nameCrypt = GetNameCrypt(keyPair, fileNameCipherId, fileNameEncodingId);
+
+            return new(keyPair)
+            {
+                ContentCrypt = contentCrypt,
+                HeaderCrypt = headerCrypt,
+                NameCrypt = nameCrypt
+            };
+        }
+
+        public static IHeaderCrypt GetHeaderCrypt(KeyPair keyPair, string contentCipherId)
+        {
+            return contentCipherId switch
             {
                 CipherId.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(keyPair),
                 CipherId.AES_GCM => new AesGcmHeaderCrypt(keyPair),
@@ -56,7 +71,11 @@ namespace SecureFolderFS.Core.Cryptography
                 CipherId.NONE => new NoHeaderCrypt(keyPair),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
-            IContentCrypt contentCrypt = contentCipherId switch
+        }
+
+        public static IContentCrypt GetContentCrypt(string contentCipherId, KeyPair keyPair)
+        {
+            return contentCipherId switch
             {
                 CipherId.AES_CTR_HMAC => new AesCtrHmacContentCrypt(keyPair.MacKey),
                 CipherId.AES_GCM => new AesGcmContentCrypt(),
@@ -64,18 +83,15 @@ namespace SecureFolderFS.Core.Cryptography
                 CipherId.NONE => new NoContentCrypt(),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
-            INameCrypt? nameCrypt = fileNameCipherId switch
+        }
+
+        public static INameCrypt? GetNameCrypt(KeyPair keyPair, string fileNameCipherId, string fileNameEncodingId)
+        {
+            return fileNameCipherId switch
             {
                 CipherId.AES_SIV => new AesSivNameCrypt(keyPair, fileNameEncodingId),
                 CipherId.NONE => null,
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipherId))
-            };
-
-            return new(keyPair)
-            {
-                ContentCrypt = contentCrypt,
-                HeaderCrypt = headerCrypt,
-                NameCrypt = nameCrypt
             };
         }
 

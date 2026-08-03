@@ -61,6 +61,7 @@ namespace SecureFolderFS.Core.MacFuse.AppModels
                 IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? false,
                 IsCachingDirectoryIds = (bool?)options.Get(nameof(IsCachingDirectoryIds)) ?? true,
                 RecycleBinSize = (long?)options.Get(nameof(RecycleBinSize)) ?? 0L,
+                ShorteningThreshold = (int?)options.Get(nameof(ShorteningThreshold)) ?? 0,
 
                 // macFUSE specific
                 MountPoint = (string?)options.Get(nameof(MountPoint)),

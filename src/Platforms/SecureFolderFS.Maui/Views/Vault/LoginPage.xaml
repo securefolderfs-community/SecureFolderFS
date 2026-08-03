@@ -8,14 +8,17 @@
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucc="clr-namespace:SecureFolderFS.Maui.UserControls.Common"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk"
+    x:Name="ThisPage"
     Title="{Binding ViewModel.VaultViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
     <Grid>
         <ScrollView>
             <Grid Padding="20">
-                <VerticalStackLayout VerticalOptions="Center">
+                <VerticalStackLayout Margin="0,-48,0,0" VerticalOptions="Center">
                     <!--  Lock icon plate + heading  -->
                     <VerticalStackLayout Margin="0,0,0,48" Spacing="16">
                         <Border
@@ -54,48 +57,62 @@
                             Text="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:localize|VaultLocked:true:localize|VaultUnlocked'}" />
                     </VerticalStackLayout>
 
-                    <!--  Remote connection progress indicator  -->
-                    <ActivityIndicator
-                        Margin="0,0,0,16"
-                        IsRunning="{Binding ViewModel.IsProgressing, Mode=OneWay}"
-                        IsVisible="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        Opacity="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}}" />
+                    <VerticalStackLayout>
+                        <!--  Remote connection progress indicator  -->
+                        <ActivityIndicator
+                            Margin="0,0,0,16"
+                            IsRunning="{Binding ViewModel.IsProgressing, Mode=OneWay}"
+                            IsVisible="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Opacity="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolOpacityConverter}}" />
 
-                    <!--  Login  -->
-                    <uc:VaultLocatorControl
-                        CancelConnectionCommand="{Binding ViewModel.CancelConnectionCommand, Mode=OneWay}"
-                        ConnectCommand="{Binding ViewModel.ConnectToVaultCommand, Mode=OneWay}"
-                        IsConnected="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        IsRunning="{Binding ViewModel.ConnectToVaultCommand.IsRunning, Mode=OneWay}">
-                        <uc:VaultLocatorControl.LoginView>
-                            <VerticalStackLayout IsVisible="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="8">
-                                <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
-                                <VerticalStackLayout>
-                                    <Button
-                                        Command="{Binding ViewModel.LoginViewModel.DiscardSavedCredentialsCommand}"
-                                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
-                                                                       iOS={LayoutOptions Alignment=Center}}"
-                                        IsVisible="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
-                                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
-                                                           iOS={StaticResource NoBackgroundButtonStyle}}"
-                                        Text="{l:ResourceString Rid=DiscardSavedCredentials}" />
-                                    <Button
-                                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
-                                        HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
-                                                                       iOS={LayoutOptions Alignment=Center}}"
-                                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                                        Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
-                                                           iOS={StaticResource NoBackgroundButtonStyle}}"
-                                        Text="{l:ResourceString Rid=RecoverAccess}" />
+                        <!--  Login  -->
+                        <uc:VaultLocatorControl
+                            CancelConnectionCommand="{Binding ViewModel.CancelConnectionCommand, Mode=OneWay}"
+                            ConnectCommand="{Binding ViewModel.ConnectToVaultCommand, Mode=OneWay}"
+                            IsConnected="{Binding ViewModel.LoginViewModel, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            IsRunning="{Binding ViewModel.ConnectToVaultCommand.IsRunning, Mode=OneWay}">
+                            <uc:VaultLocatorControl.LoginView>
+                                <VerticalStackLayout IsVisible="{Binding ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" Spacing="8">
+                                    <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                                    <VerticalStackLayout>
+                                        <Button
+                                            Command="{Binding ViewModel.LoginViewModel.DiscardSavedCredentialsCommand}"
+                                            HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                                           iOS={LayoutOptions Alignment=Center}}"
+                                            IsVisible="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay}"
+                                            Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                                               iOS={StaticResource NoBackgroundButtonStyle}}"
+                                            Text="{l:ResourceString Rid=DiscardSavedCredentials}" />
+                                        <Button
+                                            Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
+                                            HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
+                                                                           iOS={LayoutOptions Alignment=Center}}"
+                                            IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                                            Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
+                                                               iOS={StaticResource NoBackgroundButtonStyle}}"
+                                            Text="{l:ResourceString Rid=RecoverAccess}" />
+                                    </VerticalStackLayout>
                                 </VerticalStackLayout>
-                            </VerticalStackLayout>
-                        </uc:VaultLocatorControl.LoginView>
-                    </uc:VaultLocatorControl>
+                            </uc:VaultLocatorControl.LoginView>
+                        </uc:VaultLocatorControl>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
 
                 <uco:OptionsContainer VerticalOptions="End">
                     <uco:OptionsContainer.InnerContent>
                         <VerticalStackLayout>
+                            <uco:OptionsControl Title="{l:ResourceString Rid=LoginMethod}" IsVisible="{Binding ViewModel.LoginViewModel.IsAlternativeLogin, Mode=OneWay}">
+                                <uco:OptionsControl.Slot>
+                                    <ucc:ModernPicker
+                                        BindingContext="{x:Reference ThisPage}"
+                                        HorizontalTextAlignment="End"
+                                        IsTransparent="True"
+                                        ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:AuthenticationViewModel}}"
+                                        ItemsSource="{Binding ViewModel.LoginViewModel.AuthenticationOptions}"
+                                        SelectedIndexChanged="AuthenticationOptions_SelectedIndexChanged"
+                                        SelectedItem="{Binding ViewModel.LoginViewModel.SelectedAuthenticationOption, Mode=TwoWay}" />
+                                </uco:OptionsControl.Slot>
+                            </uco:OptionsControl>
                             <uco:OptionsControl Title="{l:ResourceString Rid=UnlockAsReadOnly}" IsSeparatorVisible="{Binding ViewModel.LoginViewModel.AreCredentialsSaved, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
                                 <uco:OptionsControl.Slot>
                                     <Switch IsToggled="{Binding ViewModel.IsReadOnly, Mode=TwoWay}" />

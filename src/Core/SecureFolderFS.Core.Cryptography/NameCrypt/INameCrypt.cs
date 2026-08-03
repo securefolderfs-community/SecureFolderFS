@@ -8,6 +8,11 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     public interface INameCrypt : IDisposable
     {
         /// <summary>
+        /// Gets the encoding identifier.
+        /// </summary>
+        string EncodingId { get; }
+
+        /// <summary>
         /// Encrypts the <paramref name="plaintextName"/> using associated <paramref name="directoryId"/>.
         /// </summary>
         /// <param name="plaintextName">The plaintext name to encrypt.</param>

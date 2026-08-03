@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
@@ -21,34 +20,23 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
             return new byte[Constants.DIRECTORY_ID_SIZE];
         }
 
+        /// <summary>
+        /// Removes the ciphertext file extension from the specified filename if it exists.
+        /// This method ensures that the extension is stripped manually to avoid issues with
+        /// path parsers that could misinterpret characters in the filename.
+        /// </summary>
+        /// <param name="ciphertextName">The filename with an optional ciphertext extension.</param>
+        /// <returns>
+        /// A <see cref="ReadOnlySpan{T}"/> representing the filename without the ciphertext extension.</returns>
         public static ReadOnlySpan<char> RemoveCiphertextExtension(string ciphertextName)
         {
             // Do NOT use Path.GetFileNameWithoutExtension - after APFS NFD-decomposes Base4K
             // codepoints, the string may contain spurious dot-like characters that confuse the
             // path parser, causing it to truncate mid-ciphertext.
             // Strip the known extension manually instead.
-            var nameWithoutExtension = ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
+            return ciphertextName.EndsWith(Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.Ordinal)
                 ? ciphertextName.AsSpan(0, ciphertextName.Length - Constants.Names.ENCRYPTED_FILE_EXTENSION.Length)
                 : ciphertextName.AsSpan();
-
-            // Only normalize if needed. APFS layers NFD-decompose Base4K codepoints,
-            // but Dokany/WinFsp deliver names in a form where NFC recomposition breaks lookup.
-            if (OperatingSystem.IsIOS() || OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
-            {
-                // IsNormalized() lets the string itself determine whether normalization is safe.
-                // TODO: Fix normalization in Vault V4
-                if (!nameWithoutExtension.IsNormalized(NormalizationForm.FormC))
-                {
-                    var normalizedLength = nameWithoutExtension.GetNormalizedLength(NormalizationForm.FormC);
-                    var normalized = new char[normalizedLength];
-
-                    // NFC-normalize before decoding
-                    if (nameWithoutExtension.TryNormalize(normalized, out var written, NormalizationForm.FormC))
-                        return normalized.AsSpan(0, written);
-                }
-            }
-
-            return nameWithoutExtension;
         }
     }
 }

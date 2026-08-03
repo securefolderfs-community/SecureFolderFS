@@ -32,7 +32,7 @@ namespace SecureFolderFS.UI.ViewModels.Authentication
         public override event EventHandler<EventArgs>? StateChanged;
 
         /// <inheritdoc/>
-        public sealed override bool CanComplement { get; } = false;
+        public sealed override bool CanComplement { get; } = true;
 
         /// <inheritdoc/>
         public sealed override AuthenticationStage Availability { get; } = AuthenticationStage.Any;

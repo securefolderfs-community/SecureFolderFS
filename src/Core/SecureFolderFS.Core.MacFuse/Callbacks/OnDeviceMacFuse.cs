@@ -494,6 +494,11 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 File.Delete(directoryIdPath);
                 specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
 
+                // Clean up sidecar after successful delete/recycle
+                NativePathHelpers.DeleteSidecarFile(
+                    Path.GetFileName(ciphertextPath),
+                    Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
+
                 return 0;
             }
             catch (Exception ex)
@@ -620,6 +625,11 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                     NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
                 else
                     File.Delete(ciphertextPath);
+
+                // Clean up sidecar after successful delete/recycle
+                NativePathHelpers.DeleteSidecarFile(
+                    Path.GetFileName(ciphertextPath),
+                    Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
 
                 return 0;
             }

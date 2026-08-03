@@ -31,14 +31,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 CredentialsOverlayViewModel => new CredentialsDialog(),
                 ExplanationOverlayViewModel => new ExplanationDialog(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
+                PaymentOverlayViewModel => new PaymentDialog(),
                 RecoveryOverlayViewModel => new RecoveryDialog(),
                 MigrationOverlayViewModel => new MigrationDialog(),
                 RecycleBinOverlayViewModel => new RecycleBinDialog(),
-                VaultItemInfoOverlayViewModel => new VaultItemInfoDialog(),
-
-                // Unused
-                PaymentOverlayViewModel => new PaymentDialog(),
                 IntroductionOverlayViewModel => new IntroductionControl(),
+                VaultItemInfoOverlayViewModel => new VaultItemInfoDialog(),
+                VaultRestorationOverlayViewModel => new RestorationDialog(),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };

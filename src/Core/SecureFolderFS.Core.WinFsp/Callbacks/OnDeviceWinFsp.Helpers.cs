@@ -15,6 +15,12 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private string GetCiphertextPathForUse(string plaintextName)
+        {
+            return NativePathHelpers.GetCiphertextPathForUse(plaintextName, _specifics);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsDirectory(string ciphertextPath)
         {
             return Directory.Exists(ciphertextPath) && !File.Exists(ciphertextPath);

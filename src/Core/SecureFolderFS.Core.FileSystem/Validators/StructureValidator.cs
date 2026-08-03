@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.Health;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -36,6 +37,10 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             if (!folderResult.Successful)
                 return folderResult;
+
+            // Detect orphan sidecar files
+            if (specifics.Options.ShorteningThreshold > 0)
+                await HealthHelpers.DetectOrphanSidecarsAsync(scannedFolder, reporter, cancellationToken).ConfigureAwait(false);
 
             await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
             {

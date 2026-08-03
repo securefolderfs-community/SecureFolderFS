@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers.Health;
 using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Sdk.Extensions;
@@ -40,6 +41,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     _ => GetDefault(aggregate)
                 },
                 FormatException => new HealthNameIssueViewModel(storable, result, "InvalidItemName".ToLocalized()) { ErrorMessage = "GenerateNewName".ToLocalized() },
+                OrphanSidecarException => new HealthOrphanSidecarIssueViewModel(storable, result, "OrphanSidecar".ToLocalized()) { ErrorMessage = "DeleteOrphanSidecar".ToLocalized() },
+                NormalizationException => new HealthNormalizationIssueViewModel(storable, result, "NormalizationIssue".ToLocalized()) { ErrorMessage = "RepairNormalization".ToLocalized() },
                 FileHeaderCorruptedException => new HealthFileDataIssueViewModel(storable, result, "IrrecoverableFile".ToLocalized(), isRecoverable: false) { ErrorMessage = "FileHeaderCorrupted".ToLocalized() },
                 FileChunksCorruptedException chunksEx => new HealthFileDataIssueViewModel(storable, result, "CorruptedFileChunks".ToLocalized(), chunksEx.CorruptedChunks, isRecoverable: true) { ErrorMessage = "FileHasCorruptedChunks".ToLocalized(chunksEx.CorruptedChunks.Count) },
                 CryptographicException => new HealthFileDataIssueViewModel(storable, result, "InvalidFileContents".ToLocalized()) { ErrorMessage = "RegenerateFileContents".ToLocalized() },
@@ -90,7 +93,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                         // Directory ID issue
                         HealthDirectoryIssueViewModel directoryIssue => await HealthHelpers.RepairDirectoryAsync(
                             directoryIssue.Folder ?? throw new ArgumentNullException(nameof(HealthDirectoryIssueViewModel.Folder)),
-                            specificsWrapper.Inner.Security,
+                            specificsWrapper.Inner,
                             cancellationToken),
 
                         // File data issue - repair chunks or delete irrecoverable file
@@ -103,6 +106,16 @@ namespace SecureFolderFS.UI.ServiceImplementation
                         // Irrecoverable file - delete it
                         HealthFileDataIssueViewModel { IsRecoverable: false, File: not null } dataIssue => await HealthHelpers.DeleteIrrecoverableFileAsync(
                             dataIssue.File,
+                            cancellationToken),
+
+                        // Orphan sidecar - delete it
+                        HealthOrphanSidecarIssueViewModel => await HealthHelpers.DeleteOrphanSidecarAsync(
+                            item.Inner,
+                            cancellationToken),
+
+                        // Non-normalized Base4K name - rename to NFC
+                        HealthNormalizationIssueViewModel => await HealthHelpers.RepairNormalizationAsync(
+                            item.Inner,
                             cancellationToken),
 
                         // Default

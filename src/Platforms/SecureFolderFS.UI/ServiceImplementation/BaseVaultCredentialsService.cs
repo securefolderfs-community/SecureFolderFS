@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -27,10 +28,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual IEnumerable<string> GetContentCiphers()
         {
+            // Default to AES-GCM if supported, otherwise use XChaCha20-Poly1305.
+            // This is because AES-NI intrinsics are faster on supported platforms
+            if (AesGcm.IsSupported)
+                yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+
+#if DEBUG
             if (!OperatingSystem.IsIOS())
                 yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+            
+            if (!AesGcm.IsSupported)
+                yield return Core.Cryptography.Constants.CipherId.AES_GCM; // Brute-force the branch anyway
+#else
+            yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
+#endif
 
-            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
             yield return Core.Cryptography.Constants.CipherId.NONE;
         }
 
@@ -44,17 +56,32 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<string> FromUnlockProcedureAsync(IFolder vaultFolder, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken = default)
         {
+            AuthenticationViewModel[]? requiredProcedures = null;
+            AuthenticationViewModel[]? complementedProcedures = null;
+
             try
             {
-                var procedures = await GetLoginAsync(vaultFolder, unlockProcedure, string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
-                var result = string.Join(" + ", procedures.Select(x => x.Title));
+                requiredProcedures = await GetLoginAsync(vaultFolder, unlockProcedure with { Complementation = null }, string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                var requiredText = string.Join(" + ", requiredProcedures.Select(x => x.Title));
 
-                procedures.DisposeAll();
-                return result;
+                if (string.IsNullOrWhiteSpace(unlockProcedure.Complementation))
+                    return requiredText;
+
+                complementedProcedures = await GetLoginAsync(vaultFolder, new([ unlockProcedure.Complementation ], null), string.Empty, cancellationToken).ToArrayAsyncImpl(cancellationToken);
+                var complementedText = string.Join(" + ", complementedProcedures.Select(x => x.Title));
+
+                return string.IsNullOrWhiteSpace(requiredText)
+                    ? complementedText
+                    : $"{requiredText} / {complementedText}";
             }
             catch (Exception)
             {
                 return "AuthenticationUnavailable".ToLocalized();
+            }
+            finally
+            {
+                requiredProcedures?.DisposeAll();
+                complementedProcedures?.DisposeAll();
             }
         }
 
@@ -73,6 +100,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
             }
         }
 
+        /// <inheritdoc/>
+        public virtual async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(
+            IFolder vaultFolder,
+            AuthenticationMethod unlockProcedure,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            await foreach (var item in GetLoginAsync(vaultFolder, unlockProcedure, config.Uid, cancellationToken))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return item;
+            }
+        }
+
         /// <summary>
         /// Retrieves the authentication methods for login routine.
         /// </summary>
@@ -85,5 +129,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
         /// <inheritdoc/>
         public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+
+        protected static IEnumerable<string> EnumerateLoginMethods(AuthenticationMethod unlockProcedure)
+        {
+            foreach (var item in unlockProcedure.Methods)
+                yield return item;
+
+            if (!string.IsNullOrWhiteSpace(unlockProcedure.Complementation))
+                yield return unlockProcedure.Complementation;
+        }
     }
 }

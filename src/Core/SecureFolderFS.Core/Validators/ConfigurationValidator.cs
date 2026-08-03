@@ -25,12 +25,6 @@ namespace SecureFolderFS.Core.Validators
             await Task.CompletedTask;
         }
 
-        public async Task V4ValidateAsync(V4VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
-        {
-            V4Validate(value);
-            await Task.CompletedTask;
-        }
-
         [SkipLocalsInit]
         private void Validate(VaultConfigurationDataModel value)
         {
@@ -44,20 +38,6 @@ namespace SecureFolderFS.Core.Validators
             });
 
             // Confirm that the hashes are equal
-            if (!isEqual)
-                throw new CryptographicException("Vault hash doesn't match the computed hash.");
-        }
-
-        [SkipLocalsInit]
-        private void V4Validate(V4VaultConfigurationDataModel value)
-        {
-            var isEqual = _macKey.UseKey(macKey =>
-            {
-                Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
-                VaultParser.V4CalculateConfigMac(value, macKey, payloadMac);
-                return CryptographicOperations.FixedTimeEquals(payloadMac, value.PayloadMac);
-            });
-
             if (!isEqual)
                 throw new CryptographicException("Vault hash doesn't match the computed hash.");
         }

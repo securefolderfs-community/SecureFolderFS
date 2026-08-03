@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
         public ICreationRoutine CreateVault()
         {
-            // Only in the case of creation the validation is not triggered
+            // In the case of creation the validation is not triggered
             return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 
@@ -45,16 +45,28 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new RecoverRoutine(VaultReader);
         }
 
+        public ICredentialsRoutine RestoreVault()
+        {
+            // In the case of restoring the validation is not triggered since the vault is expected to be in an invalid state
+            return new RestoreRoutine(_vaultFolder, VaultWriter);
+        }
+
         public IModifyCredentialsRoutine ModifyCredentials()
         {
             CheckVaultValidation();
             return new ModifyCredentialsRoutine(VaultReader, VaultWriter);
         }
 
+        public ModifyComplementationRoutine ModifyComplementation()
+        {
+            CheckVaultValidation();
+            return new ModifyComplementationRoutine(VaultReader, VaultWriter);
+        }
+
         private void CheckVaultValidation()
         {
             if (!_validationResult.Successful)
-                throw _validationResult.Exception ?? new InvalidDataException("Vault is not valid");
+                throw _validationResult.Exception ?? new InvalidDataException("Vault format is invalid.");
         }
 
         public static async Task<VaultRoutines> CreateRoutinesAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)

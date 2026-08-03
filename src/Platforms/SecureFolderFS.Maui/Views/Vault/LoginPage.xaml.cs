@@ -134,6 +134,15 @@ namespace SecureFolderFS.Maui.Views.Vault
                 => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(args.UnlockedVaultViewModel.VaultViewModel.VaultModel) ?? false);
             e.TaskCompletion?.TrySetResult(true);
         }
+        
+        private void AuthenticationOptions_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (sender is not Picker picker)
+                return;
+            
+            var option = ViewModel?.LoginViewModel?.AuthenticationOptions.ElementAtOrDefault(picker.SelectedIndex);
+            ViewModel?.LoginViewModel?.SelectAuthenticationOptionCommand.Execute(option);
+        }
 
         public VaultLoginViewModel? ViewModel
         {

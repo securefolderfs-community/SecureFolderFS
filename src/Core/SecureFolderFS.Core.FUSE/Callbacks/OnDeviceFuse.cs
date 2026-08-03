@@ -1,6 +1,10 @@
+using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
@@ -67,7 +71,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
-            var ciphertextPath = GetCiphertextPath(path);
+            var ciphertextPath = GetCiphertextPathForUse(path);
             if (ciphertextPath is null)
                 return -ENOENT;
 
@@ -283,7 +287,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (FuseOptions!.IsReadOnly)
                 return -EROFS;
 
-            var ciphertextPath = GetCiphertextPath(path);
+            var ciphertextPath = GetCiphertextPathForUse(path);
             if (ciphertextPath is null)
                 return -ENOENT;
 
@@ -450,7 +454,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -EROFS;
 
             var ciphertextPath = GetCiphertextPath(path);
-            var newCiphertextPath = GetCiphertextPath(newPath);
+            var newCiphertextPath = GetCiphertextPathForUse(newPath);
             if (ciphertextPath is null || newCiphertextPath is null)
                 return -ENOENT;
 
@@ -460,6 +464,11 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 if (RenameAt2(0, ciphertextPathPtr, 0, newCiphertextPathPtr, (uint)flags) == -1)
                     return -errno;
             }
+
+            // Clean up old sidecar after successful rename
+            NativePathHelpers.DeleteSidecarFile(
+                Path.GetFileName(ciphertextPath),
+                Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
 
             return 0;
         }
@@ -489,11 +498,29 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 {
                     // The folder is moved into the recycle bin together with its DirectoryID file
                     NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.Folder);
+
+                    // Clean up sidecar after successful delete/recycle
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(ciphertextPath),
+                        Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
+
                     return 0;
+                }
+                catch (FileNotFoundException)
+                {
+                    return -ENOENT;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    return -ENOENT;
                 }
                 catch (UnauthorizedAccessException)
                 {
                     return -EACCES;
+                }
+                catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+                {
+                    return -ENOSPC;
                 }
                 catch (Exception)
                 {
@@ -620,7 +647,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         /// <remarks>
         /// This method is also responsible for file deletion.
         /// </remarks>
-        public override unsafe int Unlink(ReadOnlySpan<byte> path)
+        public override int Unlink(ReadOnlySpan<byte> path)
         {
             if (FuseOptions!.IsReadOnly)
                 return -EROFS;
@@ -641,22 +668,34 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 try
                 {
                     NativeRecycleBinHelpers.DeleteOrRecycle(ciphertextPath, specifics, StorableType.File);
+
+                    // Clean up sidecar after successful delete/recycle
+                    NativePathHelpers.DeleteSidecarFile(
+                        Path.GetFileName(ciphertextPath),
+                        Path.GetDirectoryName(ciphertextPath) ?? string.Empty);
+
                     return 0;
+                }
+                catch (FileNotFoundException)
+                {
+                    return -ENOENT;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    return -ENOENT;
                 }
                 catch (UnauthorizedAccessException)
                 {
                     return -EACCES;
                 }
+                catch (IOException ioEx) when (ErrorHandlingHelpers.IsDiskFullException(ioEx))
+                {
+                    return -ENOSPC;
+                }
                 catch (Exception)
                 {
                     return -EIO;
                 }
-            }
-
-            fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
-            {
-                if (unlink(ciphertextPathPtr) == -1)
-                    return -errno;
             }
 
             return 0;
@@ -730,12 +769,21 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return buffer.Length;
         }
 
-        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> plaintextName)
+        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> nativePlaintextName)
         {
-            fixed (byte *plaintextNamePtr = plaintextName)
+            fixed (byte *plaintextNamePtr = nativePlaintextName)
             {
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(plaintextNamePtr, plaintextName.Length), specifics, directoryId);
+                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(plaintextNamePtr, nativePlaintextName.Length), specifics, directoryId);
+            }
+        }
+
+        private unsafe string? GetCiphertextPathForUse(ReadOnlySpan<byte> nativePlaintextName)
+        {
+            fixed (byte *plaintextNamePtr = nativePlaintextName)
+            {
+                var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+                return NativePathHelpers.GetCiphertextPathForUse(Encoding.UTF8.GetString(plaintextNamePtr, nativePlaintextName.Length), specifics, directoryId);
             }
         }
     }

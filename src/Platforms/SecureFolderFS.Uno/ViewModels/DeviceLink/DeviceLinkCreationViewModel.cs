@@ -35,7 +35,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             try
             {
-                using var challenge = CryptHelpers.GenerateChallenge(VaultId, Core.Cryptography.Constants.KeyTraits.CHALLENGE_KEY_PART_LENGTH_32);
+                using var challenge = CryptHelpers.GenerateChallenge(VaultId, Core.Cryptography.Constants.KeyTraits.KEY_PART_LENGTH_32);
 
                 var keyResult = await EnrollAsync(VaultId, challenge.Key, cancellationToken);
                 if (!keyResult.TryGetValue(out var key) || keyResult is not DeviceLinkPairingResult pairingResult)

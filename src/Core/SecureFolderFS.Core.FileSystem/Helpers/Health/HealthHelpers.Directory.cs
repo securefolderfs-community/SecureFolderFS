@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
@@ -15,10 +14,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
 {
     public static partial class HealthHelpers
     {
-        public static async Task<IResult> RepairDirectoryAsync(IFolder affected, Security security, CancellationToken cancellationToken)
+        public static async Task<IResult> RepairDirectoryAsync(IFolder affected, FileSystemSpecifics specifics, CancellationToken cancellationToken)
         {
             // Return success if no encryption is used
-            if (security.NameCrypt is null)
+            if (specifics.Security.NameCrypt is null)
                 return Result.Success;
 
             if (affected is not IRenamableFolder renamableFolder)
@@ -39,9 +38,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                     if (PathHelpers.IsCoreName(item.Name))
                         continue;
 
-                    // Encrypt a new name and rename
-                    var encryptedName = AbstractPathHelpers.EncryptNewName(item.Name, directoryId, security);
+                    // Remember old name for sidecar cleanup
+                    var oldName = item.Name;
+
+                    // Encrypt a new name (writes sidecar if shortening applies) and rename
+                    var encryptedName = await AbstractPathHelpers.EncryptNewNameForUseAsync(item.Name, directoryId, affected, specifics, cancellationToken);
                     _ = await renamableFolder.RenameAsync(item, encryptedName, cancellationToken);
+
+                    // Clean up old sidecar if the previous name was shortened
+                    await AbstractPathHelpers.DeleteSidecarFileAsync(oldName, renamableFolder, cancellationToken);
                 }
 
                 return Result.Success;

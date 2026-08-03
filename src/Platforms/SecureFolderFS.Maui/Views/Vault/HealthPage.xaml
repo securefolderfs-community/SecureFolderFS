@@ -10,15 +10,12 @@
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:uco="clr-namespace:SecureFolderFS.Maui.UserControls.Options"
-    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
     xmlns:vm2="clr-namespace:SecureFolderFS.UI.ViewModels.Health;assembly=SecureFolderFS.UI"
     Title="{l:ResourceString Rid=HealthReport}"
     x:DataType="local:HealthPage">
 
     <ContentPage.Resources>
-        <vc:ExpandedStateToIconConverter x:Key="ExpandedStateToIconConverter" />
-
         <!--  Directory Issue  -->
         <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
             <mtk:Expander x:Name="IssueExpander">

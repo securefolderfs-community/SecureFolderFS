@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -16,6 +18,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Shared.SecureStore;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -34,6 +37,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
 
         public required IDisposable UnlockContract { private get; init; }
+
+        public KeySequence? OldPasskey { private get; init; }
+
+        public IReadOnlyList<string>? OldAuthenticationMethodIds { private get; init; }
 
         public CredentialsConfirmationViewModel(IFolder vaultFolder, RegisterViewModel registerViewModel, AuthenticationStage authenticationStage)
         {
@@ -99,23 +106,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private async Task RemoveAsync(CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
             if (_authenticationStage != AuthenticationStage.ProceedingStageOnly)
                 return;
 
-            var key = RegisterViewModel.Credentials.Keys.First();
+            var firstStageKey = OldPasskey.Keys.First();
             var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             var authenticationMethod = new AuthenticationMethod([configuredOptions.UnlockProcedure.Methods[0]], null);
 
-            await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
+            await ChangeCredentialsAsync(firstStageKey, configuredOptions, authenticationMethod, cancellationToken);
         }
 
         private async Task ChangeCredentialsAsync(IKeyUsage key, VaultOptions configuredOptions, AuthenticationMethod unlockProcedure, CancellationToken cancellationToken)
         {
             // Modify the current unlock procedure
-            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, configuredOptions with
+            var updatedOptions = configuredOptions with
             {
                 UnlockProcedure = unlockProcedure
-            }, cancellationToken);
+            };
+
+            if (OldPasskey is not null)
+            {
+                if (RequiresComplementationRoutine(configuredOptions.UnlockProcedure, unlockProcedure))
+                    await VaultManagerService.ModifyComplementationAsync(_vaultFolder, UnlockContract, CreateComplementationCredentials(key, configuredOptions.UnlockProcedure, unlockProcedure), updatedOptions, cancellationToken);
+                else
+                {
+                    using var updatedPasskey = CreateUpdatedAuthenticationPasskey(key, unlockProcedure);
+                    await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, OldPasskey, updatedPasskey, updatedOptions, cancellationToken);
+                }
+            }
+            else
+                await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, updatedOptions, cancellationToken);
 
             if (!string.IsNullOrEmpty(configuredOptions.VaultId))
                 PersistedCredentialsModel.Instance.Remove(configuredOptions.VaultId);
@@ -127,6 +148,161 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 && ConfiguredViewModel is not null
                 && !RegisterViewModel.CurrentViewModel.Id.Equals(ConfiguredViewModel.Id))
                 await ConfiguredViewModel.RevokeAsync(configuredOptions.VaultId, cancellationToken);
+        }
+
+        private ComplementationCredentials CreateComplementationCredentials(IKeyUsage key, AuthenticationMethod configuredProcedure, AuthenticationMethod updatedProcedure)
+        {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
+
+            var oldComplementation = configuredProcedure.Complementation;
+            var newComplementation = updatedProcedure.Complementation;
+            var primaryChanged = !configuredProcedure.Methods.SequenceEqual(updatedProcedure.Methods);
+            var primaryMethod = GetPrimaryMethod(configuredProcedure);
+            var currentPrimaryCredential = GetOldCredentialByMethod(configuredProcedure, primaryMethod);
+            var currentComplementCredential = string.IsNullOrWhiteSpace(oldComplementation)
+                ? null
+                : GetOldCredentialByMethod(configuredProcedure, oldComplementation);
+
+            if (string.IsNullOrWhiteSpace(oldComplementation) && !string.IsNullOrWhiteSpace(newComplementation))
+            {
+                return new()
+                {
+                    CurrentKeystoreCredential = OldPasskey,
+                    CurrentPrimaryCredential = currentPrimaryCredential,
+                    NewPrimaryCredential = primaryChanged ? GetCredentialAt(key, 0) ?? key : null,
+                    NewComplementCredential = GetCredentialAt(key, 1) ?? key
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldComplementation) && string.IsNullOrWhiteSpace(newComplementation))
+            {
+                return new()
+                {
+                    CurrentPrimaryCredential = currentPrimaryCredential,
+                    NewPrimaryCredential = updatedProcedure.Methods.Length > 1 ? key : null
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldComplementation) && !string.IsNullOrWhiteSpace(newComplementation))
+            {
+                var updatePrimaryCredential = primaryChanged || _authenticationStage == AuthenticationStage.FirstStageOnly;
+                var updateComplementCredential = !string.Equals(oldComplementation, newComplementation, StringComparison.Ordinal) ||
+                                                 _authenticationStage == AuthenticationStage.ProceedingStageOnly;
+
+                return new()
+                {
+                    CurrentPrimaryCredential = currentPrimaryCredential,
+                    CurrentComplementCredential = currentComplementCredential,
+                    NewPrimaryCredential = updatePrimaryCredential ? GetCredentialAt(key, 0) ?? key : null,
+                    NewComplementCredential = updateComplementCredential ? GetCredentialAt(key, 1) ?? key : null
+                };
+            }
+
+            throw new InvalidOperationException("The requested authentication change does not involve complementation.");
+        }
+
+        private static bool RequiresComplementationRoutine(AuthenticationMethod configuredProcedure, AuthenticationMethod updatedProcedure)
+        {
+            var wasComplemented = !string.IsNullOrWhiteSpace(configuredProcedure.Complementation);
+            var willBeComplemented = !string.IsNullOrWhiteSpace(updatedProcedure.Complementation);
+            var complementationChanged = !string.Equals(configuredProcedure.Complementation, updatedProcedure.Complementation, StringComparison.Ordinal);
+
+            return complementationChanged || wasComplemented || willBeComplemented;
+        }
+
+        private SecureKey CreateUpdatedAuthenticationPasskey(IKeyUsage providedCredential, AuthenticationMethod updatedProcedure)
+        {
+            ArgumentNullException.ThrowIfNull(OldPasskey);
+
+            var targetCredentials = new List<IKeyUsage>(updatedProcedure.Methods.Length);
+            for (var i = 0; i < updatedProcedure.Methods.Length; i++)
+            {
+                var credential = GetNewCredentialForStage(providedCredential, i)
+                                 ?? GetCredentialAt(OldPasskey, i)
+                                 ?? throw new InvalidOperationException($"Credential material for authentication method '{updatedProcedure.Methods[i]}' is missing.");
+
+                targetCredentials.Add(credential);
+            }
+
+            return CreateStandalonePasskey(targetCredentials);
+        }
+
+        private IKeyUsage? GetNewCredentialForStage(IKeyUsage providedCredential, int targetIndex)
+        {
+            return _authenticationStage switch
+            {
+                AuthenticationStage.FirstStageOnly => targetIndex == 0 ? GetCredentialAt(providedCredential, 0) ?? providedCredential : null,
+                AuthenticationStage.ProceedingStageOnly => targetIndex == 1 ? GetProceedingStageCredential(providedCredential) : null,
+                _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+            };
+        }
+
+        private static IKeyUsage? GetProceedingStageCredential(IKeyUsage providedCredential)
+        {
+            if (providedCredential is not KeySequence sequence)
+                return providedCredential;
+
+            return sequence.Keys.ElementAtOrDefault(1) ?? (sequence.Count == 1 ? sequence.Keys.FirstOrDefault() : null);
+        }
+
+        private static SecureKey CreateStandalonePasskey(IReadOnlyCollection<IKeyUsage> credentials)
+        {
+            var combinedKey = GC.AllocateArray<byte>(credentials.Sum(x => x.Length), pinned: true);
+
+            try
+            {
+                var offset = 0;
+                foreach (var credential in credentials)
+                {
+                    var capturedOffset = offset;
+                    credential.UseKey(span => span.CopyTo(combinedKey.AsSpan(capturedOffset, span.Length)));
+                    offset += credential.Length;
+                }
+
+                return SecureKey.TakeOwnership(combinedKey);
+            }
+            catch
+            {
+                CryptographicOperations.ZeroMemory(combinedKey);
+                throw;
+            }
+        }
+
+        private static IKeyUsage? GetCredentialAt(IKeyUsage key, int index)
+        {
+            return key is KeySequence sequence
+                ? sequence.Keys.ElementAtOrDefault(index)
+                : index == 0 ? key : null;
+        }
+
+        private IKeyUsage? GetOldCredentialByMethod(AuthenticationMethod configuredProcedure, string authenticationMethodId)
+        {
+            var methodIds = GetOldAuthenticationMethodIds(configuredProcedure);
+            if (methodIds is null)
+                return null;
+
+            for (var i = 0; i < methodIds.Count; i++)
+            {
+                if (string.Equals(methodIds[i], authenticationMethodId, StringComparison.Ordinal))
+                    return GetCredentialAt(OldPasskey!, i);
+            }
+
+            return null;
+        }
+
+        private IReadOnlyList<string>? GetOldAuthenticationMethodIds(AuthenticationMethod configuredProcedure)
+        {
+            if (OldAuthenticationMethodIds is { Count: > 0 })
+                return OldAuthenticationMethodIds;
+
+            return string.IsNullOrWhiteSpace(configuredProcedure.Complementation)
+                ? configuredProcedure.Methods
+                : null;
+        }
+
+        private static string GetPrimaryMethod(AuthenticationMethod authenticationMethod)
+        {
+            return authenticationMethod.Methods.FirstOrDefault() ?? throw new InvalidOperationException("Primary authentication is missing.");
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

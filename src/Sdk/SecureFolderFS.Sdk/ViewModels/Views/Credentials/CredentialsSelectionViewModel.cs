@@ -1,4 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
@@ -9,12 +15,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -31,6 +32,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
         public IDisposable? UnlockContract { private get; set; }
+
+        public KeySequence? OldPasskey { private get; set; }
+
+        public IReadOnlyList<string>? OldAuthenticationMethodIds { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
@@ -76,6 +81,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 IsRemoving = true,
                 IsComplementationAvailable = false,
                 UnlockContract = UnlockContract,
+                OldPasskey = OldPasskey,
+                OldAuthenticationMethodIds = OldAuthenticationMethodIds,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }
@@ -95,8 +102,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                IsComplementationAvailable = _authenticationStage != AuthenticationStage.FirstStageOnly,
+                IsComplementationAvailable = RegisterViewModel.CurrentViewModel?.CanComplement ?? false,
                 UnlockContract = UnlockContract,
+                OldPasskey = OldPasskey,
+                OldAuthenticationMethodIds = OldAuthenticationMethodIds,
                 ConfiguredViewModel = ConfiguredViewModel
             });
         }

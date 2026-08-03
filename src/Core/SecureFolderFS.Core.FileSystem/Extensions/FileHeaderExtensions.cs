@@ -1,16 +1,16 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FileSystem.Extensions
 {
-    internal static class FileHeaderExtensions
+    public static class FileHeaderExtensions
     {
         [SkipLocalsInit]
-        public static bool ReadHeader(this HeaderBuffer headerBuffer, Stream ciphertextStream, Security security)
+        public static bool ReadHeader(this HeaderBuffer headerBuffer, Stream ciphertextStream, IHeaderCrypt headerCrypt)
         {
             if (headerBuffer.IsHeaderReady)
                 return true;
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
                     return true;
 
                 // Allocate ciphertext header
-                Span<byte> ciphertextHeader = stackalloc byte[security.HeaderCrypt.HeaderCiphertextSize];
+                Span<byte> ciphertextHeader = stackalloc byte[headerCrypt.HeaderCiphertextSize];
 
                 // Read header
                 int read;
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Core.FileSystem.Extensions
                     return false;
 
                 // Decrypt header
-                headerBuffer.IsHeaderReady = security.HeaderCrypt.DecryptHeader(ciphertextHeader, headerBuffer);
+                headerBuffer.IsHeaderReady = headerCrypt.DecryptHeader(ciphertextHeader, headerBuffer);
 
                 return headerBuffer.IsHeaderReady;
             }

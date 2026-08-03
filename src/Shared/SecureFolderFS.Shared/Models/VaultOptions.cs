@@ -26,6 +26,11 @@
         public string? NameEncodingId { get; init; }
 
         /// <summary>
+        /// Gets the threshold at which the file names are shortened.
+        /// </summary>
+        public int ShorteningThreshold { get; init; }
+
+        /// <summary>
         /// Gets the size of the recycle bin.
         /// </summary>
         /// <remarks>

@@ -1469,6 +1469,33 @@
   <data name="OpenInExternalApp" xml:space="preserve">
       <value>Open in external app</value>
   </data>
+  <data name="UseAsAlternativeLogin" xml:space="preserve">
+      <value>Use as alternative login method</value>
+  </data>
+  <data name="LoginMethod" xml:space="preserve">
+      <value>Login method</value>
+  </data>
+  <data name="OrphanSidecar" xml:space="preserve">
+      <value>Unlinked shortening file</value>
+  </data>
+  <data name="DeleteOrphanSidecar" xml:space="preserve">
+      <value>The name shortening file has no data file and will be deleted.</value>
+  </data>
+  <data name="NormalizationIssue" xml:space="preserve">
+      <value>Non-normalized file name</value>
+  </data>
+  <data name="RepairNormalization" xml:space="preserve">
+      <value>The file name uses decomposed Unicode and will be normalized.</value>
+  </data>
+  <data name="NameShortening" xml:space="preserve">
+      <value>Name shortening</value>
+  </data>
+  <data name="RestorationTitle" xml:space="preserve">
+      <value>Important configuration files are corrupted and must be restored.</value>
+  </data>
+  <data name="RestorationDescription" xml:space="preserve">
+      <value>SecureFolderFS will attempt to regenerate the configuration files using information from your encrypted data. After the restore process is complete, you will need to reset your credentials.</value>
+  </data>
   <data name="Calculating" xml:space="preserve">
       <value>Calculating...</value>
   </data>

@@ -1,46 +1,70 @@
-using SecureFolderFS.Shared.Models;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Core.Constants.Vault;
 
-namespace SecureFolderFS.Core.DataModels
+namespace SecureFolderFS.Core.Migration.DataModels
 {
     [Serializable]
-    public sealed record class V4VaultConfigurationDataModel : VersionDataModel
+    public sealed record class V3VaultConfigurationDataModel : VersionDataModel
     {
+        /// <summary>
+        /// Gets the ID for content encryption.
+        /// </summary>
         [JsonPropertyName(Associations.ASSOC_CONTENT_CIPHER_ID)]
         [DefaultValue("")]
         public required string ContentCipherId { get; init; }
 
+        /// <summary>
+        /// Gets the ID for file name encryption.
+        /// </summary>
         [JsonPropertyName(Associations.ASSOC_FILENAME_CIPHER_ID)]
         [DefaultValue("")]
         public required string FileNameCipherId { get; init; }
 
+        /// <summary>
+        /// Gets the ID for file name encoding.
+        /// </summary>
         [JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
         [DefaultValue("")]
         public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
 
+        /// <summary>
+        /// Gets the size of the recycle bin.
+        /// </summary>
+        /// <remarks>
+        /// If the size is zero, the recycle bin is disabled.
+        /// If the size is any value smaller than zero, the recycle bin has unlimited size capacity.
+        /// Any values above zero indicate the maximum capacity in bytes that is allowed for the recycling operation to proceed.
+        /// </remarks>
         [JsonPropertyName(Associations.ASSOC_RECYCLE_SIZE)]
         [DefaultValue(0L)]
-        public long RecycleBinSize { get; set; } = 0L;
+        public long RecycleBinSize { get; set; }
 
+        /// <summary>
+        /// Gets the information about the authentication method used for this vault.
+        /// </summary>
         [JsonPropertyName(Associations.ASSOC_AUTHENTICATION)]
         [DefaultValue("")]
         public required string AuthenticationMethod { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets the unique identifier of the vault represented by a GUID.
+        /// </summary>
         [JsonPropertyName(Associations.ASSOC_VAULT_ID)]
         [DefaultValue("")]
         public required string Uid { get; init; } = string.Empty;
 
-        [JsonPropertyName(Associations.ASSOC_APP_PLATFORM)]
-        public AppPlatformVaultOptions? AppPlatform { get; init; }
-
+        /// <summary>
+        /// Gets the HMAC-SHA256 hash of the payload.
+        /// </summary>
         [JsonPropertyName("hmacsha256mac")]
         public byte[]? PayloadMac { get; set; }
 
-        public static V4VaultConfigurationDataModel V4FromVaultOptions(VaultOptions vaultOptions)
+        public static V3VaultConfigurationDataModel FromVaultOptions(VaultOptions vaultOptions)
         {
             return new()
             {
@@ -51,25 +75,8 @@ namespace SecureFolderFS.Core.DataModels
                 AuthenticationMethod = vaultOptions.UnlockProcedure.ToString(),
                 RecycleBinSize = vaultOptions.RecycleBinSize,
                 Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),
-                AppPlatform = vaultOptions.AppPlatform,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
-            };
-        }
-
-        public VaultConfigurationDataModel ToVaultConfigurationDataModel()
-        {
-            return new VaultConfigurationDataModel
-            {
-                Version = Version,
-                ContentCipherId = ContentCipherId,
-                FileNameCipherId = FileNameCipherId,
-                FileNameEncodingId = FileNameEncodingId,
-                AuthenticationMethod = AuthenticationMethod,
-                RecycleBinSize = RecycleBinSize,
-                Uid = Uid,
-                PayloadMac = PayloadMac
             };
         }
     }
 }
-
