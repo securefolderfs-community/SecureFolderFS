@@ -924,7 +924,7 @@
     <value>You're in control</value>
   </data>
   <data name="OnboardingDashboardSubtitle" xml:space="preserve">
-    <value>Quickly manage your vault from a top-down dashboard view. Modify credentials, browse files, and check the integrity of your files.</value>
+    <value>Everything you need in one place. Quickly browse your files, modify credentials, and monitor your vault's integrity from a centralized dashboard.</value>
   </data>
   <data name="OnboardingDataSourcesTitle" xml:space="preserve">
     <value>Your data — secure, anywhere</value>
@@ -933,22 +933,22 @@
     <value>In addition to storing vaults on your device, you can also connect to other cloud storage providers.</value>
   </data>
   <data name="OnboardingAuthenticationTitle" xml:space="preserve">
-    <value>Authenticate the way you want</value>
+    <value>Unlock your vaults your way</value>
   </data>
   <data name="OnboardingAuthenticationSubtitle" xml:space="preserve">
-    <value>With our robust security, you choose how you access your files. Whether it's password, Windows Hello, or a key file — your data remains protected and readily available, tailored to your preferences.</value>
+    <value>With our robust security, you choose how you access your files. Whether it's a password, hardware security key, or biometrics — your data remains protected and readily available.</value>
   </data>
   <data name="OnboardingEncryptionTitle" xml:space="preserve">
-    <value>Your files, always protected</value>
+    <value>Strong encryption by design</value>
   </data>
   <data name="OnboardingEncryptionSubtitle" xml:space="preserve">
-    <value>Your files are encrypted using industry-standard AES-256 encryption. Even file and folder names are protected, ensuring that your sensitive documents remain completely private.</value>
+    <value>Every file is protected with AES-256-GCM encryption. Even file and folder names are encrypted to help keep your data truly private.</value>
   </data>
   <data name="OnboardingFileSystemTitle" xml:space="preserve">
     <value>Seamless virtual file system</value>
   </data>
   <data name="OnboardingFileSystemSubtitle" xml:space="preserve">
-    <value>Thanks to our seamless virtual file system engine, you can access your data worry-free without compromising speed or security. Your encrypted vault appears as a regular drive.</value>
+    <value>Your vault appears as a regular drive, allowing you to browse, edit, and use your favorite apps without compromising on performance or security.</value>
   </data>
   <data name="OnboardingEndTitle" xml:space="preserve">
     <value>You're ready to go!</value>
