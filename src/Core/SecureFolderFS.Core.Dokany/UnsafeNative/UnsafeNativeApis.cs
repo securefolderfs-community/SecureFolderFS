@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Dokany.UnsafeNative
         [return: MarshalAs(UnmanagedType.U8)]
         public static extern ulong DokanDriverVersion();
 
-        [DllImport("Shlwapi.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        [DllImport("Shlwapi.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool PathMatchSpec(
             [In] string pszFile,
