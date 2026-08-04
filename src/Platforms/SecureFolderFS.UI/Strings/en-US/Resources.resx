@@ -216,12 +216,6 @@
   <data name="DataEncryption" xml:space="preserve">
     <value>Data encryption</value>
   </data>
-  <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
-  </data>
-  <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
-  </data>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading {0}%</value>
   </data>
@@ -1125,7 +1119,7 @@
       <value>Parts of the file are corrupted and will be reset</value>
   </data>
   <data name="CorruptedChunksPlural" xml:space="preserve">
-      <value>{0:plural:{} corrupted region|{} corrupted regions|{} corrupted regions}</value>
+      <value>{0:plural:{} corrupted region|{} corrupted regions}</value>
   </data>
   <data name="DataLossImminent" xml:space="preserve">
       <value>Data loss unpreventable</value>
@@ -1236,7 +1230,7 @@
       <value>Are you sure you want to permanently delete {0:plural:one item|{} items}?</value>
   </data>
   <data name="ItemsExceedRecycleBinSizePlural" xml:space="preserve">
-      <value>The deleted {0:plural:item exceeds|{} items exceed|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items|{} items} instead?</value>
+      <value>The deleted {0:plural:item exceeds|{} items exceed} the available space in the recycle bin. Do you want to permanently delete {0:plural:this item|{} items} instead?</value>
   </data>
   <data name="IntroPrefix" xml:space="preserve">
       <value>By continuing, you agree to our </value>
@@ -1626,13 +1620,13 @@
       <value>Show all</value>
   </data>
   <data name="DevicesCountPlural" xml:space="preserve">
-      <value>{0:plural:{} device|{} devices|{} devices}</value>
+      <value>{0:plural:{} device|{} devices}</value>
   </data>
   <data name="MembersCountPlural" xml:space="preserve">
-      <value>{0:plural:{} member|{} members|{} members}</value>
+      <value>{0:plural:{} member|{} members}</value>
   </data>
   <data name="PendingCountPlural" xml:space="preserve">
-      <value>{0:plural:{} pending|{} pending|{} pending}</value>
+      <value>{0:plural:{} pending|{} pending}</value>
   </data>
   <data name="Action" xml:space="preserve">
       <value>Action</value>
@@ -1899,7 +1893,7 @@
       <value>Created the group</value>
   </data>
   <data name="EventInfo_group_deleted" xml:space="preserve">
-      <value>Removed a group with {0:plural:{} member|{} members|{} members}</value>
+      <value>Removed a group with {0:plural:{} member|{} members}</value>
   </data>
   <data name="EventInfo_group_deleted_generic" xml:space="preserve">
       <value>Removed the group</value>
@@ -1929,10 +1923,10 @@
       <value>Removed {0}</value>
   </data>
   <data name="EventInfo_permissions_added" xml:space="preserve">
-      <value>Added {0:plural:{} permission|{} permissions|{} permissions}</value>
+      <value>Added {0:plural:{} permission|{} permissions}</value>
   </data>
   <data name="EventInfo_permissions_removed" xml:space="preserve">
-      <value>Removed {0:plural:{} permission|{} permissions|{} permissions}</value>
+      <value>Removed {0:plural:{} permission|{} permissions}</value>
   </data>
   <data name="EventInfo_permissions_added_and_removed" xml:space="preserve">
       <value>Added {0}, removed {1} permissions</value>
@@ -2097,7 +2091,7 @@
       <value>Something went wrong. The operation could not be completed</value>
   </data>
   <data name="TransferItemsFailedPlural" xml:space="preserve">
-      <value>Couldn't complete the operation for {0:plural:one item|{} items|{} items}</value>
+      <value>Couldn't complete the operation for {0:plural:one item|{} items}</value>
   </data>
   <data name="FolderLoadFailed" xml:space="preserve">
       <value>Couldn't load the contents of this folder</value>
@@ -2191,5 +2185,17 @@
   </data>
   <data name="RecycleBinSpaceTaken" xml:space="preserve">
       <value>Taken {0} out of {1}</value>
+  </data>
+  <data name="RestoreVault" xml:space="preserve">
+      <value>Restore vault</value>
+  </data>
+  <data name="PutToBackground" xml:space="preserve">
+      <value>Put to background</value>
+  </data>
+  <data name="PutToBackgroundDescription" xml:space="preserve">
+      <value>Reduce the app to System Tray when closing the window</value>
+  </data>
+  <data name="OnboardingEndSubtitle" xml:space="preserve">
+      <value>You're now ready to use SecureFolderFS! You can customize your app experience by heading to Settings.</value>
   </data>
 </root>

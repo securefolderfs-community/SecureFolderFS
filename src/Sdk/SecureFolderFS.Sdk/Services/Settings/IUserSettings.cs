@@ -82,11 +82,6 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool IsTelemetryEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the value that determines whether to periodically clear or untrack system-wide recently accessed items.
-        /// </summary>
-        bool DisableRecentAccess { get; set; }
-
-        /// <summary>
         /// Gets or sets a value that enables or disables the Device Link listening.
         /// </summary>
         bool EnableDeviceLink { get; set; }

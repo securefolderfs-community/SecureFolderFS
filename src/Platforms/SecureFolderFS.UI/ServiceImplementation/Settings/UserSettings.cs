@@ -127,13 +127,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public virtual bool DisableRecentAccess
-        {
-            get => GetSetting(static () => false);
-            set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
         public bool EnableDeviceLink
         {
             get => GetSetting(static () => false);
