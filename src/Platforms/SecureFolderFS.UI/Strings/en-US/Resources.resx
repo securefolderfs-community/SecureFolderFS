@@ -2198,4 +2198,7 @@
   <data name="OnboardingEndSubtitle" xml:space="preserve">
       <value>You're now ready to use SecureFolderFS! You can customize your app experience by heading to Settings.</value>
   </data>
+  <data name="ChangeIcon" xml:space="preserve">
+      <value>Change icon</value>
+  </data>
 </root>

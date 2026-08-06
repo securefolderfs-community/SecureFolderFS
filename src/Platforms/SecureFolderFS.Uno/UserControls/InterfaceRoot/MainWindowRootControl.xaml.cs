@@ -151,8 +151,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 await ViewModel.RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(ViewModel.VaultListViewModel, ViewModel.RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
 
-            // Signal that the main window has finished initializing
-            App.Instance?.MainWindowInitialized.TrySetResult();
+            // Signal that the main window has finished initializing.
+            // This is queued at low priority instead of being set directly, because the callers awaiting it
+            // may open additional windows - doing that from within the first layout/render pass crashes the
+            // macOS Skia host. Queuing defers them until the window has settled.
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,
+                static () => App.Instance?.MainWindowInitialized.TrySetResult());
         }
 
         private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)

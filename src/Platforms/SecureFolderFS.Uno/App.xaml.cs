@@ -64,7 +64,12 @@ namespace SecureFolderFS.Uno
         /// <summary>
         /// Gets a task that completes when the main window has finished initializing.
         /// </summary>
-        public TaskCompletionSource MainWindowInitialized { get; } = new();
+        /// <remarks>
+        /// Continuations must not run inline. Awaiters of this task open additional windows, and running them
+        /// synchronously from the code that completes the task would do so while the main window is still
+        /// initializing, which crashes the macOS Skia host.
+        /// </remarks>
+        public TaskCompletionSource MainWindowInitialized { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
@@ -281,6 +286,9 @@ namespace SecureFolderFS.Uno
                 if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
                     return;
 
+                // Creating a window while the main window is still running its first layout/render pass
+                // segfaults the macOS Skia host, so this must only ever run once the main window has settled
+                // (see the remarks on MainWindowInitialized).
                 var window = new Window();
                 window.Closed += PreviewWindow_Closed;
 

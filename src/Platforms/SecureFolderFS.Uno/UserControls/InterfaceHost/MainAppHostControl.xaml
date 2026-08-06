@@ -229,10 +229,10 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind CustomizeCommand, Mode=OneWay}"
                                 CommandParameter="Icon"
-                                Text="Change icon">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE70F;" />
-                                </MenuFlyoutItem.Icon>
+                                Text="{l:ResourceString Rid=ChangeIcon}">
+                                <!-- <MenuFlyoutItem.Icon> -->
+                                <!--     <FontIcon Glyph="&#xE70F;" /> -->
+                                <!-- </MenuFlyoutItem.Icon> -->
                             </MenuFlyoutItem>
 
                             <!--  Create shortcut file  -->
@@ -240,13 +240,17 @@
                                 Command="{x:Bind CreateShortcutCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanCreateShortcut, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=CreateShortcut}">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE71B;" />
-                                </MenuFlyoutItem.Icon>
+                                <!-- <MenuFlyoutItem.Icon> -->
+                                <!--     <FontIcon Glyph="&#xE71B;" /> -->
+                                <!-- </MenuFlyoutItem.Icon> -->
                             </MenuFlyoutItem>
 
                             <!--  Auto unlock  -->
-                            <ToggleMenuFlyoutItem IsChecked="{x:Bind IsAutoUnlockEnabled, Mode=TwoWay}" Text="{l:ResourceString Rid=AutoUnlock}" />
+                            <MenuFlyoutItem Click="EnableAutoUnlock_Click" Text="{l:ResourceString Rid=AutoUnlock}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="{x:Bind IsAutoUnlockEnabled, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:none|&#xE73E;:false:none|'}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
 
                             <!--  Move up/down  -->
                             <MenuFlyoutSeparator Visibility="{x:Bind CanMove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
