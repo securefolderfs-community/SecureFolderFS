@@ -19,7 +19,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
     [Bindable(true)]
     public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>, IFolderPicker
     {
+        public const int HIDE_ANIMATION_DURATION_MS = 350;
         private const int ERROR_DISPLAY_DURATION_MS = 5000;
+        private const int MAX_ERROR_SUMMARY_LENGTH = 32;
 
         private readonly BrowserViewModel? _browserViewModel;
         private readonly SynchronizationContext? _synchronizationContext;
@@ -28,8 +30,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         private CancellationTokenSource? _errorCts;
 
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private string? _ErrorDetails;
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _IsVisible;
+        [ObservableProperty] private bool _IsSuccess;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private bool _IsPickingFolder;
         [ObservableProperty] private bool _IsErrorVisible;
@@ -76,6 +80,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         {
             ClearError();
             Title = title;
+            IsSuccess = false;
             IsProgressing = true;
             IsVisible = true;
         }
@@ -99,7 +104,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             if (token.IsCancellationRequested)
                 return;
 
-            Title = message;
+            ErrorDetails = message;
+            Title = message.Length > MAX_ERROR_SUMMARY_LENGTH
+                ? string.Concat(message[..MAX_ERROR_SUMMARY_LENGTH].TrimEnd(), "…")
+                : message;
+
+            IsSuccess = false;
             IsErrorVisible = true;
             IsProgressing = false;
             CanCancel = true;
@@ -108,18 +118,51 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             _ = DismissErrorLaterAsync(token);
         }
 
+        /// <summary>
+        /// Suspends the automatic dismissal of the error banner, keeping it up until the user dismisses it.
+        /// Used by hosts that let the user open the full <see cref="ErrorDetails"/>.
+        /// </summary>
+        [RelayCommand]
+        private void HoldError()
+        {
+            // The error stays in place, and only the pending auto-dismissal is canceled
+            _errorCts?.TryCancel();
+        }
+
         private async Task DismissErrorLaterAsync(CancellationToken token)
         {
             try
             {
                 await Task.Delay(ERROR_DISPLAY_DURATION_MS, token);
-                IsErrorVisible = false;
-                await this.HideAsync();
             }
             catch (OperationCanceledException)
             {
                 // A newer operation or an explicit dismissal took over the control
+                return;
             }
+
+            await HideErrorAsync();
+        }
+
+        /// <summary>
+        /// Hides the error banner and only drops the error state once it has animated out.
+        /// Clearing it any earlier would repaint the control as a regular operation on the way out.
+        /// </summary>
+        private async Task HideErrorAsync()
+        {
+            var errorCts = _errorCts;
+            IsVisible = false;
+
+            // A frame of slack, so the error state outlives the hide animation itself
+            await Task.Delay(HIDE_ANIMATION_DURATION_MS + 50, CancellationToken.None);
+
+            // A newer error may have claimed the control while this one was animating out
+            if (!ReferenceEquals(errorCts, _errorCts))
+                return;
+
+            ClearError();
+            IsProgressing = false;
+            IsSuccess = false;
         }
 
         /// <summary>
@@ -141,9 +184,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
             if (value.Achieved >= value.Total && value.Total > 0)
             {
                 Title = "TransferDone".ToLocalized();
+                IsSuccess = true;
                 return;
             }
 
+            IsSuccess = false;
             Title = TransferType switch
             {
                 TransferType.Copy => "CopyingItemsPlural".ToLocalized(GetInterpolation()),
@@ -186,6 +231,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
                     TransferType = transferOptions.TransferType;
 
                 Title = "ChooseDestinationFolder".ToLocalized();
+                IsSuccess = false;
                 IsProgressing = false;
                 IsVisible = true;
 
@@ -217,9 +263,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
         {
             if (IsErrorVisible)
             {
-                // Dismiss the error banner since there is no operation left to cancel
-                ClearError();
-                await this.HideAsync();
+                // Dismiss the error banner since there is no operation left to cancel.
+                // Cancelling in place keeps the same source alive, so the hide below still owns the banner
+                _errorCts?.TryCancel();
+                await HideErrorAsync();
                 return;
             }
 

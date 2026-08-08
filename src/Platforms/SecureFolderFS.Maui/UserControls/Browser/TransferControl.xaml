@@ -1,9 +1,8 @@
-﻿<ContentView
+<ContentView
     x:Class="SecureFolderFS.Maui.UserControls.Browser.TransferControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:av="clr-namespace:Xe.AcrylicView;assembly=Xe.AcrylicView"
-    xmlns:av2="clr-namespace:Xe.AcrylicView.Controls;assembly=Xe.AcrylicView"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Browser"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
@@ -15,80 +14,227 @@
         x:Name="RootPanel"
         Margin="0,0,0,32"
         IsVisible="False">
-        <Grid.Shadow>
-            <Shadow
-                Brush="{StaticResource CardFillPrimaryDarkColor}"
-                Opacity="0.4"
-                Radius="5" />
-        </Grid.Shadow>
-        <av:AcrylicView
+        <Grid.GestureRecognizers>
+            <PanGestureRecognizer x:Name="SurfacePan" PanUpdated="Panel_PanUpdated" />
+            <TapGestureRecognizer Tapped="Surface_Tapped" />
+        </Grid.GestureRecognizers>
+
+        <!--  The fill doubles as the status indicator: blue while working, green on success, red on failure  -->
+        <Border
+            x:Name="Surface"
             Margin="16"
-            Padding="8"
+            Padding="0"
             x:DataType="local:TransferControl"
             BindingContext="{x:Reference ThisControl}"
-            CornerRadius="12"
-            EffectStyle="{AppThemeBinding Dark={av2:EffectStyle Dark},
-                                          Light={av2:EffectStyle Light}}"
             HeightRequest="56"
-            TintColor="{AppThemeBinding Light={StaticResource CardFillPrimaryLightColor},
-                                        Dark={StaticResource CardFillPrimaryDarkColor}}"
-            TintOpacity="0.7">
-            <av:AcrylicView.GestureRecognizers>
-                <PanGestureRecognizer PanUpdated="Panel_PanUpdated" />
-            </av:AcrylicView.GestureRecognizers>
+            StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow
+                    Brush="{StaticResource CardFillPrimaryDarkColor}"
+                    Opacity="0.4"
+                    Radius="5" />
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle x:Name="SurfaceShape" CornerRadius="12" />
+            </Border.StrokeShape>
+            <Border.Style>
+                <!--  Kept in a style, so the triggers unambiguously win over the resting fill  -->
+                <Style TargetType="Border">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource StatusInfoFillLightColor}, Dark={StaticResource StatusInfoFillDarkColor}}" />
+                    <Style.Triggers>
+                        <DataTrigger
+                            Binding="{Binding IsSuccess, Mode=OneWay}"
+                            TargetType="Border"
+                            Value="True">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource StatusSuccessFillLightColor}, Dark={StaticResource StatusSuccessFillDarkColor}}" />
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding IsError, Mode=OneWay}"
+                            TargetType="Border"
+                            Value="True">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource StatusErrorFillLightColor}, Dark={StaticResource StatusErrorFillDarkColor}}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
 
-            <Grid ColumnSpacing="16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Grid>
+                <!--  Collapsed banner  -->
+                <Grid
+                    x:Name="BannerContent"
+                    Padding="8"
+                    ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <uc:AnimatedRevealLayout
-                    Grid.Column="0"
-                    IsShown="{Binding IsProgressing, Mode=OneWay}"
-                    RevealSide="Left"
-                    Spacing="8"
-                    VerticalOptions="Center">
-                    <uc:AnimatedRevealLayout.RevealContent>
-                        <ActivityIndicator
-                            HeightRequest="32"
-                            IsRunning="{Binding IsProgressing, Mode=OneWay}"
-                            VerticalOptions="Center"
-                            WidthRequest="32" />
-                    </uc:AnimatedRevealLayout.RevealContent>
-                    <uc:AnimatedRevealLayout.MainContent>
-                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                            <mi:MauiIcon
-                                Icon="{mi_material:Material ErrorOutline}"
-                                IconSize="20"
-                                IsVisible="{Binding IsError, Mode=OneWay}"
-                                OnPlatforms="Android"
-                                VerticalOptions="Center" />
-                            <mi:MauiIcon
-                                Icon="{mi_cupertino:Cupertino ExclamationmarkCircle}"
-                                IconSize="20"
-                                IsVisible="{Binding IsError, Mode=OneWay}"
-                                OnPlatforms="iOS"
-                                VerticalOptions="Center" />
+                    <uc:AnimatedRevealLayout
+                        Grid.Column="0"
+                        IsShown="{Binding IsProgressing, Mode=OneWay}"
+                        RevealSide="Left"
+                        Spacing="8"
+                        VerticalOptions="Center">
+                        <uc:AnimatedRevealLayout.RevealContent>
+                            <Grid
+                                HeightRequest="32"
+                                VerticalOptions="Center"
+                                WidthRequest="32">
+                                <ActivityIndicator
+                                    HeightRequest="32"
+                                    IsRunning="{Binding IsProgressing, Mode=OneWay}"
+                                    IsVisible="{Binding IsSuccess, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                    VerticalOptions="Center"
+                                    WidthRequest="32" />
+
+                                <!--  Filled badge, so the completed state reads at a glance  -->
+                                <Grid IsVisible="{Binding IsSuccess, Mode=OneWay}">
+                                    <Ellipse
+                                        Fill="{StaticResource ThemeStatusSuccessColorBrush}"
+                                        HeightRequest="26"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        WidthRequest="26" />
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_material:Material Check}"
+                                        IconColor="#FFFFFF"
+                                        IconSize="16"
+                                        OnPlatforms="Android"
+                                        VerticalOptions="Center" />
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_cupertino:Cupertino Checkmark}"
+                                        IconColor="#FFFFFF"
+                                        IconSize="16"
+                                        OnPlatforms="iOS"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </Grid>
+                        </uc:AnimatedRevealLayout.RevealContent>
+                        <uc:AnimatedRevealLayout.MainContent>
+                            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                <mi:MauiIcon
+                                    Icon="{mi_material:Material ErrorOutline}"
+                                    IconColor="{AppThemeBinding Light={StaticResource StatusErrorLightColor},
+                                                                Dark={StaticResource StatusErrorDarkColor}}"
+                                    IconSize="20"
+                                    IsVisible="{Binding IsError, Mode=OneWay}"
+                                    OnPlatforms="Android"
+                                    VerticalOptions="Center" />
+                                <mi:MauiIcon
+                                    Icon="{mi_cupertino:Cupertino ExclamationmarkCircle}"
+                                    IconColor="{AppThemeBinding Light={StaticResource StatusErrorLightColor},
+                                                                Dark={StaticResource StatusErrorDarkColor}}"
+                                    IconSize="20"
+                                    IsVisible="{Binding IsError, Mode=OneWay}"
+                                    OnPlatforms="iOS"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    FontSize="14"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="1"
+                                    Text="{Binding Title, Mode=OneWay}"
+                                    VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </uc:AnimatedRevealLayout.MainContent>
+                    </uc:AnimatedRevealLayout>
+
+                    <!--  Hints that the banner hides a full error report behind a tap  -->
+                    <mi:MauiIcon
+                        Grid.Column="1"
+                        Icon="{mi_material:Material UnfoldMore}"
+                        IconSize="20"
+                        IsVisible="{Binding IsError, Mode=OneWay}"
+                        OnPlatforms="Android"
+                        Opacity="0.6"
+                        VerticalOptions="Center" />
+                    <mi:MauiIcon
+                        Grid.Column="1"
+                        Icon="{mi_cupertino:Cupertino ChevronupChevronDown}"
+                        IconSize="20"
+                        IsVisible="{Binding IsError, Mode=OneWay}"
+                        OnPlatforms="iOS"
+                        Opacity="0.6"
+                        VerticalOptions="Center" />
+
+                    <Button
+                        Grid.Column="1"
+                        Padding="16,8"
+                        Command="{Binding PrimaryCommand, Mode=OneWay}"
+                        CornerRadius="10"
+                        IsVisible="{Binding IsConfirmShown, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                </Grid>
+
+                <!--  Expanded error report  -->
+                <Grid
+                    x:Name="DetailsContent"
+                    IsVisible="False"
+                    Opacity="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <!--
+                        The header keeps the error fill while the report itself stays neutral.
+                        Its drag is handled by DetailsGrabStrip, which does not move with the sheet
+                    -->
+                    <VerticalStackLayout
+                        x:Name="DetailsHeader"
+                        Grid.Row="0"
+                        Padding="16,10,16,14"
+                        HeightRequest="60"
+                        Spacing="10">
+                        <BoxView
+                            CornerRadius="2"
+                            HeightRequest="4"
+                            HorizontalOptions="Center"
+                            Opacity="0.35"
+                            WidthRequest="36"
+                            Color="{AppThemeBinding Light=#202020,
+                                                    Dark=#FFFFFF}" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="17"
+                            Text="{l:ResourceString Rid=ErrorDetails}" />
+                    </VerticalStackLayout>
+
+                    <Border
+                        Grid.Row="1"
+                        Padding="16,12,16,32"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor},
+                                                          Dark={StaticResource ElevatedFillPrimaryDarkColor}}"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0" />
+                        </Border.StrokeShape>
+                        <ScrollView VerticalScrollBarVisibility="Default">
                             <Label
-                                FontSize="14"
-                                LineBreakMode="TailTruncation"
-                                MaxLines="2"
-                                Text="{Binding Title, Mode=OneWay}"
-                                VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </uc:AnimatedRevealLayout.MainContent>
-                </uc:AnimatedRevealLayout>
-
-                <Button
-                    Grid.Column="1"
-                    Padding="16,8"
-                    Command="{Binding PrimaryCommand, Mode=OneWay}"
-                    CornerRadius="10"
-                    IsVisible="{Binding IsConfirmShown, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Text="{Binding PrimaryButtonText, Mode=OneWay}" />
+                                FontSize="13"
+                                LineBreakMode="CharacterWrap"
+                                Text="{Binding ErrorDetails, Mode=OneWay}" />
+                        </ScrollView>
+                    </Border>
+                </Grid>
             </Grid>
-        </av:AcrylicView>
+        </Border>
+
+        <!--
+            Stationary stand-in for the expanded header. The sheet slides out from under it during
+            a drag, so the recognizer keeps measuring against an origin that stays put
+        -->
+        <BoxView
+            x:Name="DetailsGrabStrip"
+            HeightRequest="60"
+            IsVisible="False"
+            VerticalOptions="Start"
+            Color="Transparent">
+            <BoxView.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="Header_PanUpdated" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
     </Grid>
 </ContentView>
