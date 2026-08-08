@@ -1,7 +1,11 @@
-﻿namespace SecureFolderFS.Core.Cryptography
+﻿using System;
+
+namespace SecureFolderFS.Core.Cryptography
 {
     public static class Constants
     {
+        public static bool PreferBouncyCastle { get; set; } = OperatingSystem.IsBrowser();
+
         public static class KeyTraits
         {
             public const string KEY_TEXT_SEPARATOR = "@@@";

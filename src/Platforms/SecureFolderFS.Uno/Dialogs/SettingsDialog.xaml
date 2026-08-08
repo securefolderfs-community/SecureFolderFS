@@ -60,12 +60,22 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <!--  Accounts  -->
+                <NavigationViewItem
+                    AutomationProperties.Name="{l:ResourceString Rid=Accounts}"
+                    Content="{l:ResourceString Rid=Accounts}"
+                    Tag="3">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
                 <!--  About  -->
                 <NavigationViewItem
                     Margin="0,0,45,0"
                     AutomationProperties.Name="{l:ResourceString Rid=SettingsAbout}"
                     Content="{l:ResourceString Rid=SettingsAbout}"
-                    Tag="3">
+                    Tag="4">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </NavigationViewItem.Icon>

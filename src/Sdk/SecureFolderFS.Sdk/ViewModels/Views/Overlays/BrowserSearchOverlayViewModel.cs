@@ -223,8 +223,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public void Dispose()
         {
+            // May be called by both the overlay host and the opener - keep it idempotent
             CancelSearch();
             SearchResults.DisposeAll();
+            SearchResults.Clear();
         }
     }
 }

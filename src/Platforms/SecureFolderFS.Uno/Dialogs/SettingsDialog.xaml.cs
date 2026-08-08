@@ -52,7 +52,8 @@ namespace SecureFolderFS.Uno.Dialogs
                 0 => ViewModel?.NavigationService.TryGetView<GeneralSettingsViewModel>() ?? new(),
                 1 => ViewModel?.NavigationService.TryGetView<PreferencesSettingsViewModel>() ?? new(),
                 2 => ViewModel?.NavigationService.TryGetView<PrivacySettingsViewModel>() ?? new(),
-                3 => ViewModel?.NavigationService.TryGetView<AboutSettingsViewModel>() ?? new(),
+                3 => ViewModel?.NavigationService.TryGetView<AccountsSettingsViewModel>() ?? new(),
+                4 => ViewModel?.NavigationService.TryGetView<AboutSettingsViewModel>() ?? new(),
                 _ => new GeneralSettingsViewModel()
             };
         }
@@ -75,7 +76,9 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
+            if (!int.TryParse((args.SelectedItem as NavigationViewItem)?.Tag?.ToString(), out var tag))
+                tag = 0;
+            
             await NavigateToTagAsync(tag);
         }
 

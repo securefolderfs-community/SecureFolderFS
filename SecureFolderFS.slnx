@@ -93,6 +93,7 @@
     </Project>
   </Folder>
   <Folder Name="/src/Sdk/">
+    <Project Path="src/Sdk/SecureFolderFS.Sdk.AppPlatform/SecureFolderFS.Sdk.AppPlatform.csproj" />
     <Project Path="src/Sdk/SecureFolderFS.Sdk.Accounts/SecureFolderFS.Sdk.Accounts.csproj" />
     <Project Path="src/Sdk/SecureFolderFS.Sdk.DeviceLink/SecureFolderFS.Sdk.DeviceLink.csproj" />
     <Project Path="src/Sdk/SecureFolderFS.Sdk.Dropbox/SecureFolderFS.Sdk.Dropbox.csproj" />

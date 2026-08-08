@@ -58,15 +58,16 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (OperatingSystem.IsMacCatalyst())
-                RootGrid.Margin = new(0, 37, 0, 0);
-
-#if __UNO_SKIA_MACOS__
-            InitializeStatusBarIcon();
-#endif
-
             ViewModel?.RootNavigationService.SetupNavigation(Navigation);
-            _ = EnsureRootAsync();
+            _ = EnsureRootAsync()
+#if __UNO_SKIA_MACOS__
+                .ContinueWith(_ => App.Instance?.MainWindowSynchronizationContext?.PostOrExecute(_ =>
+                {
+                    InitializeStatusBarIcon();
+                }));
+#else
+            ;
+#endif
         }
 
 #if __UNO_SKIA_MACOS__
@@ -150,8 +151,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 await ViewModel.RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(ViewModel.VaultListViewModel, ViewModel.RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
 
-            // Signal that the main window has finished initializing
-            App.Instance?.MainWindowInitialized.TrySetResult();
+            // Signal that the main window has finished initializing.
+            // This is queued at low priority instead of being set directly, because the callers awaiting it
+            // may open additional windows - doing that from within the first layout/render pass crashes the
+            // macOS Skia host. Queuing defers them until the window has settled.
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,
+                static () => App.Instance?.MainWindowInitialized.TrySetResult());
         }
 
         private async void MainWindowRootControl_PreviewKeyDown(object sender, KeyRoutedEventArgs e)

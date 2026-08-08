@@ -82,63 +82,15 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var path = CombinePath(Id, name);
-
-            // Try as a collection first (with trailing slash) to avoid 301 redirect
-            // which causes SocketsHttpHandler to strip the Authorization header
-            var folderPath = path.EndsWith('/') ? path : path + "/";
-            var folderUri = ResolveUri(folderPath);
-            var propfindParams = new PropfindParameters()
-            {
-                CancellationToken = cancellationToken
-            };
-
-            var response = await davClient.Propfind(folderUri, propfindParams);
-            if (response.IsSuccessful && response.Resources.Any())
-            {
-                var resource = response.Resources.First();
-                if (resource.IsCollection)
-                    return new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this);
-            }
-
-            // Fall back to file (no trailing slash)
-            var fileUri = ResolveUri(path);
-            response = await davClient.Propfind(fileUri, propfindParams);
-            if (!response.IsSuccessful || !response.Resources.Any())
-                throw new FileNotFoundException($"Item with name '{name}' was not found in folder '{Name}'.");
-
-            return new DavClientFile(davClient, httpClient, baseUri, path, name, this);
+            var resolved = await ResolveStorableAsync(path, cancellationToken);
+            return resolved ?? throw new FileNotFoundException($"Item with name '{name}' was not found in folder '{Name}'.");
         }
 
         /// <inheritdoc/>
         public async Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
         {
-            // Try as collection first (trailing slash) to avoid 301 redirect stripping Authorization header
-            var folderPath = id.EndsWith('/') ? id : id + "/";
-            var folderUri = ResolveUri(folderPath);
-            var propfindParams = new PropfindParameters()
-            {
-                CancellationToken = cancellationToken
-            };
-
-            var response = await davClient.Propfind(folderUri, propfindParams);
-            if (response.IsSuccessful && response.Resources.Any())
-            {
-                var resource = response.Resources.First();
-                if (resource.IsCollection)
-                {
-                    var name = Uri.UnescapeDataString(folderPath.TrimEnd('/').Split('/').Last(s => !string.IsNullOrEmpty(s)));
-                    return new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this);
-                }
-            }
-
-            // Fall back to file
-            var fileUri = ResolveUri(id);
-            response = await davClient.Propfind(fileUri, propfindParams);
-            if (!response.IsSuccessful || !response.Resources.Any())
-                throw new FileNotFoundException($"Item with id '{id}' was not found.");
-
-            var fileName = Uri.UnescapeDataString(id.TrimEnd('/').Split('/').Last(s => !string.IsNullOrEmpty(s)));
-            return new DavClientFile(davClient, httpClient, baseUri, id, fileName, this);
+            var resolved = await ResolveStorableAsync(id, cancellationToken);
+            return resolved ?? throw new FileNotFoundException($"Item with id '{id}' was not found.");
         }
 
         /// <inheritdoc/>
@@ -204,23 +156,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
                 CancellationToken = cancellationToken
             };
 
+            // COPY's destination URI already includes the final name, so the server places the copy
+            // directly at destPath — no follow-up rename is needed. (The previous code then issued a
+            // MOVE from destPath onto itself — renamedPath == destPath — which WebDAV rejects with 403.)
             var response = await davClient.Copy(sourceUri, destUri, copyParams);
             if (!response.IsSuccessful)
                 throw new IOException($"Failed to copy '{fileToCopy.Name}' to '{newName}': {response.StatusCode}");
-
-            // If the name differs from what COPY produced, MOVE to the correct name
-            if (fileToCopy.Name != newName)
-            {
-                var renamedPath = CombinePath(Id, newName);
-                var renamedUri = ResolveUri(renamedPath);
-                var moveParams = new MoveParameters() { CancellationToken = cancellationToken };
-
-                var moveResponse = await davClient.Move(destUri, renamedUri, moveParams);
-                if (!moveResponse.IsSuccessful)
-                    throw new IOException($"Failed to rename copy to '{newName}': {moveResponse.StatusCode}");
-
-                return new DavClientFile(davClient, httpClient, baseUri, renamedPath, newName, this);
-            }
 
             return new DavClientFile(davClient, httpClient, baseUri, destPath, newName, this);
         }
@@ -315,6 +256,100 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
                 throw new IOException($"Failed to create file '{name}': {response.StatusCode}");
 
             return new DavClientFile(davClient, httpClient, baseUri, id, name, this);
+        }
+
+        /// <summary>
+        /// Resolves a WebDAV path to a file or folder storable using a single PROPFIND per probe.
+        /// </summary>
+        /// <remarks>
+        /// Two addressing forms exist for the same resource: no trailing slash (file) and trailing
+        /// slash (collection). The probe order is platform-dependent:
+        /// <list type="bullet">
+        /// <item><b>Browser (WASM):</b> file-first. A trailing slash on a file is a path the server
+        /// doesn't have, so its CORS preflight returns a non-OK status and
+        /// the browser blocks the request. Probing the no-slash form first avoids generating that
+        /// failing request for the common case (all vault config files are files).</item>
+        /// <item><b>Elsewhere:</b> folder-first, to dodge the server's 301 redirect from
+        /// <c>dir</c> to <c>dir/</c>, which makes <see cref="SocketsHttpHandler"/> drop the
+        /// Authorization header on the redirected request.</item>
+        /// </list>
+        /// </remarks>
+        private async Task<IStorableChild?> ResolveStorableAsync(string path, CancellationToken cancellationToken)
+        {
+            var trimmed = path.TrimEnd('/');
+            var filePath = trimmed;
+            var folderPath = trimmed + "/";
+            var name = Uri.UnescapeDataString(trimmed.Split('/').Last(s => !string.IsNullOrEmpty(s)));
+
+            var propfindParams = new PropfindParameters()
+            {
+                CancellationToken = cancellationToken
+            };
+
+            if (OperatingSystem.IsBrowser())
+            {
+                // File-first
+                var asFile = await TryProbeAsync(filePath, propfindParams);
+                if (asFile is not null)
+                {
+                    return asFile == StorableType.Folder
+                        ? new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this)
+                        : new DavClientFile(davClient, httpClient, baseUri, filePath, name, this);
+                }
+
+                var asFolder = await TryProbeAsync(folderPath, propfindParams);
+                if (asFolder is not null)
+                    return new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this);
+
+                return null;
+            }
+
+            // Folder-first (non-browser)
+            var folderProbe = await TryProbeAsync(folderPath, propfindParams);
+            if (folderProbe == StorableType.Folder)
+                return new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this);
+
+            var fileProbe = await TryProbeAsync(filePath, propfindParams);
+            if (fileProbe is not null)
+            {
+                return fileProbe == StorableType.Folder
+                    ? new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this)
+                    : new DavClientFile(davClient, httpClient, baseUri, filePath, name, this);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Performs a Depth:0 PROPFIND on <paramref name="probePath"/>. Returns whether the resolved
+        /// resource is a collection or a file, or null when the resource does not exist / the request
+        /// failed (including a failed CORS preflight in the browser, which is only ever a negative
+        /// signal here).
+        /// </summary>
+        private async Task<StorableType?> TryProbeAsync(string probePath, PropfindParameters propfindParams)
+        {
+            try
+            {
+                var response = await davClient.Propfind(ResolveUri(probePath), propfindParams);
+                if (!response.IsSuccessful || !response.Resources.Any())
+                    return null;
+
+                // Prefer the resource that matches the probed path; fall back to the first entry
+                // (a Depth:0 PROPFIND returns the addressed resource itself).
+                var trimmedProbe = probePath.TrimEnd('/');
+                var resource = response.Resources.FirstOrDefault(r => (r.Uri ?? string.Empty).TrimEnd('/').EndsWith(trimmedProbe, StringComparison.Ordinal))
+                    ?? response.Resources.First();
+
+                return resource.IsCollection ? StorableType.Folder : StorableType.File;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

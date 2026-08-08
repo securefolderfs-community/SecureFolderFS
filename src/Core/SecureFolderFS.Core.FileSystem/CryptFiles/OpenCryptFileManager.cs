@@ -7,6 +7,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
@@ -103,11 +104,19 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <inheritdoc/>
         public void Dispose()
         {
+            // Snapshot under the lock, then dispose outside it. OpenCryptFile.Dispose blocks on that
+            // file's stream lock, and a stream closing concurrently holds its stream lock while calling
+            // back into NotifyClosed here, so disposing while holding this lock is a lock-order inversion.
+            // It deadlocks the vault-lock path, which then never reaches Security.Dispose
+            // and leaves the DEK and MAC keys resident in the memory of a hung process
+            OpenCryptFile[] cryptFiles;
             lock (_openCryptFiles)
             {
-                _openCryptFiles.Values.DisposeAll();
+                cryptFiles = _openCryptFiles.Values.ToArray();
                 _openCryptFiles.Clear();
             }
+
+            cryptFiles.DisposeAll();
         }
     }
 }

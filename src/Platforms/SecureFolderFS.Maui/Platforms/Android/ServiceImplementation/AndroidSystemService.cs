@@ -50,5 +50,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 #endif
         }
 
+        /// <inheritdoc/>
+        public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> TrySetAutoStartAsync(bool isEnabled, CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
     }
 }

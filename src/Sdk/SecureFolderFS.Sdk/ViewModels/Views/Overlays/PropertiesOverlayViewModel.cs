@@ -23,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         [ObservableProperty] private string? _Id;
         [ObservableProperty] private string? _SizeText;
+        [ObservableProperty] private string? _ItemCountText;
         [ObservableProperty] private string? _CiphertextId;
         [ObservableProperty] private string? _FileTypeText;
         [ObservableProperty] private string? _DateCreatedText;
@@ -76,6 +77,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 IFile => Inner.AsWrapper<IFile>().GetWrapperAt("CryptoFile").Inner.Id,
                 _ => CiphertextId
             };
+
+            if (Inner is IFolder innerFolder)
+            {
+                var itemCount = 0;
+                await foreach (var _ in innerFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                    itemCount++;
+
+                ItemCountText = "ElementsCountPlural".ToLocalized(itemCount);
+            }
         }
 
         [RelayCommand]

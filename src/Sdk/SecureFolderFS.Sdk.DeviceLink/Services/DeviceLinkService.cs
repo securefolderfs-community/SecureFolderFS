@@ -261,6 +261,12 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                     return;
                 }
 
+                // The verification code confirmed the hybrid key exchange is free of an active MITM,
+                // so encrypt all subsequent pairing messages under the trusted shared secret. The
+                // confirm carries the persistent challenge and the complete carries the HMAC key
+                // contribution - neither may travel in cleartext.
+                using var pairingChannel = new SecureChannelModel(sharedSecret);
+
                 // Now wait for pairing confirmation from desktop (which includes vault info)
                 var confirmMessage = await device.ReceiveMessageAsync(cancellationToken);
                 var confirmType = (MessageType)confirmMessage[0];
@@ -271,8 +277,10 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                 if (confirmType != MessageType.PairingConfirm)
                     return;
 
-                // Parse pairing confirmation
-                ProtocolSerializer.ParsePairingConfirm(confirmMessage, out var credentialId, out var vaultName, out var pairingId, out var challenge);
+                // Decrypt and parse pairing confirmation
+                var confirmPayload = confirmMessage.AsSpan(Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
+                var decryptedConfirm = pairingChannel.Decrypt(confirmPayload);
+                ProtocolSerializer.ParsePairingConfirm(decryptedConfirm, out var credentialId, out var vaultName, out var pairingId, out var challenge);
 
                 // Create and enroll credential with persistent challenge
                 var credential = new CredentialViewModel()
@@ -300,19 +308,26 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
 
                 try
                 {
-                    // Decrypt HMAC key so we can compute HMAC
+                    // Decrypt HMAC key so we can compute the derived values
                     credential.DecryptHmacKey(encryptionKey);
 
-                    // Compute HMAC over the persistent challenge data
-                    var challengeData = BuildChallengeData(credentialId, challenge);
-                    var hmacResult = credential.ComputeHmac(challengeData);
+                    // Two independent, domain-separated derivations of the HMAC key:
+                    // 1. The key contribution feeds the vault's key derivation on the desktop and is
+                    //    never persisted there (the desktop keeps only a hash to verify responses).
+                    // 2. The binding secret authenticates future session channels and is the only
+                    //    secret the desktop stores at rest. Knowing it does not reveal the key contribution.
+                    var keyContribution = credential.ComputeHmac(BuildChallengeData(credentialId, challenge));
+                    var bindingSecret = credential.ComputeHmac(BuildBindingData(credentialId, challenge));
 
-                    // Send pairing complete with HMAC result
-                    var completeMessage = ProtocolSerializer.CreatePairingComplete(hmacResult);
-                    await device.SendMessageAsync(completeMessage, cancellationToken);
+                    // Send pairing complete with both values (encrypted over the pairing channel)
+                    var completeMessage = ProtocolSerializer.CreatePairingComplete(keyContribution, bindingSecret);
+                    var encryptedComplete = pairingChannel.Encrypt(completeMessage);
+                    await device.SendMessageAsync(encryptedComplete, MessageType.PairingComplete, cancellationToken);
 
                     // Clear the decrypted key from memory
                     credential.ClearDecryptedKey();
+                    CryptographicOperations.ZeroMemory(keyContribution);
+                    CryptographicOperations.ZeroMemory(bindingSecret);
 
                     // Notify UI that enrollment is complete
                     EnrollmentCompleted?.Invoke(this, credential);
@@ -386,8 +401,40 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
             desktopNonce.CopyTo(combinedNonce, 0);
             mobileNonce.CopyTo(combinedNonce, desktopNonce.Length);
 
-            session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce);
-            CryptographicOperations.ZeroMemory(sharedSecret);
+            // Compute the pairing binding secret (== the desktop's stored BindingSecret) and fold it
+            // into the channel key. Only a device that holds this credential's HMAC key can reproduce
+            // it, which authenticates this otherwise-anonymous ephemeral handshake to the established
+            // pairing: an active MITM or a device-id impersonator that lacks the secret derives a
+            // different key and is rejected by AES-GCM authentication, so it can neither read the
+            // challenge nor capture the key contribution in the response.
+            var encryptionKey = await _credentialStoreModel.GetEncryptionKeyAsync(pairingId);
+            if (encryptionKey is null || credential.CredentialId is null || credential.Challenge is null)
+            {
+                CryptographicOperations.ZeroMemory(sharedSecret);
+                if (encryptionKey is not null)
+                    CryptographicOperations.ZeroMemory(encryptionKey);
+
+                await device.SendMessageAsync(ProtocolSerializer.CreateAuthenticationRejected("Key error"), cancellationToken);
+                return;
+            }
+
+            byte[]? bindingSecret = null;
+            try
+            {
+                credential.DecryptHmacKey(encryptionKey);
+                var bindingData = BuildBindingData(credential.CredentialId, credential.Challenge);
+                bindingSecret = credential.ComputeHmac(bindingData);
+
+                session.SecureChannel = new SecureChannelModel(sharedSecret, combinedNonce, bindingSecret);
+            }
+            finally
+            {
+                credential.ClearDecryptedKey();
+                CryptographicOperations.ZeroMemory(encryptionKey);
+                CryptographicOperations.ZeroMemory(sharedSecret);
+                if (bindingSecret is not null)
+                    CryptographicOperations.ZeroMemory(bindingSecret);
+            }
 
             // Send response with our ECDH public key and ML-KEM ciphertext
             var response = ProtocolSerializer.CreateSecureSessionAccepted(mobileNonce, myEcdhPublicKey, mlKemCiphertext);
@@ -409,14 +456,8 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                 var encryptedPayload = message.AsSpan(Constants.KeyTraits.MESSAGE_BYTE_LENGTH);
                 var decryptedPayload = session.SecureChannel.Decrypt(encryptedPayload);
 
-                // Parse request (persistent challenge from desktop)
-                using var ms = new MemoryStream(decryptedPayload);
-                using var reader = new BinaryReader(ms);
-
-                var credentialId = reader.ReadString();
-                var challengeLength = reader.ReadInt32();
-                var persistentChallenge = reader.ReadBytes(challengeLength);
-                var timestamp = reader.ReadInt64();
+                // Parse request (persistent challenge + fresh request nonce from desktop)
+                ProtocolSerializer.ParseSecureAuthRequest(decryptedPayload, out var credentialId, out var persistentChallenge, out var timestamp, out var requestNonce);
 
                 // Validate timestamp (for replay protection)
                 var requestTime = DateTimeOffset.FromUnixTimeSeconds(timestamp);
@@ -476,26 +517,30 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
                     return;
                 }
 
+                byte[]? keyContribution = null;
                 try
                 {
                     session.CurrentCredential.DecryptHmacKey(encryptionKey);
 
-                    // Compute HMAC over the challenge data
-                    var challengeData = BuildChallengeData(credentialId, persistentChallenge);
-                    var hmacResult = session.CurrentCredential.ComputeHmac(challengeData);
+                    // Compute the vault key contribution and echo the desktop's request nonce.
+                    // The echoed nonce proves this response was produced for this exact request.
+                    keyContribution = session.CurrentCredential.ComputeHmac(BuildChallengeData(credentialId, persistentChallenge));
+                    var responsePayload = ProtocolSerializer.CreateSecureAuthResponse(keyContribution, requestNonce);
 
                     // Encrypt and send response
-                    var encryptedHmac = session.SecureChannel.Encrypt(hmacResult);
-                    await device.SendMessageAsync(encryptedHmac, MessageType.SecureAuthResponse, cancellationToken);
+                    var encryptedResponse = session.SecureChannel.Encrypt(responsePayload);
+                    await device.SendMessageAsync(encryptedResponse, MessageType.SecureAuthResponse, cancellationToken);
 
                     // Notify UI that authentication completed successfully
                     AuthenticationCompleted?.Invoke(this, EventArgs.Empty);
                 }
                 finally
                 {
-                    // Clear decrypted key from memory
+                    // Clear decrypted key material from memory
                     session.CurrentCredential.ClearDecryptedKey();
                     CryptographicOperations.ZeroMemory(encryptionKey);
+                    if (keyContribution is not null)
+                        CryptographicOperations.ZeroMemory(keyContribution);
                 }
             }
             catch (CryptographicException)
@@ -506,14 +551,30 @@ namespace SecureFolderFS.Sdk.DeviceLink.Services
         }
 
         /// <summary>
-        /// Builds the data for HMAC computation.
-        /// Must match desktop's BuildChallengeData exactly.
+        /// Builds the HMAC input for the vault key contribution.
         /// </summary>
         private static byte[] BuildChallengeData(string credentialId, byte[] persistentChallenge)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
+            writer.Write(Encoding.UTF8.GetBytes(credentialId));
+            writer.Write(persistentChallenge);
+
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Builds the HMAC input for the channel binding secret. The domain-separation label keeps it
+        /// cryptographically independent from the vault key contribution: the desktop persists the
+        /// binding secret at rest, and knowing it must not reveal the key contribution.
+        /// </summary>
+        private static byte[] BuildBindingData(string credentialId, byte[] persistentChallenge)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            writer.Write("DeviceLink-Binding-v1"u8);
             writer.Write(Encoding.UTF8.GetBytes(credentialId));
             writer.Write(persistentChallenge);
 

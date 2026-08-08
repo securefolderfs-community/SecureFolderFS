@@ -225,24 +225,36 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             challenge = reader.ReadBytes(challengeLength);
         }
 
-        public static byte[] ParsePairingComplete(byte[] data)
+        /// <summary>
+        /// Parses a pairing complete message, extracting the vault key contribution and the
+        /// channel binding secret (two independent, domain-separated derivations of the mobile's HMAC key).
+        /// </summary>
+        public static void ParsePairingComplete(byte[] data, out byte[] keyContribution, out byte[] bindingSecret)
         {
             using var ms = new MemoryStream(data);
             using var reader = new BinaryReader(ms);
 
             reader.ReadByte(); // Skip message type
-            var hmacLength = reader.ReadInt32();
-            return reader.ReadBytes(hmacLength);
+            var keyLength = reader.ReadInt32();
+            keyContribution = reader.ReadBytes(keyLength);
+            var bindingLength = reader.ReadInt32();
+            bindingSecret = reader.ReadBytes(bindingLength);
         }
 
-        public static byte[] CreatePairingComplete(ReadOnlySpan<byte> hmacResult)
+        /// <summary>
+        /// Creates a pairing complete message carrying the vault key contribution and the
+        /// channel binding secret (encrypted before transmission).
+        /// </summary>
+        public static byte[] CreatePairingComplete(ReadOnlySpan<byte> keyContribution, ReadOnlySpan<byte> bindingSecret)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             writer.Write((byte)MessageType.PairingComplete);
-            writer.Write(hmacResult.Length);
-            writer.Write(hmacResult);
+            writer.Write(keyContribution.Length);
+            writer.Write(keyContribution);
+            writer.Write(bindingSecret.Length);
+            writer.Write(bindingSecret);
 
             return ms.ToArray();
         }
@@ -354,10 +366,11 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         #region Authentication
 
         /// <summary>
-        /// Creates auth request for challenge-sign model.
-        /// Sends the challenge for mobile to sign.
+        /// Creates an authentication request. Carries the persistent challenge alongside a fresh
+        /// per-request nonce; the mobile must echo the nonce in its response, proving the response
+        /// was produced for this exact request rather than replayed.
         /// </summary>
-        public static byte[] CreateSecureAuthRequest(string credentialId, ReadOnlySpan<byte> challenge, long timestamp)
+        public static byte[] CreateSecureAuthRequest(string credentialId, ReadOnlySpan<byte> challenge, long timestamp, ReadOnlySpan<byte> requestNonce)
         {
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
@@ -366,8 +379,57 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
             writer.Write(challenge.Length);
             writer.Write(challenge);
             writer.Write(timestamp);
+            writer.Write(requestNonce.Length);
+            writer.Write(requestNonce);
 
             return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Parses an authentication request (already decrypted from the secure channel).
+        /// </summary>
+        public static void ParseSecureAuthRequest(byte[] data, out string credentialId, out byte[] challenge, out long timestamp, out byte[] requestNonce)
+        {
+            using var ms = new MemoryStream(data);
+            using var reader = new BinaryReader(ms);
+
+            credentialId = reader.ReadString();
+            var challengeLength = reader.ReadInt32();
+            challenge = reader.ReadBytes(challengeLength);
+            timestamp = reader.ReadInt64();
+            var nonceLength = reader.ReadInt32();
+            requestNonce = reader.ReadBytes(nonceLength);
+        }
+
+        /// <summary>
+        /// Creates an authentication response (encrypted before transmission). Carries the stable
+        /// vault key contribution together with the echoed request nonce.
+        /// </summary>
+        public static byte[] CreateSecureAuthResponse(ReadOnlySpan<byte> keyContribution, ReadOnlySpan<byte> echoedNonce)
+        {
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            writer.Write(keyContribution.Length);
+            writer.Write(keyContribution);
+            writer.Write(echoedNonce.Length);
+            writer.Write(echoedNonce);
+
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Parses an authentication response (already decrypted from the secure channel).
+        /// </summary>
+        public static void ParseSecureAuthResponse(byte[] data, out byte[] keyContribution, out byte[] echoedNonce)
+        {
+            using var ms = new MemoryStream(data);
+            using var reader = new BinaryReader(ms);
+
+            var keyLength = reader.ReadInt32();
+            keyContribution = reader.ReadBytes(keyLength);
+            var nonceLength = reader.ReadInt32();
+            echoedNonce = reader.ReadBytes(nonceLength);
         }
 
         public static byte[] CreateAuthenticationRejected(string reason)

@@ -66,17 +66,16 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (parentDocumentId is null || documentId is null)
                 return false;
 
-            var parentSplit = parentDocumentId.Split(':', 2);
-            var childSplit = documentId.Split(':', 2);
-            if (parentSplit.Length < 2 || childSplit.Length < 2)
+            // Operate on the canonical form
+            if (!TryParseDocumentId(parentDocumentId, out var parentRootId, out var parentPath) ||
+                !TryParseDocumentId(documentId, out var childRootId, out var childPath))
                 return false;
 
             // Both documents must belong to the same root
-            if (parentSplit[0] != childSplit[0])
+            if (parentRootId != childRootId)
                 return false;
 
-            var parentPath = parentSplit[1].TrimEnd('/');
-            var childPath = childSplit[1];
+            parentPath = parentPath.TrimEnd('/');
 
             // The root folder is an ancestor of every document within it
             if (parentPath.Length == 0)
@@ -91,6 +90,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         {
             parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
             if (parentDocumentId is null || displayName is null)
+                return null;
+
+            // The name is joined onto the parent's path, so it must not be able to escape it
+            if (!IsValidDisplayName(displayName))
                 return null;
 
             var parentStorable = GetStorableForDocumentId(parentDocumentId);
@@ -322,7 +325,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override string? RenameDocument(string? documentId, string? displayName)
         {
-            if (string.IsNullOrWhiteSpace(displayName))
+            // The new name is resolved against the item's parent, so it must not be able to escape it
+            if (!IsValidDisplayName(displayName))
                 return null;
 
             documentId = documentId == "null" ? null : documentId;

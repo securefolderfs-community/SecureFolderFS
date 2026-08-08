@@ -34,6 +34,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool ContinueOnLastVault { get; set; }
 
         /// <summary>
+        /// Gets or sets the ID of the vault to prompt the user to unlock when the app is started. Only one vault can be set at a time.
+        /// </summary>
+        string? AutoUnlockVaultId { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to open the vault root folder when it is unlocked.
         /// </summary>
         bool OpenFolderOnUnlock { get; set; }
@@ -75,11 +80,6 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// Gets or sets the value that determines whether to use telemetry.
         /// </summary>
         bool IsTelemetryEnabled { get; set; }
-
-        /// <summary>
-        /// Gets or sets the value that determines whether to periodically clear or untrack system-wide recently accessed items.
-        /// </summary>
-        bool DisableRecentAccess { get; set; }
 
         /// <summary>
         /// Gets or sets a value that enables or disables the Device Link listening.

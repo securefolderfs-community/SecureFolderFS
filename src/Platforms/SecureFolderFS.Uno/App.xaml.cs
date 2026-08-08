@@ -8,17 +8,16 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
@@ -40,7 +39,10 @@ using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
 using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 #else
 using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.ViewModels;
+#endif
+#if !__UNO_SKIA_MACOS__
+using H.NotifyIcon;
 #endif
 
 namespace SecureFolderFS.Uno
@@ -62,7 +64,12 @@ namespace SecureFolderFS.Uno
         /// <summary>
         /// Gets a task that completes when the main window has finished initializing.
         /// </summary>
-        public TaskCompletionSource MainWindowInitialized { get; } = new();
+        /// <remarks>
+        /// Continuations must not run inline. Awaiters of this task open additional windows, and running them
+        /// synchronously from the code that completes the task would do so while the main window is still
+        /// initializing, which crashes the macOS Skia host.
+        /// </remarks>
+        public TaskCompletionSource MainWindowInitialized { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
@@ -156,13 +163,18 @@ namespace SecureFolderFS.Uno
             // Check if the app was launched via file activation (shortcut file)
             var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
             var isUriActivation = IsUriActivation(Program.InitialActivationArgs);
+            var isStartupActivation = IsStartupActivation(Program.InitialActivationArgs);
 
             // Activate MainWindow (required for initialization)
             MainWindow.Activate();
 
-            // If launched via shortcut file, hide the main window immediately
-            if (isShortcutActivation || isUriActivation)
+            // If launched via shortcut file or on system startup, hide the main window immediately
+            if (isShortcutActivation || isUriActivation || isStartupActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
+
+            // Show the auto-unlock vault prompt, unless another activation already presents vault UI
+            if (!isShortcutActivation && !isUriActivation)
+                _ = ShowAutoUnlockVaultAsync();
 
             // Process initial file activation if the app was launched via file association
             if (Program.InitialActivationArgs is { } initialArgs)
@@ -170,6 +182,9 @@ namespace SecureFolderFS.Uno
 #else
             // Activate MainWindow
             MainWindow.Activate();
+
+            // Show the auto-unlock vault prompt
+            _ = ShowAutoUnlockVaultAsync();
 #endif
         }
 
@@ -196,6 +211,19 @@ namespace SecureFolderFS.Uno
         private static bool IsUriActivation(AppActivationArguments? args)
         {
             return args is { Kind: ExtendedActivationKind.Protocol, Data: IProtocolActivatedEventArgs };
+        }
+
+        /// <summary>
+        /// Checks if the app was launched on system startup, in which case it should start in the background (System Tray).
+        /// </summary>
+        private static bool IsStartupActivation(AppActivationArguments? args)
+        {
+            // Packaged apps are launched through the StartupTask registration
+            if (args is { Kind: ExtendedActivationKind.StartupTask })
+                return true;
+
+            // Unpackaged auto start is registered in the Run registry key with a command-line argument
+            return Environment.GetCommandLineArgs().Contains(UI.Constants.AUTOSTART_ARGUMENT, StringComparer.OrdinalIgnoreCase);
         }
 #endif
 
@@ -258,6 +286,9 @@ namespace SecureFolderFS.Uno
                 if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
                     return;
 
+                // Creating a window while the main window is still running its first layout/render pass
+                // segfaults the macOS Skia host, so this must only ever run once the main window has settled
+                // (see the remarks on MainWindowInitialized).
                 var window = new Window();
                 window.Closed += PreviewWindow_Closed;
 
@@ -291,6 +322,22 @@ namespace SecureFolderFS.Uno
                 window.Closed -= PreviewWindow_Closed;
                 (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Shows the unlock prompt (vault preview window) for the vault marked for automatic unlocking, if any.
+        /// </summary>
+        private async Task ShowAutoUnlockVaultAsync()
+        {
+            // Wait for initialization so that the settings and the vault list are loaded
+            await MainWindowInitialized.Task;
+
+            var settingsService = DI.Service<ISettingsService>();
+            var autoUnlockVaultId = settingsService.UserSettings.AutoUnlockVaultId;
+            if (string.IsNullOrEmpty(autoUnlockVaultId))
+                return;
+
+            await HandleVaultPreviewActivationAsync(autoUnlockVaultId);
         }
 
         private async Task HandleVaultLockActivationAsync(string persistableId)
@@ -351,13 +398,11 @@ namespace SecureFolderFS.Uno
             // Set icon
             appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, Constants.FileNames.ICON_ASSET_PATH));
 #endif
-#if WINDOWS
-            // Set backdrop
-            window.SystemBackdrop = new MicaBackdrop();
-#endif
-
             // Set title
             appWindow.Title = title;
+
+            // Set backdrop
+            window.SystemBackdrop = new MicaBackdrop();
 
             // Extend title bar
             var titleBar = window.Content switch

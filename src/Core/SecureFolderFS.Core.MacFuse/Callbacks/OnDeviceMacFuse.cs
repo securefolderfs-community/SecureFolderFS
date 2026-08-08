@@ -10,6 +10,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.MacFuse.OpenHandles;
 using SecureFolderFS.Storage.Extensions;
 using static FuseSharp.Native.LibC;
+using static SecureFolderFS.Core.FileSystem.Helpers.Paths.PathHelpers;
 
 namespace SecureFolderFS.Core.MacFuse.Callbacks
 {
@@ -53,7 +54,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (chown(ciphertextPathPtr, uid, gid) == -1)
                     return -errno;
@@ -231,7 +232,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (byte* namePtr = NullTerminate(name))
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 nint result;
                 if (value.Length == 0)
@@ -255,7 +256,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 nint result;
                 if (list.Length == 0)
@@ -430,7 +431,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (byte* namePtr = NullTerminate(name))
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (removexattr(ciphertextPathPtr, namePtr, 0) == -1)
                     return -errno;
@@ -449,8 +450,8 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null || newCiphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
-            fixed (byte* newCiphertextPathPtr = Encoding.UTF8.GetBytes(newCiphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
+            fixed (byte* newCiphertextPathPtr = ToNativePath(newCiphertextPath))
             {
                 var result = flags == 0u
                     ? rename(ciphertextPathPtr, newCiphertextPathPtr)
@@ -524,7 +525,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
 
             fixed (byte* namePtr = NullTerminate(name))
             fixed (void* valuePtr = value)
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (setxattr(ciphertextPathPtr, namePtr, valuePtr, (nuint)value.Length, position, options) == -1)
                     return -errno;
@@ -540,7 +541,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (StatVfs* statfsPtr = &statfs)
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (statvfs(ciphertextPathPtr, statfsPtr) == -1)
                     return -errno;
@@ -652,7 +653,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             var times = stackalloc TimeSpec[2] { atime, mtime };
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (utimensat(AT_FDCWD, ciphertextPathPtr, times, 0) == -1)
                     return -errno;

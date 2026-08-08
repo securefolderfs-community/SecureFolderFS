@@ -11,18 +11,6 @@ namespace SecureFolderFS.Shared.Models
     {
         [JsonPropertyName("serverUrl")]
         public required string ServerUrl { get; init; }
-
-        [JsonPropertyName("vaultResource")]
-        public required string VaultResource { get; init; }
-
-        [JsonPropertyName("organization")]
-        public string? Organization { get; init; }
-
-        [JsonPropertyName("accessTokenEndpoint")]
-        public string AccessTokenEndpoint { get; init; } = "/api/app-platform/access-token";
-
-        [JsonPropertyName("deviceRegistrationEndpoint")]
-        public string DeviceRegistrationEndpoint { get; init; } = "/api/app-platform/devices";
     }
 }
 

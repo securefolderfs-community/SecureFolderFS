@@ -1,6 +1,8 @@
 ﻿using SecureFolderFS.Shared.Helpers;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Shared.Extensions
 {
@@ -81,6 +83,44 @@ namespace SecureFolderFS.Shared.Extensions
             {
                 var bytesToRead = (int)Math.Min(buffer.Length, bytesToAdvance);
                 var bytesRead = stream.Read(buffer.AsSpan(0, bytesToRead));
+                if (bytesRead <= 0)
+                    return false;
+
+                bytesToAdvance -= bytesRead;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc cref="TrySetPositionOrAdvance"/>
+        public static async ValueTask<bool> TrySetPositionOrAdvanceAsync(this Stream stream, long position, CancellationToken cancellationToken = default)
+        {
+            var positionInStream = SafetyHelpers.NoFailureResult<long?>(() => stream.Position);
+            if (positionInStream is null)
+                return false;
+
+            if (positionInStream == position)
+                return true;
+
+            if (stream.CanSeek)
+            {
+                stream.Position = position;
+                return true;
+            }
+
+            if (!stream.CanSeek && position < positionInStream)
+                return false;
+
+            if (!stream.CanRead)
+                return false;
+
+            // Read to a buffer in loop until the desired position is reached
+            var bytesToAdvance = position - positionInStream.Value;
+            var buffer = new byte[4096];
+            while (bytesToAdvance > 0)
+            {
+                var bytesToRead = (int)Math.Min(buffer.Length, bytesToAdvance);
+                var bytesRead = await stream.ReadAsync(buffer.AsMemory(0, bytesToRead), cancellationToken).ConfigureAwait(false);
                 if (bytesRead <= 0)
                     return false;
 

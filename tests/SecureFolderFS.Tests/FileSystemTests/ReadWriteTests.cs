@@ -24,9 +24,27 @@ namespace SecureFolderFS.Tests.FileSystemTests
         }
 
         [Test]
+        public async Task WriteAsync_LargeFile_ReadAsync_SameContent_NoThrow()
+        {
+            await Base_WriteAsync_LargeFile_ReadAsync_SameContent_NoThrow();
+        }
+
+        [Test]
         public async Task Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow()
         {
             await Base_Write_SmallFile_Then_WriteAgain_Read_SameContent_NoThrow();
+        }
+
+        [Test]
+        public async Task Write_SparseFile_ReadGap_ReturnsZeros_NoThrow()
+        {
+            await Base_Write_SparseFile_ReadGap_ReturnsZeros_NoThrow();
+        }
+
+        [Test]
+        public async Task SetLength_Truncate_Then_Extend_ReadsZeros_NoThrow()
+        {
+            await Base_SetLength_Truncate_Then_Extend_ReadsZeros_NoThrow();
         }
     }
 }
