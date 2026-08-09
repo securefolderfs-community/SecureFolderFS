@@ -287,6 +287,33 @@
             </StackPanel>
         </DataTemplate>
 
+        <!--  Recovery Requirement Template  -->
+        <DataTemplate x:Key="RecoveryRequirementTemplate" x:DataType="vm5:RecoveryRequirementViewModel">
+            <StackPanel Width="400" Spacing="16">
+                <!--  Info  -->
+                <InfoBar
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:ResourceString Rid=VaultRestoredNoCredentials}"
+                    Severity="Informational" />
+
+                <!--  Recovery key  -->
+                <uc:RecoveryControl
+                    ErrorMessage="{x:Bind ErrorMessage, Mode=OneWay}"
+                    PasteRecoveryKeyCommand="{x:Bind PasteRecoveryKeyCommand, Mode=OneWay}"
+                    RecoveryKey="{x:Bind RecoveryKey, Mode=TwoWay}" />
+
+                <!--  Set up credentials  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind SetUpCredentialsCommand, Mode=OneWay}"
+                    Content="{l:ResourceString Rid=SetUpNewCredentials}"
+                    Style="{ThemeResource AccentButtonStyle}"
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm5:ErrorViewModel">
             <uc:ErrorControl
@@ -324,6 +351,7 @@
                 MigrationTemplate="{StaticResource MigrationTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
                 PersistedAuthenticationTemplate="{StaticResource PersistedAuthenticationTemplate}"
+                RecoveryRequirementTemplate="{StaticResource RecoveryRequirementTemplate}"
                 UnsupportedTemplate="{StaticResource UnsupportedTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}"
                 YubiKeyTemplate="{StaticResource YubiKeyTemplate}" />

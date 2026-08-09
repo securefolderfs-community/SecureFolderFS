@@ -27,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly KeySequence _loginKeySequence;
         private readonly KeySequence _registerKeySequence;
         private readonly AuthenticationStage _authenticationStage;
+        private readonly IDisposable? _unlockContract;
         private string? _primaryAuthenticationMethodId;
 
         [ObservableProperty] private LoginViewModel _LoginViewModel;
@@ -35,13 +36,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
         [ObservableProperty] private InfoBarViewModel _StatusInfoBar = new();
 
-        public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage)
+        public CredentialsOverlayViewModel(IFolder vaultFolder, string? vaultName, AuthenticationStage authenticationStage, IDisposable? unlockContract = null)
         {
             ServiceProvider = DI.Default;
             _loginKeySequence = new();
             _registerKeySequence = new();
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
+            _unlockContract = unlockContract;
 
             RegisterViewModel = new(authenticationStage, _registerKeySequence);
             LoginViewModel = new(vaultFolder, LoginViewType.Basic, _loginKeySequence) { Title = vaultName };
@@ -81,6 +83,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // The vault is already unlocked, so there is nothing to authenticate against
+            // and the credentials can be registered right away
+            if (_unlockContract is not null)
+            {
+                BeginCredentialsReset(_unlockContract);
+                return;
+            }
+
             try
             {
                 var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
@@ -110,14 +120,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             if (e.IsRecovered)
             {
-                Title = "SetCredentials".ToLocalized();
-                PrimaryText = "Confirm".ToLocalized();
-                CanContinue = false;
-
-                // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
-                // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
-                _loginKeySequence.Dispose();
-                SelectedViewModel = new CredentialsResetViewModel(_vaultFolder, e.UnlockContract, RegisterViewModel).WithInitAsync();
+                BeginCredentialsReset(e.UnlockContract);
             }
             else
             {
@@ -139,6 +142,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 SelectionViewModel.RegisterViewModel = RegisterViewModel;
                 SelectedViewModel = SelectionViewModel;
             }
+        }
+
+        /// <summary>
+        /// Moves the overlay to the stage where new credentials are registered for an unlocked vault.
+        /// </summary>
+        /// <param name="unlockContract">The contract of the unlocked vault under which the credentials are re-keyed.</param>
+        private void BeginCredentialsReset(IDisposable unlockContract)
+        {
+            Title = "SetCredentials".ToLocalized();
+            PrimaryText = "Confirm".ToLocalized();
+            CanContinue = false;
+
+            // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
+            // The flag is manipulating the order at which keys are placed in the key sequence, so it shouldn't matter if it's cleared here
+            _loginKeySequence.Dispose();
+            SelectedViewModel = new CredentialsResetViewModel(_vaultFolder, unlockContract, RegisterViewModel).WithInitAsync();
         }
 
         private void SelectionViewModel_ConfirmationRequested(object? sender, CredentialsConfirmationViewModel e)

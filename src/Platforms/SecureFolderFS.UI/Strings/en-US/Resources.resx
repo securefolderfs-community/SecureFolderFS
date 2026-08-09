@@ -2201,4 +2201,10 @@
   <data name="ChangeIcon" xml:space="preserve">
       <value>Change icon</value>
   </data>
+  <data name="VaultRestoredNoCredentials" xml:space="preserve">
+      <value>This vault has been restored and has no credentials set up yet</value>
+  </data>
+  <data name="SetUpNewCredentials" xml:space="preserve">
+      <value>Set up new credentials</value>
+  </data>
 </root>

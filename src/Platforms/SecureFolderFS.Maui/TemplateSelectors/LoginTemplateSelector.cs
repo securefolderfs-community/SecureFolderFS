@@ -20,6 +20,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? PersistedAuthenticationTemplate { get; set; }
 
+        public DataTemplate? RecoveryRequirementTemplate { get; set; }
+
         public DataTemplate? ErrorTemplate { get; set; }
 
         public DataTemplate? UnsupportedTemplate { get; set; }
@@ -50,6 +52,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 #endif
                 AppPlatformLoginViewModel => AppPlatformTemplate,
                 PersistedAuthenticationViewModel => PersistedAuthenticationTemplate,
+                RecoveryRequirementViewModel => RecoveryRequirementTemplate,
                 ErrorViewModel => ErrorTemplate,
                 UnsupportedViewModel => UnsupportedTemplate,
                 _ => null

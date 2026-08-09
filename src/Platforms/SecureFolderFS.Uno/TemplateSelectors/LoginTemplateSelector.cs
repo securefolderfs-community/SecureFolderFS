@@ -32,6 +32,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? PersistedAuthenticationTemplate { get; set; }
 
+        public DataTemplate? RecoveryRequirementTemplate { get; set; }
+
         public DataTemplate? ErrorTemplate { get; set; }
 
         public DataTemplate? UnsupportedTemplate { get; set; }
@@ -54,6 +56,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 DeviceLinkLoginViewModel => DeviceLinkTemplate,
                 AppPlatformLoginViewModel => AppPlatformTemplate,
                 PersistedAuthenticationViewModel => PersistedAuthenticationTemplate,
+                RecoveryRequirementViewModel => RecoveryRequirementTemplate,
                 MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,
                 UnsupportedViewModel => UnsupportedTemplate,

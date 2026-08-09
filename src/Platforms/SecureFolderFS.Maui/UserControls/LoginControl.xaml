@@ -217,6 +217,99 @@
             </ContentView>
         </DataTemplate>
 
+        <!--  Recovery Requirement Template  -->
+        <DataTemplate x:Key="RecoveryRequirementTemplate" x:DataType="vm2:RecoveryRequirementViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="16">
+
+                    <!--  Description card  -->
+                    <Border
+                        Padding="20,18"
+                        Background="{StaticResource ThemeSecondaryColorBrush}"
+                        StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="12">
+                            <Border
+                                Background="{StaticResource ThemeElevatedFillPrimaryColorBrush}"
+                                HeightRequest="48"
+                                HorizontalOptions="Center"
+                                StrokeThickness="0"
+                                WidthRequest="48">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Grid>
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_material:Material Restore}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="Android"
+                                        VerticalOptions="Center" />
+                                    <mi:MauiIcon
+                                        HorizontalOptions="Center"
+                                        Icon="{mi_cupertino:Cupertino ArrowCounterclockwise}"
+                                        IconColor="{AppThemeBinding Light={StaticResource PrimaryLightColor},
+                                                                    Dark={StaticResource PrimaryDarkColor}}"
+                                        IconSize="22"
+                                        OnPlatforms="iOS"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                            <Label
+                                FontSize="14"
+                                HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                LineBreakMode="WordWrap"
+                                Opacity="0.6"
+                                Text="{l:ResourceString Rid=VaultRestoredNoCredentials}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!--  Recovery key  -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label
+                            FontSize="12"
+                            Opacity="0.6"
+                            Text="{l:ResourceString Rid=EnterRecoveryKey}" />
+                        <Editor
+                            AutoSize="TextChanges"
+                            Background="{StaticResource ThemeSecondaryColorBrush}"
+                            HorizontalOptions="Fill"
+                            Placeholder="lZbz5sWme..."
+                            Text="{Binding RecoveryKey, Mode=TwoWay}" />
+                    </VerticalStackLayout>
+
+                    <!--  Paste  -->
+                    <Button
+                        Command="{Binding PasteRecoveryKeyCommand}"
+                        HorizontalOptions="Fill"
+                        Text="{l:ResourceString Rid=Paste}" />
+
+                    <!--  Set up credentials  -->
+                    <Button
+                        Command="{Binding SetUpCredentialsCommand}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Text="{l:ResourceString Rid=SetUpNewCredentials}" />
+
+                    <!--  Error notification  -->
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        IsVisible="{Binding ErrorMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        LineBreakMode="WordWrap"
+                        Text="{Binding ErrorMessage, Mode=OneWay}"
+                        TextColor="{AppThemeBinding Light={StaticResource StatusErrorLightColor},
+                                                    Dark={StaticResource StatusErrorDarkColor}}" />
+
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <ContentView>
@@ -245,6 +338,7 @@
                     KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     PasswordTemplate="{StaticResource PasswordTemplate}"
                     PersistedAuthenticationTemplate="{StaticResource PersistedAuthenticationTemplate}"
+                    RecoveryRequirementTemplate="{StaticResource RecoveryRequirementTemplate}"
                     UnsupportedTemplate="{StaticResource UnsupportedTemplate}" />
             </local:ContentPresentation.TemplateSelector>
         </local:ContentPresentation>

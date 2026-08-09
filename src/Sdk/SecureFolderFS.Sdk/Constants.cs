@@ -42,6 +42,12 @@
 
         public static class Vault
         {
+            public static class Authentication
+            {
+                // (Cannot reference SecureFolderFS.Core Constants.Vault.Authentication)
+                public const string AUTH_RECOVERY_KEY_REQUIREMENT = "recovery_key_requirement";
+            }
+
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
             public const string VAULT_ICON_FILENAME = "vault_icon";
             public const string VAULT_ICON_FILENAME_ICO = "vault_icon.ico";
