@@ -43,6 +43,12 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// </summary>
         bool OpenFolderOnUnlock { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value that determines whether other applications on this device may use the
+        /// local integration API to enumerate vaults and request unlocking.
+        /// </summary>
+        bool EnableLocalIntegrations { get; set; }
+
         #endregion
 
         #region File Browser

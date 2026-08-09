@@ -76,6 +76,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
             set => SetSetting(value);
         }
 
+        /// <inheritdoc/>
+        public virtual bool EnableLocalIntegrations
+        {
+            get => GetSetting(static () => false);
+            set => SetSetting(value);
+        }
+
         #endregion
 
         #region File Browser
