@@ -39,6 +39,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 IntroductionOverlayViewModel => new IntroductionControl(),
                 VaultItemInfoOverlayViewModel => new VaultItemInfoDialog(),
                 VaultRestorationOverlayViewModel => new RestorationDialog(),
+                ApiConsentOverlayViewModel => new ApiConsentDialog(),
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
 
