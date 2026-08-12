@@ -20,6 +20,13 @@ namespace SecureFolderFS.Uno.PInvoke
         public const uint SHCNF_PATHW = 0x0005;
         public const uint WM_GETMINMAXINFO = 0x0024;
         public const uint WM_DPICHANGED = 0x02E0;
+        public const uint SND_ASYNC = 0x0001;
+        public const uint SND_NODEFAULT = 0x0002;
+        public const uint SND_MEMORY = 0x0004;
+        public const uint SND_PURGE = 0x0040;
+
+        [DllImport("winmm.dll", CharSet = CharSet.Unicode, EntryPoint = "PlaySoundW")]
+        public static extern bool PlaySound(IntPtr data, IntPtr module, uint flags);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
@@ -123,17 +130,32 @@ namespace SecureFolderFS.Uno.PInvoke
         public const string LibObjc = "libobjc.dylib";
         public const string SecurityLib = "/System/Library/Frameworks/Security.framework/Security";
         public const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
+        public const string AudioToolboxLib = "/System/Library/Frameworks/AudioToolbox.framework/AudioToolbox";
 
         public const int ErrSecSuccess = 0;
         public const int ErrSecDuplicateItem = -25299;
         public const int ErrSecItemNotFound = -25300;
         public const uint KCfStringEncodingUtf8 = 0x08000100;
         public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
+        public const uint CF_STRING_ENCODING_UTF8 = 0x08000100;
+        public const nint CF_URL_POSIX_PATH_STYLE = 0;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
 
         #region Core Foundation
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFURLCreateWithFileSystemPath(IntPtr allocator, IntPtr filePath, nint pathStyle, [MarshalAs(UnmanagedType.I1)] bool isDirectory);
+        
+        [LibraryImport(AudioToolboxLib)]
+        public static partial int AudioServicesCreateSystemSoundID(IntPtr fileUrl, out uint soundId);
+
+        [LibraryImport(AudioToolboxLib)]
+        public static partial void AudioServicesPlaySystemSound(uint soundId);
+
+        [LibraryImport(AudioToolboxLib)]
+        public static partial int AudioServicesDisposeSystemSoundID(uint soundId);
         
         [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);

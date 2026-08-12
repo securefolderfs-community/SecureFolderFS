@@ -45,6 +45,7 @@
     <None Remove="Assets\AppAssets\Shields\warning_shield.png" />
     <None Remove="Assets\AppAssets\Shields\warning_shield.svg" />
     <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
+    <None Remove="Assets\AppAssets\Media\IntroductionReveal.wav" />
     <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
     <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
     <None Remove="Assets\Licenses\PolySharp LICENSE" />
