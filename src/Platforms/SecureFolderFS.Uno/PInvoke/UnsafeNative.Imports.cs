@@ -24,7 +24,7 @@ namespace SecureFolderFS.Uno.PInvoke
         public const uint SND_NODEFAULT = 0x0002;
         public const uint SND_MEMORY = 0x0004;
         public const uint SND_PURGE = 0x0040;
-
+        
         [DllImport("winmm.dll", CharSet = CharSet.Unicode, EntryPoint = "PlaySoundW")]
         public static extern bool PlaySound(IntPtr data, IntPtr module, uint flags);
 
@@ -143,11 +143,8 @@ namespace SecureFolderFS.Uno.PInvoke
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
 
-        #region Core Foundation
-
-        [LibraryImport(CoreFoundationLib)]
-        public static partial IntPtr CFURLCreateWithFileSystemPath(IntPtr allocator, IntPtr filePath, nint pathStyle, [MarshalAs(UnmanagedType.I1)] bool isDirectory);
-        
+        #region Audio Toolbox
+     
         [LibraryImport(AudioToolboxLib)]
         public static partial int AudioServicesCreateSystemSoundID(IntPtr fileUrl, out uint soundId);
 
@@ -156,6 +153,13 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [LibraryImport(AudioToolboxLib)]
         public static partial int AudioServicesDisposeSystemSoundID(uint soundId);
+
+        #endregion
+
+        #region Core Foundation
+
+        [LibraryImport(CoreFoundationLib)]
+        public static partial IntPtr CFURLCreateWithFileSystemPath(IntPtr allocator, IntPtr filePath, nint pathStyle, [MarshalAs(UnmanagedType.I1)] bool isDirectory);
         
         [LibraryImport(CoreFoundationLib)]
         public static partial IntPtr CFDataCreate(IntPtr allocator, IntPtr bytes, long length);
