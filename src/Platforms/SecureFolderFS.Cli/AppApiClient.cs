@@ -8,11 +8,6 @@ namespace SecureFolderFS.Cli;
 /// <summary>
 /// Talks to a running SecureFolderFS instance over the local integration API.
 /// </summary>
-/// <remarks>
-/// Written against the BCL alone — no SecureFolderFS assemblies, no shared protocol library. It exists
-/// to prove that the published protocol is implementable from the specification by itself: a third party
-/// reading <c>docs/local-integration-api.md</c> can reproduce everything here in an afternoon.
-/// </remarks>
 internal sealed class AppApiClient : IAsyncDisposable
 {
     private const string CLIENT_NAME = "SecureFolderFS CLI";
@@ -30,7 +25,7 @@ internal sealed class AppApiClient : IAsyncDisposable
     {
         _stream = stream;
         _reader = new StreamReader(stream, Encoding.UTF8);
-        // Newline-delimited JSON: one compact object per line, terminated by '\n'.
+        // Newline-delimited JSON
         _writer = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true, NewLine = "\n" };
     }
 
@@ -68,7 +63,6 @@ internal sealed class AppApiClient : IAsyncDisposable
     private async Task HandshakeAsync(CancellationToken cancellationToken)
     {
         var token = TokenStore.TryRead();
-
         var hello = await CallAsync("hello", new
         {
             protocolMin = PROTOCOL_VERSION,
@@ -84,7 +78,7 @@ internal sealed class AppApiClient : IAsyncDisposable
         if (token is not null)
             TokenStore.Clear();
 
-        // 'pair' raises a consent dialog in SecureFolderFS; only ever call it in response to a user action.
+        // 'pair' raises a consent dialog
         var pair = await CallAsync("pair", new { scopes = new[] { "vaults.read", "vaults.trigger" } }, cancellationToken);
         TokenStore.Write(pair.GetProperty("token").GetString()!);
     }
@@ -189,7 +183,7 @@ internal sealed class AppApiClient : IAsyncDisposable
 
     /// <summary>
     /// Locates and connects to the endpoint by reading the persistent endpoint file, exactly as the
-    /// protocol specification describes. No secrets live here — the file is only a map.
+    /// protocol specification describes.
     /// </summary>
     private sealed record ApiEndpoint(string Transport, string Address, bool Enabled, int ProtocolMin, int ProtocolMax)
     {
@@ -218,8 +212,7 @@ internal sealed class AppApiClient : IAsyncDisposable
         }
 
         /// <summary>
-        /// Opens the transport, or <see langword="null"/> when nothing is listening. Liveness is only ever
-        /// determined by attempting the connection, never inferred from the file's presence.
+        /// Opens the transport, or <see langword="null"/> when nothing is listening.
         /// </summary>
         public async Task<Stream?> OpenAsync(TimeSpan connectTimeout, CancellationToken cancellationToken)
         {
