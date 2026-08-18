@@ -11,7 +11,7 @@ namespace SecureFolderFS.Cli;
 internal sealed class AppApiClient : IAsyncDisposable
 {
     private const string CLIENT_NAME = "SecureFolderFS CLI";
-    private const int PROTOCOL_VERSION = 0;
+    private const int PROTOCOL_VERSION = 1;
 
     private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(30);

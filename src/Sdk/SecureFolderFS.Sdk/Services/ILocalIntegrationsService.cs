@@ -27,12 +27,16 @@ namespace SecureFolderFS.Sdk.Services
         /// Withdraws an application's authorization. It must ask the user again to reconnect.
         /// </summary>
         /// <param name="clientId">The identifier from <see cref="IntegrationClientInfo.Id"/>.</param>
-        void RevokeClient(string clientId);
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task RevokeClientAsync(string clientId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Withdraws every application's authorization and forgets every recorded refusal, so a mistaken
         /// denial does not leave the application waiting out the cooldown.
         /// </summary>
-        void RevokeAllClients();
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task RevokeAllClientsAsync(CancellationToken cancellationToken = default);
     }
 }
