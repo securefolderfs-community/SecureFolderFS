@@ -19,6 +19,7 @@ namespace SecureFolderFS.UI
             public const string KEY_FILE_EXTENSION = ".key";
             public const string VAULT_SHORTCUT_FILE_EXTENSION = ".sfvault";
             public const string ICON_ASSET_PATH = "Assets/AppAssets/app_icon.ico";
+            public const string API_CLIENTS_FILENAME = "api_clients.json";
 
             public static class Accounts
             {
