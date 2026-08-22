@@ -15,5 +15,10 @@ namespace SecureFolderFS.Sdk.Attributes
         /// Gets or sets the value that represents the visibility of the injected class.
         /// </summary>
         public string? Visibility { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that represents the optionality of the injected class.
+        /// </summary>
+        public string? Optionality { get; set; }
     }
 }
