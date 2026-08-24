@@ -2207,4 +2207,61 @@
   <data name="SetUpNewCredentials" xml:space="preserve">
       <value>Set up new credentials</value>
   </data>
+  <data name="ApiConsentTitle" xml:space="preserve">
+      <value>Allow app to connect?</value>
+  </data>
+  <data name="ApiConsentDescription" xml:space="preserve">
+      <value>{0} wants to connect to SecureFolderFS.</value>
+  </data>
+  <data name="ApiConsentVerifiedPublisher" xml:space="preserve">
+      <value>Verified publisher: {0}</value>
+  </data>
+  <data name="ApiConsentUnverifiedPublisher" xml:space="preserve">
+      <value>This application's identity could not be verified</value>
+  </data>
+  <data name="ApiConsentPermissionsHeader" xml:space="preserve">
+      <value>It will be able to:</value>
+  </data>
+  <data name="ApiConsentScopeVaultsRead" xml:space="preserve">
+      <value>See your vaults and whether they are unlocked</value>
+  </data>
+  <data name="ApiConsentScopeVaultsTrigger" xml:space="preserve">
+      <value>Ask you to unlock vaults, and lock them</value>
+  </data>
+  <data name="ApiConsentScopeAppControl" xml:space="preserve">
+      <value>Bring the SecureFolderFS window to the front</value>
+  </data>
+  <data name="ApiConsentFooter" xml:space="preserve">
+      <value>It can never read your files or your passwords, and unlocking always requires you to enter your credentials in SecureFolderFS.</value>
+  </data>
+  <data name="Allow" xml:space="preserve">
+      <value>Allow</value>
+  </data>
+  <data name="Deny" xml:space="preserve">
+      <value>Deny</value>
+  </data>
+  <data name="LocalIntegrations" xml:space="preserve">
+      <value>App integrations</value>
+  </data>
+  <data name="LocalIntegrationsDescription" xml:space="preserve">
+      <value>Let other apps on this device see your vaults and ask to unlock them</value>
+  </data>
+  <data name="ConnectedApps" xml:space="preserve">
+      <value>Connected apps</value>
+  </data>
+  <data name="NoConnectedApps" xml:space="preserve">
+      <value>No apps have been allowed to connect</value>
+  </data>
+  <data name="RevokeAccess" xml:space="preserve">
+      <value>Revoke</value>
+  </data>
+  <data name="RevokeAllAccess" xml:space="preserve">
+      <value>Revoke all</value>
+  </data>
+  <data name="ApiClientUnverified" xml:space="preserve">
+      <value>Identity not verified</value>
+  </data>
+  <data name="ApiClientNeverUsed" xml:space="preserve">
+      <value>Never used</value>
+  </data>
 </root>

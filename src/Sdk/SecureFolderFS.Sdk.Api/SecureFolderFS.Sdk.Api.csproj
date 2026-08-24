@@ -5,10 +5,11 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SecureFolderFS.Api\SecureFolderFS.Api.csproj" />
+        <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     </ItemGroup>
 
 </Project>

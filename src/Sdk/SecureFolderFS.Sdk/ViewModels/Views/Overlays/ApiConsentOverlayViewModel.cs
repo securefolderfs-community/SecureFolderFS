@@ -38,11 +38,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private string _IdentityDescription;
 
         /// <summary>
-        /// Gets the scopes being requested, as identifiers.
-        /// </summary>
-        public ObservableCollection<string> RequestedScopes { get; }
-
-        /// <summary>
         /// Gets the human-readable description of what the caller is asking to do.
         /// </summary>
         public ObservableCollection<string> RequestedPermissions { get; }
@@ -52,14 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             string? executablePath,
             string? signer,
             bool isIdentityVerified,
-            IEnumerable<string> requestedScopes,
             IEnumerable<string> requestedPermissions)
         {
             ClientName = clientName;
             ExecutablePath = executablePath;
             Signer = signer;
             IsIdentityVerified = isIdentityVerified;
-            RequestedScopes = new(requestedScopes);
             RequestedPermissions = new(requestedPermissions);
 
             Title = "ApiConsentTitle".ToLocalized();
