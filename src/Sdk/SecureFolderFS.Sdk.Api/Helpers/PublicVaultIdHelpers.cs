@@ -17,13 +17,13 @@ namespace SecureFolderFS.Sdk.Api.Helpers
         /// <summary>
         /// Computes the public identifier for a vault.
         /// </summary>
-        /// <param name="installSecret">The per-installation secret held by the pairing store.</param>
+        /// <param name="vaultIdKey">The per-installation vault ID key held by the pairing store.</param>
         /// <param name="persistableId">The application's internal identifier for the vault.</param>
         [SkipLocalsInit]
-        public static string Compute(ReadOnlySpan<byte> installSecret, string persistableId)
+        public static string Compute(ReadOnlySpan<byte> vaultIdKey, string persistableId)
         {
             Span<byte> digest = stackalloc byte[32];
-            HMACSHA256.HashData(installSecret, Encoding.UTF8.GetBytes(persistableId), digest);
+            HMACSHA256.HashData(vaultIdKey, Encoding.UTF8.GetBytes(persistableId), digest);
 
             return ToBase64Url(digest[..ID_BYTE_LENGTH]);
         }
