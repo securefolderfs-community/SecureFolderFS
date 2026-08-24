@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.Api.Helpers
     /// Derives the public identifier under which a vault is exposed to integrations, so third-party
     /// configuration never comes to depend on the app's internal persistence identifier.
     /// </summary>
-    public static class PublicVaultId
+    public static class PublicVaultIdHelpers
     {
         // 16 digest bytes equating to a 128-bit identifier
         private const int ID_BYTE_LENGTH = 16;

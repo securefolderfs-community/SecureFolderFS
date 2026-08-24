@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using SecureFolderFS.Sdk.Api.Enums;
 
-namespace SecureFolderFS.Sdk.Api.Policy
+namespace SecureFolderFS.Sdk.Api.Helpers
 {
     /// <summary>
     /// Enforces per-client request budgets using a token bucket per request class.
     /// </summary>
-    public sealed class ApiRateLimiter
+    public sealed class ApiRateLimiterHelper
     {
         private readonly Lock _lock = new();
         private readonly Dictionary<string, Dictionary<ApiRequestType, Bucket>> _clients = [];
@@ -74,44 +74,6 @@ namespace SecureFolderFS.Sdk.Api.Policy
                 Tokens = Math.Min(capacity, Tokens + elapsed / refillInterval);
                 _lastRefill = now;
             }
-        }
-    }
-
-    /// <summary>
-    /// Collapses duplicate in-flight requests so identical work is never started twice. While a request
-    /// for a given key is outstanding, further requests for the same key are refused entry.
-    /// </summary>
-    public sealed class RequestCoalescer
-    {
-        private readonly Lock _lock = new();
-        private readonly HashSet<string> _inFlight = [];
-
-        /// <summary>
-        /// Attempts to claim exclusive ownership of a unit of work.
-        /// </summary>
-        /// <returns>A scope that releases the claim when disposed, or <see langword="null"/> when the
-        /// same work is already in flight.</returns>
-        public IDisposable? TryBeginScope(string key)
-        {
-            lock (_lock)
-            {
-                if (!_inFlight.Add(key))
-                    return null;
-            }
-
-            return new Scope(this, key);
-        }
-
-        private void End(string key)
-        {
-            lock (_lock)
-                _inFlight.Remove(key);
-        }
-
-        private sealed class Scope(RequestCoalescer owner, string key) : IDisposable
-        {
-            /// <inheritdoc/>
-            public void Dispose() => owner.End(key);
         }
     }
 }

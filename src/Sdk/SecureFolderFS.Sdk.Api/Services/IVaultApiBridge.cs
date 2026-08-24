@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Api.Protocol;
 using SecureFolderFS.Sdk.Api.Enums;
 using SecureFolderFS.Sdk.Api.EventArguments;
+using SecureFolderFS.Sdk.Api.Models;
 
 namespace SecureFolderFS.Sdk.Api.Services
 {

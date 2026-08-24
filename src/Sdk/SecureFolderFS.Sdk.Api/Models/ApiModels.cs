@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace SecureFolderFS.Sdk.Api.Protocol
+namespace SecureFolderFS.Sdk.Api.Models
 {
     /// <summary>
     /// The first message a client sends after connecting.

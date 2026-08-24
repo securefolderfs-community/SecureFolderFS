@@ -112,7 +112,7 @@ namespace SecureFolderFS.Sdk.Api.Services
         public async Task<string> CreateClientAsync(
             string displayName, PeerEvidence evidence, IReadOnlyList<string> scopes, CancellationToken cancellationToken = default)
         {
-            var token = PublicVaultId.ToBase64Url(RandomNumberGenerator.GetBytes(32));
+            var token = PublicVaultIdHelpers.ToBase64Url(RandomNumberGenerator.GetBytes(32));
             var client = new PairedClient(
                 Id: Guid.NewGuid().ToString("N"),
                 DisplayName: displayName,

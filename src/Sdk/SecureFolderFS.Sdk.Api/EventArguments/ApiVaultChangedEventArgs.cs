@@ -1,6 +1,6 @@
 using System;
-using SecureFolderFS.Sdk.Api.Protocol;
 using SecureFolderFS.Sdk.Api.Enums;
+using SecureFolderFS.Sdk.Api.Models;
 
 namespace SecureFolderFS.Sdk.Api.EventArguments
 {
