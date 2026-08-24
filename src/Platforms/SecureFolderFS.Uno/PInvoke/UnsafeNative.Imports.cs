@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace SecureFolderFS.Uno.PInvoke
 {
@@ -29,6 +30,10 @@ namespace SecureFolderFS.Uno.PInvoke
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetDpiForWindow(IntPtr hWnd);
+
+        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool GetNamedPipeClientProcessId(SafePipeHandle pipe, out uint clientProcessId);
 
         [DllImport("comctl32.dll", SetLastError = true)]
         public static extern bool SetWindowSubclass(
@@ -117,6 +122,11 @@ namespace SecureFolderFS.Uno.PInvoke
             IntPtr lParam,
             UIntPtr uIdSubclass,
             IntPtr dwRefData);
+#endif
+        
+#if !WINDOWS
+        [LibraryImport("libc", SetLastError = true)]
+        public static partial int getsockopt(int socket, int level, int optionName, byte[] optionValue, ref int optionLength);
 #endif
 
 #if __UNO_SKIA_MACOS__
@@ -300,6 +310,9 @@ namespace SecureFolderFS.Uno.PInvoke
         public static partial void objc_msgSend_void_long_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, long arg1, IntPtr arg2, IntPtr arg3);
 
         #endregion
+        
+        [LibraryImport("libproc", SetLastError = true)]
+        public static partial int proc_pidpath(int pid, byte[] buffer, uint bufferSize);
 
         public static IntPtr CfString(string value)
         {

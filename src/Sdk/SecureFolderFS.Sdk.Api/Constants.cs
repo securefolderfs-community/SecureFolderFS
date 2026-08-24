@@ -9,6 +9,8 @@ namespace SecureFolderFS.Sdk.Api
         public const string ENDPOINT_FILE_NAME = "api-endpoint.json";
         public const string APP_DIRECTORY_NAME = "SecureFolderFS";
         public const string XDG_DIRECTORY_NAME = "securefolderfs";
+        public const string TRANSPORT_NAMED_PIPE = "namedPipe";
+        public const string TRANSPORT_UNIX_SOCKET = "unixSocket";
 
         public static class Methods
         {

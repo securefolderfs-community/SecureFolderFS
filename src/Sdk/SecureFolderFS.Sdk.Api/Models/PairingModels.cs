@@ -35,4 +35,27 @@ namespace SecureFolderFS.Sdk.Api.Models
     public sealed record DeniedClient(
         [property: JsonPropertyName("fingerprint")] string Fingerprint,
         [property: JsonPropertyName("deniedAt")] DateTimeOffset DeniedAt);
+
+    public sealed class PairingStoreDataModel
+    {
+        [JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = 1;
+
+        [JsonPropertyName("vaultIdKey")]
+        public string VaultIdKey { get; set; } = string.Empty;
+
+        [JsonPropertyName("clients")]
+        public List<PairedClient> Clients { get; set; } = [];
+
+        [JsonPropertyName("denied")]
+        public List<DeniedClient> Denied { get; set; } = [];
+
+        public PairingStoreDataModel Clone() => new()
+        {
+            SchemaVersion = SchemaVersion,
+            VaultIdKey = VaultIdKey,
+            Clients = [.. Clients],
+            Denied = [.. Denied]
+        };
+    }
 }
