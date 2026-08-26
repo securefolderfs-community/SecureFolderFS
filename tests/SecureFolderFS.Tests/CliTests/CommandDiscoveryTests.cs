@@ -37,7 +37,10 @@ public class CommandDiscoveryTests
             nameof(VaultMountCommand),
             nameof(VaultRunCommand),
             nameof(VaultShellCommand),
-            nameof(VaultUnmountCommand)
+            nameof(VaultUnmountCommand),
+            nameof(AppVaultsCommand),
+            nameof(AppLockCommand),
+            nameof(AppUnlockCommand)
         ]);
     }
 }
