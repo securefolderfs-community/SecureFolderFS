@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Api.Services;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
@@ -21,6 +24,14 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             _apiHost = apiHost;
             _pairingStore = pairingStore;
             _settingsService = settingsService;
+
+            // A pairing is created off the UI thread by an API session, so notify the settings UI to refresh
+            _pairingStore.ClientsChanged += PairingStore_ClientsChanged;
+        }
+
+        private static void PairingStore_ClientsChanged(object? sender, EventArgs e)
+        {
+            App.Instance?.MainWindowSynchronizationContext?.Post(_ => WeakReferenceMessenger.Default.Send(new IntegrationClientsChangedMessage()), null);
         }
 
         /// <inheritdoc/>

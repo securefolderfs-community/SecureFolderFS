@@ -16,6 +16,8 @@ internal sealed class AppApiClient : IAsyncDisposable
     private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(30);
 
+    private static readonly TimeSpan PairTimeout = TimeSpan.FromMinutes(1);
+
     private readonly Stream _stream;
     private readonly StreamReader _reader;
     private readonly StreamWriter _writer;
@@ -78,8 +80,8 @@ internal sealed class AppApiClient : IAsyncDisposable
         if (token is not null)
             TokenStore.Clear();
 
-        // 'pair' raises a consent dialog
-        var pair = await CallAsync("pair", new { scopes = new[] { "vaults.read", "vaults.trigger" } }, cancellationToken);
+        // 'pair' raises a consent dialog and waits for the user to answer it
+        var pair = await CallAsync("pair", new { scopes = new[] { "vaults.read", "vaults.trigger" } }, cancellationToken, PairTimeout);
         TokenStore.Write(pair.GetProperty("token").GetString()!);
     }
 
@@ -121,17 +123,17 @@ internal sealed class AppApiClient : IAsyncDisposable
         return result.TryGetProperty("status", out var status) ? status.GetString() ?? "ok" : "ok";
     }
 
-    private async Task<JsonElement> CallAsync(string method, object? parameters, CancellationToken cancellationToken)
+    private async Task<JsonElement> CallAsync(string method, object? parameters, CancellationToken cancellationToken, TimeSpan? timeout = null)
     {
         var id = _nextId++;
         await _writer.WriteLineAsync(JsonSerializer.Serialize(new { id, method, @params = parameters }));
 
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(RequestTimeout);
+        using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutSource.CancelAfter(timeout ?? RequestTimeout);
 
         while (true)
         {
-            var line = await _reader.ReadLineAsync(timeout.Token)
+            var line = await _reader.ReadLineAsync(timeoutSource.Token)
                 ?? throw new AppApiException($"SecureFolderFS closed the connection during '{method}'.");
 
             if (line.Length == 0)

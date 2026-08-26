@@ -30,6 +30,9 @@ namespace SecureFolderFS.Sdk.Api.Services
         private bool _initialized;
 
         /// <inheritdoc/>
+        public event EventHandler? ClientsChanged;
+
+        /// <inheritdoc/>
         public TimeSpan DenialCooldown { get; } = TimeSpan.FromMinutes(5);
 
         public PairingStore(string fileName, IModifiableFolder settingsFolder, IAsyncSerializer<Stream> serializer)
@@ -131,36 +134,44 @@ namespace SecureFolderFS.Sdk.Api.Services
             }
 
             await SaveAsync(cancellationToken);
+            ClientsChanged?.Invoke(this, EventArgs.Empty);
             return token;
         }
 
         /// <inheritdoc/>
-        public Task RevokeClientAsync(string clientId, CancellationToken cancellationToken = default)
+        public async Task RevokeClientAsync(string clientId, CancellationToken cancellationToken = default)
         {
+            bool removed;
             lock (_lock)
             {
                 EnsureInitialized();
-                if (_data.Clients.RemoveAll(x => x.Id == clientId) == 0)
-                    return Task.CompletedTask;
+                removed = _data.Clients.RemoveAll(x => x.Id == clientId) > 0;
             }
 
-            return SaveAsync(cancellationToken);
+            if (!removed)
+                return;
+
+            await SaveAsync(cancellationToken);
+            ClientsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
-        public Task RevokeAllAsync(CancellationToken cancellationToken = default)
+        public async Task RevokeAllAsync(CancellationToken cancellationToken = default)
         {
+            bool changed;
             lock (_lock)
             {
                 EnsureInitialized();
-                if (_data.Clients.Count == 0 && _data.Denied.Count == 0)
-                    return Task.CompletedTask;
-
+                changed = _data.Clients.Count > 0 || _data.Denied.Count > 0;
                 _data.Clients.Clear();
                 _data.Denied.Clear();
             }
 
-            return SaveAsync(cancellationToken);
+            if (!changed)
+                return;
+
+            await SaveAsync(cancellationToken);
+            ClientsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>

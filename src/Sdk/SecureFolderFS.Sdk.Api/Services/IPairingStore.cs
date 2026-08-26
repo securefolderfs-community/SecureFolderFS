@@ -17,6 +17,11 @@ namespace SecureFolderFS.Sdk.Api.Services
     public interface IPairingStore : IPersistable
     {
         /// <summary>
+        /// Occurs when the set of paired clients changes (a pairing is created or revoked).
+        /// </summary>
+        event EventHandler? ClientsChanged;
+
+        /// <summary>
         /// Gets the per-installation vault ID key used to derive public vault identifiers.
         /// </summary>
         byte[] VaultIdKey { get; }

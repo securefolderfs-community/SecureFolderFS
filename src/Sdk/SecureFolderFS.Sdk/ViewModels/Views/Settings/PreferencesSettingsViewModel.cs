@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
@@ -16,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<ISystemService>, Inject<ILocalIntegrationsService>(Optionality = "optional")]
     [Bindable(true)]
-    public sealed partial class PreferencesSettingsViewModel : BaseSettingsViewModel
+    public sealed partial class PreferencesSettingsViewModel : BaseSettingsViewModel, IRecipient<IntegrationClientsChangedMessage>
     {
         public FileSystemBannerViewModel BannerViewModel { get; }
 
@@ -34,6 +36,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             ConnectedApps = new();
             AreIntegrationsSupported = LocalIntegrationsService is not null;
             Title = "SettingsPreferences".ToLocalized();
+
+            WeakReferenceMessenger.Default.Register(this);
         }
 
         public bool EnableLocalIntegrations
@@ -117,6 +121,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
                 UserSettings.StartOnSystemStartup = isAutoStartEnabled;
                 OnPropertyChanged(nameof(StartOnSystemStartup));
             }
+        }
+
+        /// <inheritdoc/>
+        public void Receive(IntegrationClientsChangedMessage message)
+        {
+            RefreshConnectedApps();
         }
 
         [RelayCommand]
