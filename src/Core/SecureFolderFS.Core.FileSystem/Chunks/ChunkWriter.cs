@@ -2,6 +2,8 @@
 using System.Buffers;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Shared.Extensions;
@@ -68,6 +70,56 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
                 // Write to stream at the correct chunk
                 _ciphertextStream.Write(realCiphertextChunk);
+
+                _fileSystemStatistics.BytesWritten?.Report(realCiphertextChunk.Length);
+            }
+            finally
+            {
+                // Clear ciphertext data before returning buffer to pool
+                CryptographicOperations.ZeroMemory(ciphertextChunk.AsSpan(0, ciphertextSize));
+
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(ciphertextChunk);
+            }
+        }
+
+        /// <inheritdoc cref="WriteChunk"/>
+        public async ValueTask WriteChunkAsync(long chunkNumber, ReadOnlyMemory<byte> plaintextChunk, CancellationToken cancellationToken = default)
+        {
+            // Calculate size of ciphertext
+            var ciphertextSize = Math.Min(plaintextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkPlaintextSize), _security.ContentCrypt.ChunkCiphertextSize);
+
+            // Calculate position in ciphertext stream
+            var streamPosition = _security.HeaderCrypt.HeaderCiphertextSize + chunkNumber * _security.ContentCrypt.ChunkCiphertextSize;
+
+            // Rent buffer
+            var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
+            try
+            {
+                // ArrayPool may return a larger array than requested
+                var realCiphertextChunk = ciphertextChunk.AsMemory(0, ciphertextSize);
+
+                // Encrypt
+                _security.ContentCrypt.EncryptChunk(
+                    plaintextChunk.Span,
+                    chunkNumber,
+                    _fileHeader,
+                    realCiphertextChunk.Span);
+
+                _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
+
+                // Extend the stream when the chunk starts beyond the current end.
+                // The zero-filled region decrypts as valid zero chunks, so out-of-order
+                // chunk writes must not be dropped as that would silently lose data
+                if (_ciphertextStream.CanSeek && streamPosition > _ciphertextStream.Length)
+                    _ciphertextStream.SetLength(streamPosition);
+
+                // Set the correct stream position
+                if (!await _ciphertextStream.TrySetPositionOrAdvanceAsync(streamPosition, cancellationToken).ConfigureAwait(false))
+                    throw new IOException($"The stream position could not be set to the chunk at {streamPosition}.");
+
+                // Write to stream at the correct chunk
+                await _ciphertextStream.WriteAsync(realCiphertextChunk, cancellationToken).ConfigureAwait(false);
 
                 _fileSystemStatistics.BytesWritten?.Report(realCiphertextChunk.Length);
             }

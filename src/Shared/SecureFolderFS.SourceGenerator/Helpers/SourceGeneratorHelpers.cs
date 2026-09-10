@@ -20,13 +20,15 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// </code>
         /// </summary>
         /// <returns><see cref="ExpressionSyntax"/></returns>
-        internal static ExpressionSyntax GetLoggerRegistration(string containingTypeName, string serviceProviderName)
+        internal static ExpressionSyntax GetLoggerRegistration(string containingTypeName, string serviceProviderName, bool isRequired)
         {
             // ServiceProviderServiceExtensions.GetRequiredService<ILoggerFactory>(this.ServiceProvider)
+            // or
+            // ServiceProviderServiceExtensions.GetService<ILoggerFactory>(this.ServiceProvider)
             var getLoggerFactory = InvocationExpression(
                     MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
                         IdentifierName("global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions"),
-                        GenericName("GetRequiredService").WithTypeArgumentList(
+                        GenericName(isRequired ? "GetRequiredService" : "GetService").WithTypeArgumentList(
                             TypeArgumentList(SeparatedList<TypeSyntax>().Add(
                                 ParseTypeName("global::Microsoft.Extensions.Logging.ILoggerFactory"))))))
                 .AddArgumentListArguments(Argument(GetThisMemberAccessExpression(serviceProviderName)));
@@ -58,8 +60,8 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// </code>
         /// </summary>
         /// <returns><see cref="PropertyDeclarationSyntax"/></returns>
-        internal static PropertyDeclarationSyntax GetPropertyDeclaration(SyntaxKind visibility, string propertyName, string type, params AccessorDeclarationSyntax[] accessors) =>
-            PropertyDeclaration(ParseTypeName(type), propertyName)
+        internal static PropertyDeclarationSyntax GetPropertyDeclaration(SyntaxKind visibility, string propertyName, string type, bool isNullable, params AccessorDeclarationSyntax[] accessors) =>
+            PropertyDeclaration(ParseNullableType(type, isNullable), propertyName)
                 .AddModifiers(Token(visibility))
                 .AddAccessorListAccessors(accessors);
 
@@ -70,8 +72,8 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// </code>
         /// </summary>
         /// <returns><see cref="PropertyDeclarationSyntax"/></returns>
-        internal static PropertyDeclarationSyntax GetPropertyDeclaration(SyntaxKind visibility, string propertyName, string type) =>
-            PropertyDeclaration(ParseTypeName(type), propertyName)
+        internal static PropertyDeclarationSyntax GetPropertyDeclaration(SyntaxKind visibility, string propertyName, string type, bool isNullable) =>
+            PropertyDeclaration(ParseNullableType(type, isNullable), propertyName)
                 .AddModifiers(Token(visibility));
 
         /// <summary>
@@ -162,10 +164,10 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// </code>
         /// </summary>
         /// <returns><see cref="ExpressionSyntax"/></returns>
-        internal static ExpressionSyntax GetServiceRegistration(ITypeSymbol injectionType, string serviceProviderName) =>
+        internal static ExpressionSyntax GetServiceRegistration(ITypeSymbol injectionType, string serviceProviderName, bool isRequired) =>
             InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
                     IdentifierName("global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions"),
-                    GenericName("GetRequiredService").WithTypeArgumentList(TypeArgumentList(SeparatedList<TypeSyntax>().Add(ParseTypeName(injectionType.ToDisplayString()))))))
+                    GenericName(isRequired ? "GetRequiredService" : "GetService").WithTypeArgumentList(TypeArgumentList(SeparatedList<TypeSyntax>().Add(ParseTypeName(injectionType.ToDisplayString()))))))
                 .AddArgumentListArguments(Argument(GetThisMemberAccessExpression(serviceProviderName)));
 
         /// <summary>

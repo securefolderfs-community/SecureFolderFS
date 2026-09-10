@@ -52,7 +52,7 @@
                             SelectAuthenticationOptionCommand="{x:Bind ViewModel.LoginViewModel.SelectAuthenticationOptionCommand, Mode=OneWay}"
                             SelectedAuthenticationOption="{x:Bind ViewModel.LoginViewModel.SelectedAuthenticationOption, Mode=TwoWay}"
                             ShouldSaveCredentials="{x:Bind ViewModel.LoginViewModel.ShouldSaveCredentials, Mode=TwoWay}"
-                            Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}" />
+                            Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel,RecoveryRequirementViewModel|invert'}" />
 
                         <HyperlinkButton
                             HorizontalAlignment="Center"

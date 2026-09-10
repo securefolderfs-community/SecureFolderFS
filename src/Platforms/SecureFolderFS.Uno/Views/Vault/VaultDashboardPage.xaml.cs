@@ -39,13 +39,12 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
             if (e.Parameter is VaultDashboardViewModel viewModel)
             {
                 ViewModel = viewModel;
                 await LoadComponentsAsync();
             }
-
-            base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

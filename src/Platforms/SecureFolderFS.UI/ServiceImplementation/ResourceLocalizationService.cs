@@ -41,7 +41,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             "zh-CN"
         };
 
-        protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;
+        protected IAppSettings AppSettings => field ??= DI.Service<ISettingsService>().AppSettings;
 
         protected virtual ResourceManager ResourceManager { get; }
 
@@ -78,6 +78,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public virtual Task SetCultureAsync(CultureInfo cultureInfo)
         {
             CurrentCulture = cultureInfo;
+            CultureInfo.CurrentCulture = cultureInfo;
             AppSettings.AppLanguage = cultureInfo.Name;
 
             return AppSettings.SaveAsync();

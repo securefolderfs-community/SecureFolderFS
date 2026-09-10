@@ -12,11 +12,9 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         public AesSivNameCrypt(KeyPair keyPair, string fileNameEncodingId)
             : base(fileNameEncodingId)
         {
-            _aesSiv256 = keyPair.UseKeys((dekKey, macKey) =>
-            {
-                // Note: AesSiv256 requires a byte[] key.
-                return AesSiv256.CreateInstance(dekKey.ToArray(), macKey.ToArray());
-            });
+            // The spans are passed straight through so the master keys never leave SecureKey's
+            // protection boundary as ordinary, movable, never-zeroed heap arrays
+            _aesSiv256 = keyPair.UseKeys(static (dekKey, macKey) => AesSiv256.CreateInstance(dekKey, macKey));
         }
 
         /// <inheritdoc/>

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -57,7 +58,13 @@ namespace SecureFolderFS.Uno.Dialogs
 
             var result = await ViewModel.RestoreAsync();
             if (!result.Successful)
+            {
+                // The first pass stops to show the detected parameters
+                if (ViewModel.IsAwaitingConfirmation)
+                    PrimaryButtonText = "ConfirmAndRestore".ToLocalized();
+
                 return;
+            }
 
             _tcs.TrySetResult(result);
             Hide();

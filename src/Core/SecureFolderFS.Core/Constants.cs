@@ -50,6 +50,7 @@ namespace SecureFolderFS.Core
                 public const string ASSOC_AUTHENTICATION = "authMode";
                 public const string ASSOC_VAULT_ID = "vaultId";
                 public const string ASSOC_APP_PLATFORM = "appPlatform";
+                public const string ASSOC_COMPLEMENT_GENERATION = "complementGeneration";
                 public const string ASSOC_VERSION = "version";
             }
 

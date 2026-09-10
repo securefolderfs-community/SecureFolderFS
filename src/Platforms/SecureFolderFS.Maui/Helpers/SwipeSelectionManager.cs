@@ -40,13 +40,13 @@ namespace SecureFolderFS.Maui.Helpers
 
                 if (inside && !_currentlyInsideIds.Contains(id))
                 {
-                    // Entered rectangle — apply intent
+                    // Entered rectangle (apply intent)
                     item.IsSelected = _selectionIntent;
                     _currentlyInsideIds.Add(id);
                 }
                 else if (!inside && _currentlyInsideIds.Contains(id))
                 {
-                    // Left rectangle — revert to original state
+                    // Left rectangle (revert to original state)
                     item.IsSelected = !_selectionIntent;
                     _currentlyInsideIds.Remove(id);
                 }

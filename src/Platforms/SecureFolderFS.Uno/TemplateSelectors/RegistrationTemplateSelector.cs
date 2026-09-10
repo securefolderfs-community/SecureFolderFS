@@ -25,6 +25,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? DeviceLinkTemplate { get; set; }
 
+        public DataTemplate? AppPlatformTemplate { get; set; }
+
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
 #if __UNO_SKIA_MACOS__
@@ -41,6 +43,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
                 MacOSBiometricsCreationViewModel => TouchIDTemplate,
 #endif
                 DeviceLinkCreationViewModel => DeviceLinkTemplate,
+                AppPlatformCreationViewModel => AppPlatformTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

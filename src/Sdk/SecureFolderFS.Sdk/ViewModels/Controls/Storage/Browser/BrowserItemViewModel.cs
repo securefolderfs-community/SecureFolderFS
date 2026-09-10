@@ -82,10 +82,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (BrowserViewModel.TransferViewModel is { } transferViewModel)
-                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
         }
 
@@ -136,6 +136,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (destinationViewModel.Items.IsEmpty())
                     await destinationViewModel.ListContentsAsync(cts.Token);
 
+                var existingNames = new HashSet<string>(destinationViewModel.Items.Select(x => x.Inner.Name), StringComparer.OrdinalIgnoreCase);
                 await transferViewModel.TransferAsync(items.Select(x => (IStorableChild)x.Inner), async (item, reporter, token) =>
                 {
                     // Check if the item source is the same as destination
@@ -143,10 +144,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         return;
 
                     // Get available name to avoid collision
-                    var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+                    var availableName = CollisionHelpers.GetAvailableName(item.Name, existingNames);
 
                     // Move
                     var movedItem = await destinationFolder.MoveStorableFromAsync(item, modifiableParent, false, availableName, reporter, token);
+                    existingNames.Add(availableName);
 
                     // Remove existing from folder
                     ParentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id)?.Dispose();
@@ -164,9 +166,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {
@@ -212,13 +214,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                 if (destinationViewModel.Items.IsEmpty())
                     await destinationViewModel.ListContentsAsync(cts.Token);
 
+                var existingNames = new HashSet<string>(destinationViewModel.Items.Select(x => x.Inner.Name), StringComparer.OrdinalIgnoreCase);
                 await transferViewModel.TransferAsync(items.Select(x => x.Inner), async (item, reporter, token) =>
                 {
                     // Get available name to avoid collision
-                    var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+                    var availableName = CollisionHelpers.GetAvailableName(item.Name, existingNames);
 
                     // Copy
                     var copiedItem = await modifiableDestination.CreateCopyOfStorableAsync(item, false, availableName, reporter, token);
+                    existingNames.Add(availableName);
 
                     // Add to destination
                     destinationViewModel.Items.Insert(copiedItem switch
@@ -233,9 +237,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {
@@ -290,10 +294,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (BrowserViewModel.TransferViewModel is { } transferViewModel)
-                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
         }
 
@@ -420,9 +424,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {
@@ -469,9 +473,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {
@@ -489,7 +493,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
         /// <remarks>
         /// A plain substring check would misclassify sibling paths that share a prefix (e.g. '/a/bc' and '/a/b').
         /// </remarks>
-        private static bool IsAncestorOrSelf(string destinationId, string itemId)
+        public static bool IsAncestorOrSelf(string destinationId, string itemId)
         {
             if (destinationId.Equals(itemId, StringComparison.OrdinalIgnoreCase))
                 return true;

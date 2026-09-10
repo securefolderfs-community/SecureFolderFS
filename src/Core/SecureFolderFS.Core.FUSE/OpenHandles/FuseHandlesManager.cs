@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             {
                 // Return a snapshot - the live collection could be mutated
                 // by another thread while the caller is enumerating it
-                lock (handles)
+                lock (handlesLock)
                     return handles.Values.ToArray();
             }
         }
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             var fileHandle = new FuseFileHandle(plaintextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
             var handle = handlesGenerator.ThreadSafeIncrement();
 
-            lock (handles)
+            lock (handlesLock)
                 handles.TryAdd(handle, fileHandle);
 
             return handle;
@@ -87,14 +87,14 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         public override THandle? GetHandle<THandle>(ulong handleId)
             where THandle : class
         {
-            lock (handles)
+            lock (handlesLock)
                 return base.GetHandle<THandle>(handleId);
         }
 
         /// <inheritdoc/>
         public override void CloseHandle(ulong handle)
         {
-            lock (handles)
+            lock (handlesLock)
                 base.CloseHandle(handle);
         }
     }

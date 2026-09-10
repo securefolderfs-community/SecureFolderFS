@@ -37,5 +37,19 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             throw new PlatformNotSupportedException("Only implemented on iOS.");
 #endif
         }
+
+        /// <inheritdoc/>
+        public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> TrySetAutoStartAsync(bool isEnabled, CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
     }
 }

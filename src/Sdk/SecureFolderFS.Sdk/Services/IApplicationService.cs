@@ -1,16 +1,16 @@
-﻿using SecureFolderFS.Sdk.ViewModels.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// A service that interacts with common app-related APIs.
     /// </summary>
-    public interface IApplicationService
+    public interface IApplicationService : IUriLauncher
     {
         /// <summary>
         /// Gets the value that determines whether the app is operating on a desktop platform.
@@ -35,13 +35,6 @@ namespace SecureFolderFS.Sdk.Services
         /// </remarks>
         /// <returns>A <see cref="string"/> containing version data.</returns>
         string GetSystemVersion();
-
-        /// <summary>
-        /// Launches a URI from app. This can be a URL, folder path, etc.
-        /// </summary>
-        /// <param name="uri">The URI to launch.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task OpenUriAsync(Uri uri);
 
         /// <summary>
         /// Tries to schedule the application for restart.

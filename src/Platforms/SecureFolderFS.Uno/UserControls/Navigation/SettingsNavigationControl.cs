@@ -15,6 +15,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             { typeof(GeneralSettingsViewModel), typeof(GeneralSettingsPage) },
             { typeof(PreferencesSettingsViewModel), typeof(PreferencesSettingsPage) },
             { typeof(PrivacySettingsViewModel), typeof(PrivacySettingsPage) },
+            { typeof(AccountsSettingsViewModel), typeof(AccountsSettingsPage) },
             { typeof(AboutSettingsViewModel), typeof(AboutSettingsPage) }
         };
 

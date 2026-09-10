@@ -9,6 +9,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? MigratorV2_V3 { get; set; }
 
+        public DataTemplate? MigratorV3_V4 { get; set; }
+
         /// <inheritdoc/>
         protected override DataTemplate? SelectTemplateCore(MigrationViewModel? item, DependencyObject container)
         {
@@ -16,6 +18,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             {
                 Core.Constants.Vault.Versions.V1 => MigratorV1_V2,
                 Core.Constants.Vault.Versions.V2 => MigratorV2_V3,
+                Core.Constants.Vault.Versions.V3 => MigratorV3_V4,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

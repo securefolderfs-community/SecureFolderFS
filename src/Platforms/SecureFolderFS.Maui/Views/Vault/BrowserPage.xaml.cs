@@ -122,8 +122,13 @@ namespace SecureFolderFS.Maui.Views.Vault
             if (ViewModel?.OuterNavigator is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
 
-            // Also update the initial layout
-            if (Browser.CanReloadCollection())
+            // Re-apply the adaptive layout when returning to the folder.
+            // The full ListContentsAsync refresh is deliberately not triggered here because
+            // it would rebuild the collection and reset the scroll position every time an overlay (e.g., the previewer) closes
+            ViewModel?.CurrentFolder?.OnAppearing();
+
+            // Only hide the browser when a reload will actually recreate the collection
+            if (Browser.CanReloadCollection() && Browser.NeedsCollectionReload())
                 Browser.IsVisible = false;
 
             base.OnAppearing();

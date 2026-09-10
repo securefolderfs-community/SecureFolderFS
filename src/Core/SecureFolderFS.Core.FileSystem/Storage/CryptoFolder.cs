@@ -279,31 +279,31 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             where TStorable : class, IStorableChild
         {
             var parentFolder = await item.GetParentAsync(cancellationToken);
-            if (parentFolder is null || parentFolder.Id == Path.DirectorySeparatorChar.ToString())
+
+            // The item is the vault root itself (it has no parent): its own ciphertext is the answer.
+            if (parentFolder is null)
             {
-                // We're at the root
-                parentFolder ??= item as IFolder;
-                if (parentFolder is not IWrapper<IFolder> folderWrapper)
+                if (item is not IWrapper<IFolder> rootWrapper)
                     return null;
 
-                if (folderWrapper.GetWrapperAt<IFolder, CryptoFolder>() is not { Inner: var ciphertextRoot })
-                    return null;
-
-                if (parentFolder.Id == Path.DirectorySeparatorChar.ToString() || parentFolder.Id == specifics.ContentFolder.Id)
-                    return ciphertextRoot as TStorable;
-
-                var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(item.Name, ciphertextRoot, specifics, cancellationToken);
-                return await ciphertextRoot.TryGetFirstByNameAsync(ciphertextName, cancellationToken) as TStorable;
+                return rootWrapper.GetWrapperAt<IFolder, CryptoFolder>() is { Inner: var ciphertextRoot }
+                    ? ciphertextRoot as TStorable
+                    : null;
             }
 
+            // Otherwise resolve the item by name inside its parent's ciphertext folder. This covers
+            // items directly under the root and items nested deeper alike: the parent supplies the
+            // Directory ID that the name is encrypted against. (A previous special-case returned the
+            // root's own ciphertext for any child of the root, which resolved every top-level item to
+            // the wrong folder and broke moves/copies out of top-level folders.)
             if (parentFolder is not IWrapper<IFolder> parentFolderWrapper)
                 return null;
 
             if (parentFolderWrapper.GetWrapperAt<IFolder, CryptoFolder>() is not { Inner: var ciphertextParent })
                 return null;
 
-            var ciphertextName2 = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(item.Name, ciphertextParent, specifics, cancellationToken);
-            return await ciphertextParent.TryGetFirstByNameAsync(ciphertextName2, cancellationToken) as TStorable;
+            var ciphertextName = await AbstractPathHelpers.EncryptNameForDiscoveryAsync(item.Name, ciphertextParent, specifics, cancellationToken);
+            return await ciphertextParent.TryGetFirstByNameAsync(ciphertextName, cancellationToken) as TStorable;
         }
     }
 }

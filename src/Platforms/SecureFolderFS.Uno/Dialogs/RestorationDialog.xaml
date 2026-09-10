@@ -20,7 +20,7 @@
     mc:Ignorable="d">
 
     <StackPanel Spacing="32">
-        <StackPanel Spacing="8">
+        <StackPanel Spacing="8" Visibility="{x:Bind ViewModel.IsAwaitingConfirmation, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
             <InfoBar
                 IsClosable="False"
                 IsOpen="True"
@@ -32,6 +32,71 @@
                 TextWrapping="WrapWholeWords" />
         </StackPanel>
 
-        <uc:RecoveryControl PasteRecoveryKeyCommand="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}" RecoveryKey="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}" />
+        <uc:RecoveryControl
+            PasteRecoveryKeyCommand="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}"
+            RecoveryKey="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}"
+            Visibility="{x:Bind ViewModel.IsAwaitingConfirmation, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}" />
+
+        <!--  The detected parameters are confirmed before the rebuilt configuration is signed with the vault's own MAC key  -->
+        <StackPanel Spacing="8" Visibility="{x:Bind ViewModel.IsAwaitingConfirmation, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <InfoBar
+                IsClosable="False"
+                IsOpen="True"
+                Message="{l:ResourceString Rid=RestorationConfirmTitle}"
+                Severity="Warning" />
+
+            <TextBlock
+                Opacity="0.6"
+                Text="{l:ResourceString Rid=RestorationConfirmDescription}"
+                TextWrapping="WrapWholeWords" />
+
+            <Grid ColumnSpacing="12" RowSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Rid=DataEncryption}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Text="{x:Bind ViewModel.DetectedParameters.ContentCipherId, Mode=OneWay}" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Rid=NameEncryption}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="{x:Bind ViewModel.DetectedFileNameCipher, Mode=OneWay}" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Rid=NameShortening}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Text="{x:Bind ViewModel.DetectedParameters.ShorteningThreshold, Mode=OneWay}" />
+            </Grid>
+
+            <InfoBar
+                IsClosable="False"
+                IsOpen="{x:Bind ViewModel.IsFileNameEncryptionMissing, Mode=OneWay}"
+                Message="{l:ResourceString Rid=RestorationNoFileNameEncryption}"
+                Severity="Error" />
+        </StackPanel>
     </StackPanel>
 </ContentDialog>

@@ -66,6 +66,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
                 Title = item.Title;
         }
 
+        /// <summary>
+        /// Removes and disposes the given <paramref name="slide"/>, adjusting <see cref="CurrentIndex"/>
+        /// so it keeps pointing at a valid slide.
+        /// </summary>
+        /// <param name="slide">The slide to remove.</param>
+        public void RemoveSlide(BasePreviewerViewModel slide)
+        {
+            var index = Slides.IndexOf(slide);
+            if (index < 0)
+                return;
+
+            Slides.RemoveAt(index);
+            (slide as IDisposable)?.Dispose();
+
+            if (Slides.Count == 0)
+                return;
+
+            var newIndex = index < CurrentIndex ? CurrentIndex - 1 : Math.Min(CurrentIndex, Slides.Count - 1);
+            if (newIndex != CurrentIndex)
+                CurrentIndex = newIndex;
+            else
+                Title = Slides.ElementAtOrDefault(CurrentIndex)?.Title;
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {

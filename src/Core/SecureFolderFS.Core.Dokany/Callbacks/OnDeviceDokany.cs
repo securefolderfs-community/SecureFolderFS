@@ -170,7 +170,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 try
                 {
-                    if (specifics.Options.IsReadOnly && mode.IsWriteFlag())
+                    if (specifics.Options.IsReadOnly && mode.IsWriteFlag(pathExists))
                         throw FileSystemExceptions.FileSystemReadOnly;
 
                     // Materialize sidecar for the new file name if shortened
@@ -441,6 +441,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
         {
+            if (specifics.Options.IsReadOnly)
+                return Trace(DokanResult.AccessDenied, fileName, info);
+
             try
             {
                 if (!IsContextInvalid(info))

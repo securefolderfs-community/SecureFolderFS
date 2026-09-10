@@ -113,8 +113,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 if (draggedItem == folderViewModel)
                     return;
 
-                // Disallow dropping a folder into its own subfolder
-                if (folderViewModel.Inner.Id.Contains(draggedItem.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
+                // Disallow dropping a folder into itself or its own subfolder
+                if (BrowserItemViewModel.IsAncestorOrSelf(folderViewModel.Inner.Id, draggedItem.Inner.Id))
                     return;
 
                 await MoveItemToFolderAsync(draggedItem, folderViewModel);
@@ -160,24 +160,18 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 if (draggedItem.ParentFolder == currentFolder)
                     return;
 
-                // Disallow dropping a folder into its own subfolder
-                if (currentFolder.Inner.Id.Contains(draggedItem.Inner.Id, StringComparison.InvariantCultureIgnoreCase))
+                // Disallow dropping a folder into itself or its own subfolder
+                if (BrowserItemViewModel.IsAncestorOrSelf(currentFolder.Inner.Id, draggedItem.Inner.Id))
                     return;
 
                 await MoveItemToFolderAsync(draggedItem, currentFolder);
                 return;
             }
 
-            // Handle external files dropped from system apps (e.g., Files app)
-            // Get the current folder from the ItemsSource binding
-            if (ItemsSource is not { Count: >= 0 } items)
-                return;
-
-            // Try to get the BrowserViewModel from the first item, or from the binding context
-            var firstItem = items.FirstOrDefault();
-            var targetBrowserViewModel = firstItem?.BrowserViewModel;
-            var targetFolder = targetBrowserViewModel?.CurrentFolder;
-
+            // Handle external files dropped from system apps (e.g., Files app).
+            // The target folder comes from the bound view model so that drops
+            // into an empty folder (no items to read the context from) also work
+            var targetFolder = ViewModel?.CurrentFolder ?? ItemsSource?.FirstOrDefault()?.BrowserViewModel.CurrentFolder;
             if (targetFolder is null)
                 return;
 
@@ -237,9 +231,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
             finally
             {
@@ -309,9 +303,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                         if (string.IsNullOrEmpty(suggestedExtension) && !string.IsNullOrEmpty(extension))
                             actualName = suggestedName + extension;
 
-                        itemsToProcess.Add((actualName, async _ =>
+                        itemsToProcess.Add((actualName, async ct =>
                         {
-                            var dataTcs = new TaskCompletionSource<NSData?>();
+                            var dataTcs = new TaskCompletionSource<NSData?>(TaskCreationOptions.RunContinuationsAsynchronously);
                             var utType = UTType.CreateFromIdentifier(capturedTypeId);
                             if (utType is null)
                                 return null;
@@ -321,7 +315,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                                 dataTcs.TrySetResult(data);
                             });
 
-                            var data = await dataTcs.Task;
+                            // Guard against providers that never invoke the completion callback
+                            var data = await dataTcs.Task.WaitAsync(TimeSpan.FromSeconds(60), ct);
                             return data?.AsStream();
                         }, false));
 
@@ -331,7 +326,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     // Second, try to load as a file URL (works for Files app)
                     if (itemProvider.HasItemConformingTo(UTTypes.Item.Identifier))
                     {
-                        var tcs = new TaskCompletionSource<(NSUrl? Url, bool IsFolder)>();
+                        var tcs = new TaskCompletionSource<(NSUrl? Url, bool IsFolder)>(TaskCreationOptions.RunContinuationsAsynchronously);
                         itemProvider.LoadItem(UTTypes.Item.Identifier, null, (item, _) =>
                         {
                             if (item is NSUrl { Path: not null } itemUrl)
@@ -346,7 +341,7 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                             }
                         });
 
-                        var (url, isFolder) = await tcs.Task;
+                        var (url, isFolder) = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(60));
                         if (url is not null)
                         {
                             // Get the actual filename from the URL path - this should include the correct extension
@@ -407,15 +402,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     if (itemProvider.HasItemConformingTo(UTTypes.Data.Identifier))
                     {
                         var capturedProvider = itemProvider;
-                        itemsToProcess.Add((suggestedName, async _ =>
+                        itemsToProcess.Add((suggestedName, async ct =>
                         {
-                            var dataTcs = new TaskCompletionSource<NSData?>();
+                            var dataTcs = new TaskCompletionSource<NSData?>(TaskCreationOptions.RunContinuationsAsynchronously);
                             capturedProvider.LoadDataRepresentation(UTTypes.Data, (data, _) =>
                             {
                                 dataTcs.TrySetResult(data);
                             });
 
-                            var data = await dataTcs.Task;
+                            // Guard against providers that never invoke the completion callback
+                            var data = await dataTcs.Task.WaitAsync(TimeSpan.FromSeconds(60), ct);
                             return data?.AsStream();
                         }, false));
                     }
@@ -433,12 +429,14 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                     if (destinationViewModel.Items.IsEmpty())
                         await destinationViewModel.ListContentsAsync(cts.Token);
 
+                    var existingNames = new HashSet<string>(destinationViewModel.Items.Select(x => x.Inner.Name), StringComparer.OrdinalIgnoreCase);
                     await transferViewModel.TransferAsync(itemsToProcess, async (item, reporter, token) =>
                     {
                         token.ThrowIfCancellationRequested();
 
                         // Get available name to avoid collision
-                        var availableName = CollisionHelpers.GetAvailableName(item.Name, destinationViewModel.Items.Select(x => x.Inner.Name));
+                        var availableName = CollisionHelpers.GetAvailableName(item.Name, existingNames);
+                        existingNames.Add(availableName);
 
                         if (item.IsFolder)
                         {
@@ -470,9 +468,9 @@ namespace SecureFolderFS.Maui.UserControls.Browser
                 {
                     // Cancellation, nothing to report
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
                 }
                 finally
                 {

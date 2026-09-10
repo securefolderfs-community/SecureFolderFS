@@ -71,6 +71,19 @@ namespace SecureFolderFS.Core.DataModels
         public AppPlatformVaultOptions? AppPlatform { get; init; }
 
         /// <summary>
+        /// Gets the rotation counter for complementation key material.
+        /// </summary>
+        /// <remarks>
+        /// Mixed into the complement key derivation so that bumping it re-keys the keystore and
+        /// invalidates previously issued complementation shares. A value of zero (the default for
+        /// non-complemented or never-rotated vaults) reproduces the legacy derivation and is therefore
+        /// omitted from the payload MAC to preserve backwards compatibility.
+        /// </remarks>
+        [JsonPropertyName(Associations.ASSOC_COMPLEMENT_GENERATION)]
+        [DefaultValue(0)]
+        public int ComplementGeneration { get; set; }
+
+        /// <summary>
         /// Gets the HMAC-SHA256 hash of the payload.
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
@@ -89,6 +102,7 @@ namespace SecureFolderFS.Core.DataModels
                 RecycleBinSize = vaultOptions.RecycleBinSize,
                 Uid = vaultOptions.VaultId ?? Guid.NewGuid().ToString(),
                 AppPlatform = vaultOptions.AppPlatform,
+                ComplementGeneration = vaultOptions.ComplementGeneration,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
         }

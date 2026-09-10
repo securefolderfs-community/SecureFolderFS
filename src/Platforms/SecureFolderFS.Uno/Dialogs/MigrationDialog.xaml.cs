@@ -62,7 +62,7 @@ namespace SecureFolderFS.Uno.Dialogs
             {
                 if (args.Result.Exception is CryptographicException)
                 {
-                    if (AuthenticationView.ContentTemplateRoot is not IProgress<IResult?> reporter)
+                    if (AuthenticationView.GetContentControlRoot() is not IProgress<IResult?> reporter)
                         return;
 
                     reporter.Report(args.Result);
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            if (AuthenticationView.ContentTemplateRoot is not IMigratorControl migratorControl)
+            if (AuthenticationView.GetContentControlRoot() is not IMigratorControl migratorControl)
                 return;
 
             await migratorControl.ContinueAsync();
@@ -101,7 +101,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is not null)
                 ViewModel.StateChanged += ViewModel_StateChanged;
 
-            if (AuthenticationView.ContentTemplateRoot is IDisposable disposable)
+            if (AuthenticationView.GetContentControlRoot() is IDisposable disposable)
                 disposable.Dispose();
         }
     }

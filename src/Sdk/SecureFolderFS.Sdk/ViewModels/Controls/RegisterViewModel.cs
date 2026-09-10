@@ -18,6 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         private readonly AuthenticationStage _authenticationStage;
         private bool _credentialsAdded;
+        private bool _committed;
 
         [ObservableProperty] private bool _CanContinue;
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
@@ -38,11 +39,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             Credentials = credentials ?? new();
         }
 
+        /// <summary>
+        /// Marks the credentials as committed to the vault, preventing any subsequent revocation
+        /// from deleting the newly-enrolled authenticator the vault now depends on.
+        /// </summary>
+        public void MarkCommitted()
+        {
+            _committed = true;
+        }
+
         public async Task RevokeCredentialsAsync(CancellationToken cancellationToken)
         {
             try
             {
-                if (!_credentialsAdded)
+                // Never revoke once the change has been written: the vault now depends on these credentials.
+                if (_committed || !_credentialsAdded)
                     return;
 
                 if (CurrentViewModel is null)
@@ -88,10 +99,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 oldValue.StateChanged -= CurrentViewModel_StateChanged;
                 oldValue.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
-                // We also need to revoke existing credentials if the user added and aborted
-                if (Credentials.Count > 0)
+                // Only revoke when the user actually enrolled a credential in this view model. Gating on
+                // Credentials.Count would also fire for a pre-seeded first-stage key, destroying a live
+                // authenticator (e.g. deleting windows_hello.cfg) merely by browsing the method list.
+                if (_credentialsAdded && !_committed)
                     await SafetyHelpers.NoFailureAsync(async () => await oldValue.RevokeAsync(null));
             }
+
+            // The new view model has no enrolled credentials yet
+            _credentialsAdded = false;
 
             if (newValue is not null)
             {

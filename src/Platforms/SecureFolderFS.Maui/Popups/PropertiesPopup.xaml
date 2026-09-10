@@ -104,6 +104,13 @@
                     IsVisible="{Binding ViewModel.SizeText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                     Subtitle="{Binding ViewModel.SizeText, Mode=OneWay}" />
 
+                <!--  Item count (folders only)  -->
+                <uc:ItemProperty
+                    Title="{l:ResourceString Rid=ContainedItems}"
+                    IsLastItem="False"
+                    IsVisible="{Binding ViewModel.ItemCountText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    Subtitle="{Binding ViewModel.ItemCountText, Mode=OneWay}" />
+
                 <!--  Date Created (iOS only)  -->
                 <OnPlatform x:TypeArguments="Grid">
                     <On Platform="iOS">

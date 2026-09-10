@@ -33,10 +33,42 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public virtual async Task<(IDisposable UnlockContract, IKeyUsage DekKey, IKeyUsage MacKey)> CreateAppPlatformAsync(IFolder vaultFolder, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        {
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
+            using var creationRoutine = routines.CreateAppPlatformVault();
+            await creationRoutine.InitAsync(cancellationToken);
+            creationRoutine.SetOptions(vaultOptions);
+
+            if (vaultFolder is IModifiableFolder modifiableFolder)
+            {
+                var readmeFile = await modifiableFolder.CreateFileAsync(Sdk.Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Sdk.Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+            }
+
+            var unlockContract = await creationRoutine.FinalizeAsync(cancellationToken);
+            if (unlockContract is not IWrapper<KeyPair> { Inner: { } keyPair })
+                throw new InvalidOperationException("Could not retrieve the KeyPair from the unlock contract.");
+            
+            return (unlockContract, keyPair.DekKey, keyPair.MacKey);
+        }
+
+        /// <inheritdoc/>
         public virtual async Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKeyUsage passkey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
+
+            await unlockRoutine.InitAsync(cancellationToken);
+            unlockRoutine.SetCredentials(passkey);
+            return await unlockRoutine.FinalizeAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IDisposable> UnlockAppPlatformAsync(IFolder vaultFolder, IKeyUsage passkey, CancellationToken cancellationToken = default)
+        {
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
+            using var unlockRoutine = routines.UnlockAppPlatformVault();
 
             await unlockRoutine.InitAsync(cancellationToken);
             unlockRoutine.SetCredentials(passkey);
@@ -63,21 +95,29 @@ namespace SecureFolderFS.UI.ServiceImplementation
             await complementationRoutine.InitAsync(cancellationToken);
             complementationRoutine.SetUnlockContract(unlockContract);
             complementationRoutine.SetOptions(vaultOptions);
-            complementationRoutine.SetCredentials(credentials, cancellationToken);
+            complementationRoutine.SetCredentials(credentials);
 
             using var result = await complementationRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> RestoreAsync(IFolder vaultFolder, string encodedRecoveryKey, Func<VaultRestorationParameters, CancellationToken, Task<bool>> confirmParametersAsync, CancellationToken cancellationToken = default)
         {
             using var recoveryKey = KeyPair.CombineRecoveryKey(encodedRecoveryKey);
-            
+
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var restoreRoutine = routines.RestoreVault();
             await restoreRoutine.InitAsync(cancellationToken);
             restoreRoutine.SetCredentials(recoveryKey);
-            
+
+            // The detected parameters are written into a configuration signed with the vault's real MAC
+            // key, so they are put to the user before anything is committed to disk
+            var parameters = await restoreRoutine.DetectParametersAsync(cancellationToken);
+            if (!await confirmParametersAsync(parameters, cancellationToken))
+                throw new OperationCanceledException("The detected vault parameters were not confirmed.");
+
+            restoreRoutine.ConfirmParameters();
+
             return await restoreRoutine.FinalizeAsync(cancellationToken);
         }
 

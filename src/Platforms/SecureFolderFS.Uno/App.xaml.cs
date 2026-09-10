@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,17 +9,19 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppLifecycle;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Api.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
 using SecureFolderFS.Shared;
@@ -29,6 +32,7 @@ using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.Uno.ServiceImplementation;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.Extensions;
 using Uno.UI;
@@ -40,7 +44,10 @@ using SecureFolderFS.Uno.Platforms.Desktop.DataTemplates;
 using SecureFolderFS.Uno.Platforms.Desktop.Helpers;
 #else
 using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.ViewModels;
+#endif
+#if !__UNO_SKIA_MACOS__
+using H.NotifyIcon;
 #endif
 
 namespace SecureFolderFS.Uno
@@ -48,6 +55,15 @@ namespace SecureFolderFS.Uno
     public partial class App : Application
     {
         public static App? Instance { get; private set; }
+
+        /// <summary>
+        /// Tracks the vault preview windows currently open, keyed by vault identifier.
+        /// </summary>
+        /// <remarks>
+        /// Only ever touched on the UI thread. Used to collapse repeated unlock requests onto the window
+        /// that is already showing, rather than stacking a new one for each request.
+        /// </remarks>
+        private readonly Dictionary<string, Window> _openPreviewWindows = new();
 
         public bool UseForceClose { get; set; }
 
@@ -62,7 +78,12 @@ namespace SecureFolderFS.Uno
         /// <summary>
         /// Gets a task that completes when the main window has finished initializing.
         /// </summary>
-        public TaskCompletionSource MainWindowInitialized { get; } = new();
+        /// <remarks>
+        /// Continuations must not run inline. Awaiters of this task open additional windows, and running them
+        /// synchronously from the code that completes the task would do so while the main window is still
+        /// initializing, which crashes the macOS Skia host.
+        /// </remarks>
+        public TaskCompletionSource MainWindowInitialized { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
@@ -152,17 +173,24 @@ namespace SecureFolderFS.Uno
             // Prepare MainWindow
             EnsureMainWindow(MainWindow, MainViewModel);
 
+            // Connect the local integration API to live vault state
+            _ = StartLocalIntegrationApiAsync(MainViewModel);
+
 #if WINDOWS
             // Check if the app was launched via file activation (shortcut file)
             var isShortcutActivation = IsShortcutFileActivation(Program.InitialActivationArgs);
-            var isUriActivation = IsUriActivation(Program.InitialActivationArgs);
+            var isStartupActivation = IsStartupActivation(Program.InitialActivationArgs);
 
             // Activate MainWindow (required for initialization)
             MainWindow.Activate();
 
-            // If launched via shortcut file, hide the main window immediately
-            if (isShortcutActivation || isUriActivation)
+            // If launched via shortcut file or on system startup, hide the main window immediately
+            if (isShortcutActivation || isStartupActivation)
                 MainWindow.Hide(enableEfficiencyMode: false);
+
+            // Show the auto-unlock vault prompt, unless another activation already presents vault UI
+            if (!isShortcutActivation)
+                _ = ShowAutoUnlockVaultAsync();
 
             // Process initial file activation if the app was launched via file association
             if (Program.InitialActivationArgs is { } initialArgs)
@@ -170,6 +198,9 @@ namespace SecureFolderFS.Uno
 #else
             // Activate MainWindow
             MainWindow.Activate();
+
+            // Show the auto-unlock vault prompt
+            _ = ShowAutoUnlockVaultAsync();
 #endif
         }
 
@@ -193,9 +224,17 @@ namespace SecureFolderFS.Uno
                    storageFile.Path.EndsWith(UI.Constants.FileNames.VAULT_SHORTCUT_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsUriActivation(AppActivationArguments? args)
+        /// <summary>
+        /// Checks if the app was launched on system startup, in which case it should start in the background (System Tray).
+        /// </summary>
+        private static bool IsStartupActivation(AppActivationArguments? args)
         {
-            return args is { Kind: ExtendedActivationKind.Protocol, Data: IProtocolActivatedEventArgs };
+            // Packaged apps are launched through the StartupTask registration
+            if (args is { Kind: ExtendedActivationKind.StartupTask })
+                return true;
+
+            // Unpackaged auto start is registered in the Run registry key with a command-line argument
+            return Environment.GetCommandLineArgs().Contains(UI.Constants.AUTOSTART_ARGUMENT, StringComparer.OrdinalIgnoreCase);
         }
 #endif
 
@@ -215,13 +254,6 @@ namespace SecureFolderFS.Uno
 
                 await HandleVaultShortcutActivationAsync(storageFile.Path);
             }
-            else if (args.Kind == ExtendedActivationKind.Protocol)
-            {
-                if (args.Data is not IProtocolActivatedEventArgs protocolArgs)
-                    return;
-
-                await HandleUriActivationAsync(protocolArgs.Uri);
-            }
         }
 
         /// <summary>
@@ -231,33 +263,56 @@ namespace SecureFolderFS.Uno
         public async Task HandleVaultShortcutActivationAsync(string filePath)
         {
             var shortcutFile = new SystemFileEx(filePath);
-            await using var shortcutStream = await shortcutFile.OpenReadAsync(default);
+            await using var shortcutStream = await shortcutFile.OpenReadAsync();
 
-            var shortcutData = await SerializationExtensions.DeserializeAsync<Stream, VaultShortcutDataModel>(StreamSerializer.Instance, shortcutStream);
+            var shortcutData = await StreamSerializer.Instance.DeserializeAsync<Stream, VaultShortcutDataModel>(shortcutStream);
             if (shortcutData?.PersistableId is null)
                 return;
 
             await HandleVaultPreviewActivationAsync(shortcutData.PersistableId);
         }
 
-        private async Task HandleVaultPreviewActivationAsync(string persistableId)
+        private async Task<bool> HandleVaultPreviewActivationAsync(string persistableId)
         {
             if (MainViewModel is null)
-                return;
+                return false;
 
             await MainWindowInitialized.Task;
 
             var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x =>
                 x.VaultViewModel.VaultModel.DataModel.PersistableId == persistableId);
             if (listItemViewModel is null)
-                return;
+                return false;
 
             var vaultViewModel = listItemViewModel.VaultViewModel;
+            return await ShowVaultPreviewWindowAsync(persistableId, listItemViewModel, vaultViewModel);
+        }
+
+        /// <summary>
+        /// Shows the vault preview window, or surfaces the one already open for that vault.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see langword="true"/> if a new window was shown; otherwise, <see langword="false"/>.</returns>
+        private async Task<bool> ShowVaultPreviewWindowAsync(
+            string persistableId,
+            VaultListItemViewModel listItemViewModel,
+            VaultViewModel vaultViewModel)
+        {
+            var shown = false;
             await MainWindowSynchronizationContext.PostOrExecuteAsync(async () =>
             {
-                if (MainViewModel.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
+                if (MainViewModel?.RootNavigationService.CurrentView is not MainHostViewModel mainHostViewModel)
                     return;
 
+                // A prompt for this vault is already up. Bring it forward instead of opening another
+                if (_openPreviewWindows.TryGetValue(persistableId, out var existingWindow))
+                {
+                    existingWindow.Activate();
+                    return;
+                }
+
+                // Creating a window while the main window is still running its first layout/render pass
+                // segfaults the macOS Skia host, so this must only ever run once the main window has settled.
+                // (see the remarks on MainWindowInitialized)
                 var window = new Window();
                 window.Closed += PreviewWindow_Closed;
 
@@ -279,66 +334,108 @@ namespace SecureFolderFS.Uno
                 window.AppWindow.MoveAndResize(new(100, 100, 464, 640));
 #endif
 
+                _openPreviewWindows[persistableId] = window;
+                shown = true;
+
                 await vaultPreviewViewModel.InitAsync();
                 window.Activate();
             });
 
-            static void PreviewWindow_Closed(object sender, WindowEventArgs args)
+            return shown;
+
+            void PreviewWindow_Closed(object sender, WindowEventArgs args)
             {
                 if (sender is not Window window)
                     return;
 
                 window.Closed -= PreviewWindow_Closed;
+                _openPreviewWindows.Remove(persistableId);
                 (window.Content as VaultPreviewRootControl)?.ViewModel?.Dispose();
             }
         }
 
-        private async Task HandleVaultLockActivationAsync(string persistableId)
+        /// <summary>
+        /// Shows the unlock prompt (vault preview window) for the vault marked for automatic unlocking, if any.
+        /// </summary>
+        private async Task ShowAutoUnlockVaultAsync()
         {
-            if (MainViewModel is null)
-                return;
-
+            // Wait for initialization so that the settings and the vault list are loaded
             await MainWindowInitialized.Task;
 
-            var listItemViewModel = MainViewModel.VaultListViewModel.Items.FirstOrDefault(x =>
-                x.VaultViewModel.VaultModel.DataModel.PersistableId == persistableId);
-            if (listItemViewModel is null)
+            var settingsService = DI.Service<ISettingsService>();
+            var autoUnlockVaultId = settingsService.UserSettings.AutoUnlockVaultId;
+            if (string.IsNullOrEmpty(autoUnlockVaultId))
                 return;
 
-            var vaultViewModel = listItemViewModel.VaultViewModel;
-            if (!vaultViewModel.IsUnlocked)
-                return;
-
-            await MainWindowSynchronizationContext.PostOrExecuteAsync(async () =>
-            {
-                WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(vaultViewModel.VaultModel));
-            });
+            await HandleVaultPreviewActivationAsync(autoUnlockVaultId);
         }
 
         /// <summary>
-        /// Handles URI protocol activation (e.g. sffs://vault/preview?id=...).
+        /// Connects the local integration API to live state, and starts it if the user enabled it.
         /// </summary>
-        public async Task HandleUriActivationAsync(Uri uri)
+        /// <param name="mainViewModel">The main view model.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        /// <remarks>
+        /// The bridge is attached regardless, so that toggling integrations on later needs no restart.
+        /// Starting the endpoint is separate and strictly opt-in.
+        /// </remarks>
+        private async Task StartLocalIntegrationApiAsync(MainViewModel mainViewModel)
         {
-            if (!uri.Host.Equals("vault", StringComparison.OrdinalIgnoreCase))
-                return;
+            // The vault list must be populated before the first snapshot is taken
+            await MainWindowInitialized.Task;
 
-            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            var persistableId = query["id"];
-            if (persistableId is null)
-                return;
-
-            var action = uri.AbsolutePath.Trim('/');
-            switch (action)
+            try
             {
-                case "preview":
-                    await HandleVaultPreviewActivationAsync(persistableId);
-                    break;
+                var bridge = DI.Service<IVaultApiBridge>();
+                if (bridge is not UnoVaultApiBridge implementation)
+                    return;
 
-                case "lock":
-                    await HandleVaultLockActivationAsync(persistableId);
-                    break;
+                // Load the pairing store before the bridge derives any public vault identifiers from it
+                await DI.Service<IPairingStore>().InitAsync();
+
+                implementation.ShowUnlockPromptAsync = ShowUnlockPromptForApiAsync;
+                implementation.ShowMainWindow = ShowMainWindowForApiAsync;
+                implementation.Attach(mainViewModel, MainWindowSynchronizationContext);
+
+                var settingsService = DI.Service<ISettingsService>();
+                var apiHost = DI.Service<IApiHost>();
+
+                if (settingsService.UserSettings.EnableLocalIntegrations)
+                    await apiHost.StartAsync();
+                else
+                    apiHost.PublishDisabled();
             }
+            catch (Exception ex)
+            {
+                // A failure here must never prevent the app from running normally
+                ApplicationLifecycle.LogException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Shows the unlock prompt on behalf of an integration.
+        /// </summary>
+        /// <param name="vaultViewModel">The view model to show the unlock window for.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see langword="true"/> if a prompt was raised; otherwise, <see langword="false"/>.</returns>
+        private async Task<bool> ShowUnlockPromptForApiAsync(VaultViewModel vaultViewModel)
+        {
+            var persistableId = vaultViewModel.VaultModel.DataModel.PersistableId;
+            if (string.IsNullOrEmpty(persistableId))
+                return false;
+
+            return await HandleVaultPreviewActivationAsync(persistableId);
+        }
+
+        /// <summary>
+        /// Brings the main window to the foreground on behalf of an integration.
+        /// </summary>
+        private Task ShowMainWindowForApiAsync()
+        {
+            return MainWindowSynchronizationContext.PostOrExecuteAsync(() =>
+            {
+                MainWindow?.Activate();
+                return Task.CompletedTask;
+            });
         }
 
         #region Window Configuration
@@ -351,13 +448,11 @@ namespace SecureFolderFS.Uno
             // Set icon
             appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, Constants.FileNames.ICON_ASSET_PATH));
 #endif
-#if WINDOWS
-            // Set backdrop
-            window.SystemBackdrop = new MicaBackdrop();
-#endif
-
             // Set title
             appWindow.Title = title;
+
+            // Set backdrop
+            window.SystemBackdrop = new MicaBackdrop();
 
             // Extend title bar
             var titleBar = window.Content switch

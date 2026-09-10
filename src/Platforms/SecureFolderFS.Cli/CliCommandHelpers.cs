@@ -51,6 +51,10 @@ internal static class CliCommandHelpers
     {
         switch (ex)
         {
+            case AppApiException:
+                CliOutput.Error(console, options, ex.Message);
+                return CliExitCodes.GeneralError;
+
             case CryptographicException:
             case FormatException:
                 CliOutput.Error(console, options, ex.Message);

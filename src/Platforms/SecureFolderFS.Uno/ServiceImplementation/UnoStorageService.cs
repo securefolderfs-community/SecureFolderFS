@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         public Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default)
         {
 #if UNPACKAGED || HAS_UNO_SKIA
-            return Task.FromResult<IFolder>(new SystemFolder(Path.Combine(Directory.GetCurrentDirectory(), UI.Constants.FileNames.SETTINGS_FOLDER_NAME)));
+            return Task.FromResult<IFolder>(new SystemFolder(Path.Combine(Directory.GetCurrentDirectory(), UI.Constants.FileNames.Settings.SETTINGS_FOLDER_NAME)));
 #else
             return Task.FromResult<IFolder>(new SystemFolder(Windows.Storage.ApplicationData.Current.LocalFolder.Path));
 #endif
