@@ -10,7 +10,6 @@ using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -99,12 +98,12 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (buffer.IsEmpty)
                 return 0;
 
-            // For seekable streams, perform EOF checks up front
+            // For seekable streams, perform EOF checks up front.
+            // EOF is decided by the plaintext position against the plaintext Length, never by the
+            // ciphertext stream's own position. Chunks are pulled into the cache ahead of the
+            // caller, so the inner stream reaches its end while plaintext is still unconsumed.
             if (Inner.CanSeek)
             {
-                if (Inner.IsEndOfStream())
-                    return Constants.FILE_EOF;
-
                 if (Inner.Length < _security.HeaderCrypt.HeaderCiphertextSize)
                     return Constants.FILE_EOF;
 
@@ -151,12 +150,12 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (buffer.IsEmpty)
                 return 0;
 
-            // For seekable streams, perform EOF checks up front
+            // For seekable streams, perform EOF checks up front.
+            // EOF is decided by the plaintext position against the plaintext Length, never by the
+            // ciphertext stream's own position. Chunks are pulled into the cache ahead of the
+            // caller, so the inner stream reaches its end while plaintext is still unconsumed.
             if (Inner.CanSeek)
             {
-                if (Inner.IsEndOfStream())
-                    return Constants.FILE_EOF;
-
                 if (Inner.Length < _security.HeaderCrypt.HeaderCiphertextSize)
                     return Constants.FILE_EOF;
 

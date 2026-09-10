@@ -225,8 +225,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
         /// <inheritdoc/>
         public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
+            // Collections are addressed with a trailing slash
             var id = CombinePath(Id, name);
-            var uri = ResolveUri(id.EndsWith('/') ? id : id + "/");
+            if (!id.EndsWith('/'))
+                id += "/";
+
+            var uri = ResolveUri(id);
             var mkcolParams = new MkColParameters()
             {
                 CancellationToken = cancellationToken
@@ -277,7 +281,6 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
         private async Task<IStorableChild?> ResolveStorableAsync(string path, CancellationToken cancellationToken)
         {
             var trimmed = path.TrimEnd('/');
-            var filePath = trimmed;
             var folderPath = trimmed + "/";
             var name = Uri.UnescapeDataString(trimmed.Split('/').Last(s => !string.IsNullOrEmpty(s)));
 
@@ -289,12 +292,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
             if (OperatingSystem.IsBrowser())
             {
                 // File-first
-                var asFile = await TryProbeAsync(filePath, propfindParams);
+                var asFile = await TryProbeAsync(trimmed, propfindParams);
                 if (asFile is not null)
                 {
                     return asFile == StorableType.Folder
                         ? new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this)
-                        : new DavClientFile(davClient, httpClient, baseUri, filePath, name, this);
+                        : new DavClientFile(davClient, httpClient, baseUri, trimmed, name, this);
                 }
 
                 var asFolder = await TryProbeAsync(folderPath, propfindParams);
@@ -309,12 +312,12 @@ namespace SecureFolderFS.Sdk.WebDavClient.Storage
             if (folderProbe == StorableType.Folder)
                 return new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this);
 
-            var fileProbe = await TryProbeAsync(filePath, propfindParams);
+            var fileProbe = await TryProbeAsync(trimmed, propfindParams);
             if (fileProbe is not null)
             {
                 return fileProbe == StorableType.Folder
                     ? new DavClientFolder(davClient, httpClient, baseUri, folderPath, name, this)
-                    : new DavClientFile(davClient, httpClient, baseUri, filePath, name, this);
+                    : new DavClientFile(davClient, httpClient, baseUri, trimmed, name, this);
             }
 
             return null;

@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Tests.Models;
 
 namespace SecureFolderFS.Tests.FileSystemTests
@@ -40,6 +41,42 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             // Assert
             dataString.SequenceEqual(compareString).Should().BeTrue();
+        }
+
+        /// <remarks>
+        /// Regression guard: the plaintext stream used to report EOF as soon as the ciphertext
+        /// stream hit its end, which happens while chunks are still being served from the cache.
+        /// One big read hid it, and every read that spanned more than a single call was truncated,
+        /// which is how a StreamReader (and therefore ReadAllTextAsync) saw only the first buffer.
+        /// </remarks>
+        protected async Task Base_Write_File_ReadInSmallChunks_SameContent_NoThrow()
+        {
+            ArgumentNullException.ThrowIfNull(StorageRoot);
+
+            // Arrange
+            var data = new byte[64_000];
+            Random.Shared.NextBytes(data);
+            if (StorageRoot.PlaintextRoot is not IModifiableFolder modifiableFolder)
+            {
+                Assert.Fail($"Folder is not {nameof(IModifiableFolder)}.");
+                return;
+            }
+
+            var file = await modifiableFolder.CreateFileAsync("CHUNKED_READ_FILE");
+            await file.WriteBytesAsync(data);
+
+            // Act
+            var readBack = new MemoryStream();
+            await using (var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read))
+            {
+                var buffer = new byte[1024];
+                int read;
+                while ((read = await stream.ReadAsync(buffer)) > 0)
+                    readBack.Write(buffer, 0, read);
+            }
+
+            // Assert
+            readBack.ToArray().SequenceEqual(data).Should().BeTrue();
         }
 
         protected async Task Base_Write_LargeFile_Read_SameContent_NoThrow()

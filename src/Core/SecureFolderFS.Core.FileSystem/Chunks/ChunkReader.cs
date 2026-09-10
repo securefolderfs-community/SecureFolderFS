@@ -62,7 +62,15 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return 0;
 
                 // Read from the stream at the correct chunk
-                var read = _ciphertextStream.Read(realCiphertextChunk);
+                var read = 0;
+                while (read < ciphertextSize)
+                {
+                    var bytesRead = _ciphertextStream.Read(realCiphertextChunk.Slice(read));
+                    if (bytesRead <= 0)
+                        break;
+
+                    read += bytesRead;
+                }
 
                 // Check for the end of the file
                 if (read == Constants.FILE_EOF)
@@ -135,7 +143,15 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return 0;
 
                 // Read from the stream at the correct chunk
-                var read = await _ciphertextStream.ReadAsync(realCiphertextChunk, cancellationToken).ConfigureAwait(false);
+                var read = 0;
+                while (read < ciphertextSize)
+                {
+                    var bytesRead = await _ciphertextStream.ReadAsync(realCiphertextChunk.Slice(read), cancellationToken).ConfigureAwait(false);
+                    if (bytesRead <= 0)
+                        break;
+
+                    read += bytesRead;
+                }
 
                 // Check for the end of the file
                 if (read == Constants.FILE_EOF)

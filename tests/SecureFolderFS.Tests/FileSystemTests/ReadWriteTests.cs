@@ -18,6 +18,12 @@ namespace SecureFolderFS.Tests.FileSystemTests
         }
 
         [Test]
+        public async Task Write_File_ReadInSmallChunks_SameContent_NoThrow()
+        {
+            await Base_Write_File_ReadInSmallChunks_SameContent_NoThrow();
+        }
+
+        [Test]
         public async Task Write_LargeFile_Read_SameContent_NoThrow()
         {
             await Base_Write_LargeFile_Read_SameContent_NoThrow();
