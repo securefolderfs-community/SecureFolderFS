@@ -1,14 +1,19 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -35,6 +40,29 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                     name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                     name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IFile?> GetVaultDataFileAsync(IVfsRoot vfsRoot, string name, bool createIfNotExists, CancellationToken cancellationToken = default)
+        {
+            if (!IsNameReserved(name))
+                throw new ArgumentException("The name of a vault data file must be reserved.", nameof(name));
+
+            if (vfsRoot is not IWrapper<FileSystemSpecifics> { Inner: var specifics })
+                return null;
+
+            if (specifics.ContentFolder is not IModifiableFolder contentFolder)
+                return null;
+
+            // Read-only vaults can still be read from, as long as the store is already there
+            var ciphertextFile = createIfNotExists && !specifics.Options.IsReadOnly
+                ? await contentFolder.CreateFileAsync(name, false, cancellationToken)
+                : await contentFolder.TryGetFileByNameAsync(name, cancellationToken);
+
+            if (ciphertextFile is null)
+                return null;
+
+            return new CryptoFile(Path.Combine(vfsRoot.PlaintextRoot.Id, name), ciphertextFile, specifics);
         }
 
         /// <inheritdoc/>

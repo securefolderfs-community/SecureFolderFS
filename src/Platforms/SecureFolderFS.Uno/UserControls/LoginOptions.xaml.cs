@@ -82,7 +82,7 @@ namespace SecureFolderFS.Uno.UserControls
 
 #if WINDOWS
                     case Core.Dokany.Constants.FileSystem.FS_ID:
-                    case WinFspId:
+                    case Core.WinFsp.Constants.FileSystem.FS_ID:
                         PopulateDriveLetters(stored?.MountPoint);
                         DriveLetterOption.Visibility = Visibility.Visible;
                         break;

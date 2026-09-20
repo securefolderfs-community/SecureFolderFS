@@ -13,6 +13,7 @@
             public const string HEALTH_WIDGET_ID = "health_widget";
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
             public const string AGGREGATED_DATA_WIDGET_ID = "aggregatedStatistics_widget";
+            public const string DROP_ZONE_WIDGET_ID = "dropzone_widget";
 
             public static class Graphs
             {
@@ -25,6 +26,13 @@
             {
                 public const int UPDATE_INTERVAL_MS = 400;
                 public const int REFRESH_RATE = 4;
+            }
+
+            public static class DropZone
+            {
+                public const string DATA_FILENAME = "dropzone.sffsw";
+                public const int MAX_PINNED_ITEMS = 16;
+                public const uint ICON_SIZE = 64u;
             }
 
             public static class Health

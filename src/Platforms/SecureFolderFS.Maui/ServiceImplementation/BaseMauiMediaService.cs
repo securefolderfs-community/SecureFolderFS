@@ -102,6 +102,12 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public virtual Task<IImage?> GetSystemIconAsync(string itemName, bool isFolder, uint size = 64u, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IImage?>(null);
+        }
+
+        /// <inheritdoc/>
         public abstract Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default);
     }
 }
