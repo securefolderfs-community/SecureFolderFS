@@ -66,6 +66,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public async Task OpenFileWithAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            var storageFile = await global::Windows.Storage.StorageFile.GetFileFromPathAsync(file.Id).AsTask(cancellationToken);
+            await global::Windows.System.Launcher.LaunchFileAsync(storageFile).AsTask(cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
         {
 #if UNPACKAGED

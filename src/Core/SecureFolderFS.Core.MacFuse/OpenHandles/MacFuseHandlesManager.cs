@@ -1,4 +1,4 @@
-using SecureFolderFS.Core.FileSystem.Extensions;
+﻿using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.MacFuse.OpenHandles
                 plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new MacFuseFileHandle(plaintextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
+            var fileHandle = new MacFuseFileHandle(plaintextStream, access, mode, ciphertextPath);
             var handle = handlesGenerator.ThreadSafeIncrement();
 
             lock (handlesLock)

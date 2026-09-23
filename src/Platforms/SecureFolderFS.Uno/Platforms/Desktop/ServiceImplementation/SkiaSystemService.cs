@@ -43,6 +43,18 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public async Task OpenFileWithAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            await Task.CompletedTask;
+#if __UNO_SKIA_MACOS__
+            // Passed as a discrete argument so that spaces in the mount path are not split by a shell
+            System.Diagnostics.Process.Start("/usr/bin/open", [ file.Id ]);
+#else
+            System.Diagnostics.Process.Start("xdg-open", file.Id);
+#endif
+        }
+
+        /// <inheritdoc/>
         public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
         {
             if (OperatingSystem.IsMacOS())

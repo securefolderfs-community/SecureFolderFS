@@ -10,6 +10,7 @@
     <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     <vc:CountToBoolConverter x:Key="CountToBoolConverter" />
     <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
+    <vc:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
     <vc:CountToStringConverter x:Key="CountToStringConverter" />
     <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
     <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />

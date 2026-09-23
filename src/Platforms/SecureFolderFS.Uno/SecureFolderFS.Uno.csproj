@@ -36,6 +36,7 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
     <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
+    <PackageReference Include="Markdig" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
     <PackageReference Include="WinUI.TableView" />

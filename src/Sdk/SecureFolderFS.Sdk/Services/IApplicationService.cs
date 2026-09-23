@@ -43,6 +43,14 @@ namespace SecureFolderFS.Sdk.Services
         Task TryRestartAsync();
 
         /// <summary>
+        /// Shows <paramref name="viewable"/> in a window of its own, or brings forward the window already showing it.
+        /// </summary>
+        /// <param name="viewable">The view model to show.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the platform can show the view model in a window, returns true; otherwise false.</returns>
+        Task<bool> TryOpenWindowAsync(IViewable viewable, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Retrieves all licenses of packages and libraries that are used by the app.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>

@@ -14,6 +14,7 @@
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
             public const string AGGREGATED_DATA_WIDGET_ID = "aggregatedStatistics_widget";
             public const string DROP_ZONE_WIDGET_ID = "dropzone_widget";
+            public const string JOURNAL_WIDGET_ID = "journal_widget";
 
             public static class Graphs
             {
@@ -33,6 +34,19 @@
                 public const string DATA_FILENAME = "dropzone.sffsw";
                 public const int MAX_PINNED_ITEMS = 16;
                 public const uint ICON_SIZE = 64u;
+            }
+
+            public static class Journal
+            {
+                public const string DATA_FILENAME = "journal.sffsw";
+                public const string DEFAULT_FOLDER_NAME = "Journal";
+                public const string ATTACHMENTS_FOLDER_NAME = "Attachments";
+                public const string ENTRY_EXTENSION = ".md";
+                public const int RECENT_ENTRIES_COUNT = 4;
+                public const int AUTOSAVE_DELAY_MS = 800;
+                public const int PREVIEW_LENGTH = 2048;
+                public const int SNIPPET_LENGTH = 140;
+                public const int MAX_TITLE_FILENAME_LENGTH = 60;
             }
 
             public static class Health

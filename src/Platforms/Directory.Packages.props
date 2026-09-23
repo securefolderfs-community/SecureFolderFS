@@ -13,6 +13,7 @@
     <PackageVersion Include="IconPacks.Material" Version="1.0.8940.2-build" />
     <PackageVersion Include="LibVLCSharp.MAUI" Version="3.10.0" />
     <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.2" />
+    <PackageVersion Include="Markdig" Version="1.4.0" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.31" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.31" />
     <PackageVersion Include="Microsoft.Maui.Core" Version="10.0.31" />

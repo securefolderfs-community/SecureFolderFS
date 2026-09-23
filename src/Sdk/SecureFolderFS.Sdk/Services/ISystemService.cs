@@ -24,6 +24,14 @@ namespace SecureFolderFS.Sdk.Services
         Task<long> GetAvailableFreeSpaceAsync(IFolder storageRoot, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Opens a file using the application the system associates with its type.
+        /// </summary>
+        /// <param name="file">The file to be opened.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task OpenFileWithAsync(IFile file, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Determines whether the app is registered to start automatically on system startup.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
