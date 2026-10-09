@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.Helpers
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 

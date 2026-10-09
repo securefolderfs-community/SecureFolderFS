@@ -12,7 +12,13 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
+using SecureFolderFS.Uno.ServiceImplementation;
 using AddService = Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions;
+#if APP_PLATFORM_PRESENT
+using SecureFolderFS.Sdk.AppPlatform.Helpers;
+using SecureFolderFS.Sdk.AppPlatform.Services;
+using SecureFolderFS.Shared.ComponentModel;
+#endif
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 {
@@ -25,7 +31,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -65,6 +71,14 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
                     .Override<ILocalizationService, ResourceLocalizationService>(AddService.AddSingleton)
                     .Override<IVaultFileSystemService, SkiaVaultFileSystemService>(AddService.AddSingleton)
                     .Override<IVaultCredentialsService, SkiaVaultCredentialsService>(AddService.AddSingleton)
+#if APP_PLATFORM_PRESENT
+                    .Override<IOidcProvider, BrowserAuthProvider>(AddService.AddSingleton)
+#endif
+#if APP_PLATFORM_PRESENT && !WINDOWS
+                    .AddSingleton<IPropertyStoreService>(new SkiaPropertyStoreService(settingsFolder))
+                    .AddSingleton<IDeviceKeyStore>(sp => new SecurePropertyKeyStore(sp.GetRequiredService<IPropertyStoreService>().SecurePropertyStore, settingsFolder))
+                    .AddSingleton<IAccountProvider>(sp => new AppPlatformAccountProvider(sp.GetRequiredService<IDeviceKeyStore>()))
+#endif
 
                     .WithUnoServices(settingsFolder)
                 ;

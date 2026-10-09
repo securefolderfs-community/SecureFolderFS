@@ -1,6 +1,8 @@
-using System;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.ServiceImplementation;
 using Windows.System;
 
@@ -45,6 +47,12 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
         public override async Task OpenUriAsync(Uri uri)
         {
             await Launcher.LaunchUriAsync(uri);
+        }
+
+        /// <inheritdoc/>
+        public override Task<bool> TryOpenWindowAsync(IViewable viewable, CancellationToken cancellationToken = default)
+        {
+            return App.Instance?.OpenViewWindowAsync(viewable) ?? Task.FromResult(false);
         }
 
         public override Task TryRestartAsync()

@@ -1,11 +1,10 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using OwlCore.Storage;
-using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
 using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
@@ -17,6 +16,12 @@ namespace SecureFolderFS.Maui.ValueConverters
     /// </summary>
     internal sealed class FileIconConverter : IValueConverter
     {
+        // The platform image loader disposes of the stream it is handed after decoding and can
+        // request the image again later (recycled cells, re-layouts). Snapshot the bytes once
+        // per image instance and serve a fresh stream per request, so a re-bind never hits a
+        // stream that has already been consumed and disposed of
+        private static readonly ConditionalWeakTable<IImage, byte[]> ImageDataSnapshots = new();
+
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -39,29 +44,43 @@ namespace SecureFolderFS.Maui.ValueConverters
 
         private static ImageSource FromImage(IImage image)
         {
-            switch (image)
+            if (image is not IImageStream)
+                return ImageSource.FromFile(GetDefaultFileIcon());
+
+            var data = ImageDataSnapshots.GetValue(image, static key => SnapshotBytes(((IImageStream)key).Inner));
+            if (data.Length == 0)
+                return ImageSource.FromFile(GetDefaultFileIcon());
+
+            return new StreamImageSource
             {
-                case StreamImageModel { Inner.CanRead: true } sim:
-                {
-                    sim.Inner.TrySetPositionOrAdvance(0L);
-                    return new StreamImageSource
-                    {
-                        Stream = _ =>
-                        {
-                            sim.Inner.TrySetPositionOrAdvance(0L);
-                            return Task.FromResult(sim.Inner);
-                        }
-                    };
-                }
+                Stream = _ => Task.FromResult<Stream>(new MemoryStream(data, writable: false))
+            };
+        }
 
-                case ImageStreamSource { Inner.CanRead: true } iss:
-                {
-                    iss.Inner.TrySetPositionOrAdvance(0L);
-                    return iss.Source;
-                }
+        private static byte[] SnapshotBytes(Stream stream)
+        {
+            try
+            {
+                // MemoryStream.ToArray is valid even after the stream has been closed
+                // by a previous image decoding
+                if (stream is MemoryStream memoryStream)
+                    return memoryStream.ToArray();
 
-                default:
-                    return ImageSource.FromFile(GetDefaultFileIcon());
+                if (!stream.CanRead || !stream.CanSeek)
+                    return [];
+
+                var savedPosition = stream.Position;
+                stream.Position = 0L;
+
+                var data = new byte[stream.Length];
+                stream.ReadExactly(data);
+                stream.TrySetPositionOrAdvance(savedPosition);
+
+                return data;
+            }
+            catch (Exception)
+            {
+                return [];
             }
         }
 

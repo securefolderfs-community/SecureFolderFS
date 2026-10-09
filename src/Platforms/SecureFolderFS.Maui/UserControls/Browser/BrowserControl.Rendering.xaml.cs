@@ -12,6 +12,11 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         private readonly ISettingsService _settingsService;
         private int _skipCollectionViewLayoutPass;
         private CollectionView? _collectionView;
+        private BrowserViewType? _appliedViewType;
+#if ANDROID
+        private Platforms.Android.Helpers.SwipeSelectionItemTouchListener? _swipeSelectionTouchListener;
+        private AndroidX.RecyclerView.Widget.RecyclerView? _swipeSelectionRecyclerView;
+#endif
 
         /// <summary>
         /// Determines if the CollectionView can be reloaded.
@@ -20,6 +25,16 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         public bool CanReloadCollection()
         {
             return _skipCollectionViewLayoutPass == 0;
+        }
+
+        /// <summary>
+        /// Determines whether a reload would actually recreate the CollectionView,
+        /// i.e. whether the applied layout differs from the requested <see cref="ViewType"/>.
+        /// </summary>
+        /// <returns>Returns true if a reload is needed; otherwise, false.</returns>
+        public bool NeedsCollectionReload()
+        {
+            return _appliedViewType != ViewType;
         }
 
         /// <summary>
@@ -35,6 +50,10 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             }
 
             if (_collectionView is null)
+                return;
+
+            // Recreating the native list is expensive - skip when the layout did not change
+            if (_appliedViewType == ViewType)
                 return;
 
             // Find the parent container
@@ -56,7 +75,8 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             var newCollectionView = new CollectionView()
             {
                 ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType),
-                ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                // Items are uniformly sized within every layout, so measuring one is enough
+                ItemSizingStrategy = ItemSizingStrategy.MeasureFirstItem,
                 ItemTemplate = itemTemplate,
                 Margin = ViewType is BrowserViewType.SmallGridView or BrowserViewType.MediumGridView or BrowserViewType.LargeGridView
                     ? new(16d)
@@ -85,12 +105,15 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             // Wire up the events
             newCollectionView.Loaded += ItemsCollectionView_Loaded;
             newCollectionView.SizeChanged += ItemsCollectionView_SizeChanged;
+            newCollectionView.Scrolled += ItemsCollectionView_Scrolled;
 
             // Add the new CollectionView to the container
             container.Children.Add(newCollectionView);
 
             // Update our reference
             _collectionView = newCollectionView;
+            _appliedViewType = ViewType;
+            _currentScrollY = 0d;
 
             // Fade in
             await _collectionView.FadeToAsync(1, 100);
@@ -153,8 +176,12 @@ namespace SecureFolderFS.Maui.UserControls.Browser
         {
             _collectionView = sender as CollectionView;
 
-            // Set initial ItemsLayout since we removed the binding from XAML
-            _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+            // Set initial ItemsLayout since we removed the binding from XAML.
+            // Recreated collection views already arrive with the correct layout applied
+            if (_appliedViewType != ViewType)
+                _collectionView?.ItemsLayout = ViewTypeToItemsLayoutConverter.ConvertLayout(ViewType);
+
+            _appliedViewType = ViewType;
 
 #if ANDROID
             // On Android, keep SelectionMode as None to prevent CollectionView re-layout
@@ -166,6 +193,60 @@ namespace SecureFolderFS.Maui.UserControls.Browser
             _collectionView?.SetBinding(SelectableItemsView.SelectionModeProperty,
                 new Binding(nameof(IsSelecting), mode: BindingMode.OneWay, source: this,
                     converter: GetConverter(nameof(BoolSelectionModeConverter))));
+#endif
+
+            AttachPlatformSwipeSelection();
+        }
+
+        /// <summary>
+        /// Attaches the native swipe-selection handler to the CollectionView's backing list.
+        /// On Android this hooks an item-touch listener into the RecyclerView; MAUI gesture
+        /// recognizers cannot claim the gesture there (see SwipeSelectionItemTouchListener).
+        /// On other platforms this is a no-op - selection uses per-item pan gestures.
+        /// </summary>
+        private void AttachPlatformSwipeSelection()
+        {
+#if ANDROID
+            if (_collectionView?.Handler?.PlatformView is not AndroidX.RecyclerView.Widget.RecyclerView recyclerView)
+                return;
+
+            if (ReferenceEquals(_swipeSelectionRecyclerView, recyclerView))
+                return;
+
+            // Detach from the previous RecyclerView - a recreated CollectionView gets a new one
+            if (_swipeSelectionRecyclerView is not null && _swipeSelectionTouchListener is not null)
+            {
+                try
+                {
+                    _swipeSelectionRecyclerView.RemoveOnItemTouchListener(_swipeSelectionTouchListener);
+                }
+                catch (Exception)
+                {
+                    // The old RecyclerView may already be disposed along with its handler
+                }
+            }
+
+            _swipeSelectionTouchListener ??= new(this);
+            recyclerView.AddOnItemTouchListener(_swipeSelectionTouchListener);
+            _swipeSelectionRecyclerView = recyclerView;
+#endif
+        }
+
+        /// <summary>
+        /// Enables or disables pull-to-refresh based on the selection mode.
+        /// </summary>
+        /// <remarks>
+        /// On Android, SwipeRefreshLayout deliberately ignores RequestDisallowInterceptTouchEvent
+        /// (legacy AndroidX behavior), so dragging the selection rectangle downward would still
+        /// trigger a refresh and cancel the gesture. The refresh gesture is therefore turned off
+        /// entirely at the native level while selecting. Other platforms are unaffected - their
+        /// selection gesture never reaches the refresh control.
+        /// </remarks>
+        private void UpdatePullToRefreshState()
+        {
+#if ANDROID
+            if (RootRefreshView.Handler?.PlatformView is AndroidX.SwipeRefreshLayout.Widget.SwipeRefreshLayout swipeRefreshLayout)
+                swipeRefreshLayout.Enabled = !IsSelecting;
 #endif
         }
 

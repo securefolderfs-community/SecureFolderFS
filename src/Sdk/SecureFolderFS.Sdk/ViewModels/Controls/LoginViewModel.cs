@@ -201,6 +201,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task InitializeLoginAsync(bool allowPersistedCredentials, CancellationToken cancellationToken)
         {
             _vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+
+            // Offer to set up new credentials instead of failing with an unsupported authentication method
+            if (Array.IndexOf(_vaultOptions.UnlockProcedure.Methods, Constants.Vault.Authentication.AUTH_RECOVERY_KEY_REQUIREMENT) >= 0)
+            {
+                CurrentViewModel = new RecoveryRequirementViewModel();
+                return;
+            }
+
             allowPersistedCredentials &= RequiredAuthenticationMethodIds is null;
             if (allowPersistedCredentials
                 && !PersistedCredentialsModel.Instance.Credentials.IsEmpty()
@@ -294,7 +302,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var unlockContract = await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
+                var isAppPlatform = _authenticatedMethodIds.Contains("app_platform"); // TODO: Avoid arbitrary authId constants in Sdk
+                var unlockContract = isAppPlatform
+                    ? await VaultManagerService.UnlockAppPlatformAsync(_vaultFolder, _keySequence, cancellationToken)
+                    : await VaultManagerService.UnlockAsync(_vaultFolder, _keySequence, cancellationToken);
                 _vaultOptions ??= await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
                 if (string.IsNullOrWhiteSpace(_vaultOptions.VaultId))
                 {
@@ -374,6 +385,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             else if (e is MigrationCompletedEventArgs)
             {
                 await InitAsync();
+            }
+            else if (e is RecoveryRequestedEventArgs recoveryArgs)
+            {
+                await RecoverAccessAsync(recoveryArgs.RecoveryKey, CancellationToken.None);
             }
         }
 
@@ -463,6 +478,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             {
                 newViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
                 ProvideCredentialsCommand = newViewModel.ProvideCredentialsCommand;
+            }
+            else if (newValue is RecoveryRequirementViewModel recoveryRequirementViewModel)
+            {
+                ProvideCredentialsCommand = recoveryRequirementViewModel.SetUpCredentialsCommand;
             }
             else
                 ProvideCredentialsCommand = null;

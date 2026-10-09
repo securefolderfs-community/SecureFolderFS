@@ -25,5 +25,23 @@ namespace SecureFolderFS.Sdk.Extensions
                 return null;
             }
         }
+
+        /// <inheritdoc cref="IMediaService.GetSystemIconAsync"/>
+        public static async Task<IImage?> TryGetSystemIconAsync(this IMediaService mediaService,
+            string itemName,
+            bool isFolder,
+            uint size = 64u,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await mediaService.GetSystemIconAsync(itemName, isFolder, size, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                return null;
+            }
+        }
     }
 }

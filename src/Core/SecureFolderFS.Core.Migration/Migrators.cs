@@ -17,5 +17,10 @@ namespace SecureFolderFS.Core.Migration
         {
             return new MigratorV2_V3(vaultFolder, streamSerializer);
         }
+
+        public static IVaultMigratorModel GetMigratorV3_V4(IFolder vaultFolder, IAsyncSerializer<Stream> streamSerializer)
+        {
+            return new MigratorV3_V4(vaultFolder, streamSerializer);
+        }
     }
 }

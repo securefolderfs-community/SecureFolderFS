@@ -1,5 +1,4 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
@@ -71,16 +70,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             if (!string.IsNullOrEmpty(decryptedName))
                 return decryptedName;
 
-            // A shortened file (.sffsn) that couldn't be decrypted means its sidecar is missing.
-            // Report this as an invalid name so the health system can offer to generate a new one.
-            if (storable.Name.EndsWith(Constants.Names.SHORTENED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            // We want to suppress failures that might be raised when the Directory ID file is not found.
-            // This case should be already handled in the folder validator
-
-            // Return an empty string to prevent raising exceptions due to the name being null
-            return string.Empty;
+            return null;
         }
     }
 }

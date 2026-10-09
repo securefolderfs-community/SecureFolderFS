@@ -9,7 +9,6 @@
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Migration"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="ThisDialog"
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
@@ -39,6 +38,14 @@
                 VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
                 VaultName="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
+        <DataTemplate x:Key="MigratorV3_V4" x:DataType="vm:MigrationViewModel">
+            <uc2:MigratorV3_V4
+                MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"
+                ProvideContinuationButton="False"
+                RecoverCommand="{Binding ViewModel.AuthenticateRecoveryCommand, Mode=OneWay, ElementName=ThisDialog}"
+                VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
+                VaultName="{x:Bind Title, Mode=OneWay}" />
+        </DataTemplate>
     </ContentDialog.Resources>
 
     <Grid>
@@ -47,7 +54,10 @@
             HorizontalAlignment="Center"
             Content="{x:Bind ViewModel.MigrationViewModel, Mode=OneWay}">
             <ContentControl.ContentTemplateSelector>
-                <ts:MigrationTemplateSelector MigratorV1_V2="{StaticResource MigratorV1_V2}" MigratorV2_V3="{StaticResource MigratorV2_V3}" />
+                <ts:MigrationTemplateSelector
+                    MigratorV1_V2="{StaticResource MigratorV1_V2}"
+                    MigratorV2_V3="{StaticResource MigratorV2_V3}"
+                    MigratorV3_V4="{StaticResource MigratorV3_V4}" />
             </ContentControl.ContentTemplateSelector>
             <ContentControl.ContentTransitions>
                 <TransitionCollection>

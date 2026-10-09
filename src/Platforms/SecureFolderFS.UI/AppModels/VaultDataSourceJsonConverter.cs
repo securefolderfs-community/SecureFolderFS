@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.DataModels;
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="JsonConverter{T}"/>
-    internal sealed class VaultDataSourceJsonConverter : JsonConverter<VaultStorageSourceDataModel>
+    public sealed class VaultDataSourceJsonConverter : JsonConverter<VaultStorageSourceDataModel>
     {
         /// <inheritdoc/>
         public override VaultStorageSourceDataModel? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

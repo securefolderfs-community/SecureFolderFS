@@ -8,7 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The legacy Base4K name encoding, needed to read names written before the V4 switch to SecombaBase4K -->
+    <PackageReference Include="Base4K" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
     <ProjectReference Include="..\..\Shared\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>

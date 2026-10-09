@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             if (disposed)
                 return FileSystem.Constants.INVALID_HANDLE;
 
-            if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag())
+            if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag(File.Exists(ciphertextPath)))
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Open ciphertext stream

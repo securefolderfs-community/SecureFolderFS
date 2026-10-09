@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
             };
             options.Converters.Add(new VaultDataSourceJsonConverter());
 
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.SAVED_VAULTS_FILENAME, settingsFolder, new DoubleSerializedStreamSerializer(options));
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.Settings.SAVED_VAULTS_FILENAME, settingsFolder, new DoubleSerializedStreamSerializer(options));
         }
 
         /// <inheritdoc/>

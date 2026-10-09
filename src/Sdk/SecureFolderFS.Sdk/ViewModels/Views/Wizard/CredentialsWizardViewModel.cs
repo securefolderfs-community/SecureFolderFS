@@ -96,6 +96,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 if (RegisterViewModel.CurrentViewModel is IVaultOptionsProvider optionsProvider)
                     vaultOptions = optionsProvider.AmendVaultOptions(vaultOptions);
 
+                // App Platform vaults generate their own key material and register it with the server
+                if (RegisterViewModel.CurrentViewModel is IAppPlatformVaultRegistration appPlatformRegistration)
+                {
+                    var (appPlatformContract, dekKey, macKey) = await VaultManagerService.CreateAppPlatformAsync(
+                        modifiableFolder,
+                        vaultOptions,
+                        cancellationToken);
+
+                    // Copies are created because returned DekKey and MacKey are part of the contract
+                    // If they were disposed instead, the Recovery Key screen wouldn't show any keys
+                    using var dekKeyCopy = dekKey.CreateCopy();
+                    using var macKeyCopy = macKey.CreateCopy();
+
+                    var vaultName = VaultModel.DataModel.DisplayName ?? VaultModel.VaultFolder?.Name;
+                    await appPlatformRegistration.RegisterVaultAsync(_vaultId, vaultName, dekKeyCopy, macKeyCopy, cancellationToken);
+
+                    return new CredentialsResult(appPlatformContract, _vaultId);
+                }
+
                 // Create the vault
                 var unlockContract = await VaultManagerService.CreateAsync(
                     modifiableFolder,

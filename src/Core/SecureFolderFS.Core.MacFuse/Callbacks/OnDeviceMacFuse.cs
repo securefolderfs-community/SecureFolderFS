@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using FuseSharp;
 using FuseSharp.Native;
 using OwlCore.Storage;
@@ -10,6 +10,7 @@ using SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native;
 using SecureFolderFS.Core.MacFuse.OpenHandles;
 using SecureFolderFS.Storage.Extensions;
 using static FuseSharp.Native.LibC;
+using static SecureFolderFS.Core.FileSystem.Helpers.Paths.PathHelpers;
 
 namespace SecureFolderFS.Core.MacFuse.Callbacks
 {
@@ -53,7 +54,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (chown(ciphertextPathPtr, uid, gid) == -1)
                     return -errno;
@@ -209,8 +210,12 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 }
                 else if (isFile)
                 {
+                    // A size query by path must still see data that open handles have not flushed yet. The
+                    // kernel resizes its page cache to the size reported here, so reporting the on-disk
+                    // size mid-write drops written pages, which then read back as zeros
                     var ciphertextSize = ((FileInfo)info).Length;
-                    stat.st_size = Math.Max(0, specifics.Security.ContentCrypt.CalculatePlaintextSize(ciphertextSize - specifics.Security.HeaderCrypt.HeaderCiphertextSize));
+                    stat.st_size = GetOpenLength(ciphertextPath)
+                                   ?? Math.Max(0, specifics.Security.ContentCrypt.CalculatePlaintextSize(ciphertextSize - specifics.Security.HeaderCrypt.HeaderCiphertextSize));
                 }
 
                 stat.st_blksize = 4096;
@@ -231,7 +236,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (byte* namePtr = NullTerminate(name))
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 nint result;
                 if (value.Length == 0)
@@ -255,7 +260,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 nint result;
                 if (list.Length == 0)
@@ -430,7 +435,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (byte* namePtr = NullTerminate(name))
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (removexattr(ciphertextPathPtr, namePtr, 0) == -1)
                     return -errno;
@@ -449,8 +454,8 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             if (ciphertextPath is null || newCiphertextPath is null)
                 return -ENOENT;
 
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
-            fixed (byte* newCiphertextPathPtr = Encoding.UTF8.GetBytes(newCiphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
+            fixed (byte* newCiphertextPathPtr = ToNativePath(newCiphertextPath))
             {
                 var result = flags == 0u
                     ? rename(ciphertextPathPtr, newCiphertextPathPtr)
@@ -458,6 +463,18 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
 
                 if (result == -1)
                     return -errno;
+            }
+
+            // Open handles follow the file, so size queries under the new name still see their unflushed data
+            foreach (var handle in handlesManager.OpenHandles)
+            {
+                if (handle is not MacFuseFileHandle macFuseFileHandle)
+                    continue;
+
+                if (macFuseFileHandle.CiphertextPath.Equals(ciphertextPath, StringComparison.Ordinal))
+                    macFuseFileHandle.CiphertextPath = newCiphertextPath;
+                else if (macFuseFileHandle.CiphertextPath.StartsWith(ciphertextPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                    macFuseFileHandle.CiphertextPath = newCiphertextPath + macFuseFileHandle.CiphertextPath[ciphertextPath.Length..];
             }
 
             return 0;
@@ -490,8 +507,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 else
                     Directory.Delete(ciphertextPath, recursive: true); // Recursive because we want to delete the Directory ID file
 
-                // Delete and remove Directory ID
-                File.Delete(directoryIdPath);
+                // Remove Directory ID from cache
                 specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
 
                 // Clean up sidecar after successful delete/recycle
@@ -524,7 +540,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
 
             fixed (byte* namePtr = NullTerminate(name))
             fixed (void* valuePtr = value)
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (setxattr(ciphertextPathPtr, namePtr, valuePtr, (nuint)value.Length, position, options) == -1)
                     return -errno;
@@ -540,7 +556,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             fixed (StatVfs* statfsPtr = &statfs)
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (statvfs(ciphertextPathPtr, statfsPtr) == -1)
                     return -errno;
@@ -652,7 +668,7 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
                 return -ENOENT;
 
             var times = stackalloc TimeSpec[2] { atime, mtime };
-            fixed (byte* ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte* ciphertextPathPtr = ToNativePath(ciphertextPath))
             {
                 if (utimensat(AT_FDCWD, ciphertextPathPtr, times, 0) == -1)
                     return -errno;
@@ -681,6 +697,28 @@ namespace SecureFolderFS.Core.MacFuse.Callbacks
             }
 
             return buffer.Length;
+        }
+
+        /// <summary>
+        /// Gets the length of a file as seen by its writable open handles, which includes data not yet on disk.
+        /// </summary>
+        /// <returns>The largest length among the writable handles open on the file, or null when there are none.</returns>
+        private long? GetOpenLength(string ciphertextPath)
+        {
+            long? length = null;
+            foreach (var handle in handlesManager.OpenHandles)
+            {
+                if (handle is not MacFuseFileHandle macFuseFileHandle || !macFuseFileHandle.FileAccess.HasFlag(FileAccess.Write))
+                    continue;
+
+                if (!macFuseFileHandle.CiphertextPath.Equals(ciphertextPath, StringComparison.Ordinal))
+                    continue;
+
+                lock (macFuseFileHandle.Stream)
+                    length = Math.Max(length ?? 0L, macFuseFileHandle.Stream.Length);
+            }
+
+            return length;
         }
 
         protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> plaintextName)

@@ -13,25 +13,25 @@ namespace SecureFolderFS.Uno.UserControls
             InitializeComponent();
         }
 
-        public string Glyph
+        public string? Glyph
         {
-            get => (string)GetValue(GlyphProperty);
+            get => (string?)GetValue(GlyphProperty);
             set => SetValue(GlyphProperty, value);
         }
         public static readonly DependencyProperty GlyphProperty =
             DependencyProperty.Register(nameof(Glyph), typeof(string), typeof(FeatureTile), new PropertyMetadata(defaultValue: null));
 
-        public string Title
+        public string? Title
         {
-            get => (string)GetValue(TitleProperty);
+            get => (string?)GetValue(TitleProperty);
             set => SetValue(TitleProperty, value);
         }
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(nameof(Title), typeof(string), typeof(FeatureTile), new PropertyMetadata(defaultValue: null));
 
-        public string Description
+        public string? Description
         {
-            get => (string)GetValue(DescriptionProperty);
+            get => (string?)GetValue(DescriptionProperty);
             set => SetValue(DescriptionProperty, value);
         }
         public static readonly DependencyProperty DescriptionProperty =

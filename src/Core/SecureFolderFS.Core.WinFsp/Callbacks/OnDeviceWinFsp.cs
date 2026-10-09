@@ -19,6 +19,8 @@ using SecureFolderFS.Core.WinFsp.OpenHandles;
 using SecureFolderFS.Core.WinFsp.UnsafeNative;
 using FileInfo = Fsp.Interop.FileInfo;
 
+// ReSharper disable InconsistentNaming
+
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace SecureFolderFS.Core.WinFsp.Callbacks
@@ -699,10 +701,10 @@ namespace SecureFolderFS.Core.WinFsp.Callbacks
                 return Trace(STATUS_ACCESS_DENIED, FileName);
             }
 
-            IDisposable? handle;
             var createdHandleId = FileSystem.Constants.INVALID_HANDLE;
             try
             {
+                IDisposable? handle;
                 var ciphertextPath = GetCiphertextPathForUse(FileName);
                 if ((CreateOptions & FILE_DIRECTORY_FILE) == 0)
                 {

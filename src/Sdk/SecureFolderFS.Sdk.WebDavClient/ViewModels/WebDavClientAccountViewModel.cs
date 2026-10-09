@@ -166,55 +166,23 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                     ? $"http://{address}"
                     : address;
 
-                // Build the base URI with an optional custom port
+                // Build the base URI. A port typed inside the address is preserved; the dedicated
+                // port value (when provided) takes precedence over it.
                 var uriBuilder = new UriBuilder(normalizedAddress);
                 if (int.TryParse(port, out var portValue) && portValue > 0)
                     uriBuilder.Port = portValue;
-                else
-                    uriBuilder.Port = -1; // Use the default port for the scheme
 
                 if (!uriBuilder.Path.EndsWith('/'))
                     uriBuilder.Path += '/';
 
                 _baseUri = uriBuilder.Uri;
-                var normalizedManualFingerprint = NormalizeFingerprint(manualCertificateFingerprint);
-                var normalizedTrustedFingerprint = NormalizeFingerprint(trustedCertificateFingerprint);
 
-                // Use SocketsHttpHandler to support non-standard HTTP methods (PROPFIND, MKCOL, etc.)
-                // The platform-default handler on platforms like Android (AndroidMessageHandler) uses java.net.HttpURLConnection
-                // which rejects non-standard HTTP methods with a ProtocolException.
-                _httpClient = new HttpClient(new SocketsHttpHandler()
-                {
-                    PreAuthenticate = false,
-                    SslOptions =
-                    {
-                        RemoteCertificateValidationCallback = (_, certificate, _, sslPolicyErrors) =>
-                        {
-                            var serverFingerprint = GetCertificateFingerprint(certificate);
-                            if (string.IsNullOrEmpty(serverFingerprint))
-                                return false;
-
-                            // Manual pinning takes precedence over TOFU/default validation.
-                            if (!string.IsNullOrWhiteSpace(normalizedManualFingerprint))
-                                return string.Equals(serverFingerprint, normalizedManualFingerprint, StringComparison.OrdinalIgnoreCase);
-
-                            if (!string.IsNullOrWhiteSpace(normalizedTrustedFingerprint))
-                                return string.Equals(serverFingerprint, normalizedTrustedFingerprint, StringComparison.OrdinalIgnoreCase);
-
-                            if (acceptFirstCertificate)
-                            {
-                                normalizedTrustedFingerprint = serverFingerprint;
-                                TrustedCertificateFingerprint = serverFingerprint;
-                                return true;
-                            }
-
-                            return sslPolicyErrors == SslPolicyErrors.None;
-                        }
-                    }
-                })
+                // The timeout must not apply to the whole client: it would abort every later file
+                // transfer through this connection after 5 seconds. Only the verification PROPFIND below is capped (see timeoutCts).
+                _httpClient = new HttpClient(CreateHandler(acceptFirstCertificate, manualCertificateFingerprint, trustedCertificateFingerprint))
                 {
                     BaseAddress = _baseUri,
-                    Timeout = TimeSpan.FromSeconds(5)
+                    Timeout = Timeout.InfiniteTimeSpan
                 };
 
                 if (!string.IsNullOrEmpty(username))
@@ -225,10 +193,13 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
 
                 _webDavClient = new WebDav.WebDavClient(_httpClient);
 
-                // Verify the connection by performing a PROPFIND on root
+                // Verify the connection by performing a PROPFIND on root (capped so a dead server
+                // fails fast without limiting later transfers on the same client)
+                using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
                 var propfindParams = new PropfindParameters
                 {
-                    CancellationToken = cancellationToken,
+                    CancellationToken = timeoutCts.Token,
                     Headers = new List<KeyValuePair<string, string>>()
                 };
 
@@ -244,6 +215,57 @@ namespace SecureFolderFS.Sdk.WebDavClient.ViewModels
                 await DisconnectAsync(cancellationToken);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Creates the HTTP handler for the platform:
+        /// <list type="bullet">
+        /// <item>Browser (WASM): the default handler, which routes through the fetch API.
+        /// <see cref="SocketsHttpHandler"/> is unavailable there (its constructor throws
+        /// <see cref="PlatformNotSupportedException"/>), and TLS validation/certificate pinning
+        /// is owned by the browser itself.</item>
+        /// <item>Everywhere else: <see cref="SocketsHttpHandler"/>, needed for non-standard HTTP
+        /// methods (PROPFIND, MKCOL, etc.) - platform-default handlers such as Android's
+        /// AndroidMessageHandler reject them - with fingerprint-pinning TLS validation.</item>
+        /// </list>
+        /// </summary>
+        private HttpMessageHandler CreateHandler(bool acceptFirstCertificate, string? manualCertificateFingerprint, string? trustedCertificateFingerprint)
+        {
+            if (OperatingSystem.IsBrowser())
+                return new HttpClientHandler();
+
+            var normalizedManualFingerprint = NormalizeFingerprint(manualCertificateFingerprint);
+            var normalizedTrustedFingerprint = NormalizeFingerprint(trustedCertificateFingerprint);
+
+            return new SocketsHttpHandler()
+            {
+                PreAuthenticate = false,
+                SslOptions =
+                {
+                    RemoteCertificateValidationCallback = (_, certificate, _, sslPolicyErrors) =>
+                    {
+                        var serverFingerprint = GetCertificateFingerprint(certificate);
+                        if (string.IsNullOrEmpty(serverFingerprint))
+                            return false;
+
+                        // Manual pinning takes precedence over TOFU/default validation.
+                        if (!string.IsNullOrWhiteSpace(normalizedManualFingerprint))
+                            return string.Equals(serverFingerprint, normalizedManualFingerprint, StringComparison.OrdinalIgnoreCase);
+
+                        if (!string.IsNullOrWhiteSpace(normalizedTrustedFingerprint))
+                            return string.Equals(serverFingerprint, normalizedTrustedFingerprint, StringComparison.OrdinalIgnoreCase);
+
+                        if (acceptFirstCertificate)
+                        {
+                            normalizedTrustedFingerprint = serverFingerprint;
+                            TrustedCertificateFingerprint = serverFingerprint;
+                            return true;
+                        }
+
+                        return sslPolicyErrors == SslPolicyErrors.None;
+                    }
+                }
+            };
         }
 
         private void UpdateInputValidation()

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace SecureFolderFS.Shared
 {
     public static class SharedConfiguration
@@ -11,5 +13,10 @@ namespace SecureFolderFS.Shared
         /// Indicates whether the internal build label should be displayed for diagnostic or development purposes.
         /// </summary>
         public static bool ShowInternalBuildLabel { get; set; } = true;
+
+        /// <summary>
+        /// Indicates whether to use sound effects when the onboarding screen is shown.
+        /// </summary>
+        public static bool EnableOnboardingSfx { get; set; } = Debugger.IsAttached;
     }
 }

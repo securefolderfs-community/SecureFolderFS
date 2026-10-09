@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -88,8 +89,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            // Only the authentication members are read so that the login sequence can also be assembled for
+            // outdated vaults, whose configuration cannot be parsed as the latest format (see the migrators)
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            var config = await vaultReader.ReadConfigurationAsync<VaultAuthenticationDataModel>(cancellationToken);
             var authenticationMethod = AuthenticationMethod.FromString(config.AuthenticationMethod);
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -107,7 +110,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            var config = await vaultReader.ReadConfigurationAsync<VaultAuthenticationDataModel>(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
             await foreach (var item in GetLoginAsync(vaultFolder, unlockProcedure, config.Uid, cancellationToken))

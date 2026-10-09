@@ -271,6 +271,10 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.RecycleBin.Native
                     if (dataModel is not { Name: not null, ParentId: not null, DirectoryId: { Length: Constants.DIRECTORY_ID_SIZE } childDirectoryId })
                         return;
 
+                    // Check if the data model is authentic
+                    if (!dataModel.VerifyMac(Path.GetFileNameWithoutExtension(configurationPath), specifics.Security))
+                        return;
+
                     // Lineage check: the entry must have been deleted out of this exact folder incarnation
                     if (!childDirectoryId.AsSpan().SequenceEqual(folderDirectoryId))
                         return;

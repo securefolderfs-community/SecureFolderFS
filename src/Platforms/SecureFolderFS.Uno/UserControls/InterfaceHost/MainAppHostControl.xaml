@@ -229,10 +229,10 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind CustomizeCommand, Mode=OneWay}"
                                 CommandParameter="Icon"
-                                Text="Change icon">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE70F;" />
-                                </MenuFlyoutItem.Icon>
+                                Text="{l:ResourceString Rid=ChangeIcon}">
+                                <!-- <MenuFlyoutItem.Icon> -->
+                                <!--     <FontIcon Glyph="&#xE70F;" /> -->
+                                <!-- </MenuFlyoutItem.Icon> -->
                             </MenuFlyoutItem>
 
                             <!--  Create shortcut file  -->
@@ -240,8 +240,15 @@
                                 Command="{x:Bind CreateShortcutCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanCreateShortcut, Mode=OneWay}"
                                 Text="{l:ResourceString Rid=CreateShortcut}">
+                                <!-- <MenuFlyoutItem.Icon> -->
+                                <!--     <FontIcon Glyph="&#xE71B;" /> -->
+                                <!-- </MenuFlyoutItem.Icon> -->
+                            </MenuFlyoutItem>
+
+                            <!--  Auto unlock  -->
+                            <MenuFlyoutItem Click="EnableAutoUnlock_Click" Text="{l:ResourceString Rid=AutoUnlock}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE71B;" />
+                                    <FontIcon Glyph="{x:Bind IsAutoUnlockEnabled, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:none|&#xE73E;:false:none|'}" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 

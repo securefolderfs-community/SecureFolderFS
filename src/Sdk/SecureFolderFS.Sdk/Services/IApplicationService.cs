@@ -1,16 +1,16 @@
-﻿using SecureFolderFS.Sdk.ViewModels.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// A service that interacts with common app-related APIs.
     /// </summary>
-    public interface IApplicationService
+    public interface IApplicationService : IUriLauncher
     {
         /// <summary>
         /// Gets the value that determines whether the app is operating on a desktop platform.
@@ -37,17 +37,18 @@ namespace SecureFolderFS.Sdk.Services
         string GetSystemVersion();
 
         /// <summary>
-        /// Launches a URI from app. This can be a URL, folder path, etc.
-        /// </summary>
-        /// <param name="uri">The URI to launch.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task OpenUriAsync(Uri uri);
-
-        /// <summary>
         /// Tries to schedule the application for restart.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task TryRestartAsync();
+
+        /// <summary>
+        /// Shows <paramref name="viewable"/> in a window of its own, or brings forward the window already showing it.
+        /// </summary>
+        /// <param name="viewable">The view model to show.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the platform can show the view model in a window, returns true; otherwise false.</returns>
+        Task<bool> TryOpenWindowAsync(IViewable viewable, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves all licenses of packages and libraries that are used by the app.

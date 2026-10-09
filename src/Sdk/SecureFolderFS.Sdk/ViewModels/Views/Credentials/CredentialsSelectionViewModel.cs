@@ -102,7 +102,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                IsComplementationAvailable = RegisterViewModel.CurrentViewModel?.CanComplement ?? false,
+                // Complementation only applies to a proceeding (second) stage. Offering the toggle for a
+                // first-stage change would let the user enable an option whose confirmation path throws.
+                IsComplementationAvailable = _authenticationStage == AuthenticationStage.ProceedingStageOnly
+                                             && (RegisterViewModel.CurrentViewModel?.CanComplement ?? false),
                 UnlockContract = UnlockContract,
                 OldPasskey = OldPasskey,
                 OldAuthenticationMethodIds = OldAuthenticationMethodIds,

@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.Dokany
             var volumeModel = new VolumeModel(specifics.Options.VolumeName, Constants.Dokan.FS_TYPE_ID);
             var dokanyCallbacks = new OnDeviceDokany(specifics, handlesManager, volumeModel);
             var dokanyWrapper = new DokanyWrapper(dokanyCallbacks);
-            dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);
+            dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint, dokanyOptions.IsReadOnly);
 
             // Await a short delay before locating the folder
             await Task.Delay(500);

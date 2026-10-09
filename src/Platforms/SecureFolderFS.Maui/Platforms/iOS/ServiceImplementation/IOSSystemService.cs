@@ -37,5 +37,25 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             throw new PlatformNotSupportedException("Only implemented on iOS.");
 #endif
         }
+
+        /// <inheritdoc/>
+        public Task OpenFileWithAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            return Task.FromException(new NotSupportedException("Opening files with associated applications is not supported on iOS. Use IShareService.ShareFileAsync instead."));
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> TrySetAutoStartAsync(bool isEnabled, CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
     }
 }

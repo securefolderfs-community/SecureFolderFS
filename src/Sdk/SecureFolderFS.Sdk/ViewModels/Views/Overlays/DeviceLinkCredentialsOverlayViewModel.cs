@@ -132,6 +132,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private async Task StartListeningAsync()
         {
+            // Tear down any previous instance so listeners and sockets are never leaked
+            StopListening();
+
             _deviceLinkService = new DeviceLinkService(
                 Environment.MachineName,
                 "SecureFolderFS Phone",

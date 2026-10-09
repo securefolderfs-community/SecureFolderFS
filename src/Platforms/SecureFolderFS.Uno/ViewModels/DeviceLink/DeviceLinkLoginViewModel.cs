@@ -71,7 +71,7 @@ namespace SecureFolderFS.Uno.ViewModels.DeviceLink
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var auth = await vaultReader.ReadAuthenticationAsync<VaultDeviceLinkDataModel>($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
-            if (auth?.CredentialId is null || auth.MobileDeviceId is null || auth.ExpectedHmac is null || auth.Challenge is null)
+            if (auth?.CredentialId is null || auth.MobileDeviceId is null || auth.BindingSecret is null || auth.KeyVerifier is null || auth.Challenge is null)
                 throw new FormatException("Invalid device link configuration.");
 
             return auth;

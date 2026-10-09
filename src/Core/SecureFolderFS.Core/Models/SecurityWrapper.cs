@@ -8,7 +8,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.Models
 {
-    internal sealed class SecurityWrapper : IWrapper<Security>, IEnumerable<KeyValuePair<string, object>>, IDisposable
+    internal sealed class SecurityWrapper : IWrapper<Security>, IWrapper<KeyPair>, IWrapper<VaultConfigurationDataModel>, IEnumerable<KeyValuePair<string, object>>, IDisposable
     {
         private readonly KeyPair _keyPair;
         private readonly VaultConfigurationDataModel _configDataModel;
@@ -20,6 +20,19 @@ namespace SecureFolderFS.Core.Models
                 contentCipherId: _configDataModel.ContentCipherId,
                 fileNameCipherId: _configDataModel.FileNameCipherId,
                 fileNameEncodingId: _configDataModel.FileNameEncodingId);
+
+        /// <inheritdoc/>
+        KeyPair IWrapper<KeyPair>.Inner => _keyPair;
+
+        /// <summary>
+        /// Gets the vault configuration whose MAC was verified during unlock.
+        /// </summary>
+        /// <remarks>
+        /// Routines that rewrite the configuration must derive it from this model rather than from a
+        /// fresh unvalidated read of the vault directory, otherwise a configuration an attacker edited
+        /// on disk would be re-signed with the vault's genuine MAC key.
+        /// </remarks>
+        VaultConfigurationDataModel IWrapper<VaultConfigurationDataModel>.Inner => _configDataModel;
 
         public SecurityWrapper(KeyPair keyPair, VaultConfigurationDataModel configDataModel)
         {
