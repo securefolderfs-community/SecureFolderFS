@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -24,6 +24,8 @@ using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Root;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -59,11 +61,13 @@ namespace SecureFolderFS.Uno
         /// <summary>
         /// Tracks the vault preview windows currently open, keyed by vault identifier.
         /// </summary>
-        /// <remarks>
-        /// Only ever touched on the UI thread. Used to collapse repeated unlock requests onto the window
-        /// that is already showing, rather than stacking a new one for each request.
-        /// </remarks>
         private readonly Dictionary<string, Window> _openPreviewWindows = new();
+
+        /// <summary>
+        /// Tracks the windows opened for view models through <see cref="OpenViewWindowAsync"/>.
+        /// </summary>
+        /// <remarks>Only ever touched on the UI thread.</remarks>
+        private readonly Dictionary<IViewable, Window> _openViewWindows = new();
 
         public bool UseForceClose { get; set; }
 
@@ -355,6 +359,85 @@ namespace SecureFolderFS.Uno
         }
 
         /// <summary>
+        /// Shows a view model in a window of its own, or brings forward the window already showing it.
+        /// </summary>
+        /// <param name="viewable">The view model to show.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see langword="true"/> if the view model has a window to show it in; otherwise, <see langword="false"/>.</returns>
+        public async Task<bool> OpenViewWindowAsync(IViewable viewable)
+        {
+            // A window must never be created while the main window is still settling (see MainWindowInitialized)
+            await MainWindowInitialized.Task;
+
+            var isShown = false;
+            await MainWindowSynchronizationContext.PostOrExecuteAsync(async () =>
+            {
+                await Task.CompletedTask;
+                if (_openViewWindows.TryGetValue(viewable, out var existingWindow))
+                {
+                    existingWindow.Activate();
+                    isShown = true;
+                    return;
+                }
+
+                var content = viewable switch
+                {
+                    JournalViewModel journalViewModel => new JournalRootControl(journalViewModel),
+                    _ => null
+                };
+
+                if (content is null)
+                    return;
+
+                var window = new Window { Content = content };
+                window.Closed += ViewWindow_Closed;
+                if (viewable is JournalViewModel journal)
+                    journal.CloseRequested += ViewModel_CloseRequested;
+
+                // Window sizes are physical pixels, so the size in effective pixels is scaled by the display density
+                // (taken from the main window, which is on screen already while this one is not)
+                var scale = MainWindow?.Content?.XamlRoot?.RasterizationScale ?? 1d;
+                var width = (int)(1180 * scale);
+                var height = (int)(800 * scale);
+#if WINDOWS
+                var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
+                boundsManager.MinWidth = 760;
+                boundsManager.MinHeight = 520;
+                window.AppWindow.MoveAndResize(new(120, 120, width, height));
+#else
+                // Sized before the window is configured, which centers it on macOS
+                SafetyHelpers.NoFailure(() => window.AppWindow.Resize(new() { Width = width, Height = height }));
+#endif
+                EnsureEarlyWindow(window, viewable.Title ?? nameof(SecureFolderFS));
+
+                _openViewWindows[viewable] = window;
+                window.Activate();
+                isShown = true;
+
+                void ViewModel_CloseRequested(object? sender, EventArgs e)
+                {
+                    // May be raised off the UI thread, e.g. by a vault being locked
+                    window.DispatcherQueue.TryEnqueue(window.Close);
+                }
+
+                async void ViewWindow_Closed(object sender, WindowEventArgs args)
+                {
+                    window.Closed -= ViewWindow_Closed;
+                    _openViewWindows.Remove(viewable);
+                    (window.Content as JournalRootControl)?.Release();
+
+                    if (viewable is not JournalViewModel journalViewModel)
+                        return;
+
+                    // The view model outlives its window, so it is saved rather than disposed
+                    journalViewModel.CloseRequested -= ViewModel_CloseRequested;
+                    await SafetyHelpers.NoFailureAsync(journalViewModel.FlushAsync);
+                }
+            });
+
+            return isShown;
+        }
+
+        /// <summary>
         /// Shows the unlock prompt (vault preview window) for the vault marked for automatic unlocking, if any.
         /// </summary>
         private async Task ShowAutoUnlockVaultAsync()
@@ -458,6 +541,7 @@ namespace SecureFolderFS.Uno
             var titleBar = window.Content switch
             {
                 VaultPreviewRootControl previewRootControl => previewRootControl.CustomTitleBar,
+                JournalRootControl journalRootControl => journalRootControl.CustomTitleBar,
                 MainWindowRootControl mainRootControl => mainRootControl.CustomTitleBar,
                 _ => null
             };
@@ -465,6 +549,11 @@ namespace SecureFolderFS.Uno
             window.ExtendsContentIntoTitleBar = true;
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             window.SetTitleBar(titleBar?.DragRegion);
+
+#if HAS_UNO_SKIA
+            // Uno 6.6 text boxes misread several keys and shortcuts
+            TextBoxKeyboardHelper.Register(window.Content);
+#endif
 
 #if __UNO_SKIA_MACOS__ || __MACCATALYST__
             // Use native macOS APIs to configure the window
@@ -518,6 +607,9 @@ namespace SecureFolderFS.Uno
             EnsureEarlyWindow(window, nameof(SecureFolderFS));
 
 #if __UNO_SKIA_MACOS__
+            // Uno 6.6 plays the alert sound on every navigation key typed into a text box (fixed in 6.7)
+            MacOsWindowHelper.SuppressEditorCommandAlerts();
+
             // Hide the main window instead of closing it when 'Reduce to background' is enabled.
             // This is handled natively because Uno's managed close-cancellation is a no-op on the macOS Skia host.
             MacOsWindowHelper.InstallMainWindowCloseInterceptor(window, static () =>

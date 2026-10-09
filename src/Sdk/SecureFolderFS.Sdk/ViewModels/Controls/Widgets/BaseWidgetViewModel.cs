@@ -16,6 +16,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     public abstract partial class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable, IViewable
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _IsEditing;
+        [ObservableProperty] private bool _CanMoveUp;
+        [ObservableProperty] private bool _CanMoveDown;
         [ObservableProperty] private ICommand? _RemoveWidgetCommand;
 
         /// <summary>

@@ -26,7 +26,7 @@ using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 {
-    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>, Inject<IShareService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>, Inject<IRecycleBinService>, Inject<ISystemService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : StorageItemViewModel, IAsyncInitialize
     {
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
 
             try
             {
-                await ShareService.OpenFileWithAsync(file);
+                await SystemService.OpenFileWithAsync(file, cancellationToken);
             }
             catch (OperationCanceledException)
             {
