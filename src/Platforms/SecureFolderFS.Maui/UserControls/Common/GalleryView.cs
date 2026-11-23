@@ -196,7 +196,7 @@ namespace SecureFolderFS.Maui.UserControls.Common
                         // Translate the whole gallery downward
                         TranslationY = _dismissTranslateY;
 
-                        // Fade out subtly as user drags — reaches ~0.4 opacity at the dismiss threshold
+                        // Fade out subtly as user drags
                         var dismissThreshold = Height / 5d;
                         var progress = Math.Clamp(_dismissTranslateY / dismissThreshold, 0d, 1d);
                         Opacity = 1d - (progress * 0.6d);

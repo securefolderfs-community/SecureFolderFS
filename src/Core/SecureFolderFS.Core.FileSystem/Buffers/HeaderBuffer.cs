@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Shared.Models;
+using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem.Buffers
 {
@@ -16,8 +17,10 @@ namespace SecureFolderFS.Core.FileSystem.Buffers
         /// <remarks>
         /// The header buffer is shared by all streams opened on the same file,
         /// so reading or creating the header must be synchronized across streams.
+        /// A <see cref="SemaphoreSlim"/> is used instead of a monitor lock
+        /// so both synchronous and asynchronous code paths can participate.
         /// </remarks>
-        public object SyncRoot { get; } = new();
+        public SemaphoreSlim SyncRoot { get; } = new(1, 1);
 
         public HeaderBuffer(byte[] buffer)
             : base(buffer)

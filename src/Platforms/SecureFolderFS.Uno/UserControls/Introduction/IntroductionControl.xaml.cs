@@ -9,12 +9,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
+using SecureFolderFS.Uno.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,6 +26,8 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
+        private const string REVEAL_SOUND = $"{nameof(SecureFolderFS)}.{nameof(UI)}.Assets.AppAssets.Media.IntroductionReveal.wav";
+
         private Grid? _overlayContainer;
         private readonly FirstTimeHelper _firstTime = new(1);
 
@@ -54,9 +58,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
             if (_overlayContainer is null)
                 return Result.Failure(null);
 
-            // Add this control to the overlay container
+            // Add this control to the overlay container, then start the cue
             _overlayContainer.Children.Add(this);
-            await Task.Delay(300);
+            if (SharedConfiguration.EnableOnboardingSfx)
+                await SoundPlayerHelper.PlayAfterAsync(REVEAL_SOUND);
+            await Task.Delay(250);
 
             // Set the visibility of the overlay container
             _overlayContainer.Visibility = Visibility.Visible;
@@ -80,6 +86,11 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             ViewModel = (IntroductionOverlayViewModel)viewable;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            // Get the sound extracted and the output device open now, well before ShowAsync needs it
+            if (SharedConfiguration.EnableOnboardingSfx)
+                _ = SoundPlayerHelper.PrepareAsync(REVEAL_SOUND);
+
             if (ViewModel is { SlidesCount: < 0 })
                 ViewModel.SlidesCount = SlidesFlipView.Items.Count;
         }
@@ -90,6 +101,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         {
             ViewModel?.PropertyChanged -= ViewModel_PropertyChanged;
             EncryptedFileSlide.Dispose();
+
+            // Never let the reveal tail outlive the overlay when it is dismissed early
+            if (SharedConfiguration.EnableOnboardingSfx)
+                SoundPlayerHelper.Stop();
 
             // Play the hide animation
             await HideOverlayStoryboard.BeginAsync();

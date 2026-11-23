@@ -44,6 +44,20 @@
     <Color x:Key="ElevatedFillPrimaryDarkColor">#2E3236</Color>
     <Color x:Key="ElevatedFillSecondaryDarkColor">#464A4F</Color>
 
+    <!--  Status Fill Colors  -->
+    <Color x:Key="StatusInfoFillLightColor">#D3E5F9</Color>
+    <Color x:Key="StatusInfoFillDarkColor">#24384C</Color>
+    <Color x:Key="StatusSuccessFillLightColor">#D5EEDB</Color>
+    <Color x:Key="StatusSuccessFillDarkColor">#1F3A28</Color>
+    <Color x:Key="StatusErrorFillLightColor">#FADEDB</Color>
+    <Color x:Key="StatusErrorFillDarkColor">#442220</Color>
+
+    <!--  Status Accent Colors  -->
+    <Color x:Key="StatusSuccessLightColor">#2E9E4F</Color>
+    <Color x:Key="StatusSuccessDarkColor">#30C24F</Color>
+    <Color x:Key="StatusErrorLightColor">#C42B1C</Color>
+    <Color x:Key="StatusErrorDarkColor">#FF453A</Color>
+
     <!--  Border Colors  -->
     <Color x:Key="BorderLightColor">#CECECE</Color>
     <Color x:Key="BorderDarkColor">#737373</Color>
@@ -77,6 +91,11 @@
 
     <SolidColorBrush x:Key="ThemeElevatedFillPrimaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillPrimaryLightColor}, Dark={StaticResource ElevatedFillPrimaryDarkColor}}" />
     <SolidColorBrush x:Key="ThemeElevatedFillSecondaryColorBrush" Color="{AppThemeBinding Light={StaticResource ElevatedFillSecondaryLightColor}, Dark={StaticResource ElevatedFillSecondaryDarkColor}}" />
+
+
+    <!--  Status Theme Brushes  -->
+    <SolidColorBrush x:Key="ThemeStatusSuccessColorBrush" Color="{AppThemeBinding Light={StaticResource StatusSuccessLightColor}, Dark={StaticResource StatusSuccessDarkColor}}" />
+    <SolidColorBrush x:Key="ThemeStatusErrorColorBrush" Color="{AppThemeBinding Light={StaticResource StatusErrorLightColor}, Dark={StaticResource StatusErrorDarkColor}}" />
 
 
 

@@ -116,7 +116,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             volumeLabel = volumeModel.VolumeName;
             fileSystemName = volumeModel.FileSystemName;
             maximumComponentLength = Constants.Dokan.MAX_COMPONENT_LENGTH;
-            features = Constants.Dokan.FEATURES;
+            features = specifics.Options.IsReadOnly
+                ? Constants.Dokan.FEATURES | FileSystemFeatures.ReadOnlyVolume
+                : Constants.Dokan.FEATURES;
 
             return Trace(DokanResult.Success, null, info);
         }

@@ -22,7 +22,7 @@ namespace SecureFolderFS.SourceGenerator
             var members = new List<MemberDeclarationSyntax>();
 
             var getter = GetGetter();
-            var serviceProviderProperty = GetPropertyDeclaration(SyntaxKind.PrivateKeyword, Constants.ServiceProviderName, Constants.ServiceProviderNamespace, getter)
+            var serviceProviderProperty = GetPropertyDeclaration(SyntaxKind.PrivateKeyword, Constants.ServiceProviderName, Constants.ServiceProviderNamespace, false, getter)
                 .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(SecureFolderFS)));
 
             members.Add(serviceProviderProperty);
@@ -31,6 +31,7 @@ namespace SecureFolderFS.SourceGenerator
             {
                 var name = string.Empty;
                 var visibility = SyntaxKind.None;
+                var isRequired = true;
 
                 if (attribute.AttributeClass is not { TypeArguments: [var type, ..] })
                     return null;
@@ -48,6 +49,10 @@ namespace SecureFolderFS.SourceGenerator
                             case "Visibility":
                                 visibility = GetVisibility((string)value);
                                 break;
+
+                            case "Optionality":
+                                isRequired = (string)value != "optional";
+                                break;
                         }
                     }
                 }
@@ -64,11 +69,11 @@ namespace SecureFolderFS.SourceGenerator
                     var loggerTypeName = $"global::Microsoft.Extensions.Logging.ILogger<{containingTypeName}>";
 
                     var loggerField = GetFieldDeclaration(SyntaxKind.PrivateKeyword, backingFieldName, loggerTypeName, true);
-                    var loggerProperty = GetPropertyDeclaration(visibility, name, loggerTypeName).WithExpressionBody(
+                    var loggerProperty = GetPropertyDeclaration(visibility, name, loggerTypeName, !isRequired).WithExpressionBody(
                         ArrowExpressionClause(
                             AssignmentExpression(SyntaxKind.CoalesceAssignmentExpression,
                                 GetThisMemberAccessExpression(backingFieldName),
-                                GetLoggerRegistration(containingTypeName, Constants.ServiceProviderName))))
+                                GetLoggerRegistration(containingTypeName, Constants.ServiceProviderName, isRequired))))
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                         .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(InjectGenerator)));
 
@@ -81,11 +86,11 @@ namespace SecureFolderFS.SourceGenerator
                     var backingFieldName = $"_{name}";
 
                     var injecteeField = GetFieldDeclaration(SyntaxKind.PrivateKeyword, backingFieldName, type.ToDisplayString(), true);
-                    var injecteeProperty = GetPropertyDeclaration(visibility, name, type.ToDisplayString()).WithExpressionBody(
+                    var injecteeProperty = GetPropertyDeclaration(visibility, name, type.ToDisplayString(), !isRequired).WithExpressionBody(
                         ArrowExpressionClause(
                             AssignmentExpression(SyntaxKind.CoalesceAssignmentExpression,
                                 GetThisMemberAccessExpression(backingFieldName),
-                                GetServiceRegistration(type, Constants.ServiceProviderName))))
+                                GetServiceRegistration(type, Constants.ServiceProviderName, isRequired))))
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                         .AddAttributeLists(GetAttributeForMethod(Constants.AssemblyName, Constants.AssemblyVersion, nameof(InjectGenerator)));
 

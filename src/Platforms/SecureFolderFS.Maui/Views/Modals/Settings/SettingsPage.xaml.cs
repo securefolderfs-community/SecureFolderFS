@@ -33,6 +33,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
 
         public PrivacySettingsViewModel? PrivacyViewModel { get; private set; }
 
+        public AccountsSettingsViewModel? AccountsViewModel { get; private set; }
+        
         public AboutSettingsViewModel? AboutViewModel { get; private set; }
 
         public SettingsPage(INavigation sourceNavigation)
@@ -69,12 +71,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Settings
             GeneralViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new GeneralSettingsViewModel().WithInitAsync());
             PreferencesViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new PreferencesSettingsViewModel().WithInitAsync());
             PrivacyViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new PrivacySettingsViewModel().WithInitAsync());
+            AccountsViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new AccountsSettingsViewModel().WithInitAsync());
             AboutViewModel = OverlayViewModel.NavigationService.Views.GetOrAdd(() => new AboutSettingsViewModel().WithInitAsync());
 
             OnPropertyChanged(nameof(OverlayViewModel));
             OnPropertyChanged(nameof(GeneralViewModel));
             OnPropertyChanged(nameof(PreferencesViewModel));
             OnPropertyChanged(nameof(PrivacyViewModel));
+            OnPropertyChanged(nameof(AccountsViewModel));
             OnPropertyChanged(nameof(AboutViewModel));
         }
 

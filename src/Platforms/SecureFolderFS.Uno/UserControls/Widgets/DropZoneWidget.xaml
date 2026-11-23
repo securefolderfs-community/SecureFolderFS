@@ -1,0 +1,199 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.Widgets.DropZoneWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.DropZone"
+    x:Name="DropZoneControl"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <!--  Pinned item tile  -->
+        <DataTemplate x:Key="PinnedItemTemplate" x:DataType="vm:PinnedItemViewModel">
+            <!--
+                Hover is tracked on the container, so that moving onto the remove button
+                does not count as leaving the item and make the button vanish mid-click
+            -->
+            <Grid
+                Width="104"
+                Height="104"
+                Background="Transparent"
+                PointerCanceled="Tile_PointerCanceled"
+                PointerEntered="Tile_PointerEntered"
+                PointerExited="Tile_PointerExited">
+
+                <Button
+                    Padding="8"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    AllowDrop="True"
+                    AutomationProperties.Name="{Binding Title, Mode=OneWay}"
+                    Background="Transparent"
+                    BorderThickness="1"
+                    CanDrag="True"
+                    Command="{Binding OpenCommand, Mode=OneWay}"
+                    DragLeave="Tile_DragLeave"
+                    DragOver="Tile_DragOver"
+                    DragStarting="Tile_DragStarting"
+                    Drop="Tile_Drop"
+                    ToolTipService.ToolTip="{Binding RelativePath, Mode=OneWay}">
+
+                    <!--  Missing items stay readable, but are visibly inactive  -->
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        Opacity="{Binding IsMissing, Mode=OneWay, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter='0.4|1.0'}"
+                        Spacing="6">
+                        <Grid Height="40">
+                            <!--  Shell icon, or a thumbnail of the contents where one could be generated  -->
+                            <Image
+                                Width="40"
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                Source="{Binding Icon, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}"
+                                Stretch="Uniform"
+                                Visibility="{Binding Icon, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                            <!--  Fallback icon  -->
+                            <FontIcon
+                                FontSize="28"
+                                Glyph="&#xE7C3;"
+                                Visibility="{Binding Icon, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}" />
+                        </Grid>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            MaxLines="2"
+                            Text="{Binding Title, Mode=OneWay}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Unpin  -->
+                <Button
+                    Width="24"
+                    Height="24"
+                    Margin="0,6,6,0"
+                    Padding="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Command="{Binding UnpinCommand, Mode=OneWay}"
+                    CommandParameter="{Binding}"
+                    CornerRadius="12"
+                    ToolTipService.ToolTip="{Binding IsMissing, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='true:localize|RemoveMissingItem:false:localize|Unpin'}"
+                    Visibility="{Binding IsRemoveVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <FontIcon FontSize="11" Glyph="&#xE711;" />
+                </Button>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid
+        x:Name="DropSurface"
+        Margin="0,8,0,0"
+        Padding="16"
+        AllowDrop="True"
+        Background="{ThemeResource ExpanderHeaderBackground}"
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+        BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+        CornerRadius="{ThemeResource ControlCornerRadius}"
+        DragLeave="DropSurface_DragLeave"
+        DragOver="DropSurface_DragOver"
+        Drop="DropSurface_Drop"
+        Loaded="DropSurface_Loaded"
+        RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <Grid Grid.Row="0" Margin="0,-4,0,0">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontWeight="Medium"
+                Text="{x:Bind ViewModel.Title, Mode=OneWay}" />
+
+            <!--  Pin an item  -->
+            <Button
+                Width="32"
+                Height="32"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                ToolTipService.ToolTip="{l:ResourceString Rid=PinItem}">
+                <FontIcon FontSize="15" Glyph="&#xE718;" />
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.PickAndPinCommand, Mode=OneWay}"
+                            CommandParameter="file"
+                            Text="{l:ResourceString Rid=PinFile}" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.PickAndPinCommand, Mode=OneWay}"
+                            CommandParameter="folder"
+                            Text="{l:ResourceString Rid=PinFolder}" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+
+        <!--  Pinned items  -->
+        <ItemsRepeater
+            x:Name="PinnedItemsRepeater"
+            Grid.Row="1"
+            ItemTemplate="{StaticResource PinnedItemTemplate}"
+            ItemsSource="{x:Bind ViewModel.PinnedItems, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+            <ItemsRepeater.Layout>
+                <UniformGridLayout
+                    ItemsStretch="None"
+                    MinColumnSpacing="8"
+                    MinRowSpacing="8" />
+            </ItemsRepeater.Layout>
+        </ItemsRepeater>
+
+        <!--  Empty state  -->
+        <Grid
+            Grid.Row="1"
+            MinHeight="104"
+            Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="2">
+                <FontIcon
+                    FontSize="22"
+                    Glyph="&#xE8DE;"
+                    Opacity="0.6" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{l:ResourceString Rid=DropZoneEmpty}" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    Opacity="0.5"
+                    Text="{l:ResourceString Rid=DropZoneEmptyDescription}" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Last failed operation  -->
+        <InfoBar
+            Grid.Row="2"
+            IsClosable="True"
+            IsOpen="{x:Bind ViewModel.WarningMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+            Message="{x:Bind ViewModel.WarningMessage, Mode=OneWay}"
+            Severity="Warning" />
+    </Grid>
+</UserControl>

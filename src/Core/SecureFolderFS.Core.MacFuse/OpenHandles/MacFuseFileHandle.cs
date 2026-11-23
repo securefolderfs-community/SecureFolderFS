@@ -1,4 +1,4 @@
-using SecureFolderFS.Core.FileSystem.OpenHandles;
+﻿using SecureFolderFS.Core.FileSystem.OpenHandles;
 
 namespace SecureFolderFS.Core.MacFuse.OpenHandles
 {
@@ -9,14 +9,19 @@ namespace SecureFolderFS.Core.MacFuse.OpenHandles
 
         public FileMode FileMode { get; }
 
-        public string Directory { get; }
+        public string Directory => Path.GetDirectoryName(CiphertextPath)!;
 
-        public MacFuseFileHandle(Stream stream, FileAccess fileAccess, FileMode fileMode, string directory)
+        /// <summary>
+        /// Gets or sets the path of the ciphertext file this handle is open on. Kept current across renames.
+        /// </summary>
+        public string CiphertextPath { get; set; }
+
+        public MacFuseFileHandle(Stream stream, FileAccess fileAccess, FileMode fileMode, string ciphertextPath)
             : base(stream)
         {
             FileAccess = fileAccess;
             FileMode = fileMode;
-            Directory = directory;
+            CiphertextPath = ciphertextPath;
         }
     }
 }

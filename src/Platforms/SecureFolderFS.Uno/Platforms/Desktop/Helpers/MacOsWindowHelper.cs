@@ -1,4 +1,4 @@
-#if __UNO_SKIA_MACOS__ || __MACCATALYST__
+﻿#if __UNO_SKIA_MACOS__ || __MACCATALYST__
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -24,6 +24,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         // These must remain referenced for the lifetime of the app so the GC does not
         // collect the callbacks that AppKit invokes.
         private static WindowShouldCloseDelegate? _closeOverride;
+        private static DoCommandBySelectorDelegate? _doCommandOverride;
         private static TerminateDelegate? _terminateOverride;
         private static IntPtr _mainWindowHandle;
         private static IntPtr _originalWindowShouldClose;
@@ -36,6 +37,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private delegate bool TerminateDelegate(IntPtr self, IntPtr cmd, IntPtr sender);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void DoCommandBySelectorDelegate(IntPtr self, IntPtr cmd, IntPtr selector);
 
         /// <summary>
         /// Intercepts the main window's native <c>windowShouldClose:</c> so that closing it via the
@@ -79,6 +83,53 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
             catch
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Stops text boxes from playing the system alert sound on navigation and editing keys
+        /// (arrows, Backspace, Enter), which are otherwise handled normally.
+        /// </summary>
+        /// <remarks>
+        /// Backport of the native half of unoplatform/uno#23727 (commit 7aeffeb): while a text box has focus,
+        /// Uno's rendering views receive editor commands such as <c>moveLeft:</c> and forward them to
+        /// <c>NSResponder</c>, whose default implementation beeps for each one. Upstream turns the method
+        /// into a no-op, which is what is installed here. Fixed in Uno 6.7.65 - remove when upgrading.
+        /// </remarks>
+        /// <returns>True if the override was installed on at least one view class; otherwise, false.</returns>
+        public static bool SuppressEditorCommandAlerts()
+        {
+            if (!OperatingSystem.IsMacOS())
+                return false;
+
+            try
+            {
+                _doCommandOverride ??= DoCommandBySelectorOverride;
+                var imp = Marshal.GetFunctionPointerForDelegate(_doCommandOverride);
+                var selector = sel_registerName("doCommandBySelector:");
+
+                // The Metal and the software renderer each have their own view class
+                var isInstalled = false;
+                foreach (var className in new[] { "UNOMetalFlippedView", "UNOSoftView" })
+                {
+                    var viewClass = objc_getClass(className);
+                    if (viewClass == IntPtr.Zero)
+                        continue;
+
+                    class_replaceMethod(viewClass, selector, imp, "v@::");
+                    isInstalled = true;
+                }
+
+                return isInstalled;
+            }
+            catch
+            {
+                return false;
+            }
+
+            static void DoCommandBySelectorOverride(IntPtr self, IntPtr cmd, IntPtr selector)
+            {
+                // Intentionally empty - the key is processed by the managed side regardless
             }
         }
 

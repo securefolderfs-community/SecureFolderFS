@@ -16,7 +16,7 @@ namespace SecureFolderFS.Tests
         [OneTimeSetUp]
         public static void GlobalInitialize()
         {
-            var settingsFolderPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), Constants.FileNames.Settings.SETTINGS_FOLDER_NAME);
             var settingsFolder = new MemoryFolder(settingsFolderPath, Path.GetFileName(settingsFolderPath));
 
             var serviceProvider = ConfigureServices(settingsFolder);

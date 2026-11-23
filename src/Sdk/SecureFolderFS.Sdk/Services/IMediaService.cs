@@ -64,6 +64,20 @@ namespace SecureFolderFS.Sdk.Services
         Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Gets the icon that the system associates with items of the same kind as <paramref name="itemName"/>.
+        /// </summary>
+        /// <remarks>
+        /// The icon is resolved from the item kind (folder, or file extension) rather than from its contents,
+        /// so it can also be served for items that are no longer present.
+        /// </remarks>
+        /// <param name="itemName">The name of the item whose kind determines the icon.</param>
+        /// <param name="isFolder">Determines whether the icon should represent a folder.</param>
+        /// <param name="size">The requested icon size, in pixels.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the platform can provide one, returns the icon; otherwise null.</returns>
+        Task<IImage?> GetSystemIconAsync(string itemName, bool isFolder, uint size = 64u, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Streams a PDF source from the provided file.
         /// </summary>
         /// <param name="file">The <see cref="IFile"/> representing the PDF to be streamed.</param>

@@ -16,12 +16,12 @@ namespace SecureFolderFS.Core.Dokany
             _dokanCallbacks = dokanCallbacks;
         }
 
-        public void StartFileSystem(string mountPoint)
+        public void StartFileSystem(string mountPoint, bool isReadOnly)
         {
             var dokanBuilder = new DokanInstanceBuilder(_dokan)
                 .ConfigureOptions(opt =>
                 {
-                    opt.Options = DokanOptions.CaseSensitive;
+                    opt.Options = isReadOnly ? DokanOptions.CaseSensitive | DokanOptions.WriteProtection : DokanOptions.CaseSensitive;
                     opt.UNCName = FileSystem.Constants.UNC_NAME;
                     opt.MountPoint = mountPoint;
                 });

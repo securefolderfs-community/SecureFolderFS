@@ -23,31 +23,5 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName("salt")]
         public byte[]? Salt { get; init; }
-
-        /// <summary>
-        /// Gets the AES-256-GCM ciphertext of the 256-bit SoftwareEntropy value.
-        /// SoftwareEntropy is a CSPRNG secret mixed into Argon2id input via HKDF-Extract,
-        /// raising the quantum security floor of all authentication methods to 256 bits
-        /// regardless of auth factor entropy.
-        /// It is encrypted under a key derived from the passkey so all active auth
-        /// factors are required to recover it.
-        ///
-        /// The value is generated at vault creation and can also be rotated during
-        /// credential changes when rebuilding the V4 keystore.
-        /// </summary>
-        [JsonPropertyName("c_softwareEntropy")]
-        public byte[]? EncryptedSoftwareEntropy { get; init; }
-
-        /// <summary>
-        /// Gets the nonce used when encrypting <see cref="EncryptedSoftwareEntropy"/>.
-        /// </summary>
-        [JsonPropertyName("entropyNonce")]
-        public byte[]? SoftwareEntropyNonce { get; init; }
-
-        /// <summary>
-        /// Gets the AES-256-GCM authentication tag for <see cref="EncryptedSoftwareEntropy"/>.
-        /// </summary>
-        [JsonPropertyName("entropyTag")]
-        public byte[]? SoftwareEntropyTag { get; init; }
     }
 }

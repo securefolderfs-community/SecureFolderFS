@@ -392,14 +392,16 @@ namespace SecureFolderFS.Tests.VaultTests
             var biometricProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_APPLE_BIOMETRIC);
             using var oldKeyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
 
-            using var oldComplementUnlock = oldKeyFile.CreateCopy();
-            using var unlockContract = await manager.UnlockAsync(vaultFolder, oldComplementUnlock);
+            // Replacing the complement rotates the complement secret to a new generation, which can only be
+            // re-derived from the primary credential (the flow is therefore constrained to a primary login).
+            using var unlockPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, unlockPasskey);
             using var newComplement = SecureKey.CreateSecureRandom(32);
 
             // Act
             await manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
             {
-                CurrentComplementCredential = oldKeyFile,
+                CurrentPrimaryCredential = unlockPasskey,
                 NewComplementCredential = newComplement
             }, CreateOptions(biometricProcedure, vaultId));
 
@@ -414,6 +416,44 @@ namespace SecureFolderFS.Tests.VaultTests
 
             var configuredOptions = await vaultService.GetVaultOptionsAsync(vaultFolder);
             configuredOptions.UnlockProcedure.Should().BeEquivalentTo(biometricProcedure);
+        }
+
+        [Test]
+        public async Task ModifyComplementation_ReplaceComplementWithoutPrimaryCredential_FailsAndPreservesOldCredentials()
+        {
+            // Arrange
+            var vaultFolder = CreateVaultFolder();
+            var manager = DI.Service<IVaultManagerService>();
+            var vaultId = Guid.NewGuid().ToString("N");
+
+            var biometricProcedure = new AuthenticationMethod([AUTH_PASSWORD], AUTH_APPLE_BIOMETRIC);
+            using var oldKeyFile = await CreatePasswordVaultWithKeyFileComplementAsync(manager, vaultFolder, "Password#1", vaultId);
+
+            using var oldComplementUnlock = oldKeyFile.CreateCopy();
+            using var unlockContract = await manager.UnlockAsync(vaultFolder, oldComplementUnlock);
+            using var newComplement = SecureKey.CreateSecureRandom(32);
+
+            // Act
+            // Without the primary credential the complement secret cannot be rotated to a new generation.
+            // Re-wrapping the old secret instead would let a revoked complement credential combined with an
+            // old copy of the share file still unlock the vault, so the operation must be rejected.
+            Func<Task> action = () => manager.ModifyComplementationAsync(vaultFolder, unlockContract, new()
+            {
+                CurrentComplementCredential = oldKeyFile,
+                NewComplementCredential = newComplement
+            }, CreateOptions(biometricProcedure, vaultId));
+
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("*Current primary credentials*");
+
+            using var passwordOnlyPasskey = await GetPasswordLoginCredentialAsync("Password#1");
+            using var oldComplementPasskey = oldKeyFile.CreateCopy();
+            using var newComplementPasskey = newComplement.CreateCopy();
+
+            (await CanUnlockAsync(manager, vaultFolder, passwordOnlyPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, oldComplementPasskey)).Should().BeTrue();
+            (await CanUnlockAsync(manager, vaultFolder, newComplementPasskey)).Should().BeFalse();
         }
 
         [Test]

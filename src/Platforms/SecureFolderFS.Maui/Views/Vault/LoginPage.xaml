@@ -87,7 +87,7 @@
                                             Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
                                             HorizontalOptions="{OnPlatform Android={LayoutOptions Alignment=Fill},
                                                                            iOS={LayoutOptions Alignment=Center}}"
-                                            IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                                            IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource TypeNameBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel,RecoveryRequirementViewModel|invert'}"
                                             Style="{OnPlatform Android={StaticResource TransparentButtonStyle},
                                                                iOS={StaticResource NoBackgroundButtonStyle}}"
                                             Text="{l:ResourceString Rid=RecoverAccess}" />

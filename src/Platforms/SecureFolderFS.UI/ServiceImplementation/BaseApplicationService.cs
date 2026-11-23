@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Components;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -63,6 +64,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     LicenseUris = licenseUris
                 };
             }
+        }
+
+        /// <inheritdoc/>
+        public virtual Task<bool> TryOpenWindowAsync(IViewable viewable, CancellationToken cancellationToken = default)
+        {
+            // Single-window platforms have nowhere else to show it
+            return Task.FromResult(false);
         }
 
         /// <inheritdoc/>

@@ -38,11 +38,19 @@ namespace SecureFolderFS.Uno.DataModels
         public required string? MobileDeviceType { get; set; }
 
         /// <summary>
-        /// The expected HMAC result from mobile (Base64).
-        /// Used to verify the mobile device has the correct HMAC key.
+        /// The channel binding secret folded into every authentication session's channel key.
+        /// Only a device holding the credential's HMAC key can reproduce it. It is domain-separated
+        /// from the vault key contribution, so its presence at rest reveals no vault key material.
         /// </summary>
-        [JsonPropertyName("expectedHmac")]
-        public required byte[] ExpectedHmac { get; init; }
+        [JsonPropertyName("bindingSecret")]
+        public required byte[] BindingSecret { get; init; }
+
+        /// <summary>
+        /// SHA-256 hash of the vault key contribution returned by the mobile device.
+        /// Used to verify authentication responses; the contribution itself is never persisted.
+        /// </summary>
+        [JsonPropertyName("keyVerifier")]
+        public required byte[] KeyVerifier { get; init; }
 
         /// <summary>
         /// When the pairing was established.
@@ -54,6 +62,6 @@ namespace SecureFolderFS.Uno.DataModels
         /// Protocol version used during pairing.
         /// </summary>
         [JsonPropertyName("protocolVersion")]
-        public int ProtocolVersion { get; init; } = 4;
+        public int ProtocolVersion { get; init; } = Sdk.DeviceLink.Constants.PROTOCOL_VERSION;
     }
 }

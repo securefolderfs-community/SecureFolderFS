@@ -9,6 +9,7 @@
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Components"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
     mc:Ignorable="d">
 
     <Grid Loaded="Root_Loaded" RowSpacing="12">
@@ -90,8 +91,7 @@
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=AutoStart}"
                 BlockMode="Default"
-                Description="{l:ResourceString Rid=AutoStartDescription}"
-                IsEnabled="False">
+                Description="{l:ResourceString Rid=AutoStartDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>
@@ -103,16 +103,16 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="Put to background"
+                Title="{l:ResourceString Rid=PutToBackground}"
                 BlockMode="Default"
-                Description="Reduce the app to System Tray when closing the window">
+                Description="{l:ResourceString Rid=PutToBackgroundDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE75B;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="Put to background"
+                        AutomationProperties.Name="{l:ResourceString Rid=PutToBackground}"
                         IsOn="{x:Bind ViewModel.ReduceToBackground, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
@@ -144,6 +144,87 @@
                         IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
+
+            <!--  Integrations API  -->
+            <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.AreIntegrationsSupported, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ucab:ActionBlockControl
+                    Title="{l:ResourceString Rid=LocalIntegrations}"
+                    BlockMode="Default"
+                    Description="{l:ResourceString Rid=LocalIntegrationsDescription}">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE71B;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <ToggleSwitch
+                            MinWidth="0"
+                            AutomationProperties.Name="{l:ResourceString Rid=LocalIntegrations}"
+                            IsOn="{x:Bind ViewModel.EnableLocalIntegrations, Mode=TwoWay}" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
+                <!--  Authorized applications, shown only while integrations are switched on  -->
+                <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.EnableLocalIntegrations, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid Margin="4,8,4,0" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="{l:ResourceString Rid=ConnectedApps}" />
+                        <Button
+                            Grid.Column="1"
+                            Command="{x:Bind ViewModel.RevokeAllAppsCommand}"
+                            Content="{l:ResourceString Rid=RevokeAllAccess}" />
+                    </Grid>
+
+                    <TextBlock
+                        Margin="4,0"
+                        Opacity="0.8"
+                        Text="{l:ResourceString Rid=NoConnectedApps}"
+                        Visibility="{x:Bind ViewModel.ConnectedApps.Count, Mode=OneWay, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=invert}" />
+
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.ConnectedApps, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm2:IntegrationClientViewModel">
+                                <Grid
+                                    Margin="0,2"
+                                    Padding="12,8"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    ColumnSpacing="8"
+                                    CornerRadius="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock FontWeight="SemiBold" Text="{x:Bind DisplayName, Mode=OneWay}" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Opacity="0.8"
+                                            Text="{x:Bind IdentityDescription}" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Opacity="0.8"
+                                            Text="{x:Bind ExecutablePath}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTipService.ToolTip="{x:Bind ExecutablePath}" />
+                                    </StackPanel>
+                                    <Button
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind RevokeCommand, Mode=OneWay}"
+                                        Content="{l:ResourceString Rid=RevokeAccess}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

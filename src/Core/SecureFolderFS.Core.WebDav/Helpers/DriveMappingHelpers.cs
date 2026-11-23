@@ -17,7 +17,21 @@ namespace SecureFolderFS.Core.WebDav.Helpers
             }
             else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
-                Process.Start("sh", $"-c \"diskutil unmount force \"{mountPath}\"\"");
+                // Invoke diskutil directly with an argument list so the mount path is passed as a single
+                // argv element and never handed to a shell. Building a "sh -c \"...\"" command string here
+                // let shell metacharacters in the mount path (which derives from the attacker-influenceable
+                // vault name) be parsed and executed as commands.
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "/usr/sbin/diskutil",
+                    UseShellExecute = false
+                };
+                startInfo.ArgumentList.Add("unmount");
+                if (force)
+                    startInfo.ArgumentList.Add("force");
+                startInfo.ArgumentList.Add(mountPath);
+
+                _ = Process.Start(startInfo);
             }
         }
     }

@@ -173,7 +173,17 @@
                             <Label
                                 FontSize="12"
                                 Opacity="0.6"
-                                Text="{l:ResourceString Rid=FileModified}" />
+                                Text="{l:ResourceString Rid=FileModified}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Padding="8,2"
+                                Command="{Binding SaveDocumentCommand}"
+                                FontSize="12"
+                                IsVisible="{Binding IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                                SemanticProperties.Description="{l:ResourceString Rid=Save}"
+                                Style="{StaticResource TransparentButtonStyle}"
+                                Text="{l:ResourceString Rid=Save}"
+                                VerticalOptions="Center" />
                             <BoxView
                                 Margin="0,0,16,0"
                                 Background="{StaticResource ThemeElevatedFillSecondaryColorBrush}"
@@ -304,6 +314,7 @@
         <uc:CommandBarControl
             Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
             Closed="Closed_Clicked"
+            DeleteCommand="{Binding ViewModel.DeleteItemCommand}"
             IsImmersed="{Binding ViewModel.IsImmersed, Mode=OneWay}"
             IsToolbarOnTop="{Binding ViewModel.PreviewerViewModel.IsToolbarOnTop, Mode=OneWay}"
             PropertiesCommand="{Binding ViewModel.OpenPropertiesCommand}"

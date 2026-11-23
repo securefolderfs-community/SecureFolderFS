@@ -33,6 +33,7 @@
             public const string DIRECTORY_ID_FILENAME = "dirid.iv";
             public const string RECYCLE_BIN_NAME = "recycle_bin";
             public const string RECYCLE_BIN_CONFIGURATION_FILENAME = "recycle_bin.cfg";
+            public const string WIDGET_DATA_FILE_EXTENSION = ".sffsw";
         }
 
         public static class Caching

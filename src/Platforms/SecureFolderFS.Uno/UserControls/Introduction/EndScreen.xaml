@@ -34,7 +34,7 @@
             Grid.Row="2"
             Padding="80,0,80,0"
             FontSize="14"
-            Text="You're now ready to use SecureFolderFS! You can customize your app experience by heading to Settings."
+            Text="{l:ResourceString Rid=OnboardingEndSubtitle}"
             TextAlignment="Center"
             TextWrapping="WrapWholeWords" />
 

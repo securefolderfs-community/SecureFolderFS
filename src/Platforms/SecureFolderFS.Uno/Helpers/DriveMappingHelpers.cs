@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Uno.Helpers
             throw new PlatformNotSupportedException();
         }
 
-        public static async Task<string?> GetMountPathForRemotePathAsync(string remotePath)
+        public static async Task<string?> GetMountPathForRemotePathAsync(string remotePath, CancellationToken cancellationToken = default)
         {
 #if WINDOWS
             remotePath = remotePath.TrimEnd('\\');
@@ -54,32 +54,27 @@ namespace SecureFolderFS.Uno.Helpers
 #else
             if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
             {
-                var process = new Process()
+                var startInfo = new ProcessStartInfo("/sbin/mount")
                 {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = "mount",
-                        Arguments = "-t webdav",
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
                 };
+                startInfo.ArgumentList.Add("-t");
+                startInfo.ArgumentList.Add("webdav");
 
-                process.Start();
-                var output = await process.StandardOutput.ReadToEndAsync();
-                await process.WaitForExitAsync();
+                using var process = Process.Start(startInfo);
+                if (process is null)
+                    return null;
 
-                var lines = output.Split('\n');
-                foreach (var line in lines)
+                var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
+                await process.WaitForExitAsync(cancellationToken);
+
+                foreach (var line in output.Split('\n'))
                 {
-                    if (line.Contains(remotePath))
-                    {
-                        var parts = line.Split(' ');
-                        if (parts.Length > 2)
-                            return parts[2]; // Assuming the mount path is the third part
-                    }
+                    if (TryParseMountLine(line) is { } mount && IsSameRemotePath(mount.RemotePath, remotePath))
+                        return mount.MountPath;
                 }
             }
 #endif
@@ -133,6 +128,32 @@ namespace SecureFolderFS.Uno.Helpers
                 _ = error;
             }
 #endif
+        }
+
+        /// <summary>
+        /// Reads an entry of the mount table, as listed by mount(8).
+        /// </summary>
+        /// <remarks>
+        /// The mount point is taken whole, as it may contain spaces.
+        /// </remarks>
+        internal static (string RemotePath, string MountPath)? TryParseMountLine(string line)
+        {
+            var separator = line.IndexOf(" on ", StringComparison.Ordinal);
+            var options = line.LastIndexOf(" (", StringComparison.Ordinal);
+            if (separator <= 0 || options <= separator + 4)
+                return null;
+
+            return (line[..separator], line[(separator + 4)..options]);
+        }
+
+        /// <summary>
+        /// Determines whether two addresses of a WebDAV share are the same, regardless of escaping and a trailing slash.
+        /// </summary>
+        internal static bool IsSameRemotePath(string first, string second)
+        {
+            return Normalize(first).Equals(Normalize(second), StringComparison.OrdinalIgnoreCase);
+
+            static string Normalize(string remotePath) => Uri.UnescapeDataString(remotePath).TrimEnd('/');
         }
     }
 }

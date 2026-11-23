@@ -309,5 +309,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             navigationViewItem.ContextFlyout.ShowAt(navigationViewItem);
 #endif
         }
+
+        private void EnableAutoUnlock_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement { DataContext: VaultListItemViewModel itemViewModel })
+                return;
+
+            itemViewModel.IsAutoUnlockEnabled = !itemViewModel.IsAutoUnlockEnabled;
+        }
     }
 }

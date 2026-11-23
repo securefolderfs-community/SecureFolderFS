@@ -13,6 +13,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.DropZone;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -78,6 +79,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
                 if (!widgetIds.Contains(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID))
                     AvailableWidgets.Add(new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID, AddWidgetCommand) { Title = "AggregatedDataWidget".ToLocalized() });
+
+                if (!widgetIds.Contains(Constants.Widgets.DROP_ZONE_WIDGET_ID))
+                    AvailableWidgets.Add(new(Constants.Widgets.DROP_ZONE_WIDGET_ID, AddWidgetCommand) { Title = "DropZoneWidget".ToLocalized() });
             });
         }
 
@@ -106,6 +110,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 Constants.Widgets.HEALTH_WIDGET_ID => new HealthWidgetViewModel(_unlockedVaultViewModel, _dashboardNavigator, widgetModel) { RemoveWidgetCommand = RemoveWidgetCommand },
                 Constants.Widgets.GRAPHS_WIDGET_ID => new GraphsWidgetViewModel(_unlockedVaultViewModel, widgetModel) { RemoveWidgetCommand = RemoveWidgetCommand },
                 Constants.Widgets.AGGREGATED_DATA_WIDGET_ID => new AggregatedDataWidgetViewModel(_unlockedVaultViewModel, widgetModel) { RemoveWidgetCommand = RemoveWidgetCommand },
+
+                // Pins belong to the vault rather than to this device, so the data is redirected into the vault itself
+                Constants.Widgets.DROP_ZONE_WIDGET_ID => new DropZoneWidgetViewModel(
+                    _unlockedVaultViewModel,
+                    new VaultWidgetModel(widgetModel, _unlockedVaultViewModel.StorageRoot, Constants.Widgets.DropZone.DATA_FILENAME))
+                {
+                    RemoveWidgetCommand = RemoveWidgetCommand
+                },
+
                 _ => null
             };
         }
@@ -129,6 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 Constants.Widgets.AGGREGATED_DATA_WIDGET_ID =>
                     Widgets.Any(x => x.WidgetModel.WidgetId == Constants.Widgets.HEALTH_WIDGET_ID) ? 1 : 0,
                 Constants.Widgets.GRAPHS_WIDGET_ID => 2,
+                Constants.Widgets.DROP_ZONE_WIDGET_ID => Widgets.Count,
                 _ => int.MaxValue
             };
 
@@ -157,6 +171,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 Constants.Widgets.HEALTH_WIDGET_ID => 0,
                 Constants.Widgets.GRAPHS_WIDGET_ID => 1,
                 Constants.Widgets.AGGREGATED_DATA_WIDGET_ID => 2,
+                Constants.Widgets.DROP_ZONE_WIDGET_ID => 3,
                 _ => 0
             };
 

@@ -81,12 +81,63 @@
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
+
+        <!--  App Platform Template  -->
+        <DataTemplate x:Key="AppPlatformTemplate" x:DataType="vm:AppPlatformCreationViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="16">
+                    <HorizontalStackLayout Spacing="16">
+                        <!--  Icon  -->
+                        <Grid>
+                            <mi:MauiIcon
+                                Icon="{mi_material:Material Shield}"
+                                OnPlatforms="Android"
+                                VerticalOptions="Center" />
+                            <mi:MauiIcon
+                                Icon="{mi_cupertino:Cupertino LockShield}"
+                                OnPlatforms="iOS"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <!--  Title  -->
+                        <Label
+                            FontSize="20"
+                            Text="Connect to App Platform"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <!--  Server URL  -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label
+                            FontSize="12"
+                            Opacity="0.6"
+                            Text="Server URL" />
+                        <Entry
+                            Keyboard="Url"
+                            Placeholder="https://"
+                            Text="{Binding ServerUrl, Mode=TwoWay}" />
+                    </VerticalStackLayout>
+
+                    <!--  Authenticate  -->
+                    <local:ActivityButton
+                        ButtonStyle="{StaticResource AccentButtonStyle}"
+                        Command="{Binding ProvideCredentialsCommand}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Fill"
+                        IsProgressing="{Binding ProvideCredentialsCommand.IsRunning, Mode=OneWay}"
+                        Text="{l:ResourceString Rid=Setup}" />
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
         <uc:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
-                <ts:RegistrationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+                <ts:RegistrationTemplateSelector
+                    AppPlatformTemplate="{StaticResource AppPlatformTemplate}"
+                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
+                    PasswordTemplate="{StaticResource PasswordTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
     </Grid>

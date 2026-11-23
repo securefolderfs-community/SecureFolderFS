@@ -116,11 +116,36 @@ namespace SecureFolderFS.Sdk.WebDavClient.Streams
             if (!_disposed && disposing)
             {
                 _disposed = true;
-                Task.Run(UploadAsync).GetAwaiter().GetResult();
-                _buffer.Dispose();
+                if (OperatingSystem.IsBrowser())
+                {
+                    // The browser runtime is single-threaded: blocking on the upload would throw
+                    // (and could never complete anyway). Fire-and-forget is the best a synchronous Dispose() can do
+                    _ = UploadAndReleaseAsync();
+                }
+                else
+                {
+                    Task.Run(UploadAsync).GetAwaiter().GetResult();
+                    _buffer.Dispose();
+                }
             }
 
             base.Dispose(disposing);
+        }
+
+        private async Task UploadAndReleaseAsync()
+        {
+            try
+            {
+                await UploadAsync();
+            }
+            catch
+            {
+                // Nothing to propagate to from a fire-and-forget upload
+            }
+            finally
+            {
+                await _buffer.DisposeAsync();
+            }
         }
 
         /// <inheritdoc/>

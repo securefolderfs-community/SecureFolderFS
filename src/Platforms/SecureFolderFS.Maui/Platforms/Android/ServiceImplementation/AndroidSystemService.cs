@@ -1,6 +1,7 @@
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.Android.Storage;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {
@@ -50,5 +51,39 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 #endif
         }
 
+        /// <inheritdoc/>
+        public Task OpenFileWithAsync(IFile file, CancellationToken cancellationToken = default)
+        {
+            // Build the content URI for this file
+            var contentUri = ShareContentProvider.RegisterFileAndBuildUri(global::Android.App.Application.Context, file);
+
+            // Determine MIME type
+            var mimeType = FileTypeHelper.GetMimeType(file.Name);
+
+            // Create view intent
+            var intent = new global::Android.Content.Intent(global::Android.Content.Intent.ActionView);
+            intent.SetDataAndType(contentUri, mimeType);
+            intent.AddFlags(global::Android.Content.ActivityFlags.GrantReadUriPermission);
+
+            var chooserIntent = global::Android.Content.Intent.CreateChooser(intent, file.Name);
+            chooserIntent?.AddFlags(global::Android.Content.ActivityFlags.NewTask);
+
+            global::Android.App.Application.Context.StartActivity(chooserIntent);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> IsAutoStartEnabledAsync(CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> TrySetAutoStartAsync(bool isEnabled, CancellationToken cancellationToken = default)
+        {
+            // Auto start is not supported on mobile platforms
+            return Task.FromResult(false);
+        }
     }
 }

@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using System;
@@ -130,17 +131,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Health
                     if (read == 0)
                         break;
 
-                    // Check if chunk first bytes are all zeros (extended chunk, skip validation)
-                    var chunkReservedSize = Math.Min(read, security.ContentCrypt.ChunkFirstReservedSize);
-                    var isAllZeros = true;
-                    for (var i = 0; i < chunkReservedSize; i++)
-                    {
-                        if (ciphertextChunk[i] != 0)
-                        {
-                            isAllZeros = false;
-                            break;
-                        }
-                    }
+                    // Only a fully zero-filled chunk is a legitimate sparse/repaired hole (see ChunkReader).
+                    // Checking just the reserved nonce would let a tampered chunk - nonce zeroed but
+                    // ciphertext left intact - pass as a valid hole and be reported as clean; requiring the
+                    // whole chunk to be zero sends any partial tamper through decryption below, where a failed tag marks the chunk corrupted.
+                    var isAllZeros = SpanExtensions.IsAllZeros(ciphertextChunk.AsSpan(0, read));
 
                     if (!isAllZeros)
                     {

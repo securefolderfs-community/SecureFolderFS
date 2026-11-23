@@ -85,20 +85,27 @@ namespace SecureFolderFS.Core.VaultAccess
 
         private async Task WriteDataAsync<TData>(IFile? file, TData? data, CancellationToken cancellationToken)
         {
-            if (file is null)
+            if (file is null || data is null)
                 return;
+
+            // Serialize fully into memory BEFORE touching the destination. The destination is truncated
+            // in place (the storage abstraction offers no atomic replace), so serializing first ensures a
+            // serialization or allocation failure can never leave a truncated/empty keystore or configuration.
+            byte[] payload;
+            await using (var serializedData = await _serializer.SerializeAsync(data, cancellationToken))
+            await using (var buffer = new MemoryStream())
+            {
+                await serializedData.CopyToAsync(buffer, cancellationToken);
+                payload = buffer.ToArray();
+            }
 
             // Open a stream to the data file
             await using var fileStream = await file.OpenStreamAsync(FileAccess.Write, cancellationToken);
 
-            // Clear contents if opened from an existing file
+            // Clear contents if opened from an existing file, then write the fully-materialized payload in one pass
             fileStream.TrySetLength(0L);
-
-            if (data is not null)
-            {
-                await using var serializedData = await _serializer.SerializeAsync(data, cancellationToken);
-                await serializedData.CopyToAsync(fileStream, cancellationToken);
-            }
+            await fileStream.WriteAsync(payload, cancellationToken);
+            await fileStream.FlushAsync(cancellationToken);
         }
     }
 }

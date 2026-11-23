@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// Represents a service to interact with vault-related data.
     /// </summary>
-    public interface IVaultService // TODO: Move some of the methods to IVaultModel?
+    public interface IVaultService
     {
         /// <summary>
         /// Gets the latest vault version format.
@@ -37,6 +38,20 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="name">The file name to check.</param>
         /// <returns>Returns true if the file name is a part of vault configuration data; otherwise false.</returns>
         bool IsNameReserved(string? name);
+
+        /// <summary>
+        /// Gets a file in the content root of <paramref name="vfsRoot"/> that stores app-owned data.
+        /// </summary>
+        /// <remarks>
+        /// The returned file encrypts its contents with the vault keys, but keeps <paramref name="name"/> verbatim,
+        /// which requires the name to be reserved (see <see cref="IsNameReserved"/>) so it stays out of vault listings.
+        /// </remarks>
+        /// <param name="vfsRoot">The unlocked root of the vault to store the data in.</param>
+        /// <param name="name">The reserved name of the data file.</param>
+        /// <param name="createIfNotExists">Determines whether a missing file should be created.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If available, returns the data file; otherwise null.</returns>
+        Task<IFile?> GetVaultDataFileAsync(IVfsRoot vfsRoot, string name, bool createIfNotExists, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.

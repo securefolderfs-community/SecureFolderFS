@@ -35,10 +35,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 RecoveryOverlayViewModel => new RecoveryDialog(),
                 MigrationOverlayViewModel => new MigrationDialog(),
                 RecycleBinOverlayViewModel => new RecycleBinDialog(),
+                DeviceSetupOverlayViewModel => new DeviceSetupDialog(),
                 IntroductionOverlayViewModel => new IntroductionControl(),
                 VaultItemInfoOverlayViewModel => new VaultItemInfoDialog(),
                 VaultRestorationOverlayViewModel => new RestorationDialog(),
-
+                ApiConsentOverlayViewModel => new ApiConsentDialog(),
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
 

@@ -1412,7 +1412,7 @@
   <data name="DeviceLinkSourceDesktop" xml:space="preserve">
       <value>Komputer</value>
   </data>
-  <data name="DeviceLinkSourceThisDevice" xml:space="preserve">
+  <data name="ThisDevice" xml:space="preserve">
       <value>To urządzenie</value>
   </data>
   <data name="FileInformation" xml:space="preserve">

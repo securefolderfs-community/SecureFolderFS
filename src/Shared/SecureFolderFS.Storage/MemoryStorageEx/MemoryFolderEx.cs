@@ -42,17 +42,51 @@ namespace SecureFolderFS.Storage.MemoryStorageEx
                     return newFile;
                 }
 
-                case IFolder:
+                case MemoryFolderEx memoryFolder:
                 {
                     FolderContents.Remove(oldPath);
                     var newFolder = new MemoryFolderEx(newPath, newName, this, _streamSource);
                     newFolder.SetParent(this);
+
+                    // A rename has to carry the subtree with it. Identifiers are derived from the parent's
+                    // path, so every descendant is re-created underneath the renamed folder
+                    await newFolder.AdoptContentsFromAsync(memoryFolder, cancellationToken);
                     FolderContents.Add(newPath, newFolder);
 
                     return newFolder;
                 }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(storable));
+            }
+        }
+
+        private async Task AdoptContentsFromAsync(MemoryFolderEx source, CancellationToken cancellationToken)
+        {
+            await foreach (var item in source.GetItemsAsync(StorableType.All, cancellationToken))
+            {
+                switch (item)
+                {
+                    case MemoryFileEx memoryFile:
+                    {
+                        // The stream instance is shared rather than copied, so the contents move with the item
+                        var adoptedFile = new MemoryFileEx(Path.Combine(Id, memoryFile.Name), memoryFile.Name, memoryFile.InternalStream, this, _streamSource);
+                        adoptedFile.SetParent(this);
+                        FolderContents[adoptedFile.Id] = adoptedFile;
+
+                        break;
+                    }
+
+                    case MemoryFolderEx memoryFolder:
+                    {
+                        var adoptedFolder = new MemoryFolderEx(Path.Combine(Id, memoryFolder.Name), memoryFolder.Name, this, _streamSource);
+                        adoptedFolder.SetParent(this);
+
+                        await adoptedFolder.AdoptContentsFromAsync(memoryFolder, cancellationToken);
+                        FolderContents[adoptedFolder.Id] = adoptedFolder;
+
+                        break;
+                    }
+                }
             }
         }
 

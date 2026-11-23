@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Imaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
+using SkiaSharp;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.Helpers;
-using SecureFolderFS.Uno.PInvoke;
-using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 
 #if WINDOWS
 using System.Runtime.InteropServices;
+using SecureFolderFS.Uno.PInvoke;
+using static SecureFolderFS.Uno.PInvoke.UnsafeNative;
 #endif
 
 namespace SecureFolderFS.Uno.ServiceImplementation
@@ -34,8 +37,8 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 "Android_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
                 {
 #if WINDOWS && !HAS_UNO
-                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_dark.png",
-                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/gpixel_light.png"
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/gpixel_light.png"
 #else
                     ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/gpixel_dark.png",
                     _ => "ms-appx:///Assets/AppAssets/Devices/gpixel_light.png"
@@ -45,13 +48,21 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 "iOS_Device" => new ImageResource(UnoThemeHelper.Instance.ActualTheme switch
                 {
 #if WINDOWS && !HAS_UNO
-                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_dark.png",
-                    _ => "ms-appx://SecureFolderFS.UI/Assets/Devices/iphone_light.png"
+                    ThemeType.Dark => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_dark.png",
+                    _ => "ms-appx://SecureFolderFS.UI/Assets/AppAssets/Devices/iphone_light.png"
 #else
                     ThemeType.Dark => "ms-appx:///Assets/AppAssets/Devices/iphone_dark.png",
                     _ => "ms-appx:///Assets/AppAssets/Devices/iphone_light.png"
 #endif
                 }),
+                
+                "AppPlatformIcon" => new ImageResource(
+#if WINDOWS && !HAS_UNO
+                    "ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_platform_icon.png"
+#else
+                    "ms-appx:///Assets/AppAssets/app_platform_icon.png"
+#endif
+                ),
 
 #if WINDOWS && !HAS_UNO
                 "DOKANY" => new ImageResource("ms-appx:///Assets/AppAssets/FileSystems/dokany.png"),
@@ -100,9 +111,69 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
+        public async Task<IImageStream> GenerateThumbnailAsync(IFile file, TypeHint typeHint = default, CancellationToken cancellationToken = default)
         {
-            return Task.FromException<IImageStream>(new NotSupportedException());
+            if (typeHint == default)
+                typeHint = FileTypeHelper.GetTypeHint(file);
+
+            if (typeHint != TypeHint.Image)
+                throw new NotSupportedException($"Thumbnails are not supported for {typeHint} files on desktop.");
+
+            // Guard against decoding very large images
+            var size = await file.GetSizeAsync(cancellationToken);
+            if (size > UI.Constants.Browser.MAX_THUMBNAIL_SOURCE_SIZE)
+                throw new NotSupportedException("The image is too large to generate a thumbnail for.");
+
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            return await Task.Run(() => GenerateImageThumbnail(fileStream), cancellationToken);
+        }
+
+        /// <summary>
+        /// Downscales the image in <paramref name="sourceStream"/> to thumbnail size and encodes it as a PNG.
+        /// </summary>
+        private static IImageStream GenerateImageThumbnail(Stream sourceStream)
+        {
+            const int MAX_SIZE = UI.Constants.Browser.IMAGE_THUMBNAIL_MAX_SIZE;
+
+            // The stream stays owned by the caller, which disposes it once the thumbnail is encoded
+            using var codec = SKCodec.Create(new SKManagedStream(sourceStream, false))
+                              ?? throw new FormatException("The image could not be decoded.");
+
+            // Ask the codec to drop resolution while decoding where the format allows it, so a large
+            // image never has to be materialized at full size just to be scaled down afterwards
+            var info = codec.Info;
+            var requestedScale = Math.Min(1f, (float)MAX_SIZE / Math.Max(info.Width, info.Height));
+            var decodeSize = codec.GetScaledDimensions(requestedScale);
+
+            using var bitmap = SKBitmap.Decode(codec, new SKImageInfo(decodeSize.Width, decodeSize.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
+                               ?? throw new FormatException("The image could not be decoded.");
+
+            // The codec only respects the scales its format supports, which leaves the bitmap either
+            // larger than the thumbnail (resize down) or already smaller (never upscale it back)
+            var longestEdge = Math.Max(bitmap.Width, bitmap.Height);
+            using var resized = longestEdge <= MAX_SIZE
+                ? null
+                : bitmap.Resize(
+                    new SKImageInfo(
+                        Math.Max(1, bitmap.Width * MAX_SIZE / longestEdge),
+                        Math.Max(1, bitmap.Height * MAX_SIZE / longestEdge)),
+                    new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear));
+
+            using var image = SKImage.FromBitmap(resized ?? bitmap);
+            using var encoded = image.Encode(SKEncodedImageFormat.Png, UI.Constants.Browser.IMAGE_THUMBNAIL_QUALITY);
+
+            // Copy over because SKData.SaveTo is later disposed of
+            return new StreamImageModel(new MemoryStream(encoded.ToArray()));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IImage?> GetSystemIconAsync(string itemName, bool isFolder, uint size = 64u, CancellationToken cancellationToken = default)
+        {
+            // Both shell back ends reach into UI frameworks, so the call is marshalled onto the UI thread
+            await DI.Service<IThreadingService>().ChangeThreadAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return SystemIconHelper.TryGetIcon(itemName, isFolder, size);
         }
 
         /// <inheritdoc/>

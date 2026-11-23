@@ -15,6 +15,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Enums;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -22,11 +23,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Inject<IOverlayService>, Inject<IShareService>]
     public sealed partial class PreviewerOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
+        // Text files are loaded into memory in full; refuse to preview unreasonably large ones
+        private const long MAX_TEXT_PREVIEW_SIZE = 10 * 1024 * 1024;
+
         private readonly BrowserItemViewModel _itemViewModel;
         private readonly FolderViewModel _folderViewModel;
 
         [ObservableProperty] private bool _IsImmersed;
         [ObservableProperty] private BasePreviewerViewModel? _PreviewerViewModel;
+
+        /// <summary>
+        /// Occurs when the previewer requests to be closed, e.g. after the previewed item was deleted.
+        /// </summary>
+        public event EventHandler? CloseRequested;
+
+        /// <summary>
+        /// Gets the command that deletes the currently previewed item, or null when the vault is read-only.
+        /// </summary>
+        public IAsyncRelayCommand? DeleteItemCommand => _folderViewModel.BrowserViewModel.Options.IsReadOnly ? null : DeleteCurrentCommand;
 
         public PreviewerOverlayViewModel(BrowserItemViewModel itemViewModel, FolderViewModel folderViewModel)
         {
@@ -36,15 +50,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             if (_itemViewModel.Inner is not IFile file)
-                return Task.CompletedTask;
+                return;
 
             var classification = FileTypeHelper.GetClassification(_itemViewModel.Inner);
             var previewer = (BasePreviewerViewModel)(classification.TypeHint switch
             {
-                TypeHint.Plaintext => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(cancellationToken),
+                TypeHint.Plaintext when await IsWithinTextSizeLimitAsync(file, cancellationToken)
+                    => new TextPreviewerViewModel(file, _folderViewModel.BrowserViewModel.Options.IsReadOnly).WithInitAsync(cancellationToken),
                 TypeHint.Document when classification is { MimeType: "application/pdf" } => new PdfPreviewerViewModel(file).WithInitAsync(cancellationToken),
                 TypeHint.Image or TypeHint.Media or TypeHint.Audio => new CarouselPreviewerViewModel(
                     _folderViewModel.Items
@@ -57,8 +72,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
             (PreviewerViewModel as IDisposable)?.Dispose();
             PreviewerViewModel = previewer;
+        }
 
-            return Task.CompletedTask;
+        private static async Task<bool> IsWithinTextSizeLimitAsync(IFile file, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var size = await file.GetSizeAsync(cancellationToken);
+                return size is null or <= MAX_TEXT_PREVIEW_SIZE;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                // If the size cannot be determined, attempt the preview anyway
+                return true;
+            }
         }
 
         [RelayCommand]
@@ -94,6 +125,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 return;
 
             await ShareService.ShareFileAsync(filePreviewer.Inner);
+        }
+
+        [RelayCommand]
+        private async Task DeleteCurrentAsync(CancellationToken cancellationToken)
+        {
+            BasePreviewerViewModel? previewer = PreviewerViewModel as FilePreviewerViewModel;
+            if (PreviewerViewModel is CarouselPreviewerViewModel carouselPreviewer)
+                previewer = carouselPreviewer.Slides.ElementAtOrDefault(carouselPreviewer.CurrentIndex);
+
+            if (previewer is not FilePreviewerViewModel filePreviewer)
+                return;
+
+            // Delegate to the browser item so the recycle bin and confirmation flows apply
+            var itemViewModel = _folderViewModel.Items.FirstOrDefault(x => x.Inner.Id == filePreviewer.Inner.Id);
+            if (itemViewModel is null)
+                return;
+
+            await itemViewModel.DeleteCommand.ExecuteAsync(null);
+
+            // The deletion may have been declined in the confirmation prompt or may have failed
+            if (_folderViewModel.Items.Any(x => x.Inner.Id == filePreviewer.Inner.Id))
+                return;
+
+            if (PreviewerViewModel is CarouselPreviewerViewModel carouselViewModel)
+            {
+                carouselViewModel.RemoveSlide(filePreviewer);
+                if (carouselViewModel.Slides.Count > 0)
+                    return;
+            }
+
+            // Nothing left to preview
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>

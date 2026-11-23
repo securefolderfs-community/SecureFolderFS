@@ -152,7 +152,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
                         Title = "UnsavedChanges".ToLocalized(),
                         Message = "UnsavedChangesDescription".ToLocalized(),
                         PrimaryText = "Save".ToLocalized(),
-                        SecondaryText = "Cancel".ToLocalized()
+                        SecondaryText = "Discard".ToLocalized()
                     };
 
                     await Task.Delay(700, CancellationToken.None);
@@ -179,10 +179,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Storage.Browser
             {
                 // Cancellation, nothing to report
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (BrowserViewModel.TransferViewModel is { } transferViewModel)
-                    await transferViewModel.ReportErrorAsync("OperationFailed".ToLocalized());
+                    await transferViewModel.ReportErrorAsync($"{"OperationFailed".ToLocalized()} ({ex.Message})");
             }
         }
     }

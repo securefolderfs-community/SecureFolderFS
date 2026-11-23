@@ -77,6 +77,9 @@ namespace SecureFolderFS.Core.WebDav
         /// <returns>A started <see cref="HttpListener"/> bound to the resolved port.</returns>
         private static HttpListener StartListener(WebDavOptions options)
         {
+            if (!IsLoopbackDomain(options.Domain))
+                throw new ArgumentOutOfRangeException(nameof(options), $"The WebDAV listener refuses to bind the non-loopback domain '{options.Domain}' while unauthenticated.");
+
             HttpListenerException? lastException = null;
             for (var attempt = 0; attempt < MAX_LISTENER_START_ATTEMPTS; attempt++)
             {
@@ -99,6 +102,25 @@ namespace SecureFolderFS.Core.WebDav
             }
 
             throw lastException ?? new HttpListenerException();
+        }
+
+        /// <summary>
+        /// Determines whether <paramref name="domain"/> resolves only to the local host.
+        /// </summary>
+        /// <remarks>
+        /// The HttpListener wildcards '+' and '*' bind every interface and are rejected outright, as is
+        /// any name that does not parse to a loopback address. Hostnames other than "localhost" are not
+        /// resolved through DNS - a name whose resolution can change is not a binding this can vouch for.
+        /// </remarks>
+        private static bool IsLoopbackDomain(string? domain)
+        {
+            if (string.IsNullOrWhiteSpace(domain))
+                return false;
+
+            if (domain is "localhost")
+                return true;
+
+            return IPAddress.TryParse(domain.Trim('[', ']'), out var address) && IPAddress.IsLoopback(address);
         }
 
         /// <inheritdoc/>

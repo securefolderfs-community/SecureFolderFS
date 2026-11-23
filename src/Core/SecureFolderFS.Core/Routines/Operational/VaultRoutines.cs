@@ -33,10 +33,21 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 
+        public AppPlatformCreationRoutine CreateAppPlatformVault()
+        {
+            return new AppPlatformCreationRoutine(_vaultFolder, VaultWriter);
+        }
+
         public ICredentialsRoutine UnlockVault()
         {
             CheckVaultValidation();
             return new UnlockRoutine(VaultReader);
+        }
+
+        public ICredentialsRoutine UnlockAppPlatformVault()
+        {
+            CheckVaultValidation();
+            return new AppPlatformUnlockRoutine(VaultReader);
         }
 
         public ICredentialsRoutine RecoverVault()
@@ -45,7 +56,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new RecoverRoutine(VaultReader);
         }
 
-        public ICredentialsRoutine RestoreVault()
+        public RestoreRoutine RestoreVault()
         {
             // In the case of restoring the validation is not triggered since the vault is expected to be in an invalid state
             return new RestoreRoutine(_vaultFolder, VaultWriter);

@@ -13,12 +13,19 @@
         <StackPanel Spacing="4">
             <!--  Vault read-only InfoBar  -->
             <InfoBar
-                x:Name="ReadOnlyInfoBar"
-                x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
                 IsClosable="False"
                 IsOpen="True"
                 Message="{l:ResourceString Rid=VaultReadOnlyMode}"
-                Severity="Informational" />
+                Severity="Informational"
+                Visibility="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!--  App Platform InfoBar  -->
+            <InfoBar
+                IsClosable="False"
+                IsOpen="True"
+                Message="{l:ResourceString Rid=AppPlatformManagesThisVault}"
+                Severity="Informational"
+                Visibility="{x:Bind ViewModel.IsAppPlatform, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Rid=VaultInformation}"
@@ -79,7 +86,8 @@
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
                 Description="{l:ResourceString Rid=ChangeCredentialsDescription}"
-                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
+                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                Visibility="{x:Bind ViewModel.IsAppPlatform, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8D7;" />
                 </ucab:ActionBlockControl.Icon>
@@ -90,7 +98,8 @@
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
                 Description="{l:ResourceString Rid=TwoFactorDescription}"
-                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}">
+                IsEnabled="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                Visibility="{x:Bind ViewModel.IsAppPlatform, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xEC19;" />
                 </ucab:ActionBlockControl.Icon>
@@ -100,7 +109,8 @@
                 Title="{l:ResourceString Rid=RecoveryCodes}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
-                Description="{l:ResourceString Rid=RecoveryCodesDescription}">
+                Description="{l:ResourceString Rid=RecoveryCodesDescription}"
+                Visibility="{x:Bind ViewModel.IsAppPlatform, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE777;" />
                 </ucab:ActionBlockControl.Icon>

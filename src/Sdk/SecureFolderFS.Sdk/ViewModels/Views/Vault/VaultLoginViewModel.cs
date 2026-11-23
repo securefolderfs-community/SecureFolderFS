@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
@@ -201,6 +202,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // Navigate away
                 NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
+                // A restored vault is unlocked right away but has no credentials configured,
+                // so the user is asked to set them up before anything else
+                if (await RequiresCredentialsSetupAsync())
+                    await SetUpCredentialsAsync(unlockedVaultViewModel.VaultFolder, unlockContract);
+
                 // Show vault tutorial
                 if (SettingsService.AppSettings.ShouldShowVaultTutorial)
                 {
@@ -217,6 +223,45 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // Clean up the current instance
                 Dispose();
             }
+        }
+
+        /// <summary>
+        /// Determines whether the vault still awaits credentials, which is the case for a vault
+        /// that was restored and can, for the time being, only be unlocked with its recovery key.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is true if credentials need to be set up; otherwise false.</returns>
+        private async Task<bool> RequiresCredentialsSetupAsync()
+        {
+            if (VaultViewModel.VaultModel.VaultFolder is not { } vaultFolder)
+                return false;
+
+            try
+            {
+                var vaultOptions = await VaultService.GetVaultOptionsAsync(vaultFolder);
+                return Array.IndexOf(vaultOptions.UnlockProcedure.Methods, Constants.Vault.Authentication.AUTH_RECOVERY_KEY_REQUIREMENT) >= 0;
+            }
+            catch (Exception)
+            {
+                // The vault is already unlocked at this point, so a failure here must not stand in the way
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Shows the overlay that registers new credentials for the just unlocked vault.
+        /// </summary>
+        /// <remarks>
+        /// Mirrors changing the first authentication from <see cref="VaultPropertiesViewModel"/>, except that
+        /// the unlock contract is already at hand, so the recovery key does not have to be provided a second time.
+        /// </remarks>
+        private async Task SetUpCredentialsAsync(IFolder vaultFolder, IDisposable unlockContract)
+        {
+            if (IsReadOnly || OverlayService.CurrentView is not null)
+                return;
+
+            using var credentialsOverlay = new CredentialsOverlayViewModel(vaultFolder, VaultViewModel.Title, AuthenticationStage.FirstStageOnly, unlockContract);
+            await credentialsOverlay.InitAsync();
+            await OverlayService.ShowAsync(credentialsOverlay);
         }
 
         /// <inheritdoc/>

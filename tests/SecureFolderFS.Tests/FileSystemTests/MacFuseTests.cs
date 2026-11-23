@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using SecureFolderFS.Core.MacFuse;
 using SecureFolderFS.Storage.SystemStorageEx;
@@ -70,6 +70,35 @@ namespace SecureFolderFS.Tests.FileSystemTests
 
             var contents = await File.ReadAllTextAsync(filePath);
             contents.Should().Be("Hello from macFUSE!");
+        }
+
+        [Test]
+        public async Task Mount_LargeSequentialWrite_ReadsBackIntact()
+        {
+            // Regression for writes of a few hundred KiB that came back with zero-filled holes. Writes
+            // go through the kernel's buffer cache, so the file system sees them in clusters, out of
+            // order, interleaved with size queries that must account for what has not reached disk yet
+            ArgumentNullException.ThrowIfNull(_storageRoot);
+            var mountPoint = _storageRoot.VirtualizedRoot.Id;
+
+            var payload = new byte[1_382_932];
+            new Random(42).NextBytes(payload);
+
+            for (var attempt = 0; attempt < 5; attempt++)
+            {
+                var filePath = Path.Combine(mountPoint, $"large-{attempt}.bin");
+                await using (var stream = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite))
+                {
+                    for (var offset = 0; offset < payload.Length; offset += 81920)
+                        await stream.WriteAsync(payload.AsMemory(offset, Math.Min(81920, payload.Length - offset)));
+                }
+
+                var readBack = await File.ReadAllBytesAsync(filePath);
+                readBack.Length.Should().Be(payload.Length);
+
+                var firstDifference = Enumerable.Range(0, payload.Length).FirstOrDefault(i => readBack[i] != payload[i], -1);
+                firstDifference.Should().Be(-1, $"attempt {attempt} must read back what was written");
+            }
         }
 
         [Test]

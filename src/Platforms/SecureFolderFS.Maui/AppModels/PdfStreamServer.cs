@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Security.Cryptography;
 using SecureFolderFS.Shared.ComponentModel;
 
 #if ANDROID
@@ -16,9 +16,11 @@ namespace SecureFolderFS.Maui.AppModels
         private readonly Stream _fileStream;
         private readonly string _mimeType;
         private readonly int _port;
+        private readonly string _accessToken;
+        private readonly SemaphoreSlim _requestSemaphore;
         private bool _disposed;
 
-        public string BaseAddress => $"http://localhost:{_port}";
+        public string BaseAddress => $"http://localhost:{_port}/{_accessToken}";
 
         public PdfStreamServer(Stream fileStream, string mimeType)
         {
@@ -27,6 +29,14 @@ namespace SecureFolderFS.Maui.AppModels
 
             _fileStream = fileStream;
             _mimeType = mimeType;
+
+            // The listener is reachable by every process on the device. Require a
+            // cryptographically random token in the path so other local apps cannot
+            // read the decrypted document while the preview is open
+            _accessToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
+
+            // Requests share one seekable stream so serve them one at a time
+            _requestSemaphore = new SemaphoreSlim(1, 1);
 
             // Automatically find a free port
             _port = GetAvailablePort();
@@ -50,109 +60,26 @@ namespace SecureFolderFS.Maui.AppModels
                 {
                     while (!_disposed && _httpListener.IsListening && await _httpListener.GetContextAsync() is var context)
                     {
-                        var response = context.Response;
-                        var absolutePath = context.Request.Url?.AbsolutePath ?? string.Empty;
-
+                        await _requestSemaphore.WaitAsync(cancellationToken);
                         try
                         {
-                            if (absolutePath == "/app_file")
-                            {
-                                response.ContentType = _mimeType;
-                                response.Headers["Accept-Ranges"] = "bytes";
-                                response.ContentLength64 = _fileStream.Length;
-
-                                await _fileStream.CopyToAsync(response.OutputStream, cancellationToken);
-                                if (_fileStream.CanSeek)
-                                    _fileStream.Position = 0L;
-
-                                response.StatusCode = (int)HttpStatusCode.OK;
-                                response.StatusDescription = "OK";
-                            }
-                            else if (absolutePath.StartsWith("/pdfjs53"))
-                            {
-#if ANDROID
-                                var relativePath = absolutePath.TrimStart('/');
-                                var contentType = FileTypeHelper.GetMimeType(relativePath);
-                                response.ContentType = contentType;
-                                response.Headers["Accept-Ranges"] = "bytes";
-
-                                await using var assetStream = Android.App.Application.Context.Assets?.Open(relativePath, Access.Random);
-                                if (assetStream is null)
-                                {
-                                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                                    continue;
-                                }
-
-                                // All this double-copying of data is needed for setting the ContentLength tag
-
-                                // Copy to temporary MemoryStream
-                                await using var memoryStream = new MemoryStream();
-                                await assetStream.CopyToAsync(memoryStream, cancellationToken);
-                                await memoryStream.FlushAsync(cancellationToken);
-                                memoryStream.Position = 0L;
-
-                                // Set the ContentLength tag
-                                response.ContentLength64 = memoryStream.Length;
-
-                                // Copy back to the OutputStream
-                                await memoryStream.CopyToAsync(response.OutputStream, cancellationToken);
-                                await response.OutputStream.FlushAsync(cancellationToken);
-                                response.StatusCode = (int)HttpStatusCode.OK;
-                                response.StatusDescription = "OK";
-#endif
-                            }
+                            await ProcessRequestAsync(context, cancellationToken);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            var title = "Internal Server Error";
-                            var message = WebUtility.HtmlEncode(ex.Message);
-                            var stackTrace = WebUtility.HtmlEncode(ex.StackTrace ?? "");
-
-                            var html = $$"""
-                                <!DOCTYPE html>
-                                <html>
-                                <head>
-                                    <meta charset="utf-8">
-                                    <title>{{title}}</title>
-                                    <style>
-                                        body {
-                                            font-family: sans-serif;
-                                            background: #fdfdfd;
-                                            color: #333;
-                                            padding: 1rem;
-                                        }
-                                        h1 {
-                                            color: #c00;
-                                        }
-                                        pre {
-                                            background: #f5f5f5;
-                                            padding: 1rem;
-                                            overflow-x: auto;
-                                            border: 1px solid #ccc;
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <h1>{{title}}</h1>
-                                    <p>{{message}}</p>
-                                    <pre>{{stackTrace}}</pre>
-                                </body>
-                                </html>
-                            """;
-
-                            try
-                            {
-                                var buffer = Encoding.UTF8.GetBytes(html);
-                                response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                response.ContentType = "text/html";
-                                response.ContentLength64 = buffer.Length;
-                                await response.OutputStream.WriteAsync(buffer, cancellationToken);
-                            }
-                            catch (Exception) { }
+                            TryWriteErrorResponse(context.Response);
                         }
                         finally
                         {
-                            response.Close();
+                            _requestSemaphore.Release();
+                            try
+                            {
+                                context.Response.Close();
+                            }
+                            catch (Exception)
+                            {
+                                // The connection may already be gone
+                            }
                         }
                     }
                 }
@@ -163,12 +90,88 @@ namespace SecureFolderFS.Maui.AppModels
             }
         }
 
+        private async Task ProcessRequestAsync(HttpListenerContext context, CancellationToken cancellationToken)
+        {
+            var response = context.Response;
+            var absolutePath = context.Request.Url?.AbsolutePath ?? string.Empty;
+
+            // Reject any request that does not carry the access token
+            var tokenPrefix = $"/{_accessToken}";
+            if (!absolutePath.StartsWith(tokenPrefix, StringComparison.Ordinal))
+            {
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+                return;
+            }
+
+            var relativePath = absolutePath[tokenPrefix.Length..];
+            if (relativePath == "/app_file")
+            {
+                response.StatusCode = (int)HttpStatusCode.OK;
+                response.ContentType = _mimeType;
+                response.ContentLength64 = _fileStream.Length;
+
+                _fileStream.Position = 0L;
+                await _fileStream.CopyToAsync(response.OutputStream, cancellationToken);
+                _fileStream.Position = 0L;
+            }
+            else if (relativePath.StartsWith("/pdfjs53", StringComparison.Ordinal))
+            {
+#if ANDROID
+                var assetPath = relativePath.TrimStart('/');
+                var contentType = FileTypeHelper.GetMimeType(assetPath);
+
+                await using var assetStream = Android.App.Application.Context.Assets?.Open(assetPath, Access.Random);
+                if (assetStream is null)
+                {
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return;
+                }
+
+                // Buffer the asset first - ContentLength64 must be known before the body is written
+                await using var memoryStream = new MemoryStream();
+                await assetStream.CopyToAsync(memoryStream, cancellationToken);
+                memoryStream.Position = 0L;
+
+                response.StatusCode = (int)HttpStatusCode.OK;
+                response.ContentType = contentType;
+                response.ContentLength64 = memoryStream.Length;
+
+                await memoryStream.CopyToAsync(response.OutputStream, cancellationToken);
+                await response.OutputStream.FlushAsync(cancellationToken);
+#else
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+#endif
+            }
+            else
+            {
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+            }
+        }
+
+        private static void TryWriteErrorResponse(HttpListenerResponse response)
+        {
+            try
+            {
+                // Don't leak exception details to other local processes by making it deliberately generic
+                var buffer = "Internal Server Error"u8.ToArray();
+                response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                response.ContentType = "text/plain";
+                response.ContentLength64 = buffer.Length;
+                response.OutputStream.Write(buffer);
+            }
+            catch (Exception)
+            {
+                // Headers may already have been sent
+            }
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {
             _disposed = true;
             _fileStream.Dispose();
             _httpListener.Abort();
+            _requestSemaphore.Dispose();
         }
 
         private static int GetAvailablePort()

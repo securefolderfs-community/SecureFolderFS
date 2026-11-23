@@ -24,8 +24,9 @@ namespace SecureFolderFS.Sdk.Extensions
 
             transferViewModel.IsPickingFolder = false;
             transferViewModel.IsVisible = false;
-            await Task.Delay(350);
+            await Task.Delay(TransferViewModel.HIDE_ANIMATION_DURATION_MS);
             transferViewModel.IsProgressing = false;
+            transferViewModel.IsSuccess = false;
         }
 
         public static async Task TransferAsync<TTransferred>(
@@ -47,6 +48,7 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.ClearError();
+            transferViewModel.IsSuccess = false;
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count, collection.Count));
@@ -106,6 +108,7 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             var collection = items.ToOrAsCollection();
             transferViewModel.ClearError();
+            transferViewModel.IsSuccess = false;
             transferViewModel.IsProgressing = true;
             transferViewModel.IsVisible = true;
             transferViewModel.Report(new(0, collection.Count, collection.Count));
@@ -156,6 +159,7 @@ namespace SecureFolderFS.Sdk.Extensions
                     _ => string.Empty
                 };
                 transferViewModel.CanCancel = cancellationToken != CancellationToken.None;
+                transferViewModel.IsSuccess = false;
                 transferViewModel.IsProgressing = true;
 
                 // Start a task that will show the UI after a delay if the operation is still running
@@ -169,6 +173,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 if (uiShown)
                 {
                     transferViewModel.Title = "TransferDone".ToLocalized();
+                    transferViewModel.IsSuccess = true;
                     await Task.Delay(300, CancellationToken.None); // Allow user to see the "Done" message
                 }
             }

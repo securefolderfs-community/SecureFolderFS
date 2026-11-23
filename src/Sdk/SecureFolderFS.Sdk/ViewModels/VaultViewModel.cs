@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
@@ -113,6 +114,9 @@ namespace SecureFolderFS.Sdk.ViewModels
                 { nameof(VirtualFileSystemOptions.VolumeName), volumeName }
             };
 
+            // Apply any user-specified, per-vault file system options
+            ApplyCustomFileSystemOptions(fileSystem.Id, options);
+
             var contentFolder = await VaultHelpers.GetOrCreateContentFolderAsync(vaultFolder, CancellationToken.None);
             _ = contentFolder ?? throw new InvalidOperationException("Could not retrieve the content folder.");
 
@@ -128,6 +132,63 @@ namespace SecureFolderFS.Sdk.ViewModels
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
 
             return _unlockedVaultViewModel;
+        }
+
+        /// <summary>
+        /// Injects the user-specified, per-vault file system options into the mount <paramref name="options"/>.
+        /// </summary>
+        private void ApplyCustomFileSystemOptions(string fileSystemId, IDictionary<string, object> options)
+        {
+            if (VaultModel.DataModel.FileSystemOptions is not { } fileSystemOptions)
+                return;
+
+            switch (fileSystemId)
+            {
+                // WebDAV: the listener self-heals onto the next free port if this one is taken.
+                case "WEBDAV":
+                    if (fileSystemOptions.Port is > 0 and <= 65535)
+                        options["Port"] = fileSystemOptions.Port.Value;
+                    break;
+
+                // Dokany/WinFsp expect a Windows drive letter (e.g., "X:").
+                case "DOKANY":
+                case "WINFSP":
+                    if (IsWindowsDriveAvailable(fileSystemOptions.MountPoint))
+                        options["MountPoint"] = fileSystemOptions.MountPoint!;
+                    break;
+
+                // FUSE/macFUSE expect a directory path, which the file system creates on demand.
+                case "FUSE":
+                case "MAC_FUSE":
+                    if (!string.IsNullOrWhiteSpace(fileSystemOptions.MountPoint))
+                        options["MountPoint"] = fileSystemOptions.MountPoint;
+                    break;
+            }
+        }
+
+        private static bool IsWindowsDriveAvailable(string? mountPoint)
+        {
+            if (string.IsNullOrWhiteSpace(mountPoint))
+                return false;
+
+            // Not running on Windows, so this is not a drive letter; let the file system validate it.
+            if (!OperatingSystem.IsWindows())
+                return true;
+
+            var letter = char.ToUpperInvariant(mountPoint[0]);
+            if (letter is < 'C' or > 'Z')
+                return false;
+
+            foreach (var drive in SafetyHelpers.NoFailureResult(DriveInfo.GetDrives) ?? [])
+            {
+                if (!drive.IsReady)
+                    continue;
+
+                if (drive.Name.Length > 0 && char.ToUpperInvariant(drive.Name[0]) == letter)
+                    return false;
+            }
+
+            return true;
         }
 
         public UnlockedVaultViewModel GetUnlockedViewModel()

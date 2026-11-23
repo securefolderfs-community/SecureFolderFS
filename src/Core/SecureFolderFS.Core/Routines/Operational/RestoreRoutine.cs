@@ -12,11 +12,13 @@ using SecureFolderFS.Core.Cryptography.NameCrypt;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.SecureStore;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.Scanners;
@@ -27,7 +29,6 @@ namespace SecureFolderFS.Core.Routines.Operational
     /// <inheritdoc cref="ICredentialsRoutine"/>
     public sealed class RestoreRoutine : ICredentialsRoutine, IFinalizationRoutine
     {
-        private const int NO_EXTENSIONS_THRESHOLD = 5;
 
         private readonly IFolder _vaultFolder;
         private readonly VaultWriter _vaultWriter;
@@ -37,6 +38,8 @@ namespace SecureFolderFS.Core.Routines.Operational
         private VaultKeystoreDataModel? _keystoreDataModel;
         private VaultConfigurationDataModel? _configDataModel;
         private KeyPair? _keyPair;
+        private VaultRestorationParameters? _detectedParameters;
+        private bool _parametersConfirmed;
 
         public RestoreRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
         {
@@ -63,13 +66,65 @@ namespace SecureFolderFS.Core.Routines.Operational
         {
             ArgumentNullException.ThrowIfNull(_keyPair);
 
+            // The configuration written here is signed with the vault's genuine MAC key and is therefore
+            // indistinguishable from one the user created. It must never be produced from parameters the
+            // user has not seen and accepted
+            var parameters = await DetectParametersAsync(cancellationToken);
+            if (!_parametersConfirmed)
+                throw new InvalidOperationException("The detected vault parameters must be confirmed before the configuration can be rebuilt.");
+
+            // Regenerate config
+            var configDataModel = new VaultConfigurationDataModel()
+            {
+                AppPlatform = null,
+                AuthenticationMethod = Constants.Vault.Authentication.AUTH_RECOVERY_KEY_REQUIREMENT, // Recovery Key is required at first to recover the restored vault
+                ContentCipherId = parameters.ContentCipherId,
+                FileNameCipherId = parameters.FileNameCipherId,
+                FileNameEncodingId = parameters.FileNameEncodingId,
+                ShorteningThreshold = parameters.ShorteningThreshold,
+                RecycleBinSize = 0L,
+                Uid = Guid.NewGuid().ToString(),
+                Version = Constants.Vault.Versions.LATEST_VERSION,
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
+
+            // Calculate config MAC
+            _keyPair.MacKey.UseKey(macKey =>
+            {
+                VaultParser.CalculateConfigMac(configDataModel, macKey, configDataModel.PayloadMac);
+            });
+
+            // Regenerate keystore
+            var keystore = GenerateKeystore(_keyPair);
+
+            // Write the whole configuration
+            await _vaultWriter.WriteConfigurationAsync(configDataModel, cancellationToken);
+            await _vaultWriter.WriteKeystoreAsync(keystore, cancellationToken);
+
+            return new SecurityWrapper(_keyPair.CreateCopy(), configDataModel);
+        }
+
+        /// <summary>
+        /// Determines the cryptographic parameters of the vault by probing its contents.
+        /// </summary>
+        /// <remarks>
+        /// The result must be presented to the user and confirmed through <see cref="ConfirmParameters"/>
+        /// before <see cref="FinalizeAsync"/> will rebuild the configuration.
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the detected parameters.</returns>
+        public async Task<VaultRestorationParameters> DetectParametersAsync(CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(_keyPair);
+
+            if (_detectedParameters is not null)
+                return _detectedParameters;
+
             var contentFolder = await _vaultFolder.GetFolderByNameAsync(Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
             var contentCryptIds = new[] { CipherId.AES_GCM, CipherId.XCHACHA20_POLY1305, CipherId.AES_CTR_HMAC };
 
             string? foundContentCrypt = null;
             string? foundNameCrypt = null;
             string? foundEncoding = null;
-            var noExtensions = 0;
             var minSidecarContentLength = int.MaxValue;
             var hasShortenedNames = false;
 
@@ -108,17 +163,18 @@ namespace SecureFolderFS.Core.Routines.Operational
                     continue;
                 }
 
-                if (!item.Name.EndsWith(FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-                    noExtensions++;
-
-                // Check if we have enough files without extensions to be certain
-                if (noExtensions >= NO_EXTENSIONS_THRESHOLD)
-                    (foundNameCrypt, foundEncoding) = (CipherId.NONE, CipherId.ENCODING_BASE4K);
+                // Vault infrastructure never carries an encrypted name, so it must take no part in the
+                // probe below. Treating a dirid.iv as a name that failed to decrypt is what allowed a
+                // vault with a handful of directories to conclude, with no attacker at all, that it
+                // had no filename encryption
+                if (PathHelpers.IsCoreName(item.Name))
+                    continue;
 
                 // Find content crypt
                 foundContentCrypt ??= await FindContentCryptAsync(file, _keyPair, contentCryptIds, cancellationToken);
 
-                // Find name crypt
+                // Find name crypt. The cipher is never inferred from what a name looks like.
+                // It is established only by an authenticated decryption that succeeds, so planting files cannot steer the result
                 if (foundNameCrypt is null || foundEncoding is null)
                     (foundNameCrypt, foundEncoding) = await FindNameCryptAsync(contentFolder, file, _keyPair, cancellationToken);
 
@@ -127,43 +183,43 @@ namespace SecureFolderFS.Core.Routines.Operational
                     break;
             }
 
-            if (foundNameCrypt is null || foundEncoding is null || foundContentCrypt is null)
-                throw new InvalidOperationException("Could not find all required cryptographic components.");
+            // The content cipher is always established by trial decryption, so failing to find one
+            // means the vault holds nothing this routine can authenticate and the restore cannot proceed
+            if (foundContentCrypt is null)
+                throw new InvalidOperationException("Could not determine the content cipher of the vault.");
+
+            // Every candidate name was probed with AES-SIV across both encodings and none authenticated.
+            // Having positively ruled out filename encryption, the names are stored in clear
+            if (foundNameCrypt is null || foundEncoding is null)
+                (foundNameCrypt, foundEncoding) = (CipherId.NONE, CipherId.ENCODING_BASE4K);
 
             // Determine shortening threshold from sidecar content, with fallback for missing sidecars
             var shorteningThreshold = minSidecarContentLength < int.MaxValue
                 ? minSidecarContentLength
                 : hasShortenedNames ? 220 : 0;
 
-            // Regenerate config
-            var configDataModel = new VaultConfigurationDataModel()
+            _detectedParameters = new VaultRestorationParameters()
             {
-                AppPlatform = null,
-                AuthenticationMethod = Constants.Vault.Authentication.AUTH_RECOVERY_KEY_REQUIREMENT, // Recovery Key is required at first to recover the restored vault
                 ContentCipherId = foundContentCrypt,
                 FileNameCipherId = foundNameCrypt,
                 FileNameEncodingId = foundEncoding,
                 ShorteningThreshold = shorteningThreshold,
-                RecycleBinSize = 0L,
-                Uid = Guid.NewGuid().ToString(),
-                Version = Constants.Vault.Versions.LATEST_VERSION,
-                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+                IsFileNameEncrypted = !string.Equals(foundNameCrypt, CipherId.NONE, StringComparison.Ordinal)
             };
 
-            // Calculate config MAC
-            _keyPair.MacKey.UseKey(macKey =>
-            {
-                VaultParser.CalculateConfigMac(configDataModel, macKey, configDataModel.PayloadMac);
-            });
+            return _detectedParameters;
+        }
 
-            // Regenerate keystore
-            var keystore = GenerateKeystore(_keyPair);
+        /// <summary>
+        /// Accepts the parameters returned by <see cref="DetectParametersAsync"/>, allowing the
+        /// configuration to be rebuilt from them.
+        /// </summary>
+        public void ConfirmParameters()
+        {
+            if (_detectedParameters is null)
+                throw new InvalidOperationException($"{nameof(DetectParametersAsync)} must be called before the parameters can be confirmed.");
 
-            // Write the whole configuration
-            await _vaultWriter.WriteConfigurationAsync(configDataModel, cancellationToken);
-            await _vaultWriter.WriteKeystoreAsync(keystore, cancellationToken);
-
-            return new SecurityWrapper(_keyPair.CreateCopy(), configDataModel);
+            _parametersConfirmed = true;
         }
 
         private unsafe VaultKeystoreDataModel GenerateKeystore(KeyPair keyPair)

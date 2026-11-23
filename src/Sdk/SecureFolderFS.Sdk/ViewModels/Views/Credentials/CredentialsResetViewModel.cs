@@ -87,7 +87,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentialsTcs.TrySetResult(e.Authentication);
+            try
+            {
+                _credentialsTcs.TrySetResult(e.Authentication);
+            }
+            finally
+            {
+                // Release RegisterViewModel.ConfirmCredentialsAsync, which awaits this completion source.
+                e.TaskCompletion?.TrySetResult();
+            }
         }
 
         /// <inheritdoc/>

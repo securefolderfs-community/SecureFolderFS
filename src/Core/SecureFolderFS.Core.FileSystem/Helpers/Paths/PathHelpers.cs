@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
 {
@@ -12,6 +13,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
         {
             return
                 itemName.EndsWith(Constants.Names.SIDECAR_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase) ||
+                itemName.EndsWith(Constants.Names.WIDGET_DATA_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.RECYCLE_BIN_NAME, StringComparison.OrdinalIgnoreCase) ||
                 itemName.Contains(Constants.Names.RECYCLE_BIN_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase);
@@ -39,6 +41,24 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Encodes <paramref name="value"/> as NUL-terminated UTF-8 for libc APIs expecting a C string.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Encoding.GetBytes(string)"/> allocates exactly as many bytes as the encoding needs
+        /// and appends no terminator. Handing that array to a <c>byte*</c> binding makes libc scan past
+        /// the end of it into whatever follows on the GC heap, and act on a path with arbitrary trailing
+        /// bytes, so paths must be terminated explicitly.
+        /// </remarks>
+        public static byte[] ToNativePath(string value)
+        {
+            var buffer = new byte[Encoding.UTF8.GetByteCount(value) + 1];
+            Encoding.UTF8.GetBytes(value, buffer);
+
+            // The trailing byte is left zero
+            return buffer;
         }
     }
 }

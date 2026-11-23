@@ -26,6 +26,43 @@
                         SelectionChanged="AuthenticationOptions_SelectionChanged"
                         Visibility="{x:Bind IsAlternativeLogin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
+                    <StackPanel
+                        x:Name="FileSystemOptionsSection"
+                        Margin="0,0,0,8"
+                        Spacing="4"
+                        Visibility="Collapsed">
+                        <TextBlock
+                            FontSize="12"
+                            Opacity="0.6"
+                            Text="{l:ResourceString Rid=FileSystemOptions}" />
+
+                        <StackPanel x:Name="PortOption" Spacing="2" Visibility="Collapsed">
+                            <TextBlock FontSize="12" Text="{l:ResourceString Rid=FileSystemPort}" />
+                            <NumberBox
+                                x:Name="PortBox"
+                                Maximum="65535"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="PortBox_ValueChanged" />
+                        </StackPanel>
+
+                        <StackPanel x:Name="DriveLetterOption" Spacing="2" Visibility="Collapsed">
+                            <TextBlock FontSize="12" Text="{l:ResourceString Rid=FileSystemDriveLetter}" />
+                            <ComboBox
+                                x:Name="DriveLetterBox"
+                                HorizontalAlignment="Stretch"
+                                SelectionChanged="DriveLetterBox_SelectionChanged" />
+                        </StackPanel>
+
+                        <StackPanel x:Name="MountPathOption" Spacing="2" Visibility="Collapsed">
+                            <TextBlock FontSize="12" Text="{l:ResourceString Rid=FileSystemMountPoint}" />
+                            <TextBox
+                                x:Name="MountPathBox"
+                                LostFocus="MountPathBox_LostFocus"
+                                PlaceholderText="{l:ResourceString Rid=FileSystemMountPointPlaceholder}" />
+                        </StackPanel>
+                    </StackPanel>
+
                     <StackPanel Spacing="4">
                         <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind IsReadOnly, Mode=TwoWay}" />
                         <CheckBox

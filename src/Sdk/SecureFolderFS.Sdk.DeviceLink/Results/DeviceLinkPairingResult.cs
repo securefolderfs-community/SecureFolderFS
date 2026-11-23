@@ -31,6 +31,13 @@ namespace SecureFolderFS.Sdk.DeviceLink.Results
         /// </summary>
         public required string MobileDeviceType { get; init; }
 
+        /// <summary>
+        /// The channel binding secret established during pairing. Persisted on the desktop and folded
+        /// into every authentication session's channel key. Domain-separated from the vault key
+        /// contribution, so storing it at rest does not expose any vault key material.
+        /// </summary>
+        public required byte[] BindingSecret { get; init; }
+
         public DeviceLinkPairingResult(IKeyBytes value)
             : base(value)
         {

@@ -17,6 +17,8 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// </summary>
         private const int REPLAY_WINDOW_SIZE = 64;
 
+        private static readonly byte[] ENCRYPTION_INFO = "DeviceLink-Encryption-v1"u8.ToArray();
+
         private readonly byte[] _encryptionKey;
         private readonly object _replayLock = new();
         private ulong _replayWindow;  // Bitmap for tracking received sequences within window
@@ -27,16 +29,48 @@ namespace SecureFolderFS.Sdk.DeviceLink.Models
         /// <summary>
         /// Creates a secure channel from a shared secret.
         /// </summary>
-        public SecureChannelModel(byte[] sharedSecret, byte[]? salt = null)
+        /// <param name="sharedSecret">The (typically ephemeral) shared secret negotiated for this channel.</param>
+        /// <param name="salt">Optional salt mixed into the key derivation (e.g. session nonces).</param>
+        /// <param name="bindingSecret">
+        /// An optional long-term secret established during pairing (known only to the two paired devices).
+        /// When supplied, it is folded into the key derivation so that only a peer that possesses this
+        /// secret can derive the same channel key. This authenticates an otherwise-anonymous ephemeral
+        /// key exchange to the established pairing: a network attacker who completes the handshake but
+        /// does not know the binding secret derives a different key, so every AES-GCM operation fails
+        /// and it can neither read nor forge channel traffic.
+        /// </param>
+        public SecureChannelModel(byte[] sharedSecret, byte[]? salt = null, byte[]? bindingSecret = null)
         {
             salt ??= [];
 
-            _encryptionKey = HKDF.DeriveKey(
-                HashAlgorithmName.SHA256,
-                sharedSecret,
-                32,
-                salt,
-                "DeviceLink-Encryption-v1"u8.ToArray());
+            // Domain-separation label, optionally extended with the pairing binding secret.
+            byte[] info;
+            if (bindingSecret is { Length: > 0 })
+            {
+                info = new byte[ENCRYPTION_INFO.Length + bindingSecret.Length];
+                ENCRYPTION_INFO.CopyTo(info, 0);
+                bindingSecret.CopyTo(info, ENCRYPTION_INFO.Length);
+            }
+            else
+            {
+                info = ENCRYPTION_INFO;
+            }
+
+            try
+            {
+                _encryptionKey = HKDF.DeriveKey(
+                    HashAlgorithmName.SHA256,
+                    sharedSecret,
+                    32,
+                    salt,
+                    info);
+            }
+            finally
+            {
+                // Zero the temporary copy that contained the binding secret.
+                if (bindingSecret is { Length: > 0 })
+                    CryptographicOperations.ZeroMemory(info);
+            }
         }
 
         /// <summary>

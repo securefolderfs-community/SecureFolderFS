@@ -46,26 +46,5 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             Application.Context.StartActivity(chooserIntent);
             await Task.CompletedTask;
         }
-
-        /// <inheritdoc/>
-        public Task OpenFileWithAsync(IFile file)
-        {
-            // Build the content URI for this file
-            var contentUri = ShareContentProvider.RegisterFileAndBuildUri(Application.Context, file);
-
-            // Determine MIME type
-            var mimeType = FileTypeHelper.GetMimeType(file.Name);
-
-            // Create view intent
-            var intent = new Intent(Intent.ActionView);
-            intent.SetDataAndType(contentUri, mimeType);
-            intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-            var chooserIntent = Intent.CreateChooser(intent, file.Name);
-            chooserIntent?.AddFlags(ActivityFlags.NewTask);
-
-            Application.Context.StartActivity(chooserIntent);
-            return Task.CompletedTask;
-        }
     }
 }
