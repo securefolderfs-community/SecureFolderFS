@@ -25,6 +25,19 @@ namespace SecureFolderFS.Uno.PInvoke
         public const uint SND_NODEFAULT = 0x0002;
         public const uint SND_MEMORY = 0x0004;
         public const uint SND_PURGE = 0x0040;
+
+        public const uint SHGFI_ICON = 0x000000100;
+        public const uint SHGFI_LARGEICON = 0x000000000;
+        public const uint SHGFI_USEFILEATTRIBUTES = 0x000000010;
+        public const uint FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
+        public const uint FILE_ATTRIBUTE_NORMAL = 0x00000080;
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyIcon(IntPtr hIcon);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
         
         [DllImport("winmm.dll", CharSet = CharSet.Unicode, EntryPoint = "PlaySoundW")]
         public static extern bool PlaySound(IntPtr data, IntPtr module, uint flags);
@@ -149,6 +162,7 @@ namespace SecureFolderFS.Uno.PInvoke
         public const uint CFNotificationSuspensionBehaviorDeliverImmediately = 4;
         public const uint CF_STRING_ENCODING_UTF8 = 0x08000100;
         public const nint CF_URL_POSIX_PATH_STYLE = 0;
+        public const ulong NSBitmapImageFileTypePng = 4UL;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void LockCallback(IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
@@ -269,6 +283,9 @@ namespace SecureFolderFS.Uno.PInvoke
         #endregion
 
         #region Objc
+        
+        [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
+        public static partial IntPtr objc_msgSend_IntPtr_ulong_IntPtr(IntPtr receiver, IntPtr selector, ulong arg1, IntPtr arg2);
 
         [LibraryImport(LibObjc, EntryPoint = "objc_msgSend")]
         public static partial ulong objc_msgSend_ulong(IntPtr receiver, IntPtr selector);
@@ -450,6 +467,20 @@ namespace SecureFolderFS.Uno.PInvoke
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    internal struct SHFILEINFO
+    {
+        public IntPtr hIcon;
+        public int iIcon;
+        public uint dwAttributes;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+        public string szDisplayName;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+        public string szTypeName;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct MONITORINFOEX
     {
         public uint cbSize;
@@ -611,6 +642,15 @@ namespace SecureFolderFS.Uno.PInvoke
     [StructLayout(LayoutKind.Sequential)]
     internal struct CGSize
     {
+        public double Width;
+        public double Height;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct CGRect
+    {
+        public double X;
+        public double Y;
         public double Width;
         public double Height;
     }

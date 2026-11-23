@@ -550,10 +550,10 @@ namespace SecureFolderFS.Uno
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             window.SetTitleBar(titleBar?.DragRegion);
 
-#if HAS_UNO_SKIA
-            // Uno 6.6 text boxes misread several keys and shortcuts
-            TextBoxKeyboardHelper.Register(window.Content);
-#endif
+// #if HAS_UNO_SKIA
+//             // Uno 6.6 text boxes misread several keys and shortcuts
+//             TextBoxKeyboardHelper.Register(window.Content);
+// #endif
 
 #if __UNO_SKIA_MACOS__ || __MACCATALYST__
             // Use native macOS APIs to configure the window
